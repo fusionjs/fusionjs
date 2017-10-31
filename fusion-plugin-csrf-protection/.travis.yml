@@ -15,3 +15,6 @@ deploy:
   script: npm-publish-prerelease
   on:
     tags: true
+env:
+  global:
+    secure: OkpRi+fn+MQjqvObJACXt+BE7Wm/WeQTg0LeFE4jme9N1jia21imvwm9Ps4RcT9HZSNDfMZlQeKavxZuKZjgkfdVXZ+IW6hZhahffUEc97qhwTBtm5pEMRWx23l84VrDJSFU7qVssqMmwNC/Nvae4BJf4Rh22dZ+chjZfh+sBlQD5c8b/eiWHwRZVtBAh4a23P8X7rOjgVH0gBPvy25TEDxvNrJQB5SvevHO2HY687wO4JmbQIZE/KkfIPoUOx2e++x2T69KmNuyu+OJNPW9GGVagP8w6LEebxyqIYngZQkw4I2Wa0oUosWDk38PIwR72muovwzK3aBkn7/bto7GWmSFe4UAwwFyZ9sIOpIPhUd4mpm7SHq4Ggp+oQers8YS3tGqQdX/PgwBXv8RNwXrz2SRkX+D3jAKnLvdgHhTT3mwg/n1qVZRvMoi6Z7XbRj5QogLtcUxb3cfMyD3sVOjxNz8hT4FQyYT+M3/kSmL5LjWNNGU/jpJkcglK/cALonGBWn19DnbVWpkmkP0MXskz2L6COv7Xf0yqQ3WCvpWYu8XH//awTPq5BlKdZXu1MMa5R/Y8kKPbj4plpi8O38AvWpUWNW0XBQElnxkKl4Fg1Qz8wMw/wUpzLpVO1NVia71K1j/je5BV8wwLONfCY5JLjB+PtR0ND+xWU2IEKP0qsM=
