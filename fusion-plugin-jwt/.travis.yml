@@ -1,0 +1,17 @@
+dist: trusty
+sudo: false
+language: node_js
+node_js: 8.8.0
+before_install:
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.2.1
+- export PATH=$HOME/.yarn/bin:$PATH
+cache:
+  yarn: true
+before_deploy:
+- yarn global add npm-publish-prerelease
+- echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+deploy:
+  provider: script
+  script: npm-publish-prerelease
+  on:
+    tags: true
