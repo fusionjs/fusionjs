@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-react:
+    build: .
+    volumes:
+      - .:/fusion-react
+      - /fusion-react/node_modules/
+      - /fusion-react/dist/
+      - /fusion-react/dist-tests/
