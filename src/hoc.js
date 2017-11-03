@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default {
-  create: name => {
+  create: (name, mapServiceToProps) => {
+    if (!mapServiceToProps) {
+      mapServiceToProps = service => ({[name]: service});
+    }
     return Component => {
       class HOC extends React.Component {
         constructor(props, ctx) {
@@ -10,7 +13,7 @@ export default {
           this.service = ctx[name];
         }
         render() {
-          const props = {...this.props, [name]: this.service};
+          const props = {...this.props, ...mapServiceToProps(this.service)};
           return React.createElement(Component, props);
         }
       }
