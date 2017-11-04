@@ -31,7 +31,7 @@ export default ({Session, expire = 86400}) => {
   const ignored = new Set();
   return new Plugin({
     Service: class CsrfProtection {
-      static ignore(path) {
+      ignore(path) {
         ignored.add(path);
       }
     },

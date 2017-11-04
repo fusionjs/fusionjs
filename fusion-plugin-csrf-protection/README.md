@@ -30,7 +30,7 @@ export default () => {
   const app = new App(<div></div>);
 
   const Session = app.plugin(JWTSession, {secret: __NODE__ && 'secret here'});
-  const {fetch} = app.plugin(CsrfProtection, {Session});
+  const {fetch, ignore} = app.plugin(CsrfProtection, {Session}).of();
 
   app.plugin(Hello);
 
@@ -57,14 +57,12 @@ const Service = app.plugin(CsrfProtection, {Session});
 ```
 
 - `Session` - Required. A Session plugin, such as the one provided by [`fusion-plugin-jwt`](../fusion-plugin-jwt). The Session instance should expose a `get: (key: string) => string` and `set: (key: string, value: string) => string` methods.
-- `Service: {ignore, fetch}`
-  - `ignore: (url: string) => void` - Server-only. Disables CSRF protection for `url`
-  - `fetch: (url: string, options: Object) => Promise` - Client-only. A decorated `fetch` function that automatically does pre-flight requests for CSRF tokens if required.
 
 #### Instance method
 
 ```js
-const {fetch} = app.plugin(CsrfProtection, {Session}).of();
+const {fetch, ignore} = app.plugin(CsrfProtection, {Session}).of();
 ```
 
+- `ignore: (url: string) => void` - Server-only. Disables CSRF protection for `url`
 - `fetch: (url: string, options: Object) => Promise` - Client-only. A decorated `fetch` function that automatically does pre-flight requests for CSRF tokens if required.

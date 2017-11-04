@@ -16,6 +16,7 @@ test('works w/ prefix', async t => {
     },
   };
   const Csrf = CsrfToken({Session});
+  t.equals(typeof Csrf.of().ignore, 'function');
   const headers = {};
   const ctx = {
     method: 'POST',

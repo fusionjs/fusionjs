@@ -43,9 +43,6 @@ export default ({fetch = window.fetch, expire = 86400, routePrefix} = {}) => {
       fetch(...args) {
         return fetchWithCsrfToken(...args);
       }
-      static fetch(...args) {
-        return fetchWithCsrfToken(...args);
-      }
     },
   });
 };

@@ -5,7 +5,6 @@ test('exposes right methods', t => {
   const Csrf = CsrfToken();
   const csrf = Csrf.of();
   t.equal(typeof csrf.fetch, 'function', 'instance fetch function');
-  t.equal(typeof Csrf.Service.fetch, 'function', 'static fetch function');
   t.end();
 });
 
