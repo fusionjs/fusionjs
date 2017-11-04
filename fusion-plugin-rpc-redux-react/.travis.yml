@@ -16,6 +16,7 @@ before_deploy:
 deploy:
   provider: script
   script: npm-publish-prerelease
+  skip_cleanup: true
   on:
     tags: true
 env:
