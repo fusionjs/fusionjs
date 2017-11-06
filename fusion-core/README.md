@@ -2,7 +2,7 @@
 
 A generic entry point class for FusionJS applications that is used by the FusionJS runtime.
 
-If you're using React, you should use the [`fusion-react`](../fusion-react) package instead.
+If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusion-react) package instead.
 
 This package also exposes utilities for developing plugins.
 
