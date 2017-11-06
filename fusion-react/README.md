@@ -31,6 +31,8 @@ export default function() {
 ### API
 
 ```js
+import App from 'fusion-react';
+
 const app = new App(element);
 ```
 
@@ -47,3 +49,41 @@ const plugin = app.plugin(factory, dependencies)
 - `factory: (dependencies: Object) => Plugin` - Required. The export value of a plugin package
 - `dependencies: Object` - Optional. A map of dependencies for the plugin
 - `plugin: Plugin` - A Fusion [plugin](../core#plugin-api)
+
+### Provider
+
+#### create
+
+```js
+import {Provider} from 'fusion-react';
+
+const ProviderComponent = Provider.create(name, BaseComponent)
+```
+
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- `BaseComponent: React.Component` - Optional. Defaults to `React.Component`. The component class to extend from.
+- `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
+
+#### ProviderPlugin
+
+```js
+import {ProviderPlugin} from 'fusion-react';
+
+const Plugin = ProviderPlugin.create(name, plugin, BaseComponent)
+```
+
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- `plugin: Plugin` - Required. Creates a provider for this plugin.
+- `BaseComponent: React.Component` - Optional. Defaults to `React.Component`. The component class to extend from.
+- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
+
+#### ProvidedHOC
+
+```js
+import {ProvidedHOC} from 'fusion-react';
+
+const hoc = ProvidedHOC.create(name, mapServiceToProps)
+```
+
+- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
+- `mapServiceToProps: Object => Object` - Optional. Defaults to `service => ({[name]: service})`. Determines what props are exposed by the HOC
