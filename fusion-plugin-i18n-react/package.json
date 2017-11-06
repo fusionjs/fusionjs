@@ -1,0 +1,60 @@
+{
+  "name": "fusion-plugin-i18n-react",
+  "version": "0.1.9",
+  "description": "Adds I18n (Internationalization) support to a FusionJS app",
+  "repository": "fusionjs/fusion-plugin-i18n-react",
+  "files": ["dist", "singleton.js"],
+  "main": "./dist/node.cjs.js",
+  "module": "./dist/node.es.js",
+  "browser": {
+    "./dist/node.cjs.js": "./dist/browser.cjs.js",
+    "./dist/node.es.js": "./dist/browser.es.js"
+  },
+  "es2015": {
+    "./dist/node.cjs.js": "./dist/node.cjs.es2015.js",
+    "./dist/node.es.js": "./dist/node.es.es2015.js",
+    "./dist/browser.cjs.js": "./dist/browser.cjs.es2015.js",
+    "./dist/browser.es.js": "./dist/browser.es.es2015.js"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test": "node dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "prepublish": "npm run transpile"
+  },
+  "dependencies": {
+    "fusion-plugin-i18n": "^0.1.9",
+    "prop-types": "^15.5.8"
+  },
+  "peerDependencies": {
+    "fusion-core": "^0.1.8",
+    "fusion-react": "^0.1.8",
+    "react": "14.x - 16.x"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.0",
+    "babel-preset-react": "^6.24.1",
+    "create-universal-package": "^1.0.0-rc.14",
+    "eslint": "^4.2.0",
+    "eslint-config-fusion": "^0.1.2",
+    "eslint-plugin-cup": "^1.0.0-rc.4",
+    "eslint-plugin-flowtype": "^2.35.0",
+    "eslint-plugin-prettier": "^2.1.2",
+    "eslint-plugin-react": "^7.1.0",
+    "fusion-core": "^0.1.8",
+    "fusion-react": "^0.1.8",
+    "fusion-react-async": "0.1.4",
+    "prettier": "1.4.2",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "tape-cup": "^4.7.1",
+    "unitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">= 8.9.0"
+  },
+  "license": "MIT"
+}
