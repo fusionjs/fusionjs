@@ -18,8 +18,8 @@
     "./dist/browser.es.js": "./dist/browser.es.es2015.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "^0.1.8",
-    "web-rpc-redux": "^0.1.7"
+    "fusion-plugin-rpc": "^0.2.0",
+    "fusion-rpc-redux": "^0.2.0"
   },
   "peerDependencies": {
     "fusion-react": "^0.1.8",

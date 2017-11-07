@@ -70,7 +70,7 @@ function Example({count, loading, error, increment}) {
 }
 
 const hoc = compose(
-  withRPCRedux({rpcId: 'increment'}),
+  withRPCRedux('increment'),
   connect(({count, loading, error}) => ({count, loading, error})),
 );
 export default hoc(Example);
@@ -79,22 +79,21 @@ export default hoc(Example);
 ### Usage with Reactors
 
 ```js
-// add the reactor enhancer in main.js
+// add the reactor enhancer in src/main.js
 import {reactorEnhancer} from 'redux-reactors'
 // ...
 app.plugin(ReduxPlugin, {reducer, enhancer: reactorEnhancer});
 
-// define a reactor
-import {createRPCReactor} from 'fusion-plugin-rpc-redux-react';
-export const incrementReactor = createRPCReactor('increment', {
+// define a reactor (src/reactors/increment.js)
+import {withRPCReactor} from 'fusion-plugin-rpc-redux-react';
+export const incrementReactor = withRPCReactor('increment', {
   start: (state, action) => ({count: state.count, loading: true, error: ''});
   success: (state, action) => ({count: action.payload.count, loading: false, error: ''});
   failure: (state, action) => ({count: state.count, loading: false, error: action.payload.error});
 });
 
-// use the higher order component
+// use the higher order component (src/components/example.js)
 import React from 'react';
-import {withRPCReactor} from 'fusion-plugin-rpc-redux-react';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {incrementReactor} from './reactors/increment.js'
@@ -113,7 +112,7 @@ function Example({count, loading, error, increment}) {
 }
 
 const hoc = compose(
-  withRPCRedux(incrementReactor),
+  incrementReactor,
   connect(({count, loading, error}) => ({count, loading, error})),
 );
 export default hoc(Example);
@@ -126,12 +125,24 @@ export default hoc(Example);
 
 ```js
 import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
-const NewComponent = withRPCRedux({
-  rpcId: '', // required
+const NewComponent = withRPCRedux('rpcId', {
   propName: '', // optional, defaults to rpcId
   mapStateToParams: (state) => ({}), // optional
   transformParams(params) => ({}), // optional
-})Component)
+})(Component)
 ```
 
 #### `withRPCReactor`
+```js
+import {withRPCReactor} from 'fusion-plugin-rpc-redux-react';
+const NewComponent = withRPCReactor('rpcId', {
+  start: (state, action) => newState, // optional
+  success: (state, action) => newState, // optional
+  failure: (state, action) => newState, // optional
+},
+{
+  propName: '', // optional, defaults to rpcId
+  mapStateToParams: (state) => ({}), // optional
+  transformParams(params) => ({}), // optional
+})(Component);
+```

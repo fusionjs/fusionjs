@@ -1570,9 +1570,9 @@ fusion-core@^0.1.8:
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
 
-fusion-plugin-rpc@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-0.1.8.tgz#be96ccdcf3e7120af528171c157ee98f1a079bd7"
+fusion-plugin-rpc@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-0.2.0.tgz#a1fc7facec7de605b95c6ff74d9d517e3c2ecb7a"
   dependencies:
     body-parser "^1.17.1"
     koa-bodyparser "4.2.0"
@@ -1586,6 +1586,12 @@ fusion-react-async@0.1.4:
 fusion-react@^0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.1.8.tgz#fed6129ffe7745f2692a94ac513d80af30821e0b"
+
+fusion-rpc-redux@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-0.2.0.tgz#ad88778466af6f34d07945077325e9180379cc38"
+  dependencies:
+    redux-reactors "^1.0.3"
 
 get-stdin@^4.0.1:
   version "4.0.1"
@@ -3349,12 +3355,6 @@ verror@1.10.0:
 vlq@^0.2.1:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/vlq/-/vlq-0.2.3.tgz#8f3e4328cf63b1540c0d67e1b2778386f8975b26"
-
-web-rpc-redux@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/web-rpc-redux/-/web-rpc-redux-0.1.7.tgz#e9d5bee6a50b1a5813ea85c4b150aa97459b9358"
-  dependencies:
-    redux-reactors "^1.0.3"
 
 whatwg-fetch@>=0.10.0:
   version "2.0.3"

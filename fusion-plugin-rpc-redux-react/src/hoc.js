@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {createRPCHandler, createRPCReactor} from 'web-rpc-redux';
+import {createRPCHandler, createRPCReactors} from 'fusion-rpc-redux';
 
-export const withRPCReactor = ({
-  propName,
+export const withRPCReactor = (
   rpcId,
   reactors,
-  transformParams,
-  mapStateToParams,
-}) => {
-  const actions = createRPCReactor(rpcId, reactors);
-  return withRPCRedux({
-    actions,
+  {propName, transformParams, mapStateToParams} = {}
+) => {
+  return withRPCRedux(rpcId, {
+    actions: createRPCReactors(rpcId, reactors),
     propName,
     rpcId,
     transformParams,
@@ -19,13 +16,10 @@ export const withRPCReactor = ({
   });
 };
 
-export function withRPCRedux({
-  propName,
+export function withRPCRedux(
   rpcId,
-  actions,
-  transformParams,
-  mapStateToParams,
-}) {
+  {propName, actions, transformParams, mapStateToParams} = {}
+) {
   if (!propName) {
     propName = rpcId;
   }
