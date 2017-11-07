@@ -1,0 +1,5 @@
+import { syncChunkIds as otherSyncChunkIds } from 'syncChunkIds';
+import { syncChunkIds } from 'fusion-core';
+
+otherSyncChunkIds();
+syncChunkIds('foo');

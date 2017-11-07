@@ -1,0 +1,6 @@
+import { assetUrl as assetUrlOther } from 'assetUrl';
+import { assetUrl } from 'fusion-core';
+
+const path = './test';
+assetUrlOther('./path');
+assetUrl(path);

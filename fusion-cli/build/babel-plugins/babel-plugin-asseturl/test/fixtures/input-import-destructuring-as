@@ -1,0 +1,5 @@
+import { assetUrl as frameworkAssetUrl } from 'fusion-core';
+import assetUrl from 'assetURL';
+
+assetUrl('./path');
+frameworkAssetUrl('./path');

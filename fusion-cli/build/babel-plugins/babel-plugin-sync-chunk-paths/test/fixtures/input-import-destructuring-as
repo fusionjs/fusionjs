@@ -1,0 +1,5 @@
+import { syncChunkPaths as frameworkSyncChunkPaths } from 'fusion-core';
+import syncChunkPaths from 'syncChunkPaths';
+
+frameworkSyncChunkPaths();
+syncChunkPaths();

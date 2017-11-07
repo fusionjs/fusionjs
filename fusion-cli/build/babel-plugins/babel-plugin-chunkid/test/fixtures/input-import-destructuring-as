@@ -1,0 +1,5 @@
+import { chunkId as frameworkChunkId } from 'fusion-core';
+import chunkId from 'chunkId';
+
+chunkId('./path');
+frameworkChunkId('./path');

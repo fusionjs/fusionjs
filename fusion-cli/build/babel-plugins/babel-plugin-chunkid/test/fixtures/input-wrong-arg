@@ -1,0 +1,6 @@
+import { chunkId as chunkIdOther } from 'chunkId';
+import { chunkId } from 'fusion-core';
+
+const path = './test';
+chunkIdOther('./path');
+chunkId(path);

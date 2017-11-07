@@ -1,0 +1,5 @@
+import { chunkId as frameworkChunkId } from 'fusion-core';
+import chunkId from 'chunkId';
+
+chunkId('./path');
+frameworkChunkId(require('__SECRET_CHUNK_ID_LOADER__!./path'));
