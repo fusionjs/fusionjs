@@ -50,14 +50,14 @@ export function createRPCReducer(rpcId, reducers) {
   };
 }
 
-export function createRPCReactor(rpcId, reducers) {
+export function createRPCReactors(rpcId, reducers) {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
     obj[type] = createReactor(actionNames[type], reducers[type]);
     return obj;
   }, {});
-  return {reactors, rpcId};
+  return reactors;
 }
 
 export function createRPCHandler({

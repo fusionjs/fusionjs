@@ -35,10 +35,10 @@ const reducer = createRPCReducer('foo', {
 });
 ```
 
-#### `createRPCReactor`
+#### `createRPCReactors`
 
 ```js
-const {reactors, rpcId} = createRPCReactor('foo', {
+const reactors = createRPCReactors('foo', {
   start: (state, action) => {}, // optional,
   success: (state, action) => {}, // optional,
   failure: (state, action) => {}, // optional,

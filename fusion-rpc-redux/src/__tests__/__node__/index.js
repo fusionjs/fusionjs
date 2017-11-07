@@ -1,7 +1,7 @@
 import test from 'tape-cup';
 import {
   createRPCHandler,
-  createRPCReactor,
+  createRPCReactors,
   createRPCActions,
   createRPCReducer,
 } from '../../index';
@@ -9,9 +9,9 @@ import {
 test('api', t => {
   t.equal(typeof createRPCHandler, 'function', 'exposes a getHandler function');
   t.equal(
-    typeof createRPCReactor,
+    typeof createRPCReactors,
     'function',
-    'exposes a createRPCReactor function'
+    'exposes a createRPCReactors function'
   );
   t.equal(
     typeof createRPCActions,
@@ -144,13 +144,12 @@ test('createRPCHandler optional parameters', t => {
   });
 });
 
-test('createRPCReactor', t => {
-  const {rpcId, reactors} = createRPCReactor('getCount', {
+test('createRPCReactors', t => {
+  const reactors = createRPCReactors('getCount', {
     start() {},
     success() {},
     failure() {},
   });
-  t.equal(rpcId, 'getCount');
   t.equal(typeof reactors.start, 'function', 'exposes a start function');
   t.equal(typeof reactors.success, 'function', 'exposes a success function');
   t.equal(typeof reactors.failure, 'function', 'exposes a failure function');
@@ -160,9 +159,8 @@ test('createRPCReactor', t => {
   t.end();
 });
 
-test('createRPCReactor optional reducers', t => {
-  const {rpcId, reactors} = createRPCReactor('getCount', {});
-  t.equal(rpcId, 'getCount');
+test('createRPCReactors optional reducers', t => {
+  const reactors = createRPCReactors('getCount', {});
   t.equal(typeof reactors.start, 'function', 'exposes a start function');
   t.equal(typeof reactors.success, 'function', 'exposes a success function');
   t.equal(typeof reactors.failure, 'function', 'exposes a failure function');
