@@ -143,53 +143,32 @@ The application in your browser should automatically reload to display the silve
 
 ### Font loading
 
-Styling and fonts go hand-in-hand, but as it turns out, font loading is surprisingly tricky to do in a performant way. Thankfully, there's a plugin to take care of that:
-
-```sh
-yarn add fusion-plugin-font
-```
-
-In order to configure the plugin, we need to tell FusionJS where the font files are. For that purpose, `fusion-core` exposes a virtual module called `assetUrl`. This virtual module enables the compiler to perform optimizations on assets and it handles asset path configuration seamlessly.
-
-Let's create a font configuration file called `assets/font-config.js` that references some fonts:
-
-```js
-// assets/font-config.js
-import {assetUrl} from 'fusion-core';
-
-export const preloadDepth = 1;
-export const fonts = {
-  'ClanPro-Book': {
-    url: {
-      woff: assetUrl('../static/Clan-Book.woff'),
-      woff2: assetUrl('../static/Clan-Book.woff2'),
-    },
-    fallback: {
-      name: 'Helvetica',
-    },
-  },
-};
-```
-
-Next, let's add the plugin, similar to how we did it with the Styletron plugin:
+Fonts can be loaded via a custom plugin:
 
 ```js
 // src/main.js
 import App from 'fusion-react';
-import Styletron from 'fusion-plugin-styletron-react';
-import Fonts from 'fusion-plugin-font';
-
+import Fonts from './plugins/fonts';
 import root from './components/root';
 
 export default () => {
   const app = new App(root);
 
-  app.plugin(Styletron);
   app.plugin(Fonts);
 
   return app;
 }
+
+// src/plugins/fonts.js
+import {html} from 'fusion-core';
+
+export default () => (ctx, next) => {
+  ctx.body.head.push(html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`);
+  return next();
+}
 ```
+
+Note: stay tuned, we're working on an official FusionJS plugin for optimized font loading, which will replace the workflow above.
 
 ---
 
