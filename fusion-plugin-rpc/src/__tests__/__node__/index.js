@@ -10,21 +10,38 @@ const EventEmitter = {
 };
 
 test('works', async t => {
+  const mockCtx = {
+    headers: {},
+  };
   const handlers = {
-    test() {
+    test(args, ctx) {
+      t.equal(args, 'test-args');
+      t.equal(ctx, mockCtx);
       return 1;
     },
   };
-  const rpc = RPC({handlers, EventEmitter}).of();
+  const rpc = RPC({handlers, EventEmitter}).of(mockCtx);
   t.equals(typeof rpc.test, 'function', 'has method');
-  t.ok(rpc.test() instanceof Promise, 'has right return type');
   try {
-    t.equals(await rpc.test(), 1, 'method works');
+    const p = rpc.test('test-args');
+    t.ok(p instanceof Promise, 'has right return type');
+    t.equals(await p, 1, 'method works');
   } catch (e) {
     t.fail(e);
   }
   t.end();
 });
+
+test('throws when not passed ctx', async t => {
+  const handlers = {
+    test() {
+      return 1;
+    },
+  };
+  t.throws(() => RPC({handlers, EventEmitter}).of());
+  t.end();
+});
+
 test('xss protection', async t => {
   const handlers = {
     '<div>'() {
@@ -32,7 +49,7 @@ test('xss protection', async t => {
     },
   };
   const Plugin = RPC({handlers, EventEmitter});
-  const ctx = {element: 'test', body: {body: []}};
+  const ctx = {headers: {}, element: 'test', body: {body: []}};
   await Plugin.middleware(ctx, () => Promise.resolve());
   t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('<div>'), null);
   t.end();

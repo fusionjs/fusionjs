@@ -25,7 +25,7 @@ import fetch from 'unfetch';
 
 // Define your rpc methods server side
 const handlers = __NODE__ && {
-  getUser: async (args) => {
+  getUser: async (args, ctx) => {
     return {some: 'data' + args};
   },
 };
@@ -34,8 +34,9 @@ export default () => {
   const app = new App(<div></div>);
 
   const Api = app.plugin(RPC, {handlers, fetch});
-
-  Api.of().getUser(1).then(console.log) // {some: 'data1'}
+  app.plugin((ctx, next) => {
+    Api.of(ctx).getUser(1).then(console.log) // {some: 'data1'}
+  });
 
   return app;
 }
@@ -56,7 +57,7 @@ const Api = app.plugin(RPC, {handlers, fetch, EventEmitter});
 ##### Instance methods
 
 ```js
-const instance = Api.of();
+const instance = Api.of(ctx)
 ```
 
 - `instance: Object` - Has the same method names and signatures as their counterparts in `handlers`.
