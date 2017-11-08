@@ -17,15 +17,14 @@ export default ({reducer, preloadedState, enhancer, getInitialState}) => {
         if (this.store) {
           return this.store;
         }
-        let initialState = preloadedState || {};
         if (getInitialState) {
-          initialState = Object.assign(
+          preloadedState = Object.assign(
             {},
-            initialState,
+            preloadedState,
             await getInitialState(ctx)
           );
         }
-        this.store = createStore(reducer, initialState, enhancer);
+        this.store = createStore(reducer, preloadedState, enhancer);
         return this.store;
       }
     },

@@ -3,9 +3,9 @@
 /* globals __REDUX_DEVTOOLS_EXTENSION__ */
 import React from 'react';
 import {Provider} from 'react-redux';
-import {createStore} from 'redux';
+import {compose, createStore, enhancer} from 'redux';
 import {Plugin} from 'fusion-core';
-import {unescape} from 'fusion-core';
+import { unescape } from 'fusion-core';
 
 export default ({reducer, preloadedState, enhancer}) => {
   return new Plugin({
@@ -23,9 +23,10 @@ export default ({reducer, preloadedState, enhancer}) => {
           window.__REDUX_DEVTOOLS_EXTENSION__ &&
           __REDUX_DEVTOOLS_EXTENSION__();
 
-        const finalEnhancer = enhancer
-          ? devTool ? a => devTool(enhancer(a)) : enhancer
-          : devTool || undefined;
+        let finalEnhancer = null;
+        if (enhancer || devTool) {
+          finalEnhancer = compose(...[enhancer, devTool].filter(Boolean));
+        }
         this.store = createStore(reducer, preloadedState, finalEnhancer);
       }
     },
