@@ -1,5 +1,7 @@
 # fusion-plugin-csrf-protection
 
+[![Build status](https://badge.buildkite.com/3fef89529147193838107b8bf6a5e0cb9f1dc8d11502461920.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-csrf-protection)
+
 Adds CSRF protection to requests that use non-idempotent HTTP methods.
 
 This package provides a modified `fetch` that is automatically secure against CSRF attacks.

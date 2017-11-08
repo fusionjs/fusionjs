@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-csrf-protection:
+    build: .
+    volumes:
+      - .:/fusion-plugin-csrf-protection
+      - /fusion-plugin-csrf-protection/node_modules/
+      - /fusion-plugin-csrf-protection/dist/
+      - /fusion-plugin-csrf-protection/dist-tests/
