@@ -1,5 +1,7 @@
 # fusion-plugin-react-redux
 
+[![Build status](https://badge.buildkite.com/b1165dac1a1aea4fee2d97e52c74f5101efeed82f6907bb16c.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-redux?branch=master)
+
 Integrates React and Redux to a FusionJS application
 
 It handles creating your store, wrapping your element tree in a provider, and serializing/deserializing your store between server and client.

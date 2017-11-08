@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-react-redux:
+    build: .
+    volumes:
+      - .:/fusion-plugin-react-redux
+      - /fusion-plugin-react-redux/node_modules/
+      - /fusion-plugin-react-redux/dist/
+      - /fusion-plugin-react-redux/dist-tests/
