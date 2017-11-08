@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-jwt:
+    build: .
+    volumes:
+      - .:/fusion-plugin-jwt
+      - /fusion-plugin-jwt/node_modules/
+      - /fusion-plugin-jwt/dist/
+      - /fusion-plugin-jwt/dist-tests/

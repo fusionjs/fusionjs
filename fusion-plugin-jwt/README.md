@@ -1,5 +1,7 @@
 # fusion-plugin-jwt
 
+[![Build status](https://badge.buildkite.com/0652871d45303631a598c88e1231073ea80b5dffaea46aa2b4.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-jwt?branch=master)
+
 Session library that uses JSON Web Token and cookies
 
 ---
