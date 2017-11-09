@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-redux-action-emitter-enhancer:
+    build: .
+    volumes:
+      - .:/fusion-redux-action-emitter-enhancer
+      - /fusion-redux-action-emitter-enhancer/node_modules/
+      - /fusion-redux-action-emitter-enhancer/dist/
+      - /fusion-redux-action-emitter-enhancer/dist-tests/

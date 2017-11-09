@@ -1,5 +1,7 @@
 # fusion-redux-action-emitter-enhancer
 
+[![Build status](https://badge.buildkite.com/1864b671ca8edc1b7a6f8470ae320c6163268c23c4085ee82a.svg?branch=master)](https://buildkite.com/uberopensource/fusion-redux-action-emitter-enhancer)
+
 Redux store enhancer that emits actions via an injected event emitter.
 
 ---
