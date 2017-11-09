@@ -1,5 +1,7 @@
 # fusion-plugin-styletron-react
 
+[![Build status](https://badge.buildkite.com/00a3de3f63ee3ceb9079ba866255300dda30a4b5db5e2e47da.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-styletron-react)
+
 The Fusion plugin for [Styletron](http://styletron.js.org/), which, in addition to providing a easy-to-use styled-component-like interface, provides [powerful server-side CSS optimizations](https://ryantsao.com/blog/virtual-css-with-styletron), yielding less CSS code down the wire.
 
 ---

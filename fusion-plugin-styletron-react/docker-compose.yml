@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-styletron-react:
+    build: .
+    volumes:
+      - .:/fusion-plugin-styletron-react
+      - /fusion-plugin-styletron-react/node_modules/
+      - /fusion-plugin-styletron-react/dist/
+      - /fusion-plugin-styletron-react/dist-tests/
