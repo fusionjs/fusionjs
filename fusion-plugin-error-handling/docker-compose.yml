@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-error-handling:
+    build: .
+    volumes:
+      - .:/fusion-plugin-error-handling
+      - /fusion-plugin-error-handling/node_modules/
+      - /fusion-plugin-error-handling/dist/
+      - /fusion-plugin-error-handling/dist-tests/

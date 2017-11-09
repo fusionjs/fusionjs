@@ -1,5 +1,7 @@
 # fusion-plugin-error-handling
 
+[![Build status](https://badge.buildkite.com/1a76dbe95f76cd888a286290c365fabd54fcc62edb3895aa5d.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-error-handling)
+
 Collects browser errors, server request errors, and uncaught exceptions, and provides an api for handling them.
 
 ### Installation
