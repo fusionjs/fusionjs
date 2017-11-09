@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-universal-logger:
+    build: .
+    volumes:
+      - .:/fusion-plugin-universal-logger
+      - /fusion-plugin-universal-logger/node_modules/
+      - /fusion-plugin-universal-logger/dist/
+      - /fusion-plugin-universal-logger/dist-tests/

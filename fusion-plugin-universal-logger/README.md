@@ -1,5 +1,7 @@
 # fusion-plugin-universal-logger
 
+[![Build status](https://badge.buildkite.com/b2263b681b25bfe410fdf3ba640e682491c77bd61b4f0e63c9.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-logger)
+
 A logger utility that batches logs from the browser to the server at set intervals.
 
 Uses [winston](https://github.com/winstonjs/winston) on the server and exposes the same API on the client.
