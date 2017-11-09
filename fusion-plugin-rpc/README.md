@@ -1,5 +1,7 @@
 # fusion-plugin-rpc
 
+[![Build status](https://badge.buildkite.com/5165e82185b13861275cd0a69f29c2a13bc66dfb9461ee4af5.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc)
+
 Fetch data on the server and client with an RPC style interface.
 
 If you're using React, you should use [`fusion-plugin-rpc-react`](../fusion-plugin-rpc-react) instead of this package. If you're also using Redux, you should use [`fusion-plugin-rpc-redux-react`](../fusion-plugin-rpc-redux-react).

@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-rpc:
+    build: .
+    volumes:
+      - .:/fusion-plugin-rpc
+      - /fusion-plugin-rpc/node_modules/
+      - /fusion-plugin-rpc/dist/
+      - /fusion-plugin-rpc/dist-tests/
