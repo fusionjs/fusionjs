@@ -3,9 +3,9 @@
 /* globals __REDUX_DEVTOOLS_EXTENSION__ */
 import React from 'react';
 import {Provider} from 'react-redux';
-import {compose, createStore, enhancer} from 'redux';
+import {compose, createStore} from 'redux';
 import {Plugin} from 'fusion-core';
-import { unescape } from 'fusion-core';
+import {unescape} from 'fusion-core';
 
 export default ({reducer, preloadedState, enhancer}) => {
   return new Plugin({
