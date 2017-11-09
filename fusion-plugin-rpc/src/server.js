@@ -1,6 +1,5 @@
 /* eslint-env node */
 
-import {html} from 'fusion-core';
 import {Plugin} from 'fusion-core';
 import bodyparser from 'koa-bodyparser';
 const statKey = 'rpc:method';
@@ -11,8 +10,11 @@ export default ({handlers = {}, EventEmitter}) => {
     ctx.status = 400;
     ctx.body = {error: e.message};
   };
-  const methods = JSON.stringify(Object.keys(handlers));
-  const script = html`<script type="application/json" id="__DATA_FETCHING_METHODS__">${methods}</script>`; // consumed by ./browser
+
+  function hasHandler(method) {
+    return handlers.hasOwnProperty(method);
+  }
+
   class RPC {
     constructor(ctx) {
       // TODO(#5): update check to look for truthy ctx
@@ -23,13 +25,43 @@ export default ({handlers = {}, EventEmitter}) => {
       }
       this.ctx = ctx;
     }
-  }
-  for (const key in handlers) {
-    if (typeof handlers[key] === 'function') {
-      RPC.prototype[key] = async function(args) {
-        // TODO(#4): add timing events here
-        return handlers[key](args, this.ctx);
-      };
+    async request(method, args) {
+      const startTime = ms();
+      const emitter = EventEmitter && EventEmitter.of(this.ctx);
+      if (!hasHandler(method)) {
+        const e = new MissingHandlerError(method);
+        if (emitter) {
+          emitter.emit('rpc:error', {
+            method,
+            origin: 'server',
+            error: e,
+          });
+        }
+        throw e;
+      }
+      try {
+        const result = await handlers[method](args, this.ctx);
+        if (emitter) {
+          emitter.emit(statKey, {
+            method,
+            status: 'success',
+            origin: 'server',
+            timing: ms() - startTime,
+          });
+        }
+        return result;
+      } catch (e) {
+        if (emitter) {
+          emitter.emit(statKey, {
+            method,
+            error: e,
+            status: 'failure',
+            origin: 'server',
+            timing: ms() - startTime,
+          });
+        }
+        throw e;
+      }
     }
   }
 
@@ -37,21 +69,18 @@ export default ({handlers = {}, EventEmitter}) => {
     Service: RPC,
     async middleware(ctx, next) {
       const emitter = EventEmitter && EventEmitter.of(ctx);
-      const rpc = this.of(ctx);
-      if (ctx.element) {
-        ctx.body.body.push(script);
-      } else if (ctx.path.startsWith(`${ctx.prefix}/api/`)) {
+      if (ctx.method === 'POST' && ctx.path.startsWith(`${ctx.prefix}/api/`)) {
         const startTime = ms();
         const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
-        if (typeof rpc[method] === 'function') {
+        if (hasHandler(method)) {
           await parseBody(ctx, () => Promise.resolve());
           try {
-            ctx.body = await rpc[method](ctx.request.body);
+            ctx.body = await handlers[method](ctx.request.body, ctx);
             if (emitter) {
               emitter.emit(statKey, {
                 method,
                 status: 'success',
-                code: ctx.status,
+                origin: 'browser',
                 timing: ms() - startTime,
               });
             }
@@ -60,21 +89,36 @@ export default ({handlers = {}, EventEmitter}) => {
             if (emitter) {
               emitter.emit(statKey, {
                 method,
+                error: e,
                 status: 'failure',
-                code: ctx.status,
+                origin: 'browser',
                 timing: ms() - startTime,
               });
             }
           }
         } else {
-          err(ctx, new Error('Invalid endpoint: ' + ctx.path));
-          if (emitter) emitter.emit('rpc:error', {method});
+          const e = new MissingHandlerError(method);
+          err(ctx, e);
+          if (emitter) {
+            emitter.emit('rpc:error', {
+              origin: 'browser',
+              method,
+              error: e,
+            });
+          }
         }
       }
       return next();
     },
   });
 };
+
+class MissingHandlerError extends Error {
+  constructor(method) {
+    super(`Missing RPC handler for ${method}`);
+    Error.captureStackTrace(this, MissingHandlerError);
+  }
+}
 
 function ms() {
   const [seconds, ns] = process.hrtime();

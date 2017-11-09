@@ -37,7 +37,7 @@ export default () => {
 
   const Api = app.plugin(RPC, {handlers, fetch});
   app.plugin((ctx, next) => {
-    Api.of(ctx).getUser(1).then(console.log) // {some: 'data1'}
+    Api.of(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
   });
 
   return app;
@@ -62,4 +62,9 @@ const Api = app.plugin(RPC, {handlers, fetch, EventEmitter});
 const instance = Api.of(ctx)
 ```
 
-- `instance: Object` - Has the same method names and signatures as their counterparts in `handlers`.
+- `instance.request(method: string, args: any)` - make an rpc call to the `method` handler with `args`.
+
+If on the server, this will directly call the `method` handler with `(args, ctx)`.
+
+If on the browser, this will `POST` to `/api/${method}` endpoint with JSON serialized args as the request body. The server will then deserialize the args and call the rpc handler. The response will be serialized and send back to the browser.
+
