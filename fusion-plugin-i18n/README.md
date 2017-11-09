@@ -1,5 +1,7 @@
 # fusion-plugin-i18n
 
+[![Build status](https://badge.buildkite.com/3f2d84d5538d87a19677f5d79304ac46a8a67f970520d13884.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-i18n)
+
 Adds I18n (Internationalization) support to a FusionJS app
 
 For date i18n, consider using [date-fns](https://date-fns.org/)
