@@ -1,5 +1,7 @@
 # fusion-plugin-rpc-redux-react
 
+[![Build status](https://badge.buildkite.com/c16ece6ba0a81b30d11d69cb90b8f4d77a0967860144d12f44.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc-redux-react)
+
 A plugin for integrating web-rpc, redux, and react.
 
 ---

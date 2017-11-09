@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-rpc-redux-react:
+    build: .
+    volumes:
+      - .:/fusion-plugin-rpc-redux-react
+      - /fusion-plugin-rpc-redux-react/node_modules/
+      - /fusion-plugin-rpc-redux-react/dist/
+      - /fusion-plugin-rpc-redux-react/dist-tests/
