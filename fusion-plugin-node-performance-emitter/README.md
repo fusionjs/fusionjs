@@ -1,5 +1,7 @@
 # node-performance-emitter
 
+[![Build status](https://badge.buildkite.com/cd218d02957b19e9397231aea7fe019ea61f5e50225d7a47a8.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-node-performance-emitter)
+
 A tool for collecting, aggregating, and emitting Node.js performance stats.
 
 Collects stats on the event loop lag, garbage collection events, and memory statistics.  Note that this plugin is server-side only and will throw an error if used browser-side.
