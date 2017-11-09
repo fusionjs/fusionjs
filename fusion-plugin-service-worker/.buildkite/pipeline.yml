@@ -1,0 +1,6 @@
+steps:
+  - name: ":docker: :package:"
+    plugins:
+      docker-compose#v1.5.2:
+        build: fusion-plugin-service-worker
+        image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs

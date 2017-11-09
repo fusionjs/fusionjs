@@ -1,0 +1,6 @@
+version: '2'
+services:
+  fusion-plugin-service-worker:
+    build: .
+    volumes:
+      - .:/fusion-plugin-service-worker
