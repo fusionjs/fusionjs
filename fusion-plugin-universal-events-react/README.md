@@ -1,5 +1,7 @@
 # fusion-plugin-universal-events-react
 
+[![Build status](https://badge.buildkite.com/eb8bd80c4893a29521d5f7070f73a199ab8e941ae422adb4b8.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-events-react)
+
 React Provider and HOC for [Fusion universal-events](https://github.com/fusionjs/fusion-plugin-universal-events)
 
 ---
