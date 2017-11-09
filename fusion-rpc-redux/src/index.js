@@ -80,7 +80,7 @@ export function createRPCHandler({
     }
     store.dispatch(actions.start(args));
     return rpc
-      [rpcId](args)
+      .request(rpcId, args)
       .then(result => {
         if (result.error) throw new Error(result.error);
         store.dispatch(actions.success(result));

@@ -51,7 +51,8 @@ test('createRPCHandler success', t => {
       },
     },
     rpc: {
-      test: () => {
+      request: rpcId => {
+        t.equal(rpcId, 'test');
         return Promise.resolve('test-resolve');
       },
     },
@@ -99,7 +100,8 @@ test('createRPCHandler failure', t => {
       },
     },
     rpc: {
-      test: () => {
+      request: rpcId => {
+        t.equal(rpcId, 'test');
         return Promise.reject(error);
       },
     },
@@ -130,7 +132,8 @@ test('createRPCHandler optional parameters', t => {
       },
     },
     rpc: {
-      test: () => {
+      request: rpcId => {
+        t.equal(rpcId, 'test');
         return Promise.resolve('response');
       },
     },
