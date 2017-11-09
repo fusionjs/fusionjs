@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-browser-performance-emitter:
+    build: .
+    volumes:
+      - .:/fusion-plugin-browser-performance-emitter
+      - /fusion-plugin-browser-performance-emitter/node_modules/
+      - /fusion-plugin-browser-performance-emitter/dist/
+      - /fusion-plugin-browser-performance-emitter/dist-tests/

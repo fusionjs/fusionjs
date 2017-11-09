@@ -1,5 +1,7 @@
 # fusion-plugin-browser-performance-emitter
 
+[![Build status](https://badge.buildkite.com/a7317a979159381e5e4ffb14e1ccd0d39737fd159f73863915.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-browser-performance-emitter)
+
 Emit performance stats from the browser
 
 ---
