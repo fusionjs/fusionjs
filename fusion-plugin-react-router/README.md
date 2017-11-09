@@ -1,5 +1,7 @@
 # fusion-plugin-react-router
 
+[![Build status](https://badge.buildkite.com/e7e66157aa0c6e75c355db44ddf818637e7f00f9d7d640c879.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-router)
+
 The `fusion-plugin-react-router` package provides a universal router plugin for React.
 
 ---

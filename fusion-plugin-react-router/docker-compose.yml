@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-react-router:
+    build: .
+    volumes:
+      - .:/fusion-plugin-react-router
+      - /fusion-plugin-react-router/node_modules/
+      - /fusion-plugin-react-router/dist/
+      - /fusion-plugin-react-router/dist-tests/
