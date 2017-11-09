@@ -1,5 +1,7 @@
 # fusion-test-utils
 
+[![Build status](https://badge.buildkite.com/830e5ff24d46977835ad18ae693019740e07413e091581905e.svg?branch=master)](https://buildkite.com/uberopensource/fusion-test-utils)
+
 Provides test utility functions for FusionJS
 
 ---
