@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-i18n-react:
+    build: .
+    volumes:
+      - .:/fusion-plugin-i18n-react
+      - /fusion-plugin-i18n-react/node_modules/
+      - /fusion-plugin-i18n-react/dist/
+      - /fusion-plugin-i18n-react/dist-tests/

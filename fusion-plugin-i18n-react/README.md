@@ -1,5 +1,7 @@
 # fusion-plugin-i18n-react
 
+[![Build status](https://badge.buildkite.com/fd8fcdba7b74ed2e6dcbca1b5c4998797b400f536029c45483.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-i18n-react)
+
 Adds I18n (Internationalization) support to a FusionJS app.
 
 This plugin looks for translations in the `./translations` folder. Translations for each language are expected to be in a JSON file with a locale as a filename, for example, for US english, translations should be in `./translations/en-US.json`
