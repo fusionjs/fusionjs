@@ -1,0 +1,7 @@
+version: '2'
+services:
+  fusion-cli:
+    build: .
+    volumes:
+      - .:/fusion-cli
+      - /fusion-cli/node_modules/
