@@ -1,0 +1,22 @@
+steps:
+  - name: ":docker: :package:"
+    plugins:
+      docker-compose#v1.5.2:
+        build: fusion-plugin-universal-events
+        image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
+  - wait
+  - name: ":eslint:"
+    command: "yarn lint"
+    plugins:
+      docker-compose#v1.5.2:
+        run: fusion-plugin-universal-events
+  - name: ":chrome: :white_check_mark:"
+    command: ".buildkite/browserTests"
+    plugins:
+      docker-compose#v1.5.2:
+        run: fusion-plugin-universal-events
+  - name: ":node: :white_check_mark:"
+    command: ".buildkite/nodeTests"
+    plugins:
+      docker-compose#v1.5.2:
+        run: fusion-plugin-universal-events

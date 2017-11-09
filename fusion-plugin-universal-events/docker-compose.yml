@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fusion-plugin-universal-events:
+    build: .
+    volumes:
+      - .:/fusion-plugin-universal-events
+      - /fusion-plugin-universal-events/node_modules/
+      - /fusion-plugin-universal-events/dist/
+      - /fusion-plugin-universal-events/dist-tests/

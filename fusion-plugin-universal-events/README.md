@@ -1,5 +1,7 @@
 # fusion-plugin-universal-events
 
+[![Build status](https://badge.buildkite.com/de4e30ddb9d019f5a8e3a2519bc0a5cccab25247809cd10c99.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-events)
+
 This is a [Fusion plugin](https://github.com/fusionjs/fusion-core) that captures events emitted from the client, sends them in batches to the server periodically, and allows the server to handle them.
 
 It's useful for when you want to collect data about user actions or other metrics, and send them in bulk to the server to minimize the number of HTTP requests.
