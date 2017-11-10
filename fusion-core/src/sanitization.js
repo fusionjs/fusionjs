@@ -5,7 +5,7 @@ Instead, they should use html`<div>{stuff}</div>` so interpolated data gets auto
 We trust the markup outside of interpolation because it's code written by a developer with commit permissions,
 which can be audited via code reviews
 */
-let html, dangerouslySetHTML, consumeSanitizedHTML, escape, unescape;
+let html, dangerouslySetHTML, consumeSanitizedHTML, escape;
 if (__NODE__) {
   const forbiddenChars = {
     '<': '\\u003C',
@@ -16,7 +16,6 @@ if (__NODE__) {
     '\u2029': '\\u2029',
   };
   const replaceForbidden = c => forbiddenChars[c];
-  const replaceEscaped = c => String.fromCodePoint(parseInt(c.slice(2), 16));
 
   const key = Symbol('sanitized html');
   html = ([head, ...rest], ...values) => {
@@ -33,12 +32,6 @@ if (__NODE__) {
     if (str && str[key]) return consumeSanitizedHTML(str);
     return String(str).replace(/[<>"/\u2028\u2029]/g, replaceForbidden);
   };
-  unescape = str => {
-    return str.replace(
-      /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029/g,
-      replaceEscaped
-    );
-  };
   consumeSanitizedHTML = h => {
     if (typeof h === 'string') {
       throw new Error(`Unsanitized html. Use html\`${h}\``);
@@ -46,5 +39,12 @@ if (__NODE__) {
     return h[key];
   };
 }
+const replaceEscaped = c => String.fromCodePoint(parseInt(c.slice(2), 16));
+const unescape = str => {
+  return str.replace(
+    /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029/g,
+    replaceEscaped
+  );
+};
 
 export {html, dangerouslySetHTML, consumeSanitizedHTML, escape, unescape};
