@@ -12,30 +12,31 @@ test('plugin', t => {
   };
   const RPCRedux = Plugin({handlers, EventEmitter});
   const mockCtx = {headers: {}};
-  t.equal(typeof RPCRedux.of(mockCtx).test, 'function');
+  t.equal(typeof RPCRedux.of(mockCtx).request, 'function');
   t.end();
 });
 
 test('withRPCRedux hoc', t => {
   function Test() {}
   t.equals(typeof withRPCRedux, 'function');
-  const Connected = withRPCRedux('test', {
-    actions: {
-      start() {},
-      success() {},
-      failure() {},
-    },
-    mapStateToParams: () => {},
-    transformParams: () => {},
-  })(Test);
+  const Connected = withRPCRedux('test')(Test);
   t.equals(Connected.displayName, 'WithRPCRedux(Test)');
   const renderer = new ShallowRenderer();
+  const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
+  const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      test() {},
+      request(method, args) {
+        t.equal(method, 'test');
+        t.equal(args, 'test-args');
+        return Promise.resolve('test-resolve');
+      },
     },
     store: {
-      dispatch() {},
+      dispatch(action) {
+        t.equal(action.type, expectedActions.shift());
+        t.equal(action.payload, expectedPayloads.shift());
+      },
       getState() {},
     },
   });
@@ -45,6 +46,7 @@ test('withRPCRedux hoc', t => {
     'function',
     'passes the handler through to props'
   );
+  rendered.props.test('test-args');
   t.end();
 });
 
@@ -62,7 +64,8 @@ test('withRPCReactor hoc', t => {
   const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      test(args) {
+      request(method, args) {
+        t.equal(method, 'test');
         t.equal(args, 'test-args');
         return Promise.resolve('test-resolve');
       },
