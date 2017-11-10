@@ -1,6 +1,5 @@
 /* eslint-env node */
 
-import {Plugin} from 'fusion-core';
 import {html} from 'fusion-core';
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
@@ -17,23 +16,22 @@ export default ({onError, CsrfProtection}) => {
   if (CsrfProtection) CsrfProtection.ignore(EnvVars().of().prefix + '/_errors');
   const err = async e => {
     await onError(e, types.server);
-    throw e;
+    process.exit(1);
   };
-  process.on('uncaughtException', err);
-  process.on('unhandledRejection', err);
+  process.once('uncaughtException', err);
+  process.once('unhandledRejection', err);
   const parseBody = bodyParser();
-  return class extends Plugin {
-    static async middleware(ctx, next) {
-      if (ctx.element) {
-        // Here, we use GET instead of POST to avoid the need for a CSRF token
-        // We also avoid using fusion-plugin-universal-event batching because
-        // we want to collect errors even if the vendor bundle fails to load
-        // (e.g. due to a network timeout)
-        // All errors should be funneled to this handler (e.g. errors in
-        // addEventListener handlers, promise rejections, react render errors, etc),
-        // ideally by calling `window.onerror` directly with an Error object
-        // (which provides more robust stack traces across browsers), or via `throw`
-        const script = html`
+  async function middleware(ctx, next) {
+    if (ctx.element) {
+      // Here, we use GET instead of POST to avoid the need for a CSRF token
+      // We also avoid using fusion-plugin-universal-event batching because
+      // we want to collect errors even if the vendor bundle fails to load
+      // (e.g. due to a network timeout)
+      // All errors should be funneled to this handler (e.g. errors in
+      // addEventListener handlers, promise rejections, react render errors, etc),
+      // ideally by calling `window.onerror` directly with an Error object
+      // (which provides more robust stack traces across browsers), or via `throw`
+      const script = html`
 <script nonce="${ctx.nonce}">
 onerror = function(m,s,l,c,e) {
   if (e.__handled) return;
@@ -48,17 +46,17 @@ onerror = function(m,s,l,c,e) {
   e.__handled = true;
 };
 </script>`;
-        ctx.body.head.unshift(script);
-      } else if (ctx.path === ctx.prefix + '/_errors') {
-        await parseBody(ctx, () => Promise.resolve());
-        await onError(ctx.request.body, types.browser);
-        ctx.body = {ok: 1};
-      }
-      return next().catch(async e => {
-        await onError(e, types.request);
-        if (ctx.app) ctx.app.emit('error', e, ctx);
-        throw e;
-      });
+      ctx.body.head.unshift(script);
+    } else if (ctx.path === ctx.prefix + '/_errors') {
+      await parseBody(ctx, () => Promise.resolve());
+      await onError(ctx.request.body, types.browser);
+      ctx.body = {ok: 1};
     }
-  };
+    return next().catch(async e => {
+      await onError(e, types.request);
+      if (ctx.app) ctx.app.emit('error', e, ctx);
+      throw e;
+    });
+  }
+  return middleware;
 };
