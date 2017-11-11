@@ -2,7 +2,13 @@
 
 [![Build status](https://badge.buildkite.com/f21b82191811f668ef6fe24f6151058a84fa2c645cfa8810d0.svg?branch=master)](https://buildkite.com/uberopensource/fusion-core)
 
-A generic entry point class for FusionJS applications that is used by the FusionJS runtime.
+### Guides
+
+- [Getting started](./docs/guides/getting-started.md)
+
+### fusion-core
+
+The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime.
 
 If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusion-react) package instead.
 
@@ -250,15 +256,79 @@ export default () => {
 
 Middlewares receive a `ctx` object as their first argument. This object has a property called `element` in both server and client.
 
+- `ctx: Object`
+  - `element: Object`
+
 In the server, `ctx` also exposes the same properties as a [Koa context](http://koajs.com/#context)
+
+- `ctx: Object`
+  - `header: Object` - alias of `ctx.headers`
+  - `headers: Object` - map of parsed HTTP headers
+  - `method: string` - HTTP method
+  - `url: string` - request URL
+  - `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for url rewriting)
+  - `path: string` - request pathname
+  - `query: Object` - parsed querystring as an object
+  - `querystring: string` - querystring without `?`
+  - `host: string` - host and port
+  - `hostname: string`
+  - `origin: string` - request origin, including protocol and host
+  - `href: string` - full URL including protocol, host and url
+  - `fresh: boolean` - check for cache negotiation
+  - `stale: boolean` - inverse of `fresh`
+  - `socket: Socket` - request socket
+  - `protocol: string`
+  - `secure: boolean`
+  - `ip: string` - remote IP address
+  - `ips: Array<string>` - proxy IPs
+  - `subdomains: Array<string>`
+  - `is: (...types: ...string) => boolean` - response type check
+  - `accepts: (...types: ...string) => boolean` - request MIME type check
+  - `acceptsEncoding: (...encodings: ...string) => boolean`
+  - `acceptsCharset: (...charsets: ...string) => boolean`
+  - `acceptsLanguage: (...languages: ...string) => boolean`
+  - `get: (name: String) => string` - returns a header
+  - `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
+  - `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
+  - `request: Request` - [Koa's `request` object](https://github.com/koajs/koa/blob/master/docs/api/request.md)
+  - `response: Response` - [Koa's `response` object](https://github.com/koajs/koa/blob/master/docs/api/response.md)
+  - `state: Object` - A state bag for Koa middlewares
+  - `app: Object` - a reference to the Koa instance
+  - `cookies: {get, set}`
+    - `get: (name: string, options: ?Object) => string` - get a cookie
+      - `name: string`
+      - `options: {signed: boolean}`
+    - `set: (name: string, value: string, options: ?Object)`
+      - `name: string`
+      - `value: string`
+      - `options: Object` - Optional
+        - `maxAge: number` - a number representing the milliseconds from Date.now() for expiry
+        - `signed: boolean` - sign the cookie value
+        - `expires: Date` - a Date for cookie expiration
+        - `path: string` - cookie path, /' by default
+        - `domain: string` - cookie domain
+        - `secure: boolean` - secure cookie
+        - `httpOnly: boolean` - server-accessible cookie, true by default
+        - `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
+  - `throw: (status: number, message: ?string, properties: ?Object) => void` - throws an error
+    - `status: number` - HTTP status code
+    - `message: string` - error message
+    - `properties: Object` - is merged to the error object
+  - `assert: (value: any, status: ?number, message: ?string, properties)` - throws if value is falsy
+    - `value: any`
+    - `status: number` - HTTP status code
+    - `message: string` - error message
+    - `properties: Object` - is merged to the error object
+  - `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
 
 Additionally, when server-side rendering a page, FusionJS sets `ctx.body` to an object with the following properties:
 
-- `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
-- `title: string` - The content for the `<title>` tag. Default: empty string
-- `head: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
-- `body: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
-- `ssr: string` - When the virtual dom `render` is called, this property is populated with the rendered html string
+- `ctx: Object`
+  - `body: Object`
+    - `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
+    - `title: string` - The content for the `<title>` tag. Default: empty string
+    - `head: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
+    - `body: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
 
 When a request does not require a server-side render, `ctx.body` follows regular Koa semantics.
 
@@ -301,5 +371,21 @@ Also note that only template strings can have template tags (i.e. <code>html&#x6
 If you get an <code>Unsanitized html. You must use html&#x60;[your html here]&#x60;</code> error, remember to prepend the `html` template tag to your template string.
 
 If you have already taken steps to sanitize your input against XSS and don't wish to re-sanitize it, you can use `dangerouslySetHTML(string)` to let Fusion render the unescaped dynamic string.
+
+##### Serialization and deserialization
+
+Here's how to serialize JSON data in the server:
+
+```js
+ctx.body.body.push(html`<script id="__MY_DATA__" type="text/plain">${JSON.stringify(data)}</script>`);
+```
+
+Here's how to deserialize it in the browser:
+
+```js
+import {unescape} from 'fusion-core';
+
+const data = JSON.parse(unescape(document.getElementById('__MY_DATA__').innerHTML));
+```
 
 

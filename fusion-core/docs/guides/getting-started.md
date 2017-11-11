@@ -193,7 +193,20 @@ Note that the argument to `assetUrl` needs to be a compile-time static string li
 
 ### Next steps
 
-Now that we've seen some of the basics of writing an application with FusionJS, here are some resources to help you get familiar with other useful plugins that are provided by the FusionJS team:
+Here are some more in-depth articles covering various aspects of FusionJS:
+
+#### Core concepts
+
+- [Creating a plugin](./creating-a-plugin.md)
+- [Universal code](./universal-code.md)
+
+#### Advanced guides
+
+- [Working with secrets](./working-with-secrets.md)
+
+#### Plugins
+
+Check out the links below to help you get familiar with other useful plugins that are provided by the FusionJS team:
 
 - [React Router](../react-router)
 - [RPC/Redux](../rpc-redux-react)
