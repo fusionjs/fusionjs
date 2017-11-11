@@ -22,8 +22,8 @@ export default function({TranslationsLoader}) {
       }
     },
     async middleware(ctx, next) {
-      await next();
       if (ctx.element) {
+        await next();
         const i18n = this.of(ctx);
 
         // get the webpack chunks that are used and serialize their translations
@@ -36,7 +36,9 @@ export default function({TranslationsLoader}) {
           });
         });
         const serialized = JSON.stringify({chunks, translations});
-        const script = html`<script type='application/json' id="__TRANSLATIONS__">${serialized}</script>`; // consumed by ./browser
+        const script = html`<script type='application/json' id="__TRANSLATIONS__">${
+          serialized
+        }</script>`; // consumed by ./browser
         ctx.body.body.push(script);
       } else if (ctx.path === '/_translations') {
         const i18n = this.of(ctx);
@@ -50,6 +52,9 @@ export default function({TranslationsLoader}) {
           });
         });
         ctx.body = translations;
+        return next();
+      } else {
+        return next();
       }
     },
   });
