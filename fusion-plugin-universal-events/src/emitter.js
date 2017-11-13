@@ -40,16 +40,16 @@ export default class UniversalEmitter {
     const index = this.handlers[type].indexOf(callback);
     if (index > -1) this.handlers[type].splice(index, 1);
   }
-  emit(type, payload, ...args) {
+  emit(type, payload, ctx) {
     const mappers = this.mappers[type] || [];
     const handlers = this.handlers[type] || [];
     const event = {
       type,
       payload: mappers.reduce((payload, mapper) => {
-        return mapper(payload, ...args);
+        return mapper(payload, ctx);
       }, payload),
     };
-    handlers.forEach(handler => handler(event.payload, ...args));
+    handlers.forEach(handler => handler(event.payload, ctx));
     return event;
   }
 }

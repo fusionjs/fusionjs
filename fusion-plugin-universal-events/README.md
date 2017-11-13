@@ -76,6 +76,25 @@ events.on('user-action', payload => {
 events.emit('user-action', {type: 'click'});
 ```
 
+### Accessing `ctx`
+
+Event mappers and handlers take an optional second parameter `ctx`. For example:
+
+```js
+events.on('type', (payload, ctx) => {
+  //...
+})
+```
+
+This parameter will be present when events are emitted from the `ctx` scoped EventsEmitter instance. For example:
+
+```js
+const eventsWithoutCtx = EventEmitter.of();
+(ctx, next) => {
+  const eventsWithCtx = EventEmitter.of(ctx);
+}
+```
+
 ---
 
 ### API
@@ -96,7 +115,7 @@ const UniversalEvents = app.plugin(universalEvents);
 ```js
 const events = UniversalEvents.of(ctx)
 ```
-Returns a singleton event emitter
+Returns an event emitter
 
 - `ctx: Object` - A memoization key
 
@@ -109,17 +128,16 @@ events.on(type, callback)
 Registers a callback to be called when an event of a type is emitted. Note that the callback will not be called if the event is emitted before the callback is registered.
 
 - `type: string` - Required. The type of event to listen on
-- `callback: (mappedPayload: Object, ...args) => void` - Required. Runs when an event of matching type occurs. Receives the `payload` after it has been transformed by [mapper functions](#eventsmap), as well any other `args` that were originally passed to `.emit`
+- `callback: (mappedPayload: Object, ctx?) => void` - Required. Runs when an event of matching type occurs. Receives the `payload` after it has been transformed by [mapper functions](#eventsmap), as well an optional ctx object.
 
 #### `events.emit`
 
 ```js
-events.emit(type, payload, ...args)
+events.emit(type, payload)
 ```
 
 - `type: string` - Required. The type of event to emit
 - `payload: Object` - Optional. Data to be passed to event handlers
-- `args: Array<any>` - Optional. Extra arguments to pass to `.map` and `.emit`
 
 #### `events.map`
 
@@ -128,7 +146,7 @@ events.map(type, callback)
 ```
 
 - `type: string` - Required. The type of event to listen on
-- `callback: (payload: Object, ...args) => Object` - Required. Runs when an event of matching type occurs. Should return a modified `payload`
+- `callback: (payload: Object, ctx?) => Object` - Required. Runs when an event of matching type occurs. Should return a modified `payload`
 
 #### `events.flush`
 

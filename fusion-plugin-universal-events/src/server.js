@@ -21,37 +21,61 @@
 // SOFTWARE.
 
 /* eslint-env node */
-import {SingletonPlugin} from 'fusion-core';
+import {Plugin} from 'fusion-core';
 import Emitter from './emitter';
 
 export default function() {
   const bodyParser = require('koa-bodyparser');
   const parseBody = bodyParser();
 
-  return new SingletonPlugin({
+  return new Plugin({
     Service: class UniversalEmitter extends Emitter {
+      constructor(ctx) {
+        super();
+        this.ctx = ctx;
+        if (this.ctx) {
+          this.batch = [];
+        }
+      }
+      emit(type, payload) {
+        if (this.ctx) {
+          this.batch.push({type, payload});
+        } else {
+          super.emit(type, payload);
+        }
+      }
+      flush() {
+        if (!this.ctx) {
+          throw new Error(
+            'Cannot flush from global instance of UniversalEvents. Try using UniversalEvents.of(ctx)'
+          );
+        }
+        for (let index = 0; index < this.batch.length; index++) {
+          const {type, payload} = this.batch[index];
+          super.emit(type, payload, this.ctx);
+        }
+      }
       // mirror browser api
       setFrequency() {}
-      flush() {}
       teardown() {}
     },
     async middleware(ctx, next) {
+      const emitter = this.of(ctx);
       if (!ctx.body && ctx.method === 'POST' && ctx.path === '/_events') {
         await parseBody(ctx, async () => {});
         const {items} = ctx.request.body;
         if (items) {
-          items.forEach(({type, payload}) => {
-            this.of().emit(type, payload, ctx);
-          });
-          await next();
+          for (let index = 0; index < items.length; index++) {
+            const {type, payload} = items[index];
+            emitter.emit(type, payload);
+          }
           ctx.status = 200;
         } else {
-          await next();
           ctx.status = 400;
         }
-      } else {
-        return next();
       }
+      await next();
+      emitter.flush();
     },
   });
 }

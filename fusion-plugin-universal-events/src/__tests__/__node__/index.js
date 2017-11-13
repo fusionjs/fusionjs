@@ -27,10 +27,11 @@ test('Instantiation', t => {
   const a = {};
   const b = {};
   const Emitter = plugin();
-  t.equals(Emitter.of(a), Emitter.of(b), 'instances are same singleton');
-  t.equals(Emitter.of(a), Emitter.of(), 'global is same singleton');
+  t.notEqual(Emitter.of(a), Emitter.of(b));
+  t.notEqual(Emitter.of(a), Emitter.of());
   t.end();
 });
+
 test('Server EventEmitter', async t => {
   let called = false;
   const ctx = {
@@ -49,6 +50,25 @@ test('Server EventEmitter', async t => {
     called = true;
   });
   await Emitter.middleware(ctx, () => Promise.resolve());
-  t.equals(called, true, 'called');
+  t.ok(called, 'called');
+  t.end();
+});
+
+test('Server EventEmitter batching', async t => {
+  let called = false;
+  const ctx = {
+    method: 'POST',
+    path: '/lol',
+  };
+  const Emitter = plugin();
+  const emitter = Emitter.of(ctx);
+  emitter.on('test', ({x}) => {
+    t.equals(x, 1, 'payload is correct');
+    called = true;
+  });
+  t.notOk(called, 'batches events');
+  emitter.emit('test', {x: 1});
+  await Emitter.middleware(ctx, () => Promise.resolve());
+  t.ok(called, 'called');
   t.end();
 });
