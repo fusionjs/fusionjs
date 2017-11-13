@@ -9,12 +9,12 @@ export default class Plugin {
     if (!this.hasOwnProperty('__instances__')) {
       this.__instances__ = new WeakMap();
     }
-    if (ctx == null) ctx = __global_key__;
+    const key = ctx === null || ctx === undefined ? __global_key__ : ctx;
     return (
-      this.__instances__.get(ctx) ||
+      this.__instances__.get(key) ||
       this.__instances__
-        .set(ctx, this.Service ? new this.Service(ctx) : {})
-        .get(ctx)
+        .set(key, this.Service ? new this.Service(ctx) : {})
+        .get(key)
     );
   }
 }
