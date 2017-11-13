@@ -98,16 +98,6 @@ exports.run = async function({
 
   await Promise.all([devRuntime.start(), compiler.clean(dir)]);
 
-  const watcher = await new Promise((resolve, reject) => {
-    const watcher = compiler.start((err, stats) => {
-      if (err || stats.hasErrors()) {
-        return reject(err || new Error('Compiler stats included errors.'));
-      }
-
-      return resolve(watcher);
-    });
-  });
-
   const runAll = async () => {
     try {
       await Promise.all([
@@ -117,8 +107,14 @@ exports.run = async function({
     } catch (e) {} // eslint-disable-line
   };
 
-  // Run for the first time after the above compilation
-  await runAll();
+  const watcher = await new Promise(resolve => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return resolve(watcher);
+      }
+      return runAll().then(() => resolve(watcher));
+    });
+  });
 
   // Rerun for each recompile
   compiler.on('done', runAll);
