@@ -32,11 +32,11 @@ test('Base EventEmitter on/off', t => {
     t.equal(event, 'test-data', 'correct payload passed to handler');
   }
   events.on('some-event', handleEvent);
-  events.emit('other-event', 'other-data');
-  events.emit('some-event', 'test-data');
+  events.handleEvent('other-event', 'other-data');
+  events.handleEvent('some-event', 'test-data');
   t.equal(eventHandlerCount, 1, 'calls handler one time');
   events.off('some-event', handleEvent);
-  events.emit('some-event', 'test-data');
+  events.handleEvent('some-event', 'test-data');
   t.equal(eventHandlerCount, 1, 'does not call the handler after removal');
   t.end();
 });
@@ -54,7 +54,8 @@ test('Base EventEmitter mappers', t => {
     mapCount++;
     return Object.assign(event, {a: true});
   });
-  events.emit('test', {b: true});
+  const mappedPayload = events.mapEvent('test', {b: true});
+  events.handleEvent('test', mappedPayload);
   t.equal(eventHandlerCount, 1, 'calls handler one time');
   t.equal(mapCount, 1, 'calls mapper one time');
   t.end();
@@ -76,7 +77,8 @@ test('Base EventEmitter * mappers', t => {
     });
     t.end();
   });
-  events.emit('test', {c: true});
+  const mappedPayload = events.mapEvent('test', {c: true});
+  events.handleEvent('test', mappedPayload);
 });
 
 test('Base EventEmitter implicit * mappers', t => {
@@ -95,7 +97,8 @@ test('Base EventEmitter implicit * mappers', t => {
     });
     t.end();
   });
-  events.emit('test', {c: true});
+  const mappedPayload = events.mapEvent('test', {c: true});
+  events.handleEvent('test', mappedPayload);
 });
 
 test('Base EventEmitter * handlers', t => {
@@ -115,7 +118,7 @@ test('Base EventEmitter * handlers', t => {
     });
     calledNormal = true;
   });
-  events.emit('test', {c: true});
+  events.handleEvent('test', {c: true});
   t.ok(calledGlobal);
   t.ok(calledNormal);
   t.end();
@@ -138,7 +141,7 @@ test('Base EventEmitter implicit * handlers', t => {
     });
     calledNormal = true;
   });
-  events.emit('test', {c: true});
+  events.handleEvent('test', {c: true});
   t.ok(calledGlobal);
   t.ok(calledNormal);
   t.end();

@@ -28,32 +28,37 @@ export default function() {
   const bodyParser = require('koa-bodyparser');
   const parseBody = bodyParser();
 
-  return new Plugin({
+  const plugin = new Plugin({
     Service: class UniversalEmitter extends Emitter {
       constructor(ctx) {
         super();
         this.ctx = ctx;
         if (this.ctx) {
+          this.parent = plugin.of();
           this.batch = [];
         }
       }
       emit(type, payload) {
-        if (this.ctx) {
-          this.batch.push({type, payload});
+        payload = super.mapEvent(type, payload, this.ctx);
+        if (!this.ctx) {
+          super.handleEvent(type, payload);
         } else {
-          super.emit(type, payload);
+          payload = this.parent.mapEvent(type, payload, this.ctx);
+          this.batch.push({type, payload});
         }
       }
       flush() {
         if (!this.ctx) {
           throw new Error(
-            'Cannot flush from global instance of UniversalEvents. Try using UniversalEvents.of(ctx)'
+            'Cannot call flush from the global instance of UniversalEmitter. Try using `UniversalEmitter.of(ctx)`'
           );
         }
         for (let index = 0; index < this.batch.length; index++) {
           const {type, payload} = this.batch[index];
-          super.emit(type, payload, this.ctx);
+          super.handleEvent(type, payload, this.ctx);
+          this.parent.handleEvent(type, payload, this.ctx);
         }
+        this.batch = [];
       }
       // mirror browser api
       setFrequency() {}
@@ -78,4 +83,5 @@ export default function() {
       emitter.flush();
     },
   });
+  return plugin;
 }

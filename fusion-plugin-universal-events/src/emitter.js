@@ -41,19 +41,17 @@ export default class UniversalEmitter {
     const index = this.handlers[type].indexOf(callback);
     if (index > -1) this.handlers[type].splice(index, 1);
   }
-  emit(type, payload, ctx) {
+  mapEvent(type, payload, ctx) {
     const globalMappers = this.mappers[globalEventType] || [];
-    const globalHandlers = this.handlers[globalEventType] || [];
     const mappers = (this.mappers[type] || []).concat(globalMappers);
+    return mappers.reduce((payload, mapper) => {
+      return mapper(payload, ctx);
+    }, payload);
+  }
+  handleEvent(type, payload, ctx) {
+    const globalHandlers = this.handlers[globalEventType] || [];
     const handlers = (this.handlers[type] || []).concat(globalHandlers);
-    const event = {
-      type,
-      payload: mappers.reduce((payload, mapper) => {
-        return mapper(payload, ctx);
-      }, payload),
-    };
-    handlers.forEach(handler => handler(event.payload, ctx));
-    return event;
+    handlers.forEach(handler => handler(payload, ctx));
   }
 }
 
@@ -63,7 +61,7 @@ function validateHandler(handler) {
 }
 
 function getArgs(args) {
-  const type = typeof args[0] === 'string' ? args[0] : '*';
+  const type = typeof args[0] === 'string' ? args[0] : globalEventType;
   const callback = args[1] || args[0];
   validateHandler(callback);
   return {type, callback};

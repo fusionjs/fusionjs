@@ -34,6 +34,7 @@ test('Instantiation', t => {
 
 test('Server EventEmitter', async t => {
   let called = false;
+  let globalCalled = false;
   const ctx = {
     method: 'POST',
     path: '/_events',
@@ -44,6 +45,11 @@ test('Server EventEmitter', async t => {
     },
   };
   const Emitter = plugin();
+  const globalEmitter = Emitter.of();
+  globalEmitter.on('a', ({x}) => {
+    t.equals(x, 1, 'payload is correct');
+    globalCalled = true;
+  });
   const emitter = Emitter.of(ctx);
   emitter.on('a', ({x}) => {
     t.equals(x, 1, 'payload is correct');
@@ -51,6 +57,50 @@ test('Server EventEmitter', async t => {
   });
   await Emitter.middleware(ctx, () => Promise.resolve());
   t.ok(called, 'called');
+  t.ok(globalCalled, 'called global handler');
+  t.end();
+});
+
+test('Server EventEmitter mapping', async t => {
+  let called = false;
+  let globalCalled = false;
+  const ctx = {
+    method: 'POST',
+    path: '/lol',
+  };
+  const Emitter = plugin();
+  const globalEmitter = Emitter.of();
+  globalEmitter.on('a', (payload, c) => {
+    t.equal(c, ctx, 'ctx is passed to global handlers');
+    t.deepLooseEqual(
+      payload,
+      {x: true, b: true, global: true},
+      'payload is correct for global'
+    );
+    globalCalled = true;
+  });
+  globalEmitter.map('a', (payload, c) => {
+    t.equal(c, ctx, 'ctx is passed to global mappers');
+    return {...payload, global: true};
+  });
+  const emitter = Emitter.of(ctx);
+  emitter.on('a', (payload, c) => {
+    t.equal(c, ctx, 'ctx is passed to scoped handlers');
+    t.deepLooseEqual(
+      payload,
+      {x: true, b: true, global: true},
+      'payload is correct'
+    );
+    called = true;
+  });
+  emitter.map('a', (payload, c) => {
+    t.equal(c, ctx, 'ctx is passed to scoped mappers');
+    return {...payload, b: true};
+  });
+  emitter.emit('a', {x: 1});
+  await Emitter.middleware(ctx, () => Promise.resolve());
+  t.ok(called, 'called');
+  t.ok(globalCalled, 'called global handler');
   t.end();
 });
 

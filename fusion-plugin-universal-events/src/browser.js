@@ -40,7 +40,9 @@ export default function({fetch = window.fetch, global = window} = {}) {
         this.interval = global.setInterval(this.flush, frequency);
       }
       emit(type, payload) {
-        this.batch.push(super.emit(type, payload));
+        payload = super.mapEvent(type, payload);
+        super.handleEvent(type, payload);
+        this.batch.push({type, payload});
       }
       flush() {
         if (this.batch.length > 0) {
