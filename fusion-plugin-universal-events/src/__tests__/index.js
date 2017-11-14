@@ -54,10 +54,92 @@ test('Base EventEmitter mappers', t => {
     mapCount++;
     return Object.assign(event, {a: true});
   });
-  events.emit('test', {
-    b: true,
-  });
+  events.emit('test', {b: true});
   t.equal(eventHandlerCount, 1, 'calls handler one time');
   t.equal(mapCount, 1, 'calls mapper one time');
+  t.end();
+});
+
+test('Base EventEmitter * mappers', t => {
+  const events = new EventEmitter();
+  events.map('*', payload => {
+    return {...payload, a: true};
+  });
+  events.map('test', payload => {
+    return {...payload, b: true};
+  });
+  events.on('test', payload => {
+    t.deepLooseEqual(payload, {
+      a: true,
+      b: true,
+      c: true,
+    });
+    t.end();
+  });
+  events.emit('test', {c: true});
+});
+
+test('Base EventEmitter implicit * mappers', t => {
+  const events = new EventEmitter();
+  events.map(payload => {
+    return {...payload, a: true};
+  });
+  events.map('test', payload => {
+    return {...payload, b: true};
+  });
+  events.on('test', payload => {
+    t.deepLooseEqual(payload, {
+      a: true,
+      b: true,
+      c: true,
+    });
+    t.end();
+  });
+  events.emit('test', {c: true});
+});
+
+test('Base EventEmitter * handlers', t => {
+  const events = new EventEmitter();
+  let calledGlobal = false;
+  let calledNormal = false;
+  events.on(payload => {
+    t.deepLooseEqual(payload, {
+      c: true,
+    });
+    calledGlobal = true;
+  });
+
+  events.on('test', payload => {
+    t.deepLooseEqual(payload, {
+      c: true,
+    });
+    calledNormal = true;
+  });
+  events.emit('test', {c: true});
+  t.ok(calledGlobal);
+  t.ok(calledNormal);
+  t.end();
+});
+
+test('Base EventEmitter implicit * handlers', t => {
+  const events = new EventEmitter();
+  let calledGlobal = false;
+  let calledNormal = false;
+  events.on('*', payload => {
+    t.deepLooseEqual(payload, {
+      c: true,
+    });
+    calledGlobal = true;
+  });
+
+  events.on('test', payload => {
+    t.deepLooseEqual(payload, {
+      c: true,
+    });
+    calledNormal = true;
+  });
+  events.emit('test', {c: true});
+  t.ok(calledGlobal);
+  t.ok(calledNormal);
   t.end();
 });

@@ -95,6 +95,16 @@ const eventsWithoutCtx = EventEmitter.of();
 }
 ```
 
+### * event type
+
+`*` is a special event type which denotes all events. This allows you to add a mapper or handler to all events. For example:
+
+```js
+events.map('*', payload => {
+  //
+});
+```
+
 ---
 
 ### API

@@ -20,15 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+const globalEventType = '*';
 export default class UniversalEmitter {
   constructor() {
     this.handlers = {};
     this.mappers = {};
   }
-  map(type, mapper) {
-    validateHandler(mapper);
+  map(...args) {
+    const {type, callback} = getArgs(args);
     if (!this.mappers[type]) this.mappers[type] = [];
-    this.mappers[type].push(mapper);
+    this.mappers[type].push(callback);
   }
   on(...args) {
     const {type, callback} = getArgs(args);
@@ -41,8 +42,10 @@ export default class UniversalEmitter {
     if (index > -1) this.handlers[type].splice(index, 1);
   }
   emit(type, payload, ctx) {
-    const mappers = this.mappers[type] || [];
-    const handlers = this.handlers[type] || [];
+    const globalMappers = this.mappers[globalEventType] || [];
+    const globalHandlers = this.handlers[globalEventType] || [];
+    const mappers = (this.mappers[type] || []).concat(globalMappers);
+    const handlers = (this.handlers[type] || []).concat(globalHandlers);
     const event = {
       type,
       payload: mappers.reduce((payload, mapper) => {
