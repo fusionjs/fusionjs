@@ -1,8 +1,20 @@
 # Creating a FusionJS Plugin
 
-There are two common types of plugins: middlewares and services.
+FusionJS provides official plugins for a wide variety of tasks, and it's possible to write complex applications without ever writing a single custom plugin. With that said, it's possible you might find that there's no plugin available for a task you're trying to accomplish, or that you don't agree with the opinions of an existing plugin. This section explains the FusionJS plugin architecture and how to implement various types of plugins.
 
-A [middleware plugin](#middlewares) specifies how the application should respond to a specific HTTP request.
+## FusionJS plugin architecture
+
+Plugins in FusionJS exist to encapsulate all code required to address a logic area of concern, regardless of whether the code runs server-side, in the browser, on a per-request basis, on multiple HTTP endpoints, whether it affects React context, etc.
+
+At the same time, plugins are designed so that dependencies are injectable, and therefore modular and testable.
+
+Examples of areas of concern that a plugin can encapsulate include CSS-in-JS, RPC, CSRF protection, translations, etc.
+
+## Types of plugins
+
+There are two common "types" of plugins: middlewares and services.
+
+A [middleware plugin](#middlewares) specifies how the application should respond to a specific HTTP request. Middlewares are typically used to implement [endpoints](./creating-endpoints.md), [providers](./creating-providers.md) and to [modify the HTML template](./modifying-html-template.md).
 
 A [service plugin](#services) exposes a programmatic API that can be used by other plugins.
 
@@ -43,7 +55,7 @@ export default () => // this is the factory function
 
 ### Dependency management
 
-The factory function can receive dependencies as arguments. This makes it possible mock those dependencies when we want to test the plugin.
+The factory function can receive [dependencies](./dependencies.md) as arguments. This makes it possible mock those dependencies when we want to test the plugin.
 
 For example, let's say we want to inject a logger:
 
@@ -182,6 +194,8 @@ export default () => {
   });
 }
 ```
+
+### Consuming service plugins
 
 Here's how we can consume this service from other plugins:
 

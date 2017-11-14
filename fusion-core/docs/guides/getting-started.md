@@ -28,7 +28,7 @@ yarn add fusion-core fusion-cli fusion-react react
 
 Next, let's add scripts to `package.json`:
 
-```
+```json
 {
   "scripts": {
     "dev": "fusion dev",
@@ -193,23 +193,26 @@ Note that the argument to `assetUrl` needs to be a compile-time static string li
 
 ### Next steps
 
-Here are some more in-depth articles covering various aspects of FusionJS:
+Here are some more in-depth sections covering various aspects of FusionJS:
 
 #### Core concepts
 
-- [Creating a plugin](./creating-a-plugin.md)
 - [Universal code](./universal-code.md)
-
-#### Advanced guides
-
-- [Working with secrets](./working-with-secrets.md)
+- [Creating a plugin](./creating-a-plugin.md)
+  - [Dependencies](./dependencies.md)
+  - [Configuring plugins](./configuring-plugins.md)
+  - [Creating endpoints](./creating-endpoints.md)
+  - [Creating providers](./creating-providers.md)
+  - [Modifying the HTML template](./modifying-html-template.md)
+  - [Working with secrets](./working-with-secrets.md)
 
 #### Plugins
 
 Check out the links below to help you get familiar with other useful plugins that are provided by the FusionJS team:
 
-- [React Router](../react-router)
-- [RPC/Redux](../rpc-redux-react)
-- [I18n](../i18n-react)
-- [Error handling](../error-handling)
-- [Logging](../universal-logger)
+- [Styletron](../fusion-plugin-styletron-react)
+- [React Router](../fusion-plugin-react-router)
+- [RPC/Redux](../fusion-plugin-rpc-redux-react)
+- [I18n](../fusion-plugin-i18n-react)
+- [Error handling](../fusion-plugin-error-handling)
+- [Logging](../fusion-plugin-universal-logger)

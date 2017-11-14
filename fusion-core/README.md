@@ -6,6 +6,19 @@
 
 - [Getting started](./docs/guides/getting-started.md)
 
+#### Core concepts
+
+- [Universal code](./universal-code.md)
+- [Creating a plugin](./creating-a-plugin.md)
+  - [Dependencies](./dependencies.md)
+  - [Configuring plugins](./configuring-plugins.md)
+  - [Creating endpoints](./creating-endpoints.md)
+  - [Creating providers](./creating-providers.md)
+  - [Modifying the HTML template](./modifying-html-template.md)
+  - [Working with secrets](./working-with-secrets.md)
+
+---
+
 ### fusion-core
 
 The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime.
