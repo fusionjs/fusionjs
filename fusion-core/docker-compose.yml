@@ -7,3 +7,5 @@ services:
       - /fusion-core/node_modules/
       - /fusion-core/dist/
       - /fusion-core/dist-tests/
+    environment:
+      - CODECOV_TOKEN
