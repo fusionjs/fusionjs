@@ -7,14 +7,18 @@
   "main": "./dist/node.cjs.js",
   "module": "./dist/node.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es.js"
+    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
+    "./dist/node.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/node.cjs.js": "./dist/node.cjs.es2015.js",
-    "./dist/node.es.js": "./dist/node.es.es2015.js",
-    "./dist/browser.cjs.js": "./dist/browser.cjs.es2015.js",
-    "./dist/browser.es.js": "./dist/browser.es.es2015.js"
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -27,31 +31,31 @@
   },
   "dependencies": {
     "fusion-plugin-i18n": "^0.1.9",
-    "prop-types": "^15.5.8"
+    "prop-types": "^15.6.0"
   },
   "peerDependencies": {
-    "fusion-core": "^0.1.8",
-    "fusion-react": "^0.1.8",
+    "fusion-core": "^0.2.3",
+    "fusion-react": "^0.1.9",
     "react": "14.x - 16.x"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.0",
-    "babel-preset-react": "^6.24.1",
-    "create-universal-package": "^1.0.0-rc.14",
-    "eslint": "^4.2.0",
+    "babel-eslint": "^8.0.2",
+    "@babel/preset-react": "^7.0.0-beta.32",
+    "create-universal-package": "^2.1.1",
+    "eslint": "^4.11.0",
     "eslint-config-fusion": "^0.1.2",
-    "eslint-plugin-cup": "^1.0.0-rc.4",
-    "eslint-plugin-flowtype": "^2.35.0",
-    "eslint-plugin-prettier": "^2.1.2",
-    "eslint-plugin-react": "^7.1.0",
-    "fusion-core": "^0.1.8",
-    "fusion-react": "^0.1.8",
+    "eslint-plugin-cup": "^1.0.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-prettier": "^2.3.1",
+    "eslint-plugin-react": "^7.4.0",
+    "fusion-core": "^0.2.3",
+    "fusion-react": "^0.1.9",
     "fusion-react-async": "0.1.4",
-    "prettier": "1.4.2",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "prettier": "1.8.2",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
     "tape-cup": "^4.7.1",
-    "unitest": "^1.0.0"
+    "unitest": "^1.1.0"
   },
   "engines": {
     "node": ">= 8.9.0"
