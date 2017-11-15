@@ -9,9 +9,9 @@ test('request errors', async t => {
     called++;
   };
   const middleware = ErrorHandling({onError});
-  await middleware({}, () =>
-    Promise.reject(new Error('server error'))
-  ).catch(() => {});
+  await middleware({}, () => Promise.reject(new Error('server error'))).catch(
+    () => {}
+  );
   t.equals(called, 1, 'emits server error');
 
   const ctx = {
