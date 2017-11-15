@@ -4,9 +4,8 @@ import {Plugin} from 'fusion-core';
 import {verifyMethod, verifyExpiry} from './shared';
 
 export default ({fetch = window.fetch, expire = 86400, routePrefix} = {}) => {
-  const prefix = routePrefix != null
-    ? routePrefix
-    : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
+  const prefix =
+    routePrefix != null ? routePrefix : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
   let token = '';
 
   function fetchWithCsrfToken(url, options = {}) {
