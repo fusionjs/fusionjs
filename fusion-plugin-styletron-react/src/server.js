@@ -10,9 +10,7 @@ export default () => (ctx, next) => {
     const styletron = new Styletron();
 
     ctx.element = (
-      <StyletronProvider styletron={styletron}>
-        {ctx.element}
-      </StyletronProvider>
+      <StyletronProvider styletron={styletron}>{ctx.element}</StyletronProvider>
     );
 
     return next().then(() => {
