@@ -35,7 +35,9 @@ export default ({reducer, preloadedState, enhancer, getInitialState}) => {
       await next();
 
       const serialized = JSON.stringify(store.getState());
-      const script = html`<script type="application/json" id="__REDUX_STATE__">${serialized}</script>`;
+      const script = html`<script type="application/json" id="__REDUX_STATE__">${
+        serialized
+      }</script>`;
       ctx.body.body.push(script);
     },
   });
