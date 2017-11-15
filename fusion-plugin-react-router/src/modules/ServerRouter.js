@@ -119,7 +119,7 @@ export class ServerRouter extends React.Component {
       router: {
         staticContext: this.props.context || {},
       },
-      pageData: this.props.pageData,
+      onRoute: routeData => this.props.onRoute(routeData),
     };
   }
 
@@ -179,9 +179,10 @@ ServerRouter.defaultProps = {
   basename: '',
   location: '/',
   context: {},
+  onRoute: () => {},
 };
 
 ServerRouter.childContextTypes = {
   router: () => {},
-  pageData: () => {},
+  onRoute: () => {},
 };

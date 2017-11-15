@@ -30,7 +30,7 @@ test('noops', t => {
   const root = document.createElement('div');
   const Hello = () => <Status code="404"><div>Hello</div></Status>;
   const el = (
-    <Router pageData={{}}>
+    <Router>
       <Route component={Hello} />
     </Router>
   );

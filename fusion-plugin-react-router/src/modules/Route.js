@@ -28,34 +28,13 @@ function Route(props, context) {
   if (remainingProps.render) {
     throw new Error('Cannot pass render function to tracking route');
   }
-  const {__IS_PREPARE__} = context;
-  if (__IS_PREPARE__) {
-    // In this case, it is actually more clear to pass children as a prop
-    /* eslint-disable react/no-children-prop */
-    return (
-      <ReactRouterRoute
-        {...remainingProps}
-        component={component}
-        children={children}
-      />
-    );
-    /* eslint-enable react/no-children-prop */
-  }
-  const pageData = context.pageData;
   return (
     <ReactRouterRoute
       {...remainingProps}
       render={renderProps => {
         const {match} = renderProps;
-        const matchSpecificity = match.path === '/'
-          ? 1
-          : match.path.split('/').length;
-        if (
-          !pageData.matchSpecificity ||
-          pageData.matchSpecificity < matchSpecificity
-        ) {
-          Object.assign(pageData, {
-            matchSpecificity,
+        if (match.isExact) {
+          context.onRoute({
             page: match.path,
             title: trackingId || match.path,
           });
@@ -69,9 +48,7 @@ function Route(props, context) {
 }
 
 Route.contextTypes = {
-  __IS_PREPARE__: PropTypes.bool,
-  pageData: PropTypes.object.isRequired,
-  getPageData: PropTypes.func,
+  onRoute: PropTypes.func.isRequired,
 };
 
 export {Route};

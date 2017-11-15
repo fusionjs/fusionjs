@@ -30,7 +30,7 @@ test('noops', t => {
   const root = document.createElement('div');
   const Hello = () => <NotFound><div>Hello</div></NotFound>;
   const el = (
-    <Router pageData={{}}>
+    <Router>
       <Route component={Hello} />
     </Router>
   );

@@ -31,7 +31,7 @@ test('redirects to a new URL', t => {
   const state = {code: 0};
   const ctx = state;
   const el = (
-    <Router pageData={{}} location="/" context={ctx}>
+    <Router location="/" context={ctx}>
       <div>
         <Route path="/" component={Moved} />
         <Route path="/hello" component={Hello} />

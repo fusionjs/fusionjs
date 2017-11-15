@@ -43,42 +43,18 @@ class BrowserRouter extends React.Component {
   constructor(props = {}) {
     super(props);
     this.history = createHistory(this.props);
-    this.currentPath = this.history.location.pathname;
-    this.lastPath = null;
-    this.pageData = {};
+    this.lastTitle = null;
   }
 
   getChildContext() {
     return {
-      pageData: this.pageData,
+      onRoute: routeData => {
+        if (routeData.title !== this.lastTitle) {
+          this.lastTitle = routeData.title;
+          this.props.onRoute(routeData);
+        }
+      },
     };
-  }
-
-  componentDidMount() {
-    this.onRoute();
-  }
-
-  componentWillMount() {
-    this.unlisten = this.history.listen(() => {
-      this.lastPath = this.currentPath;
-      this.currentPath = this.history.location.pathname;
-    });
-  }
-
-  componentDidUpdate() {
-    this.onRoute();
-  }
-
-  componentWillUnmount() {
-    this.unlisten();
-  }
-
-  onRoute() {
-    if (this.currentPath !== this.lastPath) {
-      this.lastPath = this.currentPath;
-      const {title, page} = this.pageData;
-      this.props.onRoute({title, page});
-    }
   }
 
   render() {
@@ -98,7 +74,7 @@ BrowserRouter.propTypes = {
 };
 
 BrowserRouter.childContextTypes = {
-  pageData: PropTypes.object,
+  onRoute: PropTypes.func.isRequired,
 };
 
 BrowserRouter.defaultProps = {

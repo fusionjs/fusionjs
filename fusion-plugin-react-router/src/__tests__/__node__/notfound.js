@@ -34,7 +34,7 @@ test('sets code', t => {
     },
   };
   const el = (
-    <Router pageData={{}} location="/" context={ctx}>
+    <Router location="/" context={ctx}>
       <Route component={Hello} />
     </Router>
   );

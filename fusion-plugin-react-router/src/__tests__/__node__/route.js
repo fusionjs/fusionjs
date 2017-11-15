@@ -28,7 +28,7 @@ import {Router, Route} from '../../server';
 test('matches as expected', t => {
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router pageData={{}} location="/">
+    <Router location="/">
       <Route path="/" component={Hello} />
     </Router>
   );
@@ -38,7 +38,7 @@ test('matches as expected', t => {
 test('misses as expected', t => {
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router pageData={{}} location="/foo">
+    <Router location="/foo">
       <Route path="/bar" component={Hello} />
     </Router>
   );

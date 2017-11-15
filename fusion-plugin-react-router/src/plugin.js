@@ -23,14 +23,14 @@
 import React from 'react';
 import {Router as ServerRouter} from './server';
 import {Router as BrowserRouter} from './browser';
+import {html, unescape} from 'fusion-core';
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
-export default function getRouter({EventEmitter}) {
-  const emitter = EventEmitter ? EventEmitter.of() : null;
-
+export default function getRouter({UniversalEvents}) {
   return function middleware(ctx, next) {
+    const emitter = UniversalEvents ? UniversalEvents.of(ctx) : null;
     if (__NODE__) {
-      const pageData = {
+      let pageData = {
         title: ctx.path,
         page: ctx.path,
       };
@@ -42,7 +42,9 @@ export default function getRouter({EventEmitter}) {
         };
         ctx.element = (
           <Router
-            pageData={pageData}
+            onRoute={d => {
+              pageData = d;
+            }}
             basename={ctx.routePrefix}
             location={ctx.url}
             context={context}
@@ -56,6 +58,11 @@ export default function getRouter({EventEmitter}) {
         if (!ctx.status) {
           ctx.status = 200;
         }
+        ctx.body.body.push(
+          html`<script id="__ROUTER_DATA__" type="application/json">${JSON.stringify(
+            pageData
+          )}</script>`
+        );
         if (emitter) {
           const emitTiming = type => timing => {
             emitter.emit(type, {
@@ -65,18 +72,36 @@ export default function getRouter({EventEmitter}) {
               timing,
             });
           };
+          emitter.map(payload => {
+            if (payload) {
+              payload.__url__ = pageData.title;
+            }
+            return payload;
+          });
           ctx.timing.downstream.then(emitTiming('downstream:server'));
           ctx.timing.render.then(emitTiming('render:server'));
           ctx.timing.upstream.then(emitTiming('upstream:server'));
           ctx.timing.end.then(emitTiming('pageview:server'));
         }
       });
-    } else {
+    } else if (__BROWSER__) {
       // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
+      let pageData = JSON.parse(
+        unescape(document.getElementById('__ROUTER_DATA__').textContent)
+      );
+      if (emitter) {
+        emitter.map(payload => {
+          if (payload) {
+            payload.__url__ = pageData.title;
+          }
+          return payload;
+        });
+      }
       ctx.element = (
         <Router
           basename={ctx.routePrefix}
           onRoute={payload => {
+            pageData = payload;
             if (emitter) emitter.emit('pageview:browser', payload);
           }}
         >

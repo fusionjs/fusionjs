@@ -31,7 +31,7 @@ test('test Redirect', t => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello">Hi</Redirect>;
   const el = (
-    <Router pageData={{}}>
+    <Router>
       <div>
         <Route path="/" component={Moved} />
         <Route path="/hello" component={Hello} />
@@ -40,5 +40,12 @@ test('test Redirect', t => {
   );
   ReactDOM.render(el, root);
   t.ok(/Hello/.test(root.innerHTML), `matches ${root.innerHTML}`);
+  t.equal(window.location.pathname, '/hello');
+
+  // reset the url back to "/"
+  ReactDOM.render(
+    <Router><Redirect to="/" /></Router>,
+    document.createElement('div')
+  );
   t.end();
 });

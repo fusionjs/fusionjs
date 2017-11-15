@@ -26,9 +26,11 @@
   },
   "peerDependencies": {
     "react": "14.x - 16.x",
-    "react-dom": "14.x - 16.x"
+    "react-dom": "14.x - 16.x",
+    "fusion-core": "^0.2.3"
   },
   "devDependencies": {
+    "fusion-core": "^0.2.3",
     "babel-eslint": "^8.0.0",
     "babel-preset-react": "^6.24.1",
     "create-universal-package": "^1.0.0-rc.14",

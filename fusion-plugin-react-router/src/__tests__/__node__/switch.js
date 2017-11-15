@@ -29,7 +29,7 @@ test('matches as expected', t => {
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
   const el = (
-    <Router pageData={{}} location="/">
+    <Router location="/">
       <Switch>
         <Route path="/" component={Hello} />
         <Route path="/" component={Hi} />

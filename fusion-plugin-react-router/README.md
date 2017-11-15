@@ -71,10 +71,10 @@ export default root;
 ```jsx
 import getRouter from 'fusion-plugin-react-router';
 
-app.plugin(getRouter, {EventEmitter})
+app.plugin(getRouter, {UniversalEvents})
 ```
 
-- `EventEmitter: SingletonPlugin` - Optional.
+- `UniversalEvents: SingletonPlugin` - Optional.
 
 #### `Router`
 

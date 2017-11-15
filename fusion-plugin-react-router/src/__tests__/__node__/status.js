@@ -34,7 +34,7 @@ test('sets code with static code', t => {
     },
   };
   const el = (
-    <Router pageData={{}} location="/" context={ctx}>
+    <Router location="/" context={ctx}>
       <Route component={Hello} />
     </Router>
   );
@@ -51,7 +51,7 @@ test('sets code with numeric code', t => {
     },
   };
   const el = (
-    <Router pageData={{}} location="/" context={ctx}>
+    <Router location="/" context={ctx}>
       <Route component={Hello} />
     </Router>
   );
@@ -68,7 +68,7 @@ test('sets code with string code', t => {
     },
   };
   const el = (
-    <Router pageData={{}} location="/" context={ctx}>
+    <Router location="/" context={ctx}>
       <Route component={Hello} />
     </Router>
   );

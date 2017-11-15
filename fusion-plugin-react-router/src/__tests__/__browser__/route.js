@@ -30,7 +30,7 @@ test('matches as expected', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router pageData={{}}>
+    <Router>
       <Route path="/" component={Hello} />
     </Router>
   );
@@ -42,7 +42,7 @@ test('misses as expected', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router pageData={{}}>
+    <Router>
       <Route exact path="/bar" component={Hello} />
     </Router>
   );
