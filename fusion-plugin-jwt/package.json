@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-jwt",
   "description": "Session library that uses JSON Web Token and cookies",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-jwt",
   "files": [
