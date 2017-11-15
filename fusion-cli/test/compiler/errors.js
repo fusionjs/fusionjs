@@ -6,6 +6,10 @@ const {Compiler} = require('../../build/compiler');
 
 testEnvs('missing module', 'test/fixtures/missing-module');
 testEnvs('syntax error', 'test/fixtures/syntax-error');
+testEnvs(
+  'syntax error (colocated tests)',
+  'test/fixtures/colocated-tests-error'
+);
 
 function testEnvs(title, dir) {
   testDev(`${title} dev`, dir);

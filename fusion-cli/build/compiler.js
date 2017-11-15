@@ -33,13 +33,19 @@ const browserSupport = require('./browser-support');
 const ServiceWorkerTimestampPlugin = require('./service-worker-timestamp-plugin.js');
 const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+const globby = require('globby');
 
 const rimraf = require('rimraf');
 
 function getConfig({target, env, dir, watch, cover}) {
   const main = 'src/main.js';
-  const serverTestEntry = 'src/test/node';
-  const browserTestEntry = 'src/test/browser';
+
+  const serverOnlyTestGlob = `${dir}/src/**/__tests__/*.node.js`;
+  const browserOnlyTestGlob = `${dir}/src/**/__tests__/*.browser.js`;
+  const universalTestGlob = `${dir}/src/**/__tests__/*.js`;
+
+  const serverTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},exclude[]=${browserOnlyTestGlob}!`;
+  const browserTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},exclude[]=${serverOnlyTestGlob}!`;
 
   if (target !== 'node' && target !== 'web' && target !== 'webworker') {
     throw new Error('Invalid target: must be `node`, `web`, or `webworker`');
@@ -50,11 +56,21 @@ function getConfig({target, env, dir, watch, cover}) {
   if (!fs.existsSync(path.resolve(dir))) {
     throw new Error(`Project directory must contain a ${main} file`);
   }
-  if (env === 'test' && !fs.existsSync(path.resolve(dir, serverTestEntry))) {
-    throw new Error(`Testing requires a ${serverTestEntry} directory`);
+  if (
+    env === 'test' &&
+    !globby.sync([universalTestGlob, `!${browserOnlyTestGlob}`]).length
+  ) {
+    throw new Error(
+      `Testing requires server tests in __tests__ with *.js or *.node.js extension`
+    );
   }
-  if (env === 'test' && !fs.existsSync(path.resolve(dir, browserTestEntry))) {
-    throw new Error(`Testing requires a ${browserTestEntry} directory`);
+  if (
+    env === 'test' &&
+    !globby.sync([universalTestGlob, `!${serverOnlyTestGlob}`]).length
+  ) {
+    throw new Error(
+      `Testing requires browser tests in __tests__ with *.js or *.browser.js extension`
+    );
   }
 
   const configPath = path.join(dir, 'package.json');
@@ -68,11 +84,15 @@ function getConfig({target, env, dir, watch, cover}) {
   const destination = path.resolve(dir, `.fusion/dist/${env}/${side}`);
   const evergreen = false;
   const possibleESVersions = ['es5'];
-  const serverEntry = env === 'test' ? 'server-test' : 'server-entry';
-  const clientEntry = env === 'test' ? 'client-test' : 'client-entry';
+  const serverEntry = env === 'test'
+    ? serverTestEntry
+    : path.join(__dirname, `../entries/server-entry.js`);
+  const clientEntry = env === 'test'
+    ? browserTestEntry
+    : path.join(__dirname, `../entries/client-entry.js`);
   const entry = {
-    node: path.join(__dirname, `../entries/${serverEntry}.js`),
-    web: path.join(__dirname, `../entries/${clientEntry}.js`),
+    node: serverEntry,
+    web: clientEntry,
     webworker: path.join(dir, 'src/sw.js'),
   }[target];
 
@@ -300,11 +320,11 @@ function getConfig({target, env, dir, watch, cover}) {
         },
         target === 'node' &&
         env === 'test' && {
-          __NODE_TEST_ENTRY__: path.join(dir, serverTestEntry),
+          __NODE_TEST_ENTRY__: serverTestEntry,
         },
         target === 'web' &&
         env === 'test' && {
-          __BROWSER_TEST_ENTRY__: path.join(dir, browserTestEntry),
+          __BROWSER_TEST_ENTRY__: browserTestEntry,
         },
         alias
       ),
@@ -325,6 +345,7 @@ function getConfig({target, env, dir, watch, cover}) {
         __SECRET_CLIENT_SOURCE_MAP_LOADER__: require.resolve(
           './client-source-map-loader'
         ),
+        __SECRET_MULTI_ENTRY_LOADER__: require.resolve('multi-entry-loader'),
       },
     },
     plugins: [

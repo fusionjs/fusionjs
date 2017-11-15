@@ -18,7 +18,7 @@ test('throws if missing src/main.js', t => {
   t.end();
 });
 
-test('tests throw if missing src/test/node or src/test/browser', t => {
+test('tests throw if no test files exist', t => {
   const envs = ['test'];
   const dir = './test/fixtures/noop';
   t.throws(() => {
@@ -203,19 +203,58 @@ test('test works', async t => {
   const clientEntry = path.resolve(dir, clientDir, 'client-main.js');
   t.ok(fs.existsSync(clientEntry), 'client .js');
   t.ok(fs.existsSync(clientEntry + '.map'), 'client .map');
-  const command = `
+
+  // server test bundle
+  const serverCommand = `
     require('${entry}');
-    require('${clientEntry}');
     `;
   try {
-    await exec(`node -e "${command}"`, {
+    const {stdout} = await exec(`node -e "${serverCommand}"`, {
       env: Object.assign({}, process.env, {
         NODE_ENV: 'production',
       }),
     });
-    t.end();
+    t.ok(
+      stdout.includes('server test runs'),
+      'server test included in server test bundle'
+    );
+    t.ok(
+      !stdout.includes('client test runs'),
+      'client test not included in server test bundle'
+    );
+    t.ok(
+      stdout.includes('universal test runs'),
+      'universal test included in browser test bundle'
+    );
   } catch (e) {
     t.ifError(e);
-    t.end();
   }
+
+  // browser test bundle
+  const browserCommand = `
+    require('${clientEntry}');
+    `;
+  try {
+    const {stdout} = await exec(`node -e "${browserCommand}"`, {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'production',
+      }),
+    });
+    t.ok(
+      !stdout.includes('server test runs'),
+      'server test not included in browser test bundle'
+    );
+    t.ok(
+      stdout.includes('client test runs'),
+      'client test included in browser test bundle'
+    );
+    t.ok(
+      stdout.includes('universal test runs'),
+      'universal test included in browser test bundle'
+    );
+  } catch (e) {
+    t.ifError(e);
+  }
+
+  t.end();
 });
