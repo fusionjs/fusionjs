@@ -175,14 +175,9 @@ if (__BROWSER__) {
 
 function getMockEvents({t, title: expectedTitle, page: expectedPage, done}) {
   const expected = __NODE__
-    ? [
-        'downstream:server',
-        'render:server',
-        'upstream:server',
-        'pageview:server',
-      ]
+    ? ['render:server', 'pageview:server']
     : ['pageview:browser'];
-  const values = [1, 2, 3, 4];
+  const values = [1, 2];
   const UniversalEvents = {
     of() {
       return {
@@ -217,10 +212,8 @@ function getMockCtx({url, path, element}) {
     },
     element,
     timing: {
-      downstream: Promise.resolve(1),
-      render: Promise.resolve(2),
-      upstream: Promise.resolve(3),
-      end: Promise.resolve(4),
+      render: Promise.resolve(1),
+      end: Promise.resolve(2),
     },
   };
 }

@@ -28,31 +28,32 @@ import {html, unescape} from 'fusion-core';
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
 export default function getRouter({UniversalEvents}) {
   return function middleware(ctx, next) {
+    if (!ctx.element) {
+      return next();
+    }
     const emitter = UniversalEvents ? UniversalEvents.of(ctx) : null;
     if (__NODE__) {
       let pageData = {
         title: ctx.path,
         page: ctx.path,
       };
-      if (ctx.element) {
-        const context = {
-          setCode: code => {
-            ctx.status = code;
-          },
-        };
-        ctx.element = (
-          <Router
-            onRoute={d => {
-              pageData = d;
-            }}
-            basename={ctx.routePrefix}
-            location={ctx.url}
-            context={context}
-          >
-            {ctx.element}
-          </Router>
-        );
-      }
+      const context = {
+        setCode: code => {
+          ctx.status = code;
+        },
+      };
+      ctx.element = (
+        <Router
+          onRoute={d => {
+            pageData = d;
+          }}
+          basename={ctx.routePrefix}
+          location={ctx.url}
+          context={context}
+        >
+          {ctx.element}
+        </Router>
+      );
       return next().then(() => {
         // default status code to 200 if no status component is rendered
         if (!ctx.status) {
@@ -78,9 +79,7 @@ export default function getRouter({UniversalEvents}) {
             }
             return payload;
           });
-          ctx.timing.downstream.then(emitTiming('downstream:server'));
           ctx.timing.render.then(emitTiming('render:server'));
-          ctx.timing.upstream.then(emitTiming('upstream:server'));
           ctx.timing.end.then(emitTiming('pageview:server'));
         }
       });
