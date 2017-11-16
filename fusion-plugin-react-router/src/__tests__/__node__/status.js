@@ -26,7 +26,11 @@ import {renderToString as render} from 'react-dom/server';
 import {Router, Route, Status} from '../../server';
 
 test('sets code with static code', t => {
-  const Hello = () => <Status code="404"><div>Hello</div></Status>;
+  const Hello = () => (
+    <Status code="404">
+      <div>Hello</div>
+    </Status>
+  );
   const state = {code: 0};
   const ctx = {
     setCode(code) {
@@ -43,7 +47,11 @@ test('sets code with static code', t => {
   t.end();
 });
 test('sets code with numeric code', t => {
-  const Hello = () => <Status code={404}><div>Hello</div></Status>;
+  const Hello = () => (
+    <Status code={404}>
+      <div>Hello</div>
+    </Status>
+  );
   const state = {code: 0};
   const ctx = {
     setCode(code) {
@@ -60,7 +68,11 @@ test('sets code with numeric code', t => {
   t.end();
 });
 test('sets code with string code', t => {
-  const Hello = () => <Status code={'404'}><div>Hello</div></Status>;
+  const Hello = () => (
+    <Status code={'404'}>
+      <div>Hello</div>
+    </Status>
+  );
   const state = {code: 0};
   const ctx = {
     setCode(code) {

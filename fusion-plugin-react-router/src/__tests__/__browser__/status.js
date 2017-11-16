@@ -28,7 +28,11 @@ import {Router, Route, Status} from '../../browser';
 
 test('noops', t => {
   const root = document.createElement('div');
-  const Hello = () => <Status code="404"><div>Hello</div></Status>;
+  const Hello = () => (
+    <Status code="404">
+      <div>Hello</div>
+    </Status>
+  );
   const el = (
     <Router>
       <Route component={Hello} />

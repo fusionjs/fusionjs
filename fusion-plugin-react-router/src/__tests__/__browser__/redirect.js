@@ -44,7 +44,9 @@ test('test Redirect', t => {
 
   // reset the url back to "/"
   ReactDOM.render(
-    <Router><Redirect to="/" /></Router>,
+    <Router>
+      <Redirect to="/" />
+    </Router>,
     document.createElement('div')
   );
   t.end();

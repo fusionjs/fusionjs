@@ -22,17 +22,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-export {
-  HashRouter,
-  Link,
-  MemoryRouter,
-  NavLink,
-  Prompt,
-  StaticRouter,
-  Switch,
-  matchPath,
-  withRouter,
-} from 'react-router-dom';
 export {Status, NotFound} from './Status';
 export {Redirect} from './Redirect';
 
@@ -81,4 +70,4 @@ BrowserRouter.defaultProps = {
   onRoute: () => {},
 };
 
-export {BrowserRouter};
+export {BrowserRouter as Router};

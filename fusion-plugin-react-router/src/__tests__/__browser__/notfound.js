@@ -28,7 +28,12 @@ import {Router, Route, NotFound} from '../../browser';
 
 test('noops', t => {
   const root = document.createElement('div');
-  const Hello = () => <NotFound><div>Hello</div></NotFound>;
+
+  const Hello = () => (
+    <NotFound>
+      <div>Hello</div>
+    </NotFound>
+  );
   const el = (
     <Router>
       <Route component={Hello} />

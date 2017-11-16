@@ -33,5 +33,5 @@ export {
 } from 'react-router-dom';
 export {Status, NotFound} from './modules/Status';
 export {Redirect} from './modules/Redirect';
-export {BrowserRouter as Router} from './modules/BrowserRouter';
+export {Router} from './modules/BrowserRouter';
 export {Route} from './modules/Route';

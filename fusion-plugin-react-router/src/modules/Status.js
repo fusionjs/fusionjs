@@ -43,7 +43,4 @@ Status.contextTypes = {
   }),
 };
 
-export const NotFound = props =>
-  <Status code={404}>
-    {props.children}
-  </Status>;
+export const NotFound = props => <Status code={404}>{props.children}</Status>;

@@ -26,7 +26,11 @@ import {renderToString as render} from 'react-dom/server';
 import {Router, Route, NotFound} from '../../server';
 
 test('sets code', t => {
-  const Hello = () => <NotFound><div>Hello</div></NotFound>;
+  const Hello = () => (
+    <NotFound>
+      <div>Hello</div>
+    </NotFound>
+  );
   const state = {code: 0};
   const ctx = {
     setCode(code) {
