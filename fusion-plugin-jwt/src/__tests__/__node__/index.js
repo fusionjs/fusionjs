@@ -43,7 +43,7 @@ tape('Server plugin with no initial cookie', async t => {
   try {
     await JWT.middleware(ctx, () => {
       const j = JWT.of(ctx);
-      j.token.hello = 'world';
+      j.set('hello', 'world');
       return Promise.resolve();
     });
   } catch (e) {
@@ -51,7 +51,7 @@ tape('Server plugin with no initial cookie', async t => {
   }
   const instance = JWT.of(ctx);
   t.ok(instance, 'creates instance');
-  t.equal(instance.token.hello, 'world', 'creates token');
+  t.equal(instance.get('hello'), 'world', 'creates token');
   t.equal(instance.cookie, null, 'sets cookie');
   t.end();
 });
@@ -62,7 +62,7 @@ tape('Server plugin with initial token', async t => {
     cookieName: 'cookie-name',
   };
   const JWT = plugin(config);
-  const token = await sign({hello: 'world'}, config.secret);
+  const token = await sign({data: {hello: 'world'}}, config.secret);
   const ctx = {
     cookies: {
       get: cookieName => {
@@ -84,7 +84,7 @@ tape('Server plugin with initial token', async t => {
   }
   const instance = JWT.of(ctx);
   t.ok(instance, 'creates instance');
-  t.equal(instance.token.hello, 'world', 'creates token');
+  t.equal(instance.get('hello'), 'world', 'creates token');
   t.equal(instance.cookie, token, 'sets cookie');
   t.end();
 });
@@ -95,7 +95,7 @@ tape('Server plugin with initial token and modifications', async t => {
     cookieName: 'cookie-name',
   };
   const JWT = plugin(config);
-  const token = await sign({hello: 'world'}, config.secret);
+  const token = await sign({data: {hello: 'world'}}, config.secret);
   const ctx = {
     cookies: {
       get: cookieName => {
@@ -112,16 +112,17 @@ tape('Server plugin with initial token and modifications', async t => {
   const instance = JWT.of(ctx);
   try {
     await JWT.middleware(ctx, () => {
-      instance.token.lol = 'lol';
-      instance.token.hello = 'lol';
+      t.equal(instance.get('hello'), 'world', 'creates token');
+      instance.set('lol', 'lol');
+      instance.set('hello', 'lol');
       return Promise.resolve();
     });
   } catch (e) {
     t.ifError(e, 'does not error running middleware');
   }
   t.ok(instance, 'creates instance');
-  t.equal(instance.token.lol, 'lol', 'updates token correctly');
-  t.equal(instance.token.hello, 'lol', 'updates token correctly');
+  t.equal(instance.get('lol'), 'lol', 'updates token correctly');
+  t.equal(instance.get('hello'), 'lol', 'updates token correctly');
   t.equal(instance.cookie, token, 'sets cookie');
   t.end();
 });

@@ -1,7 +1,12 @@
 import tape from 'tape-cup';
-import plugin from '../../jwt-browser';
+import JWTSessionPlugin from '../../jwt-browser';
 
 tape('Browser plugin throws', t => {
-  t.doesNotThrow(plugin, 'browser plugin should not throw');
+  t.doesNotThrow(JWTSessionPlugin, 'browser plugin should not throw');
+  t.throws(
+    () => JWTSessionPlugin({secret: 'some secret'}),
+    'throws when applied with secret'
+  );
+  t.throws(() => JWTSessionPlugin().of(), 'throws when instantiated');
   t.end();
 });

@@ -11,6 +11,9 @@ export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
   const verify = promisify(jwt.verify.bind(jwt));
   const sign = promisify(jwt.sign.bind(jwt));
 
+  // Scope path to `data.` here since `jsonwebtoken` has some special top-level keys that we do not want to expose (ex: `exp`)
+  const getFullPath = keyPath => `data.${keyPath}`;
+
   assert(typeof secret === 'string', '{secret} should be a string');
   assert(typeof cookieName === 'string', '{cookieName} should be a string');
   return new Plugin({
@@ -22,15 +25,25 @@ export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
       }
       async loadToken() {
         if (this.token == null) {
-          this.token = this.cookie ? await verify(this.cookie, secret) : {};
+          this.token = this.cookie
+            ? await verify(this.cookie, secret).catch(() => ({}))
+            : {};
         }
         return this.token;
       }
       get(keyPath) {
-        return get(this.token, keyPath);
+        assert(
+          this.token,
+          "Cannot access token before loaded, please use this plugin before any of it's dependencies"
+        );
+        return get(this.token, getFullPath(keyPath));
       }
       set(keyPath, val) {
-        return set(this.token, keyPath, val);
+        assert(
+          this.token,
+          "Cannot access token before loaded, please use this plugin before any of it's dependencies"
+        );
+        return set(this.token, getFullPath(keyPath), val);
       }
     },
     async middleware(ctx, next) {
@@ -38,7 +51,6 @@ export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
       const token = await session.loadToken();
       await next();
       if (token) {
-        delete token.exp;
         const time = Date.now(); // get time *before* async signing
         const signed = await sign(token, secret, {expiresIn});
         if (signed !== session.cookie) {
