@@ -100,7 +100,7 @@ test('tracking emit messages', t => {
       emitNumberTracker++;
       t.assert(payload !== undefined, 'event_loop_lag: message received');
     });
-  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:timing:rss`, payload => {
+  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:gauge:rss`, payload => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'rss: message received');
   });
@@ -123,6 +123,15 @@ test('tracking emit messages', t => {
     .on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`, payload => {
       emitNumberTracker++;
       t.assert(payload !== undefined, 'globalAgentRequests: message received');
+    });
+  mockEventEmitter
+    .of()
+    .on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentFreeSockets`, payload => {
+      emitNumberTracker++;
+      t.assert(
+        payload !== undefined,
+        'globalAgentFreeSockets: message received'
+      );
     });
 
   const perfService = plugin({

@@ -122,7 +122,7 @@ export default ({config, EventEmitter, timers = nodeTimers}) => {
 
       emitMemoryUsage() {
         const memoryUsage = process.memoryUsage();
-        emit('timing:rss', memoryUsage.rss);
+        emit('gauge:rss', memoryUsage.rss);
         emit('gauge:heapTotal', memoryUsage.heapTotal);
         emit('gauge:heapUsed', memoryUsage.heapUsed);
       }
@@ -179,7 +179,7 @@ export default ({config, EventEmitter, timers = nodeTimers}) => {
         );
         // number of free sockets
         emit(
-          'gauge:globalAgentRequests',
+          'gauge:globalAgentFreeSockets',
           getCountFromGlobalAgent(globalAgent.freeSockets)
         );
       }

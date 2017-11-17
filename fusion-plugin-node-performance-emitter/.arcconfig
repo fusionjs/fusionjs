@@ -1,0 +1,6 @@
+{
+  "phabricator.uri": "https://code.uberinternal.com/",
+  "git.default-relative-commit": "origin/master",
+  "unit.engine": "TAPTestEngine",
+  "unit.engine.tap.cover": "npm run cover"
+}
