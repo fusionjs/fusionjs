@@ -1,5 +1,9 @@
 /* eslint-env browser */
 /* global module */
+
+import 'core-js/es6';
+import 'core-js/es7';
+
 import initialize from '__FRAMEWORK_SHARED_ENTRY__';
 
 /*
