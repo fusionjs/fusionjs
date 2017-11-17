@@ -19,9 +19,9 @@ yarn add fusion-plugin-rpc-redux-react
 ```js
 // src/main.js
 import App from 'fusion-react';
-import UniversalEventsPlugin from 'fusion-plugin-universal-events';
-import ReduxPlugin from 'fusion-plugin-react-redux';
-import RPCPlugin from 'fusion-plugin-rpc-redux-react';
+import UniversalEvents from 'fusion-plugin-universal-events';
+import Redux from 'fusion-plugin-react-redux';
+import RPC from 'fusion-plugin-rpc-redux-react';
 
 import reducer from './reducer';
 import handlers from './rpc';
@@ -29,9 +29,9 @@ import handlers from './rpc';
 export default () => {
   const app = new App(root);
 
-  const EventEmitter = app.plugin(UniversalEventsPlugin, {fetch});
-  app.plugin(ReduxPlugin, {reducer});
-  app.plugin(RPCPlugin, __NODE__ ? {handlers, EventEmitter} : {fetch});
+  const EventEmitter = app.plugin(UniversalEvents, {fetch});
+  app.plugin(Redux, {reducer});
+  app.plugin(RPC, __NODE__ ? {handlers, EventEmitter} : {fetch});
 }
 
 // src/reducer.js
@@ -80,21 +80,68 @@ export default hoc(Example);
 
 ### Usage with Reactors
 
-```js
-// add the reactor enhancer in src/main.js
-import {reactorEnhancer} from 'redux-reactors'
-// ...
-app.plugin(ReduxPlugin, {reducer, enhancer: reactorEnhancer});
+[`redux-reactors`](https://github.com/ganemone/redux-reactors) is a library that allows you to colocate Redux actions and reducers
 
-// define a reactor (src/reactors/increment.js)
+The `fusion-plugin-rpc-redux-react` package provides a `withRPCReactor` HOC which facilitates implementing a Redux store using reactors.
+
+To use it, register the `fusion-plugin-react-redux` plugin with `reactorEnhancer` from `redux-reactors`:
+
+```js
+// src/main.js
+import App from 'fusion-react';
+import Redux from 'fusion-plugin-react-redux';
+import {reactorEnhancer} from 'redux-reactors';
+import reducer from './redux';
+import handlers from './rpc';
+import fetch from 'unfetch';
+
+export default () => {
+  const app = new App();
+  app.plugin(Redux, {reducer, enhancer: reactorEnhancer});
+  app.plugin(RPC, {handlers, fetch});
+  return app;
+}
+
+// src/rpc.js
+export default {
+  increment() {
+    return db.query(/* ... */).then(n => ({count: n}));
+  }
+}
+```
+
+Because `redux-reactors` is implemented as a Redux enhancer, it doesn't require building reducers in the traditional Redux way. Thus, the root reducer can simply be the identity function:
+
+```js
+// src/redux.js
+export default state => state;
+```
+
+Here's how to implement a reactor:
+
+```js
+// src/reactors/increment.js
 import {withRPCReactor} from 'fusion-plugin-rpc-redux-react';
+
 export const incrementReactor = withRPCReactor('increment', {
   start: (state, action) => ({count: state.count, loading: true, error: ''});
   success: (state, action) => ({count: action.payload.count, loading: false, error: ''});
   failure: (state, action) => ({count: state.count, loading: false, error: action.payload.error});
 });
+```
 
-// use the higher order component (src/components/example.js)
+`incrementReactor: Component => Component` is a React HOC. It defines three actions: `start`, `success` and `failure`, which correspond to the respective statuses of a HTTP request.
+
+In the example above, when `increment` is called, the `start` action is dispatched, which runs a reducer that sets `state.loading` to true, `state.error` to false and keeps `state.count` intact. If the request completes successfully, `state.loading` is set to false, and `state.count` is updated with a new value. Similarly, if the request fails, `state.error` is set.
+
+In addition to defining action/reducer pairs, the `incrementReactor` HOC also maps RPC methods to React props.
+
+Reactors typically need to be used in conjunction with `connect` from `react-redux`, in order to map state to React.
+
+Below is an example of consuming the state and RPC methods that are made available from the Redux store and the RPC plugin. 
+
+```js
+// src/components/example.js
 import React from 'react';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
@@ -119,6 +166,17 @@ const hoc = compose(
 );
 export default hoc(Example);
 ```
+
+### Differences between reactors and vanilla Redux
+
+Redux colocates all valid actions in a respective "slot" in the state tree, and colocates the structuring of the state tree via helpers such as `combineReducers`. This means that a reducer can be unit tested by simply calling the reducer with one of the valid actions, without having any effect on any other state that might exist in the app. The downside is that if an action needs to modify multiple "slots" in the state tree, it can be tedious to find all transformations pertaining to any given action.
+
+Another point worth mentioning is that with traditional reducers, it's possible to refactor the state tree in such a way that doesn't make any changes to reducers or components (albeit it does require changing the reducer composition chain as well as all relevant `mapStateToProps` functions). 
+
+Reactors, on the other hand, colocate a single reducer to a single action, so all state transformations pertaining to any given action are handled by a single function. This comes at the cost of flexibility: it's no longer possible to refactor the shape of the state tree without changing every affectd reducer, and it's also possible to affect unrelated parts of the state tree, for example missing properties due to an overly conservative object assignment.
+
+However doing large refactors to the shape of the state tree isn't necessarily all that common and it's often more intuitive to see all possible state transformations for a given action in a single place. In addition to creating less boilerplate, this pattern leads to similarly intuitive tests that are also colocated by action.
+
 ---
 
 ### API
