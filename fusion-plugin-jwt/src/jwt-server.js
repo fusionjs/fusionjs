@@ -51,6 +51,7 @@ export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
       const token = await session.loadToken();
       await next();
       if (token) {
+        delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
         const time = Date.now(); // get time *before* async signing
         const signed = await sign(token, secret, {expiresIn});
         if (signed !== session.cookie) {
