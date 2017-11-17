@@ -26,7 +26,6 @@
   "devDependencies": {
     "babel-eslint": "^8.0.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "codecov": "^3.0.0",
     "create-universal-package": "^2.1.1",
     "eslint": "^4.2.0",
     "eslint-config-fusion": "^0.1.2",
