@@ -26,7 +26,7 @@ import {Router as BrowserRouter} from './browser';
 import {html, unescape} from 'fusion-core';
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
-export default function getRouter({UniversalEvents}) {
+export default function getRouter({UniversalEvents} = {}) {
   return function middleware(ctx, next) {
     if (!ctx.element) {
       return next();

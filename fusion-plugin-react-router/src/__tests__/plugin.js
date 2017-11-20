@@ -39,6 +39,24 @@ function clientRender(element) {
   }
 }
 
+test('without UniversalEvents', t => {
+  const Hello = () => <div>Hello</div>;
+  const element = (
+    <div>
+      <Route path="/" trackingId="home" component={Hello} />
+      <Route path="/lol" component={Hello} />
+    </div>
+  );
+  const ctx = getMockCtx({
+    url: '/',
+    element,
+  });
+  const plugin = getRouter();
+  runPlugin(plugin, ctx);
+  t.notEquals(ctx.element, element, 'wraps ctx.element');
+  t.end();
+});
+
 test('events with trackingId', t => {
   const Hello = () => <div>Hello</div>;
   const element = (
