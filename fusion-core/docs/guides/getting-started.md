@@ -23,7 +23,7 @@ FusionJS let's you customize virtually all aspects of an application. In this ex
 First, let's install packages we'll need:
 
 ```sh
-yarn add fusion-core fusion-cli fusion-react react
+yarn add fusion-core fusion-cli fusion-react fusion-react-async react react-dom
 ```
 
 Next, let's add scripts to `package.json`:
@@ -61,7 +61,7 @@ Now that we configured our application, we just need to export a function that r
 ```js
 // src/main.js
 import App from 'fusion-react';
-import react from 'react';
+import React from 'react';
 
 export default () => {
   return new App(<div>Hello world</div>);
@@ -86,10 +86,10 @@ However, apps can gain more functionality via plugins. In the next section, we'l
 
 ### Styling
 
-Let's install this package:
+Let's install these packages:
 
 ```sh
-yarn add fusion-plugin-styletron-react
+yarn add fusion-plugin-styletron-react styletron
 ```
 
 This package contains the plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides [powerful server-side CSS optimizations](https://ryantsao.com/blog/virtual-css-with-styletron), yielding less CSS code down the wire.
@@ -100,7 +100,7 @@ To register the plugin, let's modify `src/main.js` to register the Styletron plu
 // src/main.js
 import App from 'fusion-react';
 import Styletron from 'fusion-plugin-styletron-react';
-import react from 'react';
+import React from 'react';
 
 export default () => {
   const app = new App(<div>Hello world</div>);
@@ -115,7 +115,7 @@ Now, let's move our `<div>` element to a separate file called `src/components/ro
 
 ```js
 // src/components/root.js
-import react from 'react';
+import React from 'react';
 import {styled} from 'fusion-plugin-styletron-react';
 
 const Panel = styled('div', {background: 'silver'});
@@ -178,7 +178,7 @@ The virtual module `assetUrl` should also be used for other asset types, such as
 
 ```js
 // src/components/root.js
-import react from 'react';
+import React from 'react';
 import {styled} from 'fusion-plugin-styletron-react';
 import {assetUrl} from 'fusion-core';
 
