@@ -1,19 +1,3 @@
-# FusionJS
-
-FusionJS is a Node.js framework developed by Uber.
-
-It's designed for creating production web applications that need to work well even in slow network conditions.
-
-## Features
-
-- Pluggable view engine: you can use React, or Preact, etc
-- Built-in compiler: supports ES2017, hot module reloading, bundle splitting, etc
-- Universal rendering: write code once that runs both in the server and browser
-- Performance: advanced CSS compilation, caching service worker, smart font loading, source map explorer
-- Robustness: error logging, protection against CSRF, XSS, etc
-
----
-
 ## Getting started
 
 ### Setup FusionJS packages
