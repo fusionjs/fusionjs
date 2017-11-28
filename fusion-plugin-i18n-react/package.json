@@ -42,8 +42,8 @@
     "react": "14.x - 16.x"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
     "@babel/preset-react": "^7.0.0-beta.32",
+    "babel-eslint": "^8.0.2",
     "create-universal-package": "^2.1.1",
     "eslint": "^4.11.0",
     "eslint-config-fusion": "^0.1.2",
@@ -51,6 +51,7 @@
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.59.0",
     "fusion-core": "^0.2.3",
     "fusion-react": "^0.1.9",
     "fusion-react-async": "0.1.4",

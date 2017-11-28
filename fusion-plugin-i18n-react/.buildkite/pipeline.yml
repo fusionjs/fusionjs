@@ -5,6 +5,11 @@ steps:
         build: fusion-plugin-i18n-react
         image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
   - wait
+  - command: yarn flow
+    name: ':flowtype:'
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-i18n-react
   - name: ':eslint:'
     command: yarn lint
     plugins:
