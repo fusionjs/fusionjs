@@ -60,11 +60,13 @@ const PerfStats = app.plugin(NodePerformanceEmitter, {EventEmitter, config})
 The following events are emitted through the `EventEmitter`:
 
 - `node-performance-emitter:gauge:event_loop_lag`
-- `node-performance-emitter:timing:rss`
-- `node-performance-emitter:gauge:heapTotal`
-- `node-performance-emitter:gauge:heapUsed`
-- `node-performance-emitter:timing:gc`
-- `node-performance-emitter:gauge:globalAgentSockets`
-- `node-performance-emitter:gauge:globalAgentRequests`
+- `node-performance-emitter:gauge:rss`- process.memoryUsage().rss
+- `node-performance-emitter:gauge:externalMemory` - process.memoryUsage().external
+- `node-performance-emitter:gauge:heapTotal` - process.memoryUsage().heapTotal
+- `node-performance-emitter:gauge:heapUsed` - process.memoryUsage().heapUsed
+- `node-performance-emitter:timing:gc` - time spent doing garbage collection
+- `node-performance-emitter:gauge:globalAgentSockets` - http.globalAgent.sockets
+- `node-performance-emitter:gauge:globalAgentRequests`- http.globalAgent.requests
+- `node-performance-emitter:gauge:globalAgentFreeSockets`- http.globalAgent.freeSockets
 
 

@@ -122,6 +122,7 @@ export default ({config, EventEmitter, timers = nodeTimers}) => {
 
       emitMemoryUsage() {
         const memoryUsage = process.memoryUsage();
+        emit('gauge:externalMemory', memoryUsage.external);
         emit('gauge:rss', memoryUsage.rss);
         emit('gauge:heapTotal', memoryUsage.heapTotal);
         emit('gauge:heapUsed', memoryUsage.heapUsed);

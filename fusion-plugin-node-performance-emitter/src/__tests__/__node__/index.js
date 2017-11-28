@@ -104,6 +104,12 @@ test('tracking emit messages', t => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'rss: message received');
   });
+  mockEventEmitter
+    .of()
+    .on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, payload => {
+      emitNumberTracker++;
+      t.assert(payload !== undefined, 'externalMemory: message received');
+    });
   mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, payload => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'heapTotal: message received');
@@ -148,7 +154,7 @@ test('tracking emit messages', t => {
   perfService.stopTrackingSocketUsage();
 
   setImmediate(() => {
-    t.assert(emitNumberTracker === 7, 'all emits should be captured');
+    t.assert(emitNumberTracker === 8, 'all emits should be captured');
     t.end();
   });
 });
