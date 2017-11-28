@@ -25,7 +25,15 @@ export default ({fetch = window.fetch, handlers, routePrefix} = {}) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(args || {}),
-        }).then(r => r.json());
+        })
+          .then(r => r.json())
+          .then(({status, data}) => {
+            if (status === 'success') {
+              return data;
+            } else {
+              return Promise.reject(data);
+            }
+          });
       }
     },
   });

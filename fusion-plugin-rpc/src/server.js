@@ -6,10 +6,6 @@ const statKey = 'rpc:method';
 
 export default ({handlers = {}, EventEmitter}) => {
   const parseBody = bodyparser();
-  const err = (ctx, e) => {
-    ctx.status = 400;
-    ctx.body = {error: e.message};
-  };
 
   function hasHandler(method) {
     return handlers.hasOwnProperty(method);
@@ -75,7 +71,11 @@ export default ({handlers = {}, EventEmitter}) => {
         if (hasHandler(method)) {
           await parseBody(ctx, () => Promise.resolve());
           try {
-            ctx.body = await handlers[method](ctx.request.body, ctx);
+            const result = await handlers[method](ctx.request.body, ctx);
+            ctx.body = {
+              status: 'success',
+              data: result,
+            };
             if (emitter) {
               emitter.emit(statKey, {
                 method,
@@ -85,7 +85,14 @@ export default ({handlers = {}, EventEmitter}) => {
               });
             }
           } catch (e) {
-            err(ctx, e);
+            ctx.body = {
+              status: 'failure',
+              data: {
+                message: e.message,
+                code: e.code,
+                meta: e.meta,
+              },
+            };
             if (emitter) {
               emitter.emit(statKey, {
                 method,
@@ -98,7 +105,14 @@ export default ({handlers = {}, EventEmitter}) => {
           }
         } else {
           const e = new MissingHandlerError(method);
-          err(ctx, e);
+          ctx.body = {
+            status: 'failure',
+            data: {
+              message: e.message,
+              code: e.code,
+            },
+          };
+          ctx.status = 404;
           if (emitter) {
             emitter.emit('rpc:error', {
               origin: 'browser',
@@ -116,6 +130,7 @@ export default ({handlers = {}, EventEmitter}) => {
 class MissingHandlerError extends Error {
   constructor(method) {
     super(`Missing RPC handler for ${method}`);
+    this.code = 'ERR_MISSING_HANDLER';
     Error.captureStackTrace(this, MissingHandlerError);
   }
 }

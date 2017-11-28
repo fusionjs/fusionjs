@@ -142,11 +142,10 @@ test('middleware - invalid endpoint', async t => {
   const {middleware} = RPC({handlers, EventEmitter});
   try {
     await middleware(mockCtx, () => Promise.resolve());
-    t.equal(
-      mockCtx.body.error,
-      'Missing RPC handler for valueOf',
-      'sets response body'
-    );
+    t.equal(mockCtx.body.data.message, 'Missing RPC handler for valueOf');
+    t.equal(mockCtx.body.data.code, 'ERR_MISSING_HANDLER');
+    t.equal(mockCtx.body.status, 'failure');
+    t.equal(mockCtx.status, 404);
   } catch (e) {
     t.fail(e);
   }
@@ -189,7 +188,8 @@ test('middleware - valid endpoint', async t => {
   const {middleware} = RPC({handlers, EventEmitter});
   try {
     await middleware(mockCtx, () => Promise.resolve());
-    t.equal(mockCtx.body, 1);
+    t.equal(mockCtx.body.data, 1);
+    t.equal(mockCtx.body.status, 'success');
   } catch (e) {
     t.fail(e);
   }
@@ -208,6 +208,8 @@ test('middleware - valid endpoint failure', async t => {
     },
   };
   const e = new Error('Test Failure');
+  e.code = 'ERR_CODE_TEST';
+  e.meta = {hello: 'world'};
   const handlers = {
     test() {
       return Promise.reject(e);
@@ -232,7 +234,12 @@ test('middleware - valid endpoint failure', async t => {
   const {middleware} = RPC({handlers, EventEmitter});
   try {
     await middleware(mockCtx, () => Promise.resolve());
-    t.equal(mockCtx.body.error, 'Test Failure');
+    t.equal(mockCtx.body.data.message, e.message);
+    t.equal(mockCtx.body.data.code, e.code);
+    t.equal(mockCtx.body.data.meta, e.meta);
+    t.equal(mockCtx.body.status, 'failure');
+    t.equal(Object.keys(mockCtx.body).length, 2);
+    t.equal(Object.keys(mockCtx.body.data).length, 3);
   } catch (e) {
     t.fail(e);
   }
