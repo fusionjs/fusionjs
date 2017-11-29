@@ -10,9 +10,12 @@ import ProvidedHOC from './hoc';
 import Provider from './provider';
 
 export default class App extends CoreApp {
-  constructor(root) {
+  constructor(root, render) {
     super(root, el => {
       return prepare(el).then(() => {
+        if (render) {
+          return render(el);
+        }
         return __NODE__ ? serverRender(el) : clientRender(el);
       });
     });
