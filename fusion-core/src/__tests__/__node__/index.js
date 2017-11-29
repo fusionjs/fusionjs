@@ -217,6 +217,7 @@ test('renderer with element', async t => {
 
   t.end();
 });
+
 test('renderer without element', async t => {
   const flags = {render: false, next: false};
   const element = 'hi';
@@ -246,5 +247,26 @@ test('renderer without element', async t => {
   t.ok(!flags.render, 'does not call render');
   t.equals(ctx.body, null, 'does not touch ctx.body');
 
+  t.end();
+});
+
+test('simulate non html route', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = el => {
+    flags.render = true;
+    return el;
+  };
+  const app = new App(element, render);
+  let ctx = {
+    path: '/',
+    headers: {
+      accept: 'application/json',
+    },
+  };
+  ctx = await app.simulate(ctx);
+  t.notok(ctx.rendered, 'does not set rendered');
+  t.notok(flags.render, 'does not call render');
+  t.notok(ctx.element, 'does not set ctx.element');
   t.end();
 });
