@@ -33,6 +33,7 @@
     "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^7.1.0",
+    "flow-bin": "^0.59.0",
     "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "tape-cup": "^4.7.1",
