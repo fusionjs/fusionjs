@@ -1,12 +1,17 @@
 steps:
-  - name: ":docker: build"
+  - name: ':docker: build'
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         build: eslint-config-fusion
         image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
   - wait
-  - name: ":eslint:"
-    command: "npm run lint"
+  - command: yarn flow
+    name: ':flowtype:'
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
+        run: eslint-config-fusion
+  - name: ':eslint:'
+    command: npm run lint
+    plugins:
+      'docker-compose#v1.5.2':
         run: eslint-config-fusion
