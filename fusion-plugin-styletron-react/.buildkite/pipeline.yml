@@ -5,6 +5,11 @@ steps:
         build: fusion-plugin-styletron-react
         image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
   - wait
+  - command: yarn flow
+    name: ':flowtype:'
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-styletron-react
   - name: ':eslint:'
     command: yarn lint
     plugins:
