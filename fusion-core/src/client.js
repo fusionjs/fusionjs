@@ -14,7 +14,7 @@ export default function() {
       function renderer(ctx, next) {
         const rendered = render(ctx.element);
         if (rendered instanceof Promise) {
-          render(ctx.element)
+          return render(ctx.element)
             .then(rendered => {
               ctx.rendered = rendered;
               return next();

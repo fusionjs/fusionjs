@@ -16,13 +16,21 @@ function getContext() {
       };
 }
 
+function delay() {
+  return new Promise(resolve => {
+    setTimeout(resolve, 1);
+  });
+}
+
 test(`${env} - simulate with async render`, async t => {
   const flags = {render: false};
   const element = 'hi';
   const render = el => {
-    flags.render = true;
     t.equals(el, element, 'render receives correct args');
-    return Promise.resolve(el);
+    return delay().then(() => {
+      flags.render = true;
+      return el;
+    });
   };
   const app = new App(element, render);
   const ctx = await app.simulate(getContext());
