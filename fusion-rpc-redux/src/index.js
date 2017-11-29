@@ -86,7 +86,9 @@ export function createRPCHandler({
         return result;
       })
       .catch(e => {
-        store.dispatch(actions.failure(e));
+        // error objects stringify to {} by default, so we should pluck the properties we care about
+        const {message, code, meta} = e;
+        store.dispatch(actions.failure({message, code, meta}));
         return e;
       });
   };

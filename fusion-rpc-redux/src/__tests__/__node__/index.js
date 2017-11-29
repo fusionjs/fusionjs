@@ -87,7 +87,11 @@ test('createRPCHandler failure', t => {
         t.fail('should not call success');
       },
       failure: e => {
-        t.equal(error, e);
+        t.deepLooseEqual(e, {
+          message: error.message,
+          code: error.code,
+          meta: error.meta,
+        });
         return 'failure';
       },
     },
