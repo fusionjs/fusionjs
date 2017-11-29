@@ -37,6 +37,7 @@
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.59.0",
     "fusion-core": "^0.2.3",
     "prettier": "1.8.2",
     "tape-cup": "^4.7.1",
