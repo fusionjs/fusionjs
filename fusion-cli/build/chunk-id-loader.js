@@ -24,7 +24,7 @@ function generateSource(path, done) {
   return function _generateSource(manifest) {
     const result = manifest.get(path);
     if (!result) {
-      return void done(new Error(`no result from manifest for {$path}`));
+      return void done(new Error(`no result from manifest for ${path}`));
     }
 
     const chunkIds = Array.from(result);
