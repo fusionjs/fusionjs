@@ -1,7 +1,15 @@
-//@flow
+// @flow
 /* eslint-env node */
 
-export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
+export default ({
+  secret,
+  cookieName = 'fusion-sess',
+  expiresIn = 86400,
+}: {
+  secret: string,
+  cookieName: string,
+  expiresIn: number,
+}) => {
   const assert = require('assert');
   const {promisify} = require('util');
   const jwt = require('jsonwebtoken');
@@ -18,6 +26,9 @@ export default ({secret, cookieName = 'fusion-sess', expiresIn = 86400}) => {
   assert(typeof cookieName === 'string', '{cookieName} should be a string');
   return new Plugin({
     Service: class JWTSession {
+      cookie: string;
+      token: ?Object | string;
+
       constructor(ctx) {
         assert(ctx, 'JWTSession requires a ctx object');
         this.cookie = ctx.cookies.get(cookieName);
