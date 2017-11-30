@@ -16,13 +16,15 @@ test('.create works', t => {
 
   const element = React.createElement('div');
   const ctx = {element};
-  plugin().middleware(ctx, () => Promise.resolve()).then(() => {
-    t.notEquals(ctx.element, element, 'wraps provider');
-    t.equals(ctx.element.type.displayName, 'FooProvider');
-    t.equals(
-      ctx.element.type.childContextTypes.foo,
-      PropTypes.object.isRequired
-    );
-    t.end();
-  });
+  plugin()
+    .middleware(ctx, () => Promise.resolve())
+    .then(() => {
+      t.notEquals(ctx.element, element, 'wraps provider');
+      t.equals(ctx.element.type.displayName, 'FooProvider');
+      t.equals(
+        ctx.element.type.childContextTypes.foo,
+        PropTypes.object.isRequired
+      );
+      t.end();
+    });
 });
