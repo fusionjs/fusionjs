@@ -1,6 +1,6 @@
-// @flow
 /* eslint-env browser */
 /* globals __REDUX_DEVTOOLS_EXTENSION__ */
+
 import React from 'react';
 import {Provider} from 'react-redux';
 import {compose, createStore} from 'redux';
