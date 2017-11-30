@@ -1,7 +1,5 @@
 /* eslint-env node */
 
-// @flow
-
 class ChunkTranslationMap {
   constructor() {
     this.translations = new Map();
