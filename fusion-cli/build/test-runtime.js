@@ -22,7 +22,13 @@ module.exports.TestRuntime = function({
     if (cover) {
       const unitest = command;
       command = require.resolve('nyc/bin/nyc.js');
-      args = ['--report=html', unitest, ...args];
+      args = [
+        '--reporter=text',
+        '--reporter=html',
+        '--reporter=cobertura',
+        unitest,
+        ...args,
+      ];
     }
 
     return new Promise((resolve, reject) => {
