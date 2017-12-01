@@ -49,4 +49,4 @@ export default ({}) => {
 `ErrorHandling({onError, CsrfProtection})`
 
 - `onError: (e: Error, type: 'browser' | 'uncaught' | 'request') => Promise` - Required. A function that gets called on server errors. If the error is a global uncaught exception or unhandled rejection, the process exits when the returned Promise resolves/rejects.
-- `CsrfProtection` - Optional. Pass your [`fusion-plugin-csrf-protection`](../fusion-plugin-csrf-protection) plugin to this package if CSRF protection is enabled, in order to allow errors to be logged without needing a CSRF token.
+- `CsrfProtection` - Optional. Pass your [`fusion-plugin-csrf-protection`](https://github.com/fusionjs/fusion-plugin-csrf-protection) plugin to this package if CSRF protection is enabled, in order to allow errors to be logged without needing a CSRF token.
