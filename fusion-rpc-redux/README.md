@@ -4,7 +4,7 @@
 
 A collection of helper functions for working with Redux and RPC together
 
-If using RPC from React components, you should use `fusion-plugin-rpc-redux-react` instead of this package.
+If using RPC from React components, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react) instead of this package.
 
 ---
 
