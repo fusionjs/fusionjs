@@ -19,7 +19,7 @@ export default () => {
 }
 ```
 
-Remember that typically we should only expose secrets in the server. In the example above, the `__NODE__ && process.env.SESSION_SECRET` expression [gets removed from the browser bundle](./universal-code.md) via UglifyJS' dead code elimination.
+Remember that typically we should only expose secrets in the server. In the example above, the `__NODE__ && process.env.SESSION_SECRET` expression [gets removed from the browser bundle](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md) via UglifyJS' dead code elimination.
 
 # Secret rotation
 

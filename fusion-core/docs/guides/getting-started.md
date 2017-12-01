@@ -181,22 +181,22 @@ Here are some more in-depth sections covering various aspects of FusionJS:
 
 #### Core concepts
 
-- [Universal code](./universal-code.md)
-- [Creating a plugin](./creating-a-plugin.md)
-  - [Dependencies](./dependencies.md)
-  - [Configuring plugins](./configuring-plugins.md)
-  - [Creating endpoints](./creating-endpoints.md)
-  - [Creating providers](./creating-providers.md)
-  - [Modifying the HTML template](./modifying-html-template.md)
-  - [Working with secrets](./working-with-secrets.md)
+- [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
+- [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
+  - [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
+  - [Configuring plugins](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md)
+  - [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
+  - [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
+  - [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
+  - [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
 
 #### Plugins
 
 Check out the links below to help you get familiar with other useful plugins that are provided by the FusionJS team:
 
-- [Styletron](../fusion-plugin-styletron-react)
-- [React Router](../fusion-plugin-react-router)
-- [RPC/Redux](../fusion-plugin-rpc-redux-react)
-- [I18n](../fusion-plugin-i18n-react)
-- [Error handling](../fusion-plugin-error-handling)
-- [Logging](../fusion-plugin-universal-logger)
+- [Styletron](https://github.com/fusionjs/fusion-plugin-styletron-react)
+- [React Router](https://github.com/fusionjs/fusion-plugin-react-router)
+- [RPC/Redux](https://github.com/fusionjs/fusion-plugin-rpc-redux-react)
+- [I18n](https://github.com/fusionjs/fusion-plugin-i18n-react)
+- [Error handling](https://github.com/fusionjs/fusion-plugin-error-handling)
+- [Logging](https://github.com/fusionjs/fusion-plugin-universal-logger)

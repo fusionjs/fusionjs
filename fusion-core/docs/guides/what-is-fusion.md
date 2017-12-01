@@ -17,10 +17,10 @@ Here are the features you'll find in FusionJS:
 - plugins for error logging, security, etc
 - bundle analysis tooling
 
-If you want to know how FusionJS compares to similar projects, see the [framework comparison page](./framework-comparison.md).
+If you want to know how FusionJS compares to similar projects, see the [framework comparison page](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/framework-comparison.md).
 
 ---
 
 ### Next steps
 
-- [Getting started](./getting-started.md)
+- [Getting started](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/getting-started.md)

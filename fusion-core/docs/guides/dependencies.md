@@ -2,7 +2,7 @@
 
 The FusionJS plugin architecture allows plugins to explicitly depend on other service plugins. This allows us to swap implementations of various subsystems, for example for testing, or to provide extended functionality.
 
-A [service plugin](./creating-a-plugin.md#services) is a plugin that contains a service that exposes a programmatic API. The benefit of encapsulating a service into a plugin is that a plugin allows the service instance to be memoized on a per-request basis without polluting the middleware context, and the plugin can also encapsulate the colocation of all code needed to implement related [endpoints](./creating-endpoints.md), [providers](./creating-providers.md) and [HTML template modifications](./modifying-html-template.md).
+A [service plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#services) is a plugin that contains a service that exposes a programmatic API. The benefit of encapsulating a service into a plugin is that a plugin allows the service instance to be memoized on a per-request basis without polluting the middleware context, and the plugin can also encapsulate the colocation of all code needed to implement related [endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md), [providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md) and [HTML template modifications](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md).
 
 Let's see how we can depend on a service that gets instantiated per request:
 
@@ -46,7 +46,7 @@ export default () => {
 
 The `Name` plugin simply saves the value in `?name=[value]` to a cookie session if that querystring value is defined.
 
-Notice that the factory function of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.plugin(Name, {Session})` and it's [how FusionJS plugins do dependency injection](./configuring-plugins.md).
+Notice that the factory function of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.plugin(Name, {Session})` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md).
 
 We then called `Session.of(ctx)` instead of instantiating the service using the `new` keyword. This ensure that within a single request, we always get the same memoized instance every time we call `Session.of(ctx)`, regardless of which plugin calls it.
 

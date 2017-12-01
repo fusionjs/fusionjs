@@ -4,7 +4,7 @@ When using services in React/Preact, it's good practice to use providers and HOC
 
 The FusionJS plugin architecture makes it possible to automatically install providers when a plugin is registered. This, in turn, means all logic related to a service - including integration with React/Preact - can be colocated into a single plugin.
 
-You can create providers and HOCs by implementing their respective patterns manually or by using the [`fusion-react`](../../../fusion-react) package.
+You can create providers and HOCs by implementing their respective patterns manually or by using the [`fusion-react`](https://github.com/fusionjs/fusion-react) package.
 
 If you created a provider manually and you want to install it into a plugin, simply wrap `ctx.element` with it:
 

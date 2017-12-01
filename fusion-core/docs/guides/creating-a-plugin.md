@@ -14,7 +14,7 @@ Examples of areas of concern that a plugin can encapsulate include CSS-in-JS, RP
 
 There are two common "types" of plugins: middlewares and services.
 
-A [middleware plugin](#middlewares) specifies how the application should respond to a specific HTTP request. Middlewares are typically used to implement [endpoints](./creating-endpoints.md), [providers](./creating-providers.md) and to [modify the HTML template](./modifying-html-template.md).
+A [middleware plugin](#middlewares) specifies how the application should respond to a specific HTTP request. Middlewares are typically used to implement [endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md), [providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md) and to [modify the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md).
 
 A [service plugin](#services) exposes a programmatic API that can be used by other plugins.
 
@@ -55,7 +55,7 @@ export default () => // this is the factory function
 
 ### Dependency management
 
-The factory function can receive [dependencies](./dependencies.md) as arguments. This makes it possible mock those dependencies when we want to test the plugin.
+The factory function can receive [dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md) as arguments. This makes it possible mock those dependencies when we want to test the plugin.
 
 For example, let's say we want to inject a logger:
 
