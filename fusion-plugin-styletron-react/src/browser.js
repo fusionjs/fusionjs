@@ -15,5 +15,5 @@ export default () => (ctx, next) => {
     );
   }
 
-  next();
+  return next();
 };

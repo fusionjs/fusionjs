@@ -39,7 +39,7 @@ tape('Server plugin', t => {
   };
 
   const middleware = plugin();
-  middleware(ctx, next);
-
+  const result = middleware(ctx, next);
+  t.ok(result instanceof Promise, 'returns next');
   t.end();
 });
