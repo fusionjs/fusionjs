@@ -51,7 +51,7 @@ const plugin = app.plugin(factory, dependencies)
 
 - `factory: (dependencies: Object) => Plugin` - Required. The export value of a plugin package
 - `dependencies: Object` - Optional. A map of dependencies for the plugin
-- `plugin: Plugin` - A Fusion [plugin](../core#plugin-api)
+- `plugin: Plugin` - A Fusion [plugin](https://github.com/fusionjs/fusion-core#plugin)
 
 ### Provider
 
