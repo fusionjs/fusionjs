@@ -40,13 +40,6 @@ const rimraf = require('rimraf');
 function getConfig({target, env, dir, watch, cover}) {
   const main = 'src/main.js';
 
-  const serverOnlyTestGlob = `${dir}/src/**/__tests__/*.node.js`;
-  const browserOnlyTestGlob = `${dir}/src/**/__tests__/*.browser.js`;
-  const universalTestGlob = `${dir}/src/**/__tests__/*.js`;
-
-  const serverTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},exclude[]=${browserOnlyTestGlob}!`;
-  const browserTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},exclude[]=${serverOnlyTestGlob}!`;
-
   if (target !== 'node' && target !== 'web' && target !== 'webworker') {
     throw new Error('Invalid target: must be `node`, `web`, or `webworker`');
   }
@@ -56,6 +49,14 @@ function getConfig({target, env, dir, watch, cover}) {
   if (!fs.existsSync(path.resolve(dir, main))) {
     throw new Error(`Project directory must contain a ${main} file`);
   }
+
+  const serverOnlyTestGlob = `${dir}/src/**/__tests__/*.node.js`;
+  const browserOnlyTestGlob = `${dir}/src/**/__tests__/*.browser.js`;
+  const universalTestGlob = `${dir}/src/**/__tests__/*.js`;
+
+  const serverTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},include[]=${dir}/${main},exclude[]=${browserOnlyTestGlob}!`;
+  const browserTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},include[]=${dir}/${main},exclude[]=${serverOnlyTestGlob}!`;
+
   if (
     env === 'test' &&
     !globby.sync([universalTestGlob, `!${browserOnlyTestGlob}`]).length
