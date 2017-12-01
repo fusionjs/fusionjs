@@ -53,7 +53,7 @@ function getConfig({target, env, dir, watch, cover}) {
   if (env !== 'production' && env !== 'development' && env !== 'test') {
     throw new Error('Invalid name: must be `production`, `dev`, or `test`');
   }
-  if (!fs.existsSync(path.resolve(dir))) {
+  if (!fs.existsSync(path.resolve(dir, main))) {
     throw new Error(`Project directory must contain a ${main} file`);
   }
   if (
@@ -118,7 +118,7 @@ function getConfig({target, env, dir, watch, cover}) {
           watch &&
           target !== 'node' &&
           `${require.resolve('webpack-hot-middleware/client')}?name=${name}`,
-        // TODO: use 'webpack/hot/signal' instead
+        // TODO(#46): use 'webpack/hot/signal' instead
         env === 'development' &&
           watch &&
           target === 'node' &&
@@ -126,7 +126,7 @@ function getConfig({target, env, dir, watch, cover}) {
         entry,
       ].filter(Boolean),
     },
-    // TODO: Do we need to do something different here for production?
+    // TODO(#47): Do we need to do something different here for production?
     stats: 'minimal',
     /**
      * `cheap-module-source-map` is best supported by Chrome DevTools
