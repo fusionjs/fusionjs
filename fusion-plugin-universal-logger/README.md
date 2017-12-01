@@ -6,7 +6,7 @@ A logger utility that batches logs from the browser to the server at set interva
 
 Uses [winston](https://github.com/winstonjs/winston) on the server and exposes the same API on the client.
 
-Depends on [`fusion-plugin-universal-events`](../fusion-plugin-universal-events).
+Depends on [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
 
 ---
 
@@ -62,5 +62,5 @@ const Logger = app.plugin(UniversalLogger, {UniversalEvents, config});
 const Logger = app.plugin(UniversalLogger, {UniversalEvents});
 ```
 
-- `UniversalEvents` - Required. A [`fusion-plugin-universal-events`](../fusion-plugin-universal-events) plugin.
+- `UniversalEvents` - Required. A [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events) plugin.
 - `Logger` - A Winston logger instance
