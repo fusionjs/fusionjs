@@ -16,10 +16,10 @@ test('app onerror', t => {
 });
 
 test('app callback', async t => {
-  const flags = {render: false};
+  let numRenders = 0;
   const element = 'hi';
   const render = el => {
-    flags.render = true;
+    numRenders++;
     t.equals(el, element, 'render receives correct args');
     return el;
   };
@@ -28,7 +28,7 @@ test('app callback', async t => {
   t.equal(typeof callback, 'function');
   const ctx = await callback();
   t.equal(ctx.rendered, element);
-  t.ok(flags.render, 'calls render');
+  t.equal(numRenders, 1, 'calls render once');
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });

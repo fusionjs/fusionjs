@@ -90,7 +90,9 @@ export default function() {
       return this._app.callback();
     }
     simulate(ctx) {
-      return compose(this.plugins)(ctx).then(() => ctx);
+      return compose(this.plugins)(ctx, () => Promise.resolve()).then(
+        () => ctx
+      );
     }
   };
 }

@@ -14,9 +14,9 @@ export default function() {
       function renderer(ctx, next) {
         const rendered = render(ctx.element);
         if (rendered instanceof Promise) {
-          return render(ctx.element)
-            .then(rendered => {
-              ctx.rendered = rendered;
+          return rendered
+            .then(r => {
+              ctx.rendered = r;
               return next();
             })
             .catch(next);
@@ -43,11 +43,13 @@ export default function() {
           element: null,
           body: null,
         };
-        return middleware(ctx).then(() => ctx);
+        return middleware(ctx, () => Promise.resolve()).then(() => ctx);
       };
     }
     simulate(ctx) {
-      return compose(this.plugins)(ctx).then(() => ctx);
+      return compose(this.plugins)(ctx, () => Promise.resolve()).then(
+        () => ctx
+      );
     }
   };
 }

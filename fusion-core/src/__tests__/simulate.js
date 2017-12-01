@@ -23,44 +23,44 @@ function delay() {
 }
 
 test(`${env} - simulate with async render`, async t => {
-  const flags = {render: false};
+  let numRenders = 0;
   const element = 'hi';
   const render = el => {
     t.equals(el, element, 'render receives correct args');
     return delay().then(() => {
-      flags.render = true;
+      numRenders++;
       return el;
     });
   };
   const app = new App(element, render);
   const ctx = await app.simulate(getContext());
   t.equal(ctx.rendered, element);
-  t.ok(flags.render, 'calls render');
+  t.equal(numRenders, 1, 'calls render once');
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });
 
 test(`${env} - simulate with sync render`, async t => {
-  const flags = {render: false};
+  let numRenders = 0;
   const element = 'hi';
   const render = el => {
-    flags.render = true;
+    numRenders++;
     t.equals(el, element, 'render receives correct args');
     return el;
   };
   const app = new App(element, render);
   const ctx = await app.simulate(getContext());
   t.equal(ctx.rendered, element);
-  t.ok(flags.render, 'calls render');
+  t.equal(numRenders, 1, 'calls render once');
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });
 
 test(`${env} - app.plugin`, async t => {
-  const flags = {render: false};
+  let numRenders = 0;
   const element = 'hi';
   const render = el => {
-    flags.render = true;
+    numRenders++;
     t.equals(el, element, 'render receives correct args');
     return el;
   };
@@ -70,10 +70,10 @@ test(`${env} - app.plugin`, async t => {
       return async (ctx, next) => {
         t.deepLooseEqual(deps, {a: true});
         t.equal(ctx.element, element);
-        t.notok(flags.render);
+        t.equal(numRenders, 0);
         t.notok(ctx.rendered);
         await next();
-        t.ok(flags.render);
+        t.equal(numRenders, 1);
         t.equal(ctx.rendered, element);
       };
     },
@@ -81,7 +81,7 @@ test(`${env} - app.plugin`, async t => {
   );
   const ctx = await app.simulate(getContext());
   t.equal(ctx.rendered, element);
-  t.ok(flags.render, 'calls render');
+  t.equal(numRenders, 1, 'calls render');
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });
