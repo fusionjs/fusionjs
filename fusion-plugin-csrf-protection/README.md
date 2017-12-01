@@ -6,7 +6,7 @@ Adds CSRF protection to requests that use non-idempotent HTTP methods.
 
 This package provides a modified `fetch` that is automatically secure against CSRF attacks.
 
-If you're making requests to CSRF protected endpoints from React, you should use [fusion-plugin-csrf-protection-react](../fusion-plugin-csrf-protection-react) instead of this package.
+If you're making requests to CSRF protected endpoints from React, you should use [fusion-plugin-csrf-protection-react](https://github.com/fusionjs/fusion-plugin-csrf-protection-react) instead of this package.
 
 ---
 
@@ -58,7 +58,7 @@ export default () => (ctx, next) => {
 const Service = app.plugin(CsrfProtection, {Session});
 ```
 
-- `Session` - Required. A Session plugin, such as the one provided by [`fusion-plugin-jwt`](../fusion-plugin-jwt). The Session instance should expose a `get: (key: string) => string` and `set: (key: string, value: string) => string` methods.
+- `Session` - Required. A Session plugin, such as the one provided by [`fusion-plugin-jwt`](https://github.com/fusionjs/fusion-plugin-jwt). The Session instance should expose a `get: (key: string) => string` and `set: (key: string, value: string) => string` methods.
 
 #### Instance method
 
