@@ -6,7 +6,7 @@ Adds I18n (Internationalization) support to a FusionJS app
 
 For date i18n, consider using [date-fns](https://date-fns.org/)
 
-If you're using React, you should use [`fusion-plugin-i18n-react`](../fusion-plugin-i18n-react) instead of this package.
+If you're using React, you should use [`fusion-plugin-i18n-react`](https://github.com/fusionjs/fusion-plugin-i18n-react) instead of this package.
 
 ---
 
