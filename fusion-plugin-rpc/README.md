@@ -4,7 +4,7 @@
 
 Fetch data on the server and client with an RPC style interface.
 
-If you're using React, you should use [`fusion-plugin-rpc-react`](../fusion-plugin-rpc-react) instead of this package. If you're also using Redux, you should use [`fusion-plugin-rpc-redux-react`](../fusion-plugin-rpc-redux-react).
+If you're using React, you should use [`fusion-plugin-rpc-react`](https://github.com/fusionjs/fusion-plugin-rpc-react) instead of this package. If you're also using Redux, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react).
 
 ---
 
@@ -54,7 +54,7 @@ const Api = app.plugin(RPC, {handlers, fetch, EventEmitter});
 
 - `handlers: Object<(...args: any) => Promise>` - Server-only. Required. A map of server-side RPC method implementations
 - `fetch: (url: string, options: Object) => Promise` - Browser-only. Required. A `fetch` implementation
-- `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](../fusion-plugin-universal-events)
+- `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events)
 
 ##### Instance methods
 
