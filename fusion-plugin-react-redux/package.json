@@ -29,6 +29,8 @@
     "@types/redux": "^3.6.0",
     "babel-eslint": "^8.0.2",
     "create-universal-package": "^2.1.1",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
     "eslint": "^4.11.0",
     "eslint-config-fusion": "^0.1.2",
     "eslint-plugin-cup": "^1.0.0",
@@ -37,8 +39,10 @@
     "eslint-plugin-react": "^7.4.0",
     "flow-bin": "^0.59.0",
     "fusion-core": "^0.2.3",
+    "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "react": "^16.1.1",
+    "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "tape-cup": "^4.7.1",
@@ -57,6 +61,8 @@
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test",
+    "view-cover": "npm run cover && open coverage/index.html",
     "prepublish": "npm run transpile"
   },
   "engines": {

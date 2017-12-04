@@ -13,17 +13,18 @@ export default ({reducer, preloadedState, enhancer}) => {
       constructor() {
         // We only use initialState for client-side hydration
         // The real initial state should be derived from the reducer and the @@INIT action
-        preloadedState =
-          preloadedState || // this hook is mostly for testing
-          JSON.parse(
-            unescape(document.getElementById('__REDUX_STATE__').textContent)
-          );
+        if (!preloadedState) {
+          const stateElement = document.getElementById('__REDUX_STATE__');
+          if (stateElement) {
+            preloadedState = JSON.parse(unescape(stateElement.textContent));
+          }
+        }
         const devTool =
           __DEV__ &&
           window.__REDUX_DEVTOOLS_EXTENSION__ &&
           __REDUX_DEVTOOLS_EXTENSION__();
 
-        let finalEnhancer = null;
+        let finalEnhancer;
         if (enhancer || devTool) {
           finalEnhancer = compose(...[enhancer, devTool].filter(Boolean));
         }

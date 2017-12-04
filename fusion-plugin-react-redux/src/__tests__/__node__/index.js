@@ -14,6 +14,17 @@ tape('interface', async t => {
   t.end();
 });
 
+tape('non-ssr routes', async t => {
+  const reducer = (state, action) => ({test: action.payload || 1});
+  const plugin = Redux({reducer});
+  let ctx = {
+    body: null,
+  };
+  await plugin.middleware(ctx, () => Promise.resolve());
+  t.notok(plugin.of(ctx).store);
+  t.end();
+});
+
 tape('getInitialState', async t => {
   const reducer = (state = {}, action) => ({
     ...state,
@@ -34,6 +45,7 @@ tape('getInitialState', async t => {
   t.equal(store.getState().a, 'b');
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2, 'state receives dispatch');
+  t.equal(store, await redux.initStore('test-ctx'), 'memoization works');
   t.end();
 });
 
@@ -46,6 +58,7 @@ tape('serialization', async t => {
   const ctx = {element, body: {body: []}};
   const Plugin = Redux({reducer});
   await Plugin.middleware(ctx, () => Promise.resolve());
+  t.ok(Plugin.of(ctx).store);
   t.notEquals(ctx.element, element, 'wraps provider');
   t.equals(ctx.body.body.length, 1, 'pushes serialization to body');
   t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('test')[0], 'test');
