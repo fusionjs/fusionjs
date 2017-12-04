@@ -55,10 +55,6 @@ export default function getRouter({UniversalEvents} = {}) {
         </Router>
       );
       return next().then(() => {
-        // default status code to 200 if no status component is rendered
-        if (!ctx.status) {
-          ctx.status = 200;
-        }
         ctx.body.body.push(
           html`<script id="__ROUTER_DATA__" type="application/json">${JSON.stringify(
             pageData
@@ -85,9 +81,11 @@ export default function getRouter({UniversalEvents} = {}) {
       });
     } else if (__BROWSER__) {
       // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
-      let pageData = JSON.parse(
-        unescape(document.getElementById('__ROUTER_DATA__').textContent)
-      );
+      let pageData = {};
+      const element = document.getElementById('__ROUTER_DATA__');
+      if (element) {
+        pageData = JSON.parse(unescape(element.textContent));
+      }
       if (emitter) {
         emitter.map(payload => {
           if (payload) {

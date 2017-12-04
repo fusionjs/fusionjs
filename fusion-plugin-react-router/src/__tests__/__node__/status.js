@@ -46,6 +46,7 @@ test('sets code with static code', t => {
   t.equals(state.code, 404, 'sets code');
   t.end();
 });
+
 test('sets code with numeric code', t => {
   const Hello = () => (
     <Status code={404}>
@@ -67,6 +68,7 @@ test('sets code with numeric code', t => {
   t.equals(state.code, 404, 'sets code');
   t.end();
 });
+
 test('sets code with string code', t => {
   const Hello = () => (
     <Status code={'404'}>
