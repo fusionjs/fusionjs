@@ -68,3 +68,19 @@ If on the server, this will directly call the `method` handler with `(args, ctx)
 
 If on the browser, this will `POST` to `/api/${method}` endpoint with JSON serialized args as the request body. The server will then deserialize the args and call the rpc handler. The response will be serialized and send back to the browser.
 
+### Testing
+
+The package also exports a mock rpc plugin which can be useful for testing. For example:
+
+```js
+import {mock as MockRPC} from 'fusion-plugin-rpc';
+app.plugin(mock, {
+  handlers: {
+    getUser: (args) => {
+      return {
+        mock: 'data',
+      }
+    }
+  }
+});
+```

@@ -2,6 +2,7 @@
 
 import {Plugin} from 'fusion-core';
 import bodyparser from 'koa-bodyparser';
+import MissingHandlerError from './missing-handler-error';
 const statKey = 'rpc:method';
 
 export default ({handlers = {}, EventEmitter}) => {
@@ -126,14 +127,6 @@ export default ({handlers = {}, EventEmitter}) => {
     },
   });
 };
-
-class MissingHandlerError extends Error {
-  constructor(method) {
-    super(`Missing RPC handler for ${method}`);
-    this.code = 'ERR_MISSING_HANDLER';
-    Error.captureStackTrace(this, MissingHandlerError);
-  }
-}
 
 function ms() {
   const [seconds, ns] = process.hrtime();

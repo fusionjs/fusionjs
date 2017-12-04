@@ -1,6 +1,20 @@
 import test from 'tape-cup';
 import RPC from '../../server';
 
+test('requires ctx', t => {
+  const handlers = {};
+  const EventEmitter = {
+    of() {
+      return {
+        emit() {},
+      };
+    },
+  };
+  const rpc = RPC({handlers, EventEmitter});
+  t.throws(() => rpc.of());
+  t.end();
+});
+
 test('request api', async t => {
   const mockCtx = {
     headers: {},

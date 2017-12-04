@@ -27,23 +27,24 @@
     "koa-bodyparser": "4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
+    "babel-eslint": "^8.0.3",
     "create-universal-package": "^2.1.1",
-    "eslint": "^4.11.0",
+    "eslint": "^4.12.1",
     "eslint-config-fusion": "^0.1.2",
     "eslint-config-uber-universal-stage-3": "1.0.0-rc.7",
     "eslint-plugin-cup": "^1.0.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-prettier": "^2.3.1",
-    "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.3",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-bin": "^0.60.1",
+    "fusion-core": "^0.2.5",
+    "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "tape-cup": "^4.7.1",
     "unitest": "^1.1.0"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.3"
+    "fusion-core": "^0.2.5"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -52,6 +53,7 @@
     "build-tests": "cup build-tests",
     "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-tests && npm run just-test",
+    "cover": "npm run build-tests && nyc npm run just-test",
     "transpile": "npm run clean && npm run build",
     "prepublish": "npm run transpile"
   },
