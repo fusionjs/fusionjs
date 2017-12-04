@@ -1,6 +1,7 @@
 import test from 'tape-cup';
 import ClientAppFactory from '../client';
 import ServerAppFactory from '../server';
+import compose from '../plugin/compose';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 const env = __BROWSER__ ? 'browser' : 'server';
@@ -16,40 +17,45 @@ function getContext() {
       };
 }
 
+function run(app) {
+  const ctx = getContext();
+  return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);
+}
+
 function delay() {
   return new Promise(resolve => {
     setTimeout(resolve, 1);
   });
 }
 
-test(`${env} - simulate with async render`, async t => {
+test(`${env} - async render`, async t => {
   let numRenders = 0;
   const element = 'hi';
-  const render = el => {
+  const renderFn = el => {
     t.equals(el, element, 'render receives correct args');
     return delay().then(() => {
       numRenders++;
       return el;
     });
   };
-  const app = new App(element, render);
-  const ctx = await app.simulate(getContext());
+  const app = new App(element, renderFn);
+  const ctx = await run(app);
   t.equal(ctx.rendered, element);
   t.equal(numRenders, 1, 'calls render once');
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });
 
-test(`${env} - simulate with sync render`, async t => {
+test(`${env} - sync render`, async t => {
   let numRenders = 0;
   const element = 'hi';
-  const render = el => {
+  const renderFn = el => {
     numRenders++;
     t.equals(el, element, 'render receives correct args');
     return el;
   };
-  const app = new App(element, render);
-  const ctx = await app.simulate(getContext());
+  const app = new App(element, renderFn);
+  const ctx = await run(app);
   t.equal(ctx.rendered, element);
   t.equal(numRenders, 1, 'calls render once');
   t.equal(ctx.element, element, 'sets ctx.element');
@@ -59,12 +65,12 @@ test(`${env} - simulate with sync render`, async t => {
 test(`${env} - app.plugin`, async t => {
   let numRenders = 0;
   const element = 'hi';
-  const render = el => {
+  const renderFn = el => {
     numRenders++;
     t.equals(el, element, 'render receives correct args');
     return el;
   };
-  const app = new App(element, render);
+  const app = new App(element, renderFn);
   app.plugin(
     deps => {
       return async (ctx, next) => {
@@ -79,7 +85,7 @@ test(`${env} - app.plugin`, async t => {
     },
     {a: true}
   );
-  const ctx = await app.simulate(getContext());
+  const ctx = await run(app);
   t.equal(ctx.rendered, element);
   t.equal(numRenders, 1, 'calls render');
   t.equal(ctx.element, element, 'sets ctx.element');

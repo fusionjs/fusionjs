@@ -89,27 +89,19 @@ export default function() {
       this._app.use(compose(this.plugins));
       return this._app.callback();
     }
-    simulate(ctx) {
-      return compose(this.plugins)(ctx, () => Promise.resolve()).then(
-        () => ctx
-      );
-    }
   };
 }
 
 function isSSR(ctx) {
   // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
-  // TODO: this check should probably look at the asset manifest to ensure asset 404s are handled correctly
+  // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
   if (ctx.path.match(/\.js$/)) return false;
   // The Accept header is a good proxy for whether SSR should happen
   // Requesting an HTML page via the browser url bar generates a request with `text/html` in its Accept headers
   // XHR/fetch requests do not have `text/html` in the Accept headers
-  // Assets may have `text/html` - TODO verify that assets early return here
   if (!ctx.headers.accept) return false;
   if (!ctx.headers.accept.includes('text/html')) return false;
-  //TODO: where it gets sub-optimal is in development, when someone wants to see the JSON response of some data endpoint
-  //and they load the endpoint via the browser URL bar. This can potentially run SSR logic alongside the intended code,
-  //which may affect performance metrics and other SSR-specific side effects.
+  //TODO(#45): Investigate alternatives to checking accept header
   return true;
 }
 
@@ -119,7 +111,7 @@ function getCoreGlobals(ctx) {
   const chunkManifest = {};
   Array.from(chunkUrlMap.entries()).forEach(([id, variant]) => {
     if (variant) {
-      const filepath = /*variant.get(ctx.esVersion) || */ variant.get('es5'); // TODO derive ctx.esVersion from user agent
+      const filepath = /*variant.get(ctx.esVersion) || */ variant.get('es5');
       chunkManifest[id] = path.basename(filepath);
     }
   }, {});

@@ -46,10 +46,5 @@ export default function() {
         return middleware(ctx, () => Promise.resolve()).then(() => ctx);
       };
     }
-    simulate(ctx) {
-      return compose(this.plugins)(ctx, () => Promise.resolve()).then(
-        () => ctx
-      );
-    }
   };
 }
