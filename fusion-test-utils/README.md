@@ -14,28 +14,41 @@ yarn add fusion-test-utils
 
 ```js
 import App from 'fusion-core';
-import {mockContext} from 'fusion-test-utils';
+import {render, request} from 'fusion-test-utils';
 
+// test renders of your application
 const app = new App();
-let ctx = mockContext();
-await app.simulate(ctx);
+const ctx = await render(app, '/test-url', {
+  headers: {
+    'x-header': 'value',
+  }
+});
 // do assertions on ctx
 
-let ctx = mockContext({path: '/'}); // argument is merged into mock req object
-await app.simulate(ctx);
-// do assertions on ctx
-```
-
-
-#### Browser context
-
-Browsers send an `accept: 'text/html'` header, which can determine whether a SSR happens. Using the `browser()` method will ensure this header is set.
-
-```js
+// test requests to your application
 const app = new App();
-let ctx = mockContext.browser();
-await app.simulate(ctx);
+const ctx = await request(app, '/test-url', {
+  headers: {
+    'x-header': 'value',
+  }
+});
 // do assertions on ctx
 ```
 
 ---
+
+### API
+
+#### `request(app: FusionApp, url: String, options: ?Object)` => Promise<ctx>
+
+Simulates a request through your application.
+`app` - instance of a FusionApp
+`url` - path for request
+`options` - optional object containing custom settings for the request
+`options.method` - the request method, e.g., GET, POST,
+`options.headers` - headers to be added to the request
+`options.body` - body for the request
+
+#### `render(app: FusionApp, url: String, options: ?Object)` => Promise<ctx>
+
+This is the same as `request`, but defaults the `accept` header to `text/html` which will trigger a render of your application.

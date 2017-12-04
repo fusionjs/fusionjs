@@ -1,15 +1,23 @@
 /* eslint-env node */
 
-const httpMocks = require('node-mocks-http');
-const Stream = require('stream');
-const Koa = require('koa');
+import {parse} from 'url';
 
-function mockContext(request) {
-  let req = httpMocks.createRequest(Object.assign({url: '/'}, request));
+export function mockContext(url, options) {
+  if (__BROWSER__) {
+    const parsedUrl = parse(url);
+    const {path} = parsedUrl;
+    parsedUrl.path = parsedUrl.pathname;
+    parsedUrl.url = path;
+    return {parsedUrl};
+  }
+  const httpMocks = require('node-mocks-http');
+  const Stream = require('stream');
+  const Koa = require('koa');
+  let req = httpMocks.createRequest({url, ...options});
   let res = httpMocks.createResponse();
 
   /**
-   * Copied from https://github.com/koajs/koa/blob/master/test/helpers/context.js 
+   * Copied from https://github.com/koajs/koa/blob/master/test/helpers/context.js
    * Copyright (c) 2016 Koa contributors
    * MIT License
    * https://github.com/koajs/koa/blob/master/LICENSE
@@ -27,10 +35,7 @@ function mockContext(request) {
   return ctx;
 }
 
-mockContext.browser = request => {
-  const ctx = mockContext(request);
-  ctx.headers.accept = 'text/html';
-  return ctx;
-};
-
-export default mockContext;
+export function renderContext(url, options) {
+  options = Object.assign(options, {headers: {accept: 'text/html'}});
+  return mockContext(url, options);
+}
