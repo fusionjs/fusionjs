@@ -4,7 +4,7 @@
 
 Fetch data on the server and client with an RPC style interface.
 
-If you're using React, you should use [`fusion-plugin-rpc-react`](https://github.com/fusionjs/fusion-plugin-rpc-react) instead of this package. If you're also using Redux, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react).
+If you're using React/Redux, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react) instead of this package.
 
 ---
 
