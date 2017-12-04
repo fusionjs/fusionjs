@@ -54,6 +54,9 @@
     "koa": "^2.4.1",
     "node-mocks-http": "^1.6.6"
   },
+  "peerDependencies": {
+    "fusion-core": ">=0.2.5"
+  },
   "engines": {
     "node": ">= 8.9.0"
   }
