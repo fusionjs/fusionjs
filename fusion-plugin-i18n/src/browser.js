@@ -1,15 +1,26 @@
 /* eslint-env browser */
 import {Plugin, unescape} from 'fusion-core';
 
+function loadTranslations() {
+  const element = document.getElementById('__TRANSLATIONS__');
+  if (!element) {
+    throw new Error(
+      '[fusion-plugin-i18n] - Could not find a __TRANSLATIONS__ element'
+    );
+  }
+  try {
+    return JSON.parse(unescape(element.textContent));
+  } catch (e) {
+    throw new Error(
+      '[fusion-plugin-i18n] - Error parsing __TRANSLATIONS__ element content'
+    );
+  }
+}
+
 export default function({fetch = window.fetch, hydrationState} = {}) {
   class I18n {
     constructor() {
-      const {chunks, translations} =
-        hydrationState || // this hook is mostly for testing
-        JSON.parse(
-          unescape(document.getElementById('__TRANSLATIONS__').textContent) // populated by plugin in ./node.js
-        ) ||
-        {};
+      const {chunks, translations} = hydrationState || loadTranslations();
       this.loadedChunks = chunks || [];
       this.translationMap = translations || {};
     }

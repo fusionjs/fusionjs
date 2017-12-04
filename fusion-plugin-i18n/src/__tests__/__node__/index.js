@@ -82,3 +82,15 @@ test('endpoint', async t => {
   chunkTranslationMap.translations.clear();
   t.end();
 });
+
+test('non matched route', async t => {
+  const data = {test: 'hello', interpolated: 'hi ${value}'};
+  const TranslationsLoader = getTranslationsLoader(data, 'en-US');
+  const ctx = {
+    path: '/_something',
+  };
+  const plugin = I18n({TranslationsLoader});
+  await plugin.middleware(ctx, () => Promise.resolve());
+  t.notok(ctx.body, 'does not set ctx.body');
+  t.end();
+});
