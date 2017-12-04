@@ -24,32 +24,33 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "^0.3.1",
-    "fusion-rpc-redux": "^0.3.1"
+    "fusion-plugin-rpc": "^0.3.4",
+    "fusion-rpc-redux": "^0.3.3"
   },
   "peerDependencies": {
-    "fusion-react": "^0.1.9",
+    "fusion-react": "^0.1.10",
     "prop-types": "^15.6.0",
     "react": "14.x - 16.x"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
+    "babel-eslint": "^8.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "create-universal-package": "^2.1.1",
-    "eslint": "^4.11.0",
+    "eslint": "^4.12.1",
     "eslint-config-fusion": "^0.1.2",
     "eslint-plugin-cup": "^1.0.0",
     "eslint-plugin-flowtype": "^2.39.1",
     "eslint-plugin-prettier": "^2.3.1",
-    "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.3",
-    "fusion-react": "^0.1.9",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-bin": "^0.60.1",
+    "fusion-core": "^0.2.5",
+    "fusion-react": "^0.1.10",
     "fusion-react-async": "0.1.4",
+    "nyc": "^11.3.0",
     "prettier": "1.8.2",
-    "react": "^16.1.1",
-    "react-dom": "16.1.1",
-    "react-test-renderer": "^16.1.1",
+    "react": "^16.2.0",
+    "react-dom": "16.2.0",
+    "react-test-renderer": "^16.2.0",
     "tape-cup": "^4.7.1",
     "unitest": "^1.1.0"
   },
@@ -60,6 +61,7 @@
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run transpile"
   },
   "engines": {
