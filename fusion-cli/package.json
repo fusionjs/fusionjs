@@ -50,7 +50,7 @@
     "mime-db": "^1.26.0",
     "multi-entry-loader": "^1.1.2",
     "node-zopfli": "^2.0.2",
-    "nyc": "10.1.2",
+    "nyc": "^11.3.0",
     "path-is-absolute": "^1.0.1",
     "progress-bar-webpack-plugin": "^1.10.0",
     "range-parser": "^1.2.0",
