@@ -28,7 +28,21 @@ exports.builder = {
   },
 };
 
-exports.run = async function({dir = '.', production, test, cover, logLevel}) {
+exports.run = async function(
+  {
+    dir = '.',
+    production,
+    test,
+    cover,
+    logLevel,
+  } /*: {
+    dir: string,
+    production: boolean,
+    test: boolean,
+    cover: boolean,
+    logLevel: string,
+  }*/
+) {
   const logger = new winston.Logger({
     transports: [
       new winston.transports.Console({colorize: true, level: logLevel}),

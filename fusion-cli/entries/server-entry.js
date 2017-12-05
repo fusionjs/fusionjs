@@ -1,4 +1,3 @@
-//@flow
 /* eslint-env node */
 import http from 'http';
 import main from '__FRAMEWORK_SHARED_ENTRY__';
