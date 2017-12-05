@@ -138,7 +138,7 @@ In addition to defining action/reducer pairs, the `incrementReactor` HOC also ma
 
 Reactors typically need to be used in conjunction with `connect` from `react-redux`, in order to map state to React.
 
-Below is an example of consuming the state and RPC methods that are made available from the Redux store and the RPC plugin. 
+Below is an example of consuming the state and RPC methods that are made available from the Redux store and the RPC plugin.
 
 ```js
 // src/components/example.js
@@ -171,7 +171,7 @@ export default hoc(Example);
 
 Redux colocates all valid actions in a respective "slot" in the state tree, and colocates the structuring of the state tree via helpers such as `combineReducers`. This means that a reducer can be unit tested by simply calling the reducer with one of the valid actions, without having any effect on any other state that might exist in the app. The downside is that if an action needs to modify multiple "slots" in the state tree, it can be tedious to find all transformations pertaining to any given action.
 
-Another point worth mentioning is that with traditional reducers, it's possible to refactor the state tree in such a way that doesn't make any changes to reducers or components (albeit it does require changing the reducer composition chain as well as all relevant `mapStateToProps` functions). 
+Another point worth mentioning is that with traditional reducers, it's possible to refactor the state tree in such a way that doesn't make any changes to reducers or components (albeit it does require changing the reducer composition chain as well as all relevant `mapStateToProps` functions).
 
 Reactors, on the other hand, colocate a single reducer to a single action, so all state transformations pertaining to any given action are handled by a single function. This comes at the cost of flexibility: it's no longer possible to refactor the shape of the state tree without changing every affectd reducer, and it's also possible to affect unrelated parts of the state tree, for example missing properties due to an overly conservative object assignment.
 
@@ -205,4 +205,21 @@ const NewComponent = withRPCReactor('rpcId', {
   mapStateToParams: (state) => ({}), // optional
   transformParams(params) => ({}), // optional
 })(Component);
+```
+
+### Testing
+
+The package also exports a mock rpc plugin which can be useful for testing. For example:
+
+```js
+import {mock as MockRPC} from 'fusion-plugin-rpc-redux-react';
+app.plugin(mock, {
+  handlers: {
+    getUser: (args) => {
+      return {
+        mock: 'data',
+      }
+    }
+  }
+});
 ```

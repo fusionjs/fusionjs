@@ -1,6 +1,7 @@
 import React from 'react';
 import test from 'tape-cup';
 import Plugin from '../../plugin';
+import {mock} from '../../index';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import {withRPCRedux, withRPCReactor} from '../../hoc';
 
@@ -11,6 +12,18 @@ test('plugin', t => {
     of() {},
   };
   const RPCRedux = Plugin({handlers, EventEmitter});
+  const mockCtx = {headers: {}};
+  t.equal(typeof RPCRedux.of(mockCtx).request, 'function');
+  t.end();
+});
+
+test('mock plugin', t => {
+  t.equals(typeof mock, 'function');
+  const handlers = {test() {}};
+  const EventEmitter = {
+    of() {},
+  };
+  const RPCRedux = mock({handlers, EventEmitter});
   const mockCtx = {headers: {}};
   t.equal(typeof RPCRedux.of(mockCtx).request, 'function');
   t.end();

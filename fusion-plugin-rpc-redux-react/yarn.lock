@@ -2118,6 +2118,13 @@ fusion-rpc-redux@^0.3.3:
   dependencies:
     redux-reactors "^1.0.3"
 
+fusion-test-utils@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.2.1.tgz#b8bde8bf0facaf3b9038d0dfb4bd5e96a30b7ed4"
+  dependencies:
+    koa "^2.4.1"
+    node-mocks-http "^1.6.6"
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -2353,6 +2360,10 @@ hoek@4.x.x:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-4.2.0.tgz#72d9d0754f7fe25ca2d01ad8f8f9a9449a89526d"
 
+hoist-non-react-statics@^2.2.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.3.1.tgz#343db84c6018c650778898240135a1420ee22ce0"
+
 home-path@^1.0.1:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/home-path/-/home-path-1.0.5.tgz#788b29815b12d53bacf575648476e6f9041d133f"
@@ -2479,7 +2490,7 @@ interpret@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.0.4.tgz#820cdd588b868ffb191a809506d6c9c8f212b1b0"
 
-invariant@^2.2.0, invariant@^2.2.2:
+invariant@^2.0.0, invariant@^2.2.0, invariant@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
   dependencies:
@@ -2902,6 +2913,35 @@ koa@^2.3.0:
     type-is "^1.5.5"
     vary "^1.0.0"
 
+koa@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/koa/-/koa-2.4.1.tgz#d449cfb970a7e9da571f699eda40bb9e32eb1484"
+  dependencies:
+    accepts "^1.2.2"
+    content-disposition "~0.5.0"
+    content-type "^1.0.0"
+    cookies "~0.7.0"
+    debug "*"
+    delegates "^1.0.0"
+    depd "^1.1.0"
+    destroy "^1.0.3"
+    error-inject "~1.0.0"
+    escape-html "~1.0.1"
+    fresh "^0.5.2"
+    http-assert "^1.1.0"
+    http-errors "^1.2.8"
+    is-generator-function "^1.0.3"
+    koa-compose "^4.0.0"
+    koa-convert "^1.2.0"
+    koa-is-json "^1.0.0"
+    mime-types "^2.0.7"
+    on-finished "^2.1.0"
+    only "0.0.2"
+    parseurl "^1.3.0"
+    statuses "^1.2.0"
+    type-is "^1.5.5"
+    vary "^1.0.0"
+
 lazy-cache@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/lazy-cache/-/lazy-cache-1.0.4.tgz#a1d78fc3a50474cb80845d3b3b6e1da49a446e8e"
@@ -2963,7 +3003,11 @@ locate-path@^2.0.0:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
 
-lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
+lodash-es@^4.2.0, lodash-es@^4.2.1:
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.4.tgz#dcc1d7552e150a0640073ba9cb31d70f032950e7"
+
+lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -3624,9 +3668,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@1.8.2:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.2.tgz#bff83e7fd573933c607875e5ba3abbdffb96aeb8"
+prettier@1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.9.0.tgz#1a7205bdb6126b30cf8c0a7b2b86997162e1ee3e"
 
 pretty-bytes@^1.0.2:
   version "1.0.4"
@@ -3664,7 +3708,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
   dependencies:
@@ -3765,6 +3809,17 @@ react-dom@16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-redux@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-5.0.6.tgz#23ed3a4f986359d68b5212eaaa681e60d6574946"
+  dependencies:
+    hoist-non-react-statics "^2.2.1"
+    invariant "^2.0.0"
+    lodash "^4.2.0"
+    lodash-es "^4.2.0"
+    loose-envify "^1.1.0"
+    prop-types "^15.5.10"
+
 react-test-renderer@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react-test-renderer/-/react-test-renderer-16.2.0.tgz#bddf259a6b8fcd8555f012afc8eacc238872a211"
@@ -3852,6 +3907,15 @@ redent@^1.0.0:
 redux-reactors@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/redux-reactors/-/redux-reactors-1.0.3.tgz#b04d3465bf045549b7b48c45eb8481b679a30e62"
+
+redux@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
+  dependencies:
+    lodash "^4.2.1"
+    lodash-es "^4.2.1"
+    loose-envify "^1.1.0"
+    symbol-observable "^1.0.3"
 
 regenerate-unicode-properties@^5.1.1:
   version "5.1.3"
@@ -4360,6 +4424,10 @@ supports-color@^4.0.0, supports-color@^4.2.1:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.5.0.tgz#be7a0de484dec5c5cddf8b3d59125044912f635b"
   dependencies:
     has-flag "^2.0.0"
+
+symbol-observable@^1.0.3:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.1.0.tgz#5c68fd8d54115d9dfb72a84720549222e8db9b32"
 
 table@^4.0.1:
   version "4.0.2"
