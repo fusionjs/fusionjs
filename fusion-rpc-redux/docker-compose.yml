@@ -3,7 +3,17 @@ services:
   fusion-rpc-redux:
     build: .
     volumes:
-      - .:/fusion-rpc-redux
+      - '.:/fusion-rpc-redux'
       - /fusion-rpc-redux/node_modules/
       - /fusion-rpc-redux/dist/
       - /fusion-rpc-redux/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
