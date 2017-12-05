@@ -3,7 +3,17 @@ services:
   fusion-plugin-error-handling:
     build: .
     volumes:
-      - .:/fusion-plugin-error-handling
+      - '.:/fusion-plugin-error-handling'
       - /fusion-plugin-error-handling/node_modules/
       - /fusion-plugin-error-handling/dist/
       - /fusion-plugin-error-handling/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
