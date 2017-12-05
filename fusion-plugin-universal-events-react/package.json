@@ -40,6 +40,7 @@
     "fusion-core": "^0.2.3",
     "fusion-react": "^0.1.9",
     "fusion-react-async": "^0.1.4",
+    "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "react": "16.x",
     "react-dom": "16.x",
