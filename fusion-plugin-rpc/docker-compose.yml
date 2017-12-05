@@ -3,7 +3,17 @@ services:
   fusion-plugin-rpc:
     build: .
     volumes:
-      - .:/fusion-plugin-rpc
+      - '.:/fusion-plugin-rpc'
       - /fusion-plugin-rpc/node_modules/
       - /fusion-plugin-rpc/dist/
       - /fusion-plugin-rpc/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
