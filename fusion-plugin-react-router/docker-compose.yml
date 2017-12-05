@@ -3,7 +3,17 @@ services:
   fusion-plugin-react-router:
     build: .
     volumes:
-      - .:/fusion-plugin-react-router
+      - '.:/fusion-plugin-react-router'
       - /fusion-plugin-react-router/node_modules/
       - /fusion-plugin-react-router/dist/
       - /fusion-plugin-react-router/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
