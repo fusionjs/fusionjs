@@ -1,5 +1,3 @@
-// @noflow
-
 import serverApp from './server';
 import clientApp from './client';
 
@@ -14,7 +12,6 @@ import {
 } from './sanitization';
 
 export default (__BROWSER__ ? clientApp() : serverApp());
-
 // sanitization API
 export {html, dangerouslySetHTML, consumeSanitizedHTML, escape, unescape};
 
