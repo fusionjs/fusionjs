@@ -3383,7 +3383,7 @@ number-is-nan@^1.0.0:
 
 nyc@^11.3.0:
   version "11.3.0"
-  resolved "https://registry.yarnpkg.com/nyc/-/nyc-11.3.0.tgz#a42bc17b3cfa41f7b15eb602bc98b2633ddd76f0"
+  resolved "https://registry.npmjs.org/nyc/-/nyc-11.3.0.tgz#a42bc17b3cfa41f7b15eb602bc98b2633ddd76f0"
   dependencies:
     archy "^1.0.0"
     arrify "^1.0.1"
