@@ -1,3 +1,5 @@
+// @noflow
+
 /* eslint-env browser */
 import {compose} from './plugin/index.js';
 import timing from './timing';

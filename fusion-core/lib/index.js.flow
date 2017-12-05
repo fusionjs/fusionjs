@@ -1,0 +1,25 @@
+// @flow
+
+import compose from "./compose";
+import SingletonPlugin from "./singleton-plugin/singleton-plugin";
+import Plugin from "./plugin/plugin";
+declare class Class0 {
+
+  Service: ?Class<T>;
+  __keys__: Array<$Exact<{}> | {element: Object}>;
+  __values__: Array<$Exact<{}> | T>;
+  middleware: (ctx: {element: Object}, next: () => Promise<void>) => Promise<void> | void;
+  constructor(args: {Service: Class<T>, middleware: <T>(ctx: {element: Object}, next: () => Promise<void>) => Promise<void> | void}): void | void;
+  of(ctx: ?$Exact<{}> | {element: Object}): {} | T;
+}
+declare class Class1 {
+
+  Service: Class<T>;
+  __instances__: WeakMap<$Exact<{}> | {element: Object}, $Exact<{}> | T>;
+  middleware: (ctx: {element: Object}, next: () => Promise<void>) => Promise<void> | void;
+  constructor(args: {Service: Class<T>, middleware: <T>(ctx: {element: Object}, next: () => Promise<void>) => Promise<void> | void}): void | void;
+  of(ctx: ?$Exact<{}> | {element: Object}): $Exact<{}> | void | $Exact<{}> | void | {};
+}
+declare export var Plugin: Class0<T: any> | Class1<T: any>;
+declare export var SingletonPlugin: any;
+declare export var compose: any;
