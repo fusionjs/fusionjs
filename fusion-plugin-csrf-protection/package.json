@@ -42,6 +42,7 @@
     "fusion-core": "^0.2.3",
     "generic-session": "^0.1.2",
     "get-port": "^3.2.0",
+    "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "sinon": "^4.1.2",
     "tape-cup": "^4.7.1",
