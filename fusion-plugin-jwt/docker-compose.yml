@@ -3,7 +3,17 @@ services:
   fusion-plugin-jwt:
     build: .
     volumes:
-      - .:/fusion-plugin-jwt
+      - '.:/fusion-plugin-jwt'
       - /fusion-plugin-jwt/node_modules/
       - /fusion-plugin-jwt/dist/
       - /fusion-plugin-jwt/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
