@@ -38,10 +38,10 @@ export default function() {
           this.batch = [];
         }
       }
-      emit(type, payload) {
+      emit(type, payload, ctx) {
         payload = super.mapEvent(type, payload, this.ctx);
         if (!this.ctx) {
-          super.handleEvent(type, payload);
+          super.handleEvent(type, payload, ctx);
         } else {
           payload = this.parent.mapEvent(type, payload, this.ctx);
           this.batch.push({type, payload});

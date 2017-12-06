@@ -32,10 +32,10 @@ test('Instantiation', t => {
   t.end();
 });
 
-test('Server EventEmitter', async t => {
+test('Server EventEmitter - events from browser', async t => {
   let called = false;
   let globalCalled = false;
-  const ctx = {
+  const mockCtx = {
     method: 'POST',
     path: '/_events',
     request: {
@@ -46,22 +46,39 @@ test('Server EventEmitter', async t => {
   };
   const Emitter = plugin();
   const globalEmitter = Emitter.of();
-  globalEmitter.on('a', ({x}) => {
+  globalEmitter.on('a', ({x}, ctx) => {
     t.equals(x, 1, 'payload is correct');
+    t.equals(ctx, mockCtx, 'ctx is correct');
     globalCalled = true;
   });
-  const emitter = Emitter.of(ctx);
-  emitter.on('a', ({x}) => {
+  const emitter = Emitter.of(mockCtx);
+  emitter.on('a', ({x}, ctx) => {
     t.equals(x, 1, 'payload is correct');
+    t.equals(ctx, mockCtx, 'ctx is correct');
     called = true;
   });
-  await Emitter.middleware(ctx, () => Promise.resolve());
+  await Emitter.middleware(mockCtx, () => Promise.resolve());
   t.ok(called, 'called');
   t.ok(globalCalled, 'called global handler');
   t.end();
 });
 
-test('Server EventEmitter mapping', async t => {
+test('Server EventEmitter - events with ctx', async t => {
+  let globalCalled = false;
+  const mockCtx = {mock: true};
+  const Emitter = plugin();
+  const globalEmitter = Emitter.of();
+  globalEmitter.on('b', ({x}, ctx) => {
+    t.equals(x, 1, 'payload is correct');
+    t.equals(ctx, mockCtx, 'ctx is correct');
+    globalCalled = true;
+  });
+  globalEmitter.emit('b', {x: 1}, mockCtx);
+  t.ok(globalCalled, 'called global handler');
+  t.end();
+});
+
+test('Server EventEmitter - mapping', async t => {
   let called = false;
   let globalCalled = false;
   const ctx = {
