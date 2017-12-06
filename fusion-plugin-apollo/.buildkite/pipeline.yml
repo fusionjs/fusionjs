@@ -5,6 +5,11 @@ steps:
         build: fusion-apollo
         image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
   - wait
+  - name: ":flowtype:"
+    command: "yarn flow"
+    plugins:
+      docker-compose#v1.5.2:
+        run: fusion-apollo
   - name: ":eslint:"
     command: "yarn lint"
     plugins:
