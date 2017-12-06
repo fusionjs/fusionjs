@@ -1,17 +1,15 @@
 /* eslint-env browser */
 import React from 'react';
 
-import CoreApp from 'fusion-core';
+import CoreApp, {html, unescape} from 'fusion-core';
 import {prepare} from 'fusion-react-async';
-import {html} from 'fusion-core';
 
 import {ApolloProvider} from 'react-apollo';
-import {unescape} from 'fusion-core';
+
+import {ProviderPlugin, ProvidedHOC, Provider} from 'fusion-react';
 
 import serverRender from './server';
 import clientRender from './client';
-
-import {ProviderPlugin, ProvidedHOC, Provider} from 'fusion-react';
 
 export default class App extends CoreApp {
   constructor(root, getClient) {
