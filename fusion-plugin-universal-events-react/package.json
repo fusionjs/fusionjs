@@ -25,7 +25,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-universal-events": "^0.1.10"
+    "fusion-plugin-universal-events": "^0.1.11"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.2",
