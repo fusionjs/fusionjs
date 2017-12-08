@@ -64,7 +64,9 @@ exports.run = async function({dir = '.', cover, watch, skipBuild}) {
   await runTests();
 
   if (watch) {
-    compiler.on('done', runTests);
+    compiler.on('done', () => {
+      runTests().catch(() => {}); // ignore error, since test output is already actionable enough
+    });
   }
 
   return {
