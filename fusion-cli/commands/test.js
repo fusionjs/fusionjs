@@ -2,15 +2,19 @@
 const {Compiler} = require('../build/compiler');
 const {TestRuntime} = require('../build/test-runtime');
 
-exports.command = 'test [dir]';
 exports.desc = 'Run tests';
 exports.builder = {
+  dir: {
+    type: 'string',
+    default: '.',
+    describe: 'Root path for the application relative to CLI CWD',
+  },
   cover: {
     type: 'boolean',
     default: false,
     describe: 'Run tests with coverage',
   },
-  // TODO(#20): support --debug flag
+  // TODO(#20): ensure --debug works with start and test commands
   // debug: {
   //   type: 'boolean',
   //   default: false,

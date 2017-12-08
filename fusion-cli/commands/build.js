@@ -3,18 +3,24 @@
 const winston = require('winston');
 const {Compiler} = require('../build/compiler.js');
 
-exports.command = 'build [dir]';
+exports.command =
+  'build [--dir] [--test] [--cover] [--production] [--log-level]';
 exports.desc = 'Build your app';
 exports.builder = {
-  cover: {
-    type: 'boolean',
-    default: false,
-    describe: 'Build tests (with coverage) as well as application',
+  dir: {
+    type: 'string',
+    default: '.',
+    describe: 'Root path for the application relative to CLI CWD',
   },
   test: {
     type: 'boolean',
     default: false,
-    describe: 'Build tests as well as application',
+    describe: 'Build test assets as well as development assets',
+  },
+  cover: {
+    type: 'boolean',
+    default: false,
+    describe: 'Build tests (with coverage) as well as development assets',
   },
   production: {
     type: 'boolean',
@@ -51,8 +57,8 @@ exports.run = async function(
 
   const envs = [];
   if (production) envs.push('production');
-  if (test) envs.push('test');
   if (envs.length === 0) envs.push('development');
+  if (test) envs.push('test');
   const compiler = new Compiler({envs, dir, cover, logger});
 
   await compiler.clean();

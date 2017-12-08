@@ -2,15 +2,20 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.command = 'start [dir]';
+exports.command = 'start [--dir] [--environment]';
 exports.desc = 'Run your app';
 exports.builder = {
-  // TODO: https://github.com/uber-web/framework/issues/882
+  // TODO(#20) ensure --debug works with start and test commands
   // debug: {
   //   type: 'boolean',
   //   default: false,
   //   describe: 'Debug application',
   // },
+  dir: {
+    type: 'string',
+    default: '.',
+    describe: 'Root path for the application relative to CLI CWD',
+  },
   environment: {
     type: 'string',
     describe:

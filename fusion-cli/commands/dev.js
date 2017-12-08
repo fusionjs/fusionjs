@@ -4,40 +4,20 @@ const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
 const {TestRuntime} = require('../build/test-runtime');
 
-exports.command = 'dev [dir]';
+exports.command =
+  'dev [--dir] [--debug] [--test] [--cover] [--port] [--no-open] [--no-hmr] [--log-level]';
 exports.describe = 'Run your app in development';
 exports.builder = {
-  cover: {
-    type: 'boolean',
-    default: false,
-    describe: 'Run tests (with coverage) as well as your application',
+  dir: {
+    type: 'string',
+    default: '.',
+    describe: 'Root path for the application relative to CLI CWD',
   },
   debug: {
     type: 'boolean',
     default: false,
     describe: 'Debug application',
   },
-  'no-open': {
-    type: 'boolean',
-    default: false,
-    describe: 'Run without opening the url in your browser',
-  },
-  'no-hmr': {
-    type: 'boolean',
-    default: false,
-    describe: 'Run without hot module replacement',
-  },
-  test: {
-    type: 'boolean',
-    default: false,
-    describe: 'Run tests as well as your application',
-  },
-  // TODO(#18): support watch-mode `dev --profile`
-  // profile: {
-  //   type: 'boolean',
-  //   default: false,
-  //   describe: 'Run profiling as well as your application',
-  // },
   // TODO(#19): support dev with production assets
   // production: {
   //   type: 'boolean',
@@ -48,6 +28,18 @@ exports.builder = {
     type: 'number',
     default: 3000,
     describe: 'The port at which the app runs',
+  },
+  open: {
+    // yargs generates no-open option
+    type: 'boolean',
+    default: true,
+    describe: 'Run without opening the url in your browser',
+  },
+  hmr: {
+    // yargs generates no-hmr option
+    type: 'boolean',
+    default: true,
+    describe: 'Run without hot module replacement',
   },
   'log-level': {
     type: 'string',
@@ -62,8 +54,8 @@ exports.run = async function({
   debug,
   port,
   cover,
-  noHmr,
-  noOpen,
+  hmr,
+  open,
   logLevel,
 }) {
   const logger = new winston.Logger({
@@ -75,7 +67,7 @@ exports.run = async function({
   const compiler = new Compiler({
     envs: test ? ['development', 'test'] : ['development'],
     dir,
-    watch: !noHmr,
+    watch: hmr,
     cover,
     logger,
   });
@@ -86,9 +78,9 @@ exports.run = async function({
         dir,
         port,
         debug,
-        noOpen,
+        noOpen: !open,
       },
-      !noHmr ? {middleware: compiler.getMiddleware()} : {}
+      hmr ? {middleware: compiler.getMiddleware()} : {}
     )
   );
 

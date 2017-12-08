@@ -4,7 +4,7 @@ const fs = require('fs');
 const profile = require('../lib/profiler');
 const launchSourceMapExplorer = require('../launch-source-map-explorer.js');
 
-exports.command = 'profile [dir]';
+exports.command = 'profile [--dir] [--environment] [--watch] [--file-count]';
 exports.desc = 'Profile your application';
 exports.builder = {
   // TODO(#18): support fusion profile --watch
@@ -13,6 +13,11 @@ exports.builder = {
   //   default: false,
   //   describe: 'Use existing built assets',
   // },
+  dir: {
+    type: 'string',
+    default: '.',
+    describe: 'Root path for the application relative to CLI CWD',
+  },
   environment: {
     type: 'string',
     default: 'production',
