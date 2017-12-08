@@ -29,14 +29,14 @@ import ErrorHandling from 'fusion-plugin-error-handling';
 
 export default ({}) => {
   if (__NODE__) {
-    const log = (e, type) => {
-      if (type === 'browser') {
+    const log = (e, captureType) => {
+      if (captureType === 'browser') {
         const {message, source, line, col, error} = e;
         console.log({message, source, line, col, error});
-      } else if (type === 'server') {
+      } else if (captureType === 'server') {
         console.log('UNCAUGHT EXCEPTION', e);
-      } else if (type === 'request') {
-        console.log('REQUEST ERROR', type);
+      } else if (captureType === 'request') {
+        console.log('REQUEST ERROR');
       }
     }
     return ErrorHandling({onError: log});
@@ -48,5 +48,5 @@ export default ({}) => {
 
 `ErrorHandling({onError, CsrfProtection})`
 
-- `onError: (e: Error, type: 'browser' | 'uncaught' | 'request') => Promise` - Required. A function that gets called on server errors. If the error is a global uncaught exception or unhandled rejection, the process exits when the returned Promise resolves/rejects.
+- `onError: (e: Error, captureType: 'browser' | 'uncaught' | 'request') => Promise` - Required. A function that gets called on server errors. If the error is a global uncaught exception or unhandled rejection, the process exits when the returned Promise resolves/rejects.
 - `CsrfProtection` - Optional. Pass your [`fusion-plugin-csrf-protection`](https://github.com/fusionjs/fusion-plugin-csrf-protection) plugin to this package if CSRF protection is enabled, in order to allow errors to be logged without needing a CSRF token.

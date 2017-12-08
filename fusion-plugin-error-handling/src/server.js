@@ -5,7 +5,7 @@ import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
 import EnvVars from 'fusion-cli/plugins/environment-variables-plugin';
 
-const types = {
+const captureTypes = {
   browser: 'browser',
   request: 'request',
   server: 'server',
@@ -15,7 +15,7 @@ export default ({onError, CsrfProtection}) => {
   assert(typeof onError === 'function', '{onError} must be a function');
   if (CsrfProtection) CsrfProtection.ignore(EnvVars().of().prefix + '/_errors');
   const err = async e => {
-    await onError(e, types.server);
+    await onError(e, captureTypes.server);
     process.exit(1);
   };
   process.once('uncaughtException', err);
@@ -50,11 +50,11 @@ onerror = function(m,s,l,c,e) {
       ctx.body.head.unshift(script);
     } else if (ctx.path === ctx.prefix + '/_errors') {
       await parseBody(ctx, () => Promise.resolve());
-      await onError(ctx.request.body, types.browser);
+      await onError(ctx.request.body, captureTypes.browser);
       ctx.body = {ok: 1};
     }
     return next().catch(async e => {
-      await onError(e, types.request);
+      await onError(e, captureTypes.request);
       if (ctx.app) ctx.app.emit('error', e, ctx);
       throw e;
     });
