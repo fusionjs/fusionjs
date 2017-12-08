@@ -19,7 +19,7 @@ exports.builder = {
   environment: {
     type: 'string',
     describe:
-      'Which environment/assets to run - defaults to first available assets among ["development", "test", "production"]',
+      'Which environment/assets to run - defaults to first available assets among ["development", "production"]',
   },
 };
 
@@ -31,9 +31,7 @@ exports.run = async function({dir = '.', environment}) {
 
   const env = environment
     ? fs.existsSync(getEntry(environment)) && environment
-    : ['development', 'test', 'production'].find(e =>
-        fs.existsSync(getEntry(e))
-      );
+    : ['development', 'production'].find(e => fs.existsSync(getEntry(e)));
 
   if (env) {
     const entry = getEntry(env);
