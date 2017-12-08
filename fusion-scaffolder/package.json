@@ -1,0 +1,26 @@
+{
+  "name": "fusion-scaffolder",
+  "version": "1.0.0",
+  "description": "A code scaffolder",
+  "license": "MIT",
+  "repository": "fusionjs/fusion-scaffolder",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.13.0",
+    "eslint-config-uber-node-lts": "^1.0.0-rc.7",
+    "eslint-plugin-prettier": "^2.3.1",
+    "nyc": "^11.3.0",
+    "prettier": "^1.9.1",
+    "tape": "^4.8.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node test/index.js",
+    "cover": "nyc npm run test"
+  },
+  "engines": {
+    "node": ">=8.0.0",
+    "yarn": ">=1.0.0"
+  }
+}
