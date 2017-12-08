@@ -105,6 +105,19 @@ function getConfig({target, env, dir, watch, cover}) {
   // 'test' and 'production' entries should both map to NODE_ENV='production'
   const nodeEnv = env === 'development' ? 'development' : 'production';
 
+  // Allow overrides with a warning for `dev` and `test` commands. In production builds, throw if NODE_ENV is not `production`.
+  const nodeEnvBanner =
+    `if(process.env.NODE_ENV && process.env.NODE_ENV !== '${nodeEnv}') {` +
+    `if ('${env}' === 'production') {` +
+    `throw new Error(\`NODE_ENV (\${process.env.NODE_ENV}) does not match value for compiled assets: ${nodeEnv}\`);` +
+    `} else {` +
+    `console.warn('Overriding NODE_ENV: ' + process.env.NODE_ENV + ' to ${nodeEnv} in order to match value for compiled assets');` +
+    `process.env.NODE_ENV = '${nodeEnv}';` +
+    `}` +
+    `} else {` +
+    `process.env.NODE_ENV = '${nodeEnv}';` +
+    `}`;
+
   return {
     name,
     target,
@@ -449,12 +462,7 @@ function getConfig({target, env, dir, watch, cover}) {
           raw: true,
           entryOnly: true,
           // Enforce NODE_ENV at runtime
-          banner:
-            `if(process.env.NODE_ENV && process.env.NODE_ENV !== '${nodeEnv}') {` +
-              `throw new Error(\`NODE_ENV (\${process.env.NODE_ENV}) does not match value for compiled assets: ${nodeEnv}\`);` +
-              `} else {` +
-              `process.env.NODE_ENV = '${nodeEnv}';` +
-              `}`,
+          banner: nodeEnvBanner,
         }),
       new webpack.EnvironmentPlugin({NODE_ENV: nodeEnv}),
       target !== 'node' &&
