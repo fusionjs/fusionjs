@@ -1,12 +1,17 @@
 /* eslint-env browser */
 
-import {Plugin} from 'fusion-core';
+import {Plugin, unescape} from 'fusion-core';
 import {verifyMethod, verifyExpiry} from './shared';
 
 export default ({fetch = window.fetch, expire = 86400, routePrefix} = {}) => {
   const prefix =
     routePrefix != null ? routePrefix : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
-  let token = '';
+
+  const tokenElement = document.getElementById('__CSRF_TOKEN__');
+
+  let token = tokenElement
+    ? JSON.parse(unescape(tokenElement.textContent))
+    : '';
 
   function fetchWithCsrfToken(url, options = {}) {
     const isCsrfMethod = verifyMethod(options.method || 'GET');

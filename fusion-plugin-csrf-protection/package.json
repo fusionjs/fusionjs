@@ -40,6 +40,7 @@
     "express": "^4.16.2",
     "flow-bin": "^0.59.0",
     "fusion-core": "^0.2.3",
+    "fusion-test-utils": "^0.2.1",
     "generic-session": "^0.1.2",
     "get-port": "^3.2.0",
     "nyc": "^11.3.0",
@@ -58,6 +59,7 @@
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run transpile"
   },
   "engines": {
