@@ -15,8 +15,8 @@ module.exports.TestRuntime = function({
     this.stop();
 
     const base = '.fusion/dist/test';
-    const server = path.resolve(dir, base, 'server/server-main');
-    const client = path.resolve(dir, base, 'client/client-main');
+    const server = path.resolve(dir, base, 'server/server-main.js');
+    const client = path.resolve(dir, base, 'client/client-main.js');
     let command = require.resolve('unitest/bin/cli.js');
     let args = [`--browser=${client}`, `--node=${server}`];
     if (cover) {

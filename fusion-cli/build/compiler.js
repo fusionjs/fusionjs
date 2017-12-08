@@ -202,9 +202,10 @@ function getConfig({target, env, dir, watch, cover}) {
     node: Object.assign(
       {
         // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
-        process: false,
+        // Tape requires process to be defined
+        process: env === 'test' && target === 'web' ? 'mock' : false,
         // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
-        Buffer: false,
+        Buffer: env === 'test' && target === 'web' ? 'mock' : false,
         // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
         setImmediate: false,
         // Mocking __filename and __dirname is probably harmless, but for consistency let's keep it off for now.

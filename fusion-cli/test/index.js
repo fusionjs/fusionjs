@@ -2,6 +2,7 @@
 require('./compiler/api');
 require('./compiler/errors');
 require('./cli/dev');
+require('./cli/test');
 /*
 require('./browser-support');
 */
