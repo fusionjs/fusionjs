@@ -4648,9 +4648,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-styletron-client@^3.0.0-rc.3:
-  version "3.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/styletron-client/-/styletron-client-3.0.0-rc.3.tgz#41fbca51a6bd22ba6145df1cb57cfaada119aeab"
+styletron-client@^3.0.0-rc.5:
+  version "3.0.0-rc.5"
+  resolved "https://registry.npmjs.org/styletron-client/-/styletron-client-3.0.0-rc.5.tgz#275ca0b5f971d244f0e42079ad570be9c31a2a70"
   dependencies:
     styletron-core "^3.0.0-rc.3"
 
@@ -4658,13 +4658,13 @@ styletron-core@^3.0.0-rc.3:
   version "3.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/styletron-core/-/styletron-core-3.0.0-rc.3.tgz#9468e275d9085d2e5d6d6468cc6d8733dbfa3cba"
 
-styletron-react@^3.0.0-rc.3:
-  version "3.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/styletron-react/-/styletron-react-3.0.0-rc.3.tgz#80fdca3360270b2841aecb62c56c5b2ca8365a9a"
+styletron-react@^3.0.0-rc.5:
+  version "3.0.0-rc.5"
+  resolved "https://registry.npmjs.org/styletron-react/-/styletron-react-3.0.0-rc.5.tgz#99b3e85b9c59eac78a4c3f1110a9774e5ede5e60"
   dependencies:
     "@types/react" "*"
     prop-types "^15.5.8"
-    styletron-client "^3.0.0-rc.3"
+    styletron-client "^3.0.0-rc.5"
     styletron-server "^3.0.0-rc.3"
     styletron-utils "^3.0.0-rc.3"
 
