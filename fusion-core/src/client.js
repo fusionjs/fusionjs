@@ -14,12 +14,10 @@ export default function() {
       function renderer(ctx, next) {
         const rendered = render(ctx.element);
         if (rendered instanceof Promise) {
-          return rendered
-            .then(r => {
-              ctx.rendered = r;
-              return next();
-            })
-            .catch(next);
+          return rendered.then(r => {
+            ctx.rendered = r;
+            return next();
+          });
         } else {
           ctx.rendered = rendered;
           return next();

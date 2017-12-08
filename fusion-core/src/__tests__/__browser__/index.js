@@ -32,3 +32,21 @@ test('app callback', async t => {
   t.equal(ctx.element, element, 'sets ctx.element');
   t.end();
 });
+
+test('throws rendering errors', async t => {
+  const element = 'hi';
+  const render = () => {
+    return new Promise(() => {
+      throw new Error('Test error');
+    });
+  };
+  const app = new App(element, render);
+  const callback = app.callback();
+
+  try {
+    await callback();
+  } catch (e) {
+    t.equal(e.message, 'Test error');
+    t.end();
+  }
+});

@@ -249,3 +249,28 @@ test('renderer without element', async t => {
 
   t.end();
 });
+
+test('throws rendering errors', async t => {
+  const element = 'hi';
+  const render = () => {
+    return new Promise(() => {
+      throw new Error('Test error');
+    });
+  };
+  const app = new App(element, render);
+  const renderer = app.plugins[app.plugins.length - 1];
+
+  const ctx = {
+    path: '/',
+    element: null,
+    type: null,
+    body: null,
+  };
+
+  try {
+    await renderer(ctx, render);
+  } catch (e) {
+    t.equal(e.message, 'Test error');
+    t.end();
+  }
+});
