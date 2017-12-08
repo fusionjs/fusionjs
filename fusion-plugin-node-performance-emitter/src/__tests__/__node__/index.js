@@ -47,7 +47,6 @@ test('cannot track the same types more than once at a time', t => {
   const mockEventEmitter = getMockEventEmitterFactory();
   const perfService = plugin({EventEmitter: mockEventEmitter}).of();
 
-  t.doesNotThrow(() => perfService.start(), 'service can run initially');
   t.throws(() => perfService.start(), 'already running trackers cannot start');
 
   // Able to start now that we've stopped
@@ -74,7 +73,6 @@ test('tracking number of timer intervals set', t => {
     EventEmitter: mockEventEmitter,
     timers: mockTimers,
   }).of();
-  perfService.start();
   t.assert(
     mockTimers._getNumSetInterval() === 3,
     'socket usage, event loop, and memory intervals should be set'
@@ -145,13 +143,7 @@ test('tracking emit messages', t => {
     timers: mockTimers,
   }).of();
 
-  // Start and stop all tracking, except the garbage collector
-  perfService.startTrackingEventLoopLag();
-  perfService.startTrackingMemoryUsage();
-  perfService.startTrackingSocketUsage();
-  perfService.stopTrackingEventLoopLag();
-  perfService.stopTrackingMemoryUsage();
-  perfService.stopTrackingSocketUsage();
+  perfService.stop();
 
   setImmediate(() => {
     t.assert(emitNumberTracker === 8, 'all emits should be captured');

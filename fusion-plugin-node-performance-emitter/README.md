@@ -23,24 +23,14 @@ export default function() {
   const app = new App(<Root />);
   const EventEmitter = app.plugin(UniversalEvents);
 
-  if(__NODE__) {
-    const PerfStats = app.plugin(NodePerformanceEmitter, {EventEmitter});
-    app.plugin(AnalyticsPlugin, {PerfStats});
-  }
+  const PerfStats = __NODE__ && app.plugin(NodePerformanceEmitter, {EventEmitter});
+  
+  // in tests, you can stop collecting via
+  PerfStats.of().stop();
 
   return app;
 }
 
-// plugins/analytics.js
-export default function({PerfStats}) => (ctx, next) => {
-  const perf = PerfStats.of(ctx); // Get an instance of the NodePerformanceEmitter
-  perf.start(); // Start collecting stats
-
-  /* do stuff! */
-
-  perf.stop(); // Stop collecting stats
-  return next();
-}
 ```
 
 ---

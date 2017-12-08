@@ -42,7 +42,7 @@ export default ({config, EventEmitter, timers = nodeTimers}) => {
     EventEmitter.of().emit(`node-performance-emitter:${header}`, payload);
   };
 
-  return new Plugin({
+  const p = new Plugin({
     Service: class NodePerformanceEmitter {
       constructor() {
         config = config || {};
@@ -186,4 +186,6 @@ export default ({config, EventEmitter, timers = nodeTimers}) => {
       }
     },
   });
+  p.of().start();
+  return p;
 };
