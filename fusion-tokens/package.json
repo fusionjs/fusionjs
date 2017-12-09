@@ -1,0 +1,53 @@
+{
+  "name": "fusion-types",
+  "version": "1.0.0",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/node.cjs.js",
+  "module": "./dist/node.es.js",
+  "browser": {
+    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
+    "./dist/node.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-flow-strip-types": "^7.0.0-beta.35",
+    "babel-eslint": "^8.0.3",
+    "create-universal-package": "^2.1.1",
+    "eslint": "^4.13.1",
+    "eslint-config-fusion": "^0.2.1",
+    "eslint-plugin-cup": "^1.0.0",
+    "eslint-plugin-flowtype": "^2.40.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.4.0",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-bin": "^0.61.0",
+    "nyc": "^11.4.1",
+    "prettier": "1.9.2",
+    "tape-cup": "^4.7.1",
+    "unitest": "^2.1.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && npm run just-cover",
+    "just-cover": "nyc --reporter=html npm run just-test",
+    "view-cover": "npm run cover && open coverage/index.html",
+    "prepublish": "npm run transpile"
+  },
+  "license": "MIT"
+}
