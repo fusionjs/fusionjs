@@ -210,7 +210,8 @@ function getConfig({target, env, dir, watch, cover}) {
         setImmediate: false,
         // Mocking __filename and __dirname is probably harmless, but for consistency let's keep it off for now.
         __filename: false,
-        __dirname: false,
+        // Tape also requires __dirname, remove once we don't use tape anymore
+        __dirname: env === 'test' && target === 'web' ? true : false,
         /**
        * Tape requires `fs` to be defined
        */
