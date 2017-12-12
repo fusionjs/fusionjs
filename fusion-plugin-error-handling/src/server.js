@@ -53,11 +53,13 @@ onerror = function(m,s,l,c,e) {
       await onError(ctx.request.body, captureTypes.browser);
       ctx.body = {ok: 1};
     }
-    return next().catch(async e => {
-      await onError(e, captureTypes.request);
-      if (ctx.app) ctx.app.emit('error', e, ctx);
+    try {
+      await next();
+    } catch (e) {
+      // Don't await onError here because we want to send a response as soon as possible to the user
+      onError(e, captureTypes.request);
       throw e;
-    });
+    }
   }
   return middleware;
 };

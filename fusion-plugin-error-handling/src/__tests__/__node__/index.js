@@ -26,6 +26,20 @@ test('request errors', async t => {
   process.removeAllListeners('unhandledRejection');
 });
 
+test('request errors send early response', async t => {
+  let called = 0;
+  const onError = () => {
+    called++;
+    // return promise that will never resolve
+    return new Promise(() => {});
+  };
+  const middleware = ErrorHandling({onError});
+  await middleware({}, () => Promise.reject(new Error('server error'))).catch(
+    () => {}
+  );
+  t.equals(called, 1, 'calls error handler without awaiting it');
+  t.end();
+});
 test('Uncaught exceptions', async t => {
   const forked = fork('./fixtures/uncaught-exception.js', {stdio: 'pipe'});
   let stdout = '';
