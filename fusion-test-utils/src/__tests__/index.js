@@ -1,7 +1,7 @@
 import test from 'tape-cup';
 import App from 'fusion-core';
 
-import {render, request} from '../index.js';
+import {render, request, test as exportedTest} from '../index.js';
 
 test('simulate render request', async t => {
   const flags = {render: false};
@@ -36,6 +36,18 @@ test('simulate non-render request', async t => {
     const ctx = await request(app, '/');
     t.notok(ctx.element, 'does not set ctx.element');
     t.ok(!flags.render, 'did not trigger ssr');
+    t.end();
+  }
+});
+
+test('test throws when not using test-app', async t => {
+  try {
+    exportedTest();
+  } catch (e) {
+    t.ok(
+      e.message.includes('test-app'),
+      'throws an error about running test-app'
+    );
     t.end();
   }
 });

@@ -51,6 +51,7 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
+    "assert": "^1.4.1",
     "koa": "^2.4.1",
     "node-mocks-http": "^1.6.6"
   },
