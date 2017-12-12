@@ -33,3 +33,6 @@ yarn add fusion-cli
   - `--cover`: Run tests with coverage
   - `--watch`: Use existing built assets
   - `--skip-build`: Automatically re-profile your application on changes
+- `fusion test-app [--watch] [--match]`: Run tests
+  - `--watch`: Automatically run tests when code changes.
+  - `--match="somestring"`: Only runs tests against files which match this string.
