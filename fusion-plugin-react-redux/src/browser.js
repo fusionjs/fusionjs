@@ -6,11 +6,12 @@ import {Provider} from 'react-redux';
 import {compose, createStore} from 'redux';
 import {Plugin} from 'fusion-core';
 import {unescape} from 'fusion-core';
+import ctxEnhancer from './ctx-enhancer';
 
 export default ({reducer, preloadedState, enhancer}) => {
   return new Plugin({
     Service: class Redux {
-      constructor() {
+      constructor(ctx) {
         // We only use initialState for client-side hydration
         // The real initial state should be derived from the reducer and the @@INIT action
         if (!preloadedState) {
@@ -24,11 +25,12 @@ export default ({reducer, preloadedState, enhancer}) => {
           window.__REDUX_DEVTOOLS_EXTENSION__ &&
           __REDUX_DEVTOOLS_EXTENSION__();
 
-        let finalEnhancer;
-        if (enhancer || devTool) {
-          finalEnhancer = compose(...[enhancer, devTool].filter(Boolean));
-        }
-        this.store = createStore(reducer, preloadedState, finalEnhancer);
+        const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(Boolean);
+        this.store = createStore(
+          reducer,
+          preloadedState,
+          compose(...enhancers)
+        );
       }
     },
     middleware(ctx, next) {

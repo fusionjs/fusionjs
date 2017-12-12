@@ -30,22 +30,36 @@ tape('getInitialState', async t => {
     ...state,
     test: action.payload || 1,
   });
+  const mockCtx = {mock: true};
   const redux = Redux({
     reducer,
     preloadedState: {a: 'b'},
     async getInitialState(ctx) {
-      t.equal(ctx, 'test-ctx');
+      t.equal(ctx, mockCtx);
       return {hello: 'world'};
     },
-  }).of();
-  const store = await redux.initStore('test-ctx');
+  }).of(mockCtx);
+  const store = await redux.initStore();
 
   t.equals(store.getState().test, 1, 'state is accessible');
   t.equal(store.getState().hello, 'world');
   t.equal(store.getState().a, 'b');
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2, 'state receives dispatch');
-  t.equal(store, await redux.initStore('test-ctx'), 'memoization works');
+  t.equal(store, await redux.initStore(), 'memoization works');
+  t.end();
+});
+
+tape('enhancers', async t => {
+  const mockCtx = {mock: true};
+  const myEnhancer = createStore => (...args) => {
+    const store = createStore(...args);
+    t.equals(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
+    return store;
+  };
+  const redux = Redux({reducer: s => s, enhancer: myEnhancer}).of(mockCtx);
+  const store = await redux.initStore();
+  t.equals(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
   t.end();
 });
 

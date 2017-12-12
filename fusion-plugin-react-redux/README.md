@@ -66,3 +66,10 @@ Creates the redux store and integrates it into the Fusion application
 The plugin automatically integrates with the [redux devtools Chrome extension](https://github.com/zalmoxisus/redux-devtools-extension)
 
 ---
+
+### `store.ctx` - Enhancers have access to `ctx`
+
+For convenience, Redux stores are composed with a default right-most enhancer to add `store.ctx` along side with other [Store APIs](https://github.com/reactjs/redux/blob/master/docs/api/Store.md).
+This is particular useful for your custom store enhancers to access to `ctx` for use-cases such as logging, analytics...etc.
+
+See [redux-action-emitter-enhancer](https://github.com/fusionjs/fusion-redux-action-emitter-enhancer/) for an usage example.

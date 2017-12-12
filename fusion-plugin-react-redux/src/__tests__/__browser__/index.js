@@ -80,6 +80,7 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
 });
 
 tape('browser with enhancer', t => {
+  const mockCtx = {mock: true};
   const reducer = (state, action) => {
     return {
       ...state,
@@ -92,10 +93,13 @@ tape('browser with enhancer', t => {
     t.equal(typeof createStore, 'function');
     return (...args) => {
       t.equal(args[0], reducer);
-      return createStore(...args);
+      const store = createStore(...args);
+      t.equal(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
+      return store;
     };
   };
-  const {store} = Redux({reducer, enhancer}).of();
+  const {store} = Redux({reducer, enhancer}).of(mockCtx);
+  t.equal(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2);
