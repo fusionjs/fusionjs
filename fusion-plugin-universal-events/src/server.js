@@ -36,6 +36,7 @@ export default function() {
         if (this.ctx) {
           this.parent = plugin.of();
           this.batch = [];
+          this.flushed = false;
         }
       }
       emit(type, payload, ctx) {
@@ -44,8 +45,17 @@ export default function() {
           super.handleEvent(type, payload, ctx);
         } else {
           payload = this.parent.mapEvent(type, payload, this.ctx);
-          this.batch.push({type, payload});
+          // this logic exists to manage ensuring we send events after the batch
+          if (this.flushed) {
+            this.handleBatchedEvent({type, payload});
+          } else {
+            this.batch.push({type, payload});
+          }
         }
+      }
+      handleBatchedEvent({type, payload}) {
+        super.handleEvent(type, payload, this.ctx);
+        this.parent.handleEvent(type, payload, this.ctx);
       }
       flush() {
         if (!this.ctx) {
@@ -54,11 +64,10 @@ export default function() {
           );
         }
         for (let index = 0; index < this.batch.length; index++) {
-          const {type, payload} = this.batch[index];
-          super.handleEvent(type, payload, this.ctx);
-          this.parent.handleEvent(type, payload, this.ctx);
+          this.handleBatchedEvent(this.batch[index]);
         }
         this.batch = [];
+        this.flushed = true;
       }
       // mirror browser api
       setFrequency() {}
@@ -79,8 +88,12 @@ export default function() {
           ctx.status = 400;
         }
       }
+      // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
+      // into the event batch flush.
       await next();
-      emitter.flush();
+      ctx.timing.end.then(() => {
+        emitter.flush();
+      });
     },
   });
   return plugin;

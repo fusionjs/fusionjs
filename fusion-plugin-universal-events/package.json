@@ -38,6 +38,7 @@
     "eslint-plugin-react": "^7.4.0",
     "flow-bin": "^0.59.0",
     "fusion-core": "^0.2.3",
+    "fusion-test-utils": "^0.2.1",
     "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "tape-cup": "^4.7.1",
