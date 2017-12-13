@@ -13,13 +13,14 @@ module.exports = function buildPreset(
   opts /*: PresetOpts */
 ) {
   const target = opts.targets.hasOwnProperty('node') ? 'node' : 'browser';
+  const modules = opts.modules === undefined ? false : opts.modules;
   return {
     presets: [
       [
         require('babel-preset-env'),
         {
           targets: opts.targets,
-          modules: false,
+          modules: modules,
           exclude: ['transform-regenerator', 'transform-async-to-generator'],
         },
       ],
