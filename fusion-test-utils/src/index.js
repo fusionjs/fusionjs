@@ -17,11 +17,12 @@ export function render(app, url, options = {}) {
   return simulate(app, ctx);
 }
 
+// Export test runner functions from jest
 let test;
-if (typeof global.jest !== 'undefined') {
-  /* eslint-env node */
+if (typeof it !== 'undefined') {
+  /* eslint-env node, jest */
   test = (description, callback, ...rest) =>
-    global.it(description, () => callback(assert), ...rest);
+    it(description, () => callback(assert), ...rest);
 } else {
   const notSupported = () => {
     throw new Error('Can’t import test() when not using the test-app target.');
