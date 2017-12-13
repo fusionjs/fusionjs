@@ -1,19 +1,17 @@
 /* eslint-env browser,node */
-import {applyMiddleware} from 'redux';
-
 export default EventEmitter => {
-  if (__DEV__ && !EventEmitter)
+  if (__DEV__ && !EventEmitter) {
     throw new Error(`EventEmitter is required, but was: ${EventEmitter}`);
+  }
 
-  const emitter = EventEmitter.of();
-  const emit = payload => {
-    emitter.emit('redux-action-emitter:action', payload);
+  return createStore => (...args) => {
+    const store = createStore(...args);
+    return {
+      ...store,
+      dispatch: action => {
+        EventEmitter.of(store.ctx).emit('redux-action-emitter:action', action);
+        return store.dispatch(action);
+      },
+    };
   };
-
-  const emitActionMiddleware = (/*store*/) => next => action => {
-    emit(action);
-    return next(action);
-  };
-
-  return applyMiddleware(emitActionMiddleware);
 };

@@ -1,14 +1,20 @@
-import {createStore} from 'redux';
+import {createStore, compose} from 'redux';
 import test from 'tape-cup';
-import EventEmitter from 'events';
 import actionEmitterFunc from '../../index.js';
 
 /* Mocks & Mock Factories */
 const getMockEventEmitterFactory = function() {
-  const emitter = new EventEmitter();
+  const handlers = {};
   return {
-    of() {
-      return emitter;
+    of(ctx) {
+      return {
+        on(type, handler) {
+          handlers[type] = handler;
+        },
+        emit(type, event) {
+          handlers[type](event, ctx);
+        },
+      };
     },
   };
 };
@@ -39,22 +45,34 @@ test('Emits actions', t => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
   const enhancer = actionEmitterFunc(mockEventEmitter);
-  const store = createStore(sampleReducer, [], enhancer);
+  const mockCtx = {mock: true};
+  const store = createStore(
+    sampleReducer,
+    [],
+    compose(enhancer, createStore => (...args) => {
+      const store = createStore(...args);
+      store.ctx = mockCtx;
+      return store;
+    })
+  );
 
   // Test Emits
-  mockEventEmitter.of().on('redux-action-emitter:action', payload => {
-    t.equal(
-      payload.type,
-      'SAMPLE_SET',
-      'payload type is SAMPLE_SET, as expected'
-    );
-    t.equal(payload.value, true, 'payload value is true, as expected');
-  });
+  mockEventEmitter
+    .of(mockCtx)
+    .on('redux-action-emitter:action', (payload, ctx) => {
+      t.equal(
+        payload.type,
+        'SAMPLE_SET',
+        'payload type is SAMPLE_SET, as expected'
+      );
+      t.equal(payload.value, true, 'payload value is true, as expected');
+      t.equal(ctx, mockCtx, 'ctx was provided');
+    });
   store.dispatch({
     type: 'SAMPLE_SET',
     value: true,
   });
 
-  t.plan(2);
+  t.plan(3);
   t.end();
 });
