@@ -1,0 +1,19 @@
+version: '2'
+services:
+  fusion-plugin-font-loader-react:
+    build: .
+    volumes:
+      - '.:/fusion-plugin-font-loader-react'
+      - /fusion-plugin-font-loader-react/node_modules/
+      - /fusion-plugin-font-loader-react/dist/
+      - /fusion-plugin-font-loader-react/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT

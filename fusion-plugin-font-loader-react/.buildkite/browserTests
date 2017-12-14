@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+export DISPLAY=:99.0
+/etc/init.d/xvfb start
+
+./node_modules/.bin/nyc --instrument=false --exclude-after-remap=false --reporter=text --reporter=json ./node_modules/.bin/unitest --browser=dist-tests/browser.js
+bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json -n browser

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-tests/
+coverage/
+.nyc_output/
+.vscode
+
+.DS_Store
+npm-debug.log
+yarn-error.log

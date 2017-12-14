@@ -1,0 +1,64 @@
+{
+  "name": "fusion-plugin-font-loader-react",
+  "version": "0.1.0",
+  "description": "The Fusion plugin for declaring and optimizing the loading of cutsom fonts",
+  "license": "MIT",
+  "repository": "fusionjs/fusion-plugin-font-loading",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/node.cjs.js",
+  "module": "./dist/node.es.js",
+  "browser": {
+    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
+    "./dist/node.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/preset-react": "^7.0.0-beta.32",
+    "babel-eslint": "^8.0.2",
+    "create-universal-package": "^2.1.1",
+    "enzyme": "^3.1.1",
+    "enzyme-adapter-react-16": "^1.0.4",
+    "eslint": "^4.11.0",
+    "eslint-config-fusion": "^0.1.2",
+    "eslint-plugin-cup": "^1.0.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-prettier": "^2.3.1",
+    "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.59.0",
+    "fusion-core": "^0.2.3",
+    "nyc": "^11.3.0",
+    "prettier": "1.8.2",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
+    "tape-cup": "^4.7.1",
+    "unitest": "^1.1.0"
+  },
+  "peerDependencies": {
+    "fusion-core": "^0.2.3",
+    "react": "14.x - 16.x"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "prepublish": "npm run transpile"
+  },
+  "engines": {
+    "node": ">= 8.9.0"
+  }
+}
