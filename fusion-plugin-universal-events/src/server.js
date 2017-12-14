@@ -40,11 +40,10 @@ export default function() {
         }
       }
       emit(type, payload, ctx) {
-        payload = super.mapEvent(type, payload, this.ctx);
         if (!this.ctx) {
+          payload = super.mapEvent(type, payload, this.ctx);
           super.handleEvent(type, payload, ctx);
         } else {
-          payload = this.parent.mapEvent(type, payload, this.ctx);
           // this logic exists to manage ensuring we send events after the batch
           if (this.flushed) {
             this.handleBatchedEvent({type, payload});
@@ -54,6 +53,8 @@ export default function() {
         }
       }
       handleBatchedEvent({type, payload}) {
+        payload = super.mapEvent(type, payload, this.ctx);
+        payload = this.parent.mapEvent(type, payload, this.ctx);
         super.handleEvent(type, payload, this.ctx);
         this.parent.handleEvent(type, payload, this.ctx);
       }

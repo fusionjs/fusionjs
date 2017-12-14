@@ -152,20 +152,28 @@ test('Server EventEmitter batching', async t => {
 
   app.plugin(() => async (ctx, next) => {
     const emitter = Emitter.of(ctx);
-    emitter.on('test-post-await', ({x}) => {
+    emitter.on('test-post-await', ({x, lol}) => {
       t.equals(x, 1, 'payload is correct');
+      t.ok(lol, 'runs mappers');
       flags.postawait = true;
     });
     await next();
     emitter.emit('test-post-await', {x: 1});
+    emitter.map(payload => {
+      return {
+        ...payload,
+        lol: true,
+      };
+    });
     t.notOk(emitter.flushed, 'waits to flush');
     t.notOk(flags.postawait, 'batches post await next events');
   });
 
   app.plugin(() => async (ctx, next) => {
     const emitter = Emitter.of(ctx);
-    emitter.on('test-post-end', ({x}) => {
+    emitter.on('test-post-end', ({x, lol}) => {
       t.equals(x, 1, 'payload is correct');
+      t.ok(lol, 'runs mappers');
       flags.postend = true;
     });
     ctx.timing.end.then(() => {
@@ -178,8 +186,9 @@ test('Server EventEmitter batching', async t => {
 
   app.plugin(() => async (ctx, next) => {
     const emitter = Emitter.of(ctx);
-    emitter.on('test-timeout', ({x}) => {
+    emitter.on('test-timeout', ({x, lol}) => {
       t.equals(x, 1, 'payload is correct');
+      t.ok(lol, 'runs mappers');
       flags.timeout = true;
     });
     setTimeout(() => {
