@@ -18,10 +18,15 @@ exports.builder = {
     default: null,
     describe: 'Runs test files that match a given string',
   },
+  configPath: {
+    type: 'string',
+    default: './node_modules/fusion-cli/build/jest-config.js',
+    describe: 'Path to the jest configuration',
+  },
 };
 
-exports.run = async function({dir = '.', watch, match}) {
-  const testRuntime = new TestAppRuntime({dir, watch, match});
+exports.run = async function({dir = '.', watch, match, configPath}) {
+  const testRuntime = new TestAppRuntime({dir, watch, match, configPath});
 
   await testRuntime.run();
 

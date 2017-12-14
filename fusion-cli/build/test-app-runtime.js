@@ -2,14 +2,18 @@
 const path = require('path');
 const {spawn} = require('child_process');
 
-module.exports.TestAppRuntime = function({dir = '.', watch = false, match}) {
+module.exports.TestAppRuntime = function({
+  dir = '.',
+  watch = false,
+  match,
+  configPath,
+}) {
   const state = {proc: null};
 
   this.run = () => {
     this.stop();
-
     let command = require.resolve('jest-cli/bin/jest.js');
-    let args = ['--config', './node_modules/fusion-cli/build/jest-config.js'];
+    let args = ['--config', configPath];
 
     if (watch) {
       args.push('--watch');
