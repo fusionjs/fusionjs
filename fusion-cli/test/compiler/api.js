@@ -112,6 +112,50 @@ test('dev works', async t => {
   }
 });
 
+test('compiles with babel plugin', async t => {
+  const envs = ['development'];
+  const dir = './test/fixtures/custom-babel';
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/server/server-main.js`
+  );
+  const clientEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/client/client-main.js`
+  );
+
+  const compiler = new Compiler({envs, dir});
+  await compiler.clean();
+
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
+
+      return resolve(watcher);
+    });
+  });
+  watcher.close();
+
+  t.ok(fs.existsSync(clientEntryPath), 'Client file gets compiled');
+  t.ok(fs.existsSync(serverEntryPath), 'Server file gets compiled');
+
+  const clientEntry = fs.readFileSync(clientEntryPath, 'utf8');
+  const serverEntry = fs.readFileSync(serverEntryPath, 'utf8');
+
+  t.ok(
+    clientEntry.includes('transformed_helloworld_custom_babel'),
+    'custom plugin applied in client'
+  );
+  t.ok(
+    serverEntry.includes('transformed_helloworld_custom_babel'),
+    'custom plugin applied in server'
+  );
+
+  t.end();
+});
+
 test('production works', async t => {
   const envs = ['production'];
   const dir = './test/fixtures/noop';

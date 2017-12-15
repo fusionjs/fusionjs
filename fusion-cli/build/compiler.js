@@ -34,7 +34,7 @@ const ServiceWorkerTimestampPlugin = require('./service-worker-timestamp-plugin.
 const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const globby = require('globby');
-
+const loadFusionRC = require('./load-fusionrc.js');
 const rimraf = require('rimraf');
 
 function getConfig({target, env, dir, watch, cover}) {
@@ -73,6 +73,8 @@ function getConfig({target, env, dir, watch, cover}) {
       `Testing requires browser tests in __tests__ with *.js or *.browser.js extension`
     );
   }
+
+  const fusionConfig = loadFusionRC(dir);
 
   const configPath = path.join(dir, 'package.json');
   const configData = fs.existsSync(configPath) ? require(configPath) : {};
@@ -240,6 +242,10 @@ function getConfig({target, env, dir, watch, cover}) {
               loader: require.resolve('babel-loader'),
               options: {
                 plugins: [
+                  // Note: plugins run first to last, so user-defined plugins go first
+                  ...(fusionConfig.babel && fusionConfig.babel.plugins
+                    ? fusionConfig.babel.plugins
+                    : []),
                   //cup-globals works with webpack.EnvironmentPlugin(['NODE_ENV']) to implement static conditionals
                   require.resolve('babel-plugin-syntax-dynamic-import'),
                   require.resolve('./babel-plugins/babel-plugin-asseturl'),
@@ -269,6 +275,7 @@ function getConfig({target, env, dir, watch, cover}) {
                     ),
                 ].filter(Boolean),
                 presets: [
+                  // Note: presets run last to first, so user-defined presets go last
                   [
                     require.resolve('./babel-preset.js'),
                     {
@@ -283,6 +290,9 @@ function getConfig({target, env, dir, watch, cover}) {
                           },
                     },
                   ],
+                  ...(fusionConfig.babel && fusionConfig.babel.presets
+                    ? fusionConfig.babel.presets
+                    : []),
                 ],
                 babelrc: false,
               },
