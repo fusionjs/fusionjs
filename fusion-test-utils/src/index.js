@@ -20,6 +20,9 @@ export function render(app, url, options = {}) {
 // Export test runner functions from jest
 let test;
 if (typeof it !== 'undefined') {
+  // Surface snapshot testing
+  assert.matchSnapshot = tree => expect(tree).toMatchSnapshot();
+
   /* eslint-env node, jest */
   test = (description, callback, ...rest) =>
     it(description, () => callback(assert), ...rest);
