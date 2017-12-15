@@ -5,6 +5,7 @@ const babelConfig = require('./babel-preset.js')(null, {
     node: 'current',
   },
   modules: 'commonjs',
+  transformGlobals: false,
 });
 
 const transformer = require('babel-jest').createTransformer(babelConfig);

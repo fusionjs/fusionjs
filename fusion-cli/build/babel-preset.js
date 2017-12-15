@@ -35,7 +35,12 @@ module.exports = function buildPreset(
           useBuiltIns: true,
         },
       ],
-      [require.resolve('babel-plugin-transform-cup-globals'), {target: target}],
+      ...(opts.transformGlobals
+        ? [
+            require.resolve('babel-plugin-transform-cup-globals'),
+            {target: target},
+          ]
+        : []),
       ...(target === 'browser'
         ? [
             [

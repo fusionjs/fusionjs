@@ -91,7 +91,7 @@
     "eslint-plugin-react": "^7.1.0",
     "flow-bin": "^0.59.0",
     "fusion-core": "^0.1.8",
-    "fusion-test-utils": "^0.2.3",
+    "fusion-test-utils": "0.2.4",
     "globby": "^6.1.0",
     "prettier": "1.4.2",
     "react": "^16.2.0",
