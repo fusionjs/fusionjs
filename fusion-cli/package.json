@@ -96,6 +96,7 @@
     "prettier": "1.4.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-test-renderer": "^16.2.0",
     "request-promise": "^4.2.1",
     "strip-indent": "^2.0.0",
     "tape": "^4.7.0"

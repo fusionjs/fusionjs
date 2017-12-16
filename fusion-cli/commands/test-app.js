@@ -24,6 +24,11 @@ exports.builder = {
     describe:
       'Comma-separated list of environments to run tests in. Defaults to running both node and browser tests.',
   },
+  updateSnapshot: {
+    type: 'boolean',
+    default: false,
+    describe: 'Updates snapshots',
+  },
   configPath: {
     type: 'string',
     default: './node_modules/fusion-cli/build/jest-config.js',
@@ -31,8 +36,22 @@ exports.builder = {
   },
 };
 
-exports.run = async function({dir = '.', watch, match, env, configPath}) {
-  const testRuntime = new TestAppRuntime({dir, watch, match, env, configPath});
+exports.run = async function({
+  dir = '.',
+  watch,
+  match,
+  env,
+  updateSnapshot,
+  configPath,
+}) {
+  const testRuntime = new TestAppRuntime({
+    dir,
+    watch,
+    match,
+    env,
+    updateSnapshot,
+    configPath,
+  });
 
   await testRuntime.run();
 

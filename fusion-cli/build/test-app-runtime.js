@@ -7,6 +7,7 @@ module.exports.TestAppRuntime = function({
   watch = false,
   match,
   env,
+  updateSnapshot,
   configPath,
 }) {
   const state = {procs: []};
@@ -25,6 +26,10 @@ module.exports.TestAppRuntime = function({
 
       if (match && match.length > 0) {
         args.push(match);
+      }
+
+      if (updateSnapshot) {
+        args.push('--updateSnapshot');
       }
 
       return args;
