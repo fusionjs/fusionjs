@@ -8,6 +8,8 @@ const babelConfig = require('./babel-preset.js')(null, {
   transformGlobals: false,
 });
 
+babelConfig.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
+
 const transformer = require('babel-jest').createTransformer(babelConfig);
 
 const originalProcessFn = transformer.process;

@@ -102,3 +102,13 @@ test('`fusion test-app` snapshotting', async t => {
 
   t.end();
 });
+
+test('`fusion test-app` dynamic imports', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=dynamic-imports`;
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+  t.end();
+});
