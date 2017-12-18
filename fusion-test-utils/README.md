@@ -52,3 +52,26 @@ Simulates a request through your application.
 #### `render(app: FusionApp, url: String, options: ?Object)` => Promise<ctx>
 
 This is the same as `request`, but defaults the `accept` header to `text/html` which will trigger a render of your application.
+
+#### `test(testName: String, executor: (assert) => {})`
+
+A block which executes a test case when using [fusion-cli](https://github.com/fusionjs/fusion-cli) as a test runner. The first argument is the name of the test, and the second argument is a function that executes your test code. The test case will receive a cross-environment assertion helper with all methods defined in the [assert module](https://nodejs.org/api/assert.html), as well as a `.matchSnapshot()` method.
+
+Example usage:
+```js
+import React from 'react';
+import {test} from 'fusion-test-utils';
+import {shallow} from 'enzyme';
+
+import MyComponent from '../my-component';
+
+test('MyComponent snapshot', assert => {
+  const wrapper = shallow(<MyComponent />);
+  assert.matchSnapshot(wrapper);
+});
+
+test('async functions', async assert => {
+  const value = await doSomething();
+  assert.equal(true, value, 'something is equal to true');
+});
+```
