@@ -1,5 +1,7 @@
 # fusion-plugin-font-loader-react
 
+[![Build status](https://badge.buildkite.com/a09fc8cc2c13e72534ae4e791fb891753489fb80e02d82021b.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-font-loader-react)
+
 Provides :
 1. A fusion plugin that generates @font-faces and preloads fallback fonts based on app-level font configuration.
 2. A Higher Order Component for loading custom web fonts (and associated utils). During font loading, this HOC temporarily swaps the element to a well-matched fallback font, avoiding FOIT and FOUT. See https://www.zachleat.com/web/comprehensive-webfonts/#critical-foft-preload for more on this.
