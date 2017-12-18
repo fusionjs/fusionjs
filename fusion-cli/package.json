@@ -36,6 +36,7 @@
     "core-js": "^2.5.1",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
+    "enzyme-to-json": "^3.3.0",
     "es6-object-assign": "^1.1.0",
     "express": "^4.15.2",
     "fast-async": "^6.3.0",
