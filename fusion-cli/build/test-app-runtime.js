@@ -8,6 +8,7 @@ module.exports.TestAppRuntime = function({
   match,
   env,
   updateSnapshot,
+  coverage,
   configPath,
 }) {
   const state = {procs: []};
@@ -22,6 +23,10 @@ module.exports.TestAppRuntime = function({
 
       if (watch) {
         args.push('--watch');
+      }
+
+      if (coverage) {
+        args.push('--coverage');
       }
 
       if (match && match.length > 0) {

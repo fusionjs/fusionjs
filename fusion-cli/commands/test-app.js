@@ -29,6 +29,11 @@ exports.builder = {
     default: false,
     describe: 'Updates snapshots',
   },
+  coverage: {
+    type: 'boolean',
+    default: false,
+    describe: 'Runs test coverage',
+  },
   configPath: {
     type: 'string',
     default: './node_modules/fusion-cli/build/jest-config.js',
@@ -42,6 +47,7 @@ exports.run = async function({
   match,
   env,
   updateSnapshot,
+  coverage,
   configPath,
 }) {
   const testRuntime = new TestAppRuntime({
@@ -50,6 +56,7 @@ exports.run = async function({
     match,
     env,
     updateSnapshot,
+    coverage,
     configPath,
   });
 

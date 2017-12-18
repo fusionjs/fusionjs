@@ -36,3 +36,6 @@ yarn add fusion-cli
 - `fusion test-app [--watch] [--match]`: Run tests
   - `--watch`: Automatically run tests when code changes.
   - `--match="somestring"`: Only runs tests against files which match this string.
+  - `--coverage`: Collects and outputs test coverage
+  - `--env`: Which environments to run tests in. Defaults to "node,jsdom". You may specify only one.
+  - `--updateSnapshot`: Updates snapshots
