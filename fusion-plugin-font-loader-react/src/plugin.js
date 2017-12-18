@@ -11,7 +11,7 @@ import generateFontFaces from './generate-font-faces';
 const fontsToPreload = {};
 let fallbackLookup;
 
-export const FontPlugin = configObject => {
+const FontPlugin = configObject => {
   const {fonts, preloadDepth} = configObject;
 
   fallbackLookup = generateFallbackMap(fonts, preloadDepth);
@@ -38,6 +38,7 @@ export const FontPlugin = configObject => {
     }
   };
 };
+export default FontPlugin;
 
 function getFontDetails(name) {
   const {name: fallbackName, styles = {}} = fallbackLookup[name] || {};

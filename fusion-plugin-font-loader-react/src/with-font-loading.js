@@ -17,7 +17,7 @@ withFontLoading('Lato-Bold')(styled('div', props => props.fontStyles));
 All requested fonts should be defined in src/fonts/fontConfig.js
 */
 
-export const withFontLoading = fontName => {
+const withFontLoading = fontName => {
   return OriginalComponent => {
     class WithFontLoading extends Component {
       constructor(props, context) {
@@ -51,3 +51,5 @@ export const withFontLoading = fontName => {
     return WithFontLoading;
   };
 };
+
+export default withFontLoading;
