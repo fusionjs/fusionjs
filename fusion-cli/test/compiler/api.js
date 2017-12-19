@@ -18,6 +18,185 @@ test('throws if missing src/main.js', t => {
   t.end();
 });
 
+test('development/production env globals', async t => {
+  const envs = ['development', 'production'];
+  const dir = './test/fixtures/noop-test';
+
+  const compiler = new Compiler({envs, dir});
+  await compiler.clean();
+
+  for (let i = 0; i < envs.length; i++) {
+    const entryPath = `.fusion/dist/${envs[i]}/server/server-main.js`;
+    const entry = path.resolve(dir, entryPath);
+
+    const watcher = await new Promise((resolve, reject) => {
+      const watcher = compiler.start((err, stats) => {
+        if (err || stats.hasErrors()) {
+          return reject(err || new Error('Compiler stats included errors.'));
+        }
+
+        return resolve(watcher);
+      });
+    });
+    watcher.close();
+
+    // Validate browser globals by file content
+    const clientDir = path.resolve(dir, `.fusion/dist/${envs[i]}/client`);
+    const assets = fs.readdirSync(clientDir);
+    const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
+    const clientEntryPath = path.resolve(
+      dir,
+      `.fusion/dist/${envs[i]}/client/${clientEntry}`
+    );
+    const clientContent = fs.readFileSync(clientEntryPath, 'utf8');
+
+    const expectedClientBrowser = {
+      development: 'main __BROWSER__ is " + true',
+      production: 'main __BROWSER__ is "+!0',
+    };
+    t.ok(
+      clientContent.includes(expectedClientBrowser[envs[i]]),
+      '__BROWSER__ is transpiled to be true'
+    );
+
+    const expectedClientNode = {
+      development: 'main __NODE__ is " + false',
+      production: 'main __NODE__ is "+!1',
+    };
+    t.ok(
+      clientContent.includes(expectedClientNode[envs[i]]),
+      '__NODE__ is transpiled to be false'
+    );
+
+    // Validate node globals by execution
+    const command = `
+      const assert = require('assert');
+      const app = require('${entry}');
+      assert.equal(typeof app.start, 'function', 'Entry has start function');
+      app
+        .start({port: ${await getPort()}})
+        .then(server => {
+          server.close();
+        })
+        .catch(e => {
+          setImmediate(() => {
+            throw e;
+          });
+        });
+      `;
+    try {
+      const {stdout} = await exec(`node -e "${command}"`, {
+        env: Object.assign({}, process.env, {
+          NODE_ENV: 'production',
+        }),
+      });
+      t.ok(
+        stdout.includes('main __BROWSER__ is false'),
+        'the global, __BROWSER__, is false'
+      );
+      t.ok(
+        stdout.includes(`main __DEV__ is ${envs[i] === 'development'}`),
+        `the global, __DEV__, is ${envs[i] === 'development'}`
+      );
+      t.ok(
+        stdout.includes('main __NODE__ is true'),
+        'the global, __NODE__, is true'
+      );
+    } catch (e) {
+      t.ifError(e);
+      t.end();
+    }
+  }
+  t.end();
+});
+
+test('test env globals', async t => {
+  const envs = ['test'];
+  const dir = './test/fixtures/noop-test';
+
+  const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+  const entry = path.resolve(dir, entryPath);
+  const compiler = new Compiler({envs, dir});
+  await compiler.clean();
+
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
+
+      return resolve(watcher);
+    });
+  });
+  watcher.close();
+
+  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
+  t.ok(fs.existsSync(entry + '.map'), 'Source map gets compiled');
+
+  const clientDir = `.fusion/dist/${envs[0]}/client`;
+  const clientEntry = path.resolve(dir, clientDir, 'client-main.js');
+  t.ok(fs.existsSync(clientEntry), 'client .js');
+  t.ok(fs.existsSync(clientEntry + '.map'), 'client .map');
+
+  // server test bundle
+  const serverCommand = `
+    require('${entry}');
+    `;
+  try {
+    const {stdout} = await exec(`node -e "${serverCommand}"`, {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'production',
+      }),
+    });
+    t.ok(
+      stdout.includes('universal __BROWSER__ is false'),
+      'the global, __BROWSER__, is false in universal tests'
+    );
+    t.ok(
+      stdout.includes('universal __DEV__ is false'),
+      'the global, __DEV__, is false in universal tests'
+    );
+    t.ok(
+      stdout.includes('universal __NODE__ is true'),
+      'the global, __NODE__, is true in universal tests'
+    );
+  } catch (e) {
+    t.ifError(e);
+  }
+
+  // browser test bundle
+  const browserCommand = `
+    require('${clientEntry}');
+    `;
+  try {
+    const {stdout} = await exec(`node -e "${browserCommand}"`, {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'production',
+      }),
+    });
+    t.ok(
+      stdout.includes('browser __BROWSER__ is true'),
+      'the global, __BROWSER__, is true in browser tests'
+    );
+    t.ok(
+      stdout.includes('universal __BROWSER__ is true'),
+      'the global, __BROWSER__, is true in universal tests'
+    );
+    t.ok(
+      stdout.includes('browser __NODE__ is false'),
+      'the global, __NODE__, is false in browser tests'
+    );
+    t.ok(
+      stdout.includes('universal __NODE__ is false'),
+      'the global, __NODE__, is false in universal tests'
+    );
+  } catch (e) {
+    t.ifError(e);
+  }
+
+  t.end();
+});
+
 test('tests throw if no test files exist', t => {
   const envs = ['test'];
   const dir = './test/fixtures/noop';

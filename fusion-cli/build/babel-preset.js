@@ -5,21 +5,23 @@
 /*::
 type PresetOpts = {|
   targets: {|browser: Object|} | {|node: 'current'|},
+  modules: boolean,
+  transformGlobals: boolean
 |};
 */
 
 module.exports = function buildPreset(
   context /*: any */,
-  opts /*: PresetOpts */
+  {targets, modules = false, transformGlobals = true} /*: PresetOpts */
 ) {
-  const target = opts.targets.hasOwnProperty('node') ? 'node' : 'browser';
-  const modules = opts.modules === undefined ? false : opts.modules;
+  const target = targets.hasOwnProperty('node') ? 'node' : 'browser';
+
   return {
     presets: [
       [
         require('babel-preset-env'),
         {
-          targets: opts.targets,
+          targets: targets,
           modules: modules,
           exclude: ['transform-regenerator', 'transform-async-to-generator'],
         },
@@ -35,10 +37,12 @@ module.exports = function buildPreset(
           useBuiltIns: true,
         },
       ],
-      ...(opts.transformGlobals
+      ...(transformGlobals
         ? [
-            require.resolve('babel-plugin-transform-cup-globals'),
-            {target: target},
+            [
+              require.resolve('babel-plugin-transform-cup-globals'),
+              {target: target},
+            ],
           ]
         : []),
       ...(target === 'browser'
