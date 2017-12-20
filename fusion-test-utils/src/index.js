@@ -18,7 +18,7 @@ export function render(app, url, options = {}) {
 }
 
 // Export test runner functions from jest
-let test;
+let mockFunction, test;
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
   assert.matchSnapshot = tree => expect(tree).toMatchSnapshot();
@@ -26,10 +26,12 @@ if (typeof it !== 'undefined') {
   /* eslint-env node, jest */
   test = (description, callback, ...rest) =>
     it(description, () => callback(assert), ...rest);
+  mockFunction = (...args) => jest.fn(...args);
 } else {
   const notSupported = () => {
     throw new Error('Can’t import test() when not using the test-app target.');
   };
   test = notSupported;
+  mockFunction = notSupported;
 }
-export {test};
+export {mockFunction, test};

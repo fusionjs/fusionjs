@@ -25,3 +25,8 @@ steps:
     plugins:
       'docker-compose#v1.7.0':
         run: fusion-test-utils
+  - name: ':jest:'
+    command: yarn jest
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-test-utils

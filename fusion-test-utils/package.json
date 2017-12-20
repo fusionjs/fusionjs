@@ -4,7 +4,9 @@
   "version": "0.2.4",
   "license": "MIT",
   "repository": "fusionjs/fusion-test-utils",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/node.cjs.js",
   "module": "./dist/node.es.js",
   "browser": {
@@ -23,7 +25,11 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.0.3",
+    "babel-jest": "^22.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-jest": "^22.0.3",
+    "babel-preset-react": "^6.24.1",
     "create-universal-package": "^2.1.1",
     "eslint": "^4.12.1",
     "eslint-config-fusion": "^0.1.2",
@@ -33,6 +39,8 @@
     "eslint-plugin-react": "^7.5.1",
     "flow-bin": "^0.60.1",
     "fusion-core": "^0.2.5",
+    "jest": "^22.0.3",
+    "jest-cli": "^22.0.3",
     "nyc": "^11.3.0",
     "prettier": "1.8.2",
     "tape-cup": "^4.7.1",
@@ -43,8 +51,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run transpile"
@@ -59,5 +66,10 @@
   },
   "engines": {
     "node": ">= 8.9.0"
+  },
+  "jest": {
+    "testMatch": [
+      "**/__jest__/**/*.js"
+    ]
   }
 }

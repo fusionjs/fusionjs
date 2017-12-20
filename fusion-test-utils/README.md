@@ -75,3 +75,17 @@ test('async functions', async assert => {
   assert.equal(true, value, 'something is equal to true');
 });
 ```
+
+#### `mockFunction()`
+
+Returns a mock function which allows you to inspect the mock state via the .mock property.
+Example usage:
+```js
+import {mockFunction, test} from '../index';
+
+test('function mocks', assert => {
+  const myMock = mockFunction();
+  myMock();
+  assert.equal(myMock.mock.calls.length, 1);
+});
+```
