@@ -3,8 +3,11 @@
 module.exports = {
   cache: true,
   globals: {
+    // Parity with create-universal-package globals.
+    // https://github.com/rtsao/create-universal-package#globals
     __NODE__: process.env.JEST_ENV === 'node',
     __BROWSER__: process.env.JEST_ENV === 'jsdom',
+    __DEV__: process.env.NODE_ENV !== 'production',
   },
   rootDir: process.cwd(),
   setupFiles: [

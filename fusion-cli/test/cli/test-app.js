@@ -157,3 +157,14 @@ test('`fusion test-app` coverage', async t => {
   t.ok(response.stdout.includes('Uncovered Lines'));
   t.end();
 });
+
+test('`fusion test-app` environment variables', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --coverage --match=environment-variables`;
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+
+  t.end();
+});
