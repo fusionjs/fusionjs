@@ -160,7 +160,18 @@ test('`fusion test-app` coverage', async t => {
 
 test('`fusion test-app` environment variables', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
-  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --coverage --match=environment-variables`;
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=environment-variables`;
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+
+  t.end();
+});
+
+test('`fusion test-app` uses .fusionjs.js', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-babel');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js`;
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   const response = await exec(`node -e "${cmd}"`);
