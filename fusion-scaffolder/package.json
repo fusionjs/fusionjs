@@ -5,18 +5,28 @@
   "license": "MIT",
   "repository": "fusionjs/fusion-scaffolder",
   "main": "index.js",
-  "dependencies": {},
+  "bin": {
+    "fusion-scaffold": "bin/cli.js"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "nunjucks": "^3.0.1",
+    "recursive-readdir": "^2.2.1"
+  },
   "devDependencies": {
     "eslint": "^4.13.0",
     "eslint-config-uber-node-lts": "^1.0.0-rc.7",
     "eslint-plugin-prettier": "^2.3.1",
     "nyc": "^11.3.0",
     "prettier": "^1.9.1",
+    "rimraf": "^2.6.2",
     "tape": "^4.8.0"
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "node test/index.js",
+    "test": "npm run lint && node test/index.js",
     "cover": "nyc npm run test"
   },
   "engines": {
