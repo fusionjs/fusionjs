@@ -8,7 +8,7 @@
 - [Getting started](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/getting-started.md)
 - [Framework comparison](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/framework-comparison.md)
 
-#### Core concepts
+### Core concepts
 
 - [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
 - [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
@@ -21,7 +21,7 @@
 
 ---
 
-### fusion-core
+## fusion-core
 
 The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime.
 
@@ -86,13 +86,13 @@ Call this method to register a plugin into a FusionJS application. Returns a plu
 
 ---
 
-# Plugin
+## Plugin
 
 There are two types of plugins: middleware plugins and service plugins.
 
 When writing a plugin you should always export a function that returns either a middleware or a instance of the `Plugin` class.
 
-#### Middleware plugins
+### Middleware plugins
 
 A middleware plugin is a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some FusionJS-specific properties, and a `next` callback function.
 
@@ -118,7 +118,7 @@ export default () => __NODE__ && async (ctx, next) => {
 }
 ```
 
-## Services
+### Services
 
 Often we want to encapsulate some functionality into a single coherent package that exposes a programmatic API that can be consumed by others.
 
