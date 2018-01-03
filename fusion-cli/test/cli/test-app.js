@@ -163,7 +163,11 @@ test('`fusion test-app` environment variables', async t => {
   const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=environment-variables`;
 
   const cmd = `require('${runnerPath}').run('${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await exec(`node -e "${cmd}"`, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'development',
+    }),
+  });
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
   t.end();
