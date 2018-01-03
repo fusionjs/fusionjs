@@ -1,4 +1,4 @@
-## Getting started
+# Getting started
 
 ### Setup FusionJS packages
 
@@ -27,7 +27,7 @@ Next, let's add scripts to `package.json`:
 
 ### Hello world
 
-Fusion expects the entry file to be at `src/main.js`. There we can specify what rendering library we want to use. For convenience, the `fusion-react` package provides a entry-point application class that is already configured to work with React. Let's use that:
+Fusion expects the entry file to be at `src/main.js`. There we can specify what rendering library we want to use. For convenience, the `fusion-react` package provides an entry-point application class that is already configured to work with React. Let's use that:
 
 ```js
 // src/main.js
@@ -76,7 +76,7 @@ Let's install these packages:
 yarn add fusion-plugin-styletron-react styletron
 ```
 
-This package contains the plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides [powerful server-side CSS optimizations](https://ryantsao.com/blog/virtual-css-with-styletron), yielding less CSS code down the wire.
+This package contains the plugin for Styletron, which, in addition to providing an easy-to-use styled-component-like interface, provides [powerful server-side CSS optimizations](https://ryantsao.com/blog/virtual-css-with-styletron), yielding less CSS code down the wire.
 
 To register the plugin, let's modify `src/main.js` to register the Styletron plugin:
 
