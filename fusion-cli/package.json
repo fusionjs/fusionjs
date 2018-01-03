@@ -84,6 +84,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.0.0",
+    "enzyme": "^3.3.0",
     "eslint": "^4.2.0",
     "eslint-config-fusion": "^0.1.2",
     "eslint-plugin-cup": "^1.0.0-rc.4",
