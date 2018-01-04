@@ -26,8 +26,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && node test/index.js",
-    "cover": "nyc npm run test"
+    "test": "yarn lint && node test/index.js",
+    "cover": "nyc yarn test"
   },
   "engines": {
     "node": ">=8.0.0",
