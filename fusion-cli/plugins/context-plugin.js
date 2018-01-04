@@ -18,6 +18,7 @@ module.exports = function() {
     ctx.env = envVars.env;
     ctx.prefix = envVars.prefix;
     ctx.assetPath = envVars.assetPath;
+    ctx.cdnUrl = envVars.cdnUrl;
 
     // webpack-related things
     ctx.syncChunks = compilationMetaData.syncChunks;

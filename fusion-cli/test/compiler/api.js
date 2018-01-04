@@ -3,8 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const run = require('../run-command');
 const getPort = require('get-port');
 
 const {Compiler} = require('../../build/compiler');
@@ -84,28 +83,19 @@ test('development/production env globals', async t => {
           });
         });
       `;
-    try {
-      const {stdout} = await exec(`node -e "${command}"`, {
-        env: Object.assign({}, process.env, {
-          NODE_ENV: 'production',
-        }),
-      });
-      t.ok(
-        stdout.includes('main __BROWSER__ is false'),
-        'the global, __BROWSER__, is false'
-      );
-      t.ok(
-        stdout.includes(`main __DEV__ is ${envs[i] === 'development'}`),
-        `the global, __DEV__, is ${envs[i] === 'development'}`
-      );
-      t.ok(
-        stdout.includes('main __NODE__ is true'),
-        'the global, __NODE__, is true'
-      );
-    } catch (e) {
-      t.ifError(e);
-      t.end();
-    }
+    const {stdout} = await run(command);
+    t.ok(
+      stdout.includes('main __BROWSER__ is false'),
+      'the global, __BROWSER__, is false'
+    );
+    t.ok(
+      stdout.includes(`main __DEV__ is ${envs[i] === 'development'}`),
+      `the global, __DEV__, is ${envs[i] === 'development'}`
+    );
+    t.ok(
+      stdout.includes('main __NODE__ is true'),
+      'the global, __NODE__, is true'
+    );
   }
   t.end();
 });
@@ -142,57 +132,49 @@ test('test env globals', async t => {
   const serverCommand = `
     require('${entry}');
     `;
-  try {
-    const {stdout} = await exec(`node -e "${serverCommand}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'production',
-      }),
-    });
-    t.ok(
-      stdout.includes('universal __BROWSER__ is false'),
-      'the global, __BROWSER__, is false in universal tests'
-    );
-    t.ok(
-      stdout.includes('universal __DEV__ is false'),
-      'the global, __DEV__, is false in universal tests'
-    );
-    t.ok(
-      stdout.includes('universal __NODE__ is true'),
-      'the global, __NODE__, is true in universal tests'
-    );
-  } catch (e) {
-    t.ifError(e);
-  }
+  let {stdout} = await run(serverCommand, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'production',
+    }),
+  });
+  t.ok(
+    stdout.includes('universal __BROWSER__ is false'),
+    'the global, __BROWSER__, is false in universal tests'
+  );
+  t.ok(
+    stdout.includes('universal __DEV__ is false'),
+    'the global, __DEV__, is false in universal tests'
+  );
+  t.ok(
+    stdout.includes('universal __NODE__ is true'),
+    'the global, __NODE__, is true in universal tests'
+  );
 
   // browser test bundle
   const browserCommand = `
     require('${clientEntry}');
     `;
-  try {
-    const {stdout} = await exec(`node -e "${browserCommand}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'production',
-      }),
-    });
-    t.ok(
-      stdout.includes('browser __BROWSER__ is true'),
-      'the global, __BROWSER__, is true in browser tests'
-    );
-    t.ok(
-      stdout.includes('universal __BROWSER__ is true'),
-      'the global, __BROWSER__, is true in universal tests'
-    );
-    t.ok(
-      stdout.includes('browser __NODE__ is false'),
-      'the global, __NODE__, is false in browser tests'
-    );
-    t.ok(
-      stdout.includes('universal __NODE__ is false'),
-      'the global, __NODE__, is false in universal tests'
-    );
-  } catch (e) {
-    t.ifError(e);
-  }
+  const {stdout: browserStdout} = await run(browserCommand, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'production',
+    }),
+  });
+  t.ok(
+    browserStdout.includes('browser __BROWSER__ is true'),
+    'the global, __BROWSER__, is true in browser tests'
+  );
+  t.ok(
+    browserStdout.includes('universal __BROWSER__ is true'),
+    'the global, __BROWSER__, is true in universal tests'
+  );
+  t.ok(
+    browserStdout.includes('browser __NODE__ is false'),
+    'the global, __NODE__, is false in browser tests'
+  );
+  t.ok(
+    browserStdout.includes('universal __NODE__ is false'),
+    'the global, __NODE__, is false in universal tests'
+  );
 
   t.end();
 });
@@ -278,17 +260,12 @@ test('dev works', async t => {
       });
     });
     `;
-  try {
-    await exec(`node -e "${command}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'development',
-      }),
-    });
-    t.end();
-  } catch (e) {
-    t.ifError(e);
-    t.end();
-  }
+  await run(command, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'development',
+    }),
+  });
+  t.end();
 });
 
 test('compiles with babel plugin', async t => {
@@ -384,17 +361,12 @@ test('production works', async t => {
         });
       });
     `;
-  try {
-    await exec(`node -e "${command}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'production',
-      }),
-    });
-    t.end();
-  } catch (e) {
-    t.ifError(e);
-    t.end();
-  }
+  await run(command, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'production',
+    }),
+  });
+  t.end();
 });
 
 // TODO(#24): Is this how testing should work?
@@ -431,53 +403,45 @@ test('test works', async t => {
   const serverCommand = `
     require('${entry}');
     `;
-  try {
-    const {stdout} = await exec(`node -e "${serverCommand}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'production',
-      }),
-    });
-    t.ok(
-      stdout.includes('server test runs'),
-      'server test included in server test bundle'
-    );
-    t.ok(
-      !stdout.includes('client test runs'),
-      'client test not included in server test bundle'
-    );
-    t.ok(
-      stdout.includes('universal test runs'),
-      'universal test included in browser test bundle'
-    );
-  } catch (e) {
-    t.ifError(e);
-  }
+  const {stdout} = await run(serverCommand, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'production',
+    }),
+  });
+  t.ok(
+    stdout.includes('server test runs'),
+    'server test included in server test bundle'
+  );
+  t.ok(
+    !stdout.includes('client test runs'),
+    'client test not included in server test bundle'
+  );
+  t.ok(
+    stdout.includes('universal test runs'),
+    'universal test included in browser test bundle'
+  );
 
   // browser test bundle
   const browserCommand = `
     require('${clientEntry}');
     `;
-  try {
-    const {stdout} = await exec(`node -e "${browserCommand}"`, {
-      env: Object.assign({}, process.env, {
-        NODE_ENV: 'production',
-      }),
-    });
-    t.ok(
-      !stdout.includes('server test runs'),
-      'server test not included in browser test bundle'
-    );
-    t.ok(
-      stdout.includes('client test runs'),
-      'client test included in browser test bundle'
-    );
-    t.ok(
-      stdout.includes('universal test runs'),
-      'universal test included in browser test bundle'
-    );
-  } catch (e) {
-    t.ifError(e);
-  }
+  const {stdout: browserStdout} = await run(browserCommand, {
+    env: Object.assign({}, process.env, {
+      NODE_ENV: 'production',
+    }),
+  });
+  t.ok(
+    !browserStdout.includes('server test runs'),
+    'server test not included in browser test bundle'
+  );
+  t.ok(
+    browserStdout.includes('client test runs'),
+    'client test included in browser test bundle'
+  );
+  t.ok(
+    browserStdout.includes('universal test runs'),
+    'universal test included in browser test bundle'
+  );
 
   t.end();
 });

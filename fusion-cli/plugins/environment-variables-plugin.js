@@ -14,8 +14,9 @@ if (!(env === 'development' || env === 'production')) {
   throw new Error(`Invalid NODE_ENV loaded: ${env}.`);
 }
 const prefix = load('ROUTE_PREFIX', '');
-const assetPath = load('FRAMEWORK_STATIC_ASSET_PATH', '/_static');
-assert(!prefix.endsWith('/'), 'ROUTE_PREFIX must not end with /');
+const assetPath = '/_static';
+const cdnUrl = load('CDN_URL', '');
+assert(!cdnUrl.endsWith('/'), 'ROUTE_PREFIX must not end with /');
 
 module.exports = function() {
   return new SingletonPlugin({
@@ -25,6 +26,7 @@ module.exports = function() {
         env: 'development' | 'production';
         prefix: string;
         assetPath: string;
+        cdnUrl: string;
       */
 
       constructor() {
@@ -32,6 +34,7 @@ module.exports = function() {
         this.env = env;
         this.prefix = prefix;
         this.assetPath = assetPath;
+        this.cdnUrl = cdnUrl;
       }
     },
   });

@@ -27,5 +27,7 @@ module.exports.run = args => {
       value: instance,
     });
     return Promise.reject(error);
-  } else return require(cmdPath).run(instance.argv);
+  } else {
+    return require(cmdPath).run(instance.argv);
+  }
 };

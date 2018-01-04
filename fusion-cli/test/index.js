@@ -2,8 +2,8 @@
 require('./compiler/api');
 require('./compiler/errors');
 require('./cli/dev');
-require('./cli/test');
 require('./cli/test-app');
+require('./cli/build');
 
 /*
 require('./browser-support');

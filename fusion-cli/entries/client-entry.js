@@ -14,7 +14,7 @@ The property can be set at runtime by assigning to a magic
 global variable called `__webpack_public_path__`.
 
 We set this value at runtime because its value depends on the
-`ROUTE_PREFIX` and `FRAMEWORK_ASSET_PATH` environment variables.
+`ROUTE_PREFIX` and `CDN_URL` environment variables.
 
 The value of the env var is sent from the server to the client
 by the `/plugins/compilation-metadata-plugin.js` file. It creates

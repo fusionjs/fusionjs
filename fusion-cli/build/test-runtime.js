@@ -43,7 +43,7 @@ module.exports.TestRuntime = function({
       });
 
       state.proc.on('error', reject);
-      state.proc.on('exit', (code, signal) => {
+      state.proc.on('close', (code, signal) => {
         if (code) {
           return reject(new Error(`Test exited with code ${code}`));
         }

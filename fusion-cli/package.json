@@ -8,7 +8,9 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "node test/index.js"
+    "test": "node test/index.js && node test/cli/test.js",
+    "TODO(#102)": "Something weird is going on with nyc and unitest. This is a hack to fix it",
+    "cover": "node test/cli/test.js && nyc node test/index.js"
   },
   "dependencies": {
     "@nadiia/file-loader": "^1.0.0-beta.5",
@@ -57,7 +59,7 @@
     "mime-db": "^1.26.0",
     "multi-entry-loader": "^1.1.2",
     "node-zopfli": "^2.0.2",
-    "nyc": "^11.3.0",
+    "nyc": "^11.4.1",
     "path-is-absolute": "^1.0.1",
     "progress-bar-webpack-plugin": "^1.10.0",
     "range-parser": "^1.2.0",

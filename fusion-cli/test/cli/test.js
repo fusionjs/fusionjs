@@ -3,12 +3,11 @@
 const path = require('path');
 const test = require('tape');
 
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const run = require('../run-command');
 
 const runnerPath = require.resolve('../../bin/cli-runner');
 
-test('`fusion test` exits w/ unhandled promise rejection in server tests', async t => {
+test('"fusion test" exits w/ unhandled promise rejection in server tests', async t => {
   const dir = path.resolve(
     __dirname,
     '../fixtures/unhandled-promise-rejection-server'
@@ -17,7 +16,7 @@ test('`fusion test` exits w/ unhandled promise rejection in server tests', async
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
-    await exec(`node -e "${cmd}"`, {
+    await run(cmd, {
       env: Object.assign({}, process.env, {
         NODE_ENV: 'production',
       }),
@@ -40,7 +39,7 @@ test('`fusion test` exits w/ unhandled promise rejection in browser tests', asyn
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await run(cmd);
     t.fail('should not succeed');
   } catch (e) {
     t.notEqual(e.code, 0, 'exits with non-zero status code');
