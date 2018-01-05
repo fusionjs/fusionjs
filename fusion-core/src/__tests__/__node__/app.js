@@ -19,12 +19,16 @@ test('context composition', t => {
     ctx.element = ctx.element.toUpperCase();
     return next();
   };
+  const chunkUrlMap = new Map();
+  const chunkIdZero = new Map();
+  chunkIdZero.set('es5', 'es5-file.js');
+  chunkUrlMap.set(0, chunkIdZero);
   const context = {
     headers: {accept: 'text/html'},
     path: '/',
-    syncChunks: [],
+    syncChunks: [0],
     preloadChunks: [],
-    chunkUrlMap: new Set(),
+    chunkUrlMap,
     webpackPublicPath: '/',
     element: null,
     rendered: null,
@@ -39,6 +43,50 @@ test('context composition', t => {
   middleware(context, () => Promise.resolve())
     .then(() => {
       t.equals(typeof context.rendered, 'string', 'renders');
+      t.ok(context.body.includes('src="/es5-file.js"'));
+      t.ok(context.rendered.includes('<h1>HELLO</h1>'), 'has expected html');
+      t.end();
+    })
+    .catch(e => {
+      t.ifError(e, 'something went wrong');
+      t.end();
+    });
+});
+
+test('context composition with a cdn', t => {
+  const element = 'hello';
+  const render = el => `<h1>${el}</h1>`;
+  const wrap = () => (ctx, next) => {
+    ctx.element = ctx.element.toUpperCase();
+    return next();
+  };
+  const chunkUrlMap = new Map();
+  const chunkIdZero = new Map();
+  chunkIdZero.set('es5', 'es5-file.js');
+  chunkUrlMap.set(0, chunkIdZero);
+  const context = {
+    headers: {accept: 'text/html'},
+    path: '/',
+    syncChunks: [0],
+    preloadChunks: [],
+    chunkUrlMap,
+    webpackPublicPath: 'https://something.com/lol',
+    element: null,
+    rendered: null,
+    render: null,
+    type: null,
+    body: null,
+  };
+
+  const app = new App(element, render);
+  app.plugin(wrap);
+  const middleware = compose(app.plugins);
+  middleware(context, () => Promise.resolve())
+    .then(() => {
+      t.equals(typeof context.rendered, 'string', 'renders');
+      t.ok(
+        context.body.includes('src="https://something.com/lol/es5-file.js"')
+      );
       t.ok(context.rendered.includes('<h1>HELLO</h1>'), 'has expected html');
       t.end();
     })

@@ -130,8 +130,13 @@ function getCoreGlobals(ctx) {
 
 function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
   return chunks.map(id => {
-    const url = chunkUrlMap.get(id).get('es5');
-    return {id, url: path.join(webpackPublicPath, url)};
+    let url = chunkUrlMap.get(id).get('es5');
+    if (webpackPublicPath.endsWith('/')) {
+      url = webpackPublicPath + url;
+    } else {
+      url = webpackPublicPath + '/' + url;
+    }
+    return {id, url};
   });
 }
 
