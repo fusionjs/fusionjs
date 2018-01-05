@@ -8,6 +8,7 @@ const getPort = require('get-port');
 const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
+const renderError = require('./server-error').renderError;
 
 function getChildUrl(originalUrl, replacement) {
   const parsedUrl = Object.assign(url.parse(originalUrl), replacement);
@@ -18,6 +19,7 @@ function getChildUrl(originalUrl, replacement) {
 function Lifecycle() {
   const emitter = new EventEmitter();
   const state = {started: false};
+  let listening = false;
   return {
     start: () => {
       state.started = true;
@@ -26,10 +28,23 @@ function Lifecycle() {
     stop: () => {
       state.started = false;
     },
+    error: error => {
+      state.error = error;
+      // The error listener may emit before we call wait.
+      // Make sure that we're listening before attempting to emit.
+      if (listening) {
+        emitter.emit('error');
+      }
+    },
     wait: () => {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         if (state.started) resolve();
-        else emitter.once('started', resolve);
+        else if (state.error) reject(state.error);
+        else {
+          listening = true;
+          emitter.once('started', resolve);
+          emitter.once('error', () => reject(state.error));
+        }
       });
     },
   };
@@ -63,7 +78,12 @@ module.exports.DevelopmentRuntime = function({
 
       const logAndSend = e => {
         logErrors(e);
-        process.send('error');
+        process.send({event: 'error', payload: {
+          message: e.message,
+          name: e.name,
+          stack: e.stack,
+          type: e.type
+        }});
       }
 
       const entry = path.resolve(
@@ -76,7 +96,7 @@ module.exports.DevelopmentRuntime = function({
           const {start} = require(entry);
           start({port: ${childPort}})
             .then(() => {
-              process.send('started')
+              process.send({event: 'started'})
             })
             .catch(logAndSend); // handle server bootstrap errors (e.g. port already in use)
         }
@@ -105,11 +125,12 @@ module.exports.DevelopmentRuntime = function({
       state.proc.on('error', handleChildServerCrash);
       state.proc.on('exit', handleChildServerCrash);
       state.proc.on('message', message => {
-        if (message === 'started') {
+        if (message.event === 'started') {
           lifecycle.start();
           resolve();
         }
-        if (message === 'error') {
+        if (message.event === 'error') {
+          lifecycle.error(message.payload);
           killProc();
           reject(new Error('Received error message from server'));
         }
@@ -130,7 +151,6 @@ module.exports.DevelopmentRuntime = function({
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
         const childPort = await state.childPortP;
-
         lifecycle.wait().then(function retry() {
           const newUrl = getChildUrl(req.url, {
             protocol: 'http',
@@ -140,13 +160,14 @@ module.exports.DevelopmentRuntime = function({
           const proxyReq = request(newUrl);
           proxyReq.on('error', retry);
           req.pipe(proxyReq).pipe(res);
+        }, error => {
+          renderError(res, error);
         });
       });
     });
     const listen = promisify(state.server.listen.bind(state.server));
     return listen(port).then(() => {
       const url = `http://localhost:${port}`;
-      console.log(`Server listening at ${url}`); // eslint-disable-line
       if (!noOpen) openUrl(url);
     });
   };
