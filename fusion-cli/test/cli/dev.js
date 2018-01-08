@@ -65,12 +65,17 @@ test('`fusion dev` works with assets with cdnUrl', async t => {
 });
 
 test('`fusion dev` top-level error', async t => {
-  const dir = path.resolve(
-    __dirname,
-    '../fixtures/server-error-route-component'
-  );
+  const dir = path.resolve(__dirname, '../fixtures/server-startup-error');
   const {res, proc} = await dev(`--dir=${dir}`);
-  t.ok(res.includes('top-level-route-error'));
+  t.ok(res.includes('server-startup-error'));
+  proc.kill();
+  t.end();
+});
+
+test('`fusion dev` server render error', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/server-render-error');
+  const {res, proc} = await dev(`--dir=${dir}`);
+  t.ok(res.includes('server-render-error'));
   proc.kill();
   t.end();
 });

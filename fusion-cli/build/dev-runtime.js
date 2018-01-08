@@ -163,7 +163,8 @@ module.exports.DevelopmentRuntime = function({
             req.pipe(proxyReq).pipe(res);
           },
           error => {
-            renderError(res, error);
+            res.write(renderError(error));
+            res.end();
           }
         );
       });

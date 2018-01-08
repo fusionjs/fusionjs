@@ -5,10 +5,12 @@ import main from '__FRAMEWORK_SHARED_ENTRY__';
 import CompilationMetaDataFactory from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextFactory from '../plugins/context-plugin';
+import ServerErrorFactory from '../plugins/server-error-plugin';
 
 const CompilationMetaData = CompilationMetaDataFactory();
 const Assets = AssetsFactory();
 const Context = ContextFactory();
+const ServerErrorHandling = ServerErrorFactory();
 
 /*
 Webpack has a configuration option called `publicPath`, which determines the
@@ -59,6 +61,9 @@ export async function start({port}) {
 async function reload() {
   const app = await initialize();
   app.plugins = [Assets, Context].concat(app.plugins);
+  if (__DEV__) {
+    app.plugins.unshift(ServerErrorHandling);
+  }
   state.serve = app.callback();
   state.app = app;
 }

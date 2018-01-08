@@ -75,7 +75,13 @@ async function waitForServer(port) {
       });
       started = true;
     } catch (e) {
-      numTries++;
+      // Allow returning true for 500 status code errors to test error states
+      if (e.statusCode === 500) {
+        started = true;
+        res = e.response.body;
+      } else {
+        numTries++;
+      }
     }
   }
   if (!started) {
