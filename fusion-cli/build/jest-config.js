@@ -9,6 +9,7 @@ module.exports = {
     __BROWSER__: process.env.JEST_ENV === 'jsdom',
     __DEV__: process.env.NODE_ENV !== 'production',
   },
+  coverageReporters: ['json', 'lcov', 'text', 'cobertura'],
   rootDir: process.cwd(),
   setupFiles: [
     require.resolve('./jest-framework-shims.js'),
