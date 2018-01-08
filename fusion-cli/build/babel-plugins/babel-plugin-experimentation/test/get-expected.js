@@ -1,5 +1,6 @@
 /* eslint-env node */
 const stripIndent = require('strip-indent');
+
 const sharedExpectedContent = stripIndent(
   `
     import { chunkId as _chunkId } from 'fusion-core';

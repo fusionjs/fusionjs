@@ -7,7 +7,10 @@ const test = require('tape');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
 
+const readFile = promisify(fs.readFile);
+
 const countTests = require('../fixtures/test-jest-app/count-tests');
+
 const runnerPath = require.resolve('../../bin/cli-runner');
 
 test('`fusion test-app` passes', async t => {
@@ -93,8 +96,8 @@ test('`fusion test-app` snapshotting', async t => {
   const updateSnapshot = `require('${runnerPath}').run('${args} --updateSnapshot')`;
   await exec(`node -e "${updateSnapshot}"`);
 
-  const newSnapshotCode = fs.readFileSync(snapshotFile);
-  const originalSnapshotCode = fs.readFileSync(backupSnapshot);
+  const newSnapshotCode = await readFile(snapshotFile);
+  const originalSnapshotCode = await readFile(backupSnapshot);
   t.notEqual(newSnapshotCode, originalSnapshotCode, 'snapshot is updated');
 
   // Restore the failing snapshot
@@ -125,8 +128,8 @@ test('`fusion test-app` snapshotting - enzyme serializer', async t => {
   const updateSnapshot = `require('${runnerPath}').run('${args} --updateSnapshot')`;
   await exec(`node -e "${updateSnapshot}"`);
 
-  const newSnapshotCode = fs.readFileSync(snapshotFile);
-  const originalSnapshotCode = fs.readFileSync(backupSnapshot);
+  const newSnapshotCode = await readFile(snapshotFile);
+  const originalSnapshotCode = await readFile(backupSnapshot);
   t.notEqual(newSnapshotCode, originalSnapshotCode, 'snapshot is updated');
 
   // Restore the failing snapshot

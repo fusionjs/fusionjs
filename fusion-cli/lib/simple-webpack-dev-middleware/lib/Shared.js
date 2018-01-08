@@ -3,6 +3,7 @@
 const parseRange = require('range-parser');
 const pathIsAbsolute = require('path-is-absolute');
 const MemoryFileSystem = require('memory-fs');
+
 const HASH_REGEXP = /[0-9a-f]{10,}/;
 const EventEmitter = require('events');
 

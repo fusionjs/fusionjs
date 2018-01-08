@@ -5,8 +5,8 @@ module.exports = function doTransform(inputString) {
   return (
     transform(inputString.trim(), {
       plugins: [[plugin]],
-    }).code
-      .trim()
+    })
+      .code.trim()
       // Normalize quotes
       .replace(/"/g, "'")
   );

@@ -1,9 +1,10 @@
 /* eslint-env node */
-require('./compiler/api');
-require('./compiler/errors');
 require('./cli/dev');
 require('./cli/test-app');
+require('./cli/test');
 require('./cli/build');
+require('./compiler/api');
+require('./compiler/errors');
 
 /*
 require('./browser-support');

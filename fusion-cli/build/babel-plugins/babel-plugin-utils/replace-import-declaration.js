@@ -1,6 +1,7 @@
 // @flow
 /* eslint-env node */
 const snakeCase = require('just-snake-case');
+
 module.exports = replaceImportDeclaration;
 
 /*

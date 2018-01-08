@@ -4,6 +4,7 @@
 import 'core-js/es6';
 import 'core-js/es7';
 
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 import initialize from '__FRAMEWORK_SHARED_ENTRY__';
 
 /*

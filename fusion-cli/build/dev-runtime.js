@@ -151,18 +151,21 @@ module.exports.DevelopmentRuntime = function({
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
         const childPort = await state.childPortP;
-        lifecycle.wait().then(function retry() {
-          const newUrl = getChildUrl(req.url, {
-            protocol: 'http',
-            hostname: 'localhost',
-            port: childPort,
-          });
-          const proxyReq = request(newUrl);
-          proxyReq.on('error', retry);
-          req.pipe(proxyReq).pipe(res);
-        }, error => {
-          renderError(res, error);
-        });
+        lifecycle.wait().then(
+          function retry() {
+            const newUrl = getChildUrl(req.url, {
+              protocol: 'http',
+              hostname: 'localhost',
+              port: childPort,
+            });
+            const proxyReq = request(newUrl);
+            proxyReq.on('error', retry);
+            req.pipe(proxyReq).pipe(res);
+          },
+          error => {
+            renderError(res, error);
+          }
+        );
       });
     });
     const listen = promisify(state.server.listen.bind(state.server));

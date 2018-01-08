@@ -4,7 +4,7 @@
 
 /* eslint-env browser */
 /* global setImmediate, setTimeout */
-
+// eslint-disable-next-line import/no-mutable-exports
 var Promise = function(executor) {
   if (!(this instanceof Promise))
     throw new Error('Promise must be called with `new`');
@@ -20,9 +20,8 @@ var Promise = function(executor) {
     resolvers: resolvers,
     rejectors: rejectors,
   });
-  var callAsync = typeof setImmediate === 'function'
-    ? setImmediate
-    : setTimeout;
+  var callAsync =
+    typeof setImmediate === 'function' ? setImmediate : setTimeout;
   function handler(list, shouldAbsorb) {
     return function execute(value) {
       var then;

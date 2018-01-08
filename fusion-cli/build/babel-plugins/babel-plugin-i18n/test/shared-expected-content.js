@@ -1,5 +1,6 @@
 /* eslint-env node */
 const stripIndent = require('strip-indent');
+
 module.exports = () =>
   stripIndent(
     `

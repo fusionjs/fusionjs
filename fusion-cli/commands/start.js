@@ -11,6 +11,11 @@ exports.builder = {
   //   default: false,
   //   describe: 'Debug application',
   // },
+  port: {
+    type: 'number',
+    describe:
+      'Port to start the server on. Defaults to process.env.PORT_HTTP || 3000',
+  },
   dir: {
     type: 'string',
     default: '.',
@@ -23,7 +28,7 @@ exports.builder = {
   },
 };
 
-exports.run = async function({dir = '.', environment}) {
+exports.run = async function({dir = '.', environment, port}) {
   const getEntry = env => {
     const entryPath = `.fusion/dist/${env}/server/server-main.js`;
     return path.resolve(dir, entryPath);
@@ -36,8 +41,7 @@ exports.run = async function({dir = '.', environment}) {
   if (env) {
     const entry = getEntry(env);
     const {start} = require(entry);
-
-    return start({port: process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
+    return start({port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
   } else {
     throw new Error(`App can't start. JS isn't compiled`); // handle compilation errors
   }

@@ -16,8 +16,8 @@ module.exports = function doTransform(inputString) {
         ],
         babelPluginSyntaxJsx,
       ],
-    }).code
-      .trim()
+    })
+      .code.trim()
       // Normalize quotes
       .replace(/"/g, "'")
   );

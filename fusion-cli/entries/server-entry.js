@@ -1,5 +1,6 @@
 /* eslint-env node */
 import http from 'http';
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 import main from '__FRAMEWORK_SHARED_ENTRY__';
 import CompilationMetaDataFactory from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';

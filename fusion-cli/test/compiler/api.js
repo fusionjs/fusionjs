@@ -3,10 +3,14 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
-const run = require('../run-command');
+const {run} = require('../run-command');
 const getPort = require('get-port');
-
 const {Compiler} = require('../../build/compiler');
+const {promisify} = require('util');
+
+const exists = promisify(fs.exists);
+const readFile = promisify(fs.readFile);
+const readdir = promisify(fs.readdir);
 
 test('throws if missing src/main.js', t => {
   const envs = ['development'];
@@ -41,13 +45,13 @@ test('development/production env globals', async t => {
 
     // Validate browser globals by file content
     const clientDir = path.resolve(dir, `.fusion/dist/${envs[i]}/client`);
-    const assets = fs.readdirSync(clientDir);
+    const assets = await readdir(clientDir);
     const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
     const clientEntryPath = path.resolve(
       dir,
       `.fusion/dist/${envs[i]}/client/${clientEntry}`
     );
-    const clientContent = fs.readFileSync(clientEntryPath, 'utf8');
+    const clientContent = await readFile(clientEntryPath, 'utf8');
 
     const expectedClientBrowser = {
       development: 'main __BROWSER__ is " + true',
@@ -83,7 +87,7 @@ test('development/production env globals', async t => {
           });
         });
       `;
-    const {stdout} = await run(command);
+    const {stdout} = await run(command, {stdio: 'pipe'});
     t.ok(
       stdout.includes('main __BROWSER__ is false'),
       'the global, __BROWSER__, is false'
@@ -120,13 +124,13 @@ test('test env globals', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
-  t.ok(fs.existsSync(entry + '.map'), 'Source map gets compiled');
+  t.ok(await exists(entry), 'Entry file gets compiled');
+  t.ok(await exists(entry + '.map'), 'Source map gets compiled');
 
   const clientDir = `.fusion/dist/${envs[0]}/client`;
   const clientEntry = path.resolve(dir, clientDir, 'client-main.js');
-  t.ok(fs.existsSync(clientEntry), 'client .js');
-  t.ok(fs.existsSync(clientEntry + '.map'), 'client .map');
+  t.ok(await exists(clientEntry), 'client .js');
+  t.ok(await exists(clientEntry + '.map'), 'client .map');
 
   // server test bundle
   const serverCommand = `
@@ -136,6 +140,7 @@ test('test env globals', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
     }),
+    stdio: 'pipe',
   });
   t.ok(
     stdout.includes('universal __BROWSER__ is false'),
@@ -158,6 +163,7 @@ test('test env globals', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
     }),
+    stdio: 'pipe',
   });
   t.ok(
     browserStdout.includes('browser __BROWSER__ is true'),
@@ -196,7 +202,7 @@ test('generates error if missing default export', async t => {
 
   const compiler = new Compiler({envs, dir});
   await compiler.clean();
-  t.ok(!fs.existsSync(entry), 'Cleans');
+  t.notok(await exists(entry), 'Cleans');
 
   const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
@@ -209,7 +215,7 @@ test('generates error if missing default export', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
+  t.ok(await exists(entry), 'Entry file gets compiled');
 
   const app = require(entry);
   t.ok(typeof app.start === 'function', 'Entry has start function');
@@ -231,7 +237,8 @@ test('dev works', async t => {
 
   const compiler = new Compiler({envs, dir});
   await compiler.clean();
-  t.ok(!fs.existsSync(entry), 'Cleans');
+
+  t.notok(await exists(entry), 'Cleans');
 
   const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
@@ -244,8 +251,8 @@ test('dev works', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
-  t.ok(fs.existsSync(entry + '.map'), 'Source map gets compiled');
+  t.ok(await exists(entry), 'Entry file gets compiled');
+  t.ok(await exists(entry + '.map'), 'Source map gets compiled');
 
   const command = `
     const assert = require('assert');
@@ -264,6 +271,7 @@ test('dev works', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'development',
     }),
+    stdio: 'pipe',
   });
   t.end();
 });
@@ -294,11 +302,11 @@ test('compiles with babel plugin', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(clientEntryPath), 'Client file gets compiled');
-  t.ok(fs.existsSync(serverEntryPath), 'Server file gets compiled');
+  t.ok(await exists(clientEntryPath), 'Client file gets compiled');
+  t.ok(await exists(serverEntryPath), 'Server file gets compiled');
 
-  const clientEntry = fs.readFileSync(clientEntryPath, 'utf8');
-  const serverEntry = fs.readFileSync(serverEntryPath, 'utf8');
+  const clientEntry = await readFile(clientEntryPath, 'utf8');
+  const serverEntry = await readFile(serverEntryPath, 'utf8');
 
   t.ok(
     clientEntry.includes('transformed_helloworld_custom_babel'),
@@ -320,7 +328,8 @@ test('production works', async t => {
 
   const compiler = new Compiler({envs, dir});
   await compiler.clean();
-  t.ok(!fs.existsSync(entry), 'Cleans');
+
+  t.notok(await exists(entry), 'Cleans');
 
   const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
@@ -333,11 +342,11 @@ test('production works', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
-  t.ok(fs.existsSync(entry + '.map'), 'Source map gets compiled');
+  t.ok(await exists(entry), 'Entry file gets compiled');
+  t.ok(await exists(entry + '.map'), 'Source map gets compiled');
 
   const clientDir = path.resolve(dir, `.fusion/dist/${envs[0]}/client`);
-  const assets = fs.readdirSync(clientDir);
+  const assets = await readdir(clientDir);
   t.ok(assets.find(a => a.match(/^client-main.+\.js$/)), 'main .js');
   t.ok(assets.find(a => a.match(/^client-main.+\.js.map$/)), 'main .map');
   //t.ok(assets.find(a => a.match(/^client-main.+\.js.gz$/)), 'main .gz');
@@ -365,6 +374,7 @@ test('production works', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
     }),
+    stdio: 'pipe',
   });
   t.end();
 });
@@ -378,7 +388,8 @@ test('test works', async t => {
 
   const compiler = new Compiler({envs, dir});
   await compiler.clean();
-  t.ok(!fs.existsSync(entry), 'Cleans');
+
+  t.notok(await exists(entry), 'Cleans');
 
   const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
@@ -391,13 +402,13 @@ test('test works', async t => {
   });
   watcher.close();
 
-  t.ok(fs.existsSync(entry), 'Entry file gets compiled');
-  t.ok(fs.existsSync(entry + '.map'), 'Source map gets compiled');
+  t.ok(await exists(entry), 'Entry file gets compiled');
+  t.ok(await exists(entry + '.map'), 'Source map gets compiled');
 
   const clientDir = `.fusion/dist/${envs[0]}/client`;
   const clientEntry = path.resolve(dir, clientDir, 'client-main.js');
-  t.ok(fs.existsSync(clientEntry), 'client .js');
-  t.ok(fs.existsSync(clientEntry + '.map'), 'client .map');
+  t.ok(await exists(clientEntry), 'client .js');
+  t.ok(await exists(clientEntry + '.map'), 'client .map');
 
   // server test bundle
   const serverCommand = `
@@ -407,6 +418,7 @@ test('test works', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
     }),
+    stdio: 'pipe',
   });
   t.ok(
     stdout.includes('server test runs'),
@@ -429,6 +441,7 @@ test('test works', async t => {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
     }),
+    stdio: 'pipe',
   });
   t.ok(
     !browserStdout.includes('server test runs'),
