@@ -11,7 +11,6 @@ const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const ChunkManifestPlugin = require('./external-chunk-manifest-plugin.js');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const composeMiddleware = require('compose-middleware').compose;
 const {
   //zopfliWebpackPlugin,
   brotliWebpackPlugin,
@@ -612,7 +611,12 @@ function Compiler({
       publicPath: '/_static/',
     });
     const hot = webpackHotMiddleware(compiler, {log: false});
-    return composeMiddleware([dev, hot]);
+    return (req, res, next) => {
+      dev(req, res, err => {
+        if (err) return next(err);
+        return hot(req, res, next);
+      });
+    };
   };
 
   this.clean = () => {

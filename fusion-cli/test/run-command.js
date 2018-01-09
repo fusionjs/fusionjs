@@ -50,14 +50,14 @@ async function start(args, options) {
   const port = await getPort();
   const {proc} = cmd(`start --port=${port} ${args}`, options);
   const res = await waitForServer(port);
-  return {proc, res};
+  return {proc, res, port};
 }
 
 async function dev(args, options) {
   const port = await getPort();
   const {proc} = cmd(`dev --port=${port} --no-open ${args}`, options);
   const res = await waitForServer(port);
-  return {proc, res};
+  return {proc, res, port};
 }
 
 async function waitForServer(port) {
