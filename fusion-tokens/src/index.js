@@ -5,5 +5,6 @@ export const createToken = name => () => {
 export const createOptionalToken = (name, defaultValue) => () => defaultValue;
 
 // Tokens
-export const GenericSessionToken = createToken('GenericSession');
-export const FetchToken = createToken('Fetch');
+export const FetchToken = createToken('FetchToken');
+export const LoggerToken = createToken('LoggerToken');
+export const SessionToken = createToken('SessionToken');
