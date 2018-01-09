@@ -1,6 +1,9 @@
 /* eslint-env node */
 const path = require('path');
 const {spawn} = require('child_process');
+const rimraf = require('rimraf');
+
+const mergeCoverage = require('./merge-coverage');
 
 module.exports.TestAppRuntime = function({
   dir = '.',
@@ -12,6 +15,7 @@ module.exports.TestAppRuntime = function({
   configPath,
 }) {
   const state = {procs: []};
+  const rootDir = path.resolve(process.cwd(), dir);
 
   this.run = () => {
     this.stop();
@@ -40,6 +44,24 @@ module.exports.TestAppRuntime = function({
       return args;
     };
 
+    const setup = () => {
+      if (!coverage) {
+        return Promise.resolve();
+      }
+
+      // Remove existing coverage directories
+      const folders = [
+        `${rootDir}/coverage/`,
+        `${rootDir}/coverage-node/`,
+        `${rootDir}/coverage-jsdom/`,
+      ];
+      return Promise.all(
+        folders.map(
+          folder => new Promise(resolve => rimraf(folder, () => resolve))
+        )
+      );
+    };
+
     const spawnProc = testEnv => {
       return new Promise((resolve, reject) => {
         const args = getArgs();
@@ -56,7 +78,7 @@ module.exports.TestAppRuntime = function({
         }
 
         const proc = spawn(command, args, {
-          cwd: path.resolve(process.cwd(), dir),
+          cwd: rootDir,
           stdio: 'inherit',
           env: Object.assign(procEnv, process.env),
         });
@@ -78,7 +100,19 @@ module.exports.TestAppRuntime = function({
       });
     };
 
-    return Promise.all(allTestEnvs.map(spawnProc));
+    const finish = () => {
+      if (!coverage) {
+        return Promise.resolve();
+      }
+      return mergeCoverage({
+        dir: rootDir,
+        environments: allTestEnvs,
+      });
+    };
+
+    return setup()
+      .then(Promise.all(allTestEnvs.map(spawnProc)))
+      .then(finish());
   };
 
   this.stop = () => {

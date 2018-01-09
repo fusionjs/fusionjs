@@ -161,6 +161,34 @@ test('`fusion test-app` coverage', async t => {
   t.end();
 });
 
+test('`fusion test-app` merge coverage reports', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --coverage --match=passes`;
+
+  const cmd = `require('${runnerPath}').run('${args} --env=jsdom')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 1, 'ran 1 tests');
+
+  const cobertunaReport = await readFile(
+    path.resolve(dir, 'coverage/cobertura-coverage.xml')
+  );
+  // Only a single report should be generated
+  t.ok(cobertunaReport.includes('<line number="1" hits="1"/>'));
+  t.ok(!cobertunaReport.includes('<line number="1" hits="2"/>'));
+
+  // Assert that there's two hits when combining coverage
+  const cmd2 = `require('${runnerPath}').run('${args}')`;
+  const response2 = await exec(`node -e "${cmd2}"`);
+  t.equal(countTests(response2.stderr), 2, 'ran 2 tests');
+
+  const combinedReport = await readFile(
+    path.resolve(dir, 'coverage/cobertura-coverage.xml')
+  );
+  t.ok(combinedReport.includes('<line number="1" hits="2"/>'));
+  t.ok(!combinedReport.includes('<line number="1" hits="1"/>'));
+  t.end();
+});
+
 test('`fusion test-app` environment variables', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=environment-variables`;

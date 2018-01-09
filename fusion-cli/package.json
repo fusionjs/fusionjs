@@ -46,6 +46,8 @@
     "iltorb": "^2.0.3",
     "imagemin": "^5.3.1",
     "imagemin-svgo": "^6.0.0",
+    "istanbul-api": "^1.2.1",
+    "istanbul-lib-coverage": "^1.1.1",
     "jest": "^22.0.4",
     "jest-cli": "^22.0.4",
     "just-snake-case": "^1.0.0",

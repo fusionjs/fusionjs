@@ -9,7 +9,9 @@ module.exports = {
     __BROWSER__: process.env.JEST_ENV === 'jsdom',
     __DEV__: process.env.NODE_ENV !== 'production',
   },
-  coverageReporters: ['json', 'lcov', 'text', 'cobertura'],
+  coverageDirectory: `<rootDir>/coverage-${process.env.JEST_ENV}`,
+  // 'cobertura', 'lcov', 'text' coverage reports are written by the merge-coverage script
+  coverageReporters: ['json'],
   rootDir: process.cwd(),
   setupFiles: [
     require.resolve('./jest-framework-shims.js'),
