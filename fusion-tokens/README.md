@@ -1,3 +1,5 @@
+[![Build status](https://badge.buildkite.com/51c7145b44d8842a8b71bb446614e49c8be0721f91633d11d8.svg?branch=master)](https://buildkite.com/uberopensource/fusion-tokens)
+
 # fusion-tokens
 
 Dependency injection tokens for FusionJS.
