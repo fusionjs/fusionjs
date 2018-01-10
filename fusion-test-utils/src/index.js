@@ -1,6 +1,6 @@
+import assert from 'assert';
 import {mockContext, renderContext} from './mock-context.js';
 import simulate from './simulate';
-import assert from 'assert';
 
 export function request(app, url, options = {}) {
   if (__BROWSER__) {
@@ -18,6 +18,7 @@ export function render(app, url, options = {}) {
 }
 
 // Export test runner functions from jest
+// eslint-disable-next-line import/no-mutable-exports
 let mockFunction, test;
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
