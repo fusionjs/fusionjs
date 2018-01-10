@@ -1,6 +1,6 @@
 {
   "name": "fusion-scaffolder",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A code scaffolder",
   "license": "MIT",
   "repository": "fusionjs/fusion-scaffolder",
@@ -26,7 +26,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "yarn lint && node test/index.js",
+    "fast-test": "node test/index.js",
+    "test": "yarn lint && yarn fast-test",
     "cover": "nyc yarn test"
   },
   "engines": {

@@ -12,21 +12,15 @@ const options = minimist(process.argv.slice(2), {
   },
 });
 
-// Set named options
-if (options._.length === 2) {
-  options.path = options._[0];
-  options.project = options._[1];
-}
-
 // Show version information when --version
 if (options.version) {
   return log(packageJson.version);
 }
 
 // Show usage information when options incorrectly passed or using --help
-if ((!options.path && !options.project) || options.help) {
+if (options._.length !== 2 || options.help) {
   return log(`
-    Usage: ${colors.cyan('scaffold')} ${colors.green(
+    Usage: ${colors.cyan('fusion-scaffold')} ${colors.green(
     '<path-to-template>'
   )} ${colors.green('<project-name>')}
 
@@ -36,6 +30,10 @@ if ((!options.path && !options.project) || options.help) {
       -v, --version       Output the version number
   `);
 }
+
+// Set named options
+options.path = options._[0];
+options.project = options._[1];
 
 // Scaffold
 log(colors.cyan(`Scaffolding "${options.project}"...`));
