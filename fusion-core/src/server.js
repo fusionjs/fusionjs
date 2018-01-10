@@ -141,11 +141,18 @@ function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
 }
 
 function getChunkScripts(ctx) {
+  const webpackPublicPath = ctx.webpackPublicPath || '';
+  // cross origin is needed to get meaningful errors in window.onerror
+  const crossOrigin = webpackPublicPath.startsWith('https://')
+    ? ' crossorigin="anonymous"'
+    : '';
   const sync = getUrls(ctx, ctx.syncChunks).map(({url}) => {
-    return `<script defer src="${url}"></script>`;
+    return `<script defer${crossOrigin} src="${url}"></script>`;
   });
   const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
-    return `<script defer src="${url}" data-webpack-preload="${id}"></script>`;
+    return `<script defer${crossOrigin} src="${url}" data-webpack-preload="${
+      id
+    }"></script>`;
   });
   return [...sync, ...preloaded].join('');
 }

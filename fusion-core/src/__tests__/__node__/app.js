@@ -43,7 +43,7 @@ test('context composition', t => {
   middleware(context, () => Promise.resolve())
     .then(() => {
       t.equals(typeof context.rendered, 'string', 'renders');
-      t.ok(context.body.includes('src="/es5-file.js"'));
+      t.ok(context.body.includes('defer src="/es5-file.js"'));
       t.ok(context.rendered.includes('<h1>HELLO</h1>'), 'has expected html');
       t.end();
     })
@@ -85,7 +85,9 @@ test('context composition with a cdn', t => {
     .then(() => {
       t.equals(typeof context.rendered, 'string', 'renders');
       t.ok(
-        context.body.includes('src="https://something.com/lol/es5-file.js"')
+        context.body.includes(
+          'defer crossorigin="anonymous" src="https://something.com/lol/es5-file.js"'
+        )
       );
       t.ok(context.rendered.includes('<h1>HELLO</h1>'), 'has expected html');
       t.end();
