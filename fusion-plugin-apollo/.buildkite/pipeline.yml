@@ -1,27 +1,37 @@
 steps:
-  - name: ":docker: :package:"
+  - name: ':docker: :package:'
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         build: fusion-apollo
-        image-repository: 296822479253.dkr.ecr.us-east-2.amazonaws.com/fusionjs
+        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+    agents:
+      queue: builders
   - wait
-  - name: ":flowtype:"
-    command: "yarn flow"
+  - name: ':flowtype:'
+    command: yarn flow
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         run: fusion-apollo
-  - name: ":eslint:"
-    command: "yarn lint"
+    agents:
+      queue: workers
+  - name: ':eslint:'
+    command: yarn lint
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         run: fusion-apollo
-  - name: ":chrome: :white_check_mark:"
-    command: ".buildkite/browserTests"
+    agents:
+      queue: workers
+  - name: ':chrome: :white_check_mark:'
+    command: .buildkite/browserTests
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         run: fusion-apollo
-  - name: ":node: :white_check_mark:"
-    command: ".buildkite/nodeTests"
+    agents:
+      queue: workers
+  - name: ':node: :white_check_mark:'
+    command: .buildkite/nodeTests
     plugins:
-      docker-compose#v1.5.2:
+      'docker-compose#v1.5.2':
         run: fusion-apollo
+    agents:
+      queue: workers
