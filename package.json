@@ -55,7 +55,7 @@
     "prepublish": "npm run transpile"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.4",
+    "fusion-core": "^0.3.0-2",
     "fusion-react-async": "^0.1.4",
     "react": "14.x - 16.x",
     "react-dom": "14.x - 16.x"
