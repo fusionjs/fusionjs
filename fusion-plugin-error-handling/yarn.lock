@@ -616,6 +616,10 @@
   version "7.0.49"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.49.tgz#f43777edd31822d6bcb50735a76c7f301d7b3121"
 
+"@types/node@^9.3.0":
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+
 "@types/rimraf@^0.0.28":
   version "0.0.28"
   resolved "https://registry.yarnpkg.com/@types/rimraf/-/rimraf-0.0.28.tgz#5562519bc7963caca8abf7f128cae3b594d41d06"
@@ -875,6 +879,10 @@ async-array-reduce@^0.2.0:
 async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
+
+async-limiter@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.0.tgz#78faed8c3d074ab81f22b4e985d79e8738f720f8"
 
 async@0.2.x:
   version "0.2.10"
@@ -1889,6 +1897,26 @@ chrome-launcher@0.8.1:
     mkdirp "0.5.1"
     rimraf "^2.6.1"
 
+chrome-launcher@^0.10.0:
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/chrome-launcher/-/chrome-launcher-0.10.2.tgz#f7d860ddec627b6f01015736b5ae1e33b3d165b1"
+  dependencies:
+    "@types/core-js" "^0.9.41"
+    "@types/mkdirp" "^0.3.29"
+    "@types/node" "^9.3.0"
+    "@types/rimraf" "^0.0.28"
+    is-wsl "^1.1.0"
+    lighthouse-logger "^1.0.0"
+    mkdirp "0.5.1"
+    rimraf "^2.6.1"
+
+chrome-remote-interface@^0.25.5:
+  version "0.25.5"
+  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.25.5.tgz#cfd3fb124bf5f2ea5a9d72037527c156822b1406"
+  dependencies:
+    commander "2.11.x"
+    ws "3.3.x"
+
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/cipher-base/-/cipher-base-1.0.4.tgz#8760e4ecc272f4c363532f926d874aae2c1397de"
@@ -1990,6 +2018,10 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.5.tgz#938370a57b4a51dea2c77c15d5c5fdf895164009"
   dependencies:
     delayed-stream "~1.0.0"
+
+commander@2.11.x:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
 commander@^2.8.1, commander@~2.12.1:
   version "2.12.2"
@@ -3291,7 +3323,7 @@ get-caller-file@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.2.tgz#f702e63127e7e231c160a80c1554acb70d5047e5"
 
-get-port@^3.0.0:
+get-port@^3.0.0, get-port@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/get-port/-/get-port-3.2.0.tgz#dd7ce7de187c06c8bf353796ac71e099f0980ebc"
 
@@ -3859,6 +3891,10 @@ is-callable@^1.1.1, is-callable@^1.1.3:
 is-date-object@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/is-date-object/-/is-date-object-1.0.1.tgz#9aa20eb6aeebbff77fbd33e74ca01b33581d3a16"
+
+is-docker@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-docker/-/is-docker-1.1.0.tgz#f04374d4eee5310e9a8e113bf1495411e46176a1"
 
 is-dotfile@^1.0.0:
   version "1.0.3"
@@ -4572,6 +4608,10 @@ merge2@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.0.3.tgz#fa44f8b2262615ab72f0808a401d478a70e394db"
 
+merge2@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.2.0.tgz#0f882151d988b1f3d0758945404fa73ee5923d3f"
+
 metaviewport-parser@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/metaviewport-parser/-/metaviewport-parser-0.1.0.tgz#97fa67ea4bbf640f4fd59010f88f10cea7d5accc"
@@ -4708,7 +4748,7 @@ multicast-dns@^6.0.1:
     dns-packet "^1.0.1"
     thunky "^0.1.0"
 
-multistream@^2.0.5:
+multistream@^2.0.5, multistream@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/multistream/-/multistream-2.1.0.tgz#625c267d5c44424ad6294788b5bb4da3dcb32f1d"
   dependencies:
@@ -6782,6 +6822,10 @@ ultron@1.0.x:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.0.2.tgz#ace116ab557cd197386a4e88f4685378c8b2e4fa"
 
+ultron@~1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
+
 underscore@^1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
@@ -6811,7 +6855,7 @@ unique-string@^1.0.0:
   dependencies:
     crypto-random-string "^1.0.0"
 
-unitest@^1.0.0, unitest@^1.1.0:
+unitest@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/unitest/-/unitest-1.1.0.tgz#c5969513aac2ef0a926bb1f8bba481c07f323d65"
   dependencies:
@@ -6823,6 +6867,22 @@ unitest@^1.0.0, unitest@^1.1.0:
     merge2 "1.0.3"
     minimist "^1.2.0"
     multistream "^2.0.5"
+    run-parallel "^1.1.6"
+    tap-finished "0.0.1"
+    tap-merge "^0.3.1"
+
+unitest@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/unitest/-/unitest-2.1.1.tgz#ca349e320ba3d7ea1843a9f2f74683930595b7b9"
+  dependencies:
+    chrome-launcher "^0.10.0"
+    chrome-remote-interface "^0.25.5"
+    get-port "^3.2.0"
+    is-docker "^1.1.0"
+    istanbul-lib-coverage "^1.1.1"
+    merge2 "1.2.0"
+    minimist "^1.2.0"
+    multistream "^2.1.0"
     run-parallel "^1.1.6"
     tap-finished "0.0.1"
     tap-merge "^0.3.1"
@@ -7171,6 +7231,14 @@ ws@1.1.2:
   dependencies:
     options ">=0.0.5"
     ultron "1.0.x"
+
+ws@3.3.x:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-3.3.3.tgz#f1cf84fe2d5e901ebce94efaece785f187a228f2"
+  dependencies:
+    async-limiter "~1.0.0"
+    safe-buffer "~5.1.0"
+    ultron "~1.1.0"
 
 xdg-basedir@^3.0.0:
   version "3.0.0"
