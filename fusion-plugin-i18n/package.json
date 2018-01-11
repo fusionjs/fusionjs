@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-i18n",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
   "repository": "fusionjs/fusion-plugin-i18n",
   "files": ["dist", "chunk-translation-map.js"],
