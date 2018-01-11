@@ -1,4 +1,4 @@
-FROM node:8.9.0
+FROM uber/web-base-image:1.0.0
 
 WORKDIR /fusion-plugin-i18n-react
 
