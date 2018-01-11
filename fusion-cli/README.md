@@ -31,8 +31,8 @@ yarn add fusion-cli
   - `--environment`: Which environment/assets to run - defaults to first available assets among `["development", "test", "production"]`
 - `fusion test [--cover] [--watch] [--skip-build]`: Run tests
   - `--cover`: Run tests with coverage
-  - `--watch`: Use existing built assets
-  - `--skip-build`: Automatically re-profile your application on changes
+  - `--watch`: Automatically re-profile your application on changes
+  - `--skip-build`: Use existing built assets
 - `fusion test-app [--watch] [--match]`: Run tests
   - `--watch`: Automatically run tests when code changes.
   - `--match="somestring"`: Only runs tests against files which match this string.
