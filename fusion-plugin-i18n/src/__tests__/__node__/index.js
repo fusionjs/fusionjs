@@ -4,28 +4,17 @@ import test from 'tape-cup';
 import {consumeSanitizedHTML} from 'fusion-core';
 import I18n from '../../node';
 
-function getTranslationsLoader(translations, locale) {
-  return {
-    of() {
-      return {
-        translations,
-        locale,
-      };
-    },
-  };
-}
-
 test('translate', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
 
   const ctx = {
     headers: {'accept-language': 'en-US'},
+    memoized: new Map(),
   };
 
-  const TranslationsLoader = getTranslationsLoader(data, 'en-US');
-
-  const plugin = I18n({TranslationsLoader});
-  const i18n = plugin.of(ctx);
+  const i18n = I18n({
+    loadTranslations: () => ({translations: data, locale: 'en-US'}),
+  }).of(ctx);
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
 
@@ -34,8 +23,6 @@ test('translate', async t => {
 
 test('ssr', async t => {
   const data = {test: 'hello</div>', interpolated: 'hi ${value}'};
-
-  const TranslationsLoader = getTranslationsLoader(data, 'en-US');
 
   const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
@@ -46,10 +33,13 @@ test('ssr', async t => {
     headers: {'accept-language': 'en-US'},
     element: 'test',
     body: {body: []},
+    memoized: new Map(),
   };
 
-  const plugin = I18n({TranslationsLoader});
-  await plugin.middleware(ctx, () => Promise.resolve());
+  const i18n = I18n({
+    loadTranslations: () => ({translations: data, locale: 'en-US'}),
+  });
+  await i18n.__middleware__(ctx, () => Promise.resolve());
   t.equals(ctx.body.body.length, 1, 'injects hydration code');
   t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('hello')[0], 'hello');
   t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('</div>'), null);
@@ -61,7 +51,6 @@ test('ssr', async t => {
 
 test('endpoint', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
-  const TranslationsLoader = getTranslationsLoader(data, 'en-US');
 
   const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
@@ -72,10 +61,13 @@ test('endpoint', async t => {
     headers: {'accept-language': 'en-US'},
     path: '/_translations',
     querystring: 'ids=0',
+    memoized: new Map(),
   };
 
-  const plugin = I18n({TranslationsLoader});
-  await plugin.middleware(ctx, () => Promise.resolve());
+  const i18n = I18n({
+    loadTranslations: () => ({translations: data, locale: 'en-US'}),
+  });
+  await i18n.__middleware__(ctx, () => Promise.resolve());
   t.deepEquals(ctx.body, data, 'injects hydration code');
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
@@ -85,12 +77,14 @@ test('endpoint', async t => {
 
 test('non matched route', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
-  const TranslationsLoader = getTranslationsLoader(data, 'en-US');
   const ctx = {
     path: '/_something',
+    memoized: new Map(),
   };
-  const plugin = I18n({TranslationsLoader});
-  await plugin.middleware(ctx, () => Promise.resolve());
+  const i18n = I18n({
+    loadTranslations: () => ({translations: data, locale: 'en-US'}),
+  });
+  await i18n.__middleware__(ctx, () => Promise.resolve());
   t.notok(ctx.body, 'does not set ctx.body');
   t.end();
 });

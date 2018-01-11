@@ -7,8 +7,7 @@ test('hydration', t => {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${value}'},
   };
-  const plugin = I18n({hydrationState});
-  const i18n = plugin.of();
+  const i18n = I18n({hydrationState}).of();
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   t.end();
@@ -24,8 +23,7 @@ test('hydration from element', t => {
   translations.setAttribute('id', '__TRANSLATIONS__');
   translations.textContent = JSON.stringify(hydrationState);
   document.body.appendChild(translations);
-  const plugin = I18n();
-  const i18n = plugin.of();
+  const i18n = I18n({hydrationState}).of();
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   document.body.removeChild(translations);
