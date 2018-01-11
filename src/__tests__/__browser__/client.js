@@ -4,6 +4,7 @@ import test from 'tape-cup';
 import React from 'react';
 import render from '../../client';
 import App from '../../index';
+import {render as run} from 'fusion-test-utils';
 
 test('renders', t => {
   const root = setup();
@@ -21,7 +22,7 @@ test('client side app', async t => {
 
   const app = new App(React.createElement('span', null, 'hello'));
   try {
-    const ctx = await app.simulate({});
+    const ctx = await run(app, '/');
     t.ok(ctx.rendered, 'sets rendered');
     t.ok(ctx.element, 'sets element');
     t.equals(root.firstChild.nodeName, 'SPAN', 'has right tag');

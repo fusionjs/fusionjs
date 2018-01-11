@@ -4,9 +4,7 @@
   "version": "0.1.10",
   "license": "MIT",
   "repository": "fusionjs/fusion-react",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/node.cjs.js",
   "module": "./dist/node.es.js",
   "browser": {
@@ -33,7 +31,8 @@
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.5.1",
     "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.4",
+    "fusion-core": "^0.3.0-2",
+    "fusion-test-utils": "^0.3.0",
     "fusion-react-async": "^0.1.4",
     "nyc": "^11.3.0",
     "prettier": "1.8.2",
@@ -47,7 +46,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=cobertura --reporter=html npm run just-test",
@@ -55,7 +55,7 @@
     "prepublish": "npm run transpile"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.4",
+    "fusion-core": "^0.3.0-2",
     "fusion-react-async": "^0.1.4",
     "react": "14.x - 16.x",
     "react-dom": "14.x - 16.x"
