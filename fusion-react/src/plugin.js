@@ -4,9 +4,9 @@ import Provider from './provider';
 export default {
   create: (name, plugin, BaseComponent) => (...args) => {
     const p = plugin(...args);
-    const middleware = p.middleware;
+    const middleware = p.__middleware__;
     const ProviderComponent = Provider.create(name, BaseComponent);
-    p.middleware = function(ctx, next) {
+    p.__middleware__ = function(ctx, next) {
       if (ctx.element) {
         ctx.element = React.createElement(
           ProviderComponent,
@@ -14,7 +14,7 @@ export default {
           ctx.element
         );
       }
-      return middleware.call(p, ctx, next);
+      return middleware ? middleware.call(p, ctx, next) : next();
     };
     return p;
   },
