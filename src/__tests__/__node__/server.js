@@ -11,10 +11,9 @@ test('renders', t => {
   t.end();
 });
 
-test.only('app api', async t => {
+test('app api', async t => {
   t.equal(typeof App, 'function', 'exports a function');
   try {
-    //eslint-disable-next-line
     const app = new App(React.createElement('div', null, 'Hello World'));
     const ctx = await run(app, '/');
     t.ok(ctx.rendered.includes('Hello World'));
