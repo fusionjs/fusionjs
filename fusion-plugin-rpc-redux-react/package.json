@@ -56,7 +56,7 @@
     "redux": "^3.7.2",
     "redux-reactors": "^1.0.3",
     "tape-cup": "^4.7.1",
-    "unitest": "^1.1.0"
+    "unitest": "^2.1.1"
   },
   "scripts": {
     "clean": "rm -rf dist",
