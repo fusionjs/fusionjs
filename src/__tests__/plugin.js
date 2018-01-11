@@ -9,7 +9,6 @@ test('.create works', t => {
   }
   const foo = () => ({of: () => new Foo()});
   const plugin = ReactPlugin.create('foo', foo);
-  t.equals(typeof plugin, 'function', 'is plugin');
   t.ok(plugin().of() instanceof Foo, 'extends base');
   t.equals(typeof plugin().of().foo, 'function', 'has expected method');
 
