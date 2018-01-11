@@ -38,7 +38,7 @@
     "react-apollo": "^2.0.1",
     "react-dom": "^16.0.0",
     "tape-cup": "^4.7.1",
-    "unitest": "^1.0.0"
+    "unitest": "^2.1.1"
   },
   "scripts": {
     "clean": "rm -rf dist",
