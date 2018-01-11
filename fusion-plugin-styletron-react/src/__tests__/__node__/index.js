@@ -15,7 +15,7 @@ const SilverPanel = styled('div', {
 tape('Server plugin', t => {
   const ctx = {
     element: <SilverPanel />,
-    body: {
+    template: {
       head: {
         push: h => {
           t.equal(

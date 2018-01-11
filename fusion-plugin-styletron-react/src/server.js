@@ -15,7 +15,7 @@ export default () => (ctx, next) => {
 
     return next().then(() => {
       const stylesForHead = styletron.getStylesheetsHtml();
-      ctx.body.head.push(dangerouslySetHTML(stylesForHead));
+      ctx.template.head.push(dangerouslySetHTML(stylesForHead));
     });
   } else {
     return next();
