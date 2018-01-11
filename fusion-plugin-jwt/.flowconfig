@@ -6,10 +6,11 @@
 ./src/
 
 [libs]
+./node_modules/fusion-core/flow-typed
+./node_modules/fusion-types/flow-typed
 
 [lints]
 
 [options]
-suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
 
 [strict]

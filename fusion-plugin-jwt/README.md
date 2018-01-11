@@ -20,25 +20,35 @@ yarn add fusion-plugin-jwt
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import JWTSession from 'fusion-plugin-jwt';
-import PageViewCounter from './page-view-counter';
+import JWTSessionfrom, {
+  SessionSecretToken
+  SessionCookieNameToken
+  SessionCookieExpiresToken
+} from 'fusion-plugin-jwt';
 
+import {SessionToken} from 'fusion-types';
+
+// src/main.js
 export default () => {
-  const app = new App(<div></div>);
-  const Session = app.plugin(JWTSession, {secret: __NODE__ && 'secret-key-goes-here'});
-  app.plugin(PageViewCounter, {Session});
+  const app = new App();
+  // ...
+  if (__NODE__) {
+    app.register(SessionToken, JWTSession);
+    app.configure(SessionSecretToken, 'some-secret'); // required
+    app.configure(SessionCookieNameToken, 'some-cookie-name'); // required 
+    app.configure(SessionCookieExpiresToken, 86400); // optional 
+    
+    app.middleware({Session: SessionToken}, ({Session}) => {
+      return async (ctx, next) => {
+        const session = Session.from(ctx);
+        session.set('some-key', 'some-value');
+        const someValue = session.get('some-key');
+        return next();
+      }
+    });
+  }
+  // ...
   return app;
-}
-
-// src/page-view-counter.js
-import html from 'fusion-core';
-
-export default ({Session}) => (ctx, next) => {
-  const session = Session.of(ctx);
-  const count = (session.get('count') || 0) + 1;
-  session.set('count', count);
-  ctx.body.body.push(html`You viewed this page ${count} times`);
-  return next();
 }
 ```
 
@@ -49,17 +59,49 @@ export default ({Session}) => (ctx, next) => {
 #### Plugin registration
 
 ```js
-const Session = app.plugin(JWTSession, {secret});
+import {SessionToken} from 'fusion-tokens';
+app.register(SessionToken, JWTSession);
 ```
 
-- `secret: string` - Encryption secret for JWTs. Required in server, required to be falsy in client.
-- `cookieName: string` - Cookie name. Optional. Defaults to `fusion-sess`
-- `expiresIn: number` - Time in seconds until session/cookie expiration. Defaults to `86400` (24 hours)
+`fusion-plugin-jwt` conforms to the standard fusion session api token exposed as `{SessionToken}` from 'fusion-tokens`.
+
+#### Dependencies
+
+##### SessionSecretToken
+
+- `string` - Encryption secret for JWTs. Required on the server, required to be falsy in client.
+
+```js
+import {SessionSecretToken} from 'fusion-plugin-jwt';
+__NODE__ && app.configure(SessionSecretToken, 'some-secret'); 
+```
+
+##### SessionCookieNameToken
+
+- `string` - Cookie name. Required on the server.
+
+```js
+import {SessionCookieNameToken} from 'fusion-plugin-jwt';
+__NODE__ && app.configure(SessionCookieNameToken, 'some-cookie-name'); 
+```
+
+##### SessionCookieExpiresToken
+
+- `number` - Time in seconds until session/cookie expiration. Defaults to `86400` (24 hours)
+
+```js
+import {SessionCookieExpiresToken} from 'fusion-plugin-jwt';
+__NODE__ && app.configure(SessionCookieNameToken, 86400); 
+```
 
 #### Instance API
 
 ```js
-const session = Session.of(ctx);
+app.middleware({Session: SessionToken}, ({Session}) => {
+  return async (ctx, next) => {
+    const session = Session.from(ctx);
+  }
+});
 ```
 
 ##### set
@@ -75,7 +117,7 @@ const value = session.set(key, val);
 ##### get
 
 ```js
-const value = session.set(key);
+const value = session.get(key);
 ```
 
 - `key: string` - Required
