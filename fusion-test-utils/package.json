@@ -41,7 +41,7 @@
     "jest": "22.0.6",
     "jest-cli": "22.0.6",
     "nyc": "11.4.1",
-    "prettier": "1.10.1",
+    "prettier": "1.10.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
