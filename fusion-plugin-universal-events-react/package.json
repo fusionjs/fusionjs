@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
-    "create-universal-package": "2.1.1",
+    "create-universal-package": "3.2.4",
     "eslint": "4.15.0",
     "eslint-config-fusion": "0.1.2",
     "eslint-plugin-cup": "1.0.0",
