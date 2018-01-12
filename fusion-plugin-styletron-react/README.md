@@ -26,7 +26,7 @@ import root from './components/root';
 export default () => {
   const app = new App(root);
 
-  app.plugin(Styletron);
+  app.register(Styletron);
 
   return app;
 }
