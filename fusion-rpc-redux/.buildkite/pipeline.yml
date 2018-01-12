@@ -1,7 +1,7 @@
 steps:
   - name: ':docker: :package:'
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         build: fusion-rpc-redux
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
@@ -10,28 +10,28 @@ steps:
   - command: yarn flow
     name: ':flowtype:'
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         run: fusion-rpc-redux
     agents:
       queue: workers
   - name: ':eslint:'
     command: yarn lint
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         run: fusion-rpc-redux
     agents:
       queue: workers
   - name: ':chrome: :white_check_mark:'
     command: .buildkite/browserTests
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         run: fusion-rpc-redux
     agents:
       queue: workers
   - name: ':node: :white_check_mark:'
     command: .buildkite/nodeTests
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         run: fusion-rpc-redux
     agents:
       queue: workers
