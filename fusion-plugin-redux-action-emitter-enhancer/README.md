@@ -10,8 +10,9 @@ Redux store enhancer that emits actions via an injected event emitter.
 
 ```js
 // src/main.js
-import UniversalEvents from 'fusion-plugin-universal-events';
-import Redux from 'fusion-plugin-react-redux'
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+import Redux, {ReduxToken, ReducerToken, EnhancerToken} from 'fusion-plugin-react-redux';
 import fetch from 'unfetch';
 import reduxActionEnhancerFactory from 'fusion-redux-action-emitter-enhancer';
 import reducer from './reducers/root.js'
@@ -19,9 +20,12 @@ import reducer from './reducers/root.js'
 export default function start() {
   const app = new App(root);
 
-  const EventEmitter = app.plugin(UniversalEvents, {fetch});
-  const enhancer = reduxActionEnhancerFactory(EventEmitter);
-  app.plugin(Redux, {reducer, enhancer});
+  app.register(UniversalEventsToken, UniversalEvents, {fetch});
+  __BROWSER__ && app.configure(FetchToken, fetch);
+
+  app.register(ReduxToken, Redux);
+  app.configure(ReducerToken, reducer);
+  app.configure(EnhancerToken, reduxActionEnhancerFactory(EventEmitter));
 
   return app;
 }
