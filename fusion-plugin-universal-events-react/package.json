@@ -41,7 +41,7 @@
     "fusion-react": "0.1.10",
     "fusion-react-async": "0.1.4",
     "nyc": "11.4.1",
-    "prettier": "1.8.2",
+    "prettier": "1.10.2",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "tape-cup": "4.7.1"
