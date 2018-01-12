@@ -20,9 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import {createToken} from 'fusion-tokens';
 import ServerEvents from './server.js';
 import BrowserEvents from './browser.js';
 
 const UniversalEvents = __BROWSER__ ? BrowserEvents : ServerEvents;
 
 export default UniversalEvents;
+
+export const UniversalEventsToken = createToken(UniversalEvents);

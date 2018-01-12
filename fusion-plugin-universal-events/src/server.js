@@ -21,81 +21,86 @@
 // SOFTWARE.
 
 /* eslint-env node */
-import {Plugin} from 'fusion-core';
+import {withMiddleware, memoize} from 'fusion-core';
 import Emitter from './emitter';
+
+export class GlobalEmitter extends Emitter {
+  constructor() {
+    super();
+    this.from = memoize(ctx => {
+      return new ScopedEmitter(ctx, this);
+    });
+  }
+  emit(type, payload, ctx) {
+    payload = super.mapEvent(type, payload, this.ctx);
+    super.handleEvent(type, payload, ctx);
+  }
+  // mirror browser api
+  setFrequency() {}
+  teardown() {}
+}
+
+class ScopedEmitter extends Emitter {
+  constructor(ctx, parent) {
+    super();
+    this.ctx = ctx;
+    this.parent = parent;
+    this.batch = [];
+    this.flushed = false;
+  }
+  emit(type, payload) {
+    // this logic exists to manage ensuring we send events after the batch
+    if (this.flushed) {
+      this.handleBatchedEvent({type, payload});
+    } else {
+      this.batch.push({type, payload});
+    }
+  }
+  handleBatchedEvent({type, payload}) {
+    payload = super.mapEvent(type, payload, this.ctx);
+    payload = this.parent.mapEvent(type, payload, this.ctx);
+    super.handleEvent(type, payload, this.ctx);
+    this.parent.handleEvent(type, payload, this.ctx);
+  }
+  flush() {
+    for (let index = 0; index < this.batch.length; index++) {
+      this.handleBatchedEvent(this.batch[index]);
+    }
+    this.batch = [];
+    this.flushed = true;
+  }
+  // mirror browser api
+  setFrequency() {}
+  teardown() {}
+}
 
 export default function() {
   const bodyParser = require('koa-bodyparser');
   const parseBody = bodyParser();
 
-  const plugin = new Plugin({
-    Service: class UniversalEmitter extends Emitter {
-      constructor(ctx) {
-        super();
-        this.ctx = ctx;
-        if (this.ctx) {
-          this.parent = plugin.of();
-          this.batch = [];
-          this.flushed = false;
+  const globalEmitter = new GlobalEmitter();
+
+  async function universalEventsMiddleware(ctx, next) {
+    const emitter = globalEmitter.from(ctx);
+    if (ctx.method === 'POST' && ctx.path === '/_events') {
+      await parseBody(ctx, async () => {});
+      const {items} = ctx.request.body;
+      if (items) {
+        for (let index = 0; index < items.length; index++) {
+          const {type, payload} = items[index];
+          emitter.emit(type, payload);
         }
+        ctx.status = 200;
+      } else {
+        ctx.status = 400;
       }
-      emit(type, payload, ctx) {
-        if (!this.ctx) {
-          payload = super.mapEvent(type, payload, this.ctx);
-          super.handleEvent(type, payload, ctx);
-        } else {
-          // this logic exists to manage ensuring we send events after the batch
-          if (this.flushed) {
-            this.handleBatchedEvent({type, payload});
-          } else {
-            this.batch.push({type, payload});
-          }
-        }
-      }
-      handleBatchedEvent({type, payload}) {
-        payload = super.mapEvent(type, payload, this.ctx);
-        payload = this.parent.mapEvent(type, payload, this.ctx);
-        super.handleEvent(type, payload, this.ctx);
-        this.parent.handleEvent(type, payload, this.ctx);
-      }
-      flush() {
-        if (!this.ctx) {
-          throw new Error(
-            'Cannot call flush from the global instance of UniversalEmitter. Try using `UniversalEmitter.of(ctx)`'
-          );
-        }
-        for (let index = 0; index < this.batch.length; index++) {
-          this.handleBatchedEvent(this.batch[index]);
-        }
-        this.batch = [];
-        this.flushed = true;
-      }
-      // mirror browser api
-      setFrequency() {}
-      teardown() {}
-    },
-    async middleware(ctx, next) {
-      const emitter = this.of(ctx);
-      if (!ctx.body && ctx.method === 'POST' && ctx.path === '/_events') {
-        await parseBody(ctx, async () => {});
-        const {items} = ctx.request.body;
-        if (items) {
-          for (let index = 0; index < items.length; index++) {
-            const {type, payload} = items[index];
-            emitter.emit(type, payload);
-          }
-          ctx.status = 200;
-        } else {
-          ctx.status = 400;
-        }
-      }
-      // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
-      // into the event batch flush.
-      await next();
-      ctx.timing.end.then(() => {
-        emitter.flush();
-      });
-    },
-  });
-  return plugin;
+    }
+    // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
+    // into the event batch flush.
+    await next();
+    ctx.timing.end.then(() => {
+      emitter.flush();
+    });
+  }
+  return withMiddleware(globalEmitter, universalEventsMiddleware);
 }

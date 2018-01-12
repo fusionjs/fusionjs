@@ -21,12 +21,22 @@
 // SOFTWARE.
 
 import test from 'tape-cup';
-import plugin from '../../browser.js';
+import App from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
+import {render} from 'fusion-test-utils';
+import plugin from '../browser.js';
+import {UniversalEventsToken} from '../index';
 
-test('Browser EventEmitter', t => {
+function getApp(fetch) {
+  const app = new App('el', el => el);
+  app.register(FetchToken, () => fetch);
+  app.register(UniversalEventsToken, plugin);
+  return app;
+}
+
+test('Browser EventEmitter', async t => {
   let fetched = false;
   let emitted = false;
-  const ctx = {};
   const fetch = (url, {method, headers, body}) => {
     t.equals(url, '/_events', 'url is ok');
     t.equals(method, 'POST', 'method is ok');
@@ -41,21 +51,26 @@ test('Browser EventEmitter', t => {
     fetched = true;
     return Promise.resolve();
   };
-  const global = {
-    setInterval: () => {},
-    clearInterval: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-  };
-  const Emitter = plugin({fetch, global});
-  const emitter = Emitter.of(ctx);
-  emitter.on('a', ({x}) => {
-    t.equals(x, 1, 'payload is correct');
-    emitted = true;
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      t.equal(emitter, events);
+      emitter.on('a', ({x}) => {
+        t.equals(x, 1, 'payload is correct');
+        emitted = true;
+      });
+      emitter.emit('a', {x: 1});
+      emitter.flush();
+      emitter.teardown();
+      return next();
+    };
   });
-  emitter.emit('a', {x: 1});
-  emitter.flush();
-  emitter.teardown();
+
+  await render(app, '/');
+
+  await new Promise(resolve => setTimeout(resolve, 100));
+
   t.equals(emitted, true, 'emitted');
   t.equals(fetched, true, 'fetched');
   t.end();

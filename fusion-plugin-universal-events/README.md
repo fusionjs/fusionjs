@@ -1,4 +1,4 @@
-# fusion-plugin-universal-events
+ # fusion-plugin-universal-events
 
 [![Build status](https://badge.buildkite.com/de4e30ddb9d019f5a8e3a2519bc0a5cccab25247809cd10c99.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-events)
 
@@ -24,47 +24,36 @@ yarn add fusion-plugin-universal-events
 // main.js
 import React from 'react';
 import App from 'fusion-react';
-import universalEvents from 'fusion-plugin-universal-events';
-import Root from './components/root';
-import analytics from './plugins/analytics';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
 
 export default function() {
-  const app = new App(<Root />);
-  const UniversalEvents = app.plugin(universalEvents);
-  const Analytics = app.plugin(analytics, {UniversalEvents});
+  const app = new App();
+  app.register(UniversalEventsToken, UniversalEvents);
+  __BROWSER__ && app.configure(FetchToken, window.fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    events.on('some-event', (payload) => {});
+    events.on('some-scoped-event', (payload, ctx) => {});
+    events.emit('some-event', {some: 'payload'});
+    return (ctx, next) => {
+      const scoped = events.from(ctx);
+      scoped.on('some-scoped-event', (payload, ctx) => {});
+      scoped.emit('some-scoped-event', {some: 'payload'});
+    };
+  });
   return app;
 }
-
-// components/root.js
-export default ({}, {universalEvents}) => {
-  function trackSignUp() {
-    universalEvents.emit('user-action', {
-      action: 'click',
-      target: 'sign up button',
-    });
-  }
-  return <button onClick={trackSignUp}>Sign up</button>;
-}
-
-// plugins/analytics.js
-export default function({UniversalEvents}) => (ctx, next) => {
-  UniversalEvents.of(ctx).on('user-action', ({action, target}) => {
-    // logs `User did a click on sign up button` both in client and server
-    console.log(`User did a ${action} on ${target}!`);
-    if (__NODE__) {
-      // save data
-    }
-  });
-  return next();
-}
 ```
+
+### UniversalEvents vs Standard Event Emitter
+
+The `UniversalEvents` abstraction was designed to allow you to emit and react to events without worrying about whether you are on the server or the browser. It also provides the ability for observers to map event payloads to new ones. For example, you might want to add the some piece of context such as a session id to every event of a certain type. If you just want a standard event emitter, this might not be the package for you.
 
 ### Event transformation
 
 It's possible to transform event data with a mapping function, for example to attach a timestamp to all actions of a type.
 
 ```js
-const events = UniversalEvents.of();
 events.map('user-action', payload => {
   return {...payload, time: new Date().getTime()};
 });
@@ -89,10 +78,13 @@ events.on('type', (payload, ctx) => {
 This parameter will be present when events are emitted from the `ctx` scoped EventsEmitter instance. For example:
 
 ```js
-const eventsWithoutCtx = EventEmitter.of();
-(ctx, next) => {
-  const eventsWithCtx = EventEmitter.of(ctx);
-}
+app.middleware({events: UniversalEventsToken}, ({events}) => {
+  events.on('some-scoped-event', (payload, ctx) => {});
+  return (ctx, next) => {
+    const scoped = events.from(ctx);
+    scoped.emit('some-scoped-event', {some: 'payload'});
+  };
+});
 ```
 
 ### * event type
@@ -109,25 +101,24 @@ events.map('*', payload => {
 
 ### API
 
-#### `universalEvents`
-
-`universalEvents` - A plugin that creates a UniversalEvents class when passed to `app.plugin`
+#### Plugin registration
 
 ```js
-import App from 'fusion-react';
-import universalEvents from 'fusion-plugin-universal-events';
-
-const UniversalEvents = app.plugin(universalEvents);
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+app.register(UniversalEventsToken, UniversalEvents);
 ```
 
-#### `UniversalEvents.of`
+#### Dependencies
+
+##### `FetchToken`
+
+- `fetch` - UniversalEvents in the browser depends on an implementation of `fetch` registered on the standard `FetchToken` exported from `fusion-tokens`.
 
 ```js
-const events = UniversalEvents.of(ctx)
-```
-Returns an event emitter
+import {FetchToken} from 'fetch-tokens';
+__BROWSER__ && app.configure(FetchToken, window.fetch);
 
-- `ctx: Object` - A memoization key
+#### Instance API 
 
 #### `events.on`
 
@@ -182,4 +173,14 @@ Sets the frequency at which data is flushed to the server. Resets the interval t
 events.teardown()
 ```
 
-Stops the interval timer, clears the data queue and prevents any further data from being flushed to the server.
+Stops the interval timer, clears the data queue and prevents any further data from being flushed to the server. Useful for testing
+
+#### `events.from`
+
+```js
+const scoped = events.from(ctx);
+```
+
+Returns a scoped version of the events api.
+
+- `ctx: FusionContext` - Required. See [FusionContext](https://github.com/fusionjs/fusion-core#context)

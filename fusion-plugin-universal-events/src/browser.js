@@ -21,47 +21,55 @@
 // SOFTWARE.
 
 /* eslint-env browser */
-import {SingletonPlugin} from 'fusion-core';
+import {withDependencies} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
 import Emitter from './emitter';
 
-export default function({fetch = window.fetch, global = window} = {}) {
-  return new SingletonPlugin({
-    Service: class UniversalEmitter extends Emitter {
-      constructor() {
-        super();
-        //privates
-        this.batch = [];
-        this.flush = this.flush.bind(this);
-        this.setFrequency(5000);
-        global.addEventListener('beforeunload', this.flush);
-      }
-      setFrequency(frequency) {
-        global.clearInterval(this.interval);
-        this.interval = global.setInterval(this.flush, frequency);
-      }
-      emit(type, payload) {
-        payload = super.mapEvent(type, payload);
-        super.handleEvent(type, payload);
-        this.batch.push({type, payload});
-      }
-      flush() {
-        if (this.batch.length > 0) {
-          fetch('/_events', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({items: this.batch} || []),
-          }).catch(() => {});
-        }
-        this.batch = [];
-      }
-      teardown() {
-        global.removeEventListener('beforeunload', this.flush);
-        global.clearInterval(this.interval);
-        this.interval = null;
-        this.batch = [];
-      }
-    },
-  });
+class UniversalEmitter extends Emitter {
+  constructor(fetch) {
+    super();
+    //privates
+    this.batch = [];
+    this.flush = this.flush.bind(this);
+    this.fetch = fetch;
+    this.setFrequency(5000);
+    addEventListener('beforeunload', this.flush);
+  }
+  setFrequency(frequency) {
+    clearInterval(this.interval);
+    this.interval = setInterval(this.flush, frequency);
+  }
+  emit(type, payload) {
+    payload = super.mapEvent(type, payload);
+    super.handleEvent(type, payload);
+    this.batch.push({type, payload});
+  }
+  // match server api
+  from() {
+    return this;
+  }
+  flush() {
+    if (this.batch.length > 0) {
+      this.fetch('/_events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({items: this.batch} || []),
+      }).catch(() => {});
+    }
+    this.batch = [];
+  }
+  teardown() {
+    removeEventListener('beforeunload', this.flush);
+    clearInterval(this.interval);
+    this.interval = null;
+    this.batch = [];
+  }
 }
+
+const plugin = withDependencies({fetch: FetchToken})(({fetch}) => {
+  return new UniversalEmitter(fetch);
+});
+
+export default plugin;
