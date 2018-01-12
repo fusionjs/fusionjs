@@ -41,7 +41,7 @@ exports.run = async function({dir = '.', environment, port}) {
   if (env) {
     const entry = getEntry(env);
     const {start} = require(entry);
-    return start({port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
+    return start({dir, port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
   } else {
     throw new Error(`App can't start. JS isn't compiled`); // handle compilation errors
   }

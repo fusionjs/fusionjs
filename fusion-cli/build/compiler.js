@@ -201,6 +201,7 @@ function getConfig({target, env, dir, watch, cover}) {
       // Warn on assets larger than 250kb (webpack default)
       maxAssetSize: 250000,
     },
+    context: dir,
     /**
      * Don't polyfill or mock node things in the browser. Default settings can be found at:
      * https://github.com/webpack/webpack/blob/master/lib/WebpackOptionsDefaulter.js
@@ -214,10 +215,10 @@ function getConfig({target, env, dir, watch, cover}) {
         Buffer: env === 'test' && target === 'web' ? 'mock' : false,
         // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
         setImmediate: false,
-        // Mocking __filename and __dirname is probably harmless, but for consistency let's keep it off for now.
-        __filename: false,
-        // Tape also requires __dirname, remove once we don't use tape anymore
-        __dirname: env === 'test' && target === 'web' ? true : false,
+        // We want these to resolve to the original file source location, not the compiled location
+        // in the future, we may want to consider using `import.meta`
+        __filename: true,
+        __dirname: true,
         /**
          * Tape requires `fs` to be defined
          */

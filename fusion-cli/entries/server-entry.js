@@ -8,7 +8,7 @@ import ContextFactory from '../plugins/context-plugin';
 import ServerErrorFactory from '../plugins/server-error-plugin';
 
 const CompilationMetaData = CompilationMetaDataFactory();
-const Assets = AssetsFactory();
+let Assets;
 const Context = ContextFactory();
 const ServerErrorHandling = ServerErrorFactory();
 
@@ -40,7 +40,8 @@ const initialize = main
       throw new Error('App should export a function');
     };
 
-export async function start({port}) {
+export async function start({port, dir = '.'}) {
+  Assets = AssetsFactory(dir);
   await reload();
 
   // TODO(#21): support https.createServer(credentials, listener);

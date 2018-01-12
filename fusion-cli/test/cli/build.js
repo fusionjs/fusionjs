@@ -4,6 +4,7 @@ const path = require('path');
 const test = require('tape');
 const {cmd, start} = require('../run-command');
 const {promisify} = require('util');
+const request = require('request-promise');
 
 const exists = promisify(fs.exists);
 const readdir = promisify(fs.readdir);
@@ -131,6 +132,27 @@ test('`fusion build` works in production', async t => {
     res.includes('src="/_static/client-vendor'),
     'includes a script reference to client-vendor'
   );
+  proc.kill();
+  t.end();
+});
+
+test('`fusion build` with assets', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/assets');
+  await cmd(`build --dir=${dir}`);
+  const {proc, port} = await start(`--dir=${dir}`);
+  const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
+  try {
+    const res = await request(`http://localhost:${port}${expectedAssetPath}`, {
+      resolveWithFullResponse: true,
+    });
+    const contents = fs
+      .readFileSync(path.resolve(dir, 'src/static/test.css'))
+      .toString();
+    t.equal(res.body, contents);
+    t.equal(res.headers['x-test'], 'test');
+  } catch (e) {
+    t.ifError(e);
+  }
   proc.kill();
   t.end();
 });

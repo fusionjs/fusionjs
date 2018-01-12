@@ -8,7 +8,6 @@ const {promisify} = require('util');
 const request = require('request-promise');
 
 const exists = promisify(fs.exists);
-const readFile = promisify(fs.readFile);
 
 test('`fusion dev` works', async t => {
   const dir = path.resolve(__dirname, '../fixtures/noop');
@@ -22,34 +21,35 @@ test('`fusion dev` works', async t => {
   t.end();
 });
 
-test.only('`fusion dev` works with assets', async t => {
+test('`fusion dev` works with assets', async t => {
   const dir = path.resolve(__dirname, '../fixtures/assets');
   const entryPath = path.resolve(
     dir,
     '.fusion/dist/development/server/server-main.js'
   );
-  const testFilePath = path.resolve(dir, '.fusion/test-asset');
-
   const {proc, port} = await dev(`--dir=${dir}`);
-  t.ok(await exists(testFilePath), 'Generates test file');
   t.ok(await exists(entryPath), 'Entry file gets compiled');
-  const assetPath = await readFile(testFilePath);
   const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
-  t.equal(assetPath.toString(), expectedAssetPath, 'sets correct asset path');
   try {
+    const clientMain = await request(
+      `http://localhost:${port}/_static/client-main.js`
+    );
+    t.ok(clientMain, 'serves client-main from memory correctly');
     t.ok(
-      await request(`http://localhost:${port}/_static/client-main.js`),
-      'serves client-main from memory correctly'
+      clientMain.includes('"src", "src/main.js")'),
+      'transpiles __dirname and __filename'
     );
     t.ok(
       await request(`http://localhost:${port}/_static/client-vendor.js`),
       'serves client-vendor from memory correctly'
     );
     t.equal(
-      fs.readFileSync(path.resolve(dir, 'src/static/test.css')).toString(),
       await request(`http://localhost:${port}${expectedAssetPath}`),
+      fs.readFileSync(path.resolve(dir, 'src/static/test.css')).toString(),
       'serves css file from memory correctly'
     );
+    t.equal(await request(`http://localhost:${port}/dirname`), 'src');
+    t.equal(await request(`http://localhost:${port}/filename`), 'src/main.js');
   } catch (e) {
     t.iferror(e);
   }
@@ -63,16 +63,13 @@ test('`fusion dev` works with assets with cdnUrl', async t => {
     dir,
     '.fusion/dist/development/server/server-main.js'
   );
-  const testFilePath = path.resolve(dir, '.fusion/test-asset');
-  const {proc} = await dev(`--dir=${dir}`, {
+  const {proc, port} = await dev(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {CDN_URL: 'https://cdn.com'}),
   });
-  t.ok(await exists(testFilePath), 'Generates test file');
   t.ok(await exists(entryPath), 'Entry file gets compiled');
-  const assetPath = await readFile(testFilePath);
   t.equal(
-    assetPath.toString(),
-    'https://cdn.com/d41d8cd98f00b204e9800998ecf8427e.js',
+    await request(`http://localhost:${port}/test`),
+    'https://cdn.com/c300a7df05c8142598558365dbdaa451.css',
     'sets correct asset path'
   );
   proc.kill();
