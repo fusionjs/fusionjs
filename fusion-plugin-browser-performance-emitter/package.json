@@ -24,21 +24,21 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.2",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-eslint": "8.2.1",
+    "babel-plugin-transform-flow-strip-types": "6.22.0",
     "create-universal-package": "2.1.1",
-    "eslint": "^4.11.0",
-    "eslint-config-fusion": "^0.1.2",
-    "eslint-plugin-cup": "^1.0.0",
-    "eslint-plugin-flowtype": "^2.39.1",
-    "eslint-plugin-prettier": "^2.3.1",
-    "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.3",
-    "nyc": "^11.3.0",
+    "eslint": "4.15.0",
+    "eslint-config-fusion": "0.1.2",
+    "eslint-plugin-cup": "1.0.0",
+    "eslint-plugin-flowtype": "2.41.0",
+    "eslint-plugin-prettier": "2.4.0",
+    "eslint-plugin-react": "7.5.1",
+    "flow-bin": "0.59.0",
+    "fusion-core": "0.2.8",
+    "nyc": "11.4.1",
     "prettier": "1.8.2",
-    "tape-cup": "^4.7.1",
-    "unitest": "^1.1.0"
+    "tape-cup": "4.7.1",
+    "unitest": "1.1.0"
   },
   "peerDependencies": {
     "fusion-core": "^0.2.3"
