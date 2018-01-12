@@ -24,25 +24,31 @@ yarn add fusion-plugin-i18n-react
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import Internationalization from 'fusion-plugin-i18n-react';
+import I18n, {I18nToken, I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n-react';
+import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 import Hello from './hello';
 
 export default () => {
   const app = new App(<div></div>);
 
-  const I18n = app.plugin(Internationalization, {fetch});
+  const I18n = app.register(I18nToken, I18n);
+  __NODE__
+    ? app.configure(I18nLoaderToken, createI18nLoader())
+    : app.configure(FetchToken, fetch);
 
-  app.plugin(Hello, {I18n});
+  app.register(Hello);
 
   return app;
 }
 
 // src/hello.js
-export default ({I18n}) => (ctx, next) => {
+import {I18nToken} from 'fusion-plugin-i18n-react';
+
+export default withDependencies({I18n: I18nToken})({I18n}) => (ctx, next) => {
   // use the service
   if (__NODE__ && ctx.path === '/hello') {
-    const i18n = I18n.of(ctx);
+    const i18n = I18n(ctx);
     ctx.body = {
       message: i18n.translate('test', {name: 'world'}), // hello world
     }
@@ -53,6 +59,64 @@ export default ({I18n}) => (ctx, next) => {
 // translations/en-US.json
 {
   test: "hello ${name}"
+}
+```
+
+##### Custom translations loader example
+
+```js
+// src/main.js
+import React from 'react';
+import App from 'fusion-react';
+import I18n, {I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n-react';
+import {FetchToken} from 'fusion-tokens';
+import fetch from 'unfetch';
+import Hello from './hello';
+import I18nLoader from './translations';
+
+export default () => {
+  const app = new App(<div></div>);
+
+  app.register(I18nToken, I18n);
+  __NODE__
+    ? app.configure(I18nLoaderToken, I18nLoader);
+    : app.configure(FetchToken, fetch);
+
+  app.register(Hello);
+
+  return app;
+}
+
+// src/hello.js
+import {I18nToken} from 'fusion-plugin-i18n-react';
+
+export default withDependencies({I18n: I18nToken})(({I18n}) => {
+  return withMiddleware((ctx, next) => {
+    if (__NODE__ && ctx.path === '/hello') {
+      const i18n = I18n(ctx);
+      ctx.body = {
+        message: i18n.translate('test', {name: 'world'}), // hello world
+      }
+    }
+    return next();
+  });
+});
+
+// src/translation-loader.js
+import {Locale} from 'locale';
+
+const translationData = {
+  'en-US': {
+    test: "hello ${name}"
+  }
+}
+
+export default (ctx) => {
+  // locale could be determined in different ways,
+  // e.g. from ctx.headers['accept-language'] or from a /en-US/ URL
+  const locale = new Locale('en-US');
+  const translations = translationData[locale];
+  return {locale, translations};
 }
 ```
 
@@ -109,13 +173,60 @@ Usage:
 
 ### API
 
+#### Dependency registration
+
+```js
+import I18n, {I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n-react';
+import {FetchToken} from 'fusion-tokens';
+
+app.register(I18nToken, I18n);
+__NODE__
+  ? app.configure(I18nLoaderToken, I18nLoader);
+  : app.configure(FetchToken, fetch);
+```
+
+- `I18n` - the core I18n library
+- `I18nLoader: (ctx: Context) => ({locale: string, translations: Object<string, string>})` - A function that provides translations
+  - `ctx: FusionContext` - A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+- `fetch` - a [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation
+
+#### Factory
+
+`const i18n = I18n(ctx)`
+
+- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+
 #### Instance methods
 
 ```js
-const {translate} = app.plugin(Internationalization, {fetch}).of();
+const translation = i18n.translate(key, interpolations)
 ```
 
-- `translate: (key: string, interpolations: Object) => string`
+- `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
+- `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
+- `translation: string` - A translation, or `key` if a matching translation could not be found.
+
+#### Server-side loader
+
+This plugin has a simple loader implementation that looks for files in a `./translations` directory. Files should be named after their locales.
+
+```js
+import {I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n-react';
+
+app.configure(I18nLoaderToken, createI18nLoader());
+
+// translations/en-US.json
+{
+  "some-translation-key": "hello",
+}
+```
+
+`const loader = createI18nLoader()`
+
+- `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
+  - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  - `translations: Object` - A object that maps translation keys to translated values for the given locale
 
 #### React component
 
