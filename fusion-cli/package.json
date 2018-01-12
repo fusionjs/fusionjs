@@ -100,7 +100,7 @@
     "flow-bin": "0.62.0",
     "fusion-core": "0.2.8",
     "fusion-plugin-react-router": "0.2.3",
-    "fusion-react": "0.1.10",
+    "fusion-react": "0.2.0",
     "fusion-react-async": "0.1.4",
     "fusion-test-utils": "0.2.4",
     "globby": "7.1.1",
