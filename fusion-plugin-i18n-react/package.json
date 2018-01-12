@@ -33,12 +33,13 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "^0.1.9",
+    "fusion-plugin-i18n": "^0.2.1",
     "prop-types": "^15.6.0"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.3",
-    "fusion-react": "^0.1.9",
+    "fusion-core": "^0.3.0-2",
+    "fusion-react": "^0.2.0",
+    "fusion-tokens": "0.0.4",
     "react": "14.x - 16.x"
   },
   "devDependencies": {
@@ -52,8 +53,9 @@
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
     "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.3",
-    "fusion-react": "^0.1.9",
+    "fusion-core": "^0.3.0-2",
+    "fusion-react": "^0.2.0",
+    "fusion-tokens": "0.0.4",
     "fusion-react-async": "0.1.4",
     "nyc": "^11.3.0",
     "prettier": "1.8.2",
