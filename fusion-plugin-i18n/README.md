@@ -45,7 +45,7 @@ export default () => {
 // src/hello.js
 import {I18nToken} from 'fusion-plugin-i18n';
 
-export default withDependencies({I18n: I18nToken}, ({I18n}) => {
+export default withDependencies({I18n: I18nToken})(({I18n}) => {
   return withMiddleware((ctx, next) => {
     if (__NODE__ && ctx.path === '/hello') {
       const i18n = I18n(ctx);
@@ -91,7 +91,7 @@ export default () => {
 // src/hello.js
 import {I18nToken} from 'fusion-plugin-i18n';
 
-export default withDependencies({I18n: I18nToken}, ({I18n}) => {
+export default withDependencies({I18n: I18nToken})(({I18n}) => {
   return withMiddleware((ctx, next) => {
     if (__NODE__ && ctx.path === '/hello') {
       const i18n = I18n(ctx);
@@ -104,6 +104,8 @@ export default withDependencies({I18n: I18nToken}, ({I18n}) => {
 });
 
 // src/translation-loader.js
+import {Locale} from 'locale';
+
 const translationData = {
   'en-US': {
     test: "hello ${name}"
@@ -113,7 +115,7 @@ const translationData = {
 export default (ctx) => {
   // locale could be determined in different ways,
   // e.g. from ctx.headers['accept-language'] or from a /en-US/ URL
-  const locale = 'en-US';
+  const locale = new Locale('en-US');
   const translations = translationData[locale];
   return {locale, translations};
 }
@@ -142,13 +144,19 @@ __NODE__
 
 #### Factory
 
-`I18n(ctx)`
+`const i18n = I18n(ctx)`
 
-- `ctx: {headers: {'accept-language': string}}` - a Koa context object
+- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
 
 #### Instance methods
 
-- `translate: (key: string, interpolations: Object) => string`
+```js
+const translation = i18n.translate(key, interpolations)
+```
+
+- `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
+- `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
+- `translation: string` - A translation, or `key` if a matching translation could not be found.
 
 #### Server-side loader
 
@@ -165,3 +173,9 @@ app.configure(I18nLoaderToken, createI18nLoader());
 }
 ```
 
+`const loader = createI18nLoader()`
+
+- `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
+  - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  - `translations: Object` - A object that maps translation keys to translated values for the given locale
