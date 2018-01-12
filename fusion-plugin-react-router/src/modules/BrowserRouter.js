@@ -22,11 +22,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-export {Status, NotFound} from './Status';
-export {Redirect} from './Redirect';
-
 import {Router as BaseRouter} from 'react-router-dom';
 import createHistory from 'history/createBrowserHistory';
+
+export {Status, NotFound} from './Status';
+export {Redirect} from './Redirect';
 
 class BrowserRouter extends React.Component {
   constructor(props = {}) {

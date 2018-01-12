@@ -23,6 +23,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Route as ReactRouterRoute} from 'react-router-dom';
+
 function Route(props, context) {
   const {trackingId, component, children, ...remainingProps} = props;
   if (remainingProps.render) {

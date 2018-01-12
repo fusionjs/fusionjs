@@ -21,12 +21,13 @@
 // SOFTWARE.
 
 import React from 'react';
-import test from 'tape-cup';
-import {Route} from '../modules/Route';
-import getRouter from '../plugin';
 import {withRouter} from 'react-router-dom';
 import ReactDOMServer from 'react-dom/server';
 import ReactDOM from 'react-dom';
+import test from 'tape-cup';
+import {Route} from '../modules/Route';
+import getRouter from '../plugin';
+
 const {renderToString} = ReactDOMServer;
 const {render} = ReactDOM;
 
