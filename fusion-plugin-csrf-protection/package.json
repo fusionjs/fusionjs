@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-flow-strip-types": "7.0.0-beta.37",
-    "@babel/preset-react": "7.0.0-beta.32",
+    "@babel/preset-react": "7.0.0-beta.37",
     "babel-eslint": "8.2.1",
     "body-parser": "1.18.2",
     "create-universal-package": "2.1.1",
