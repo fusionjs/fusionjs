@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/plugin-transform-flow-strip-types": "7.0.0-beta.37",
     "babel-eslint": "8.2.1",
-    "create-universal-package": "2.1.1",
+    "create-universal-package": "3.2.4",
     "eslint": "4.15.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
