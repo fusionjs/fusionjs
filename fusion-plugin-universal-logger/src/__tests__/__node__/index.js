@@ -1,6 +1,6 @@
+import universalEvents from 'fusion-plugin-universal-events';
 import test from 'tape-cup';
 import plugin from '../../server.js';
-import universalEvents from 'fusion-plugin-universal-events';
 
 test('Server logger', async t => {
   let called = false;
