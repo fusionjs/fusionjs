@@ -1,5 +1,6 @@
 /* eslint-env node */
 const Plugin = require('../dist/node.cjs');
+
 const onError = e => {
   console.log('ERROR HANDLER', e); // eslint-disable-line
 };
