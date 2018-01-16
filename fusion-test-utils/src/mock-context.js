@@ -1,10 +1,14 @@
 /* eslint-env node */
+// @flow
 
 import {parse} from 'url';
+import type {Context} from 'fusion-core';
 
-export function mockContext(url, options) {
+declare var __BROWSER__: boolean;
+
+export function mockContext(url: string, options: *): Context {
   if (__BROWSER__) {
-    const parsedUrl = parse(url);
+    const parsedUrl = {...parse(url)};
     const {path} = parsedUrl;
     parsedUrl.path = parsedUrl.pathname;
     parsedUrl.url = path;
@@ -23,7 +27,9 @@ export function mockContext(url, options) {
    * https://github.com/koajs/koa/blob/master/LICENSE
    */
   const socket = new Stream.Duplex();
+  //$FlowFixMe
   req = Object.assign({headers: {}, socket}, Stream.Readable.prototype, req);
+  //$FlowFixMe
   res = Object.assign({_headers: {}, socket}, Stream.Writable.prototype, res);
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   res.getHeader = k => res._headers[k.toLowerCase()];
@@ -31,11 +37,12 @@ export function mockContext(url, options) {
   res.removeHeader = k => delete res._headers[k.toLowerCase()];
 
   const app = new Koa();
+  //$FlowFixMe
   const ctx = app.createContext(req, res);
   return ctx;
 }
 
-export function renderContext(url, options) {
+export function renderContext(url: string, options: any): Context {
   options = Object.assign(options, {headers: {accept: 'text/html'}});
   return mockContext(url, options);
 }

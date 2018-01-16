@@ -14,11 +14,14 @@ yarn add fusion-test-utils
 
 ```js
 import App from 'fusion-core';
-import {render, request} from 'fusion-test-utils';
+import {getSimulator} from 'fusion-test-utils';
+
+// create simulator
+const app = new App();
+const simulator = getSimulator(app /*, (optional) test plugin with assertions on dependencies */);
 
 // test renders of your application
-const app = new App();
-const ctx = await render(app, '/test-url', {
+const ctx = await simulator.render(app, '/test-url', {
   headers: {
     'x-header': 'value',
   }
@@ -26,8 +29,7 @@ const ctx = await render(app, '/test-url', {
 // do assertions on ctx
 
 // test requests to your application
-const app = new App();
-const ctx = await request(app, '/test-url', {
+const ctx = await simulator.request(app, '/test-url', {
   headers: {
     'x-header': 'value',
   }
@@ -39,17 +41,22 @@ const ctx = await request(app, '/test-url', {
 
 ### API
 
-#### `request(app: FusionApp, url: String, options: ?Object)` => Promise<ctx>
+#### `getSimulator(app: FusionApp, testPlugin?: FusionPlugin) => { request, render }`
+
+Creates a simulator which exposes functionality to simulate requests and renders through your application.
+`app` - instance of a FusionApp
+`testPlugin` - optional plugin to make assertions on dependencies
+
+#### `getSimulator(...).request(url: String, options: ?Object)` => Promise<ctx>
 
 Simulates a request through your application.
-`app` - instance of a FusionApp
 `url` - path for request
 `options` - optional object containing custom settings for the request
 `options.method` - the request method, e.g., GET, POST,
 `options.headers` - headers to be added to the request
 `options.body` - body for the request
 
-#### `render(app: FusionApp, url: String, options: ?Object)` => Promise<ctx>
+#### `getSimulator(...).render(url: String, options: ?Object)` => Promise<ctx>
 
 This is the same as `request`, but defaults the `accept` header to `text/html` which will trigger a render of your application.
 

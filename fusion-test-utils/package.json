@@ -38,6 +38,7 @@
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
     "fusion-core": "0.3.0-2",
+    "fusion-tokens": "^0.0.4",
     "jest": "22.0.6",
     "jest-cli": "22.0.6",
     "nyc": "11.4.1",
@@ -61,7 +62,8 @@
     "node-mocks-http": "^1.6.6"
   },
   "peerDependencies": {
-    "fusion-core": ">=0.3.0-2"
+    "fusion-core": ">=0.3.0-2",
+    "fusion-tokens": "^0.0.4"
   },
   "engines": {
     "node": ">= 8.9.0"
