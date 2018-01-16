@@ -41,9 +41,7 @@ export default withDependencies({
         });
       });
       const serialized = JSON.stringify({chunks, translations});
-      const script = html`<script type='application/json' id="__TRANSLATIONS__">${
-        serialized
-      }</script>`; // consumed by ./browser
+      const script = html`<script type='application/json' id="__TRANSLATIONS__">${serialized}</script>`; // consumed by ./browser
       ctx.body.body.push(script);
     } else if (ctx.path === '/_translations') {
       const i18n = plugin.of(ctx);
