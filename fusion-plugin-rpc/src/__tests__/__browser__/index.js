@@ -30,9 +30,9 @@ test('failure status request', t => {
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
   const rpc = RPC({fetch}).of();
   t.equals(typeof rpc.request, 'function', 'has method');
-  t.ok(rpc.request('test') instanceof Promise, 'has right return type');
-  rpc
-    .request('test')
+  const testRequest = rpc.request('test');
+  t.ok(testRequest instanceof Promise, 'has right return type');
+  testRequest
     .then(() => {
       t.fail(new Error('should reject promise'));
     })
