@@ -1,7 +1,7 @@
 steps:
   - name: ':docker: :package:'
     plugins:
-      'docker-compose#v1.5.2':
+      'docker-compose#v1.7.0':
         build: fusion-plugin-service-worker
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
