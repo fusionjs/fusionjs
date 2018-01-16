@@ -20,18 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import React from 'react';
-import {html, unescape} from 'fusion-core';
+import {withDependencies, withMiddleware, html, unescape} from 'fusion-core';
 import {Router as ServerRouter} from './server';
 import {Router as BrowserRouter} from './browser';
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
-export default function getRouter({UniversalEvents} = {}) {
-  return function middleware(ctx, next) {
+export default withDependencies({
+  emitter: UniversalEventsToken,
+})(({emitter}) => {
+  return withMiddleware({}, (ctx, next) => {
     if (!ctx.element) {
       return next();
     }
-    const emitter = UniversalEvents ? UniversalEvents.of(ctx) : null;
     if (__NODE__) {
       let pageData = {
         title: ctx.path,
@@ -107,5 +109,5 @@ export default function getRouter({UniversalEvents} = {}) {
       );
       return next();
     }
-  };
-}
+  });
+});

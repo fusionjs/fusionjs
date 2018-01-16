@@ -20,11 +20,13 @@ yarn add fusion-plugin-react-router
 // src/main.js
 import App from 'fusion-react';
 import Router from 'fusion-plugin-react-router';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import root from './components/root';
 
 export default function start(App) {
   const app = new App(root);
-  app.plugin(Router);
+  app.register(Router);
+  app.register(UniversalEventsToken, UniversalEvents);
   return app;
 }
 
@@ -57,7 +59,7 @@ export default root;
 
 ### API
 
-- [getRouter](#getrouter)
+- [Dependency registration](#dependency-registration)
 - [Router](#router)
 - [Route](#route)
 - [Link](#link)
@@ -66,15 +68,17 @@ export default root;
 - [NotFound](#notfound)
 - [Redirect](#redirect)
 
-#### `getRouter`
+#### Dependency registration
 
 ```jsx
-import getRouter from 'fusion-plugin-react-router';
+import Router from 'fusion-plugin-react-router';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-app.plugin(getRouter, {UniversalEvents})
+app.register(Router);
+app.register(UniversalEventsToken, UniversalEvents);
 ```
 
-- `UniversalEvents: SingletonPlugin` - Optional.
+- `UniversalEvents` - a universal event emitter. Used internally to emit routing events
 
 #### `Router`
 

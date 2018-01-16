@@ -52,7 +52,7 @@ test('without UniversalEvents', t => {
     url: '/',
     element,
   });
-  const plugin = getRouter();
+  const plugin = getRouter({});
   runPlugin(plugin, ctx);
   t.notEquals(ctx.element, element, 'wraps ctx.element');
   t.end();
@@ -76,7 +76,7 @@ test('events with trackingId', t => {
     page: '/',
     done: t.end,
   });
-  const plugin = getRouter({UniversalEvents});
+  const plugin = getRouter({emitter: UniversalEvents});
   runPlugin(plugin, ctx);
   t.notEquals(ctx.element, element, 'wraps ctx.element');
 });
@@ -100,7 +100,7 @@ test('events with no tracking id', t => {
     page: '/',
     done: t.end,
   });
-  const plugin = getRouter({UniversalEvents});
+  const plugin = getRouter({emitter: UniversalEvents});
   runPlugin(plugin, ctx);
   t.notEquals(ctx.element, element, 'wraps ctx.element');
 });
@@ -124,8 +124,8 @@ test('events with no tracking id and deep path', t => {
     page: '/user/:uuid',
     done: t.end,
   });
-  const plugin = getRouter({UniversalEvents});
-  plugin(ctx, () => {
+  const plugin = getRouter({emitter: UniversalEvents});
+  plugin.__middleware__(ctx, () => {
     renderToString(ctx.element);
     return Promise.resolve();
   });
@@ -168,26 +168,22 @@ if (__BROWSER__) {
       {page: '/', title: '/'},
       {page: '/user', title: '/user'},
     ];
+    let mapper;
     const UniversalEvents = {
-      of() {
-        let mapper;
-        return {
-          map(m) {
-            mapper = m;
-          },
-          emit(type, payload) {
-            const expected = expectedPayloads.shift();
-            t.deepLooseEqual(payload, expected);
-            const mapped = mapper({});
-            t.equal(mapped.__url__, expected.title);
-            if (expectedPayloads.length === 0) {
-              t.end();
-            }
-          },
-        };
+      map(m) {
+        mapper = m;
+      },
+      emit(type, payload) {
+        const expected = expectedPayloads.shift();
+        t.deepLooseEqual(payload, expected);
+        const mapped = mapper({});
+        t.equal(mapped.__url__, expected.title);
+        if (expectedPayloads.length === 0) {
+          t.end();
+        }
       },
     };
-    const plugin = getRouter({UniversalEvents});
+    const plugin = getRouter({emitter: UniversalEvents});
     runPlugin(plugin, ctx, {title: '/user', page: '/user'});
   });
 }
@@ -197,28 +193,23 @@ function getMockEvents({t, title: expectedTitle, page: expectedPage, done}) {
     ? ['render:server', 'pageview:server']
     : ['pageview:browser'];
   const values = [1, 2];
-  const UniversalEvents = {
-    of() {
-      return {
-        map(mapper) {
-          t.equal(typeof mapper, 'function');
-        },
-        emit(type, {title, page, status, timing}) {
-          t.equal(type, expected.shift(), 'emits with the correct type');
-          t.equal(title, expectedTitle, 'correct title');
-          t.equal(page, expectedPage, 'correct page');
-          if (__NODE__) {
-            t.equal(status, 200, 'emits status code');
-            t.equal(timing, values.shift(), 'emits with the correct value');
-          }
-          if (expected.length === 0) {
-            done();
-          }
-        },
-      };
+  return {
+    map(mapper) {
+      t.equal(typeof mapper, 'function');
+    },
+    emit(type, {title, page, status, timing}) {
+      t.equal(type, expected.shift(), 'emits with the correct type');
+      t.equal(title, expectedTitle, 'correct title');
+      t.equal(page, expectedPage, 'correct page');
+      if (__NODE__) {
+        t.equal(status, 200, 'emits status code');
+        t.equal(timing, values.shift(), 'emits with the correct value');
+      }
+      if (expected.length === 0) {
+        done();
+      }
     },
   };
-  return UniversalEvents;
 }
 
 function getMockCtx({url, path, element}) {
@@ -246,7 +237,7 @@ function runPlugin(p, ctx, pageData = {title: '/', page: '/'}) {
     el.appendChild(textNode);
     document.body.appendChild(el);
   }
-  p(ctx, () => {
+  p.__middleware__(ctx, () => {
     if (__NODE__) {
       renderToString(ctx.element);
     } else if (__BROWSER__) {

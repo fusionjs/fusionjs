@@ -1,12 +1,11 @@
 {
   "name": "fusion-plugin-react-router",
-  "description": "The `fusion-plugin-react-router` package provides a universal router plugin for React.",
+  "description":
+    "The `fusion-plugin-react-router` package provides a universal router plugin for React.",
   "version": "0.2.3",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-router",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/node.cjs.js",
   "module": "./dist/node.es.js",
   "browser": {
@@ -30,7 +29,7 @@
     "react-router-dom": "^4.2.2"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.5",
+    "fusion-core": "^0.3.0-2",
     "react": "14.x - 16.x",
     "react-dom": "14.x - 16.x"
   },
@@ -45,8 +44,9 @@
     "eslint-plugin-prettier": "2.4.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
-    "fusion-core": "0.2.8",
+    "fusion-core": "0.3.0-2",
     "fusion-plugin-universal-events": "0.2.0",
+    "fusion-tokens": "0.0.4",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
@@ -58,7 +58,8 @@
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "transpile": "npm run clean && cup build",
