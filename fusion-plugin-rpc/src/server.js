@@ -3,6 +3,7 @@
 import {Plugin} from 'fusion-core';
 import bodyparser from 'koa-bodyparser';
 import MissingHandlerError from './missing-handler-error';
+
 const statKey = 'rpc:method';
 
 export default ({handlers = {}, EventEmitter}) => {
