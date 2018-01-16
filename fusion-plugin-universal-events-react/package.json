@@ -1,27 +1,22 @@
 {
   "name": "fusion-plugin-universal-events-react",
   "description": "React Provider and HOC for Fusion universal-events",
-  "repository": "fusionjs/fusion-plugin-universal-events-react",
   "version": "0.1.12",
-  "license": "MIT",
+  "repository": "fusionjs/fusion-plugin-universal-events-react",
   "keywords": [],
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/node.cjs.js",
-  "module": "./dist/node.es.js",
+  "license": "MIT",
+  "files": ["dist", "src"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es5.es.js"
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
   },
   "es2017": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
@@ -37,9 +32,10 @@
     "eslint-plugin-prettier": "2.4.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
-    "fusion-core": "0.2.8",
-    "fusion-react": "0.1.10",
+    "fusion-core": "0.3.0-2",
+    "fusion-react": "0.2.0",
     "fusion-react-async": "0.1.4",
+    "fusion-tokens": "0.0.4",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
@@ -47,8 +43,9 @@
     "tape-cup": "4.7.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.3",
-    "fusion-react": "^0.1.9"
+    "fusion-core": "^0.3.0-2",
+    "fusion-react": "^0.2.0",
+    "fusion-tokens": "0.0.4"
   },
   "scripts": {
     "clean": "rm -rf dist",

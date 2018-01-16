@@ -47,15 +47,16 @@ export default withBatchEvents(Component);
 ```js
 // main.js
 import App from 'fusion-react';
-import universalEvents from 'fusion-plugin-universal-events-react';
+import UniversalEvents from 'fusion-plugin-universal-events-react';
+import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
 export default function() {
   const app = new App(root);
-  const EventEmitter = app.plugin(universalEvents, {fetch});
+  const EventEmitter = app.register(UniversalEventsToken, UniversalEvents);
+  __BROWSER__ && app.configure(FetchToken, fetch);
   return app;
 }
-
 ```
 
 #### `withBatchEvents`
@@ -64,9 +65,10 @@ export default function() {
 import {withBatchEvents} from 'fusion-plugin-universal-events-react';
 
 const Component = ({universalEvents}) => {
-  universalEvents.on('foo', payload => {console.log(payload)});
+  universalEvents.on('foo', payload => {
+    console.log(payload);
+  });
 };
 
 export default withBatchEvents(Component);
-
 ```

@@ -25,3 +25,4 @@ import withBatchEvents from './hoc';
 
 export default plugin;
 export {withBatchEvents};
+export {UniversalEventsToken} from 'fusion-plugin-universal-events';
