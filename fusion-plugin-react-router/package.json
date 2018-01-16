@@ -46,7 +46,7 @@
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
     "fusion-core": "0.2.8",
-    "fusion-plugin-universal-events": "0.1.13",
+    "fusion-plugin-universal-events": "0.2.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
