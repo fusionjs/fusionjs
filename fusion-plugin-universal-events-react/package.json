@@ -5,7 +5,10 @@
   "repository": "fusionjs/fusion-plugin-universal-events-react",
   "keywords": [],
   "license": "MIT",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -26,9 +29,10 @@
     "babel-eslint": "8.2.1",
     "create-universal-package": "3.2.4",
     "eslint": "4.15.0",
-    "eslint-config-fusion": "0.1.2",
+    "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
