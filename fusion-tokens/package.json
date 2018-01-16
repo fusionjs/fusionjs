@@ -30,7 +30,7 @@
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.0",
     "eslint-plugin-import": "2.8.0",
-    "eslint-plugin-prettier": "2.4.0",
+    "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
     "nyc": "11.4.1",
