@@ -3237,9 +3237,9 @@ fusion-react@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.2.0.tgz#3363df120f145089a06b5965a668e4fb3aa9028b"
 
-fusion-test-utils@0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.2.4.tgz#cde093be74ed3a9eb4dfa6423adc21616838c428"
+fusion-test-utils@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.3.0.tgz#dd96be1272458146b1d4c878ead322099e93f3b5"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"

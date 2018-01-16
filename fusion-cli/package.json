@@ -102,7 +102,7 @@
     "fusion-plugin-react-router": "0.2.3",
     "fusion-react": "0.2.0",
     "fusion-react-async": "0.1.4",
-    "fusion-test-utils": "0.2.4",
+    "fusion-test-utils": "0.3.0",
     "globby": "7.1.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
