@@ -4,7 +4,6 @@ import plugin from '../../server.js';
 
 test('Server logger', async t => {
   let called = false;
-  const ctx = {};
   class Transport {
     constructor() {
       this.name = 'test-transport';
@@ -15,12 +14,11 @@ test('Server logger', async t => {
       called = true;
     }
   }
-  const UniversalEvents = universalEvents();
-  const Logger = plugin({
-    UniversalEvents,
+  const logger = plugin({
+    emitter: universalEvents(),
     config: {transports: [new Transport()]},
   });
-  Logger.of(ctx).info('test');
+  logger.info('test');
   t.equals(called, true, 'called');
   t.end();
 });

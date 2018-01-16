@@ -22,21 +22,23 @@ yarn add fusion-plugin-universal-logger
 
 ```js
 import App from 'fusion-core';
+import {LoggerToken} from 'fusion-tokens';
 import UniversalEvents from 'fusion-plugin-universal-events';
 import UniversalLogger from 'fusion-plugin-universal-logger';
 
 export default () => {
   const app = new App(<div>Hello</div>);
-  const Logger = app.plugin(UniversalLogger, {
-    UniversalEvents: app.plugin(UniversalEvents)
-  });
+
+  app.register(UniversalUniversalEventsToken, UniversalEvents)
+  app.register(LoggerToken, UniversalLogger);
 
   if (__BROWSER__) {
-    // log memory usage every minute
-    setInterval(() => {
-      const logger = Logger.of();
-      logger.info('memory consumption is: ' + performance.memory.usedJSHeapSize);
-    }, 60000);
+    // log browser memory usage every minute
+    app.register(withDependencies({logger: LoggerToken})(({logger}) => {
+      setInterval(() => {
+        logger.info('memory consumption is: ' + performance.memory.usedJSHeapSize);
+      }, 60000);
+    }));
   }
 
   return app;
@@ -46,21 +48,67 @@ export default () => {
 ### Configuring Winston
 
 ```js
+import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
+
 const config = __NODE__ && {
   transports: [
     new winston.transports.File({filename: 'logs.log'}),
   ],
 };
-const Logger = app.plugin(UniversalLogger, {UniversalEvents, config});
+app.configure(UniversalLoggerConfigToken, config);
 ```
 
 ---
 
 ### API
 
+
+#### Dependency registration
+
 ```js
-const Logger = app.plugin(UniversalLogger, {UniversalEvents});
+import UniversalLogger, {UniversalLoggerToken} from 'fusion-plugin-universal-logger';
+import UniversalEvents from 'fusion-plugin-universal-events';
+
+app.register(UniversalLoggerToken, UniversalLogger);
+app.register(UniversalEventsToken, UniversalEvents);
+app.configure(UniversalLoggerConfigToken, config);
 ```
 
-- `UniversalEvents` - Required. A [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events) plugin.
-- `Logger` - A Winston logger instance
+- `UniversalLogger` - the logger implementation
+- `UniversalEvents` - an universal event emitter. Used internally to upload logs from the browser to the server
+- `config` - a Winston config object
+
+#### Instance methods
+
+`logger.log(level, ...args)`
+
+- `level: string` - Valid levels: `'trace'`, `'debug'`, `'info'`, `'access'`, `'warn'`, `'error'`, `'fatal'`
+- `args: [string]`
+
+`logger.trace(...args)`
+
+- `args: [string]`
+
+`logger.debug(...args)`
+
+- `args: [string]`
+
+`logger.info(...args)`
+
+- `args: [string]`
+
+`logger.access(...args)`
+
+- `args: [string]`
+
+`logger.warn(...args)`
+
+- `args: [string]`
+
+`logger.error(...args)`
+
+- `args: [string]`
+
+`logger.fatal(...args)`
+
+- `args: [string]`
