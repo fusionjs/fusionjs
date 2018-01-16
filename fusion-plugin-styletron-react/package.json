@@ -1,11 +1,12 @@
 {
   "name": "fusion-plugin-styletron-react",
   "version": "0.3.1",
-  "description":
-    "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
+  "description": "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-styletron-react",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/node.cjs.js",
   "module": "./dist/node.es.js",
   "browser": {
@@ -24,7 +25,9 @@
   },
   "dependencies": {
     "prop-types": "^15.6.0",
-    "styletron-react": "^3.0.0-rc.5"
+    "styletron-client": "^3.0.2",
+    "styletron-react": "^3.0.0-rc.5",
+    "styletron-server": "^3.0.2"
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.37",
@@ -33,9 +36,10 @@
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "eslint": "4.15.0",
-    "eslint-config-fusion": "0.1.2",
+    "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.59.0",
@@ -56,8 +60,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "prepublish": "npm run transpile"
   },

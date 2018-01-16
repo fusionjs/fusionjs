@@ -4,9 +4,8 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 
 import {consumeSanitizedHTML} from 'fusion-core';
+import {styled, StyletronProvider} from 'styletron-react';
 import plugin from '../../server';
-import {styled} from 'styletron-react';
-import {StyletronProvider} from 'styletron-react';
 
 const SilverPanel = styled('div', {
   backgroundColor: 'silver',
