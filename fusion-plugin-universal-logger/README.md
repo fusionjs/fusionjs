@@ -29,17 +29,16 @@ import UniversalLogger from 'fusion-plugin-universal-logger';
 export default () => {
   const app = new App(<div>Hello</div>);
 
-  app.register(UniversalUniversalEventsToken, UniversalEvents)
+  app.register(UniversalEventsToken, UniversalEvents)
   app.register(LoggerToken, UniversalLogger);
 
-  if (__BROWSER__) {
-    // log browser memory usage every minute
-    app.register(withDependencies({logger: LoggerToken})(({logger}) => {
-      setInterval(() => {
-        logger.info('memory consumption is: ' + performance.memory.usedJSHeapSize);
-      }, 60000);
-    }));
-  }
+  app.middleware({logger: LoggerToken}, ({logger}) => {
+    return (ctx, next) => {
+      if (__NODE__) logger.info(`Received request at ${ctx.url}`);
+      else logger.info(`Pageload at ${ctx.url}`);
+      return next();
+    }
+  });
 
   return app;
 }
@@ -55,13 +54,12 @@ const config = __NODE__ && {
     new winston.transports.File({filename: 'logs.log'}),
   ],
 };
-app.configure(UniversalLoggerConfigToken, config);
+app.register(UniversalLoggerConfigToken, config);
 ```
 
 ---
 
 ### API
-
 
 #### Dependency registration
 
@@ -71,7 +69,7 @@ import UniversalEvents from 'fusion-plugin-universal-events';
 
 app.register(UniversalLoggerToken, UniversalLogger);
 app.register(UniversalEventsToken, UniversalEvents);
-app.configure(UniversalLoggerConfigToken, config);
+app.register(UniversalLoggerConfigToken, config);
 ```
 
 - `UniversalLogger` - the logger implementation

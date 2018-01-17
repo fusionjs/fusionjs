@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {withDependencies} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 const supportedLevels = [
@@ -23,23 +23,26 @@ function normalizeErrors(value) {
   return value;
 }
 
-export default withDependencies({
-  emitter: UniversalEventsToken,
-})(({emitter}) => {
-  class UniversalLogger {
-    constructor() {
-      supportedLevels.forEach(level => {
-        this[level] = (...args) => {
-          return this.log(level, ...args);
-        };
-      });
+export default createPlugin({
+  deps: {
+    emitter: UniversalEventsToken,
+  },
+  provides: ({emitter}) => {
+    class UniversalLogger {
+      constructor() {
+        supportedLevels.forEach(level => {
+          this[level] = (...args) => {
+            return this.log(level, ...args);
+          };
+        });
+      }
+      log(level, ...args) {
+        return emitter.emit('universal-log', {
+          level,
+          args: args.map(normalizeErrors),
+        });
+      }
     }
-    log(level, ...args) {
-      return emitter.emit('universal-log', {
-        level,
-        args: args.map(normalizeErrors),
-      });
-    }
-  }
-  return new UniversalLogger();
+    return new UniversalLogger();
+  },
 });
