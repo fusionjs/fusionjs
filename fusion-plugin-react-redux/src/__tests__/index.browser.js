@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import tape from 'tape-cup';
 import React from 'react';
-import Redux from '../../index.js';
+import Redux from '../index.js';
 import Enzyme, {mount} from 'enzyme';
 import {connect} from 'react-redux';
 import Adapter from 'enzyme-adapter-react-16';
