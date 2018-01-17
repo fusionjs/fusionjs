@@ -703,8 +703,8 @@
     semver "^5.3.0"
 
 "@types/core-js@^0.9.41":
-  version "0.9.44"
-  resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-0.9.44.tgz#0d3b179ffa612898beed19fe8cc863822da507e5"
+  version "0.9.45"
+  resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-0.9.45.tgz#98bd4e49bd5c5e8da5d85dfaa589dfc269b7b067"
 
 "@types/mkdirp@^0.3.29":
   version "0.3.29"
@@ -2236,9 +2236,9 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@^0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.1.10.tgz#4970d9ed9ad1d4345dd3b8eb6a50fcd3bb69581f"
+fusion-react@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.3.0.tgz#e47ab890acba8f91fe4e360901aaf5dc181490cb"
 
 gauge@~2.7.3:
   version "2.7.4"
