@@ -1,6 +1,6 @@
 import {createStore, compose} from 'redux';
 import test from 'tape-cup';
-import actionEmitterFunc from '../../index.js';
+import actionEmitterFunc from '../index.js';
 
 /* Mocks & Mock Factories */
 const getMockEventEmitterFactory = function() {
