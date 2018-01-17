@@ -2,7 +2,7 @@
 
 import test from 'tape-cup';
 import {consumeSanitizedHTML} from 'fusion-core';
-import I18n from '../../node';
+import I18n from '../node';
 
 test('translate', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};

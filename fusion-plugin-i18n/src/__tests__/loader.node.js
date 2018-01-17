@@ -2,8 +2,8 @@
 
 import fs from 'fs';
 import test from 'tape-cup';
-import I18n from '../../node';
-import createLoader from '../../loader';
+import I18n from '../node';
+import createLoader from '../loader';
 
 test('loader', async t => {
   fs.mkdirSync('translations');

@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import test from 'tape-cup';
-import I18n from '../../browser';
+import I18n from '../browser';
 
 test('hydration', t => {
   const hydrationState = {
