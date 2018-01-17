@@ -1,5 +1,5 @@
 import test from 'tape-cup';
-import RPC from '../../browser';
+import RPC from '../browser';
 
 test('success status request', t => {
   const fetch = (...args) =>

@@ -1,5 +1,5 @@
 import test from 'tape-cup';
-import RPC from '../../server';
+import RPC from '../server';
 
 test('requires ctx', t => {
   const handlers = {};
