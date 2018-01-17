@@ -4,7 +4,7 @@ import {
   createRPCReactors,
   createRPCActions,
   createRPCReducer,
-} from '../../index';
+} from '../index';
 
 test('api', t => {
   t.equal(typeof createRPCHandler, 'function', 'exposes a getHandler function');
