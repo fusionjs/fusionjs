@@ -22,7 +22,7 @@
 
 /* eslint-env browser */
 import test from 'tape-cup';
-import plugin from '../../browser.js';
+import plugin from '../browser.js';
 
 test('Correct metrics are logged', t => {
   const originalAddEventListener = window.addEventListener;

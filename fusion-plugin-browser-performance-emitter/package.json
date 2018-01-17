@@ -5,28 +5,26 @@
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-browser-performance-emitter",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "main": "./dist/node.cjs.js",
-  "module": "./dist/node.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es5.es.js"
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
   },
   "es2017": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
     "babel-plugin-transform-flow-strip-types": "6.22.0",
-    "create-universal-package": "2.1.1",
+    "create-universal-package": "^3.2.4",
     "eslint": "4.15.0",
     "eslint-config-fusion": "0.1.2",
     "eslint-plugin-cup": "1.0.0",

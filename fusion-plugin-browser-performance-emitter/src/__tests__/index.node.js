@@ -22,7 +22,7 @@
 
 /* eslint-env node */
 import test from 'tape-cup';
-import plugin from '../../server.js';
+import plugin from '../server.js';
 import Emitter from 'events';
 
 const timing = {

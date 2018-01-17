@@ -26,7 +26,7 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/core@^7.0.0-beta.31":
+"@babel/core@^7.0.0-beta.36":
   version "7.0.0-beta.37"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.37.tgz#a6291a7892643e36b721e56bcf132d9cc1b65b08"
   dependencies:
@@ -322,6 +322,10 @@
   version "7.0.0-beta.37"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-dynamic-import/-/plugin-syntax-dynamic-import-7.0.0-beta.37.tgz#cac79651c3ab6b3cd9c0898c801b2518dd9379aa"
 
+"@babel/plugin-syntax-flow@7.0.0-beta.37":
+  version "7.0.0-beta.37"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0-beta.37.tgz#e6467f3cc3b56806c300a1cd4fea37c5ab8020c6"
+
 "@babel/plugin-syntax-import-meta@7.0.0-beta.37":
   version "7.0.0-beta.37"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-import-meta/-/plugin-syntax-import-meta-7.0.0-beta.37.tgz#3ccd614cc8d49a324298cd26f7f2f2f7f1651949"
@@ -400,6 +404,12 @@
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-exponentiation-operator/-/plugin-transform-exponentiation-operator-7.0.0-beta.31.tgz#2b6090f2138e180acb3246dc1a13dd4a78600383"
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
+
+"@babel/plugin-transform-flow-strip-types@^7.0.0-beta.36":
+  version "7.0.0-beta.37"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.37.tgz#749b005300334fa474e18b82b22b869fdfe68fed"
+  dependencies:
+    "@babel/plugin-syntax-flow" "7.0.0-beta.37"
 
 "@babel/plugin-transform-for-of@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -503,7 +513,7 @@
     "@babel/helper-regex" "7.0.0-beta.31"
     regexpu-core "^4.1.3"
 
-"@babel/preset-stage-3@^7.0.0-beta.31":
+"@babel/preset-stage-3@^7.0.0-beta.36":
   version "7.0.0-beta.37"
   resolved "https://registry.yarnpkg.com/@babel/preset-stage-3/-/preset-stage-3-7.0.0-beta.37.tgz#c92b9becd08177fcb03e342d4de68f70df1d84af"
   dependencies:
@@ -794,7 +804,7 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-args@^3.0.7:
+args@^3.0.8:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/args/-/args-3.0.8.tgz#2f425ab639c69d74ff728f3d7c6e93b97b91af7c"
   dependencies:
@@ -1435,29 +1445,30 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-2.1.1.tgz#170877cb6725d8494efb757005eb5aca9ee5edde"
+create-universal-package@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.4.tgz#3cb03ce00a04d3e9bba5bf64dd272da5185a3b6b"
   dependencies:
-    "@babel/core" "^7.0.0-beta.31"
-    "@babel/preset-stage-3" "^7.0.0-beta.31"
+    "@babel/core" "^7.0.0-beta.36"
+    "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.36"
+    "@babel/preset-stage-3" "^7.0.0-beta.36"
     "@rtsao/babel-preset-env" "^7.0.0-beta.31"
-    args "^3.0.7"
+    args "^3.0.8"
     babel-plugin-istanbul "^4.1.5"
     babel-plugin-transform-cup-globals "^1.0.0"
     chalk "^2.3.0"
     draftlog "^1.0.12"
     fast-async "^6.3.0"
     import-lazy "^3.1.0"
-    jest-worker "^21.3.0-beta.8"
+    jest-worker "^22.0.3"
     loader-utils "^1.1.0"
     multi-entry-loader "^1.1.2"
     rimraf "^2.6.2"
-    rollup "^0.51.1"
+    rollup "^0.53.2"
     rollup-plugin-memory "^2.0.0"
     rollup-plugin-multi-entry "^2.0.2"
     rollup-pluginutils "^2.0.1"
-    webpack "^3.8.1"
+    webpack "^3.10.0"
 
 cross-spawn@^4:
   version "4.0.2"
@@ -2770,9 +2781,9 @@ jest-docblock@^21.0.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
 
-jest-worker@^21.3.0-beta.8:
-  version "21.3.0-beta.15"
-  resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-21.3.0-beta.15.tgz#bef2fccaff63712bcbc1b9e3087cb4ff989b7ae7"
+jest-worker@^22.0.3:
+  version "22.1.0"
+  resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-22.1.0.tgz#0987832fe58fbdc205357f4c19b992446368cafb"
   dependencies:
     merge-stream "^1.0.1"
 
@@ -3932,9 +3943,9 @@ rollup-pluginutils@^2.0.1:
     estree-walker "^0.3.0"
     micromatch "^2.3.11"
 
-rollup@^0.51.1:
-  version "0.51.8"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.51.8.tgz#58bd0b642885f4770b5f93cc64f14e4233c2236d"
+rollup@^0.53.2:
+  version "0.53.4"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.53.4.tgz#f92ce56ee1d097ad5b6f13951bc80db5fef18113"
 
 run-async@^2.2.0:
   version "2.3.0"
@@ -4497,7 +4508,7 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^3.8.1:
+webpack@^3.10.0:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.10.0.tgz#5291b875078cf2abf42bdd23afe3f8f96c17d725"
   dependencies:
