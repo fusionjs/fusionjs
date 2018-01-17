@@ -1,7 +1,7 @@
 import tape from 'tape-cup';
 import React from 'react';
-import hoc from '../../hoc';
-import provider from '../../provider';
+import hoc from '../hoc';
+import provider from '../provider';
 import {renderToString} from 'react-dom/server';
 
 tape('hoc', t => {
