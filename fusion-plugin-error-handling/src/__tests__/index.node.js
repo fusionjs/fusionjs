@@ -1,7 +1,7 @@
 /* eslint-env node */
 import {fork} from 'child_process';
 import test from 'tape-cup';
-import ErrorHandling from '../../server';
+import ErrorHandling from '../server';
 
 test('request errors', async t => {
   let called = 0;

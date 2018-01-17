@@ -1,7 +1,7 @@
 /* eslint-env browser */
 
 import test from 'tape-cup';
-import ErrorHandling from '../../client';
+import ErrorHandling from '../client';
 
 test('Get exception stack frames', t => {
   t.plan(2);
