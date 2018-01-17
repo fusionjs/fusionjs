@@ -23,13 +23,13 @@
 import test from 'tape-cup';
 import App from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
-import {render} from 'fusion-test-utils';
+import {getSimulator} from 'fusion-test-utils';
 import plugin from '../browser.js';
 import {UniversalEventsToken} from '../index';
 
 function getApp(fetch) {
   const app = new App('el', el => el);
-  app.register(FetchToken, () => fetch);
+  app.register(FetchToken, fetch);
   app.register(UniversalEventsToken, plugin);
   return app;
 }
@@ -66,8 +66,8 @@ test('Browser EventEmitter', async t => {
       return next();
     };
   });
-
-  await render(app, '/');
+  const simulator = getSimulator(app);
+  await simulator.render('/');
 
   await new Promise(resolve => setTimeout(resolve, 100));
 

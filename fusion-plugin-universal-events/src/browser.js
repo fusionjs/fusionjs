@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 /* eslint-env browser */
-import {withDependencies} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import Emitter from './emitter';
 
@@ -68,8 +68,11 @@ class UniversalEmitter extends Emitter {
   }
 }
 
-const plugin = withDependencies({fetch: FetchToken})(({fetch}) => {
-  return new UniversalEmitter(fetch);
+const plugin = createPlugin({
+  deps: {fetch: FetchToken},
+  provides: ({fetch}) => {
+    return new UniversalEmitter(fetch);
+  },
 });
 
 export default plugin;

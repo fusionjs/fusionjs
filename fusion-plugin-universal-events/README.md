@@ -30,7 +30,7 @@ import {FetchToken} from 'fusion-tokens';
 export default function() {
   const app = new App();
   app.register(UniversalEventsToken, UniversalEvents);
-  __BROWSER__ && app.configure(FetchToken, window.fetch);
+  __BROWSER__ && app.register(FetchToken, window.fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     events.on('some-event', (payload) => {});
     events.on('some-scoped-event', (payload, ctx) => {});
@@ -116,7 +116,7 @@ app.register(UniversalEventsToken, UniversalEvents);
 
 ```js
 import {FetchToken} from 'fetch-tokens';
-__BROWSER__ && app.configure(FetchToken, window.fetch);
+__BROWSER__ && app.register(FetchToken, window.fetch);
 
 #### Instance API 
 
