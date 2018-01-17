@@ -2,7 +2,7 @@
 
 import test from 'tape-cup';
 import React from 'react';
-import render from '../../server';
+import render from '../server';
 
 test('renders', async t => {
   const rendered = await render(React.createElement('span', null, 'hello'));

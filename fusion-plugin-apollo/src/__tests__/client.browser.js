@@ -2,7 +2,7 @@
 
 import test from 'tape-cup';
 import React from 'react';
-import render from '../../client';
+import render from '../client';
 
 test('renders', t => {
   const root = document.createElement('div');
