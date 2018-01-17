@@ -5,22 +5,20 @@
   "repository": "fusionjs/fusion-plugin-i18n-react",
   "files": [
     "dist",
-    "singleton.js"
+    "singleton.js",
+    "src"
   ],
-  "main": "./dist/node.cjs.js",
-  "module": "./dist/node.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es5.es.js"
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
   },
   "es2017": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "scripts": {
@@ -45,7 +43,7 @@
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.37",
     "babel-eslint": "8.2.1",
-    "create-universal-package": "2.1.1",
+    "create-universal-package": "^3.2.4",
     "eslint": "4.15.0",
     "eslint-config-fusion": "0.1.2",
     "eslint-plugin-cup": "1.0.0",
@@ -55,8 +53,8 @@
     "flow-bin": "0.63.1",
     "fusion-core": "0.3.0-2",
     "fusion-react": "0.2.0",
-    "fusion-tokens": "0.0.4",
     "fusion-react-async": "0.1.4",
+    "fusion-tokens": "0.0.4",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",

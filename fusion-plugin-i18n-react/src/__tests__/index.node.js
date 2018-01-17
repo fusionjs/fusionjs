@@ -1,8 +1,8 @@
 /* eslint-env node */
 
 import test from 'tape-cup';
-import Plugin from '../../plugin';
-import withI18n from '../../hoc';
+import Plugin from '../plugin';
+import withI18n from '../hoc';
 
 test('plugin', t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
