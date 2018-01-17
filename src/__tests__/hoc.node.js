@@ -1,8 +1,8 @@
 import tape from 'tape-cup';
 import React from 'react';
+import {renderToString} from 'react-dom/server';
 import hoc from '../hoc';
 import provider from '../provider';
-import {renderToString} from 'react-dom/server';
 
 tape('hoc', t => {
   const withTest = hoc.create('test');

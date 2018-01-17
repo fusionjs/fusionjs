@@ -2,20 +2,27 @@ import React from 'react';
 import Provider from './provider';
 
 export default {
-  create: (name, plugin, BaseComponent) => (...args) => {
-    const p = plugin(...args);
-    const middleware = p.__middleware__;
+  create: (name, plugin, BaseComponent) => {
+    let originalMiddleware = plugin.middleware;
     const ProviderComponent = Provider.create(name, BaseComponent);
-    p.__middleware__ = function(ctx, next) {
-      if (ctx.element) {
-        ctx.element = React.createElement(
-          ProviderComponent,
-          {service: this.of(ctx)},
-          ctx.element
-        );
+    plugin.middleware = (deps, provides) => {
+      if (originalMiddleware) {
+        originalMiddleware = originalMiddleware(deps, provides);
       }
-      return middleware ? middleware.call(p, ctx, next) : next();
+      return function(ctx, next) {
+        if (ctx.element) {
+          ctx.element = React.createElement(
+            ProviderComponent,
+            {provides},
+            ctx.element
+          );
+        }
+        if (originalMiddleware) {
+          return originalMiddleware(ctx, next);
+        }
+        return next();
+      };
     };
-    return p;
+    return plugin;
   },
 };
