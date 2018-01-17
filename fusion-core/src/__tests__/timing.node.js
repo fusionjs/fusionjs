@@ -1,5 +1,5 @@
 import tape from 'tape-cup';
-import Timing from '../../timing';
+import Timing from '../timing';
 
 tape('timing plugin', t => {
   const ctx = {};

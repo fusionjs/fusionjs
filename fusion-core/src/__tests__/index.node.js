@@ -1,6 +1,6 @@
 import test from 'tape-cup';
-import App, {html} from '../../index';
-import {compose} from '../../plugin/index.js';
+import App, {html} from '../index';
+import {compose} from '../plugin/index.js';
 
 test('ssr with accept header', async t => {
   const flags = {render: false, next: false};

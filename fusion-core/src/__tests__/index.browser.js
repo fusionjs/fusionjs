@@ -1,5 +1,5 @@
 import test from 'tape-cup';
-import AppFactory from '../../client';
+import AppFactory from '../client';
 
 const App = AppFactory();
 

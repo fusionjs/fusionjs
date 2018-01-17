@@ -1,6 +1,6 @@
 import test from 'tape-cup';
-import App from '../../index';
-import {compose} from '../../plugin/index.js';
+import App from '../index';
+import {compose} from '../plugin/index.js';
 
 test('interface', t => {
   const element = () => 'hi';
