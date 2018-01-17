@@ -20,26 +20,73 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/* eslint-env browser */
 import test from 'tape-cup';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {Router, Route, NotFound} from '../../browser';
+import {renderToString as render} from 'react-dom/server';
+import {Router, Route, Status} from '../server';
 
-test('noops', t => {
-  const root = document.createElement('div');
-
+test('sets code with static code', t => {
   const Hello = () => (
-    <NotFound>
+    <Status code="404">
       <div>Hello</div>
-    </NotFound>
+    </Status>
   );
+  const state = {code: 0};
+  const ctx = {
+    setCode(code) {
+      state.code = code;
+    },
+  };
   const el = (
-    <Router>
+    <Router location="/" context={ctx}>
       <Route component={Hello} />
     </Router>
   );
-  ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), 'matches');
+  t.ok(/Hello/.test(render(el)), 'matches');
+  t.equals(state.code, 404, 'sets code');
+  t.end();
+});
+
+test('sets code with numeric code', t => {
+  const Hello = () => (
+    <Status code={404}>
+      <div>Hello</div>
+    </Status>
+  );
+  const state = {code: 0};
+  const ctx = {
+    setCode(code) {
+      state.code = code;
+    },
+  };
+  const el = (
+    <Router location="/" context={ctx}>
+      <Route component={Hello} />
+    </Router>
+  );
+  t.ok(/Hello/.test(render(el)), 'matches');
+  t.equals(state.code, 404, 'sets code');
+  t.end();
+});
+
+test('sets code with string code', t => {
+  const Hello = () => (
+    <Status code={'404'}>
+      <div>Hello</div>
+    </Status>
+  );
+  const state = {code: 0};
+  const ctx = {
+    setCode(code) {
+      state.code = code;
+    },
+  };
+  const el = (
+    <Router location="/" context={ctx}>
+      <Route component={Hello} />
+    </Router>
+  );
+  t.ok(/Hello/.test(render(el)), 'matches');
+  t.equals(state.code, 404, 'sets code');
   t.end();
 });

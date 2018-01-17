@@ -20,25 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/* eslint-env browser */
 import test from 'tape-cup';
 import React from 'react';
-import {renderToString as render} from 'react-dom/server';
-import {Router, Route, Redirect} from '../../server';
+import ReactDOM from 'react-dom';
+import {Router, Route, NotFound} from '../browser';
 
-test('redirects to a new URL', t => {
-  const Hello = () => <div>Hello</div>;
-  const Moved = () => <Redirect to="/hello" />;
-  const state = {code: 0};
-  const ctx = state;
+test('noops', t => {
+  const root = document.createElement('div');
+
+  const Hello = () => (
+    <NotFound>
+      <div>Hello</div>
+    </NotFound>
+  );
   const el = (
-    <Router location="/" context={ctx}>
-      <div>
-        <Route path="/" component={Moved} />
-        <Route path="/hello" component={Hello} />
-      </div>
+    <Router>
+      <Route component={Hello} />
     </Router>
   );
-  render(el);
-  t.equals(state.code, 307, 'sets code');
+  ReactDOM.render(el, root);
+  t.ok(/Hello/.test(root.innerHTML), 'matches');
   t.end();
 });

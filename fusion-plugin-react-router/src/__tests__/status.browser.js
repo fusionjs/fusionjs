@@ -24,22 +24,21 @@
 import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Switch, Route} from '../../browser';
+import {Router, Route, Status} from '../browser';
 
-test('matches as expected', t => {
+test('noops', t => {
   const root = document.createElement('div');
-  const Hello = () => <div>Hello</div>;
-  const Hi = () => <div>Hi</div>;
+  const Hello = () => (
+    <Status code="404">
+      <div>Hello</div>
+    </Status>
+  );
   const el = (
     <Router>
-      <Switch>
-        <Route path="/" component={Hello} />
-        <Route path="/" component={Hi} />
-      </Switch>
+      <Route component={Hello} />
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), 'matches first');
-  t.ok(!/Hi/.test(root.innerHTML), 'does not match second');
+  t.ok(/Hello/.test(root.innerHTML), 'matches');
   t.end();
 });
