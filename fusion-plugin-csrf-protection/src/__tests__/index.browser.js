@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import test from 'tape-cup';
 import App from 'fusion-core';
-import CsrfToken from '../../index';
+import CsrfToken from '../index';
 
 test('exposes right methods', t => {
   const Csrf = CsrfToken();

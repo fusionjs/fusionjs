@@ -1,7 +1,7 @@
 import App from 'fusion-core';
 import {request, render} from 'fusion-test-utils';
 import test from 'tape-cup';
-import CsrfToken from '../../server';
+import CsrfToken from '../server';
 
 function getSession() {
   const state = {};
