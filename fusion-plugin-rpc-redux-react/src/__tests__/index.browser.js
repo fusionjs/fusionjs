@@ -1,15 +1,15 @@
 /* eslint-env browser */
 import test from 'tape-cup';
-import Plugin from '../../plugin';
+import Plugin from '../plugin';
 import React from 'react';
-import {withRPCRedux, withRPCReactor} from '../../hoc';
+import {withRPCRedux, withRPCReactor} from '../hoc';
 import {prepared} from 'fusion-react-async';
 import {createStore} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {compose} from 'redux';
 import App from 'fusion-react';
 import {render} from 'fusion-test-utils';
-import {mock as RPCPluginMock} from '../../index';
+import {mock as RPCPluginMock} from '../index';
 import {reactorEnhancer} from 'redux-reactors';
 
 test('browser plugin integration test withRPCRedux', async t => {
