@@ -1,6 +1,6 @@
 /* eslint-env node */
 import test from 'tape-cup';
-import plugin from '../../server.js';
+import plugin from '../server.js';
 
 /* Constants */
 const EVENT_PLUGIN_NAME = 'node-performance-emitter';

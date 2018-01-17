@@ -1,6 +1,6 @@
 import tape from 'tape-cup';
 
-import plugin from '../../browser';
+import plugin from '../browser';
 
 tape('browser', t => {
   t.doesNotThrow(plugin);
