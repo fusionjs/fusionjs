@@ -1,7 +1,7 @@
 import test from 'tape-cup';
 import React from 'react';
-import render from '../../server';
-import App from '../../index';
+import render from '../server';
+import App from '../index';
 import {render as run} from 'fusion-test-utils';
 
 test('renders', t => {
