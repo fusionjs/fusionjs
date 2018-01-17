@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import universalEvents from 'fusion-plugin-universal-events';
 import test from 'tape-cup';
-import plugin from '../../browser.js';
+import plugin from '../browser.js';
 
 test('Server logger', t => {
   let called = false;
