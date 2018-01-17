@@ -2,7 +2,7 @@ import tape from 'tape-cup';
 import mock from '../mock';
 
 tape('mock with missing handler', async t => {
-  const rpc = mock({handlers: {}}).of();
+  const rpc = mock({handlers: {}})();
   try {
     await rpc.request('test');
   } catch (e) {
@@ -14,7 +14,7 @@ tape('mock with missing handler', async t => {
 
 tape('mock with no handlers', t => {
   try {
-    const rpc = mock().of();
+    const rpc = mock()();
     t.equal(typeof rpc.request, 'function');
   } catch (e) {
     t.ifError(e);
@@ -31,7 +31,7 @@ tape('mock with handler', async t => {
         return 10;
       },
     },
-  }).of();
+  })();
   try {
     const result = await rpc.request('test', {test: 'args'});
     t.equal(result, 10);

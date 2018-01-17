@@ -4,7 +4,7 @@ import RPC from '../browser';
 test('success status request', t => {
   const fetch = (...args) =>
     Promise.resolve({json: () => ({status: 'success', data: args})});
-  const rpc = RPC({fetch}).of();
+  const rpc = RPC({fetch})();
   t.equals(typeof rpc.request, 'function', 'has method');
   t.ok(rpc.request('test') instanceof Promise, 'has right return type');
   rpc
@@ -28,7 +28,7 @@ test('success status request', t => {
 test('failure status request', t => {
   const fetch = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
-  const rpc = RPC({fetch}).of();
+  const rpc = RPC({fetch})();
   t.equals(typeof rpc.request, 'function', 'has method');
   const testRequest = rpc.request('test');
   t.ok(testRequest instanceof Promise, 'has right return type');

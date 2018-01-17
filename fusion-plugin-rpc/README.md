@@ -22,7 +22,9 @@ yarn add fusion-plugin-rpc
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import RPC from 'fusion-plugin-rpc';
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
 // Define your rpc methods server side
@@ -35,9 +37,15 @@ const handlers = __NODE__ && {
 export default () => {
   const app = new App(<div></div>);
 
-  const Api = app.plugin(RPC, {handlers, fetch});
-  app.plugin((ctx, next) => {
-    Api.of(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
+  app.register(RPCToken, RPC);
+  app.register(UniversalEventsToken, UniversalEvents);
+  app.configure(RPCHandlersToken, handlers);
+  app.configure(FetchToken, fetch);
+
+  app.register(withDependencies({
+    RPC: RPCToken
+  })(({RPC}) => (ctx, next) => {
+    RPC(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
   });
 
   return app;
@@ -48,19 +56,35 @@ export default () => {
 
 ### API
 
+#### Dependency registration
+
 ```js
-const Api = app.plugin(RPC, {handlers, fetch, EventEmitter});
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+
+app.register(RPCToken, RPC);
+app.register(UniversalEventsToken, UniversalEvents);
+__NODE__
+  ? app.configure(RPCHandlersToken, handlers);
+  : app.configure(FetchToken, fetch);
 ```
 
+- `RPC` - the RPC library
+- `UniversalEvents` - a universal event emitter
 - `handlers: Object<(...args: any) => Promise>` - Server-only. Required. A map of server-side RPC method implementations
 - `fetch: (url: string, options: Object) => Promise` - Browser-only. Required. A `fetch` implementation
 - `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events)
 
-##### Instance methods
+##### Factory
 
 ```js
-const instance = Api.of(ctx)
+const instance = RPC(ctx);
 ```
+
+- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context)
+
+#### Instance methods
 
 - `instance.request(method: string, args: any)` - make an rpc call to the `method` handler with `args`.
 
@@ -74,13 +98,6 @@ The package also exports a mock rpc plugin which can be useful for testing. For 
 
 ```js
 import {mock as MockRPC} from 'fusion-plugin-rpc';
-app.plugin(mock, {
-  handlers: {
-    getUser: (args) => {
-      return {
-        mock: 'data',
-      }
-    }
-  }
-});
+
+app.register(RPCToken, mock);
 ```

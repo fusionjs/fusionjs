@@ -3,21 +3,21 @@ import RPC from '../server';
 
 test('requires ctx', t => {
   const handlers = {};
-  const EventEmitter = {
-    of() {
-      return {
-        emit() {},
-      };
+  const emitter = {
+    emit() {},
+    from() {
+      return this;
     },
   };
-  const rpc = RPC({handlers, EventEmitter});
-  t.throws(() => rpc.of());
+  const rpc = RPC({handlers, emitter});
+  t.throws(() => rpc());
   t.end();
 });
 
 test('request api', async t => {
   const mockCtx = {
     headers: {},
+    memoized: new Map(),
   };
   const handlers = {
     test(args, ctx) {
@@ -27,20 +27,19 @@ test('request api', async t => {
     },
   };
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:method');
-          t.equal(payload.method, 'test');
-          t.equal(payload.status, 'success');
-          t.equal(typeof payload.timing, 'number');
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+    from() {
+      return this;
     },
   };
 
-  const rpc = RPC({handlers, EventEmitter}).of(mockCtx);
+  const rpc = RPC({handlers, emitter})(mockCtx);
   t.equals(typeof rpc.request, 'function', 'has request method');
   try {
     const p = rpc.request('test', 'test-args');
@@ -55,6 +54,7 @@ test('request api', async t => {
 test('request api with failing request', async t => {
   const mockCtx = {
     headers: {},
+    memoized: new Map(),
   };
   const e = new Error('fail');
   const handlers = {
@@ -63,21 +63,20 @@ test('request api with failing request', async t => {
     },
   };
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:method');
-          t.equal(payload.method, 'test');
-          t.equal(payload.status, 'failure');
-          t.equal(typeof payload.timing, 'number');
-          t.equal(payload.error, e);
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'failure');
+      t.equal(typeof payload.timing, 'number');
+      t.equal(payload.error, e);
+    },
+    from() {
+      return this;
     },
   };
 
-  const rpc = RPC({handlers, EventEmitter}).of(mockCtx);
+  const rpc = RPC({handlers, emitter})(mockCtx);
   t.equals(typeof rpc.request, 'function', 'has request method');
   try {
     const p = rpc.request('test', 'test-args');
@@ -92,23 +91,23 @@ test('request api with failing request', async t => {
 test('request api with invalid endpoint', async t => {
   const mockCtx = {
     headers: {},
+    memoized: new Map(),
   };
   const handlers = {};
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:error');
-          t.equal(payload.method, 'test');
-          t.equal(payload.origin, 'server');
-          t.equal(payload.error.message, 'Missing RPC handler for test');
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:error');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'server');
+      t.equal(payload.error.message, 'Missing RPC handler for test');
+    },
+    from() {
+      return this;
     },
   };
 
-  const rpc = RPC({handlers, EventEmitter}).of(mockCtx);
+  const rpc = RPC({handlers, emitter})(mockCtx);
   t.equals(typeof rpc.request, 'function', 'has request method');
   try {
     const p = rpc.request('test', 'test-args');
@@ -130,30 +129,30 @@ test('middleware - invalid endpoint', async t => {
     request: {
       body: {},
     },
+    memoized: new Map(),
   };
   const handlers = {
     something: () => {},
     other: () => {},
   };
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:error');
-          t.equal(payload.method, 'valueOf');
-          t.equal(payload.origin, 'browser');
-          t.equal(
-            payload.error.message,
-            'Missing RPC handler for valueOf',
-            'emits error in payload'
-          );
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:error');
+      t.equal(payload.method, 'valueOf');
+      t.equal(payload.origin, 'browser');
+      t.equal(
+        payload.error.message,
+        'Missing RPC handler for valueOf',
+        'emits error in payload'
+      );
+    },
+    from() {
+      return this;
     },
   };
 
-  const {middleware} = RPC({handlers, EventEmitter});
+  const middleware = RPC({handlers, emitter}).__middleware__;
   try {
     await middleware(mockCtx, () => Promise.resolve());
     t.equal(mockCtx.body.data.message, 'Missing RPC handler for valueOf');
@@ -185,21 +184,20 @@ test('middleware - valid endpoint', async t => {
     },
   };
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:method');
-          t.equal(payload.method, 'test');
-          t.equal(payload.origin, 'browser');
-          t.equal(payload.status, 'success');
-          t.equal(typeof payload.timing, 'number');
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+    from() {
+      return this;
     },
   };
 
-  const {middleware} = RPC({handlers, EventEmitter});
+  const middleware = RPC({handlers, emitter}).__middleware__;
   try {
     await middleware(mockCtx, () => Promise.resolve());
     t.equal(mockCtx.body.data, 1);
@@ -220,6 +218,7 @@ test('middleware - valid endpoint failure', async t => {
     request: {
       body: 'test-args',
     },
+    memoized: new Map(),
   };
   const e = new Error('Test Failure');
   e.code = 'ERR_CODE_TEST';
@@ -230,22 +229,21 @@ test('middleware - valid endpoint failure', async t => {
     },
   };
 
-  const EventEmitter = {
-    of() {
-      return {
-        emit(type, payload) {
-          t.equal(type, 'rpc:method');
-          t.equal(payload.method, 'test');
-          t.equal(payload.origin, 'browser');
-          t.equal(payload.status, 'failure');
-          t.equal(typeof payload.timing, 'number');
-          t.equal(payload.error, e);
-        },
-      };
+  const emitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'failure');
+      t.equal(typeof payload.timing, 'number');
+      t.equal(payload.error, e);
+    },
+    from() {
+      return this;
     },
   };
 
-  const {middleware} = RPC({handlers, EventEmitter});
+  const middleware = RPC({handlers, emitter}).__middleware__;
   try {
     await middleware(mockCtx, () => Promise.resolve());
     t.equal(mockCtx.body.data.message, e.message);
@@ -268,13 +266,9 @@ test('throws when not passed ctx', async t => {
   };
 
   const EventEmitter = {
-    of() {
-      return {
-        emit() {},
-      };
-    },
+    emit() {},
   };
 
-  t.throws(() => RPC({handlers, EventEmitter}).of());
+  t.throws(() => RPC({handlers, EventEmitter})());
   t.end();
 });
