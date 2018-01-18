@@ -2,7 +2,7 @@
 import tape from 'tape-cup';
 import React from 'react';
 import {styled, StyletronProvider} from 'styletron-react';
-import plugin from '../../browser';
+import plugin from '../browser';
 
 // TODO(#2) Test if style is hydrated correctly in the browser test
 /*
@@ -31,7 +31,7 @@ tape('Browser plugin', t => {
     return Promise.resolve();
   };
 
-  const middleware = plugin();
+  const middleware = plugin.middleware();
   const result = middleware(ctx, next);
   t.ok(result instanceof Promise, 'returns next');
   t.end();

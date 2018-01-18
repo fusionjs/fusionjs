@@ -5,7 +5,7 @@ import {renderToString} from 'react-dom/server';
 
 import {consumeSanitizedHTML} from 'fusion-core';
 import {styled, StyletronProvider} from 'styletron-react';
-import plugin from '../../server';
+import plugin from '../server';
 
 const SilverPanel = styled('div', {
   backgroundColor: 'silver',
@@ -37,7 +37,7 @@ tape('Server plugin', t => {
     return Promise.resolve();
   };
 
-  const middleware = plugin();
+  const middleware = plugin.middleware();
   const result = middleware(ctx, next);
   t.ok(result instanceof Promise, 'returns next');
   t.end();
