@@ -3,22 +3,20 @@
   "description": "Dependency injection tokens for FusionJS",
   "version": "0.0.4",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "main": "./dist/node.cjs.js",
-  "module": "./dist/node.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es5.es.js"
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
   },
   "es2017": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
