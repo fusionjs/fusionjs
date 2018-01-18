@@ -2,7 +2,7 @@
 /* eslint-env node */
 
 import {createToken, createOptionalToken} from 'fusion-tokens';
-import {withDependencies, withMiddleware, memoize} from 'fusion-core';
+import {createPlugin, memoize} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
 
 export const SessionSecretToken: string = createToken('SessionSecret');
@@ -64,40 +64,47 @@ class JWTSession {
   }
 }
 
-type SessionService = {from: (ctx: Context) => JWTSession};
+export type SessionService = {from: (ctx: Context) => JWTSession};
 type SessionPluginType = FusionPlugin<JWTConfig, SessionService>;
-const p: SessionPluginType = withDependencies({
-  secret: SessionSecretToken,
-  cookieName: SessionCookieNameToken,
-  expires: SessionCookieExpiresToken,
-})(deps => {
-  const {secret, cookieName, expires} = deps;
-  const service = {
-    from: memoize((ctx: Context) => {
-      return new JWTSession(ctx, {secret, cookieName, expires});
-    }),
-  };
-  return withMiddleware(service, async function jwtMiddleware(
-    ctx: Context,
-    next: () => Promise<void>
-  ) {
-    const session = service.from(ctx);
-    const token = await session.loadToken();
-    await next();
-    if (token) {
-      // $FlowFixMe
-      delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
-      const time = Date.now(); // get time *before* async signing
-      const signed = await sign(token, secret, {
-        expiresIn: expires,
-      });
-      if (signed !== session.cookie) {
-        const msExpires = new Date(time + expires * 1000);
-        // TODO(#3) provide way to not set cookie if not needed yet
-        ctx.cookies.set(cookieName, signed, {expires: msExpires});
+const p: SessionPluginType = createPlugin({
+  deps: {
+    secret: SessionSecretToken,
+    cookieName: SessionCookieNameToken,
+    expires: SessionCookieExpiresToken,
+  },
+  provides: deps => {
+    const {secret, cookieName, expires} = deps;
+    const service = {
+      from: memoize((ctx: Context) => {
+        return new JWTSession(ctx, {secret, cookieName, expires});
+      }),
+    };
+    return service;
+  },
+  middleware: (deps, service) => {
+    const {secret, cookieName, expires} = deps;
+    return async function jwtMiddleware(
+      ctx: Context,
+      next: () => Promise<void>
+    ) {
+      const session = service.from(ctx);
+      const token = await session.loadToken();
+      await next();
+      if (token) {
+        // $FlowFixMe
+        delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
+        const time = Date.now(); // get time *before* async signing
+        const signed = await sign(token, secret, {
+          expiresIn: expires,
+        });
+        if (signed !== session.cookie) {
+          const msExpires = new Date(time + expires * 1000);
+          // TODO(#3) provide way to not set cookie if not needed yet
+          ctx.cookies.set(cookieName, signed, {expires: msExpires});
+        }
       }
-    }
-  });
+    };
+  },
 });
 
 export default p;

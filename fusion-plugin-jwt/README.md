@@ -26,7 +26,7 @@ import JWTSessionfrom, {
   SessionCookieExpiresToken
 } from 'fusion-plugin-jwt';
 
-import {SessionToken} from 'fusion-types';
+import {SessionToken} from 'fusion-tokens';
 
 // src/main.js
 export default () => {
@@ -34,9 +34,9 @@ export default () => {
   // ...
   if (__NODE__) {
     app.register(SessionToken, JWTSession);
-    app.configure(SessionSecretToken, 'some-secret'); // required
-    app.configure(SessionCookieNameToken, 'some-cookie-name'); // required 
-    app.configure(SessionCookieExpiresToken, 86400); // optional 
+    app.register(SessionSecretToken, 'some-secret'); // required
+    app.register(SessionCookieNameToken, 'some-cookie-name'); // required 
+    app.register(SessionCookieExpiresToken, 86400); // optional 
     
     app.middleware({Session: SessionToken}, ({Session}) => {
       return async (ctx, next) => {
@@ -73,7 +73,7 @@ app.register(SessionToken, JWTSession);
 
 ```js
 import {SessionSecretToken} from 'fusion-plugin-jwt';
-__NODE__ && app.configure(SessionSecretToken, 'some-secret'); 
+__NODE__ && app.register(SessionSecretToken, 'some-secret'); 
 ```
 
 ##### SessionCookieNameToken
@@ -82,7 +82,7 @@ __NODE__ && app.configure(SessionSecretToken, 'some-secret');
 
 ```js
 import {SessionCookieNameToken} from 'fusion-plugin-jwt';
-__NODE__ && app.configure(SessionCookieNameToken, 'some-cookie-name'); 
+__NODE__ && app.register(SessionCookieNameToken, 'some-cookie-name'); 
 ```
 
 ##### SessionCookieExpiresToken
@@ -91,7 +91,7 @@ __NODE__ && app.configure(SessionCookieNameToken, 'some-cookie-name');
 
 ```js
 import {SessionCookieExpiresToken} from 'fusion-plugin-jwt';
-__NODE__ && app.configure(SessionCookieNameToken, 86400); 
+__NODE__ && app.register(SessionCookieNameToken, 86400); 
 ```
 
 #### Instance API
