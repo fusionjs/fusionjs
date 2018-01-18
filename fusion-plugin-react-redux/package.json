@@ -22,7 +22,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.37",
+    "@babel/preset-react": "7.0.0-beta.38",
     "@types/redux": "3.6.31",
     "babel-eslint": "8.2.1",
     "create-universal-package": "3.2.6",
