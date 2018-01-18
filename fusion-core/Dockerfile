@@ -1,4 +1,4 @@
-FROM uber/web-base-image:1.0.0@sha256:ae4686cb70626cfa94bc06825deea7d23ef904214d82b06d5a7e5365e60a3311
+FROM uber/web-base-image:1.0.2@sha256:50825281ac5f6044ab318f37f57073e007afd6d2e25f91ac8a4448aa8b9f28b2
 
 WORKDIR /fusion-core
 
