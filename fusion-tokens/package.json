@@ -1,7 +1,7 @@
 {
   "name": "fusion-tokens",
   "description": "Dependency injection tokens for FusionJS",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "files": [
     "dist",
     "src"
