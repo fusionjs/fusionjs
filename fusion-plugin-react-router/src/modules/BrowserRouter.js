@@ -29,16 +29,17 @@ export {Status, NotFound} from './Status';
 export {Redirect} from './Redirect';
 
 class BrowserRouter extends React.Component {
-  constructor(props = {}) {
-    super(props);
+  constructor(props = {}, context) {
+    super(props, context);
     this.history = createHistory(this.props);
     this.lastTitle = null;
   }
 
   getChildContext() {
+    const {__IS_PREPARE__} = this.context;
     return {
       onRoute: routeData => {
-        if (routeData.title !== this.lastTitle) {
+        if (routeData.title !== this.lastTitle && !__IS_PREPARE__) {
           this.lastTitle = routeData.title;
           this.props.onRoute(routeData);
         }
@@ -60,6 +61,10 @@ BrowserRouter.propTypes = {
   keyLength: PropTypes.number,
   children: PropTypes.node,
   onRoute: PropTypes.func,
+};
+
+BrowserRouter.contextTypes = {
+  __IS_PREPARE__: PropTypes.bool,
 };
 
 BrowserRouter.childContextTypes = {

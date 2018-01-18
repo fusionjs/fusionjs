@@ -21,26 +21,29 @@
 // SOFTWARE.
 
 import React from 'react';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin} from 'fusion-core';
+import App from 'fusion-react';
+import {getSimulator} from 'fusion-test-utils';
 import {withRouter} from 'react-router-dom';
-import ReactDOMServer from 'react-dom/server';
-import ReactDOM from 'react-dom';
 import test from 'tape-cup';
 import {Route} from '../modules/Route';
-import getRouter from '../plugin';
+import RouterPlugin from '../plugin';
 
-const {renderToString} = ReactDOMServer;
-const {render} = ReactDOM;
+function getApp(el) {
+  const app = new App(el);
+  app.register(RouterPlugin);
+  return app;
+}
 
-function clientRender(element) {
+function cleanup() {
   if (__BROWSER__) {
-    const el = document.createElement('div');
-    document.body.appendChild(el);
-    render(element, el);
-    document.body.removeChild(el);
+    document.body.removeChild(document.getElementById('root'));
+    document.body.removeChild(document.getElementById('__ROUTER_DATA__'));
   }
 }
 
-test('without UniversalEvents', t => {
+test('events with trackingId', async t => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -48,40 +51,20 @@ test('without UniversalEvents', t => {
       <Route path="/lol" component={Hello} />
     </div>
   );
-  const ctx = getMockCtx({
-    url: '/',
-    element,
-  });
-  const plugin = getRouter({});
-  runPlugin(plugin, ctx);
-  t.notEquals(ctx.element, element, 'wraps ctx.element');
-  t.end();
-});
-
-test('events with trackingId', t => {
-  const Hello = () => <div>Hello</div>;
-  const element = (
-    <div>
-      <Route path="/" trackingId="home" component={Hello} />
-      <Route path="/lol" component={Hello} />
-    </div>
-  );
-  const ctx = getMockCtx({
-    url: '/',
-    element,
-  });
+  const app = getApp(element);
   const UniversalEvents = getMockEvents({
     t,
     title: 'home',
     page: '/',
-    done: t.end,
   });
-  const plugin = getRouter({emitter: UniversalEvents});
-  runPlugin(plugin, ctx);
-  t.notEquals(ctx.element, element, 'wraps ctx.element');
+  app.register(UniversalEventsToken, UniversalEvents);
+  const simulator = setup(app);
+  await simulator.render('/');
+  cleanup();
+  t.end();
 });
 
-test('events with no tracking id', t => {
+test('events with no tracking id', async t => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -90,22 +73,20 @@ test('events with no tracking id', t => {
     </div>
   );
 
-  const ctx = getMockCtx({
-    url: '/',
-    element,
-  });
+  const app = getApp(element);
   const UniversalEvents = getMockEvents({
     t,
     title: '/',
     page: '/',
-    done: t.end,
   });
-  const plugin = getRouter({emitter: UniversalEvents});
-  runPlugin(plugin, ctx);
-  t.notEquals(ctx.element, element, 'wraps ctx.element');
+  app.register(UniversalEventsToken, UniversalEvents);
+  const simulator = setup(app);
+  await simulator.render('/');
+  cleanup();
+  t.end();
 });
 
-test('events with no tracking id and deep path', t => {
+test('events with no tracking id and deep path', async t => {
   const Hello = () => <div>Hello</div>;
   if (__BROWSER__) {
     return t.end();
@@ -117,26 +98,27 @@ test('events with no tracking id and deep path', t => {
     </div>
   );
 
-  const ctx = getMockCtx({url: '/user/abcd', element});
+  const app = getApp(element);
   const UniversalEvents = getMockEvents({
     t,
     title: '/user/:uuid',
     page: '/user/:uuid',
-    done: t.end,
   });
-  const plugin = getRouter({emitter: UniversalEvents});
-  plugin.__middleware__(ctx, () => {
-    renderToString(ctx.element);
-    return Promise.resolve();
-  });
-  t.notEquals(ctx.element, element, 'wraps ctx.element');
+
+  app.register(UniversalEventsToken, UniversalEvents);
+  const simulator = setup(app);
+  await simulator.render('/user/abcd');
+  cleanup();
+  t.end();
 });
 
 if (__BROWSER__) {
-  test('mapping events in browser', t => {
+  test('mapping events in browser', async t => {
     const Home = withRouter(({location, history}) => {
       if (location.pathname === '/') {
-        history.push('/user/');
+        setTimeout(() => {
+          history.push('/user/');
+        }, 50);
       }
       // add some nested routes
       return (
@@ -163,72 +145,59 @@ if (__BROWSER__) {
         <Route path="/user" component={User} />
       </div>
     );
-    const ctx = getMockCtx({url: '/user', element});
+    const app = getApp(element);
     const expectedPayloads = [
       {page: '/', title: '/'},
       {page: '/user', title: '/user'},
     ];
     let mapper;
-    const UniversalEvents = {
-      map(m) {
-        mapper = m;
-      },
-      emit(type, payload) {
-        const expected = expectedPayloads.shift();
-        t.deepLooseEqual(payload, expected);
-        const mapped = mapper({});
-        t.equal(mapped.__url__, expected.title);
-        if (expectedPayloads.length === 0) {
-          t.end();
-        }
-      },
-    };
-    const plugin = getRouter({emitter: UniversalEvents});
-    runPlugin(plugin, ctx, {title: '/user', page: '/user'});
+    const UniversalEvents = createPlugin({
+      provides: () => ({
+        map(m) {
+          mapper = m;
+        },
+        emit(type, payload) {
+          const expected = expectedPayloads.shift();
+          t.deepLooseEqual(payload, expected);
+          const mapped = mapper({});
+          t.equal(mapped.__url__, expected.title);
+          if (expectedPayloads.length === 0) {
+            cleanup();
+            t.end();
+          }
+        },
+      }),
+    });
+
+    app.register(UniversalEventsToken, UniversalEvents);
+    const simulator = setup(app);
+    await simulator.render('/');
   });
 }
 
-function getMockEvents({t, title: expectedTitle, page: expectedPage, done}) {
+function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
   const expected = __NODE__
     ? ['render:server', 'pageview:server']
     : ['pageview:browser'];
-  const values = [1, 2];
-  return {
-    map(mapper) {
-      t.equal(typeof mapper, 'function');
-    },
-    emit(type, {title, page, status, timing}) {
-      t.equal(type, expected.shift(), 'emits with the correct type');
-      t.equal(title, expectedTitle, 'correct title');
-      t.equal(page, expectedPage, 'correct page');
-      if (__NODE__) {
-        t.equal(status, 200, 'emits status code');
-        t.equal(timing, values.shift(), 'emits with the correct value');
-      }
-      if (expected.length === 0) {
-        done();
-      }
-    },
-  };
+  return createPlugin({
+    provides: () => ({
+      map(mapper) {
+        t.equal(typeof mapper, 'function');
+      },
+      emit(type, {title, page, status, timing}) {
+        t.equal(type, expected.shift(), 'emits with the correct type');
+        t.equal(title, expectedTitle, 'correct title');
+        t.equal(page, expectedPage, 'correct page');
+        if (__NODE__) {
+          t.equal(status, 200, 'emits status code');
+          t.equal(typeof timing, 'number', 'emits with the correct value');
+        }
+      },
+    }),
+  });
 }
 
-function getMockCtx({url, path, element}) {
-  return {
-    url,
-    path: path || url,
-    status: 200,
-    body: {
-      body: [],
-    },
-    element,
-    timing: {
-      render: Promise.resolve(1),
-      end: Promise.resolve(2),
-    },
-  };
-}
-
-function runPlugin(p, ctx, pageData = {title: '/', page: '/'}) {
+function setup(app, pageData = {title: '/', page: '/'}) {
   if (__BROWSER__) {
     const el = document.createElement('script');
     el.setAttribute('type', 'application/json');
@@ -236,13 +205,10 @@ function runPlugin(p, ctx, pageData = {title: '/', page: '/'}) {
     const textNode = document.createTextNode(JSON.stringify(pageData));
     el.appendChild(textNode);
     document.body.appendChild(el);
+    const rootEl = document.createElement('div');
+    rootEl.setAttribute('id', 'root');
+    document.body.appendChild(rootEl);
   }
-  p.__middleware__(ctx, () => {
-    if (__NODE__) {
-      renderToString(ctx.element);
-    } else if (__BROWSER__) {
-      clientRender(ctx.element);
-    }
-    return Promise.resolve();
-  });
+  const simulator = getSimulator(app);
+  return simulator;
 }
