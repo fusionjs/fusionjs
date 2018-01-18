@@ -5,7 +5,7 @@ export default {
   create: (name, BaseComponent = React.Component) => {
     class Provider extends BaseComponent {
       getChildContext() {
-        return {[name]: this.props.service};
+        return {[name]: this.props.provides};
       }
       render() {
         return React.Children.only(this.props.children);

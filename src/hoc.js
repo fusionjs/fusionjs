@@ -2,18 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default {
-  create: (name, mapServiceToProps) => {
-    if (!mapServiceToProps) {
-      mapServiceToProps = service => ({[name]: service});
+  create: (name, mapProvidesToProps) => {
+    if (!mapProvidesToProps) {
+      mapProvidesToProps = provides => ({[name]: provides});
     }
     return Component => {
       class HOC extends React.Component {
         constructor(props, ctx) {
           super(props, ctx);
-          this.service = ctx[name];
+          this.provides = ctx[name];
         }
         render() {
-          const props = {...this.props, ...mapServiceToProps(this.service)};
+          const props = {...this.props, ...mapProvidesToProps(this.provides)};
           return React.createElement(Component, props);
         }
       }
