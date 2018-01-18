@@ -1,47 +1,57 @@
 import tape from 'tape-cup';
 import React from 'react';
-import {renderToString} from 'react-dom/server';
+import {createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import App from '../index';
 import hoc from '../hoc';
-import provider from '../provider';
+import plugin from '../plugin';
 
-tape('hoc', t => {
+tape('hoc', async t => {
   const withTest = hoc.create('test');
-  const TestProvider = provider.create('test');
-  const testService = {hello: 'world'};
+  const testProvides = {hello: 'world'};
   let didRender = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.test, testService);
+    t.deepLooseEqual(props.test, testProvides);
     return React.createElement('div', null, 'hello');
   }
-  const element = React.createElement(
-    TestProvider,
-    {service: testService},
-    React.createElement(withTest(TestComponent))
+  const testPlugin = plugin.create(
+    'test',
+    createPlugin({provides: () => testProvides})
   );
-  t.ok(renderToString(element).includes('hello'));
+  const element = React.createElement(withTest(TestComponent));
+  const app = new App(element);
+  app.register(testPlugin);
+  const sim = getSimulator(app);
+  const ctx = await sim.render('/');
+  t.ok(ctx.body.includes('hello'));
   t.ok(didRender);
   t.end();
 });
 
-tape('hoc with mapServiceToProps', t => {
-  const withTest = hoc.create('test', service => {
-    return {mapped: service};
+tape('hoc with mapProvidesToProps', async t => {
+  const withTest = hoc.create('test', provides => {
+    return {mapped: provides};
   });
-  const TestProvider = provider.create('test');
-  const testService = {hello: 'world'};
+
+  const testProvides = {hello: 'world'};
   let didRender = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.mapped, testService);
+    t.deepLooseEqual(props.mapped, testProvides);
     return React.createElement('div', null, 'hello');
   }
-  const element = React.createElement(
-    TestProvider,
-    {service: testService},
-    React.createElement(withTest(TestComponent))
+
+  const testPlugin = plugin.create(
+    'test',
+    createPlugin({provides: () => testProvides})
   );
-  t.ok(renderToString(element).includes('hello'));
+  const element = React.createElement(withTest(TestComponent));
+  const app = new App(element);
+  app.register(testPlugin);
+  const sim = getSimulator(app);
+  const ctx = await sim.render('/');
+  t.ok(ctx.body.includes('hello'));
   t.ok(didRender);
   t.end();
 });

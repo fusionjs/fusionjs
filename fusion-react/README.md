@@ -85,8 +85,8 @@ const Plugin = ProviderPlugin.create(name, plugin, BaseComponent)
 ```js
 import {ProvidedHOC} from 'fusion-react';
 
-const hoc = ProvidedHOC.create(name, mapServiceToProps)
+const hoc = ProvidedHOC.create(name, mapProvidesToProps)
 ```
 
 - `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
-- `mapServiceToProps: Object => Object` - Optional. Defaults to `service => ({[name]: service})`. Determines what props are exposed by the HOC
+- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
