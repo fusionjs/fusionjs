@@ -2270,9 +2270,9 @@ fusion-react@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.2.0.tgz#3363df120f145089a06b5965a668e4fb3aa9028b"
 
-fusion-tokens@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.4.tgz#b84c58e2de8e06d3e63c2c182da7e023ccfb50ec"
+fusion-tokens@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.5.tgz#71af057ab696046c43e89ca06dfe47cdbaeac6d8"
 
 gauge@~2.7.3:
   version "2.7.4"
