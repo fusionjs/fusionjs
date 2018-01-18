@@ -26,7 +26,7 @@ export default (__NODE__
       return ctx => {
         const expectedLocales = new Locales(ctx.headers['accept-language']);
         const locale = expectedLocales.best(supportedLocales);
-        const translations = data[locale.toString()];
+        const translations = data[locale.normalized];
         return {translations, locale};
       };
     }

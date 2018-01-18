@@ -27,37 +27,30 @@ import App from 'fusion-react';
 import I18n, {I18nToken, I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
-import Hello from './hello';
 
 export default () => {
   const app = new App(<div></div>);
 
   app.register(I18nToken, I18n);
   __NODE__
-    ? app.configure(I18nLoaderToken, createI18nLoader());
-    : app.configure(FetchToken, fetch);
+    ? app.register(I18nLoaderToken, createI18nLoader());
+    : app.register(FetchToken, fetch);
 
-  app.register(Hello);
+  app.middleware({I18n: I18nToken}, ({I18n}) => {
+    return (ctx, next) => {
+      if (__NODE__ && ctx.path === '/hello') {
+        const i18n = I18n.from(ctx);
+        ctx.body = {
+          message: i18n.translate('test', {name: 'world'}), // hello world
+        }
+      }
+      return next();
+    }
+  });
 
   return app;
 }
-
-// src/hello.js
-import {I18nToken} from 'fusion-plugin-i18n';
-
-export default withDependencies({I18n: I18nToken})(({I18n}) => {
-  return withMiddleware((ctx, next) => {
-    if (__NODE__ && ctx.path === '/hello') {
-      const i18n = I18n(ctx);
-      ctx.body = {
-        message: i18n.translate('test', {name: 'world'}), // hello world
-      }
-    }
-    return next();
-  });
-});
-
-// translations/en-US.json
+// translations/en_US.json
 {
   "test": "hello ${name}"
 }
@@ -72,7 +65,6 @@ import App from 'fusion-react';
 import I18n, {I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
-import Hello from './hello';
 import I18nLoader from './translations';
 
 export default () => {
@@ -80,42 +72,27 @@ export default () => {
 
   app.register(I18nToken, I18n);
   __NODE__
-    ? app.configure(I18nLoaderToken, I18nLoader);
-    : app.configure(FetchToken, fetch);
+    ? app.register(I18nLoaderToken, I18nLoader);
+    : app.register(FetchToken, fetch);
 
-  app.register(Hello);
+  // ....
 
   return app;
 }
-
-// src/hello.js
-import {I18nToken} from 'fusion-plugin-i18n';
-
-export default withDependencies({I18n: I18nToken})(({I18n}) => {
-  return withMiddleware((ctx, next) => {
-    if (__NODE__ && ctx.path === '/hello') {
-      const i18n = I18n(ctx);
-      ctx.body = {
-        message: i18n.translate('test', {name: 'world'}), // hello world
-      }
-    }
-    return next();
-  });
-});
 
 // src/translation-loader.js
 import {Locale} from 'locale';
 
 const translationData = {
-  'en-US': {
+  'en_US': {
     test: "hello ${name}"
   }
 }
 
 export default (ctx) => {
   // locale could be determined in different ways,
-  // e.g. from ctx.headers['accept-language'] or from a /en-US/ URL
-  const locale = new Locale('en-US');
+  // e.g. from ctx.headers['accept-language'] or from a /en_US/ URL
+  const locale = new Locale('en_US');
   const translations = translationData[locale];
   return {locale, translations};
 }
@@ -133,8 +110,8 @@ import {FetchToken} from 'fusion-tokens';
 
 app.register(I18nToken, I18n);
 __NODE__
-  ? app.configure(I18nLoaderToken, I18nLoader);
-  : app.configure(FetchToken, fetch);
+  ? app.register(I18nLoaderToken, I18nLoader);
+  : app.register(FetchToken, fetch);
 ```
 
 - `I18n` - the core I18n library
@@ -144,7 +121,7 @@ __NODE__
 
 #### Factory
 
-`const i18n = I18n(ctx)`
+`const i18n = I18n.from(ctx)`
 
 - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
 
@@ -165,9 +142,9 @@ This plugin has a simple loader implementation that looks for files in a `./tran
 ```js
 import {I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n';
 
-app.configure(I18nLoaderToken, createI18nLoader());
+app.register(I18nLoaderToken, createI18nLoader());
 
-// translations/en-US.json
+// translations/en_US.json
 {
   "some-translation-key": "hello",
 }

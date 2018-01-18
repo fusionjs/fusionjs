@@ -7,7 +7,7 @@ test('hydration', t => {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${value}'},
   };
-  const i18n = I18n({hydrationState}).of();
+  const i18n = I18n.provides({hydrationState}).from();
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   t.end();
@@ -23,7 +23,7 @@ test('hydration from element', t => {
   translations.setAttribute('id', '__TRANSLATIONS__');
   translations.textContent = JSON.stringify(hydrationState);
   document.body.appendChild(translations);
-  const i18n = I18n({hydrationState}).of();
+  const i18n = I18n.provides({hydrationState}).from();
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   document.body.removeChild(translations);
@@ -36,9 +36,9 @@ test('hydration parse error', t => {
   translations.setAttribute('id', '__TRANSLATIONS__');
   translations.textContent = 'abcdomg-"asddf}';
   document.body.appendChild(translations);
-  const plugin = I18n();
   try {
-    plugin.of();
+    const plugin = I18n.provides();
+    plugin.from();
   } catch (e) {
     t.equal(
       e.message,
@@ -51,9 +51,9 @@ test('hydration parse error', t => {
 });
 
 test('hydration missing element error', t => {
-  const plugin = I18n();
   try {
-    plugin.of();
+    const plugin = I18n.provides();
+    plugin.from();
   } catch (e) {
     t.equal(
       e.message,
@@ -77,8 +77,8 @@ test('load', t => {
     called = true;
     return Promise.resolve({json: () => data});
   };
-  const plugin = I18n({fetch, hydrationState});
-  const i18n = plugin.of();
+  const plugin = I18n.provides({fetch, hydrationState});
+  const i18n = plugin.from();
   i18n.load([0]).then(() => {
     t.ok(called, 'fetch called');
     t.equals(i18n.translate('test'), 'hello');
