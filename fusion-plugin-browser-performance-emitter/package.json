@@ -34,7 +34,7 @@
     "flow-bin": "0.59.0",
     "fusion-core": "0.2.8",
     "nyc": "11.4.1",
-    "prettier": "1.8.2",
+    "prettier": "1.10.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
