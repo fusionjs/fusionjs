@@ -38,7 +38,7 @@
     "flow-bin": "0.63.1",
     "fusion-core": "0.3.0-4",
     "fusion-test-utils": "0.4.0",
-    "fusion-tokens": "0.0.4",
+    "fusion-tokens": "0.0.5",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "tape-cup": "4.7.1",
