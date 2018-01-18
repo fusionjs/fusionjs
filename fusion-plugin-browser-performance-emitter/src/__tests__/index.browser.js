@@ -47,6 +47,7 @@ test('Correct metrics are logged', t => {
 
   const BrowserPerformanceEmitter = plugin({EventEmitter});
   BrowserPerformanceEmitter.middleware({}, () => {});
+
   window.addEventListener('load', () => {
     t.equal(eventsEmitted.length, 1, 'one event was emitted');
     const event = eventsEmitted[0];
@@ -57,9 +58,12 @@ test('Correct metrics are logged', t => {
     );
     t.deepEqual(
       event.payload.resourceEntries,
-      window.performance.getEntriesByType('resource').filter(entry => {
-        return entry.name.indexOf('data:') !== 0 && entry.toJSON;
-      }),
+      window.performance
+        .getEntriesByType('resource')
+        .filter(entry => {
+          return entry.name.indexOf('data:') !== 0 && entry.toJSON;
+        })
+        .map(entry => entry.toJSON()),
       'Event payload have correct data'
     );
 

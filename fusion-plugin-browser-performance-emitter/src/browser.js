@@ -53,15 +53,18 @@ export default ({EventEmitter}) => {
         timing = timing || window.performance.timing;
         resourceEntries =
           resourceEntries ||
-          window.performance.getEntriesByType('resource').filter(entry => {
-            return entry.name.indexOf('data:') !== 0 && entry.toJSON;
-          });
+          window.performance
+            .getEntriesByType('resource')
+            .filter(entry => {
+              return entry.name.indexOf('data:') !== 0 && entry.toJSON;
+            })
+            .map(entry => entry.toJSON());
 
         const firstPaint = getFirstPaint();
 
         return {
           timing,
-          resourceEntries: resourceEntries.map(entry => entry.toJSON()),
+          resourceEntries,
           firstPaint,
         };
       }
