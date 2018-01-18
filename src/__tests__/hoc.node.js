@@ -1,11 +1,9 @@
 import tape from 'tape-cup';
 import React from 'react';
-import {renderToString} from 'react-dom/server';
 import {createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import App from '../index';
 import hoc from '../hoc';
-import provider from '../provider';
 import plugin from '../plugin';
 
 tape('hoc', async t => {
