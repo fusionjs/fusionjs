@@ -4,13 +4,19 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import {compose, createStore} from 'redux';
-import {Plugin} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
 import {unescape} from 'fusion-core';
 import ctxEnhancer from './ctx-enhancer';
+import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
 
-export default ({reducer, preloadedState, enhancer}) => {
-  return new Plugin({
-    Service: class Redux {
+export default createPlugin({
+  deps: {
+    reducer: ReducerToken,
+    preloadedState: PreloadedStateToken,
+    enhancer: EnhancerToken,
+  },
+  provides({reducer, preloadedState, enhancer}) {
+    class Redux {
       constructor(ctx) {
         // We only use initialState for client-side hydration
         // The real initial state should be derived from the reducer and the @@INIT action
@@ -32,11 +38,18 @@ export default ({reducer, preloadedState, enhancer}) => {
           compose(...enhancers)
         );
       }
-    },
-    middleware(ctx, next) {
-      const {store} = this.of(ctx);
+    }
+    return {
+      from(ctx) {
+        return new Redux(ctx);
+      },
+    };
+  },
+  middleware(_, redux) {
+    return (ctx, next) => {
+      const {store} = redux.from(ctx);
       ctx.element = <Provider store={store}>{ctx.element}</Provider>;
       return next();
-    },
-  });
-};
+    };
+  },
+});

@@ -21,20 +21,20 @@ yarn add fusion-plugin-react-redux
 ```js
 // in your main.js file
 import React from 'react';
-import Redux from 'fusion-plugin-react-redux';
+import Redux, {ReduxToken, ReducerToken, EnhancerToken, InitialStateToken} from 'fusion-plugin-react-redux';
 import App from 'fusion-react';
 import reducer from './reducer';
 import enhancer from './enhancer';
 
 export default function start() {
   const app = new App(root);
-  app.plugin(Redux, {
-    reducer,
-    enhancer,
-    async getInitialState(ctx) {
-      return {};
-    }
+  app.register(ReduxToken, Redux);
+  app.register(ReducerToken, reducer);
+  app.register(EnhancerToken, enhancer);
+  __NODE__ && app.register(InitialStateToken, async getInitialState(ctx) {
+    return {};
   });
+
   return app;
 }
 
@@ -48,16 +48,33 @@ export default (state, action) => {
 
 ### API
 
+#### Dependency registration
+
 ```js
-app.plugin(ReactReduxPlugin, {reducer, preloadedState, enhancer, getInitialState})
+import Redux, {ReduxToken, ReducerToken, EnhancerToken, InitialStateToken} from 'fusion-plugin-react-redux';
+
+app.register(ReduxToken, Redux);
+app.register(ReducerToken, reducer);
+app.register(EnhancerToken, enhancer);
+__NODE__ && app.register(InitialStateToken, getInitialState);
 ```
 
 Creates the redux store and integrates it into the Fusion application
 
+- `Redux` - The Redux plugin
 - `reducer: (state: any, action: Object) => any` - required. The root reducer
 - `preloadedState: any` - optional. Overrides the initial state in the server, and the hydrated state in the client
 - `enhancer: (arg: any) => any` - optional. Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. If you're using `applyMiddleware`, pass it to this option (i.e `{enhancer: applyMiddleware(myMiddleware)}`). You can also compose multiple enhancers (e.g. `{enhancer: compose(applyMiddleware(myMiddleware), anotherEnhancer)`)
-- `async getInitialState: (ctx) => Promise<any>` - optional. A function that returns the initial state for your redux store.
+- `getInitialState: (ctx) => Promise<any>` - optional. A function that returns the initial state for your redux store.
+
+#### Factory
+
+`const redux = Redux.from(ctx);`
+
+- `ctx: FusionContext` - Required. A [FusionJS Context](https://github.com/fusionjs/fusion-core#context).
+- `redux: {initStore, store}`
+  - `initStore: () => Promise<ReduxStore>` - Runs `getInitialState` and populates the store asynchronously.
+  - `store: ReduxStore` - A [Redux store](https://redux.js.org/docs/api/Store.html)
 
 ---
 

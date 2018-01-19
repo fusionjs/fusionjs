@@ -15,7 +15,7 @@ tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux({reducer}).of();
+  const {store} = Redux.provides({reducer}).from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2, 'state receives dispatch');
@@ -29,7 +29,10 @@ tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux({reducer, preloadedState: {hello: 'world'}}).of();
+  const {store} = Redux.provides({
+    reducer,
+    preloadedState: {hello: 'world'},
+  }).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -48,7 +51,7 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux({reducer}).of();
+  const {store} = Redux.provides({reducer}).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -71,7 +74,10 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux({reducer, preloadedState: {hello: 'world'}}).of();
+  const {store} = Redux.provides({
+    reducer,
+    preloadedState: {hello: 'world'},
+  }).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -98,7 +104,7 @@ tape('browser with enhancer', t => {
       return store;
     };
   };
-  const {store} = Redux({reducer, enhancer}).of(mockCtx);
+  const {store} = Redux.provides({reducer, enhancer}).from(mockCtx);
   t.equal(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
@@ -123,7 +129,7 @@ tape('browser with devtools enhancer', t => {
       return createStore(...args);
     };
   };
-  const {store} = Redux({reducer}).of();
+  const {store} = Redux.provides({reducer}).from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2);
@@ -157,7 +163,7 @@ tape('browser with devtools enhancer and normal enhancer', t => {
       return createStore(...args);
     };
   };
-  const {store} = Redux({reducer, enhancer}).of();
+  const {store} = Redux.provides({reducer, enhancer}).from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2);
@@ -179,9 +185,9 @@ tape('browser middleware', async t => {
   const Connected = connect(state => state)(Component);
   const element = React.createElement(Connected);
   const ctx = {element};
-  const Plugin = Redux({reducer});
+  const Plugin = Redux.provides({reducer});
   try {
-    await Plugin.middleware(ctx, () => Promise.resolve());
+    await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
   } catch (e) {
     t.ifError(e);
   }

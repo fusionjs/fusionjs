@@ -4,8 +4,9 @@ import Redux from '../index.js';
 import {consumeSanitizedHTML} from 'fusion-core';
 
 tape('interface', async t => {
+  const ctx = {memoized: new Map()};
   const reducer = (state, action) => ({test: action.payload || 1});
-  const redux = Redux({reducer}).of();
+  const redux = Redux.provides({reducer}).from(ctx);
   const store = await redux.initStore();
 
   t.equals(store.getState().test, 1, 'state is accessible');
@@ -16,12 +17,13 @@ tape('interface', async t => {
 
 tape('non-ssr routes', async t => {
   const reducer = (state, action) => ({test: action.payload || 1});
-  const plugin = Redux({reducer});
+  const plugin = Redux.provides({reducer});
   let ctx = {
     body: null,
+    memoized: new Map(),
   };
-  await plugin.middleware(ctx, () => Promise.resolve());
-  t.notok(plugin.of(ctx).store);
+  await Redux.middleware(null, plugin)(ctx, () => Promise.resolve());
+  t.notok(plugin.from(ctx).store);
   t.end();
 });
 
@@ -30,15 +32,15 @@ tape('getInitialState', async t => {
     ...state,
     test: action.payload || 1,
   });
-  const mockCtx = {mock: true};
-  const redux = Redux({
+  const mockCtx = {mock: true, memoized: new Map()};
+  const redux = Redux.provides({
     reducer,
     preloadedState: {a: 'b'},
     async getInitialState(ctx) {
       t.equal(ctx, mockCtx);
       return {hello: 'world'};
     },
-  }).of(mockCtx);
+  }).from(mockCtx);
   const store = await redux.initStore();
 
   t.equals(store.getState().test, 1, 'state is accessible');
@@ -51,13 +53,15 @@ tape('getInitialState', async t => {
 });
 
 tape('enhancers', async t => {
-  const mockCtx = {mock: true};
+  const mockCtx = {mock: true, memoized: new Map()};
   const myEnhancer = createStore => (...args) => {
     const store = createStore(...args);
     t.equals(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
     return store;
   };
-  const redux = Redux({reducer: s => s, enhancer: myEnhancer}).of(mockCtx);
+  const redux = Redux.provides({reducer: s => s, enhancer: myEnhancer}).from(
+    mockCtx
+  );
   const store = await redux.initStore();
   t.equals(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
   t.end();
@@ -69,13 +73,13 @@ tape('serialization', async t => {
     xss: '</div>',
   });
   const element = React.createElement('div');
-  const ctx = {element, body: {body: []}};
-  const Plugin = Redux({reducer});
-  await Plugin.middleware(ctx, () => Promise.resolve());
-  t.ok(Plugin.of(ctx).store);
+  const ctx = {element, template: {body: []}, memoized: new Map()};
+  const Plugin = Redux.provides({reducer});
+  await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
+  t.ok(Plugin.from(ctx).store);
   t.notEquals(ctx.element, element, 'wraps provider');
-  t.equals(ctx.body.body.length, 1, 'pushes serialization to body');
-  t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('test')[0], 'test');
-  t.equals(consumeSanitizedHTML(ctx.body.body[0]).match('</div>'), null);
+  t.equals(ctx.template.body.length, 1, 'pushes serialization to body');
+  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('test')[0], 'test');
+  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
   t.end();
 });
