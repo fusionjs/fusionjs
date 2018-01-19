@@ -14,6 +14,7 @@ tape('hoc', async t => {
   function TestComponent(props) {
     didRender = true;
     t.deepLooseEqual(props.test, testProvides);
+    t.notok(props.ctx, 'does not pass ctx through by default');
     return React.createElement('div', null, 'hello');
   }
   const testPlugin = plugin.create(
@@ -30,7 +31,7 @@ tape('hoc', async t => {
   t.end();
 });
 
-tape('hoc with mapServiceToProps', async t => {
+tape('hoc with mapProvidesToProps', async t => {
   const withTest = hoc.create('test', provides => {
     return {mapped: provides};
   });
@@ -74,6 +75,7 @@ tape('hoc with custom provider', async t => {
     }
     render() {
       didUseCustomProvider = true;
+      t.ok(this.props.ctx, 'passes ctx through');
       return React.Children.only(this.props.children);
     }
   }
