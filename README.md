@@ -60,11 +60,10 @@ const plugin = app.plugin(factory, dependencies)
 ```js
 import {Provider} from 'fusion-react';
 
-const ProviderComponent = Provider.create(name, BaseComponent)
+const ProviderComponent = Provider.create(name)
 ```
 
 - `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-- `BaseComponent: React.Component` - Optional. Defaults to `React.Component`. The component class to extend from.
 - `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
 
 #### ProviderPlugin
@@ -72,12 +71,12 @@ const ProviderComponent = Provider.create(name, BaseComponent)
 ```js
 import {ProviderPlugin} from 'fusion-react';
 
-const Plugin = ProviderPlugin.create(name, plugin, BaseComponent)
+const Plugin = ProviderPlugin.create(name, plugin, ProviderComponent)
 ```
 
 - `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
 - `plugin: Plugin` - Required. Creates a provider for this plugin.
-- `BaseComponent: React.Component` - Optional. Defaults to `React.Component`. The component class to extend from.
+- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
 - `Plugin: Plugin` - A plugin that registers its provider onto the React tree
 
 #### ProvidedHOC
