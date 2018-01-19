@@ -13,7 +13,7 @@ export default {
         if (ctx.element) {
           ctx.element = React.createElement(
             ProviderComponent,
-            {provides},
+            {provides, ctx},
             ctx.element
           );
         }
