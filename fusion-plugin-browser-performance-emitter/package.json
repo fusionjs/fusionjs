@@ -26,20 +26,25 @@
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "create-universal-package": "3.2.6",
     "eslint": "4.15.0",
-    "eslint-config-fusion": "0.1.2",
+    "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
-    "flow-bin": "0.59.0",
-    "fusion-core": "0.2.8",
+    "flow-bin": "0.63.1",
+    "fusion-core": "^0.3.0-4",
+    "fusion-tokens": "^0.0.5",
+    "fusion-plugin-universal-events": "^0.3.0",
+    "fusion-test-utils": "^0.4.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.3"
+    "fusion-core": "^0.3.0-4",
+    "fusion-tokens": "^0.0.5"
   },
   "scripts": {
     "clean": "rm -rf dist",

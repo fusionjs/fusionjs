@@ -2,7 +2,9 @@
 
 [![Build status](https://badge.buildkite.com/a7317a979159381e5e4ffb14e1ccd0d39737fd159f73863915.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-browser-performance-emitter)
 
-Emit performance stats from the browser
+Emit performance stats from the browser.
+
+Depends on [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events).
 
 ---
 
@@ -19,29 +21,36 @@ yarn add fusion-plugin-browser-performance-emitter
 ```js
 // src/main.js
 import App from 'fusion-react';
-import UniversalEvents from 'fusion-plugin-universal-events';
-import fetch from 'unfetch';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import BrowserPerformanceEmitter from 'fusion-plugin-browser-performance-emitter';
+
 import PerformanceLogging from './performance-logging';
 
 export default () => {
   const app = new App();
+  // ...
+  app.register(UniversalEventsToken, UniversalEvents);
+  app.register(BrowserPerformanceEmitter);
 
-  const EventEmitter = app.plugin(UniversalEvents, {fetch});
-  app.plugin(BrowserPerformanceEmitterPlugin, {EventEmitter});
-
-  // create a plugin to consume browser perf events
-  app.plugin(PerformanceLogging, {EventEmitter});
-
+  // (optional) a plugin to consume browser performance events
+  app.register(PerformanceLogging);
+  // ...
   return app;
 }
 
 // src/performance-logging.js
-export default ({EventEmitter}) => {
-  const emitter = EventEmitter.of();
-  emitter.on('browser-performance-emitter:stats', e => {
-    console.log(e); // log events to console
-  });
-}
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+export default createPlugin({
+  deps: { emitter: UniversalEventsToken },
+  provides: deps => {
+    const emitter = deps.emitter;
+    emitter.on('browser-performance-emitter:stats', e => {
+      console.log(e); // log events to console
+    });
+  }
+});
 ```
 
 ---

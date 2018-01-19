@@ -20,77 +20,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// @flow
 /* eslint-env browser */
-import {Plugin} from 'fusion-core';
 
-export default ({EventEmitter}) => {
-  if (__DEV__ && !EventEmitter)
-    throw new Error(`EventEmitter is required, but was: ${EventEmitter}`);
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin} from 'fusion-core';
 
-  const emit = payload => {
-    EventEmitter.of().emit(
-      'browser-performance-emitter:stats:browser-only',
-      payload
-    );
-  };
+class BrowserPerformanceEmitter {
+  constructor() {
+    this.tags = {route: window.location.href};
+  }
 
-  return new Plugin({
-    Service: class BrowserPerformanceEmitter {
-      constructor() {
-        this.tags = {route: window.location.href};
-      }
+  calculate(timing, resourceEntries) {
+    if (
+      (!window.performance ||
+        !window.performance.timing ||
+        !window.performance.getEntriesByType) &&
+      (!timing && !resourceEntries)
+    ) {
+      return;
+    }
 
-      calculate(timing, resourceEntries) {
-        if (
-          (!window.performance ||
-            !window.performance.timing ||
-            !window.performance.getEntriesByType) &&
-          (!timing && !resourceEntries)
-        ) {
-          return;
-        }
+    timing = timing || window.performance.timing;
+    resourceEntries =
+      resourceEntries ||
+      window.performance
+        .getEntriesByType('resource')
+        .filter(entry => {
+          return entry.name.indexOf('data:') !== 0 && entry.toJSON;
+        })
+        .map(entry => entry.toJSON());
 
-        timing = timing || window.performance.timing;
-        resourceEntries =
-          resourceEntries ||
-          window.performance
-            .getEntriesByType('resource')
-            .filter(entry => {
-              return entry.name.indexOf('data:') !== 0 && entry.toJSON;
-            })
-            .map(entry => entry.toJSON());
+    const firstPaint = this.getFirstPaint();
 
-        const firstPaint = getFirstPaint();
+    return {
+      timing,
+      resourceEntries,
+      firstPaint,
+    };
+  }
 
-        return {
-          timing,
-          resourceEntries,
-          firstPaint,
-        };
-      }
-    },
-    middleware(ctx, next) {
-      const browserPerformanceEmitter = this.of(ctx);
-
-      window.addEventListener('load', () => {
-        // window.performance.timing.loadEventEnd not ready until the next tick
-        window.setTimeout(() => {
-          // for testing purposes pass timing and resourceEntries from options
-          const {
-            timing,
-            resourceEntries,
-            firstPaint,
-          } = browserPerformanceEmitter.calculate();
-          emit({timing, resourceEntries, firstPaint, tags: this.of(ctx).tags});
-        }, 0);
-      });
-
-      return next();
-    },
-  });
-
-  /* Helper Functions */
-  function getFirstPaint() {
+  /* Helper methods */
+  getFirstPaint() {
     if (!window.performance) return null;
 
     if (window.chrome && window.chrome.loadTimes) {
@@ -105,4 +76,38 @@ export default ({EventEmitter}) => {
 
     return null;
   }
-};
+}
+
+export default createPlugin({
+  deps: {emitter: UniversalEventsToken},
+  middleware: deps => {
+    const emitter = deps.emitter;
+    const emit = payload => {
+      emitter.emit('browser-performance-emitter:stats:browser-only', payload);
+    };
+
+    return async (ctx, next) => {
+      const browserPerformanceEmitter = new BrowserPerformanceEmitter();
+
+      window.addEventListener('load', () => {
+        // window.performance.timing.loadEventEnd not ready until the next tick
+        window.setTimeout(() => {
+          // for testing purposes pass timing and resourceEntries from options
+          const {
+            timing,
+            resourceEntries,
+            firstPaint,
+          } = browserPerformanceEmitter.calculate();
+          emit({
+            timing,
+            resourceEntries,
+            firstPaint,
+            tags: browserPerformanceEmitter.tags,
+          });
+        }, 0);
+      });
+
+      return next();
+    };
+  },
+});

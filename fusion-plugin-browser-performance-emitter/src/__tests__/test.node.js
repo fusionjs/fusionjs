@@ -22,10 +22,16 @@
 
 /* eslint-env node */
 import test from 'tape-cup';
-import plugin from '../server.js';
-import Emitter from 'events';
+import MockEmitter from 'events';
 
-const timing = {
+import App, {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {getSimulator} from 'fusion-test-utils';
+
+import BrowserPerformanceEmitterPlugin from '../server';
+
+/* Mock Results */
+const mockTiming = {
   connectEnd: 1467935411926,
   connectStart: 1467935411926,
   domComplete: 1467935412992,
@@ -49,7 +55,7 @@ const timing = {
   unloadEventStart: 1467935412009,
 };
 
-const resourceEntries = [
+const mockResourceEntries = [
   {
     initiatorType: 'link',
     name: 'http://localhost:5663/trips-viewer/stylesheets/main.css',
@@ -106,25 +112,32 @@ const resourceEntries = [
   },
 ];
 
-const event = {
-  timing,
-  resourceEntries,
+const mockEvent = {
+  timing: mockTiming,
+  resourceEntries: mockResourceEntries,
   firstPaint: null,
   tags: null,
 };
 
-test('Correct metrics are emitted', t => {
-  // TODO(#1) We may want to rethink what we want this schema to look like
+/* Fixture */
+function createTestFixture() {
+  const app = new App('content', el => el);
+  app.register(BrowserPerformanceEmitterPlugin);
+  return app;
+}
 
-  // Fixtures: track the map handler
-  const e = new Emitter();
-  const EventEmitter = {
-    of: function() {
-      return e;
-    },
-  };
+/* Tests */
+test('Correct metrics are emitted', t => {
+  const mockEmitter = new MockEmitter();
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
+
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitterPlugin);
 
   // Process emits
+  t.plan(14);
   const handlePerfEvent = function(event) {
     const calculatedStats = event.calculatedStats;
     t.notEqual(calculatedStats, undefined, 'calculatedStates are defined');
@@ -182,11 +195,19 @@ test('Correct metrics are emitted', t => {
     );
   };
 
-  // Begin test
-  plugin({EventEmitter});
-  const emitter = EventEmitter.of();
-  emitter.on('browser-performance-emitter:stats', handlePerfEvent);
-  emitter.emit('browser-performance-emitter:stats:browser-only', event);
+  /* Simulator */
+  getSimulator(
+    app,
+    createPlugin({
+      provides: () => {
+        mockEmitter.on('browser-performance-emitter:stats', handlePerfEvent);
+        mockEmitter.emit(
+          'browser-performance-emitter:stats:browser-only',
+          mockEvent
+        );
+      },
+    })
+  );
 
   t.end();
 });

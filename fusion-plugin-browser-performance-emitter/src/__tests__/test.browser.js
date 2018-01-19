@@ -22,9 +22,23 @@
 
 /* eslint-env browser */
 import test from 'tape-cup';
-import plugin from '../browser.js';
 
+import App, {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {getSimulator} from 'fusion-test-utils';
+
+import BrowserPerformanceEmitterPlugin from '../browser';
+
+/* Fixture */
+function createTestFixture() {
+  const app = new App('content', el => el);
+  app.register(BrowserPerformanceEmitterPlugin);
+  return app;
+}
+
+/* Tests */
 test('Correct metrics are logged', t => {
+  /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
 
@@ -35,19 +49,24 @@ test('Correct metrics are logged', t => {
     fn();
   };
 
+  /* App registration */
   const eventsEmitted = [];
-  const EventEmitter = {
-    of: function() {
-      const emit = (type, payload) => {
-        eventsEmitted.push({type, payload});
-      };
-      return {emit};
+  const mockEmitter = {
+    emit: (type, payload) => {
+      eventsEmitted.push({type, payload});
     },
   };
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
 
-  const BrowserPerformanceEmitter = plugin({EventEmitter});
-  BrowserPerformanceEmitter.middleware({}, () => {});
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitterPlugin);
 
+  /* Simulator */
+  getSimulator(app).render('/');
+
+  t.plan(3);
   window.addEventListener('load', () => {
     t.equal(eventsEmitted.length, 1, 'one event was emitted');
     const event = eventsEmitted[0];
@@ -67,6 +86,7 @@ test('Correct metrics are logged', t => {
       'Event payload have correct data'
     );
 
+    /* Revert window overrides */
     window.addEventListener = originalAddEventListener;
     window.setTimeout = originalSetTimeout;
 
@@ -75,6 +95,7 @@ test('Correct metrics are logged', t => {
 });
 
 test('Emits correct event', t => {
+  /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
 
@@ -85,18 +106,24 @@ test('Emits correct event', t => {
     fn();
   };
 
+  /* App registration */
   const eventsEmitted = [];
-  const EventEmitter = {
-    of: function() {
-      const emit = (type, payload) => {
-        eventsEmitted.push({type, payload});
-      };
-      return {emit};
+  const mockEmitter = {
+    emit: (type, payload) => {
+      eventsEmitted.push({type, payload});
     },
   };
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
 
-  const BrowserPerformanceEmitter = plugin({EventEmitter});
-  BrowserPerformanceEmitter.middleware({}, () => {});
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitterPlugin);
+
+  /* Simulator */
+  getSimulator(app).render('/');
+
+  t.plan(6);
   window.addEventListener('load', () => {
     t.equal(eventsEmitted.length, 1, 'one event was emitted');
     const event = eventsEmitted[0];
@@ -109,6 +136,7 @@ test('Emits correct event', t => {
       t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
     });
 
+    /* Revert window overrides */
     window.addEventListener = originalAddEventListener;
     window.setTimeout = originalSetTimeout;
 
