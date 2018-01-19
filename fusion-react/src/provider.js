@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default {
-  create: (name, BaseComponent = React.Component) => {
-    class Provider extends BaseComponent {
+  create: name => {
+    class Provider extends React.Component {
       getChildContext() {
         return {[name]: this.props.provides};
       }
