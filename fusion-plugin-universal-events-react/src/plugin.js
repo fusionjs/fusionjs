@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import universalEvents from 'fusion-plugin-universal-events';
+import UniversalEvents from 'fusion-plugin-universal-events';
 import {ProviderPlugin} from 'fusion-react';
 
-export default ProviderPlugin.create('universalEvents', universalEvents);
+export default ProviderPlugin.create('universalEvents', UniversalEvents);

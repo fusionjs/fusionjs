@@ -19,7 +19,7 @@ yarn add fusion-plugin-universal-events-react
 ```js
 // main.js
 import App from 'fusion-react';
-import universalEvents from 'fusion-plugin-universal-events-react';
+import UniversalEvents from 'fusion-plugin-universal-events-react';
 import fetch from 'unfetch';
 
 export default function() {

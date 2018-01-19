@@ -23,11 +23,12 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-universal-events": "^0.2.0"
+    "fusion-plugin-universal-events": "^0.3.0",
+    "fusion-test-utils": "^0.4.0"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
-    "create-universal-package": "3.2.4",
+    "create-universal-package": "3.2.6",
     "eslint": "4.15.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
@@ -36,8 +37,8 @@
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
     "flow-bin": "0.63.1",
-    "fusion-core": "0.3.0-2",
-    "fusion-react": "0.2.0",
+    "fusion-core": "0.3.0-5",
+    "fusion-react": "0.3.1",
     "fusion-react-async": "0.1.4",
     "fusion-tokens": "0.0.5",
     "nyc": "11.4.1",
@@ -47,18 +48,19 @@
     "tape-cup": "4.7.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.3.0-2",
-    "fusion-react": "^0.2.0",
-    "fusion-tokens": "0.0.4"
+    "fusion-core": "^0.3.0-5",
+    "fusion-react": "^0.3.0",
+    "fusion-tokens": "0.0.5"
   },
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "npm run clean && cup build",
+    "transpile": "yarn clean && cup build",
     "build-test": "rm -rf dist-test && cup build-tests",
     "just-test": "node dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "prepublish": "npm run transpile"
+    "test": "yarn build-test && yarn just-test",
+    "cover": "nyc yarn test",
+    "prepublish": "yarn transpile"
   },
   "engines": {
     "node": ">= 8.9.0"
