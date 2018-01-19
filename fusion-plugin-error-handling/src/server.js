@@ -1,9 +1,9 @@
 /* eslint-env node */
 
-import {html} from 'fusion-core';
+import {createPlugin, html} from 'fusion-core';
+import {createToken} from 'fusion-tokens';
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
-import EnvVars from 'fusion-cli/plugins/environment-variables-plugin';
 
 const captureTypes = {
   browser: 'browser',
@@ -11,27 +11,32 @@ const captureTypes = {
   server: 'server',
 };
 
-export default ({onError, CsrfProtection}) => {
-  assert(typeof onError === 'function', '{onError} must be a function');
-  if (CsrfProtection) CsrfProtection.ignore(EnvVars().of().prefix + '/_errors');
-  const err = async e => {
-    await onError(e, captureTypes.server);
-    process.exit(1);
-  };
-  process.once('uncaughtException', err);
-  process.once('unhandledRejection', err);
-  const parseBody = bodyParser();
-  async function middleware(ctx, next) {
-    if (ctx.element) {
-      // Here, we use GET instead of POST to avoid the need for a CSRF token
-      // We also avoid using fusion-plugin-universal-event batching because
-      // we want to collect errors even if the vendor bundle fails to load
-      // (e.g. due to a network timeout)
-      // All errors should be funneled to this handler (e.g. errors in
-      // addEventListener handlers, promise rejections, react render errors, etc),
-      // ideally by calling `window.onerror` directly with an Error object
-      // (which provides more robust stack traces across browsers), or via `throw`
-      const script = html`
+export const ErrorHandlerToken = createToken('ErrorHandlerToken');
+
+export default createPlugin({
+  deps: {onError: ErrorHandlerToken},
+  provides({onError}) {
+    assert(typeof onError === 'function', '{onError} must be a function');
+    const err = async e => {
+      await onError(e, captureTypes.server);
+      process.exit(1);
+    };
+    process.once('uncaughtException', err);
+    process.once('unhandledRejection', err);
+  },
+  middleware({onError}) {
+    const parseBody = bodyParser();
+    async function middleware(ctx, next) {
+      if (ctx.element) {
+        // Here, we use GET instead of POST to avoid the need for a CSRF token
+        // We also avoid using fusion-plugin-universal-event batching because
+        // we want to collect errors even if the vendor bundle fails to load
+        // (e.g. due to a network timeout)
+        // All errors should be funneled to this handler (e.g. errors in
+        // addEventListener handlers, promise rejections, react render errors, etc),
+        // ideally by calling `window.onerror` directly with an Error object
+        // (which provides more robust stack traces across browsers), or via `throw`
+        const script = html`
 <script nonce="${ctx.nonce}">
 onerror = function(m,s,l,c,e) {
   var _e = e || {};
@@ -47,19 +52,20 @@ onerror = function(m,s,l,c,e) {
   _e.__handled = true;
 };
 </script>`;
-      ctx.body.head.unshift(script);
-    } else if (ctx.path === ctx.prefix + '/_errors') {
-      await parseBody(ctx, () => Promise.resolve());
-      await onError(ctx.request.body, captureTypes.browser);
-      ctx.body = {ok: 1};
+        ctx.template.head.unshift(script);
+      } else if (ctx.path === ctx.prefix + '/_errors') {
+        await parseBody(ctx, () => Promise.resolve());
+        await onError(ctx.request.body, captureTypes.browser);
+        ctx.body = {ok: 1};
+      }
+      try {
+        await next();
+      } catch (e) {
+        // Don't await onError here because we want to send a response as soon as possible to the user
+        onError(e, captureTypes.request);
+        throw e;
+      }
     }
-    try {
-      await next();
-    } catch (e) {
-      // Don't await onError here because we want to send a response as soon as possible to the user
-      onError(e, captureTypes.request);
-      throw e;
-    }
-  }
-  return middleware;
-};
+    return middleware;
+  },
+});

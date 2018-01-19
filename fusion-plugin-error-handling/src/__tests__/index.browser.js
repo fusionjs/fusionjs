@@ -1,10 +1,14 @@
 /* eslint-env browser */
 
+import App from 'fusion-core';
 import test from 'tape-cup';
-import ErrorHandling from '../client';
+import {getSimulator} from 'fusion-test-utils';
+import ErrorHandling, {ErrorHandlingEmitterToken} from '../client';
 
 test('Get exception stack frames', t => {
   t.plan(2);
+
+  const app = new App('test', el => el);
 
   const mockError = new Error('mock');
   const mockEmit = e => {
@@ -18,7 +22,9 @@ test('Get exception stack frames', t => {
     },
   };
 
-  ErrorHandling({emit: mockEmit});
+  app.register(ErrorHandling);
+  app.register(ErrorHandlingEmitterToken, mockEmit);
+  getSimulator(app);
 
   t.notEqual(
     window.__foo__.prototype.addEventListener,
