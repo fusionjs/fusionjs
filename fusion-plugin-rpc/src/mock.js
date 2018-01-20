@@ -4,20 +4,37 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {withDependencies} from 'fusion-core';
+// @flow
+
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
 import MissingHandlerError from './missing-handler-error';
 import {RPCHandlersToken} from './tokens';
 
-export default withDependencies({
-  handlers: RPCHandlersToken,
-})(({handlers} = {}) => {
-  class RPC {
-    async request(method, args) {
-      if (!handlers[method]) {
-        throw new MissingHandlerError(method);
-      }
-      return handlers[method](args);
-    }
+class RPC {
+  handlers: *;
+
+  constructor(handlers: any) {
+    this.handlers = handlers;
   }
-  return () => new RPC();
+
+  async request(method, args) {
+    if (!this.handlers[method]) {
+      throw new MissingHandlerError(method);
+    }
+    return this.handlers[method](args);
+  }
+}
+
+type RPCServiceFactory = () => RPC;
+type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
+const plugin: RPCPluginType = createPlugin({
+  deps: {
+    handlers: RPCHandlersToken,
+  },
+  provides: ({handlers} = {}) => {
+    return () => new RPC(handlers);
+  },
 });
+
+export default plugin;

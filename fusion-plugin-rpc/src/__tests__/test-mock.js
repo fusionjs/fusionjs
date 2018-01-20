@@ -4,46 +4,74 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import tape from 'tape-cup';
-import mock from '../mock';
+import test from 'tape-cup';
+import App, {createPlugin} from 'fusion-core';
+import {createToken} from 'fusion-tokens';
+import {getSimulator} from 'fusion-test-utils';
 
-tape('mock with missing handler', async t => {
-  const rpc = mock({handlers: {}})();
-  try {
-    await rpc.request('test');
-  } catch (e) {
-    t.equal(e.message, 'Missing RPC handler for test');
-  } finally {
-    t.end();
-  }
-});
+import {RPCHandlersToken} from '../tokens';
+import RPCPlugin from '../mock';
 
-tape('mock with no handlers', t => {
-  try {
-    const rpc = mock()();
-    t.equal(typeof rpc.request, 'function');
-  } catch (e) {
-    t.ifError(e);
-  } finally {
-    t.end();
-  }
-});
+const MockPluginToken = createToken('test-plugin-token');
+function createTestFixture() {
+  const mockHandlers = {};
 
-tape('mock with handler', async t => {
-  const rpc = mock({
-    handlers: {
-      test: args => {
-        t.deepLooseEqual(args, {test: 'args'});
-        return 10;
+  const app = new App('content', el => el);
+  app.register(RPCHandlersToken, mockHandlers);
+  app.register(MockPluginToken, RPCPlugin);
+  return app;
+}
+
+test('mock with missing handler', async t => {
+  const app = createTestFixture();
+
+  t.plan(1);
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: async deps => {
+        const rpc = deps.rpcFactory();
+        try {
+          await rpc.request('test');
+        } catch (e) {
+          t.equal(e.message, 'Missing RPC handler for test');
+        } finally {
+          t.end();
+        }
       },
+    })
+  );
+});
+
+test('mock with handler', async t => {
+  const mockHandlers = {
+    test: args => {
+      t.deepLooseEqual(args, {test: 'args'}, 'correct args provded');
+      return 10;
     },
-  })();
-  try {
-    const result = await rpc.request('test', {test: 'args'});
-    t.equal(result, 10);
-  } catch (e) {
-    t.ifError(e);
-  } finally {
-    t.end();
-  }
+  };
+
+  const app = createTestFixture();
+  app.register(RPCHandlersToken, mockHandlers);
+
+  t.plan(2);
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: async deps => {
+        const rpc = deps.rpcFactory();
+
+        try {
+          const result = await rpc.request('test', {test: 'args'});
+          t.equal(result, 10, 'correct request result');
+        } catch (e) {
+          t.ifError(e);
+        } finally {
+          t.end();
+        }
+      },
+    })
+  );
 });

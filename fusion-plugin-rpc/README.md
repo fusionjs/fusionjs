@@ -21,7 +21,7 @@ yarn add fusion-plugin-rpc
 ```js
 // src/main.js
 import React from 'react';
-import App from 'fusion-react';
+import App, {createPlugin} from 'fusion-core';
 import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
 import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
@@ -36,18 +36,19 @@ const handlers = __NODE__ && {
 
 export default () => {
   const app = new App(<div></div>);
-
+  // ...
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
-  app.configure(RPCHandlersToken, handlers);
-  app.configure(FetchToken, fetch);
+  app.register(RPCHandlersToken, handlers);
+  app.register(FetchToken, fetch);
 
-  app.register(withDependencies({
-    RPC: RPCToken
-  })(({RPC}) => (ctx, next) => {
-    RPC(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
-  });
-
+  app.middleware(
+    { RPCFactory: RPCToken },
+    ({RPCFactory}) => (ctx, next) => {
+      RPCFactory(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
+    }
+  );
+  // ...
   return app;
 }
 ```

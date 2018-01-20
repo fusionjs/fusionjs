@@ -5,45 +5,94 @@
  */
 
 import test from 'tape-cup';
-import RPC from '../browser';
+
+import App, {createPlugin} from 'fusion-core';
+import {FetchToken, createToken} from 'fusion-tokens';
+import {getSimulator} from 'fusion-test-utils';
+
+import {RPCHandlersToken} from '../tokens';
+import RPCPlugin from '../browser';
+
+const MockPluginToken = createToken('test-plugin-token');
+function createTestFixture() {
+  const mockFetch = (...args) =>
+    Promise.resolve({json: () => ({status: 'success', data: args})});
+  const mockHandlers = {};
+
+  const app = new App('content', el => el);
+  app.register(FetchToken, mockFetch);
+  app.register(RPCHandlersToken, mockHandlers);
+  app.register(MockPluginToken, RPCPlugin);
+  return app;
+}
 
 test('success status request', t => {
-  const fetch = (...args) =>
-    Promise.resolve({json: () => ({status: 'success', data: args})});
-  const rpc = RPC({fetch})();
-  t.equals(typeof rpc.request, 'function', 'has method');
-  t.ok(rpc.request('test') instanceof Promise, 'has right return type');
-  rpc
-    .request('test')
-    .then(([url, options]) => {
-      t.equals(url, '/api/test', 'has right url');
-      t.equals(options.method, 'POST', 'has right http method');
-      t.equals(
-        options.headers['Content-Type'],
-        'application/json',
-        'has right content-type'
-      );
-      t.equals(options.body, '{}', 'has right body');
-      t.end();
+  const app = createTestFixture();
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        rpc
+          .request('test')
+          .then(([url, options]) => {
+            t.equals(url, '/api/test', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              'application/json',
+              'has right content-type'
+            );
+            t.equals(options.body, '{}', 'has right body');
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
     })
-    .catch(e => {
-      t.fail(e);
-    });
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
 });
 
 test('failure status request', t => {
-  const fetch = () =>
+  const mockFetchAsFailure = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
-  const rpc = RPC({fetch})();
-  t.equals(typeof rpc.request, 'function', 'has method');
-  const testRequest = rpc.request('test');
-  t.ok(testRequest instanceof Promise, 'has right return type');
-  testRequest
-    .then(() => {
-      t.fail(new Error('should reject promise'));
+
+  const app = createTestFixture();
+  app.register(FetchToken, mockFetchAsFailure);
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        const testRequest = rpc.request('test');
+        t.ok(testRequest instanceof Promise, 'has right return type');
+        testRequest
+          .then(() => {
+            t.fail(() => new Error('should reject promise'));
+          })
+          .catch(e => {
+            t.equal(e, 'failure data', 'should pass failure data through');
+          });
+
+        wasResolved = true;
+      },
     })
-    .catch(e => {
-      t.equal(e, 'failure data', 'should pass failure data through');
-      t.end();
-    });
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
 });
