@@ -1,25 +1,56 @@
 /* eslint-env node */
 
 import test from 'tape-cup';
-import Plugin from '../plugin';
-import withI18n from '../hoc';
+import App from 'fusion-react';
+import React from 'react';
+import {getSimulator} from 'fusion-test-utils';
+import Plugin, {
+  I18nToken,
+  I18nLoaderToken,
+  HydrationStateToken,
+  createI18nLoader,
+  Translate,
+  withTranslations,
+} from '../index.js';
 
-test('plugin', t => {
-  const data = {test: 'hello', interpolated: 'hi ${value}'};
-
-  t.equals(typeof Plugin, 'function');
-
-  const I18n = Plugin({
-    loadTranslations: () => ({translations: data, locale: 'en-US'}),
-  });
-  const ctx = {headers: {'accept-language': 'en-US'}, memoized: new Map()};
-  t.equals(typeof I18n.of(ctx).translate, 'function');
+test('exports', t => {
+  t.ok(Plugin, 'exports default plugin');
+  t.ok(I18nToken, 'exports I18nToken');
+  t.ok(I18nLoaderToken, 'exports I18nLoaderToken');
+  t.ok(HydrationStateToken, 'exports HydrationStateToken');
+  t.ok(createI18nLoader, 'exports createI18nLoader');
+  t.ok(Translate, 'exports Translate');
+  t.ok(withTranslations, 'exports withTranslations');
   t.end();
 });
-test('hoc', t => {
-  function Test() {}
-  const hoc = withI18n(Test);
-  t.equals(typeof withI18n, 'function');
-  t.equals(hoc.displayName, 'WithI18n(Test)');
+
+test('plugin', async t => {
+  const data = {test: 'hello', interpolated: 'hi ${value}'};
+  function Test(props) {
+    t.equal(typeof props.translate, 'function');
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(Translate, {id: 'test'})
+    );
+  }
+  const Root = withTranslations(['test'])(Test);
+  const app = new App(React.createElement(Root));
+  app.register(I18nToken, Plugin);
+  app.register(I18nLoaderToken, () => ({translations: data, locale: 'en_US'}));
+  app.middleware({i18n: I18nToken}, ({i18n}) => {
+    return (ctx, next) => {
+      const translator = i18n.from(ctx);
+      t.equals(translator.translate('test'), 'hello');
+      t.equals(
+        translator.translate('interpolated', {value: 'world'}),
+        'hi world'
+      );
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
+  t.ok(ctx.body.includes('hello'));
   t.end();
 });

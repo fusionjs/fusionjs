@@ -1,4 +1,3 @@
-// @flow
 import I18n from './plugin';
 
 export default I18n;
