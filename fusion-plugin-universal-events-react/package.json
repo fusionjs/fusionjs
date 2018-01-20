@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-universal-events-react",
   "description": "React Provider and HOC for Fusion universal-events",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository": "fusionjs/fusion-plugin-universal-events-react",
   "keywords": [],
   "license": "MIT",
