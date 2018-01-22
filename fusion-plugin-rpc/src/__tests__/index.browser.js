@@ -35,7 +35,7 @@ test('success status request', t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory();
+        const rpc = deps.rpcFactory.from();
         t.equals(typeof rpc.request, 'function', 'has method');
         t.ok(rpc.request('test') instanceof Promise, 'has right return type');
         rpc
@@ -76,7 +76,7 @@ test('failure status request', t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory();
+        const rpc = deps.rpcFactory.from();
         t.equals(typeof rpc.request, 'function', 'has method');
         const testRequest = rpc.request('test');
         t.ok(testRequest instanceof Promise, 'has right return type');

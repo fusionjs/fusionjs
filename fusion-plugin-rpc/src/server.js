@@ -76,7 +76,7 @@ class RPC {
   }
 }
 
-type RPCServiceFactory = (ctx: Context) => RPC;
+type RPCServiceFactory = {from: (ctx: Context) => RPC};
 type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
 const plugin: RPCPluginType = createPlugin({
   deps: {
@@ -87,7 +87,9 @@ const plugin: RPCPluginType = createPlugin({
   provides: deps => {
     const {emitter, handlers} = deps;
 
-    return memoize(ctx => new RPC(emitter, handlers, ctx));
+    return {
+      from: memoize(ctx => new RPC(emitter, handlers, ctx)),
+    };
   },
 
   middleware: deps => {

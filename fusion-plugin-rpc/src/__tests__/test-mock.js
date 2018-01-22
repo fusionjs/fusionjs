@@ -31,7 +31,7 @@ test('mock with missing handler', async t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: async deps => {
-        const rpc = deps.rpcFactory();
+        const rpc = deps.rpcFactory.from();
         try {
           await rpc.request('test');
         } catch (e) {
@@ -61,7 +61,7 @@ test('mock with handler', async t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: async deps => {
-        const rpc = deps.rpcFactory();
+        const rpc = deps.rpcFactory.from();
 
         try {
           const result = await rpc.request('test', {test: 'args'});

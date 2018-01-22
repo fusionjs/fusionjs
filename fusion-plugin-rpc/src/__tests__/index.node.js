@@ -97,7 +97,7 @@ test('service - request api', async t => {
     emitter: mockEmitter,
     handlers: mockHandlers,
   });
-  const rpc = rpcFactory(mockCtx);
+  const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
   try {
@@ -138,7 +138,7 @@ test('service - request api with failing request', async t => {
     emitter: mockEmitter,
     handlers: mockHandlers,
   });
-  const rpc = rpcFactory(mockCtx);
+  const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
   const p = rpc.request('test', 'test-args');
@@ -174,7 +174,7 @@ test('service - request api with invalid endpoint', async t => {
     emitter: mockEmitter,
     handlers: mockHandlers,
   });
-  const rpc = rpcFactory(mockCtx);
+  const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
   const p = rpc.request('test', 'test-args');
@@ -361,7 +361,7 @@ test('throws when not passed ctx', async t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       middleware: ({rpcFactory}) => () => {
-        t.throws(() => rpcFactory(), 'missing context throws error');
+        t.throws(() => rpcFactory.from(), 'missing context throws error');
         t.end();
       },
     })

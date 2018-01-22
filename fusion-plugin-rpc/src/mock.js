@@ -26,14 +26,14 @@ class RPC {
   }
 }
 
-type RPCServiceFactory = () => RPC;
+type RPCServiceFactory = {from: () => RPC};
 type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
 const plugin: RPCPluginType = createPlugin({
   deps: {
     handlers: RPCHandlersToken,
   },
   provides: ({handlers} = {}) => {
-    return () => new RPC(handlers);
+    return {from: () => new RPC(handlers)};
   },
 });
 
