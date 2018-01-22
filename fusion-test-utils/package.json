@@ -29,7 +29,7 @@
     "babel-preset-jest": "22.0.6",
     "babel-preset-react": "6.24.1",
     "create-universal-package": "3.2.4",
-    "eslint": "4.15.0",
+    "eslint": "4.16.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.0",
