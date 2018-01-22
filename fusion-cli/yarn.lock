@@ -66,7 +66,7 @@
     "@babel/helper-builder-react-jsx" "7.0.0-beta.38"
     "@babel/plugin-syntax-jsx" "7.0.0-beta.38"
 
-"@babel/preset-react@^7.0.0-beta.34":
+"@babel/preset-react@^7.0.0-beta.38":
   version "7.0.0-beta.38"
   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.38.tgz#eb42433a72314f14f28be7fe2b092c9a9a3294cb"
   dependencies:
@@ -1657,6 +1657,15 @@ clone@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
 
+co-body@^5.1.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/co-body/-/co-body-5.1.1.tgz#d97781d1e3344ba4a820fd1806bddf8341505236"
+  dependencies:
+    inflation "^2.0.0"
+    qs "^6.4.0"
+    raw-body "^2.2.0"
+    type-is "^1.6.14"
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -1844,6 +1853,10 @@ copy-concurrently@^1.0.0:
 copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
+
+copy-to@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/copy-to/-/copy-to-2.0.1.tgz#2680fbb8068a48d08656b6098092bdafc906f4a5"
 
 core-js@2.5.3, core-js@^2.4.0, core-js@^2.5.0:
   version "2.5.3"
@@ -2166,9 +2179,9 @@ detect-node@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.3.tgz#a2033c09cc8e158d37748fbde7507832bd6ce127"
 
-detect-port-alt@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/detect-port-alt/-/detect-port-alt-1.1.3.tgz#a4d2f061d757a034ecf37c514260a98750f2b131"
+detect-port-alt@1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/detect-port-alt/-/detect-port-alt-1.1.5.tgz#a1aa8fc805a4a5df9b905b7ddc7eed036bcce889"
   dependencies:
     address "^1.0.1"
     debug "^2.6.0"
@@ -3204,22 +3217,29 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.2.8.tgz#90413a044483a91143c6b8b800237b738a4f1495"
+fusion-core@0.3.0-5:
+  version "0.3.0-5"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0-5.tgz#b6ad6ea3f7dcdb6517dc31214f64856727c5800c"
   dependencies:
     koa "^2.3.0"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
+    toposort "^1.0.6"
 
-fusion-plugin-react-router@0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-0.2.3.tgz#be0ee18e3abd025015deafc0c668b98429ebb08e"
+fusion-plugin-react-router@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-0.4.0.tgz#ec4c5987821c2ba20b1a5ac2f0007638f0182b58"
   dependencies:
-    "@babel/preset-react" "^7.0.0-beta.34"
+    "@babel/preset-react" "^7.0.0-beta.38"
     history "^4.7.2"
     prop-types "^15.6.0"
     react-router-dom "^4.2.2"
+
+fusion-plugin-universal-events@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.0.tgz#fb88370679b36ae70a6140ac89f84a1e2009ddd1"
+  dependencies:
+    koa-bodyparser "4.2.0"
 
 fusion-react-async@0.1.4:
   version "0.1.4"
@@ -3227,17 +3247,21 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.3.0.tgz#e47ab890acba8f91fe4e360901aaf5dc181490cb"
+fusion-react@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.1.tgz#d411ebc389ae22e1bfd7e1058d66ac0d19b4d64a"
 
-fusion-test-utils@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.3.0.tgz#dd96be1272458146b1d4c878ead322099e93f3b5"
+fusion-test-utils@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.0.tgz#9800a29ed4a3e9c987e39a02ec977a09fc137e5f"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
+
+fusion-tokens@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.5.tgz#71af057ab696046c43e89ca06dfe47cdbaeac6d8"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -3834,6 +3858,10 @@ infinity-x@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/infinity-x/-/infinity-x-1.0.0.tgz#cea2d75181d820961b0f72d78e7c4e06fdd55a07"
 
+inflation@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/inflation/-/inflation-2.0.0.tgz#8b417e47c28f925a45133d914ca1fd389107f30f"
+
 inflight@^1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
@@ -4355,51 +4383,13 @@ istanbul-reports@^1.1.3:
   dependencies:
     handlebars "^4.0.3"
 
-jest-changed-files@^22.1.0, jest-changed-files@^22.1.4:
+jest-changed-files@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-22.1.4.tgz#1f7844bcb739dec07e5899a633c0cb6d5069834e"
   dependencies:
     throat "^4.0.0"
 
-jest-cli@22.1.3:
-  version "22.1.3"
-  resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-22.1.3.tgz#b4fe4a66f476672924a2093d8ca01f1c227970fc"
-  dependencies:
-    ansi-escapes "^3.0.0"
-    chalk "^2.0.1"
-    exit "^0.1.2"
-    glob "^7.1.2"
-    graceful-fs "^4.1.11"
-    import-local "^1.0.0"
-    is-ci "^1.0.10"
-    istanbul-api "^1.1.14"
-    istanbul-lib-coverage "^1.1.1"
-    istanbul-lib-instrument "^1.8.0"
-    istanbul-lib-source-maps "^1.2.1"
-    jest-changed-files "^22.1.0"
-    jest-config "^22.1.3"
-    jest-environment-jsdom "^22.1.2"
-    jest-get-type "^22.1.0"
-    jest-haste-map "^22.1.0"
-    jest-message-util "^22.1.0"
-    jest-regex-util "^22.1.0"
-    jest-resolve-dependencies "^22.1.0"
-    jest-runner "^22.1.3"
-    jest-runtime "^22.1.3"
-    jest-snapshot "^22.1.2"
-    jest-util "^22.1.2"
-    jest-worker "^22.1.0"
-    micromatch "^2.3.11"
-    node-notifier "^5.1.2"
-    realpath-native "^1.0.0"
-    rimraf "^2.5.4"
-    slash "^1.0.0"
-    string-length "^2.0.0"
-    strip-ansi "^4.0.0"
-    which "^1.2.12"
-    yargs "^10.0.3"
-
-jest-cli@^22.1.3:
+jest-cli@22.1.4, jest-cli@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-22.1.4.tgz#0fe9f3ac881b0cdc00227114c58583a2ebefcc04"
   dependencies:
@@ -4437,7 +4427,7 @@ jest-cli@^22.1.3:
     which "^1.2.12"
     yargs "^10.0.3"
 
-jest-config@^22.1.3, jest-config@^22.1.4:
+jest-config@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-config/-/jest-config-22.1.4.tgz#075ffacce83c3e38cf85b1b9ba0d21bd3ee27ad0"
   dependencies:
@@ -4472,7 +4462,7 @@ jest-docblock@^22.1.0:
   dependencies:
     detect-newline "^2.1.0"
 
-jest-environment-jsdom@^22.1.2, jest-environment-jsdom@^22.1.4:
+jest-environment-jsdom@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-environment-jsdom/-/jest-environment-jsdom-22.1.4.tgz#704518ce8375f7ec5de048d1e9c4268b08a03e00"
   dependencies:
@@ -4563,7 +4553,7 @@ jest-resolve@^22.1.4:
     browser-resolve "^1.11.2"
     chalk "^2.0.1"
 
-jest-runner@^22.1.3, jest-runner@^22.1.4:
+jest-runner@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-runner/-/jest-runner-22.1.4.tgz#e039039110cb1b31febc0f99e349bf7c94304a2f"
   dependencies:
@@ -4579,7 +4569,7 @@ jest-runner@^22.1.3, jest-runner@^22.1.4:
     jest-worker "^22.1.0"
     throat "^4.0.0"
 
-jest-runtime@^22.1.3, jest-runtime@^22.1.4:
+jest-runtime@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-runtime/-/jest-runtime-22.1.4.tgz#1474d9f5cda518b702e0b25a17d4ef3fc563a20c"
   dependencies:
@@ -4614,7 +4604,7 @@ jest-snapshot@^22.1.2:
     natural-compare "^1.4.0"
     pretty-format "^22.1.0"
 
-jest-util@^22.1.2, jest-util@^22.1.4:
+jest-util@^22.1.4:
   version "22.1.4"
   resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-22.1.4.tgz#ac8cbd43ee654102f1941f3f0e9d1d789a8b6a9b"
   dependencies:
@@ -4641,11 +4631,11 @@ jest-worker@^22.1.0:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@22.1.3:
-  version "22.1.3"
-  resolved "https://registry.yarnpkg.com/jest/-/jest-22.1.3.tgz#59bd66af5e9cd6367cbeeead9de6c3cfdd6d4204"
+jest@22.1.4:
+  version "22.1.4"
+  resolved "https://registry.yarnpkg.com/jest/-/jest-22.1.4.tgz#9ec71373a38f40ff92a3e5e96ae85687c181bb72"
   dependencies:
-    jest-cli "^22.1.3"
+    jest-cli "^22.1.4"
 
 jpeg-js@0.1.2, jpeg-js@^0.1.2:
   version "0.1.2"
@@ -4791,6 +4781,13 @@ kind-of@^5.0.0, kind-of@^5.0.2:
 kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
+
+koa-bodyparser@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/koa-bodyparser/-/koa-bodyparser-4.2.0.tgz#bce6e08bc65f8709b6d1faa9411c7f0d8938aa54"
+  dependencies:
+    co-body "^5.1.0"
+    copy-to "^2.0.1"
 
 koa-compose@^3.0.0, koa-compose@^3.2.1:
   version "3.2.1"
@@ -5802,13 +5799,7 @@ opn@4.0.2:
     object-assign "^4.0.1"
     pinkie-promise "^2.0.0"
 
-opn@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/opn/-/opn-5.1.0.tgz#72ce2306a17dbea58ff1041853352b4a8fc77519"
-  dependencies:
-    is-wsl "^1.1.0"
-
-opn@^5.1.0:
+opn@5.2.0, opn@^5.1.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/opn/-/opn-5.2.0.tgz#71fdf934d6827d676cecbea1531f95d354641225"
   dependencies:
@@ -6270,7 +6261,7 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
 
-qs@6.5.1, qs@~6.5.1:
+qs@6.5.1, qs@^6.4.0, qs@~6.5.1:
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
 
@@ -6345,7 +6336,7 @@ raven@^2.2.1:
     timed-out "4.0.1"
     uuid "3.0.0"
 
-raw-body@2.3.2:
+raw-body@2.3.2, raw-body@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.2.tgz#bcd60c77d3eb93cde0050295c3f379389bc88f89"
   dependencies:
@@ -6367,23 +6358,23 @@ react-deep-force-update@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-2.1.1.tgz#8ea4263cd6455a050b37445b3f08fd839d86e909"
 
-react-dev-utils@4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-4.2.1.tgz#9f2763e7bafa1a1b9c52254d2a479deec280f111"
+react-dev-utils@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-5.0.0.tgz#425ac7c9c40c2603bc4f7ab8836c1406e96bb473"
   dependencies:
     address "1.0.3"
     babel-code-frame "6.26.0"
     chalk "1.1.3"
     cross-spawn "5.1.0"
-    detect-port-alt "1.1.3"
+    detect-port-alt "1.1.5"
     escape-string-regexp "1.0.5"
     filesize "3.5.11"
     global-modules "1.0.0"
     gzip-size "3.0.0"
     inquirer "3.3.0"
     is-root "1.0.0"
-    opn "5.1.0"
-    react-error-overlay "^3.0.0"
+    opn "5.2.0"
+    react-error-overlay "^4.0.0"
     recursive-readdir "2.2.1"
     shell-quote "1.6.1"
     sockjs-client "1.1.4"
@@ -6399,9 +6390,9 @@ react-dom@16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-error-overlay@3.0.0, react-error-overlay@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-3.0.0.tgz#c2bc8f4d91f1375b3dad6d75265d51cd5eeaf655"
+react-error-overlay@4.0.0, react-error-overlay@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-4.0.0.tgz#d198408a85b4070937a98667f500c832f86bd5d4"
 
 react-hot-loader@3.1.3:
   version "3.1.3"
@@ -7168,9 +7159,9 @@ source-map-resolve@^0.5.0:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
-source-map-support@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.1.tgz#72291517d1fd0cb9542cee6c27520884b5da1a07"
+source-map-support@0.5.2, source-map-support@^0.5.0:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.2.tgz#1a6297fd5b2e762b39688c7fc91233b60984f0a5"
   dependencies:
     source-map "^0.6.0"
 
@@ -7179,12 +7170,6 @@ source-map-support@^0.4.15:
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.18.tgz#0286a6de8be42641338594e97ccea75f0a2c585f"
   dependencies:
     source-map "^0.5.6"
-
-source-map-support@^0.5.0:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.2.tgz#1a6297fd5b2e762b39688c7fc91233b60984f0a5"
-  dependencies:
-    source-map "^0.6.0"
 
 source-map-url@^0.4.0:
   version "0.4.0"
@@ -7782,6 +7767,10 @@ to-string-x@^1.4.2:
   dependencies:
     is-symbol "^1.0.1"
 
+toposort@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-1.0.6.tgz#c31748e55d210effc00fdcdc7d6e68d7d7bb9cec"
+
 tough-cookie@>=2.3.3, tough-cookie@^2.3.3, tough-cookie@~2.3.0, tough-cookie@~2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.3.tgz#0b618a5565b6dea90bf3425d04d55edc475a7561"
@@ -8167,9 +8156,9 @@ webpack-dev-middleware@2.0.4:
     url-join "^2.0.2"
     webpack-log "^1.0.1"
 
-webpack-dev-server@2.10.1:
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-2.10.1.tgz#a9768375346e62155860fe3cef3d4d641b24273e"
+webpack-dev-server@2.11.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-2.11.1.tgz#6f9358a002db8403f016e336816f4485384e5ec0"
   dependencies:
     ansi-html "0.0.7"
     array-includes "^3.0.3"
@@ -8194,7 +8183,7 @@ webpack-dev-server@2.10.1:
     sockjs "0.3.19"
     sockjs-client "1.1.4"
     spdy "^3.4.1"
-    strip-ansi "^4.0.0"
+    strip-ansi "^3.0.0"
     supports-color "^5.1.0"
     webpack-dev-middleware "1.12.2"
     yargs "6.6.0"

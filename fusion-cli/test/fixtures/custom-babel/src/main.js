@@ -1,8 +1,6 @@
 console.log('helloworld');
+import App from 'fusion-core'; 
 
 export default async function() {
-  return {
-    plugins: [],
-    callback() {},
-  };
+  return new App('el', el => el);
 }

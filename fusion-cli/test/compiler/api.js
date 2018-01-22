@@ -1,5 +1,4 @@
 /* eslint-env node */
-
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
@@ -54,7 +53,7 @@ test('development/production env globals', async t => {
     const clientContent = await readFile(clientEntryPath, 'utf8');
 
     const expectedClientBrowser = {
-      development: 'main __BROWSER__ is " + true',
+      development: `main __BROWSER__ is ' + true`,
       production: 'main __BROWSER__ is "+!0',
     };
     t.ok(
@@ -63,7 +62,7 @@ test('development/production env globals', async t => {
     );
 
     const expectedClientNode = {
-      development: 'main __NODE__ is " + false',
+      development: `main __NODE__ is ' + false`,
       production: 'main __NODE__ is "+!1',
     };
     t.ok(

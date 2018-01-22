@@ -2,15 +2,12 @@
 import http from 'http';
 // eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
 import main from '__FRAMEWORK_SHARED_ENTRY__';
-import CompilationMetaDataFactory from '../plugins/compilation-metadata-plugin';
+import getCompilationMetaData from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';
-import ContextFactory from '../plugins/context-plugin';
-import ServerErrorFactory from '../plugins/server-error-plugin';
+import ContextPlugin from '../plugins/context-plugin';
+import ServerErrorPlugin from '../plugins/server-error-plugin';
 
-const CompilationMetaData = CompilationMetaDataFactory();
-let Assets;
-const Context = ContextFactory();
-const ServerErrorHandling = ServerErrorFactory();
+let AssetsPlugin;
 
 /*
 Webpack has a configuration option called `publicPath`, which determines the
@@ -31,7 +28,7 @@ Webpack compiles the `__webpack_public_path__ = ...` assignment expression
 into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 */
 // eslint-disable-next-line
-__webpack_public_path__ = CompilationMetaData.of().webpackPublicPath + '/';
+__webpack_public_path__ = getCompilationMetaData().webpackPublicPath + '/';
 
 const state = {serve: null};
 const initialize = main
@@ -41,7 +38,7 @@ const initialize = main
     };
 
 export async function start({port, dir = '.'}) {
-  Assets = AssetsFactory(dir);
+  AssetsPlugin = AssetsFactory(dir);
   await reload();
 
   // TODO(#21): support https.createServer(credentials, listener);
@@ -61,12 +58,18 @@ export async function start({port, dir = '.'}) {
 
 async function reload() {
   const app = await initialize();
-  app.plugins = [Assets, Context].concat(app.plugins);
+  reverseRegister(app, AssetsPlugin);
+  reverseRegister(app, ContextPlugin);
   if (__DEV__) {
-    app.plugins.unshift(ServerErrorHandling);
+    reverseRegister(app, ServerErrorPlugin);
   }
   state.serve = app.callback();
   state.app = app;
+}
+
+function reverseRegister(app, token, plugin) {
+  app.register(token, plugin);
+  app.plugins.unshift(app.plugins.pop());
 }
 
 if (module.hot) {
