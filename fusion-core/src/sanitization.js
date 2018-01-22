@@ -1,3 +1,9 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 /*
 We never want developers to be able to write `ctx.body.body.push(`<div>${stuff}</div>`)`
 because that allows XSS attacks by default (e.g. if stuff === '<script>alert(1)</script>')

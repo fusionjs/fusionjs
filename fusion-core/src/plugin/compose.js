@@ -1,3 +1,9 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 // inline version of koa-compose to get around Rollup/CUP commonjs-related issue
 function composeMiddleware(middleware) {
   if (!Array.isArray(middleware)) {
