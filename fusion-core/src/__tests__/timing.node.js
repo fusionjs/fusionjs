@@ -41,7 +41,7 @@ tape('timing plugin', t => {
     });
     ctx.timing.end.then(result => {
       t.equal(typeof result, 'number', 'sets end timing result');
-      t.ok(result >= 10, 'result time is at least 10ms');
+      t.ok(result >= 10, `result time is at least 10ms, received: ${result}ms`);
       t.ok(result <= 30, 'result time is no more than 30ms');
       t.end();
     });
