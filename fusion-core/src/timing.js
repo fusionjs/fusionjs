@@ -5,6 +5,7 @@
  */
 
 import {Plugin} from './plugin/index.js';
+
 export default new Plugin({
   Service: class Timing {
     constructor() {
