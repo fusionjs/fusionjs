@@ -22,15 +22,15 @@ yarn add fusion-plugin-react-redux
 // in your main.js file
 import React from 'react';
 import Redux, {ReduxToken, ReducerToken, EnhancerToken, InitialStateToken} from 'fusion-plugin-react-redux';
+import ReduxActionEmitterEnhancer from 'fusion-plugin-redux-action-emitter-enhancer';
 import App from 'fusion-react';
 import reducer from './reducer';
-import enhancer from './enhancer';
 
 export default function start() {
   const app = new App(root);
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
-  app.register(EnhancerToken, enhancer);
+  app.register(EnhancerToken, ReduxActionEmitterEnhancer);
   __NODE__ && app.register(InitialStateToken, async getInitialState(ctx) {
     return {};
   });
@@ -64,7 +64,8 @@ Creates the redux store and integrates it into the Fusion application
 - `Redux` - The Redux plugin
 - `reducer: (state: any, action: Object) => any` - required. The root reducer
 - `preloadedState: any` - optional. Overrides the initial state in the server, and the hydrated state in the client
-- `enhancer: (arg: any) => any` - optional. Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. If you're using `applyMiddleware`, pass it to this option (i.e `{enhancer: applyMiddleware(myMiddleware)}`). You can also compose multiple enhancers (e.g. `{enhancer: compose(applyMiddleware(myMiddleware), anotherEnhancer)`)
+- `enhancer: Plugin` - optional. Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. We are currently investigating enhancer composition in fusionjs/fusion-core#90, but for now you can use plugin aliasing for registering multiple enhancers: `app.register(EnhancerToken, ReduxActionEmitterEnhancer).alias(EnhancerToken, AnotherEnhancerPlugin);`.
+
 - `getInitialState: (ctx) => Promise<any>` - optional. A function that returns the initial state for your redux store.
 
 #### Factory
@@ -89,4 +90,4 @@ The plugin automatically integrates with the [redux devtools Chrome extension](h
 For convenience, Redux stores are composed with a default right-most enhancer to add `store.ctx` along side with other [Store APIs](https://github.com/reactjs/redux/blob/master/docs/api/Store.md).
 This is particular useful for your custom store enhancers to access to `ctx` for use-cases such as logging, analytics...etc.
 
-See [redux-action-emitter-enhancer](https://github.com/fusionjs/fusion-redux-action-emitter-enhancer/) for an usage example.
+See [redux-action-emitter-enhancer](https://github.com/fusionjs/fusion-plugin-redux-action-emitter-enhancer/) for an usage example.
