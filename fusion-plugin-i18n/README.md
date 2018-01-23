@@ -115,7 +115,7 @@ __NODE__
 ```
 
 - `I18n` - the core I18n library
-- `I18nLoader: (ctx: Context) => ({locale: string, translations: Object<string, string>})` - A function that provides translations
+- `I18nLoader.from: (ctx: Context) => ({locale: string, translations: Object<string, string>})` - A function that provides translations
   - `ctx: {headers: {'accept-language': string}}` - A Koa context object
 - `fetch` - a [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation
 
@@ -152,7 +152,7 @@ app.register(I18nLoaderToken, createI18nLoader());
 
 `const loader = createI18nLoader()`
 
-- `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
+- `loader.from: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
   - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
   - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
   - `translations: Object` - A object that maps translation keys to translated values for the given locale

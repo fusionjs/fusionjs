@@ -13,15 +13,15 @@ import createLoader from './loader';
 export const I18nLoaderToken = createOptionalToken('I18nLoaderToken', null);
 export default createPlugin({
   deps: {
-    loadTranslations: I18nLoaderToken,
+    loader: I18nLoaderToken,
   },
-  provides: ({loadTranslations}) => {
+  provides: ({loader}) => {
     class I18n {
       constructor(ctx) {
-        if (!loadTranslations) {
-          loadTranslations = createLoader();
+        if (!loader) {
+          loader = createLoader();
         }
-        const {translations, locale} = loadTranslations(ctx);
+        const {translations, locale} = loader.from(ctx);
         this.translations = translations;
         this.locale = locale;
       }

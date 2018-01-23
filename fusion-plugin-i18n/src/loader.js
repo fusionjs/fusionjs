@@ -5,6 +5,7 @@
  */
 
 import {Locales} from 'locale';
+import {memoize} from 'fusion-core';
 import fs from 'fs';
 import path from 'path';
 
@@ -29,11 +30,13 @@ export default (__NODE__
       }, {});
       const supportedLocales = new Locales(locales);
 
-      return ctx => {
-        const expectedLocales = new Locales(ctx.headers['accept-language']);
-        const locale = expectedLocales.best(supportedLocales);
-        const translations = data[locale.normalized];
-        return {translations, locale};
+      return {
+        from: memoize(ctx => {
+          const expectedLocales = new Locales(ctx.headers['accept-language']);
+          const locale = expectedLocales.best(supportedLocales);
+          const translations = data[locale.normalized];
+          return {translations, locale};
+        }),
       };
     }
   : null);
