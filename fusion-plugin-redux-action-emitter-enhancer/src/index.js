@@ -5,19 +5,27 @@
  */
 
 /* eslint-env browser,node */
-export default EventEmitter => {
-  if (__DEV__ && !EventEmitter) {
-    throw new Error(`EventEmitter is required, but was: ${EventEmitter}`);
-  }
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-  return createStore => (...args) => {
-    const store = createStore(...args);
-    return {
-      ...store,
-      dispatch: action => {
-        EventEmitter.of(store.ctx).emit('redux-action-emitter:action', action);
-        return store.dispatch(action);
-      },
+export default createPlugin({
+  deps: {
+    emitter: UniversalEventsToken,
+  },
+  provides(emitter) {
+    if (__DEV__ && !emitter) {
+      throw new Error(`emitter is required, but was: ${emitter}`);
+    }
+
+    return createStore => (...args) => {
+      const store = createStore(...args);
+      return {
+        ...store,
+        dispatch: action => {
+          emitter.from(store.ctx).emit('redux-action-emitter:action', action);
+          return store.dispatch(action);
+        },
+      };
     };
-  };
-};
+  },
+});
