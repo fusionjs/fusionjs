@@ -21,7 +21,7 @@ export default function start() {
   const app = new App(root);
 
   app.register(UniversalEventsToken, UniversalEvents, {fetch});
-  __BROWSER__ && app.configure(FetchToken, fetch);
+  __BROWSER__ && app.register(FetchToken, fetch);
 
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
