@@ -24,8 +24,8 @@ export default function start() {
   __BROWSER__ && app.configure(FetchToken, fetch);
 
   app.register(ReduxToken, Redux);
-  app.configure(ReducerToken, reducer);
-  app.configure(EnhancerToken, reduxActionEnhancerFactory(EventEmitter));
+  app.register(ReducerToken, reducer);
+  app.register(EnhancerToken, reduxActionEnhancerFactory(EventEmitter));
 
   return app;
 }
