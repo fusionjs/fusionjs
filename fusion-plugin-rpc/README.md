@@ -39,8 +39,9 @@ export default () => {
   // ...
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(RPCHandlersToken, handlers);
-  app.register(FetchToken, fetch);
+  __NODE__
+    ? app.register(RPCHandlersToken, handlers);
+    : app.register(FetchToken, fetch);
 
   app.middleware(
     { RPCFactory: RPCToken },
@@ -59,31 +60,19 @@ export default () => {
 
 #### Dependency registration
 
-```js
-import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {FetchToken} from 'fusion-tokens';
-
-app.register(RPCToken, RPC);
-app.register(UniversalEventsToken, UniversalEvents);
-__NODE__
-  ? app.configure(RPCHandlersToken, handlers);
-  : app.configure(FetchToken, fetch);
-```
-
-- `RPC` - the RPC library
-- `UniversalEvents` - a universal event emitter
-- `handlers: Object<(...args: any) => Promise>` - Server-only. Required. A map of server-side RPC method implementations
-- `fetch: (url: string, options: Object) => Promise` - Browser-only. Required. A `fetch` implementation
-- `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events)
+- `RPC` - the RPC library.
+- `UniversalEvents` - Required. A universal event emitter.
+- `handlers: Object<(...args: any) => Promise>` - Server-only. Required. A map of server-side RPC method implementations.
+- `fetch: (url: string, options: Object) => Promise` - Browser-only. Required. A `fetch` implementation.
+- `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events).
 
 ##### Factory
 
 ```js
-const instance = RPC(ctx);
+const instance = RPC.from(ctx);
 ```
 
-- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context)
+- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context).
 
 #### Instance methods
 
