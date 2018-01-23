@@ -13,3 +13,9 @@ export {withRPCRedux, withRPCReactor} from './hoc';
 export default plugin;
 
 export const mock = ProviderPlugin.create('rpc', RPCMock);
+
+export {
+  RPCToken,
+  RPCHandlersToken,
+  RPCRoutePrefixConfigToken,
+} from 'fusion-plugin-rpc';

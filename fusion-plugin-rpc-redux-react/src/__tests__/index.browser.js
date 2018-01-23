@@ -14,13 +14,28 @@ import {createStore} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {compose} from 'redux';
 import App from 'fusion-react';
-import {render} from 'fusion-test-utils';
-import {mock as RPCPluginMock} from '../index';
+import {getSimulator} from 'fusion-test-utils';
+import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
 import {reactorEnhancer} from 'redux-reactors';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+
+function setup() {
+  const root = document.createElement('div');
+  root.id = 'root';
+  const span = document.createElement('span');
+  span.textContent = 'hello world';
+  root.appendChild(span);
+  document.body.appendChild(root);
+}
+function teardown() {
+  document.getElementById('root').remove();
+}
 
 test('browser plugin integration test withRPCRedux', async t => {
+  setup();
   const EventEmitter = {
-    of() {},
+    from() {},
   };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
@@ -53,7 +68,7 @@ test('browser plugin integration test withRPCRedux', async t => {
       expectedActions.shift(),
       'dispatches expected action'
     );
-    return {};
+    return action.payload;
   });
 
   const Component = props => {
@@ -61,9 +76,13 @@ test('browser plugin integration test withRPCRedux', async t => {
     return React.createElement('span', null, 'hello world');
   };
 
-  const withTest = withRPCRedux('test')(
-    prepared(props => props.test({hello: 'world'}))(Component)
-  );
+  const withTest = compose(
+    withRPCRedux('test'),
+    connect(s => s),
+    prepared(
+      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    )
+  )(Component);
 
   const element = React.createElement(
     Provider,
@@ -71,15 +90,21 @@ test('browser plugin integration test withRPCRedux', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.plugin(Plugin, {EventEmitter, fetch});
-  await render(app, '/');
+  app.register(Plugin);
+  app.register(RPCHandlersToken, {});
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
+
+  teardown();
   t.end();
 });
 
 test('browser plugin integration test withRPCRedux - failure', async t => {
+  setup();
   const EventEmitter = {
-    of() {},
+    from() {},
   };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
@@ -117,7 +142,7 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
       expectedActions.shift(),
       'dispatches expected action'
     );
-    return {};
+    return action.payload;
   });
 
   const Component = props => {
@@ -125,9 +150,14 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
     return React.createElement('span', null, 'hello world');
   };
 
-  const withTest = withRPCRedux('test')(
-    prepared(props => props.test({hello: 'world'}))(Component)
-  );
+  const withTest = compose(
+    withRPCRedux('test'),
+    connect(s => s),
+    prepared(
+      props =>
+        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    )
+  )(Component);
 
   const element = React.createElement(
     Provider,
@@ -135,13 +165,21 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.plugin(Plugin, {EventEmitter, fetch});
-  await render(app, '/');
+  app.register(Plugin);
+  app.register(RPCHandlersToken, {});
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
+  teardown();
   t.end();
 });
 
 test('browser mock integration test withRPCRedux', async t => {
+  setup();
+  const EventEmitter = {
+    from() {},
+  };
   const handlers = {
     test(args) {
       t.deepLooseEqual(
@@ -163,7 +201,7 @@ test('browser mock integration test withRPCRedux', async t => {
       expectedActions.shift(),
       'dispatches expected actions'
     );
-    return {};
+    return action.payload;
   });
 
   const Component = props => {
@@ -171,9 +209,13 @@ test('browser mock integration test withRPCRedux', async t => {
     return React.createElement('span', null, 'hello world');
   };
 
-  const withTest = withRPCRedux('test')(
-    prepared(props => props.test({hello: 'world'}))(Component)
-  );
+  const withTest = compose(
+    withRPCRedux('test'),
+    connect(s => s),
+    prepared(
+      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    )
+  )(Component);
 
   const element = React.createElement(
     Provider,
@@ -181,13 +223,21 @@ test('browser mock integration test withRPCRedux', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.plugin(RPCPluginMock, {handlers});
-  await render(app, '/');
+  app.register(RPCPluginMock);
+  app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
+  teardown();
   t.end();
 });
 
 test('browser mock integration test withRPCRedux - failure', async t => {
+  setup();
+  const EventEmitter = {
+    from() {},
+  };
   const e = new Error('message');
   e.code = 'code';
   e.meta = {hello: 'world'};
@@ -215,7 +265,7 @@ test('browser mock integration test withRPCRedux - failure', async t => {
       expectedActions.shift(),
       'dispatches expected actions'
     );
-    return {};
+    return action.payload;
   });
 
   const Component = props => {
@@ -223,9 +273,14 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     return React.createElement('span', null, 'hello world');
   };
 
-  const withTest = withRPCRedux('test')(
-    prepared(props => props.test({hello: 'world'}))(Component)
-  );
+  const withTest = compose(
+    withRPCRedux('test'),
+    connect(s => s),
+    prepared(
+      props =>
+        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    )
+  )(Component);
 
   const element = React.createElement(
     Provider,
@@ -233,15 +288,20 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.plugin(RPCPluginMock, {handlers});
-  await render(app, '/');
+  app.register(RPCPluginMock);
+  app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
+  teardown();
   t.end();
 });
 
 test('browser plugin integration test withRPCReactor', async t => {
+  setup();
   const EventEmitter = {
-    of() {},
+    from() {},
   };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
@@ -271,7 +331,7 @@ test('browser plugin integration test withRPCReactor', async t => {
         expectedActions.shift(),
         'dispatches expected action'
       );
-      return {};
+      return action.payload;
     },
     {},
     reactorEnhancer
@@ -279,7 +339,6 @@ test('browser plugin integration test withRPCReactor', async t => {
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
-    t.equal(props.loading, false);
     return React.createElement('span', null, 'hello world');
   };
 
@@ -307,6 +366,7 @@ test('browser plugin integration test withRPCReactor', async t => {
           'dispatches success with correct payload'
         );
         return {
+          ...action.payload,
           loading: false,
         };
       },
@@ -315,7 +375,9 @@ test('browser plugin integration test withRPCReactor', async t => {
         return {};
       },
     }),
-    prepared(props => props.test({hello: 'world'})),
+    prepared(
+      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    ),
     connect(s => s)
   );
 
@@ -325,15 +387,23 @@ test('browser plugin integration test withRPCReactor', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.plugin(Plugin, {EventEmitter, fetch});
-  await render(app, '/');
+  app.register(Plugin);
+  app.register(RPCHandlersToken, {});
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.success, true, 'dispatches success action');
+  teardown();
   t.end();
 });
 
 test('browser mock plugin integration test withRPCReactor', async t => {
+  setup();
+  const EventEmitter = {
+    from() {},
+  };
   const handlers = {
     test(args) {
       t.deepLooseEqual(
@@ -361,7 +431,6 @@ test('browser mock plugin integration test withRPCReactor', async t => {
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
-    t.equal(props.loading, false);
     return React.createElement('span', null, 'hello world');
   };
 
@@ -389,6 +458,7 @@ test('browser mock plugin integration test withRPCReactor', async t => {
           'dispatches success with correct payload'
         );
         return {
+          ...action.payload,
           loading: false,
         };
       },
@@ -397,7 +467,9 @@ test('browser mock plugin integration test withRPCReactor', async t => {
         return {};
       },
     }),
-    prepared(props => props.test({hello: 'world'})),
+    prepared(
+      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    ),
     connect(s => s)
   );
 
@@ -407,15 +479,23 @@ test('browser mock plugin integration test withRPCReactor', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.plugin(RPCPluginMock, {handlers});
-  await render(app, '/');
+  app.register(RPCPluginMock);
+  app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.success, true, 'dispatches success action');
+  teardown();
   t.end();
 });
 
 test('browser plugin integration test withRPCReactor - failure', async t => {
+  setup();
+  const EventEmitter = {
+    from() {},
+  };
   const e = new Error('Some failure');
   e.code = 'ERR_CODE';
   e.meta = {error: 'meta'};
@@ -446,7 +526,6 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
-    t.equal(props.loading, false);
     return React.createElement('span', null, 'hello world');
   };
 
@@ -482,11 +561,15 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
           'dispatches failure with correct payload'
         );
         return {
+          ...action.payload,
           loading: false,
         };
       },
     }),
-    prepared(props => props.test({hello: 'world'})),
+    prepared(
+      props =>
+        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    ),
     connect(s => s)
   );
 
@@ -496,20 +579,25 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.plugin(RPCPluginMock, {handlers});
-  await render(app, '/');
+  app.register(RPCPluginMock);
+  app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.failure, true, 'dispatches failure action');
+  teardown();
   t.end();
 });
 
 test('browser plugin integration test withRPCReactor - failure', async t => {
+  setup();
   const e = new Error('Some failure');
   e.code = 'ERR_CODE';
   e.meta = {error: 'meta'};
   const EventEmitter = {
-    of() {},
+    from() {},
   };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
@@ -541,7 +629,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
         expectedActions.shift(),
         'dispatches expected action'
       );
-      return {};
+      return action.payload;
     },
     {},
     reactorEnhancer
@@ -549,7 +637,6 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
-    t.equal(props.loading, false);
     return React.createElement('span', null, 'hello world');
   };
 
@@ -585,11 +672,15 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
           'dispatches failure with correct payload'
         );
         return {
+          ...action.payload,
           loading: false,
         };
       },
     }),
-    prepared(props => props.test({hello: 'world'})),
+    prepared(
+      props =>
+        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    ),
     connect(s => s)
   );
 
@@ -599,10 +690,14 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.plugin(Plugin, {EventEmitter, fetch});
-  await render(app, '/');
+  app.register(Plugin);
+  app.register(RPCHandlersToken, {});
+  app.register(UniversalEventsToken, EventEmitter);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.failure, true, 'dispatches failure action');
+  teardown();
   t.end();
 });

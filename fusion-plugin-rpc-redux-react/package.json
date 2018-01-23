@@ -4,10 +4,7 @@
   "version": "0.2.4",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-rpc-redux-react",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -22,11 +19,13 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "^0.3.4",
+    "fusion-plugin-rpc": "^0.6.0",
     "fusion-rpc-redux": "^0.3.3"
   },
   "peerDependencies": {
-    "fusion-react": "^0.1.10",
+    "fusion-core": "0.3.0-5",
+    "fusion-react": "0.4.1",
+    "fusion-tokens": "0.0.5",
     "prop-types": "^15.6.0",
     "react": "14.x - 16.x"
   },
@@ -41,10 +40,12 @@
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.5.1",
     "flow-bin": "^0.60.1",
-    "fusion-core": "^0.2.5",
-    "fusion-react": "^0.1.10",
+    "fusion-core": "0.3.0-5",
+    "fusion-plugin-universal-events": "0.3.0",
+    "fusion-react": "0.4.1",
     "fusion-react-async": "0.1.4",
-    "fusion-test-utils": "^0.2.1",
+    "fusion-test-utils": "^0.4.0",
+    "fusion-tokens": "0.0.5",
     "nyc": "^11.3.0",
     "prettier": "1.9.0",
     "react": "^16.2.0",
@@ -61,7 +62,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run transpile"

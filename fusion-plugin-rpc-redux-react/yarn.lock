@@ -825,7 +825,7 @@ assert-plus@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-0.2.0.tgz#d74e1b87e7affc0db8aadb7021f3fe48101ab234"
 
-assert@^1.1.1:
+assert@^1.1.1, assert@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/assert/-/assert-1.4.1.tgz#99912d591836b5a6f5b345c0f07eefc08fc65d91"
   dependencies:
@@ -2155,19 +2155,26 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.2.5.tgz#b6cfba06cdac1c98b3b11af26c811ce0b4511f63"
+fusion-core@0.3.0-5:
+  version "0.3.0-5"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0-5.tgz#b6ad6ea3f7dcdb6517dc31214f64856727c5800c"
   dependencies:
     koa "^2.3.0"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
+    toposort "^1.0.6"
 
-fusion-plugin-rpc@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-0.3.4.tgz#2e9ac7b89f14ae80794fedfa7733ba52b34ba2e7"
+fusion-plugin-rpc@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-0.6.0.tgz#c7fd22476dd66468645552b1a6bcb65914f737c6"
   dependencies:
     body-parser "^1.18.2"
+    koa-bodyparser "4.2.0"
+
+fusion-plugin-universal-events@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.0.tgz#fb88370679b36ae70a6140ac89f84a1e2009ddd1"
+  dependencies:
     koa-bodyparser "4.2.0"
 
 fusion-react-async@0.1.4:
@@ -2176,9 +2183,9 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@^0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.1.10.tgz#4970d9ed9ad1d4345dd3b8eb6a50fcd3bb69581f"
+fusion-react@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.1.tgz#d411ebc389ae22e1bfd7e1058d66ac0d19b4d64a"
 
 fusion-rpc-redux@^0.3.3:
   version "0.3.3"
@@ -2186,12 +2193,17 @@ fusion-rpc-redux@^0.3.3:
   dependencies:
     redux-reactors "^1.0.3"
 
-fusion-test-utils@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.2.1.tgz#b8bde8bf0facaf3b9038d0dfb4bd5e96a30b7ed4"
+fusion-test-utils@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.0.tgz#9800a29ed4a3e9c987e39a02ec977a09fc137e5f"
   dependencies:
+    assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
+
+fusion-tokens@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.5.tgz#71af057ab696046c43e89ca06dfe47cdbaeac6d8"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -4437,6 +4449,10 @@ to-object-path@^0.3.0:
   resolved "https://registry.yarnpkg.com/to-object-path/-/to-object-path-0.3.0.tgz#297588b7b0e7e0ac08e04e672f85c1f4999e17af"
   dependencies:
     kind-of "^3.0.2"
+
+toposort@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-1.0.6.tgz#c31748e55d210effc00fdcdc7d6e68d7d7bb9cec"
 
 tough-cookie@~2.3.0:
   version "2.3.3"

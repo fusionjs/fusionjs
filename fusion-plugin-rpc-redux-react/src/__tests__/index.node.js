@@ -12,26 +12,26 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import {withRPCRedux, withRPCReactor} from '../hoc';
 
 test('plugin', t => {
-  t.equals(typeof Plugin, 'function');
+  t.equals(typeof Plugin.provides, 'function');
   const handlers = {test() {}};
   const EventEmitter = {
-    of() {},
+    from() {},
   };
-  const RPCRedux = Plugin({handlers, EventEmitter});
-  const mockCtx = {headers: {}};
-  t.equal(typeof RPCRedux.of(mockCtx).request, 'function');
+  const RPCRedux = Plugin.provides({handlers, EventEmitter});
+  const mockCtx = {headers: {}, memoized: new Map()};
+  t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();
 });
 
 test('mock plugin', t => {
-  t.equals(typeof mock, 'function');
+  t.equals(typeof mock.provides, 'function');
   const handlers = {test() {}};
   const EventEmitter = {
-    of() {},
+    from() {},
   };
-  const RPCRedux = mock({handlers, EventEmitter});
-  const mockCtx = {headers: {}};
-  t.equal(typeof RPCRedux.of(mockCtx).request, 'function');
+  const RPCRedux = mock.provides({handlers, EventEmitter});
+  const mockCtx = {headers: {}, memoized: new Map()};
+  t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();
 });
 
@@ -45,10 +45,14 @@ test('withRPCRedux hoc', t => {
   const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      request(method, args) {
-        t.equal(method, 'test');
-        t.equal(args, 'test-args');
-        return Promise.resolve('test-resolve');
+      from() {
+        return {
+          request(method, args) {
+            t.equal(method, 'test');
+            t.equal(args, 'test-args');
+            return Promise.resolve('test-resolve');
+          },
+        };
       },
     },
     store: {
@@ -83,10 +87,14 @@ test('withRPCReactor hoc', t => {
   const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      request(method, args) {
-        t.equal(method, 'test');
-        t.equal(args, 'test-args');
-        return Promise.resolve('test-resolve');
+      from() {
+        return {
+          request(method, args) {
+            t.equal(method, 'test');
+            t.equal(args, 'test-args');
+            return Promise.resolve('test-resolve');
+          },
+        };
       },
     },
     store: {
