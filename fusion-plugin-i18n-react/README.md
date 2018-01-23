@@ -34,8 +34,8 @@ export default () => {
 
   const I18n = app.register(I18nToken, I18n);
   __NODE__
-    ? app.configure(I18nLoaderToken, createI18nLoader())
-    : app.configure(FetchToken, fetch);
+    ? app.register(I18nLoaderToken, createI18nLoader())
+    : app.register(FetchToken, fetch);
 
   app.register(Hello);
 
@@ -79,8 +79,8 @@ export default () => {
 
   app.register(I18nToken, I18n);
   __NODE__
-    ? app.configure(I18nLoaderToken, I18nLoader);
-    : app.configure(FetchToken, fetch);
+    ? app.register(I18nLoaderToken, I18nLoader);
+    : app.register(FetchToken, fetch);
 
   app.register(Hello);
 
@@ -181,8 +181,8 @@ import {FetchToken} from 'fusion-tokens';
 
 app.register(I18nToken, I18n);
 __NODE__
-  ? app.configure(I18nLoaderToken, I18nLoader);
-  : app.configure(FetchToken, fetch);
+  ? app.register(I18nLoaderToken, I18nLoader);
+  : app.register(FetchToken, fetch);
 ```
 
 - `I18n` - the core I18n library
@@ -213,7 +213,7 @@ This plugin has a simple loader implementation that looks for files in a `./tran
 ```js
 import {I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n-react';
 
-app.configure(I18nLoaderToken, createI18nLoader());
+app.register(I18nLoaderToken, createI18nLoader());
 
 // translations/en-US.json
 {
