@@ -45,6 +45,7 @@ export function mockContext(url: string, options: *): Context {
   const app = new Koa();
   //$FlowFixMe
   const ctx = app.createContext(req, res);
+  ctx.status = 404;
   return ctx;
 }
 
