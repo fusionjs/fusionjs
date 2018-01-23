@@ -10,6 +10,7 @@ module.exports.TestAppRuntime = function({
   watch = false,
   match,
   env,
+  testFolder,
   updateSnapshot,
   coverage,
   configPath,
@@ -70,6 +71,7 @@ module.exports.TestAppRuntime = function({
 
         const procEnv = {
           JEST_ENV: testEnv,
+          TEST_FOLDER: testFolder,
         };
 
         // Pass in the CI flag to prevent console clearing when watching on more than one suite

@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+const testFolder = process.env.TEST_FOLDER || '__tests__';
+
 module.exports = {
   cache: true,
   globals: {
@@ -18,6 +20,7 @@ module.exports = {
     require.resolve('./jest-framework-setup.js'),
   ],
   snapshotSerializers: [require.resolve('enzyme-to-json/serializer')],
+  testMatch: [`**/${testFolder}/**/*.js`],
   testPathIgnorePatterns: [
     process.env.JEST_ENV === 'node' ? '.*\\.browser\\.js' : '.*\\.node\\.js',
   ],
