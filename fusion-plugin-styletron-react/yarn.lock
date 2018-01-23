@@ -660,6 +660,14 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
+"@babel/types@7.0.0-beta.38":
+  version "7.0.0-beta.38"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.38.tgz#2ce2443f7dc6ad535a67db4940cbd34e64035a6f"
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.2.0"
+    to-fast-properties "^2.0.0"
+
 "@rtsao/babel-preset-env@^7.0.0-beta.31":
   version "7.0.0-beta.31"
   resolved "https://registry.yarnpkg.com/@rtsao/babel-preset-env/-/babel-preset-env-7.0.0-beta.31.tgz#ac7e56227a41af3aa3a06d352c9ea6b8fb2f620a"
@@ -1510,9 +1518,9 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.2.4:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.4.tgz#3cb03ce00a04d3e9bba5bf64dd272da5185a3b6b"
+create-universal-package@3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.6.tgz#8269a7ac8ad5d1e13139a36f18d139fb48000483"
   dependencies:
     "@babel/core" "^7.0.0-beta.36"
     "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.36"
