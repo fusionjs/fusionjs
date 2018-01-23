@@ -54,7 +54,7 @@ import fetch from 'unfetch';
 export default function() {
   const app = new App(root);
   const EventEmitter = app.register(UniversalEventsToken, UniversalEvents);
-  __BROWSER__ && app.configure(FetchToken, fetch);
+  __BROWSER__ && app.register(FetchToken, fetch);
   return app;
 }
 ```
