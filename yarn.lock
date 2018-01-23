@@ -2247,9 +2247,9 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-test-utils@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.0.tgz#9800a29ed4a3e9c987e39a02ec977a09fc137e5f"
+fusion-test-utils@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.1.tgz#c834945eb0bdecc6f56993c4daaf4f4e13416029"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
@@ -2713,8 +2713,8 @@ is-regex@^1.0.4:
     has "^1.0.1"
 
 is-resolvable@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.0.1.tgz#acca1cd36dbe44b974b924321555a70ba03b1cf4"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.1.0.tgz#fb18f87ce1feb925169c9a407c19318a3206ed88"
 
 is-stream@^1.0.1, is-stream@^1.1.0:
   version "1.1.0"
@@ -4059,8 +4059,8 @@ setprototypeof@1.0.3:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.0.3.tgz#66567e37043eeb4f04d91bd658c0cbefb55b8e04"
 
 sha.js@^2.4.0, sha.js@^2.4.8:
-  version "2.4.9"
-  resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.9.tgz#98f64880474b74f4a38b8da9d3c0f2d104633e7d"
+  version "2.4.10"
+  resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.10.tgz#b1fde5cd7d11a5626638a07c604ab909cfa31f9b"
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
