@@ -12,7 +12,7 @@ export default createPlugin({
   deps: {
     emitter: UniversalEventsToken,
   },
-  provides(emitter) {
+  provides({emitter}) {
     if (__DEV__ && !emitter) {
       throw new Error(`emitter is required, but was: ${emitter}`);
     }

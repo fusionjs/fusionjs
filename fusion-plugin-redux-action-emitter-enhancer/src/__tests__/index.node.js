@@ -45,15 +45,16 @@ test('Instantiation', t => {
   );
   const mockEventEmitter = getMockEventEmitterFactory();
   t.doesNotThrow(
-    () => actionEmitterPlugin.provides(mockEventEmitter),
+    () => actionEmitterPlugin.provides({emitter: mockEventEmitter}),
     'provide the EventEmitter dependency'
   );
   t.end();
 });
+
 test('Emits actions', t => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
-  const enhancer = actionEmitterPlugin.provides(mockEventEmitter);
+  const enhancer = actionEmitterPlugin.provides({emitter: mockEventEmitter});
   const mockCtx = {mock: true};
   const store = createStore(
     sampleReducer,
