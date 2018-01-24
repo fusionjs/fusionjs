@@ -4,19 +4,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {Plugin} from 'fusion-core';
+/* eslint-env browser */
+import {createPlugin} from 'fusion-core';
 
-export default options => {
-  if (options) {
+const plugin = createPlugin({
+  provides: () => {
     throw new Error(
-      'Cannot pass parameters to NodePerformanceEmitter in the browser. Try: `app.plugin(NodePerformance, __NODE__ && {...}`'
+      'Cannot instantiate NodePerformanceEmitter in the browser.  Try __NODE__ && app.register(...)'
     );
-  }
-  return new Plugin({
-    Service: function() {
-      throw new Error(
-        'Cannot instantiate NodePerformanceEmitter in the browser'
-      );
-    },
-  });
-};
+  },
+});
+
+export default plugin;

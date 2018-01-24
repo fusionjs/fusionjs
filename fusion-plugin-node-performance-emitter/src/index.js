@@ -8,4 +8,12 @@
 import browser from './browser';
 import server from './server';
 
+export {
+  NodePerformanceEmitterToken,
+  TimersToken,
+  EventLoopLagIntervalToken,
+  MemoryIntervalToken,
+  SocketIntervalToken,
+} from './tokens';
+
 export default (__BROWSER__ ? browser : server);

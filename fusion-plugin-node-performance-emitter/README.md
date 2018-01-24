@@ -8,46 +8,66 @@ Collects stats on the event loop lag, garbage collection events, and memory stat
 
 ---
 
+### Installation
+
+```
+yarn add fusion-plugin-node-performance-emitter
+```
+
+---
+
 ### Example
 
 ```js
-// main.js
-import App from 'fusion-react';
-import Root from './components/root';
-import UniversalEvents from 'fusion-plugin-universal-events';
-import Analytics from './plugins/analytics';
+// src/main.js
+import App, {createPlugin} from 'fusion-core';
+import NodePerformanceEmitterPlugin, {
+  NodePerformanceEmitterToken,
+  TimersToken,
+  EventLoopLagIntervalToken,
+  MemoryIntervalToken,
+  SocketIntervalToken
+} from 'fusion-plugin-node-performance-emitter';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import NodePerformanceEmitter from 'fusion-plugin-node-performance-emitter';
+import PerformanceLogging from './performance-logging';
 
 export default function() {
-  const app = new App(<Root />);
-  const EventEmitter = app.plugin(UniversalEvents);
+  const app = new App(...);
+  // ...
+  app.register(UniversalEventsToken, UniversalEvents);
+  app.register(TimersToken, /*some timers*/); // optional
+  app.register(EventLoopLagIntervalToken, /*config interval*/); // optional
+  app.register(MemoryIntervalToken, /*config interval*/); // optional
+  app.register(SocketIntervalToken, /*config interval*/); // optional
+  __NODE__ && app.register(NodePerformanceEmitterToken, NodePerformanceEmitterPlugin);
 
-  const PerfStats = __NODE__ && app.plugin(NodePerformanceEmitter, {EventEmitter});
-  
-  // in tests, you can stop collecting via
-  PerfStats.of().stop();
-
+  // (optional) a plugin to consume browser performance events
+  app.register(PerformanceLogging);
+  // ...
   return app;
 }
 
+// src/performance-logging.js
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+export default createPlugin({
+  deps: { emitter: UniversalEventsToken },
+  provides: deps => {
+    const emitter = deps.emitter;
+    emitter.on('node-performance-emitter:{action}', e => {
+      console.log(e); // log events to console
+    });
+  }
+});
 ```
 
 ---
 
 ### API
 
-```js
-const PerfStats = app.plugin(NodePerformanceEmitter, {EventEmitter, config})
-```
-
-- `EventEmitter` - Required. An event emitter plugin to emit stats events to
-- `config: Object` - Optional
-  - `eventLoopLagInterval: number` - Optional. Stats emission frequency for event loop lag stats. Defaults to 10,000 (ms)
-  - `memoryInterval: number` - Optional. Stats emission frequency for memory stats. Defaults to 10,000 (ms)
-  - `socketInterval: number` - Optional. Stats emission frequency for socket stats. Defaults to 10,000 (ms)
-
-The following events are emitted through the `EventEmitter`:
+This package has no public API methods. To consume performance events, add an event listener for one of hte following events:
 
 - `node-performance-emitter:gauge:event_loop_lag`
 - `node-performance-emitter:gauge:rss`- process.memoryUsage().rss
@@ -59,4 +79,11 @@ The following events are emitted through the `EventEmitter`:
 - `node-performance-emitter:gauge:globalAgentRequests`- http.globalAgent.requests
 - `node-performance-emitter:gauge:globalAgentFreeSockets`- http.globalAgent.freeSockets
 
+#### Dependency registration
+
+- `UniversalEventsToken` - Required. An event emitter plugin to emit stats events to.
+- `TimersToken` - Optional. Timers to track interval-based emissions.
+- `EventLoopLagIntervalToken: number` - Optional. Stats emission frequency for event loop lag stats. Defaults to 10,000 (ms).
+- `MemoryIntervalToken: number` - Optional. Stats emission frequency for memory stats. Defaults to 10,000 (ms).
+- `SocketIntervalToken: number` - Optional. Stats emission frequency for socket stats. Defaults to 10,000 (ms).
 

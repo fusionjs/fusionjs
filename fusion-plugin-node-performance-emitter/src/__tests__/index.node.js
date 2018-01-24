@@ -6,28 +6,32 @@
 
 /* eslint-env node */
 import test from 'tape-cup';
-import plugin from '../server.js';
+import MockEmitter from 'events';
+
+import App, {createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import {NodePerformanceEmitterToken, TimersToken} from '../tokens';
+import NodePerformanceEmitterPlugin from '../server';
 
 /* Constants */
 const EVENT_PLUGIN_NAME = 'node-performance-emitter';
 
-/* Mock Factories */
-const getMockEventEmitterFactory = function() {
-  const onHandlers = [];
-  return {
-    of: function() {
-      return {
-        on: function(type, handler) {
-          onHandlers.push({type, handler});
-        },
-        emit: function(type, event) {
-          onHandlers.filter(o => o.type == type).forEach(o => o.handler(event));
-        },
-      };
-    },
-  };
+/* Mocks */
+const mockConfig = {
+  eventLoopLagInterval: 1,
+  memoryInterval: 10,
+  socketInterval: 100,
 };
-const getMockTimers = t => {
+
+const mockEmitterFactory = () => {
+  const mockEmitter = new MockEmitter();
+  mockEmitter.from = () => mockEmitter;
+  return mockEmitter;
+};
+
+const mockTimersFactory = t => {
   let _numSetInterval = 0;
   return {
     _getNumSetInterval: () => _numSetInterval,
@@ -49,9 +53,44 @@ const getMockTimers = t => {
   };
 };
 
-test('cannot track the same types more than once at a time', t => {
-  const mockEventEmitter = getMockEventEmitterFactory();
-  const perfService = plugin({EventEmitter: mockEventEmitter}).of();
+/* Fixtures */
+function createTestFixture() {
+  const mockTimers = mockTimersFactory();
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitterFactory(),
+  });
+
+  const app = new App('content', el => el);
+  app.register(NodePerformanceEmitterToken, NodePerformanceEmitterPlugin);
+  app.register(TimersToken, mockTimers);
+  app.register(UniversalEventsToken, mockEmitterPlugin);
+  return app;
+}
+
+/* Tests */
+test('FusionApp - service resolved', t => {
+  const app = createTestFixture();
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {perfEmitter: NodePerformanceEmitterToken},
+      provides: ({perfEmitter}) => {
+        t.ok(perfEmitter);
+        wasResolved = true;
+      },
+    })
+  );
+  t.true(wasResolved, 'service was resolved');
+
+  t.end();
+});
+
+test('service - cannot track the same types more than once at a time', t => {
+  const perfService = NodePerformanceEmitterPlugin.provides({
+    emitter: mockEmitterFactory(),
+  });
 
   t.throws(() => perfService.start(), 'already running trackers cannot start');
 
@@ -71,14 +110,14 @@ test('cannot track the same types more than once at a time', t => {
   t.end();
 });
 
-test('tracking number of timer intervals set', t => {
-  const mockEventEmitter = getMockEventEmitterFactory();
-  const mockTimers = getMockTimers(t);
-
-  const perfService = plugin({
-    EventEmitter: mockEventEmitter,
+test('service - tracking number of timer intervals set', t => {
+  const mockTimers = mockTimersFactory(t);
+  const perfService = NodePerformanceEmitterPlugin.provides({
+    emitter: mockEmitterFactory(),
     timers: mockTimers,
-  }).of();
+    ...mockConfig,
+  });
+
   t.assert(
     mockTimers._getNumSetInterval() === 3,
     'socket usage, event loop, and memory intervals should be set'
@@ -92,62 +131,56 @@ test('tracking number of timer intervals set', t => {
   t.end();
 });
 
-test('tracking emit messages', t => {
-  const mockEventEmitter = getMockEventEmitterFactory();
-  const mockTimers = getMockTimers();
+test('service - tracking emit messages', t => {
+  const mockEmitter = mockEmitterFactory();
+  const mockTimers = mockTimersFactory();
 
   // Register to listen to emits
   let emitNumberTracker = 0;
-  mockEventEmitter
-    .of()
-    .on(`${EVENT_PLUGIN_NAME}:gauge:event_loop_lag`, payload => {
-      emitNumberTracker++;
-      t.assert(payload !== undefined, 'event_loop_lag: message received');
-    });
-  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:gauge:rss`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:event_loop_lag`, payload => {
+    emitNumberTracker++;
+    t.assert(payload !== undefined, 'event_loop_lag: message received');
+  });
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:rss`, payload => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'rss: message received');
   });
-  mockEventEmitter
-    .of()
-    .on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, payload => {
-      emitNumberTracker++;
-      t.assert(payload !== undefined, 'externalMemory: message received');
-    });
-  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, payload => {
+    emitNumberTracker++;
+    t.assert(payload !== undefined, 'externalMemory: message received');
+  });
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, payload => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'heapTotal: message received');
   });
-  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:gauge:heapUsed`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapUsed`, payload => {
     emitNumberTracker++;
     t.assert(payload !== undefined, 'heapUsed: message received');
   });
-  mockEventEmitter
-    .of()
-    .on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentSockets`, payload => {
-      emitNumberTracker++;
-      t.assert(payload !== undefined, 'globalAgentSockets: message received');
-    });
-  mockEventEmitter
-    .of()
-    .on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`, payload => {
-      emitNumberTracker++;
-      t.assert(payload !== undefined, 'globalAgentRequests: message received');
-    });
-  mockEventEmitter
-    .of()
-    .on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentFreeSockets`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentSockets`, payload => {
+    emitNumberTracker++;
+    t.assert(payload !== undefined, 'globalAgentSockets: message received');
+  });
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`, payload => {
+    emitNumberTracker++;
+    t.assert(payload !== undefined, 'globalAgentRequests: message received');
+  });
+  mockEmitter.on(
+    `${EVENT_PLUGIN_NAME}:gauge:globalAgentFreeSockets`,
+    payload => {
       emitNumberTracker++;
       t.assert(
         payload !== undefined,
         'globalAgentFreeSockets: message received'
       );
-    });
+    }
+  );
 
-  const perfService = plugin({
-    EventEmitter: mockEventEmitter,
+  const perfService = NodePerformanceEmitterPlugin.provides({
+    emitter: mockEmitter,
     timers: mockTimers,
-  }).of();
+    ...mockConfig,
+  });
 
   perfService.stop();
 
@@ -157,20 +190,21 @@ test('tracking emit messages', t => {
   });
 });
 
-test('testing garbage collection emits', t => {
-  const mockEventEmitter = getMockEventEmitterFactory();
-  const mockTimers = getMockTimers();
+test('service - testing garbage collection emits', t => {
+  const mockEmitter = mockEmitterFactory();
+  const mockTimers = mockTimersFactory();
 
   // Register to listen to emits
   let gcMessageReceived = false;
-  mockEventEmitter.of().on(`${EVENT_PLUGIN_NAME}:timing:gc`, () => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:timing:gc`, () => {
     gcMessageReceived = true;
   });
 
-  const perfService = plugin({
-    EventEmitter: mockEventEmitter,
+  const perfService = NodePerformanceEmitterPlugin.provides({
+    emitter: mockEmitter,
     timers: mockTimers,
-  }).of();
+    ...mockConfig,
+  });
   perfService.startTrackingGCUsage();
 
   // Make some garbage!

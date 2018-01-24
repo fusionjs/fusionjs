@@ -8,14 +8,17 @@
 import profiler from 'gc-profiler';
 import nodeTimers from 'timers';
 import {globalAgent} from 'http';
-import {Plugin} from 'fusion-core';
+import assert from 'assert';
 
-/* Constants */
-const CONFIG_DEFAULTS = {
-  eventLoopLagInterval: 1000 * 10,
-  memoryInterval: 1000 * 10,
-  socketInterval: 1000 * 10,
-};
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import {
+  TimersToken,
+  EventLoopLagIntervalToken,
+  MemoryIntervalToken,
+  SocketIntervalToken,
+} from './tokens';
 
 /* Helper Functions */
 function getCountFromGlobalAgent(data) {
@@ -40,158 +43,186 @@ function eventLoopLag(cb) {
 
 function noop() {}
 
-export default ({config, EventEmitter, timers = nodeTimers}) => {
-  if (__DEV__ && !EventEmitter)
-    throw new Error(`EventEmitter is required, but was: ${EventEmitter}`);
+/* Service */
+class NodePerformanceEmitter {
+  constructor(config, emit, timers) {
+    assert.ok(config);
+    assert.ok(emit);
+    assert.ok(timers);
 
-  const emit = (header, payload) => {
-    EventEmitter.of().emit(`node-performance-emitter:${header}`, payload);
-  };
+    this.eventLoopLagInterval = config.eventLoopLagInterval;
+    this.memoryInterval = config.memoryInterval;
+    this.socketInterval = config.socketInterval;
 
-  const p = new Plugin({
-    Service: class NodePerformanceEmitter {
-      constructor() {
-        config = config || {};
-        this.eventLoopLagInterval =
-          config.eventLoopLagInterval || CONFIG_DEFAULTS.eventLoopLagInterval;
-        this.memoryInterval =
-          config.memoryInterval || CONFIG_DEFAULTS.memoryInterval;
-        this.socketInterval =
-          config.socketInterval || CONFIG_DEFAULTS.socketInterval;
+    this.emit = emit;
 
-        // Track running timers
-        this.socketUsageIntervalRef = null;
-        this.eventLoopLagIntervalRef = null;
-        this.memoryIntervalRef = null;
-        this.isTrackingGarbageCollection = false;
-      }
+    this.timers = timers;
 
-      /* PRODUCTIVITY API */
-      start() {
-        this.startTrackingEventLoopLag();
-        this.startTrackingMemoryUsage();
-        this.startTrackingGCUsage();
-        this.startTrackingSocketUsage();
-      }
+    // Track running timers
+    this.socketUsageIntervalRef = null;
+    this.eventLoopLagIntervalRef = null;
+    this.memoryIntervalRef = null;
+    this.isTrackingGarbageCollection = false;
+  }
 
-      stop() {
-        this.stopTrackingEventLoopLag();
-        this.stopTrackingMemoryUsage();
-        this.stopTrackingGCUsage();
-        this.stopTrackingSocketUsage();
-      }
+  /* PRODUCTIVITY API */
+  start() {
+    this.startTrackingEventLoopLag();
+    this.startTrackingMemoryUsage();
+    this.startTrackingGCUsage();
+    this.startTrackingSocketUsage();
+  }
 
-      /* POWER API */
-      /* Tracking Lag */
-      startTrackingEventLoopLag() {
-        if (this.eventLoopLagIntervalRef)
-          throw new Error(
-            'Event Loop Lag is already being tracked.  Please stop previous instance before beginning a new one.'
-          );
+  stop() {
+    this.stopTrackingEventLoopLag();
+    this.stopTrackingMemoryUsage();
+    this.stopTrackingGCUsage();
+    this.stopTrackingSocketUsage();
+  }
 
-        this.eventLoopLagIntervalRef = timers.setInterval(
-          this.emitEventLoopLag.bind(this),
-          this.eventLoopLagInterval
-        );
-      }
+  /* POWER API */
+  /* Tracking Lag */
+  startTrackingEventLoopLag() {
+    if (this.eventLoopLagIntervalRef)
+      throw new Error(
+        'Event Loop Lag is already being tracked.  Please stop previous instance before beginning a new one.'
+      );
 
-      stopTrackingEventLoopLag() {
-        timers.clearInterval(this.eventLoopLagIntervalRef);
-        this.eventLoopLagIntervalRef = null;
-      }
+    this.eventLoopLagIntervalRef = this.timers.setInterval(
+      this.emitEventLoopLag.bind(this),
+      this.eventLoopLagInterval
+    );
+  }
 
-      emitEventLoopLag(done) {
-        done = done || noop;
-        eventLoopLag(lag => {
-          emit('gauge:event_loop_lag', lag);
-          return done();
-        });
-      }
+  stopTrackingEventLoopLag() {
+    this.timers.clearInterval(this.eventLoopLagIntervalRef);
+    this.eventLoopLagIntervalRef = null;
+  }
 
-      /* Tracking Memory Usage */
-      startTrackingMemoryUsage() {
-        if (this.memoryIntervalRef)
-          throw new Error(
-            'Memory Usage is already being tracked.  Please stop previous instance before beginning a new one.'
-          );
+  emitEventLoopLag(done) {
+    done = done || noop;
+    eventLoopLag(lag => {
+      this.emit('gauge:event_loop_lag', lag);
+      return done();
+    });
+  }
 
-        this.memoryIntervalRef = timers.setInterval(
-          this.emitMemoryUsage.bind(this),
-          this.memoryInterval
-        );
-      }
+  /* Tracking Memory Usage */
+  startTrackingMemoryUsage() {
+    if (this.memoryIntervalRef)
+      throw new Error(
+        'Memory Usage is already being tracked.  Please stop previous instance before beginning a new one.'
+      );
 
-      stopTrackingMemoryUsage() {
-        timers.clearInterval(this.memoryIntervalRef);
-        this.memoryIntervalRef = null;
-      }
+    this.memoryIntervalRef = this.timers.setInterval(
+      this.emitMemoryUsage.bind(this),
+      this.memoryInterval
+    );
+  }
 
-      emitMemoryUsage() {
-        const memoryUsage = process.memoryUsage();
-        emit('gauge:externalMemory', memoryUsage.external);
-        emit('gauge:rss', memoryUsage.rss);
-        emit('gauge:heapTotal', memoryUsage.heapTotal);
-        emit('gauge:heapUsed', memoryUsage.heapUsed);
-      }
+  stopTrackingMemoryUsage() {
+    this.timers.clearInterval(this.memoryIntervalRef);
+    this.memoryIntervalRef = null;
+  }
 
-      /* Tracking Garbage Collection */
-      startTrackingGCUsage() {
-        if (this.isTrackingGarbageCollection)
-          throw new Error(
-            'Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one.'
-          );
+  emitMemoryUsage() {
+    const memoryUsage = process.memoryUsage();
+    this.emit('gauge:externalMemory', memoryUsage.external);
+    this.emit('gauge:rss', memoryUsage.rss);
+    this.emit('gauge:heapTotal', memoryUsage.heapTotal);
+    this.emit('gauge:heapUsed', memoryUsage.heapUsed);
+  }
 
-        profiler.on('gc', info => {
-          emit('timing:gc', {
-            duration: info.duration,
-            type: info.type,
-            forced: info.forced,
-          });
-        });
-      }
+  /* Tracking Garbage Collection */
+  startTrackingGCUsage() {
+    if (this.isTrackingGarbageCollection)
+      throw new Error(
+        'Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one.'
+      );
 
-      stopTrackingGCUsage() {
-        profiler.removeAllListeners('gc');
-        this.isTrackingGarbageCollection = false;
-      }
+    profiler.on('gc', info => {
+      this.emit('timing:gc', {
+        duration: info.duration,
+        type: info.type,
+        forced: info.forced,
+      });
+    });
+  }
 
-      /* Tracking Socket Usage */
-      startTrackingSocketUsage() {
-        if (this.socketUsageIntervalRef)
-          throw new Error(
-            'Socket Usage is already being tracked.  Please stop previous instance before beginning a new one.'
-          );
+  stopTrackingGCUsage() {
+    profiler.removeAllListeners('gc');
+    this.isTrackingGarbageCollection = false;
+  }
 
-        this.socketUsageIntervalRef = timers.setInterval(
-          this.emitSocketUsage.bind(this),
-          this.socketInterval
-        );
-      }
+  /* Tracking Socket Usage */
+  startTrackingSocketUsage() {
+    if (this.socketUsageIntervalRef)
+      throw new Error(
+        'Socket Usage is already being tracked.  Please stop previous instance before beginning a new one.'
+      );
 
-      stopTrackingSocketUsage() {
-        timers.clearInterval(this.socketUsageIntervalRef);
-        this.socketUsageIntervalRef = null;
-      }
+    this.socketUsageIntervalRef = this.timers.setInterval(
+      this.emitSocketUsage.bind(this),
+      this.socketInterval
+    );
+  }
 
-      emitSocketUsage() {
-        // number of sockets currently in use
-        emit(
-          'gauge:globalAgentSockets',
-          getCountFromGlobalAgent(globalAgent.sockets)
-        );
-        // number of requests that have not yet been assigned to sockets
-        emit(
-          'gauge:globalAgentRequests',
-          getCountFromGlobalAgent(globalAgent.requests)
-        );
-        // number of free sockets
-        emit(
-          'gauge:globalAgentFreeSockets',
-          getCountFromGlobalAgent(globalAgent.freeSockets)
-        );
-      }
-    },
-  });
-  p.of().start();
-  return p;
-};
+  stopTrackingSocketUsage() {
+    this.timers.clearInterval(this.socketUsageIntervalRef);
+    this.socketUsageIntervalRef = null;
+  }
+
+  emitSocketUsage() {
+    // number of sockets currently in use
+    this.emit(
+      'gauge:globalAgentSockets',
+      getCountFromGlobalAgent(globalAgent.sockets)
+    );
+    // number of requests that have not yet been assigned to sockets
+    this.emit(
+      'gauge:globalAgentRequests',
+      getCountFromGlobalAgent(globalAgent.requests)
+    );
+    // number of free sockets
+    this.emit(
+      'gauge:globalAgentFreeSockets',
+      getCountFromGlobalAgent(globalAgent.freeSockets)
+    );
+  }
+}
+
+/* Plugin */
+const plugin = createPlugin({
+  deps: {
+    emitter: UniversalEventsToken,
+    timers: TimersToken,
+
+    /* Config */
+    eventLoopLagInterval: EventLoopLagIntervalToken,
+    memoryInterval: MemoryIntervalToken,
+    socketInterval: SocketIntervalToken,
+  },
+  provides: ({
+    emitter,
+    timers = nodeTimers,
+    eventLoopLagInterval,
+    memoryInterval,
+    socketInterval,
+  }) => {
+    const config = {
+      eventLoopLagInterval: eventLoopLagInterval,
+      memoryInterval: memoryInterval,
+      socketInterval: socketInterval,
+    };
+    const emit = (header, payload) => {
+      emitter.emit(`node-performance-emitter:${header}`, payload);
+    };
+
+    const service = new NodePerformanceEmitter(config, emit, timers);
+    service.start();
+
+    return service;
+  },
+});
+
+export default plugin;
