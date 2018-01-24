@@ -96,6 +96,48 @@ test('`fusion build` works in production with a CDN_URL', async t => {
   t.end();
 });
 
+test('`fusion build` works in production with default asset path and supplied ROUTE_PREFIX', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/noop');
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js`
+  );
+  const serverMapPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js.map`
+  );
+  await cmd(`build --dir=${dir} --production`);
+  const clientFiles = await readdir(
+    path.resolve(dir, '.fusion/dist/production/client')
+  );
+  t.ok(
+    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
+    'includes a versioned client-main.js file'
+  );
+  t.ok(
+    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
+    'includes a versioned client-vendor.js file'
+  );
+  t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
+  t.ok(
+    await exists(serverMapPath),
+    'Server Entry file sourcemap gets compiled'
+  );
+  const {res, proc} = await start(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
+  });
+  t.ok(
+    res.includes('src="/test-prefix/_static/client-main'),
+    'includes a script reference to client-main'
+  );
+  t.ok(
+    res.includes('src="/test-prefix/_static/client-vendor'),
+    'includes a script reference to client-vendor'
+  );
+  proc.kill();
+  t.end();
+});
+
 test('`fusion build` works in production', async t => {
   const dir = path.resolve(__dirname, '../fixtures/noop');
   const serverEntryPath = path.resolve(

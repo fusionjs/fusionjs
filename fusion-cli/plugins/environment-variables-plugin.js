@@ -13,9 +13,14 @@ if (!(env === 'development' || env === 'production')) {
   throw new Error(`Invalid NODE_ENV loaded: ${env}.`);
 }
 const prefix = load('ROUTE_PREFIX', '');
-const assetPath = '/_static';
+assert(!prefix.endsWith('/'), 'ROUTE_PREFIX must not end with /');
+const assetPath = load('FRAMEWORK_STATIC_ASSET_PATH', `${prefix}/_static`);
+assert(
+  !assetPath.endsWith('/'),
+  'FRAMEWORK_STATIC_ASSET_PATH must not end with /'
+);
 const cdnUrl = load('CDN_URL', '');
-assert(!cdnUrl.endsWith('/'), 'ROUTE_PREFIX must not end with /');
+assert(!cdnUrl.endsWith('/'), 'CDN_URL must not end with /');
 
 module.exports = () => {
   return {

@@ -608,8 +608,7 @@ function Compiler({
       },
       reporter: null,
       serverSideRender: true,
-      // TODO(#14): handle route prefix here??
-      publicPath: '/_static/',
+      publicPath: '/_static', // keep in sync with defaults in environment-variables-plugin.js
     });
     const hot = webpackHotMiddleware(compiler, {log: false});
     return (req, res, next) => {

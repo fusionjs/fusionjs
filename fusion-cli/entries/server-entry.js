@@ -6,6 +6,7 @@ import getCompilationMetaData from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
+import RoutePrefixPlugin from '../plugins/route-prefix-context-plugin';
 
 let AssetsPlugin;
 
@@ -60,6 +61,7 @@ async function reload() {
   const app = await initialize();
   reverseRegister(app, AssetsPlugin);
   reverseRegister(app, ContextPlugin);
+  reverseRegister(app, RoutePrefixPlugin);
   if (__DEV__) {
     reverseRegister(app, ServerErrorPlugin);
   }
