@@ -50,7 +50,7 @@
     "fusion-test-utils": "^0.4.0",
     "fusion-tokens": "0.0.5",
     "nyc": "^11.3.0",
-    "prettier": "1.9.0",
+    "prettier": "1.10.2",
     "react": "^16.2.0",
     "react-dom": "16.2.0",
     "react-redux": "^5.0.6",
