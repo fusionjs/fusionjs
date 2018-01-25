@@ -41,7 +41,6 @@
     "express": "4.16.2",
     "fast-async": "6.3.0",
     "fusion-plugin-universal-events": "^0.3.0",
-    "fusion-tokens": "^0.0.5",
     "get-port": "3.2.0",
     "gzip-size": "4.1.0",
     "iltorb": "2.0.3",
@@ -105,6 +104,7 @@
     "fusion-react": "0.4.1",
     "fusion-react-async": "0.1.4",
     "fusion-test-utils": "0.4.0",
+    "fusion-tokens": "^0.0.5",
     "globby": "7.1.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
@@ -116,7 +116,8 @@
   },
   "peerDependencies": {
     "enzyme": "^3.3.0",
-    "fusion-core": "^0.3.0-5"
+    "fusion-core": "^0.3.0-5",
+    "fusion-tokens": "^0.0.5"
   },
   "engines": {
     "node": ">= 8.9.0"
