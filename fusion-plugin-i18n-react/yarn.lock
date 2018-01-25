@@ -703,8 +703,8 @@
     semver "^5.3.0"
 
 "@types/core-js@^0.9.41":
-  version "0.9.45"
-  resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-0.9.45.tgz#98bd4e49bd5c5e8da5d85dfaa589dfc269b7b067"
+  version "0.9.46"
+  resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-0.9.46.tgz#ea701ee34cbb6dfe6d100f1530319547c93c8d79"
 
 "@types/mkdirp@^0.3.29":
   version "0.3.29"
@@ -2189,9 +2189,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@0.63.1:
-  version "0.63.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.63.1.tgz#ab00067c197169a5fb5b4996c8f6927b06694828"
+flow-bin@0.64.0:
+  version "0.64.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.64.0.tgz#ddd3fb3b183ab1ab35a5d5dec9caf5ebbcded167"
 
 for-each@~0.3.2:
   version "0.3.2"
@@ -2303,8 +2303,8 @@ fusion-react@0.4.1:
   resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.1.tgz#d411ebc389ae22e1bfd7e1058d66ac0d19b4d64a"
 
 fusion-test-utils@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.0.tgz#9800a29ed4a3e9c987e39a02ec977a09fc137e5f"
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.1.tgz#c834945eb0bdecc6f56993c4daaf4f4e13416029"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
@@ -2772,8 +2772,8 @@ is-regex@^1.0.4:
     has "^1.0.1"
 
 is-resolvable@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.0.1.tgz#acca1cd36dbe44b974b924321555a70ba03b1cf4"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-resolvable/-/is-resolvable-1.1.0.tgz#fb18f87ce1feb925169c9a407c19318a3206ed88"
 
 is-stream@^1.0.1, is-stream@^1.1.0:
   version "1.1.0"
@@ -4126,8 +4126,8 @@ setprototypeof@1.0.3:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.0.3.tgz#66567e37043eeb4f04d91bd658c0cbefb55b8e04"
 
 sha.js@^2.4.0, sha.js@^2.4.8:
-  version "2.4.9"
-  resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.9.tgz#98f64880474b74f4a38b8da9d3c0f2d104633e7d"
+  version "2.4.10"
+  resolved "https://registry.yarnpkg.com/sha.js/-/sha.js-2.4.10.tgz#b1fde5cd7d11a5626638a07c604ab909cfa31f9b"
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
@@ -4437,8 +4437,8 @@ through@^2.3.6, through@~2.3.4, through@~2.3.8:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
 timers-browserify@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.4.tgz#96ca53f4b794a5e7c0e1bd7cc88a372298fa01e6"
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.5.tgz#04878fb12a155a159c9d1e59faa1f77bf4ecc44c"
   dependencies:
     setimmediate "^1.0.4"
 
@@ -4761,8 +4761,8 @@ yargs-parser@^8.0.0, yargs-parser@^8.1.0:
     camelcase "^4.1.0"
 
 yargs@^10.0.3:
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.1.1.tgz#5fe1ea306985a099b33492001fa19a1e61efe285"
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.1.2.tgz#454d074c2b16a51a43e2fb7807e4f9de69ccb5c5"
   dependencies:
     cliui "^4.0.0"
     decamelize "^1.1.1"
