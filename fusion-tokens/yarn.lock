@@ -1797,9 +1797,9 @@ eslint-plugin-cup@1.0.0:
   dependencies:
     globals "^10.0.0"
 
-eslint-plugin-flowtype@2.41.1:
-  version "2.41.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.41.1.tgz#0996e1ea1d501dfc945802453a304ae9e8098b78"
+eslint-plugin-flowtype@2.42.0:
+  version "2.42.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.42.0.tgz#7fcc98df4ed9482a22ac10ba4ca48d649c4c733a"
   dependencies:
     lodash "^4.15.0"
 
@@ -3127,8 +3127,8 @@ node-pre-gyp@^0.6.39:
     tar-pack "^3.4.0"
 
 nodent-compiler@>=3.1.0:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.5.tgz#8c09289eacf7256bda89c2b88941681d5cccf80c"
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.6.tgz#1fd2b37625f127405d90ddc9cf7a059affef82f5"
   dependencies:
     acorn ">=2.5.2"
     acorn-es7-plugin ">=1.1.6"
@@ -4136,8 +4136,8 @@ through@^2.3.6, through@~2.3.4, through@~2.3.8:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
 timers-browserify@^2.0.4:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.5.tgz#04878fb12a155a159c9d1e59faa1f77bf4ecc44c"
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.6.tgz#241e76927d9ca05f4d959819022f5b3664b64bae"
   dependencies:
     setimmediate "^1.0.4"
 
