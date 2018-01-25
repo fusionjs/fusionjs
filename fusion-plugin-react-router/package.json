@@ -42,7 +42,7 @@
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.5.1",
-    "flow-bin": "0.63.1",
+    "flow-bin": "0.64.0",
     "fusion-core": "0.3.0-4",
     "fusion-plugin-universal-events": "0.3.0",
     "fusion-react": "0.3.0",
