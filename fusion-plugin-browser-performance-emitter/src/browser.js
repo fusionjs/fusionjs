@@ -4,7 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @flow
 /* eslint-env browser */
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
