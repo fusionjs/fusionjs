@@ -30,7 +30,7 @@
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.41.1",
     "eslint-plugin-prettier": "2.5.0",
-    "eslint-plugin-react": "7.5.1",
+    "eslint-plugin-react": "7.6.0",
     "flow-bin": "0.59.0",
     "fusion-core": "^0.3.0-5",
     "fusion-plugin-react-redux": "^0.2.0",
