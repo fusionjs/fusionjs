@@ -48,7 +48,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^0.3.0-4",
-    "fusion-tokens": "^0.0.4"
+    "fusion-tokens": "^0.0.5"
   },
   "scripts": {
     "clean": "rm -rf dist",
