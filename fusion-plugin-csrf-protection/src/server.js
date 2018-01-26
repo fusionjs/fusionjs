@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {GenericSessionToken} from 'fusion-tokens';
+import {SessionToken} from 'fusion-tokens';
 import {html, createPlugin} from 'fusion-core';
 import crypto from 'crypto';
 import base64Url from 'base64-url';
@@ -51,7 +51,7 @@ function loadOrGenerateSecret(session) {
 
 const CsrfPlugin = createPlugin({
   deps: {
-    Session: GenericSessionToken,
+    Session: SessionToken,
     expire: CSRFTokenExpire,
     ignored: CSRFIgnoreRoutes,
   },

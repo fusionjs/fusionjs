@@ -6,7 +6,7 @@
 
 import App from 'fusion-core';
 import test from 'tape-cup';
-import {GenericSessionToken} from 'fusion-tokens';
+import {SessionToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 import CsrfPlugin from '../server';
 import {CSRFTokenExpire, CSRFIgnoreRoutes} from '../shared';
@@ -31,19 +31,23 @@ function getSession() {
 test('valid token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
+  app.middleware((ctx, next) => {
+    if (ctx.path === '/test') ctx.body = {ok: 1};
+    return next();
+  });
   const simulator = getSimulator(app);
 
   const ctx = await simulator.request('/csrf-token', {method: 'POST'});
   t.ok(ctx.response.headers['x-csrf-token'], 'has token');
-  t.equal(ctx.response.status, 200, 'has right status');
+  t.equal(ctx.status, 200, 'has right status');
   t.equal(ctx.response.body, '', 'has empty body');
   const secret = Session.from(ctx).get('csrf-secret');
   t.ok(secret, 'sets a session secret');
 
   const renderCtx = await simulator.render('/');
-  t.equal(ctx.response.status, 200, 'has right status');
+  t.equal(ctx.status, 200, 'has right status');
   t.equal(
     secret,
     Session.from(renderCtx).get('csrf-secret'),
@@ -55,15 +59,19 @@ test('valid token', async t => {
       'x-csrf-token': ctx.response.headers['x-csrf-token'],
     },
   });
-  t.equal(postCtx.response.status, 200);
+  t.equal(postCtx.status, 200);
   t.end();
 });
 
 test('creates a session on a GET request', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
+  app.middleware((ctx, next) => {
+    if (ctx.path === '/') ctx.body = {ok: 1};
+    return next();
+  });
   const simulator = getSimulator(app);
 
   const ctx = await simulator.request('/');
@@ -71,7 +79,7 @@ test('creates a session on a GET request', async t => {
     ctx.response.headers['x-csrf-token'],
     'does not set x-csrf-token header'
   );
-  t.equals(ctx.response.status, 200, 'has right status');
+  t.equals(ctx.status, 200, 'has right status');
   t.ok(Session.from(ctx).get('csrf-secret'), 'sets the session');
   t.end();
 });
@@ -79,7 +87,7 @@ test('creates a session on a GET request', async t => {
 test('render request', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
@@ -88,7 +96,7 @@ test('render request', async t => {
     ctx.response.headers['x-csrf-token'],
     'does not set x-csrf-token header'
   );
-  t.equals(ctx.response.status, 200, 'has right status');
+  t.equals(ctx.status, 200, 'has right status');
   t.ok(Session.from(ctx).get('csrf-secret'), 'sets the session');
   t.ok(
     ctx.response.body.includes('<script id="__CSRF_TOKEN__"'),
@@ -100,7 +108,7 @@ test('render request', async t => {
 test('fails with no session and invalid token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
@@ -120,7 +128,7 @@ test('fails with no session and invalid token', async t => {
 test('fails with session and no token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
@@ -141,7 +149,7 @@ test('fails with session and no token', async t => {
 test('fails with session and invalid token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
@@ -163,7 +171,7 @@ test('fails with session and invalid token', async t => {
 test('fails with expired token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CSRFTokenExpire, 1);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
@@ -188,13 +196,17 @@ test('fails with expired token', async t => {
 test('does not verify ignored paths', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
-  app.register(GenericSessionToken, Session);
+  app.register(SessionToken, Session);
   app.register(CsrfPlugin);
   app.register(CSRFIgnoreRoutes, ['/test']);
+  app.middleware((ctx, next) => {
+    if (ctx.path === '/test') ctx.body = {ok: 1};
+    return next();
+  });
   const simulator = getSimulator(app);
   const ctx = await simulator.request('/test', {
     method: 'POST',
   });
-  t.equal(ctx.response.status, 200);
+  t.equal(ctx.status, 200);
   t.end();
 });
