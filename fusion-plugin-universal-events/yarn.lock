@@ -2258,9 +2258,9 @@ fusion-core@0.3.0-4:
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
 
-fusion-test-utils@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.0.tgz#9800a29ed4a3e9c987e39a02ec977a09fc137e5f"
+fusion-test-utils@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.1.tgz#c834945eb0bdecc6f56993c4daaf4f4e13416029"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
