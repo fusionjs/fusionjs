@@ -36,17 +36,16 @@ export function mockContext(url: string, options: *): Context {
   //$FlowFixMe
   req = Object.assign({headers: {}, socket}, Stream.Readable.prototype, req);
   //$FlowFixMe
-  res = Object.assign({_headers: {}, socket}, Stream.Writable.prototype, res);
+  res = Object.assign({_headers: {}, socket}, Stream.Writable.prototype, res, {
+    statusCode: 404,
+  });
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   res.getHeader = k => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);
   res.removeHeader = k => delete res._headers[k.toLowerCase()];
 
-  const app = new Koa();
   //$FlowFixMe
-  const ctx = app.createContext(req, res);
-  ctx.status = 404;
-  return ctx;
+  return new Koa().createContext(req, res);
 }
 
 export function renderContext(url: string, options: any): Context {
