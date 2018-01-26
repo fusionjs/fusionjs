@@ -34,7 +34,7 @@
     "flow-bin": "0.64.0",
     "fusion-core": "0.3.0-4",
     "fusion-react-async": "0.1.4",
-    "fusion-test-utils": "0.4.0",
+    "fusion-test-utils": "0.4.1",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "prop-types": "15.6.0",
