@@ -7,6 +7,7 @@
 /* eslint-env node */
 
 import test from 'tape-cup';
+import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import React from 'react';
 import {getSimulator} from 'fusion-test-utils';
@@ -43,7 +44,14 @@ test('plugin', async t => {
   const Root = withTranslations(['test'])(Test);
   const app = new App(React.createElement(Root));
   app.register(I18nToken, Plugin);
-  app.register(I18nLoaderToken, () => ({translations: data, locale: 'en_US'}));
+  app.register(
+    I18nLoaderToken,
+    createPlugin({
+      provides() {
+        return {from: () => ({translations: data, locale: 'en_US'})};
+      },
+    })
+  );
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);

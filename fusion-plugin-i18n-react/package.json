@@ -3,11 +3,7 @@
   "version": "0.2.1",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
   "repository": "fusionjs/fusion-plugin-i18n-react",
-  "files": [
-    "dist",
-    "singleton.js",
-    "src"
-  ],
+  "files": ["dist", "singleton.js", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -31,7 +27,7 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "^0.3.0",
+    "fusion-plugin-i18n": "^0.4.0",
     "prop-types": "^15.6.0"
   },
   "peerDependencies": {
