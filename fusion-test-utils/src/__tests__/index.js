@@ -5,7 +5,7 @@
  */
 
 import test from 'tape-cup';
-import App, {withDependencies} from 'fusion-core';
+import App, {createPlugin} from 'fusion-core';
 import {createToken} from 'fusion-tokens';
 
 import {getSimulator, test as exportedTest} from '../index.js';
@@ -68,11 +68,15 @@ test('simulate non-render request', async t => {
 test('use simulator with fixture and plugin dependencies', async t => {
   // Dependency-less plugin
   const msgProviderPluginToken = createToken('MessageProviderPluginToken');
-  const msgProviderPlugin = {msg: 'it works!'};
+  const msgProviderPlugin = createPlugin({
+    provides() {
+      return {msg: 'it works!'};
+    },
+  });
   function getTestFixture() {
     // Register plugins
     const app = new App('hi', el => el);
-    app.register(msgProviderPluginToken, () => msgProviderPlugin);
+    app.register(msgProviderPluginToken, msgProviderPlugin);
     return app;
   }
   const app = getTestFixture();
@@ -80,18 +84,19 @@ test('use simulator with fixture and plugin dependencies', async t => {
   t.plan(3);
   getSimulator(
     app,
-    withDependencies({
-      msgProvider: msgProviderPluginToken,
-    })(deps => {
-      t.ok(deps, 'some dependencies successfully resolved');
-      t.ok(deps.msgProvider, 'requested dependency successfully resolved');
-      const {msgProvider} = deps;
-      t.equal(
-        msgProvider.msg,
-        msgProviderPlugin.msg,
-        'dependency payload is correct'
-      );
-      return 'yay!';
+    createPlugin({
+      deps: {msgProvider: msgProviderPluginToken},
+      provides(deps) {
+        t.ok(deps, 'some dependencies successfully resolved');
+        t.ok(deps.msgProvider, 'requested dependency successfully resolved');
+        const {msgProvider} = deps;
+        t.equal(
+          msgProvider.msg,
+          msgProviderPlugin.provides().msg,
+          'dependency payload is correct'
+        );
+        return 'yay!';
+      },
     })
   );
 
