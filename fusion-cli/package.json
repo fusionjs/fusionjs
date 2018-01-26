@@ -86,7 +86,7 @@
     "webpack-node-externals": "1.6.0",
     "webpack-sources": "1.1.0",
     "winston": "2.4.0",
-    "yargs": "10.1.1"
+    "yargs": "11.0.0"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
