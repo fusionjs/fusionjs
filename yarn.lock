@@ -667,8 +667,8 @@
   resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-0.3.29.tgz#7f2ad7ec55f914482fc9b1ec4bb1ae6028d46066"
 
 "@types/node@^9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.0.tgz#b85a0bcf1e1cc84eb4901b7e96966aedc6f078d1"
 
 "@types/rimraf@^0.0.28":
   version "0.0.28"
@@ -1637,8 +1637,8 @@ doctrine@^2.0.2, doctrine@^2.1.0:
     esutils "^2.0.2"
 
 domain-browser@^1.1.1:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.1.7.tgz#867aa4b093faa05f1de08c06f4d7b21fdf8698bc"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
 
 draftlog@^1.0.12:
   version "1.0.12"
@@ -2247,9 +2247,9 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-test-utils@0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.1.tgz#c834945eb0bdecc6f56993c4daaf4f4e13416029"
+fusion-test-utils@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.2.tgz#a8cc45eea3c6943cb41ba4b61f699adb126ef531"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
