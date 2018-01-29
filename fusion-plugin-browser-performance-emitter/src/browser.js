@@ -61,36 +61,37 @@ class BrowserPerformanceEmitter {
   }
 }
 
-export default createPlugin({
-  deps: {emitter: UniversalEventsToken},
-  middleware: deps => {
-    const emitter = deps.emitter;
-    const emit = payload => {
-      emitter.emit('browser-performance-emitter:stats:browser-only', payload);
-    };
+export default __BROWSER__ &&
+  createPlugin({
+    deps: {emitter: UniversalEventsToken},
+    middleware: deps => {
+      const emitter = deps.emitter;
+      const emit = payload => {
+        emitter.emit('browser-performance-emitter:stats:browser-only', payload);
+      };
 
-    return async (ctx, next) => {
-      const browserPerformanceEmitter = new BrowserPerformanceEmitter();
+      return async (ctx, next) => {
+        const browserPerformanceEmitter = new BrowserPerformanceEmitter();
 
-      window.addEventListener('load', () => {
-        // window.performance.timing.loadEventEnd not ready until the next tick
-        window.setTimeout(() => {
-          // for testing purposes pass timing and resourceEntries from options
-          const {
-            timing,
-            resourceEntries,
-            firstPaint,
-          } = browserPerformanceEmitter.calculate();
-          emit({
-            timing,
-            resourceEntries,
-            firstPaint,
-            tags: browserPerformanceEmitter.tags,
-          });
-        }, 0);
-      });
+        window.addEventListener('load', () => {
+          // window.performance.timing.loadEventEnd not ready until the next tick
+          window.setTimeout(() => {
+            // for testing purposes pass timing and resourceEntries from options
+            const {
+              timing,
+              resourceEntries,
+              firstPaint,
+            } = browserPerformanceEmitter.calculate();
+            emit({
+              timing,
+              resourceEntries,
+              firstPaint,
+              tags: browserPerformanceEmitter.tags,
+            });
+          }, 0);
+        });
 
-      return next();
-    };
-  },
-});
+        return next();
+      };
+    },
+  });

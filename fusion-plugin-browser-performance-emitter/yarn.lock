@@ -667,8 +667,8 @@
   resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-0.3.29.tgz#7f2ad7ec55f914482fc9b1ec4bb1ae6028d46066"
 
 "@types/node@^9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.0.tgz#b85a0bcf1e1cc84eb4901b7e96966aedc6f078d1"
 
 "@types/rimraf@^0.0.28":
   version "0.0.28"
@@ -1467,9 +1467,9 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.2.6:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.6.tgz#8269a7ac8ad5d1e13139a36f18d139fb48000483"
+create-universal-package@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.3.0.tgz#69c31d117705f72b8c418c1140e4cf051160ef9d"
   dependencies:
     "@babel/core" "^7.0.0-beta.36"
     "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.36"
@@ -1665,8 +1665,8 @@ doctrine@^2.0.2, doctrine@^2.1.0:
     esutils "^2.0.2"
 
 domain-browser@^1.1.1:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.1.7.tgz#867aa4b093faa05f1de08c06f4d7b21fdf8698bc"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
 
 draftlog@^1.0.12:
   version "1.0.12"
@@ -1875,9 +1875,9 @@ eslint-plugin-cup@1.0.0:
   dependencies:
     globals "^10.0.0"
 
-eslint-plugin-flowtype@2.41.0:
-  version "2.41.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.41.0.tgz#fd5221c60ba917c059d7ef69686a99cca09fd871"
+eslint-plugin-flowtype@2.42.0:
+  version "2.42.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.42.0.tgz#7fcc98df4ed9482a22ac10ba4ca48d649c4c733a"
   dependencies:
     lodash "^4.15.0"
 
@@ -2173,9 +2173,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@0.63.1:
-  version "0.63.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.63.1.tgz#ab00067c197169a5fb5b4996c8f6927b06694828"
+flow-bin@0.64.0:
+  version "0.64.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.64.0.tgz#ddd3fb3b183ab1ab35a5d5dec9caf5ebbcded167"
 
 for-each@~0.3.2:
   version "0.3.2"
@@ -2275,9 +2275,9 @@ fusion-plugin-universal-events@^0.3.0:
   dependencies:
     koa-bodyparser "4.2.0"
 
-fusion-test-utils@^0.4.0:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.1.tgz#c834945eb0bdecc6f56993c4daaf4f4e13416029"
+fusion-test-utils@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.2.tgz#a8cc45eea3c6943cb41ba4b61f699adb126ef531"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
@@ -3360,8 +3360,8 @@ node-pre-gyp@^0.6.39:
     tar-pack "^3.4.0"
 
 nodent-compiler@>=3.1.0:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.6.tgz#1fd2b37625f127405d90ddc9cf7a059affef82f5"
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.7.tgz#78198d9baacc491b0065b8c65bc0ca83d3fcd2a2"
   dependencies:
     acorn ">=2.5.2"
     acorn-es7-plugin ">=1.1.6"
