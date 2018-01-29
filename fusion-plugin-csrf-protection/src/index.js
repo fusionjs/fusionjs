@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import serverCsrf from './server';
-import clientCsrf from './browser';
+import serverCsrf from './server.js';
+import clientCsrf from './browser.js';
 
 export default (__NODE__ ? serverCsrf : clientCsrf);

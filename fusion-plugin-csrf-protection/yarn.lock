@@ -1088,7 +1088,7 @@ base64-js@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.1.tgz#a91947da1f4a516ea38e5b4ec0ec3773675e0886"
 
-base64-url@^2.0.1:
+base64-url@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/base64-url/-/base64-url-2.1.0.tgz#8f8e883fbf2451210bfab752a8aeed9940fb2e62"
 
@@ -1524,9 +1524,9 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.2.6:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.6.tgz#8269a7ac8ad5d1e13139a36f18d139fb48000483"
+create-universal-package@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.3.0.tgz#69c31d117705f72b8c418c1140e4cf051160ef9d"
   dependencies:
     "@babel/core" "^7.0.0-beta.36"
     "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.36"
@@ -1946,7 +1946,7 @@ eslint-plugin-flowtype@2.42.0:
   dependencies:
     lodash "^4.15.0"
 
-eslint-plugin-import@2.8.0:
+eslint-plugin-import@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.8.0.tgz#fa1b6ef31fcb3c501c09859c1b86f1fc5b986894"
   dependencies:
@@ -3226,8 +3226,8 @@ lolex@^1.6.0:
   resolved "https://registry.yarnpkg.com/lolex/-/lolex-1.6.0.tgz#3a9a0283452a47d7439e72731b9e07d7386e49f6"
 
 lolex@^2.2.0:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/lolex/-/lolex-2.3.1.tgz#3d2319894471ea0950ef64692ead2a5318cff362"
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/lolex/-/lolex-2.3.2.tgz#85f9450425103bf9e7a60668ea25dc43274ca807"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -3448,8 +3448,8 @@ net@^1.0.2:
   resolved "https://registry.yarnpkg.com/net/-/net-1.0.2.tgz#d1757ec9a7fb2371d83cf4755ce3e27e10829388"
 
 nise@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/nise/-/nise-1.2.0.tgz#079d6cadbbcb12ba30e38f1c999f36ad4d6baa53"
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/nise/-/nise-1.2.2.tgz#9aa5edb500da38035884106e3c571341bc68b2c1"
   dependencies:
     formatio "^1.2.0"
     just-extend "^1.1.26"
@@ -3524,8 +3524,8 @@ node-pre-gyp@^0.6.39:
     tar-pack "^3.4.0"
 
 nodent-compiler@>=3.1.0:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.6.tgz#1fd2b37625f127405d90ddc9cf7a059affef82f5"
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.1.7.tgz#78198d9baacc491b0065b8c65bc0ca83d3fcd2a2"
   dependencies:
     acorn ">=2.5.2"
     acorn-es7-plugin ">=1.1.6"
