@@ -7,12 +7,14 @@
 /* eslint-env browser */
 import {createPlugin} from 'fusion-core';
 
-const plugin = createPlugin({
-  provides: () => {
-    throw new Error(
-      'Cannot instantiate NodePerformanceEmitter in the browser.  Try __NODE__ && app.register(...)'
-    );
-  },
-});
+const plugin =
+  __BROWSER__ &&
+  createPlugin({
+    provides: () => {
+      throw new Error(
+        'Cannot instantiate NodePerformanceEmitter in the browser.  Try __NODE__ && app.register(...)'
+      );
+    },
+  });
 
 export default plugin;

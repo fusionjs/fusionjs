@@ -192,37 +192,39 @@ class NodePerformanceEmitter {
 }
 
 /* Plugin */
-const plugin = createPlugin({
-  deps: {
-    emitter: UniversalEventsToken,
-    timers: TimersToken,
+const plugin =
+  __NODE__ &&
+  createPlugin({
+    deps: {
+      emitter: UniversalEventsToken,
+      timers: TimersToken,
 
-    /* Config */
-    eventLoopLagInterval: EventLoopLagIntervalToken,
-    memoryInterval: MemoryIntervalToken,
-    socketInterval: SocketIntervalToken,
-  },
-  provides: ({
-    emitter,
-    timers = nodeTimers,
-    eventLoopLagInterval,
-    memoryInterval,
-    socketInterval,
-  }) => {
-    const config = {
-      eventLoopLagInterval: eventLoopLagInterval,
-      memoryInterval: memoryInterval,
-      socketInterval: socketInterval,
-    };
-    const emit = (header, payload) => {
-      emitter.emit(`node-performance-emitter:${header}`, payload);
-    };
+      /* Config */
+      eventLoopLagInterval: EventLoopLagIntervalToken,
+      memoryInterval: MemoryIntervalToken,
+      socketInterval: SocketIntervalToken,
+    },
+    provides: ({
+      emitter,
+      timers = nodeTimers,
+      eventLoopLagInterval,
+      memoryInterval,
+      socketInterval,
+    }) => {
+      const config = {
+        eventLoopLagInterval: eventLoopLagInterval,
+        memoryInterval: memoryInterval,
+        socketInterval: socketInterval,
+      };
+      const emit = (header, payload) => {
+        emitter.emit(`node-performance-emitter:${header}`, payload);
+      };
 
-    const service = new NodePerformanceEmitter(config, emit, timers);
-    service.start();
+      const service = new NodePerformanceEmitter(config, emit, timers);
+      service.start();
 
-    return service;
-  },
-});
+      return service;
+    },
+  });
 
 export default plugin;
