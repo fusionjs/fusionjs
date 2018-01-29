@@ -6,9 +6,9 @@
 
 import React from 'react';
 import test from 'tape-cup';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import Plugin from '../plugin';
 import {mock} from '../index';
-import ShallowRenderer from 'react-test-renderer/shallow';
 import {withRPCRedux, withRPCReactor} from '../hoc';
 
 test('plugin', t => {

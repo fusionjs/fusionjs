@@ -6,19 +6,18 @@
 
 /* eslint-env browser */
 import test from 'tape-cup';
-import Plugin from '../plugin';
 import React from 'react';
-import {withRPCRedux, withRPCReactor} from '../hoc';
 import {prepared} from 'fusion-react-async';
-import {createStore} from 'redux';
+import {compose, createStore} from 'redux';
 import {Provider, connect} from 'react-redux';
-import {compose} from 'redux';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
-import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
 import {reactorEnhancer} from 'redux-reactors';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
+import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
+import Plugin from '../plugin';
+import {withRPCRedux, withRPCReactor} from '../hoc';
 
 function setup() {
   const root = document.createElement('div');
