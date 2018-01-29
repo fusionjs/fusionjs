@@ -52,11 +52,13 @@ class UniversalEmitter extends Emitter {
   }
 }
 
-const plugin = createPlugin({
-  deps: {fetch: FetchToken},
-  provides: ({fetch}) => {
-    return new UniversalEmitter(fetch);
-  },
-});
+const plugin =
+  __BROWSER__ &&
+  createPlugin({
+    deps: {fetch: FetchToken},
+    provides: ({fetch}) => {
+      return new UniversalEmitter(fetch);
+    },
+  });
 
 export default plugin;

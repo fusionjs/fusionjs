@@ -58,32 +58,33 @@ class ScopedEmitter extends Emitter {
   teardown() {}
 }
 
-export default createPlugin({
-  provides: () => new GlobalEmitter(),
-  middleware: (deps, globalEmitter) => {
-    const bodyParser = require('koa-bodyparser');
-    const parseBody = bodyParser();
-    return async function universalEventsMiddleware(ctx, next) {
-      const emitter = globalEmitter.from(ctx);
-      if (ctx.method === 'POST' && ctx.path === '/_events') {
-        await parseBody(ctx, async () => {});
-        const {items} = ctx.request.body;
-        if (items) {
-          for (let index = 0; index < items.length; index++) {
-            const {type, payload} = items[index];
-            emitter.emit(type, payload);
+export default __NODE__ &&
+  createPlugin({
+    provides: () => new GlobalEmitter(),
+    middleware: (deps, globalEmitter) => {
+      const bodyParser = require('koa-bodyparser');
+      const parseBody = bodyParser();
+      return async function universalEventsMiddleware(ctx, next) {
+        const emitter = globalEmitter.from(ctx);
+        if (ctx.method === 'POST' && ctx.path === '/_events') {
+          await parseBody(ctx, async () => {});
+          const {items} = ctx.request.body;
+          if (items) {
+            for (let index = 0; index < items.length; index++) {
+              const {type, payload} = items[index];
+              emitter.emit(type, payload);
+            }
+            ctx.status = 200;
+          } else {
+            ctx.status = 400;
           }
-          ctx.status = 200;
-        } else {
-          ctx.status = 400;
         }
-      }
-      // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
-      // into the event batch flush.
-      await next();
-      ctx.timing.end.then(() => {
-        emitter.flush();
-      });
-    };
-  },
-});
+        // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
+        // into the event batch flush.
+        await next();
+        ctx.timing.end.then(() => {
+          emitter.flush();
+        });
+      };
+    },
+  });
