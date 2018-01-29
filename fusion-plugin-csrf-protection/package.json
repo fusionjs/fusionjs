@@ -27,7 +27,7 @@
     "@babel/preset-react": "7.0.0-beta.38",
     "babel-eslint": "8.2.1",
     "body-parser": "1.18.2",
-    "create-universal-package": "3.3.0",
+    "create-universal-package": "3.3.1",
     "eslint": "4.16.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
