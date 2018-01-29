@@ -78,87 +78,93 @@ class RPC {
 
 type RPCServiceFactory = {from: (ctx: Context) => RPC};
 type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
-const plugin: RPCPluginType = createPlugin({
-  deps: {
-    emitter: UniversalEventsToken,
-    handlers: RPCHandlersToken,
-  },
+const plugin: RPCPluginType =
+  // $FlowFixMe
+  __NODE__ &&
+  createPlugin({
+    deps: {
+      emitter: UniversalEventsToken,
+      handlers: RPCHandlersToken,
+    },
 
-  provides: deps => {
-    const {emitter, handlers} = deps;
+    provides: deps => {
+      const {emitter, handlers} = deps;
 
-    return {
-      from: memoize(ctx => new RPC(emitter, handlers, ctx)),
-    };
-  },
+      return {
+        from: memoize(ctx => new RPC(emitter, handlers, ctx)),
+      };
+    },
 
-  middleware: deps => {
-    const {emitter, handlers} = deps;
-    const parseBody = bodyparser();
+    middleware: deps => {
+      const {emitter, handlers} = deps;
+      const parseBody = bodyparser();
 
-    return async (ctx, next) => {
-      const scopedEmitter = emitter.from(ctx);
-      if (ctx.method === 'POST' && ctx.path.startsWith(`${ctx.prefix}/api/`)) {
-        const startTime = ms();
-        const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
-        if (hasHandler(handlers, method)) {
-          await parseBody(ctx, () => Promise.resolve());
-          try {
-            const result = await handlers[method](ctx.request.body, ctx);
-            ctx.body = {
-              status: 'success',
-              data: result,
-            };
-            if (scopedEmitter) {
-              scopedEmitter.emit(statKey, {
-                method,
+      return async (ctx, next) => {
+        const scopedEmitter = emitter.from(ctx);
+        if (
+          ctx.method === 'POST' &&
+          ctx.path.startsWith(`${ctx.prefix}/api/`)
+        ) {
+          const startTime = ms();
+          const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
+          if (hasHandler(handlers, method)) {
+            await parseBody(ctx, () => Promise.resolve());
+            try {
+              const result = await handlers[method](ctx.request.body, ctx);
+              ctx.body = {
                 status: 'success',
-                origin: 'browser',
-                timing: ms() - startTime,
-              });
+                data: result,
+              };
+              if (scopedEmitter) {
+                scopedEmitter.emit(statKey, {
+                  method,
+                  status: 'success',
+                  origin: 'browser',
+                  timing: ms() - startTime,
+                });
+              }
+            } catch (e) {
+              ctx.body = {
+                status: 'failure',
+                data: {
+                  message: e.message,
+                  code: e.code,
+                  meta: e.meta,
+                },
+              };
+              if (scopedEmitter) {
+                scopedEmitter.emit(statKey, {
+                  method,
+                  error: e,
+                  status: 'failure',
+                  origin: 'browser',
+                  timing: ms() - startTime,
+                });
+              }
             }
-          } catch (e) {
+          } else {
+            const e = new MissingHandlerError(method);
             ctx.body = {
               status: 'failure',
               data: {
                 message: e.message,
                 code: e.code,
-                meta: e.meta,
               },
             };
+            ctx.status = 404;
             if (scopedEmitter) {
-              scopedEmitter.emit(statKey, {
+              scopedEmitter.emit('rpc:error', {
+                origin: 'browser',
                 method,
                 error: e,
-                status: 'failure',
-                origin: 'browser',
-                timing: ms() - startTime,
               });
             }
           }
-        } else {
-          const e = new MissingHandlerError(method);
-          ctx.body = {
-            status: 'failure',
-            data: {
-              message: e.message,
-              code: e.code,
-            },
-          };
-          ctx.status = 404;
-          if (scopedEmitter) {
-            scopedEmitter.emit('rpc:error', {
-              origin: 'browser',
-              method,
-              error: e,
-            });
-          }
         }
-      }
-      return next();
-    };
-  },
-});
+        return next();
+      };
+    },
+  });
 
 /* Helper functions */
 function ms() {

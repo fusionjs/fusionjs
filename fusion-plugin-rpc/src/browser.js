@@ -6,7 +6,6 @@
 
 // @flow
 /* eslint-env browser */
-
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import {FetchToken, createOptionalToken} from 'fusion-tokens';
@@ -58,29 +57,34 @@ class RPC {
 
 type RPCServiceFactory = {from: () => RPC};
 type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
-const plugin: RPCPluginType = createPlugin({
-  deps: {
-    fetch: FetchToken,
-    handlers: RPCHandlersToken,
-    routePrefix: RPCRoutePrefixConfigToken,
-  },
-  provides: deps => {
-    const {fetch = window.fetch, handlers, routePrefix} = deps;
+const plugin: RPCPluginType =
+  // $FlowFixMe
+  __BROWSER__ &&
+  createPlugin({
+    deps: {
+      fetch: FetchToken,
+      handlers: RPCHandlersToken,
+      routePrefix: RPCRoutePrefixConfigToken,
+    },
+    provides: deps => {
+      const {fetch = window.fetch, handlers, routePrefix} = deps;
 
-    if (__DEV__ && handlers) {
-      if (Object.keys(handlers).find(h => typeof handlers[h] === 'function')) {
-        const error = `Don't bundle server-side {handlers} in the client. Instead of 'const handlers = {...}', use 'const handlers = __NODE__ && {...}'`;
-        throw new Error(error);
+      if (__DEV__ && handlers) {
+        if (
+          Object.keys(handlers).find(h => typeof handlers[h] === 'function')
+        ) {
+          const error = `Don't bundle server-side {handlers} in the client. Instead of 'const handlers = {...}', use 'const handlers = __NODE__ && {...}'`;
+          throw new Error(error);
+        }
       }
-    }
 
-    const prefix =
-      routePrefix != null
-        ? routePrefix // this hook is mostly for testing
-        : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
+      const prefix =
+        routePrefix != null
+          ? routePrefix // this hook is mostly for testing
+          : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
 
-    return {from: () => new RPC(fetch, prefix)};
-  },
-});
+      return {from: () => new RPC(fetch, prefix)};
+    },
+  });
 
 export default plugin;
