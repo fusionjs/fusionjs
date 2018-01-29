@@ -22,19 +22,19 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.1.0",
-    "just-safe-get": "^1.1.0",
+    "jsonwebtoken": "^8.1.1",
+    "just-safe-get": "^1.2.0",
     "just-safe-set": "^2.0.1"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
     "babel-plugin-transform-flow-strip-types": "6.22.0",
-    "create-universal-package": "3.2.6",
+    "create-universal-package": "3.3.0",
     "eslint": "4.16.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
-    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.6.0",
     "flow-bin": "0.64.0",
