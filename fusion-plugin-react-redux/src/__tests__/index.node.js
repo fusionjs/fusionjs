@@ -5,9 +5,9 @@
  */
 
 import tape from 'tape-cup';
+import {consumeSanitizedHTML} from 'fusion-core';
 import React from 'react';
 import Redux from '../index.js';
-import {consumeSanitizedHTML} from 'fusion-core';
 
 tape('interface', async t => {
   const ctx = {memoized: new Map()};
