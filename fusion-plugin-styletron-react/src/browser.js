@@ -12,22 +12,23 @@ import {createPlugin} from 'fusion-core';
 
 let styletron;
 
-export default createPlugin({
-  middleware: () => (ctx, next) => {
-    if (ctx.element) {
-      if (!styletron) {
-        const styleElements = document.getElementsByClassName(
-          '_styletron_hydrate_'
+export default __BROWSER__ &&
+  createPlugin({
+    middleware: () => (ctx, next) => {
+      if (ctx.element) {
+        if (!styletron) {
+          const styleElements = document.getElementsByClassName(
+            '_styletron_hydrate_'
+          );
+          styletron = new Styletron(styleElements);
+        }
+        ctx.element = (
+          <StyletronProvider styletron={styletron}>
+            {ctx.element}
+          </StyletronProvider>
         );
-        styletron = new Styletron(styleElements);
       }
-      ctx.element = (
-        <StyletronProvider styletron={styletron}>
-          {ctx.element}
-        </StyletronProvider>
-      );
-    }
 
-    return next();
-  },
-});
+      return next();
+    },
+  });
