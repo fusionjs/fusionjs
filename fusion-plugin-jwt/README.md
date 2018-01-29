@@ -20,7 +20,7 @@ yarn add fusion-plugin-jwt
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import JWTSessionfrom, {
+import JWTSession, {
   SessionSecretToken
   SessionCookieNameToken
   SessionCookieExpiresToken

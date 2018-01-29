@@ -7,16 +7,13 @@
 // @flow
 /* eslint-env node */
 
-import {createToken, createOptionalToken} from 'fusion-tokens';
 import {createPlugin, memoize} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
-
-export const SessionSecretToken: string = createToken('SessionSecret');
-export const SessionCookieNameToken: string = createToken('SessionCookieName');
-export const SessionCookieExpiresToken: number = createOptionalToken(
-  'SessionCookieExpires',
-  86400
-);
+import {
+  SessionCookieExpiresToken,
+  SessionCookieNameToken,
+  SessionSecretToken,
+} from './tokens';
 
 const assert = require('assert');
 const {promisify} = require('util');

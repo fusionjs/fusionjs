@@ -8,4 +8,10 @@
 import browser from './jwt-browser';
 import server from './jwt-server';
 
+export {
+  SessionCookieExpiresToken,
+  SessionCookieNameToken,
+  SessionSecretToken,
+} from './tokens';
+
 export default (__BROWSER__ ? browser : server);
