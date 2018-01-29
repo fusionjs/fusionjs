@@ -27,43 +27,44 @@ export const HydrationStateToken = createOptionalToken(
   'HydrationStateToken',
   null
 );
-export default createPlugin({
-  deps: {
-    fetch: FetchToken,
-    hydrationState: HydrationStateToken,
-  },
-  provides: ({fetch = window.fetch, hydrationState} = {}) => {
-    class I18n {
-      constructor() {
-        const {chunks, translations} = hydrationState || loadTranslations();
-        this.loadedChunks = chunks || [];
-        this.translationMap = translations || {};
-      }
-      load(chunkIds) {
-        const unloaded = chunkIds.filter(id => {
-          return this.loadedChunks.indexOf(id) < 0;
-        });
-        if (unloaded.length > 0) {
-          const ids = unloaded.join(',');
-          // TODO(#3) don't append prefix if injected fetch also injects prefix
-          return fetch(`/_translations?ids=${ids}`, {method: 'POST'})
-            .then(r => r.json())
-            .then(data => {
-              for (const key in data) this.translationMap[key] = data[key];
-              unloaded.forEach(id => {
-                this.loadedChunks[id] = true;
+export default __BROWSER__ &&
+  createPlugin({
+    deps: {
+      fetch: FetchToken,
+      hydrationState: HydrationStateToken,
+    },
+    provides: ({fetch = window.fetch, hydrationState} = {}) => {
+      class I18n {
+        constructor() {
+          const {chunks, translations} = hydrationState || loadTranslations();
+          this.loadedChunks = chunks || [];
+          this.translationMap = translations || {};
+        }
+        load(chunkIds) {
+          const unloaded = chunkIds.filter(id => {
+            return this.loadedChunks.indexOf(id) < 0;
+          });
+          if (unloaded.length > 0) {
+            const ids = unloaded.join(',');
+            // TODO(#3) don't append prefix if injected fetch also injects prefix
+            return fetch(`/_translations?ids=${ids}`, {method: 'POST'})
+              .then(r => r.json())
+              .then(data => {
+                for (const key in data) this.translationMap[key] = data[key];
+                unloaded.forEach(id => {
+                  this.loadedChunks[id] = true;
+                });
               });
-            });
+          }
+        }
+        translate(key, interpolations = {}) {
+          const template = this.translationMap[key];
+          return template
+            ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
+            : key;
         }
       }
-      translate(key, interpolations = {}) {
-        const template = this.translationMap[key];
-        return template
-          ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
-          : key;
-      }
-    }
-    const i18n = new I18n();
-    return {from: () => i18n};
-  },
-});
+      const i18n = new I18n();
+      return {from: () => i18n};
+    },
+  });
