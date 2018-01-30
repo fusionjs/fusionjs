@@ -5,49 +5,49 @@
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-font-loading",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "main": "./dist/node.cjs.js",
-  "module": "./dist/node.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "browser": {
-    "./dist/node.cjs.js": "./dist/browser.es5.cjs.js",
-    "./dist/node.es.js": "./dist/browser.es5.es.js"
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
   },
   "es2015": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2015.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
   },
   "es2017": {
-    "./dist/browser.es5.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.cjs.js": "./dist/browser.es2017.cjs.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0-beta.32",
-    "babel-eslint": "^8.0.2",
-    "create-universal-package": "^2.1.1",
-    "enzyme": "^3.1.1",
-    "enzyme-adapter-react-16": "^1.0.4",
-    "eslint": "^4.11.0",
-    "eslint-config-fusion": "^0.2.0",
+    "@babel/preset-react": "^7.0.0-beta.38",
+    "babel-eslint": "^8.2.1",
+    "create-universal-package": "^3.2.6",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.16.0",
+    "eslint-config-fusion": "^0.2.1",
     "eslint-plugin-cup": "^1.0.0",
-    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-flowtype": "^2.42.0",
     "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-prettier": "^2.3.1",
-    "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.59.0",
-    "fusion-core": "^0.2.3",
-    "nyc": "^11.3.0",
+    "eslint-plugin-prettier": "^2.5.0",
+    "eslint-plugin-react": "^7.6.0",
+    "flow-bin": "^0.64.0",
+    "fusion-core": "^0.3.0-5",
+    "fusion-tokens": "0.0.5",
+    "fusion-test-utils": "^0.4.1",
+    "nyc": "^11.4.1",
     "prettier": "1.10.2",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.0.0"
+    "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.3",
+    "fusion-core": "^0.3.0-5",
+    "fusion-tokens": "0.0.5",
     "prop-types": "^15.6.0",
     "react": "14.x - 16.x"
   },

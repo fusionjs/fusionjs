@@ -1,3 +1,8 @@
 // @flow
-export {default as withFontLoading} from './with-font-loading';
-export {default as FontPlugin} from './plugin';
+
+import withFontLoading from './with-font-loading';
+import FontLoaderReactPlugin from './plugin';
+import {FontLoaderReactToken, FontLoaderReactConfigToken} from './tokens';
+
+export default FontLoaderReactPlugin;
+export {withFontLoading, FontLoaderReactToken, FontLoaderReactConfigToken};

@@ -6,15 +6,51 @@ Provides :
 1. A fusion plugin that generates @font-faces and preloads fallback fonts based on app-level font configuration.
 2. A Higher Order Component for loading custom web fonts (and associated utils). During font loading, this HOC temporarily swaps the element to a well-matched fallback font, avoiding FOIT and FOUT. See https://www.zachleat.com/web/comprehensive-webfonts/#critical-foft-preload for more on this.
 
-## Installation
+---
+
+### Installation
 
 ```
 yarn add fusion-plugin-font-loading
 ```
 
-## Usage
+---
 
-### Configuration
+### Example
+
+```js
+// src/main.js
+import App rom 'fusion-core';
+import {
+  FontPlugin as FontLoaderReact,
+  FontLoaderReactConfigToken
+} from 'fusion-plugin-font-loader-react';
+
+export default () => {
+  const app = new App(<div></div>);
+  // ...
+  app.register(FontLoaderReactConfigToken, {/*some config*/});
+  app.register(FontLoaderReact);
+  // ...
+  return app;
+}
+
+// src/some-component.js
+import {withFontLoading} from 'fusion-plugin-font-loader-react';
+
+const FancyLink1 = withFontLoading('Lato-Bold'.(
+  styled('a', props => ({
+    ':hover': {fontSize: `${props.answer}px`}.
+    ...props.fontStyles,
+  }))
+);
+```
+
+---
+
+### Usage
+
+#### Configuration
 Consuming apps should define a `font-config.js` which a) provides data for @font-face generation, b) is used to derive the fallback font and styles that will be used by the `with-font-loading.js` HOC.
 
 _Sample \<app\>/src/font-config.js file_
@@ -55,7 +91,7 @@ export const fonts = {
 };
 ```
 
-#### @font-face generation
+##### @font-face generation
 
 Based on the example configuration file above the following @font-face would be generated in <head>
 
@@ -65,7 +101,7 @@ Based on the example configuration file above the following @font-face would be 
 @font-face {font-family: "Lato-Thin"; src: url("/_static/03b64805a8cd2d53fadc5814445c2fb5.woff2") format("woff2");}
 ```
 
-#### font loading
+##### font loading
 
 1. An in-memory font fallback tree is generated at runtime based on the defintitions provided in `font-config.js`
 2. Fallbacks at and above the specified `preloadDepth` will be preloaded/prefetched on page load
@@ -92,7 +128,7 @@ If `preloadDepth` were 0 then every font would be preloaded, and there would be 
 
 If `preloadDepth` were 2 then the only fallback font would be Helvetica, and since Helvetica is a system font, no custom fonts would be preloaded.
 
-### Higher Order Component
+#### Higher Order Component
 
 This repo also supplies a `with-font-loading.js` Higher Order Component which is used to:
 1. Load a specified font
@@ -110,9 +146,11 @@ const FancyLink1 = withFontLoading('Lato-Bold'.(
 
 This will lazy-load `Lato-Bold` and meanwhile assign a fallback font and styling to the element via `props.fontStyles`.
 
-## Utils
+---
 
-### font-loader.js
+### Utils
+
+#### font-loader.js
 
 Promise used by `with-font-loading.js` HOC to dynamically load specified font; calls `resolve` when load is complete.
 
