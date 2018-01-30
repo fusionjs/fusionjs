@@ -6,7 +6,6 @@
 
 /* eslint-env node */
 import profiler from 'gc-profiler';
-import nodeTimers from 'timers';
 import {globalAgent} from 'http';
 import assert from 'assert';
 
@@ -46,9 +45,9 @@ function noop() {}
 /* Service */
 class NodePerformanceEmitter {
   constructor(config, emit, timers) {
-    assert.ok(config);
-    assert.ok(emit);
-    assert.ok(timers);
+    assert.ok(config, 'config provided, as expected');
+    assert.ok(emit, 'emit provided, as expected');
+    assert.ok(timers, 'timers provided, as expected');
 
     this.eventLoopLagInterval = config.eventLoopLagInterval;
     this.memoryInterval = config.memoryInterval;
@@ -206,7 +205,7 @@ const plugin =
     },
     provides: ({
       emitter,
-      timers = nodeTimers,
+      timers,
       eventLoopLagInterval,
       memoryInterval,
       socketInterval,

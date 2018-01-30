@@ -90,6 +90,7 @@ test('FusionApp - service resolved', t => {
 test('service - cannot track the same types more than once at a time', t => {
   const perfService = NodePerformanceEmitterPlugin.provides({
     emitter: mockEmitterFactory(),
+    timers: mockTimersFactory(),
   });
 
   t.throws(() => perfService.start(), 'already running trackers cannot start');

@@ -4,13 +4,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import nodeTimers from 'timers';
+
 import {createToken, createOptionalToken} from 'fusion-tokens';
 
 export const NodePerformanceEmitterToken = createToken(
   'NodePerformanceEmitterToken'
 );
 
-export const TimersToken = createOptionalToken('TimersToken', null);
+export const TimersToken = createOptionalToken(
+  'TimersToken',
+  __NODE__ ? nodeTimers : null
+);
 
 /* Configuration Tokens */
 const CONFIG_DEFAULTS = {
