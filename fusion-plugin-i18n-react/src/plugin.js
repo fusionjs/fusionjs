@@ -21,7 +21,7 @@ class BundleSplitConsumer extends React.Component {
     }
   }
   getChildContext() {
-    return {i18n: this.props.provides.from(this.props.ctx)};
+    return {i18n: this.i18n};
   }
   render() {
     return React.Children.only(this.props.children);
