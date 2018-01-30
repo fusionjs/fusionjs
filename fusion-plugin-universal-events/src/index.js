@@ -12,4 +12,4 @@ const UniversalEvents = __BROWSER__ ? BrowserEvents : ServerEvents;
 
 export default UniversalEvents;
 
-export const UniversalEventsToken = createToken(UniversalEvents);
+export const UniversalEventsToken = createToken('UniversalEventsToken');
