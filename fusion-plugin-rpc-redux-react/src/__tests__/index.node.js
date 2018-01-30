@@ -45,14 +45,10 @@ test('withRPCRedux hoc', t => {
   const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      from() {
-        return {
-          request(method, args) {
-            t.equal(method, 'test');
-            t.equal(args, 'test-args');
-            return Promise.resolve('test-resolve');
-          },
-        };
+      request(method, args) {
+        t.equal(method, 'test');
+        t.equal(args, 'test-args');
+        return Promise.resolve('test-resolve');
       },
     },
     store: {
@@ -87,14 +83,10 @@ test('withRPCReactor hoc', t => {
   const expectedPayloads = ['test-args', 'test-resolve'];
   renderer.render(React.createElement(Connected), {
     rpc: {
-      from() {
-        return {
-          request(method, args) {
-            t.equal(method, 'test');
-            t.equal(args, 'test-args');
-            return Promise.resolve('test-resolve');
-          },
-        };
+      request(method, args) {
+        t.equal(method, 'test');
+        t.equal(args, 'test-args');
+        return Promise.resolve('test-resolve');
       },
     },
     store: {

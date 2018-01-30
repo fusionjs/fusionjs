@@ -35,7 +35,7 @@ export function withRPCRedux(
         const {rpc, store} = this.context;
         const handler = createRPCHandler({
           rpcId,
-          rpc: rpc.from(this.props.ctx),
+          rpc,
           store,
           actions,
           mapStateToParams,

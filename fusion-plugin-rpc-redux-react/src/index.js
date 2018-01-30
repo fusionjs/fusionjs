@@ -4,17 +4,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {ProviderPlugin} from 'fusion-react';
-import {mock as RPCMock} from 'fusion-plugin-rpc';
-import plugin from './plugin';
+import plugin, {mock} from './plugin';
 
 export {createRPCReducer} from 'fusion-rpc-redux';
 export {withRPCRedux, withRPCReactor} from './hoc';
 
 export default plugin;
-
-export const mock = ProviderPlugin.create('rpc', RPCMock);
-
+export {mock};
 export {
   RPCToken,
   RPCHandlersToken,

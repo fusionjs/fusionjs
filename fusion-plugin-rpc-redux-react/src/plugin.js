@@ -5,6 +5,26 @@
  */
 
 import {ProviderPlugin} from 'fusion-react';
-import rpc from 'fusion-plugin-rpc';
+import PropTypes from 'prop-types';
+import React from 'react';
+import rpc, {mock as RPCMock} from 'fusion-plugin-rpc';
 
-export default ProviderPlugin.create('rpc', rpc);
+class RPCProvider extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.rpc = props.provides.from(props.ctx);
+  }
+  getChildContext() {
+    return {rpc: this.rpc};
+  }
+  render() {
+    return React.Children.only(this.props.children);
+  }
+}
+
+RPCProvider.childContextTypes = {
+  rpc: PropTypes.object.isRequired,
+};
+
+export default ProviderPlugin.create('rpc', rpc, RPCProvider);
+export const mock = ProviderPlugin.create('rpc', RPCMock, RPCProvider);
