@@ -9,7 +9,7 @@ import test from 'tape-cup';
 import {SessionToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 import CsrfPlugin from '../server';
-import {CSRFTokenExpire, CSRFIgnoreRoutes} from '../shared';
+import {CsrfExpireToken, CsrfIgnoreRoutesToken} from '../shared';
 
 function getSession() {
   const state = {};
@@ -172,7 +172,7 @@ test('fails with expired token', async t => {
   const Session = getSession();
   const app = new App('fake-element', el => el);
   app.register(SessionToken, Session);
-  app.register(CSRFTokenExpire, 1);
+  app.register(CsrfExpireToken, 1);
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
@@ -198,7 +198,7 @@ test('does not verify ignored paths', async t => {
   const app = new App('fake-element', el => el);
   app.register(SessionToken, Session);
   app.register(CsrfPlugin);
-  app.register(CSRFIgnoreRoutes, ['/test']);
+  app.register(CsrfIgnoreRoutesToken, ['/test']);
   app.middleware((ctx, next) => {
     if (ctx.path === '/test') ctx.body = {ok: 1};
     return next();

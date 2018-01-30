@@ -7,16 +7,14 @@
 /* eslint-env browser */
 import test from 'tape-cup';
 import App, {createPlugin} from 'fusion-core';
-import {FetchToken, createToken} from 'fusion-tokens';
+import {FetchToken} from 'fusion-tokens';
 import CsrfPlugin from '../index';
-import {CSRFTokenExpire} from '../shared';
-
-const BaseFetchToken = createToken('BaseFetch');
+import {CsrfExpireToken, FetchForCsrfToken} from '../shared';
 
 function getApp(fetchFn) {
   const app = new App('element', el => el);
-  app.register(BaseFetchToken, fetchFn);
-  app.register(FetchToken, CsrfPlugin).alias(FetchToken, BaseFetchToken);
+  app.register(FetchForCsrfToken, fetchFn);
+  app.register(FetchToken, CsrfPlugin);
   return app;
 }
 
@@ -224,7 +222,7 @@ test('fetch preflights if token is expired', t => {
     });
   };
   const app = getApp(fetch);
-  app.register(CSRFTokenExpire, 1);
+  app.register(CsrfExpireToken, 1);
   app.register(
     createPlugin({
       deps: {fetch: FetchToken},

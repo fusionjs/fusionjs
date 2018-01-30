@@ -11,8 +11,8 @@ import base64Url from 'base64-url';
 import {
   verifyMethod,
   verifyExpiry,
-  CSRFIgnoreRoutes,
-  CSRFTokenExpire,
+  CsrfIgnoreRoutesToken,
+  CsrfExpireToken,
 } from './shared';
 
 // @flow
@@ -55,8 +55,8 @@ const CsrfPlugin =
   createPlugin({
     deps: {
       Session: SessionToken,
-      expire: CSRFTokenExpire,
-      ignored: CSRFIgnoreRoutes,
+      expire: CsrfExpireToken,
+      ignored: CsrfIgnoreRoutesToken,
     },
     provides: () => () =>
       Promise.reject(new Error('Cannot use fetch on the server')),

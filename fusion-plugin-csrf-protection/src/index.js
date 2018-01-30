@@ -8,3 +8,9 @@ import serverCsrf from './server.js';
 import clientCsrf from './browser.js';
 
 export default (__NODE__ ? serverCsrf : clientCsrf);
+
+export {
+  FetchForCsrfToken,
+  CsrfExpireToken,
+  CsrfIgnoreRoutesToken,
+} from './shared';

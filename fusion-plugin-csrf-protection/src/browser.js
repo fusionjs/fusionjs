@@ -7,16 +7,20 @@
 // @flow
 /* eslint-env browser */
 import {unescape, createPlugin} from 'fusion-core';
-import {FetchToken} from 'fusion-tokens';
-import {verifyMethod, verifyExpiry, CSRFTokenExpire} from './shared';
+import {
+  verifyMethod,
+  verifyExpiry,
+  CsrfExpireToken,
+  FetchForCsrfToken,
+} from './shared';
 
 const BrowserCSRFPlugin =
   // $FlowFixMe
   __BROWSER__ &&
   createPlugin({
     deps: {
-      fetch: FetchToken,
-      expire: CSRFTokenExpire,
+      fetch: FetchForCsrfToken,
+      expire: CsrfExpireToken,
     },
     provides: ({fetch, expire}) => {
       const prefix = window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
