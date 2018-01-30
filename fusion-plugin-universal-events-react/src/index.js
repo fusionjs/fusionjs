@@ -4,9 +4,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import plugin from './plugin';
 import withBatchEvents from './hoc';
 
 export default plugin;
 export {withBatchEvents};
-export {UniversalEventsToken} from 'fusion-plugin-universal-events';
+export {UniversalEventsToken};
