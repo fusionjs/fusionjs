@@ -4,10 +4,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {createToken} from 'fusion-tokens';
+import {createToken, createOptionalToken} from 'fusion-tokens';
 
 export const ReduxToken = createToken('ReduxToken');
 export const ReducerToken = createToken('ReducerToken');
-export const PreloadedStateToken = createToken('PreloadedStateToken');
-export const EnhancerToken = createToken('EnhancerToken');
-export const InitialStateToken = createToken('InitialStateToken');
+export const PreloadedStateToken = createOptionalToken(
+  'PreloadedStateToken',
+  null
+);
+export const EnhancerToken = createOptionalToken('EnhancerToken', null);
+export const InitialStateToken = createOptionalToken('InitialStateToken', null);
