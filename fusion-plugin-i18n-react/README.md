@@ -32,7 +32,7 @@ import Hello from './hello';
 export default () => {
   const app = new App(<div></div>);
 
-  const I18n = app.register(I18nToken, I18n);
+  app.register(I18nToken, I18n);
   __NODE__
     ? app.register(I18nLoaderToken, createI18nLoader())
     : app.register(FetchToken, fetch);
