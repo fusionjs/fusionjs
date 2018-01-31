@@ -29,10 +29,12 @@ const plugin = createPlugin({
         );
         return next().then(() => {
           if (__NODE__) {
-            ctx.body.head.push(html`<style>`);
-            ctx.body.head.push(dangerouslySetHTML(generateFontFaces(fonts)));
-            ctx.body.head.push(html`</style>`);
-            ctx.body.head.push(
+            ctx.template.head.push(html`<style>`);
+            ctx.template.head.push(
+              dangerouslySetHTML(generateFontFaces(fonts))
+            );
+            ctx.template.head.push(html`</style>`);
+            ctx.template.head.push(
               dangerouslySetHTML(generatePreloadLinks(fontsToPreload, fonts))
             );
           }
