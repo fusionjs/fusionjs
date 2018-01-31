@@ -57,7 +57,7 @@ export default createPlugin({
             });
           };
           emitter.map(payload => {
-            if (payload) {
+            if (payload && typeof payload === 'object') {
               payload.__url__ = pageData.title;
             }
             return payload;
@@ -73,7 +73,7 @@ export default createPlugin({
           pageData = JSON.parse(unescape(element.textContent));
         }
         emitter.map(payload => {
-          if (payload) {
+          if (payload && typeof payload === 'object') {
             payload.__url__ = pageData.title;
           }
           return payload;
