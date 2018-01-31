@@ -1,100 +1,57 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-/* eslint-env node */
 import path from 'path';
-import {compose} from './plugin/index.js';
-import {escape, consumeSanitizedHTML} from './sanitization';
-import Timing, {now} from './timing';
+import {escape, consumeSanitizedHTML} from '../sanitization';
 
-export default function() {
-  const Koa = require('koa');
+export default function createSSRPlugin({element}) {
+  return async function ssrPlugin(ctx, next) {
+    if (!isSSR(ctx)) return next();
 
-  return class ServerApp {
-    constructor(element, render) {
-      this._app = new Koa();
-      const ssrPlugin = async (ctx, next) => {
-        if (!isSSR(ctx)) return next();
+    const template = {
+      htmlAttrs: {},
+      title: '',
+      head: [],
+      body: [],
+    };
+    ctx.element = element;
+    ctx.rendered = '';
+    ctx.template = template;
+    ctx.type = 'text/html';
+    if (!ctx.chunkUrlMap) ctx.chunkUrlMap = new Map();
+    if (!ctx.syncChunks) ctx.syncChunks = [];
+    if (!ctx.preloadChunks) ctx.preloadChunks = [];
 
-        const template = {
-          htmlAttrs: {},
-          title: '',
-          head: [],
-          body: [],
-        };
-        ctx.element = element;
-        ctx.rendered = '';
-        ctx.body = template;
-        ctx.type = 'text/html';
-        if (!ctx.chunkUrlMap) ctx.chunkUrlMap = new Map();
-        if (!ctx.syncChunks) ctx.syncChunks = [];
-        if (!ctx.preloadChunks) ctx.preloadChunks = [];
+    await next();
 
-        await next();
+    const {htmlAttrs, title, head, body} = ctx.template;
+    const safeAttrs = Object.keys(htmlAttrs)
+      .map(attrKey => {
+        return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
+      })
+      .join('');
+    const safeTitle = escape(title);
+    const safeHead = head.map(consumeSanitizedHTML).join('');
+    const safeBody = body.map(consumeSanitizedHTML).join('');
 
-        if (ctx.body !== template) return; // this can happen if you hit an endpoint from the url bar
+    const preloadHintLinks = getPreloadHintLinks(ctx);
+    const coreGlobals = getCoreGlobals(ctx);
+    const chunkScripts = getChunkScripts(ctx);
+    const bundleSplittingBootstrap = [
+      preloadHintLinks,
+      coreGlobals,
+      chunkScripts,
+    ].join('');
 
-        const {htmlAttrs, title, head, body} = ctx.body;
-        const safeAttrs = Object.keys(htmlAttrs).map(attrKey => {
-          return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
-        });
-        const safeTitle = escape(title);
-        const safeHead = head.map(consumeSanitizedHTML).join('');
-        const safeBody = body.map(consumeSanitizedHTML).join('');
+    const chunkPreloaderScript = getChunkPreloaderScript(ctx);
 
-        const preloadHintLinks = getPreloadHintLinks(ctx);
-        const coreGlobals = getCoreGlobals(ctx);
-        const chunkScripts = getChunkScripts(ctx);
-        const bundleSplittingBootstrap = [
-          preloadHintLinks,
-          coreGlobals,
-          chunkScripts,
-        ].join('');
-
-        const chunkPreloaderScript = getChunkPreloaderScript(ctx);
-
-        ctx.body = [
-          '<!doctype html>',
-          `<html${safeAttrs}>`,
-          `<head>`,
-          `<title>${safeTitle}</title>`,
-          `${bundleSplittingBootstrap}${safeHead}`,
-          `</head>`,
-          `<body>${ctx.rendered}${safeBody}${chunkPreloaderScript}</body>`,
-          '</html>',
-        ].join('');
-      };
-      const rendererPlugin = async (ctx, next) => {
-        const timing = Timing.of(ctx);
-        timing.downstream.resolve(now() - timing.start);
-
-        if (ctx.element) {
-          const renderStart = now();
-          ctx.rendered = await render(ctx.element);
-          timing.render.resolve(now() - renderStart);
-        }
-
-        const upstreamStart = now();
-        await next();
-        timing.upstream.resolve(now() - upstreamStart);
-      };
-      this.plugins = [Timing, ssrPlugin, rendererPlugin];
-    }
-    onerror(err) {
-      return this._app.onerror(err);
-    }
-    plugin(plugin, dependencies) {
-      const service = plugin(dependencies);
-      this.plugins.splice(-1, 0, service);
-      return service;
-    }
-    callback() {
-      this._app.use(compose(this.plugins));
-      return this._app.callback();
-    }
+    ctx.body = [
+      '<!doctype html>',
+      `<html${safeAttrs}>`,
+      `<head>`,
+      `<title>${safeTitle}</title>`,
+      `${bundleSplittingBootstrap}${safeHead}`,
+      `</head>`,
+      `<body>${ctx.rendered}${safeBody}${chunkPreloaderScript}</body>`,
+      '</html>',
+    ].join('');
   };
 }
 
@@ -156,7 +113,9 @@ function getChunkScripts(ctx) {
     return `<script defer${crossOrigin} src="${url}"></script>`;
   });
   const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
-    return `<script defer${crossOrigin} src="${url}" data-webpack-preload="${id}"></script>`;
+    return `<script defer${crossOrigin} src="${url}" data-webpack-preload="${
+      id
+    }"></script>`;
   });
   return [...sync, ...preloaded].join('');
 }

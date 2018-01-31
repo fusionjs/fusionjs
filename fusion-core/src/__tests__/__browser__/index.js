@@ -1,25 +1,7 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 import test from 'tape-cup';
-import AppFactory from '../client';
+import AppFactory from '../../client-app';
 
 const App = AppFactory();
-
-test('app onerror', t => {
-  const e = new Error('Some error');
-  const app = new App('hello', () => {});
-  try {
-    app.onerror(e);
-  } catch (error) {
-    t.equal(error, e);
-  } finally {
-    t.end();
-  }
-});
 
 test('app callback', async t => {
   let numRenders = 0;

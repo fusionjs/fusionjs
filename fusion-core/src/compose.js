@@ -1,17 +1,14 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
+/* @flow */
 // inline version of koa-compose to get around Rollup/CUP commonjs-related issue
-function composeMiddleware(middleware) {
+export function compose(middleware: Array<Middleware>): Middleware {
   if (!Array.isArray(middleware)) {
     throw new TypeError('Middleware stack must be an array!');
   }
   for (const fn of middleware) {
     if (typeof fn !== 'function') {
-      throw new TypeError('Middleware must be composed of functions!');
+      throw new TypeError(
+        `Expected middleware function, received: ${typeof fn}`
+      );
     }
   }
 
@@ -27,6 +24,7 @@ function composeMiddleware(middleware) {
       if (i === middleware.length) fn = next;
       if (!fn) return Promise.resolve();
       try {
+        // $FlowFixMe
         return fn(context, function next() {
           return dispatch(i + 1);
         });
@@ -35,13 +33,4 @@ function composeMiddleware(middleware) {
       }
     }
   };
-}
-
-export default function(plugins) {
-  const middleware = plugins
-    .map(p => {
-      return p && typeof p.middleware === 'function' ? p.middleware.bind(p) : p;
-    })
-    .filter(Boolean);
-  return composeMiddleware(middleware);
 }

@@ -1,17 +1,10 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 /*
-We never want developers to be able to write `ctx.body.body.push(`<div>${stuff}</div>`)`
+We never want developers to be able to write `ctx.template.body.push(`<div>${stuff}</div>`)`
 because that allows XSS attacks by default (e.g. if stuff === '<script>alert(1)</script>')
 Instead, they should use html`<div>{stuff}</div>` so interpolated data gets automatically escaped
 We trust the markup outside of interpolation because it's code written by a developer with commit permissions,
 which can be audited via code reviews
 */
-// eslint-disable-next-line import/no-mutable-exports
 let html, dangerouslySetHTML, consumeSanitizedHTML, escape;
 if (__NODE__) {
   const forbiddenChars = {

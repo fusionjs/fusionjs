@@ -1,27 +1,20 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
+/* @flow */
+import serverApp from './server-app';
+import clientApp from './client-app';
+// $FlowFixMe
+export default (__BROWSER__ ? clientApp() : serverApp());
 
-import serverApp from './server';
-import clientApp from './client';
+export {compose} from './compose.js';
+export {memoize} from './memoize';
 
-import {Plugin, SingletonPlugin, compose} from './plugin/index.js';
-
-import {
+// sanitization API
+export {
   html,
   dangerouslySetHTML,
   consumeSanitizedHTML,
   escape,
   unescape,
 } from './sanitization';
-
-export default (__BROWSER__ ? clientApp() : serverApp());
-// sanitization API
-export {html, dangerouslySetHTML, consumeSanitizedHTML, escape, unescape};
-
-export {Plugin, SingletonPlugin, compose};
 
 // Virtual modules
 export {
@@ -30,3 +23,6 @@ export {
   syncChunkIds,
   syncChunkPaths,
 } from './virtual/index.js';
+
+export {RenderToken, ElementToken} from './tokens';
+export {createPlugin} from './create-plugin';

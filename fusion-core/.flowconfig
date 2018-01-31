@@ -5,10 +5,11 @@
 ./src/
 
 [libs]
+./flow-typed/npm/koa_v2.x.x.js
+./flow.js
 
 [lints]
 
 [options]
-suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
 
 [strict]
