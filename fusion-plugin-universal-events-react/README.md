@@ -19,12 +19,14 @@ yarn add fusion-plugin-universal-events-react
 ```js
 // main.js
 import App from 'fusion-react';
-import UniversalEvents from 'fusion-plugin-universal-events-react';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events-react';
 import fetch from 'unfetch';
+import {FetchToken} from 'fusion-tokens';
 
 export default function() {
   const app = new App(root);
-  const EventEmitter = app.plugin(universalEvents, {fetch});
+  app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, UniversalEvents);
   return app;
 }
 
@@ -47,13 +49,13 @@ export default withBatchEvents(Component);
 ```js
 // main.js
 import App from 'fusion-react';
-import UniversalEvents from 'fusion-plugin-universal-events-react';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events-react';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
 export default function() {
   const app = new App(root);
-  const EventEmitter = app.register(UniversalEventsToken, UniversalEvents);
+  app.register(UniversalEventsToken, UniversalEvents);
   __BROWSER__ && app.register(FetchToken, fetch);
   return app;
 }
