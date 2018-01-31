@@ -31,7 +31,7 @@ export default function start() {
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
   app.register(EnhancerToken, ReduxActionEmitterEnhancer);
-  __NODE__ && app.register(InitialStateToken, async getInitialState(ctx) {
+  __NODE__ && app.register(InitialStateToken, async (ctx) => {
     return {};
   });
 
