@@ -21,8 +21,7 @@ yarn add fusion-plugin-font-loading
 ```js
 // src/main.js
 import App rom 'fusion-core';
-import {
-  FontPlugin as FontLoaderReact,
+import FontLoaderReactPlugin, {
   FontLoaderReactConfigToken
 } from 'fusion-plugin-font-loader-react';
 
