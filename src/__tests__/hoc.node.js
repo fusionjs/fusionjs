@@ -86,7 +86,7 @@ tape('hoc with custom provider', async t => {
     }
   }
   CustomProvider.childContextTypes = {
-    test: PropTypes.object.isRequired,
+    test: PropTypes.any.isRequired,
   };
 
   const testPlugin = plugin.create(
