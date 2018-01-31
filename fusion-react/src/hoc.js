@@ -31,7 +31,7 @@ export default {
         displayName +
         ')';
       HOC.contextTypes = {
-        [name]: PropTypes.object.isRequired,
+        [name]: PropTypes.any.isRequired,
       };
       return HOC;
     };
