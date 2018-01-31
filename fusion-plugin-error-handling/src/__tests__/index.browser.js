@@ -12,7 +12,7 @@ import {getSimulator} from 'fusion-test-utils';
 import ErrorHandling, {ErrorHandlingEmitterToken} from '../client';
 
 test('Get exception stack frames', t => {
-  t.plan(2);
+  t.plan(4);
 
   const app = new App('test', el => el);
 
@@ -21,26 +21,30 @@ test('Get exception stack frames', t => {
     t.equal(e, mockError, 'emits error');
   };
 
-  const mockAddEventListener = () => t.pass('called original register');
-  window.__foo__ = {
-    prototype: {
-      addEventListener: mockAddEventListener,
-    },
-  };
+  function h() {
+    throw mockError;
+  }
+
+  class Foo {
+    addEventListener(event, handler) {
+      t.equal(event, 'some-event', 'passes event type through');
+      t.notEqual(handler, h, 'wraps handler in try catch');
+      handler();
+    }
+  }
+
+  window.__foo__ = Foo;
 
   app.register(ErrorHandling);
   app.register(ErrorHandlingEmitterToken, mockEmit);
+
   getSimulator(app);
 
-  t.notEqual(
-    window.__foo__.prototype.addEventListener,
-    mockAddEventListener,
-    'addEventListener wrapped'
-  );
-
-  const rejectionEvent = new Event('unhandledrejection');
-  rejectionEvent.reason = mockError;
-  window.dispatchEvent(rejectionEvent);
+  try {
+    window.__foo__.prototype.addEventListener('some-event', h);
+  } catch (e) {
+    t.equal(e, mockError, 'throws error in dev');
+  }
 
   t.end();
 });
