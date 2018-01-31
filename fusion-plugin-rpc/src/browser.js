@@ -10,10 +10,6 @@ import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import {FetchToken, createOptionalToken} from 'fusion-tokens';
 
-import {RPCHandlersToken} from './tokens';
-
-declare var __DEV__: boolean;
-
 export const RPCRoutePrefixConfigToken: ?string = createOptionalToken(
   'RPCRoutePrefixConfigToken',
   null
@@ -63,20 +59,10 @@ const plugin: RPCPluginType =
   createPlugin({
     deps: {
       fetch: FetchToken,
-      handlers: RPCHandlersToken,
       routePrefix: RPCRoutePrefixConfigToken,
     },
     provides: deps => {
-      const {fetch = window.fetch, handlers, routePrefix} = deps;
-
-      if (__DEV__ && handlers) {
-        if (
-          Object.keys(handlers).find(h => typeof handlers[h] === 'function')
-        ) {
-          const error = `Don't bundle server-side {handlers} in the client. Instead of 'const handlers = {...}', use 'const handlers = __NODE__ && {...}'`;
-          throw new Error(error);
-        }
-      }
+      const {fetch = window.fetch, routePrefix} = deps;
 
       const prefix =
         routePrefix != null
