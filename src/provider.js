@@ -19,7 +19,7 @@ export default {
     }
     Provider.childContextTypes = {
       ...(Provider.childContextTypes || {}),
-      [name]: PropTypes.object.isRequired,
+      [name]: PropTypes.any.isRequired,
     };
     Provider.displayName =
       name.replace(/^./, c => c.toUpperCase()) + 'Provider';

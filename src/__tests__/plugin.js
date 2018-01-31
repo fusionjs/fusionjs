@@ -20,10 +20,7 @@ test('.create works', t => {
   middleware(ctx, () => Promise.resolve()).then(() => {
     t.notEquals(ctx.element, element, 'wraps provider');
     t.equals(ctx.element.type.displayName, 'FooProvider');
-    t.equals(
-      ctx.element.type.childContextTypes.foo,
-      PropTypes.object.isRequired
-    );
+    t.equals(ctx.element.type.childContextTypes.foo, PropTypes.any.isRequired);
     t.end();
   });
 });
