@@ -127,32 +127,73 @@ The application in your browser should automatically reload to display the silve
 
 ### Font loading
 
-Fonts can be loaded via a custom plugin:
+Let's install these packages:
+
+```sh
+yarn add fusion-plugin-font-loading
+```
+
+This package contains a plugin that provides an avenue to generate and leverage @font-faces, including preloading fallback fonts.  Check out the [repository](https://github.com/fusionjs/fusion-plugin-font-loader-react) for more details.
 
 ```js
 // src/main.js
 import App from 'fusion-react';
-import Fonts from './plugins/fonts';
+import {
+  FontPlugin as FontLoaderReact,
+  FontLoaderReactConfigToken
+} from 'fusion-plugin-font-loader-react';
+import appFonts from './configuration/font-config';
 import root from './components/root';
 
 export default () => {
   const app = new App(root);
 
-  app.plugin(Fonts);
+  app.register(FontLoaderReactConfigToken, appFonts);
+  app.register(FontLoaderReact);
 
   return app;
 }
 
-// src/plugins/fonts.js
-import {html} from 'fusion-core';
-
-export default () => (ctx, next) => {
-  ctx.body.head.push(html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`);
-  return next();
-}
+// src/configuration/font-config.js
+import {assetUrl} from 'fusion-core';
+export const preloadDepth = 1;
+export const fonts = {
+  'Arial-Regular': {
+    urls: {
+      woff2: assetUrl('../static/LArialato-Regular.woff2'),
+    },
+    fallback: {
+      name: 'Helvetica',
+    },
+  },
+  'Arial-Bold': {
+    urls: {
+      woff2: assetUrl('../static/Arial-Bold.woff2'),
+    },
+    fallback: {
+      name: 'Arial-Regular',
+      styles: {
+        'font-weight': 'bold',
+      },
+    },
+  }
+};
 ```
 
-Note: stay tuned, we're working on an official FusionJS plugin for optimized font loading, which will replace the workflow above.
+A Higher Order Component for loading these custom web fonts is also provided:
+
+```js
+// src/components/some-component.js
+import {withFontLoading} from 'fusion-plugin-font-loader-react';
+import {styled} from 'fusion-plugin-styletron-react';
+
+const FancyLink1 = withFontLoading('Arial-Bold'.(
+  styled('a', props => ({
+    ':hover': {fontSize: `${props.answer}px`}.
+    ...props.fontStyles,
+  }))
+);
+```
 
 ---
 
