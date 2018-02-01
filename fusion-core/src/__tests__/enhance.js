@@ -4,18 +4,16 @@ import tape from 'tape-cup';
 import ClientAppFactory from '../client-app';
 import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
+import {createToken} from '../create-token';
+import type {Token} from '../create-token';
+
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
-function createToken(name): any {
-  return () => {
-    throw new Error(`Missing dependency: ${name}`);
-  };
-}
 tape('enhancement', t => {
   const app = new App('el', el => el);
 
   type FnType = string => string;
-  const FnToken: FnType = createToken('FnType');
+  const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
       return arg => arg;
@@ -40,7 +38,7 @@ tape('enhancement with a plugin', t => {
   const app = new App('el', el => el);
 
   type FnType = string => string;
-  const FnToken: FnType = createToken('FnType');
+  const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
       return arg => arg;
@@ -68,11 +66,11 @@ tape('enhancement with a plugin', t => {
 tape('enhancement with a plugin with deps', t => {
   const app = new App('el', el => el);
 
-  const DepAToken: string = createToken('DepA');
-  const DepBToken: string = createToken('DepB');
+  const DepAToken: Token<string> = createToken('DepA');
+  const DepBToken: Token<string> = createToken('DepB');
 
   const DepA = 'test-dep-a';
-  const DepB: FusionPlugin<{a: string}, string> = createPlugin({
+  const DepB: FusionPlugin<{a: Token<string>}, string> = createPlugin({
     deps: {
       a: DepAToken,
     },
@@ -83,7 +81,7 @@ tape('enhancement with a plugin with deps', t => {
   });
 
   type FnType = string => string;
-  const FnToken: FnType = createToken('FnType');
+  const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
       return arg => arg;
@@ -91,7 +89,7 @@ tape('enhancement with a plugin with deps', t => {
   });
   const BaseFnEnhancer = (
     fn: FnType
-  ): FusionPlugin<{a: string, b: string}, FnType> => {
+  ): FusionPlugin<{a: Token<string>, b: Token<string>}, FnType> => {
     return createPlugin({
       deps: {
         a: DepAToken,
@@ -121,13 +119,13 @@ tape('enhancement with a plugin with deps', t => {
 tape('enhancement with a plugin with missing deps', t => {
   const app = new App('el', el => el);
 
-  const DepAToken: string = createToken('DepA');
-  const DepBToken: string = createToken('DepB');
+  const DepAToken: Token<string> = createToken('DepA');
+  const DepBToken: Token<string> = createToken('DepB');
 
   const DepB = 'test-dep-b';
 
   type FnType = string => string;
-  const FnToken: FnType = createToken('FnType');
+  const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
       return arg => arg;
@@ -135,7 +133,7 @@ tape('enhancement with a plugin with missing deps', t => {
   });
   const BaseFnEnhancer = (
     fn: FnType
-  ): FusionPlugin<{a: string, b: string}, FnType> => {
+  ): FusionPlugin<{a: Token<string>, b: Token<string>}, FnType> => {
     return createPlugin({
       deps: {
         a: DepAToken,
@@ -157,6 +155,6 @@ tape('enhancement with a plugin with missing deps', t => {
     t.end();
     return (ctx, next) => next();
   });
-  t.throws(() => app.resolve(), /Missing dependency: DepA/);
+  t.throws(() => app.resolve(), /Cannot resolve to a value for token: DepA/);
   t.end();
 });

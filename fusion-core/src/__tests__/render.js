@@ -1,8 +1,11 @@
 /* @flow */
+
 import test, {run} from './test-helper';
 import ClientAppFactory from '../client-app';
 import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
+import {createToken} from '../create-token';
+import type {Token} from '../create-token';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 type AType = {
@@ -11,8 +14,9 @@ type AType = {
 type BType = () => {
   b: string,
 };
-const TokenA: AType = (() => 'TokenA': any);
-const TokenB: BType = (() => 'TokenB': any);
+const TokenA: Token<AType> = createToken('TokenA');
+const TokenB: Token<BType> = createToken('TokenB');
+const TokenString: Token<string> = createToken('TokenString');
 
 function delay() {
   return new Promise(resolve => {
@@ -201,16 +205,15 @@ test('app.register - middleware execution respects dependency order', async t =>
 });
 
 test('app.middleware with dependencies', async t => {
-  const TokenA = 'TokenA';
   const element = 'hi';
   const renderFn = el => {
     return el;
   };
   const app = new App(element, renderFn);
   let called = false;
-  app.register(TokenA, 'Something');
-  app.middleware({TokenA}, deps => {
-    t.equal(deps.TokenA, 'Something');
+  app.register(TokenString, 'Something');
+  app.middleware({TokenString}, deps => {
+    t.equal(deps.TokenString, 'Something');
     return (ctx, next) => {
       called = true;
       return next();

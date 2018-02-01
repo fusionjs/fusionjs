@@ -26,3 +26,4 @@ export {
 
 export {RenderToken, ElementToken} from './tokens';
 export {createPlugin} from './create-plugin';
+export {createToken} from './create-token';

@@ -7,6 +7,8 @@ type aliaser<Token> = {
   alias: (sourceToken: Token, destToken: Token) => aliaser<*>,
 };
 
+type ExtractReturnType = <V>(() => V) => V;
+
 declare module 'fusion-core' {
   declare var __NODE__: Boolean;
   declare var __BROWSER__: Boolean;
@@ -20,10 +22,13 @@ declare module 'fusion-core' {
     },
   } & KoaContext;
   declare export type Context = SSRContext | KoaContext;
-  declare export type FusionPlugin<Deps, Service> = {
+  declare type FusionPlugin<Deps, Service> = {
     deps?: Deps,
-    provides?: Deps => Service,
-    middleware?: (Deps, Service) => Middleware,
+    provides?: (Deps: $ObjMap<Deps, ExtractReturnType>) => Service,
+    middleware?: (
+      Deps: $ObjMap<Deps, ExtractReturnType>,
+      Service: Service
+    ) => Middleware,
   };
   declare export type Middleware = (
     ctx: Context,
@@ -38,19 +43,24 @@ declare module 'fusion-core' {
     renderer: any;
     enhance<Token, Deps>(
       token: Token,
-      enhancer: (item: Token) => FusionPlugin<Deps, Token>
+      enhancer: (
+        item: $Call<ExtractReturnType, Token>
+      ) => FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
     ): void;
     enhance<Token>(token: Token, enhancer: (token: Token) => Token): void;
-    enhance<Token>(token: Token, enhancer: (token: Token) => Token): void;
     register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
-    register<Deps, Provides>(
-      token: Provides,
-      Plugin: FusionPlugin<Deps, Provides>
+    register<Token, Deps>(
+      token: Token,
+      Plugin: FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
     ): aliaser<*>;
-    register<Token: string>(token: Token, val: string): aliaser<*>;
-    register<Token: number>(token: Token, val: number): aliaser<*>;
-    register<Token: Object>(token: Token, val: $Exact<Token>): aliaser<*>;
-    middleware<Deps>(deps: Deps, middleware: (Deps) => Middleware): void;
+    register<Token: Object>(
+      token: Token,
+      val: $Call<ExtractReturnType, Token>
+    ): aliaser<*>;
+    middleware<Deps>(
+      deps: Deps,
+      middleware: (Deps: $ObjMap<Deps, ExtractReturnType>) => Middleware
+    ): void;
     middleware(middleware: Middleware): void;
     callback(): () => Promise<void>;
     resolve(): void;
@@ -59,6 +69,11 @@ declare module 'fusion-core' {
   declare export function createPlugin<Deps, Service>(
     options: FusionPlugin<Deps, Service>
   ): FusionPlugin<Deps, Service>;
+  declare export type Token<T> = {
+    (): T,
+    optional: () => ?T,
+  };
+  declare export function createToken(name: string): Token<any>;
   declare export function html(
     strings: Array<string>,
     ...expressions: Array<string>

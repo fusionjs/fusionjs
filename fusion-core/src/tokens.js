@@ -1,6 +1,4 @@
-export const RenderToken = () => {
-  throw new Error('Missing required value for RenderToken');
-};
-export const ElementToken = () => {
-  throw new Error('Missing required value for ElementToken');
-};
+import {createToken} from './create-token';
+
+export const RenderToken = createToken('RenderToken');
+export const ElementToken = createToken('ElementToken');

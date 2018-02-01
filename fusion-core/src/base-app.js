@@ -1,10 +1,11 @@
 import {createPlugin} from './create-plugin';
 import {ElementToken, RenderToken} from './tokens';
+import {TokenType, TokenImpl} from './create-token';
 
 class FusionApp {
   constructor(element, render) {
-    this.registered = new Map();
-    this.plugins = [];
+    this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
+    this.plugins = []; // Token
     element && this.register(ElementToken, element);
     render && this.register(RenderToken, render);
   }
@@ -14,11 +15,11 @@ class FusionApp {
     }
     // the renderer is a special case, since it needs to be always run last
     this.plugins.push(token);
-    const {aliases, enhancers} = this.registered.get(token) || {
+    const {aliases, enhancers} = this.registered.get(getTokenRef(token)) || {
       aliases: new Map(),
       enhancers: [],
     };
-    this.registered.set(token, {value, aliases, enhancers});
+    this.registered.set(getTokenRef(token), {value, aliases, enhancers});
     function alias(sourceToken, destToken) {
       aliases.set(sourceToken, destToken);
       return {alias};
@@ -32,59 +33,65 @@ class FusionApp {
     this.register(createPlugin({deps, middleware}));
   }
   enhance(token, enhancer) {
-    const {value, aliases, enhancers} = this.registered.get(token) || {
+    const {value, aliases, enhancers} = this.registered.get(
+      getTokenRef(token)
+    ) || {
       aliases: new Map(),
       enhancers: [],
     };
     enhancers.push(enhancer);
-    this.registered.set(token, {value, aliases, enhancers});
+    this.registered.set(getTokenRef(token), {value, aliases, enhancers});
   }
   resolve() {
-    const resolved = new Map();
-    const dependedOn = new Set();
-    const nonPluginTokens = new Set();
-    const resolving = new Set();
-    const registered = this.registered;
-    const resolvedPlugins = [];
-    const allAliases = new Set();
+    const resolved = new Map(); // Token.ref || Token => Service
+    const dependedOn = new Set(); // Token.ref || Token
+    const nonPluginTokens = new Set(); // Token
+    const resolving = new Set(); // Token.ref || Token
+    const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
+    const resolvedPlugins = []; // Plugins
+    const allAliases = new Set(); // Token.ref || Token
     const resolveToken = (token, tokenAliases) => {
-      // if we have already resolved the type, return it
+      // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(token)) {
         const newToken = tokenAliases.get(token);
-        allAliases.add([token, newToken]);
+        allAliases.add([getTokenRef(token), getTokenRef(newToken)]);
         token = newToken;
       }
+      if (resolved.has(getTokenRef(token))) {
+        return resolved.get(getTokenRef(token));
+      }
 
-      if (resolved.has(token)) {
-        return resolved.get(token);
+      // Base: if currently resolving the same type, we have a circular dependency
+      if (resolving.has(getTokenRef(token))) {
+        throw new Error(`Cannot resolve circular dependency: ${token.name}`);
       }
-      // if currently resolving the same type, we have a circular dependency
-      if (resolving.has(token)) {
-        throw new Error(
-          `Cannot resolve circular dependency: ${token.toString()}`
-        );
-      }
-      let {value, aliases, enhancers} = registered.get(token) || {};
-      // the type was never registered, throw error
+
+      // Base: the type was never registered, throw error or provide undefined if optional
+      let {value, aliases, enhancers} =
+        registered.get(getTokenRef(token)) || {};
       if (value === undefined) {
-        // Attempt to get default value
-        value = token();
-        if (value === undefined) {
+        // Attempt to get default value, if optional
+        if (token.type === TokenType.Optional) {
+          this.register(token, undefined);
+        } else {
+          // otherwise, we cannot resolve this token
           throw new Error(
-            `Cannot resolve to a default value of 'undefined' for token: ${token.toString()}`
+            `Cannot resolve to a value for token: ${
+              token.name
+            }.  Ensure this token has been registered`
           );
         }
-        this.register(token, value);
       }
-      // get the registered type and resolve it
-      resolving.add(token);
+
+      // Recursive: get the registered type and resolve it
+      resolving.add(getTokenRef(token));
 
       function resolvePlugin(plugin) {
         const registeredDeps = plugin.deps || {};
         const resolvedDeps = {};
         for (const key in registeredDeps) {
           const registeredToken = registeredDeps[key];
-          dependedOn.add(registeredToken);
+          dependedOn.add(getTokenRef(registeredToken));
           resolvedDeps[key] = resolveToken(registeredToken, aliases);
         }
         // `provides` should be undefined if the plugin does not have a `provides` function
@@ -96,6 +103,7 @@ class FusionApp {
         }
         return provides;
       }
+
       let provides = value;
       if (value && value.__plugin__) {
         provides = resolvePlugin(provides);
@@ -112,8 +120,8 @@ class FusionApp {
           provides = nextProvides;
         });
       }
-      resolved.set(token, provides);
-      resolving.delete(token);
+      resolved.set(getTokenRef(token), provides);
+      resolving.delete(getTokenRef(token));
       return provides;
     };
 
@@ -121,22 +129,28 @@ class FusionApp {
       resolveToken(this.plugins[i]);
     }
     for (const aliasPair of allAliases) {
-      const [sourceToken, destToken] = aliasPair;
-      if (dependedOn.has(sourceToken)) {
-        dependedOn.add(destToken);
+      const [sourceTokenRef, destTokenRef] = aliasPair;
+      if (dependedOn.has(sourceTokenRef)) {
+        dependedOn.add(destTokenRef);
       }
     }
     for (const token of nonPluginTokens) {
-      if (!dependedOn.has(token)) {
+      if (!dependedOn.has(getTokenRef(token))) {
         throw new Error(
-          `Registered token without depending on it: ${
-            token instanceof Function ? token() : String(token)
-          }`
+          `Registered token without depending on it: ${token.name}`
         );
       }
     }
     this.plugins = resolvedPlugins;
   }
+}
+
+/* Helper functions */
+function getTokenRef(token) {
+  if (token instanceof TokenImpl) {
+    return token.ref;
+  }
+  return token;
 }
 
 export default FusionApp;

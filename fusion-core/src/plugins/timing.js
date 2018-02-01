@@ -1,7 +1,8 @@
 /* @flow */
 import {createPlugin} from '../create-plugin';
-
 import {memoize} from '../memoize';
+import {createToken} from '../create-token';
+import type {Token} from '../create-token';
 
 type Deferred<T> = {
   promise: Promise<T>,
@@ -31,7 +32,7 @@ const timing: TimingPlugin = {
   from: memoize(() => new Timing()),
 };
 
-export const TimingToken: TimingPlugin = (() => {}: any);
+export const TimingToken: Token<TimingPlugin> = createToken('TimingToken');
 
 function middleware(ctx, next) {
   ctx.memoized = new Map();
