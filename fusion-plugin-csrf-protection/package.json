@@ -37,7 +37,7 @@
     "eslint-plugin-react": "7.6.1",
     "express": "4.16.2",
     "flow-bin": "0.64.0",
-    "fusion-core": "0.3.0-5",
+    "fusion-core": "0.3.0",
     "fusion-test-utils": "0.4.2",
     "fusion-tokens": "0.0.5",
     "generic-session": "0.1.2",
