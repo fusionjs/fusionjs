@@ -1,27 +1,14 @@
 // @flow
 
-// Helpers
-export function createToken(name: string): any {
-  // $FlowFixMe
-  return () => {
-    throw new Error(`Missing required value for token: ${name}.`);
-  };
-}
-
-export function createOptionalToken<Default>(
-  name: string,
-  defaultValue: Default
-): Default {
-  // $FlowFixMe
-  return () => defaultValue;
-}
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
 // Tokens
 type Fetch = (
   input: string | Request,
   init?: RequestOptions
 ) => Promise<Response>;
-export const FetchToken: Fetch = (createToken('FetchToken'): any);
+export const FetchToken: Token<Fetch> = createToken('FetchToken');
 
 type Session = {
   from(
@@ -31,7 +18,7 @@ type Session = {
     set(keyPath: string, val: any): void,
   },
 };
-export const SessionToken: Session = (createToken('SessionToken'): any);
+export const SessionToken: Token<Session> = createToken('SessionToken');
 
 type Logger = {
   log(level: string, arg: any): void,
@@ -42,4 +29,4 @@ type Logger = {
   debug(arg: any): void,
   silly(arg: any): void,
 };
-export const LoggerToken: Logger = (createToken('LoggerToken'): any);
+export const LoggerToken: Token<Logger> = createToken('LoggerToken');
