@@ -9,28 +9,27 @@ Let's see how we can depend on a service that gets instantiated per request:
 ```js
 // src/main.js
 import App from 'fusion-react';
-import JWTSession from 'fusion-plugin-jwt-session';
+import Session from 'fusion-plugin-jwt-session';
 
 export default () => {
-  const app = new App()
-  const Session = app.plugin(JWTSession);
-}
-```
+  const app = new App();
+  const Session = app.register(Session);
+};
 
-Rather than blindly instantiating the service in the `JWTSession` plugin on every single request, this service can now be instantiated on demand.
-
-Let's use this plugin to create a contrived example:
-
-```js
 // src/plugins/name.js
-export default ({Session}) => (ctx, next) => {
-  if (ctx.query.name) {
-    const session = Session.of(ctx);
-    session.set('name', ctx.query.name);
-    ctx.body = {ok: 1};
+export default {
+  deps: {Session: SessionToken},
+  middleware({Session}) {
+    return (ctx, next) => {
+      if (ctx.query.name) {
+        const session = Session.from(ctx);
+        session.set('name', ctx.query.name);
+        ctx.body = {ok: 1};
+      }
+      return next();
+    }
   }
-  return next();
-}
+};
 
 // src/main.js
 import App from 'fusion-react';
@@ -46,17 +45,17 @@ export default () => {
 
 The `Name` plugin simply saves the value in `?name=[value]` to a cookie session if that querystring value is defined.
 
-Notice that the factory function of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.plugin(Name, {Session})` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md).
+Notice that the `middleware` method of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.register(SessionToken, Session)` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#configuration).
 
-We then called `Session.of(ctx)` instead of instantiating the service using the `new` keyword. This ensure that within a single request, we always get the same memoized instance every time we call `Session.of(ctx)`, regardless of which plugin calls it.
+We then called `Session.from(ctx)`, which is how that plugin creates a memoized instance per request.
 
-To illustrate, let's create another contrived plugin to print the the value of the `name` key from the session store:
+Let's create another contrived plugin to print the the value of the `name` key from the session store:
 
 ```js
 // src/plugins/greeting.js
 export default ({Session}) => async (ctx, next) => {
   if (ctx.path === '/greet') {
-    const session = Session.of(ctx);
+    const session = Session.from(ctx);
     ctx.body = {greeting: 'hello ' + await session.get('name')};
   }
   return next();
@@ -64,15 +63,15 @@ export default ({Session}) => async (ctx, next) => {
 
 // src/main.js
 import App from 'fusion-react';
-import JWTSession from 'fusion-plugin-jwt';
+import Session, {SessionToken} from 'fusion-plugin-jwt';
 import Name from './plugins/name';
 import Greeting from './plugins/greeting';
 
 export default () => {
   const app = new App();
-  const Session = app.plugin(JWTSession, {secret: __NODE__ && 'secret'});
-  app.plugin(Name, {Session});
-  app.plugin(Greeting, {Session});
+  const Session = app.register(SessionToken, Session);
+  app.register(Name);
+  app.register(Greeting);
 }
 ```
 

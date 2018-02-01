@@ -4,20 +4,20 @@
 
 ### Guides
 
-- [What is FusionJS](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/what-is-fusion.md)
-- [Getting started](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/getting-started.md)
-- [Framework comparison](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/framework-comparison.md)
+* [What is FusionJS](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/what-is-fusion.md)
+* [Getting started](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/getting-started.md)
+* [Framework comparison](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/framework-comparison.md)
 
 ### Core concepts
 
-- [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
-- [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
-  - [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
-  - [Configuring plugins](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md)
-  - [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
-  - [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
-  - [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
-  - [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
+* [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
+* [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
+  * [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
+  * [Configuring plugins](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md)
+  * [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
+  * [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
+  * [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
+  * [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
 
 ---
 
@@ -42,7 +42,10 @@ import App, {ElementToken, RenderToken} from 'fusion-core';
 
 const Hello = () => <div>Hello</div>;
 
-const render = el => __NODE__ ? renderToString(el) : ReactDOM.render(el, document.getElementById('root'));
+const render = el =>
+  __NODE__
+    ? renderToString(el)
+    : ReactDOM.render(el, document.getElementById('root'));
 
 export default function() {
   const app = new App();
@@ -72,7 +75,6 @@ An application can receive any number of plugins, which can augment the behavior
 
 Typically a plugin works similarly to a Koa middleware.
 
-
 #### App Instance members
 
 ##### app.register
@@ -81,42 +83,43 @@ Typically a plugin works similarly to a Koa middleware.
 app.register([Token,] Plugin | Value);
 ```
 
-- `Token: Object` - Optional. A token to register the plugin under. 
-- `Plugin: Object` - The result from calling `createPlugin` to be registered
-- `Value: any` - The value to be registered. Alternative to Plugin.
+* `Token: Object` - Optional. A token to register the plugin under.
+* `Plugin: Object` - The result from calling `createPlugin` to be registered
+* `Value: any` - The value to be registered. Alternative to Plugin.
 
 Call this method to register a plugin into a FusionJS application. An optional token can be passed as the first
-argument to allow integrating the plugin into the FusionJS dependency injection system. 
+argument to allow integrating the plugin into the FusionJS dependency injection system.
 
 ##### app.middleware
 
 ```js
-app.middleware(Dependencies, (deps) => Middleware);
+app.middleware(Dependencies, deps => Middleware);
 app.middleware(Middleware);
 ```
 
-This method is a useful shortcut for registering middleware plugins. 
+This method is a useful shortcut for registering middleware plugins.
 
 ##### app.enhance
 
 ```js
-app.enhance(Token, (value) => Plugin | Value);
+app.enhance(Token, value => Plugin | Value);
 ```
 
-This method is useful for composing / enhancing functionality of existing tokens in the DI system. 
+This method is useful for composing / enhancing functionality of existing tokens in the DI system.
 For example, if you wanted to add a header to every request sent using the registered `fetch`.
+
 ```js
 app.register(FetchToken, window.fetch);
-app.enhance(FetchToken, (fetch) => {
+app.enhance(FetchToken, fetch => {
   return (url, params = {}) => {
     return fetch(url, {
       ...params,
       headers: {
         ...params.headers,
         'x-test': 'test',
-      }
+      },
     });
-  }
+  };
 });
 ```
 
@@ -125,7 +128,7 @@ the enhancer to have dependencies and even middleware.
 
 ```js
 app.register(FetchToken, window.fetch);
-app.enhance(FetchToken, (fetch) => {
+app.enhance(FetchToken, fetch => {
   return createPlugin({
     provides: () => (url, params = {}) => {
       return fetch(url, {
@@ -133,9 +136,9 @@ app.enhance(FetchToken, (fetch) => {
         headers: {
           ...params.headers,
           'x-test': 'test',
-        }
+        },
       });
-    }
+    },
   });
 });
 ```
@@ -156,7 +159,10 @@ The element token is used to register the root element with the fusion app. This
 ```js
 import ReactDOM from 'react-dom';
 import {renderToString} from 'react-dom/server';
-const render = el => __NODE__ ? renderToString(el) : ReactDOM.render(el, document.getElementById('root'));
+const render = el =>
+  __NODE__
+    ? renderToString(el)
+    : ReactDOM.render(el, document.getElementById('root'));
 import App, {RenderToken} from 'fusion-core';
 const app = new App();
 app.register(RenderToken, render);
@@ -188,8 +194,8 @@ export default createPlugin({
   middleware: ({depA, depB}, thing) => {
     return (ctx, next) => {
       return next();
-    }
-  }
+    };
+  },
 });
 ```
 
@@ -201,14 +207,14 @@ import {createPlugin} from 'fusion-core';
 const ConsoleLoggerPlugin = createPlugin({
   provides: () => {
     return console;
-  }
+  },
 });
 ```
 
 In order to use plugins, you need to register them with your FusionJS application. You do this by calling
 `app.register` with the plugin and a token for that plugin. The token is simply a value used to keep track of
 what plugins are registered, and to allow plugins to depend on one another. Tokens also work nicely with `flow`.
-You can think of Tokens like interfaces. We keep a list of standard tokens in the `fusion-tokens` repository. 
+You can think of Tokens like interfaces. We keep a list of standard tokens in the `fusion-tokens` repository.
 Lets finish up this logger example:
 
 ```js
@@ -237,7 +243,7 @@ const APIPlugin = createPlugin({
   },
   provides: ({logger}) => {
     return new APIClient(logger);
-  }
+  },
 });
 ```
 
@@ -245,13 +251,13 @@ The API plugin is declaring that it needs a logger that matches the api document
 
 ## Middleware
 
-A middleware function is essentially a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some FusionJS-specific properties, and a `next` callback function. 
+A middleware function is essentially a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some FusionJS-specific properties, and a `next` callback function.
 However, it has some additional properties on `ctx` and can run both on the `server` and the `browser`.
 
 ```js
 const middleware = (ctx, next) => {
   return next();
-}
+};
 ```
 
 In FusionJS, the `next()` call represents the time when virtual dom rendering happens. Typically, you'll want to run all your logic before that, and simply have a `return next()` statement at the end of the function. Even in cases where virtual DOM rendering is not applicable, this pattern is still the simplest way to write a middleware.
@@ -267,7 +273,7 @@ const middleware = () => async (ctx, next) => {
 
   // this happens after virtual rendeing, but before the response is sent to the browser
   console.log('timing: ', new Date() - start);
-}
+};
 ```
 
 Plugins can add dependency injected middlewares. Lets try adding a middleware to our api plugin.
@@ -286,8 +292,8 @@ const APIPlugin = createPlugin({
       // do middleware things...
       await next();
       // do middleware things...
-    }
-  }
+    };
+  },
 });
 ```
 
@@ -300,7 +306,6 @@ const APIPlugin = createPlugin({
 A plugin can be used to implement a RESTful HTTP endpoint. To achieve this, simply run code conditionally based on the url of the request
 
 ```js
-
 app.middleware(async (ctx, next) => {
   if (ctx.method === 'GET' && ctx.path === '/api/v1/users') {
     ctx.body = await getUsers();
@@ -347,7 +352,8 @@ import VersionPlugin from './plugins/version-plugin';
 
 const root = <div>Hello world</div>;
 
-const render = el => __NODE__ ? renderToString(el) : render(el, document.getElementById('root'));
+const render = el =>
+  __NODE__ ? renderToString(el) : render(el, document.getElementById('root'));
 
 export default function() {
   const app = new App(root, render);
@@ -364,79 +370,79 @@ export default function() {
 
 Middlewares receive a `ctx` object as their first argument. This object has a property called `element` in both server and client.
 
-- `ctx: Object`
-  - `element: Object`
+* `ctx: Object`
+  * `element: Object`
 
 In the server, `ctx` also exposes the same properties as a [Koa context](http://koajs.com/#context)
 
-- `ctx: Object`
-  - `header: Object` - alias of `ctx.headers`
-  - `headers: Object` - map of parsed HTTP headers
-  - `method: string` - HTTP method
-  - `url: string` - request URL
-  - `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for url rewriting)
-  - `path: string` - request pathname
-  - `query: Object` - parsed querystring as an object
-  - `querystring: string` - querystring without `?`
-  - `host: string` - host and port
-  - `hostname: string`
-  - `origin: string` - request origin, including protocol and host
-  - `href: string` - full URL including protocol, host and url
-  - `fresh: boolean` - check for cache negotiation
-  - `stale: boolean` - inverse of `fresh`
-  - `socket: Socket` - request socket
-  - `protocol: string`
-  - `secure: boolean`
-  - `ip: string` - remote IP address
-  - `ips: Array<string>` - proxy IPs
-  - `subdomains: Array<string>`
-  - `is: (...types: ...string) => boolean` - response type check
-  - `accepts: (...types: ...string) => boolean` - request MIME type check
-  - `acceptsEncoding: (...encodings: ...string) => boolean`
-  - `acceptsCharset: (...charsets: ...string) => boolean`
-  - `acceptsLanguage: (...languages: ...string) => boolean`
-  - `get: (name: String) => string` - returns a header
-  - `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
-  - `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
-  - `request: Request` - [Koa's `request` object](https://github.com/koajs/koa/blob/master/docs/api/request.md)
-  - `response: Response` - [Koa's `response` object](https://github.com/koajs/koa/blob/master/docs/api/response.md)
-  - `state: Object` - A state bag for Koa middlewares
-  - `app: Object` - a reference to the Koa instance
-  - `cookies: {get, set}`
-    - `get: (name: string, options: ?Object) => string` - get a cookie
-      - `name: string`
-      - `options: {signed: boolean}`
-    - `set: (name: string, value: string, options: ?Object)`
-      - `name: string`
-      - `value: string`
-      - `options: Object` - Optional
-        - `maxAge: number` - a number representing the milliseconds from Date.now() for expiry
-        - `signed: boolean` - sign the cookie value
-        - `expires: Date` - a Date for cookie expiration
-        - `path: string` - cookie path, /' by default
-        - `domain: string` - cookie domain
-        - `secure: boolean` - secure cookie
-        - `httpOnly: boolean` - server-accessible cookie, true by default
-        - `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
-  - `throw: (status: number, message: ?string, properties: ?Object) => void` - throws an error
-    - `status: number` - HTTP status code
-    - `message: string` - error message
-    - `properties: Object` - is merged to the error object
-  - `assert: (value: any, status: ?number, message: ?string, properties)` - throws if value is falsy
-    - `value: any`
-    - `status: number` - HTTP status code
-    - `message: string` - error message
-    - `properties: Object` - is merged to the error object
-  - `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
+* `ctx: Object`
+  * `header: Object` - alias of `ctx.headers`
+  * `headers: Object` - map of parsed HTTP headers
+  * `method: string` - HTTP method
+  * `url: string` - request URL
+  * `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for url rewriting)
+  * `path: string` - request pathname
+  * `query: Object` - parsed querystring as an object
+  * `querystring: string` - querystring without `?`
+  * `host: string` - host and port
+  * `hostname: string`
+  * `origin: string` - request origin, including protocol and host
+  * `href: string` - full URL including protocol, host and url
+  * `fresh: boolean` - check for cache negotiation
+  * `stale: boolean` - inverse of `fresh`
+  * `socket: Socket` - request socket
+  * `protocol: string`
+  * `secure: boolean`
+  * `ip: string` - remote IP address
+  * `ips: Array<string>` - proxy IPs
+  * `subdomains: Array<string>`
+  * `is: (...types: ...string) => boolean` - response type check
+  * `accepts: (...types: ...string) => boolean` - request MIME type check
+  * `acceptsEncoding: (...encodings: ...string) => boolean`
+  * `acceptsCharset: (...charsets: ...string) => boolean`
+  * `acceptsLanguage: (...languages: ...string) => boolean`
+  * `get: (name: String) => string` - returns a header
+  * `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
+  * `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
+  * `request: Request` - [Koa's `request` object](https://github.com/koajs/koa/blob/master/docs/api/request.md)
+  * `response: Response` - [Koa's `response` object](https://github.com/koajs/koa/blob/master/docs/api/response.md)
+  * `state: Object` - A state bag for Koa middlewares
+  * `app: Object` - a reference to the Koa instance
+  * `cookies: {get, set}`
+    * `get: (name: string, options: ?Object) => string` - get a cookie
+      * `name: string`
+      * `options: {signed: boolean}`
+    * `set: (name: string, value: string, options: ?Object)`
+      * `name: string`
+      * `value: string`
+      * `options: Object` - Optional
+        * `maxAge: number` - a number representing the milliseconds from Date.now() for expiry
+        * `signed: boolean` - sign the cookie value
+        * `expires: Date` - a Date for cookie expiration
+        * `path: string` - cookie path, /' by default
+        * `domain: string` - cookie domain
+        * `secure: boolean` - secure cookie
+        * `httpOnly: boolean` - server-accessible cookie, true by default
+        * `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
+  * `throw: (status: number, message: ?string, properties: ?Object) => void` - throws an error
+    * `status: number` - HTTP status code
+    * `message: string` - error message
+    * `properties: Object` - is merged to the error object
+  * `assert: (value: any, status: ?number, message: ?string, properties)` - throws if value is falsy
+    * `value: any`
+    * `status: number` - HTTP status code
+    * `message: string` - error message
+    * `properties: Object` - is merged to the error object
+  * `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
 
 Additionally, when server-side rendering a page, FusionJS sets `ctx.template` to an object with the following properties:
 
-- `ctx: Object`
-  - `template: Object`
-    - `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
-    - `title: string` - The content for the `<title>` tag. Default: empty string
-    - `head: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
-    - `body: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
+* `ctx: Object`
+  * `template: Object`
+    * `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
+    * `title: string` - The content for the `<title>` tag. Default: empty string
+    * `head: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
+    * `body: Array` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
 
 When a request does not require a server-side render, `ctx.body` follows regular Koa semantics.
 
@@ -464,14 +470,14 @@ If `userData` above was `<script>alert(1)</script>`, ththe string would be autom
 If your HTML is complex and needs to be broken into smaller strings, you can also nest sanitized HTML strings like this:
 
 ```js
-const notUserData = html`<h1>Hello</h1>`
-const body = html`<div>${notUserData}</div>`
+const notUserData = html`<h1>Hello</h1>`;
+const body = html`<div>${notUserData}</div>`;
 ```
 
 Note that you cannot mix sanitized HTML with unsanitized strings:
 
 ```js
-ctx.template.body.push(html`<h1>Safe</h1>` + 'not safe') // will throw an error when rendered
+ctx.template.body.push(html`<h1>Safe</h1>` + 'not safe'); // will throw an error when rendered
 ```
 
 Also note that only template strings can have template tags (i.e. <code>html&#x60;&lt;div&gt;&lt;/div&gt;&#x60;</code>). The following are NOT valid Javascript: `html"<div></div>"` and `html'<div></div>'`.
@@ -485,7 +491,11 @@ If you have already taken steps to sanitize your input against XSS and don't wis
 Here's how to serialize JSON data in the server:
 
 ```js
-ctx.template.body.push(html`<script id="__MY_DATA__" type="text/plain">${JSON.stringify(data)}</script>`);
+ctx.template.body.push(
+  html`<script id="__MY_DATA__" type="text/plain">${JSON.stringify(
+    data
+  )}</script>`
+);
 ```
 
 Here's how to deserialize it in the browser:
@@ -493,5 +503,7 @@ Here's how to deserialize it in the browser:
 ```js
 import {unescape} from 'fusion-core';
 
-const data = JSON.parse(unescape(document.getElementById('__MY_DATA__').innerHTML));
+const data = JSON.parse(
+  unescape(document.getElementById('__MY_DATA__').innerHTML)
+);
 ```

@@ -10,17 +10,207 @@ At the same time, plugins are designed so that dependencies are injectable, and 
 
 Examples of areas of concern that a plugin can encapsulate include CSS-in-JS, RPC, CSRF protection, translations, etc.
 
-## Types of plugins
+## Plugin structure
 
-There are two common "types" of plugins: middlewares and services.
+A plugin is created via the `createPlugin`:
 
-A [middleware plugin](#middlewares) specifies how the application should respond to a specific HTTP request. Middlewares are typically used to implement [endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md), [providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md) and to [modify the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md).
+```js
+import {createPlugin} from 'fusion-core';
 
-A [service plugin](#services) exposes a programmatic API that can be used by other plugins.
+export default createPlugin({
+  deps: dependencies,
+  provides() {
+    return service;
+  }
+  middleware() {
+    return middleware;
+  }
+});
+```
 
-Complex plugins can be both at the same time.
+The `createPlugin` function accepts three optional named parameters: `deps`, `provides`, and `middleware`.
 
-When writing a plugin you should always export a function that returns either a middleware or a instance of the `Plugin` class.
+* `deps: Object` - a map of dependencies
+* `provides: (deps: Object) => T` - receives resolved dependencies as named arguments and returns a service
+* `middleware: (deps: Object, service: T) => (ctx: FusionContext, next: () => Promise) => Promise` - receives dependencies and the provided service and returns a middleware.
+
+---
+
+## Dependency injection
+
+A dependency is anything that has a programmatic API which can be consumed by another part of your web application, and which one might reasonably want to mock in a test.
+
+In FusionJS, dependencies are registered to tokens via `app.register`:
+
+```js
+// src/main.js
+import App from 'fusion-react';
+import {LoggerToken} from 'fusion-tokens';
+
+export default () => {
+  const app = new App();
+
+  app.register(LoggerToken, console); // register a logger
+
+  return app;
+};
+```
+
+Plugins can signal that they depend on something by referencing a token. Let's suppose there's an `Example` plugin that looks like this:
+
+```js
+// src/plugins/example.js
+import {LoggerToken} from 'fusion-tokens';
+
+export default createPlugin({
+  deps: {logger: LoggerToken},
+});
+```
+
+The code above means that the `Example` plugin depends on whatever `LoggerToken` represents. In other words, the following entry point would throw an error about a missing `LoggerToken` dependency:
+
+```js
+// src/main.js
+import App from 'fusion-react';
+import Example from './plugins/example.js';
+
+export default () => {
+  const app = new App();
+  app.register(Example);
+  return app;
+};
+
+// throws 'Cannot resolve to a default value of 'undefined' for token: LoggerToken'
+```
+
+The error occurs because we've specified that `LoggerToken` is a dependency of the `Example` plugin, via its `deps` field. To resolve the error, you would then need to register the dependency:
+
+```js
+// src/main.js
+import App from 'fusion-react';
+import {LoggerToken} from 'fusion-tokens';
+import Example from './plugins/example.js';
+
+export default () => {
+  const app = new App();
+  app.register(Example);
+  app.register(LoggerToken, console);
+  return app;
+};
+
+// everything's peachy now
+```
+
+Note that nothing depends on `Example`, so we don't need to register it to a token. Later, we'll look into how we can make [the `Example` plugin do something with the logger it depends on](#services-with-dependencies).
+
+Also note that we can register dependencies in any order. In this case, we registered `console` after `Example` even though `Example` depends on `console`.
+
+### Overriding dependencies
+
+One benefit of registering `console` as a dependency is that we can mock it in tests, by simply re-registering something else to the `LoggerToken`.
+
+```js
+// src/__tests__/index.js
+import test from 'tape-cup';
+import createApp from '../main.js';
+
+test('my test', t => {
+  const app = createApp();
+
+  // override the logger with a mock
+  app.register(LoggerToken, noopLogger);
+
+  // now we can run an end-to-end test without polluting logs
+
+  t.end();
+});
+```
+
+If we had hard-coded `console` everywhere, it would be difficult to mock it in an integration or e2e test.
+
+---
+
+## Providing services
+
+Plugins can provide a programmatic interface and be registered as dependencies for other plugins via `provides`.
+
+```js
+// src/plugins/example.js
+import {createToken, LoggerToken} from 'fusion-tokens';
+
+export const ExampleToken = createToken('ExampleToken');
+
+export default createPlugin({
+  provides() {
+    return {
+      sayHello() {
+        console.log('hello world');
+      },
+    };
+  },
+});
+```
+
+The example above exports a plugin that resolves to an object with a `sayHello` method.
+
+It also exports a token called `ExampleToken`, which can be used by other plugins that want to depend on the `Example` plugin.
+
+### Services with dependencies
+
+We can expand the `Example` plugin above to consume the logger that we registered.
+
+```js
+// src/plugins/example.js
+import {createToken, LoggerToken} from 'fusion-tokens';
+
+export const ExampleToken = createToken('ExampleToken');
+
+export default createPlugin({
+  deps: {logger: LoggerToken},
+  provides({logger}) {
+    return {
+      sayHello() {
+        logger.log('hello world');
+      },
+    };
+  },
+});
+```
+
+Similarly, if we wanted to log `"hello world"`, we can create another plugin that depends on the `Example` plugin:
+
+```js
+// src/plugins/foo.js
+import {createToken} from 'fusion-tokens';
+import {ExampleToken} from '';
+
+export const ExampleToken = createToken('ExampleToken');
+
+export default createPlugin({
+  deps: {example: ExampleToken},
+  provides({example}) {
+    example.sayHello();
+  },
+});
+```
+
+And then register the dependencies accordingly:
+
+```js
+// src/main.js
+import App from 'fusion-react';
+import {LoggerToken} from 'fusion-tokens';
+import Example, {ExampleToken} from './plugins/example.js';
+import Foo from './plugins/foo.js';
+
+export default () => {
+  const app = new App();
+  app.register(LoggerToken, console);
+  app.register(ExampleToken, Example);
+  app.register(Foo);
+  return app;
+};
+```
 
 ---
 
@@ -28,84 +218,111 @@ When writing a plugin you should always export a function that returns either a 
 
 One of the most common use case for creating a plugin for an application is to implement HTTP endpoints.
 
-To do so, a plugin would typically look like this:
+To do so, a plugin would look like this:
 
 ```js
 // src/api/hello.js
 
-export default () => (ctx, next) => {
-  if (ctx.method === 'POST' && ctx.path === '/api/hello') {
-    ctx.body = {greeting: 'hello'};
-  }
-  return next();
+export default createPlugin({
+  middleware() {
+    return (ctx, next) => {
+      if (ctx.method === 'POST' && ctx.path === '/api/hello') {
+        ctx.body = {greeting: 'hello'};
+      }
+      return next();
+    }
+  },
 }
 ```
 
-Let's break this down. Here, we export a _factory_ function that returns a _middleware_ function.
+### Middlewares with dependencies
 
-```js
-export default () => // this is the factory function
-  (ctx, next) => { // this is the middleware function
-    if (ctx.method === 'POST' && ctx.path === '/api/hello') {
-      ctx.body = {greeting: 'hello'};
-    }
-    return next();
-  }
-```
-
-### Dependency management
-
-The factory function can receive [dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md) as arguments. This makes it possible mock those dependencies when we want to test the plugin.
+Just like the `provides` method, the `middleware` method can receive dependencis as arguments.
 
 For example, let's say we want to inject a logger:
 
 ```js
 // src/api/hello.js
+import {LoggerToken} from 'fusion-tokens';
 
-export default ({console}) => (ctx, next) => {
-  if (ctx.method === 'POST' && ctx.path === '/api/hello') {
-    ctx.body = {greeting: 'hello'};
-    console.log('hello');
+export default createPlugin({
+  deps: {console: LoggerToken}
+  middleware({console}) {
+    return (ctx, next) => {
+      if (ctx.method === 'POST' && ctx.path === '/api/hello') {
+        ctx.body = {greeting: 'hello'};
+        console.log('hello');
+      }
+      return next();
+    }
   }
-  return next();
-}
+};
 ```
 
-Now we can easily swap logger implementations as long as they conform to a common interface, and we can just as easily mock or noop the logger in tests as needed.
+### Middlewares with services
+
+The `middleware` method also receives the return value of `provides` as its second argument, which allows the middleware to consume the programmatic API that the plugin provides:
+
+```js
+// src/plugins/example.js
+import {createToken, LoggerToken} from 'fusion-tokens';
+
+export const ExampleToken = createToken('ExampleToken');
+
+export default createPlugin({
+  deps: {logger: LoggerToken},
+  provides({logger}) {
+    return {
+      sayHello() {
+        logger.log('hello world');
+      },
+    };
+  },
+  middleware({logger}, greeter) {
+    return (ctx, next) => {
+      greeter.sayHello();
+      return next();
+    };
+  },
+});
+```
 
 ### Configuration
 
-Similarly, the factory function can also receive configuration. For example, let's say we want to configure the endpoint url:
+Configuration values can be registered to tokens in the same way plugins can:
 
 ```js
-// src/api/hello.js
+// src/main.js
+import App from 'fusion-react';
+import SomePlugin, {ConfigToken} from './plugins/some-plugin.js';
 
-export default ({url = '/api/hello'}) => (ctx, next) => {
-  if (ctx.method === 'POST' && ctx.path === url) {
-    ctx.body = {greeting: 'hello'};
+export default () => {
+  const app = new App();
+  app.register(SomePlugin);
+  app.register(ConfigToken, 'hello');
+  return app;
+};
+
+// src/plugins/some-plugin.js
+import {createPlugin} from 'fusion-core';
+import {createToken} from 'fusion-tokens';
+
+export const ConfigToken = createToken('ConfigToken');
+export default createPlugin({
+  deps: {config: ConfigToken},
+  provides() {
+    return {
+      greet() {
+        return config; // returns 'hello'
+      }
+    }
   }
-  return next();
-}
+})
 ```
 
 Both dependencies and configuration need to be specified when the plugin is registered in `src/main.js`.
 
-To register a plugin, call `app.plugin()`. The first argument should be the factory function, and the second argument is an optional map of dependencies that will get passed to the factory function.
-
-```js
-// src/main.js
-import React from 'react';
-import App from 'fusion-react';
-import Hello from './api/hello';
-
-export default () => {
-  const app = new App(<div>Hello</div>);
-
-  app.plugin(Hello, {url: '/api/hi', console});
-
-  return app;
-}
-```
+---
 
 ### Request lifecycle
 
@@ -122,15 +339,19 @@ In FusionJS, the `next()` call represents the time when virtual dom rendering ha
 In a few more advanced cases, however, you might want to do things _after_ virtual dom rendering. In that case, you can call `await next()` instead:
 
 ```js
-export default () => __NODE__ && async (ctx, next) => {
-  // this happens before virtual dom rendering
-  const start = new Date();
+export default createPlugin({
+  middleware() {
+    return __NODE__ && async (ctx, next) => {
+      // this happens before virtual dom rendering
+      const start = new Date();
 
-  await next();
+      await next();
 
-  // this happens after virtual rendeing, but before the response is sent to the browser
-  console.log('timing: ', new Date() - start);
-}
+      // this happens after virtual rendeing, but before the response is sent to the browser
+      console.log('timing: ', new Date() - start);
+    }
+  }
+});
 ```
 
 ##### Troubleshooting hang-ups
@@ -140,196 +361,3 @@ Note that the `next` function should normally be called once - and only once - p
 It's important to keep in mind that the middleware stack will remain in a pending status if you forget to call `return next()` or will potentially behave erratically if you break the promise chain (for example, by forgetting to use `async/await` or by forgetting to `return` in a non-async function). Breaking the promise chain is useful in a few select obscure cases, for example, short-circuiting the stack when dealing with static assets, but can lead to surprising behavior if done inadvertedly.
 
 If things appear to hang or give you a blank screen, make sure you called `return next()` in your middleware.
-
-If you need a no-op middleware, you can simply not return a function.
-
-```js
-// if we don't need to do anything on page load on the browser,
-// we can simply not return a function at all in the client-side
-export default () => __NODE__ && () => {/* ... */}
-```
-
----
-
-## Services
-
-Often we want to encapsulate some functionality into a single coherent package that exposes a programmatic API that can be consumed by others.
-
-In FusionJS, any class can be a service. Here's how to wrap a service in a plugin:
-
-```sh
-yarn add fusion-core
-```
-
-```js
-import {Plugin} from 'fusion-core';
-
-export default () => {
-  return new Plugin({
-    Service: class SomeService {
-      /* ... */
-    },
-  });
-}
-```
-
-Wrapping a service in a plugin gives consumers a few benefits. One of them is that plugins can memoize instances on a per-request basis, via the `of()` method.
-
-Suppose we have state that is dependent on request data and we want to reuse that state across multiple endpoints and services. We can encapsulate that state in a service:
-
-```js
-// src/my-state.js
-import {Plugin} from 'fusion-core';
-
-export default () => {
-  return new Plugin({
-    Service: class MyState {
-      constructor(ctx) {
-        // Here's some contrived state.
-        // A less contrived example might be decrypting a session cookie
-        // or parsing the accept-language header instead
-        this.url = ctx.url;
-      }
-    },
-  });
-}
-```
-
-### Consuming service plugins
-
-Here's how we can consume this service from other plugins:
-
-```js
-// src/main.js
-import React from 'react';
-import App from 'fusion-react';
-import MyState from './my-state';
-import MyApi from './my-api';
-
-export default () => {
-  const app = new App(<div>Hello</div>);
-
-  const State = app.plugin(MyState); // returns the plugin
-
-  app.plugin(MyApi, {State});
-
-  return app;
-}
-
-// src/my-api.js
-export default ({State}) => (ctx, next) => {
-  if (ctx.method === 'GET' && ctx.path === '/api/my-state') {
-    ctx.body = State.of(ctx).url; // get the instance of MyState
-  }
-}
-```
-
-Since `ctx` is the always the same during the lifetime of a request, every time `State.of(ctx)` is called from the same request, it returns the same instance of the `MyState` class. Naturally, calling it from a different request returns a different instance that is unique to the other request.
-
-The benefit of encapsulating state into a service rather than polluting `ctx` with ad-hoc properties is that an application can scale to any complexity without running into the risk of `ctx` properties getting clobbered by unrelated plugins due to issues like naming collisions.
-
-Encapsulated services are also far easier to test.
-
-### Singleton services
-
-In some cases, it's desirable to enforce that only a single instance of a service exists in an application. To do this, simply use the `SingletonPlugin` instead of the `Plugin` class:
-
-```js
-import {SingletonPlugin} from 'fusion-core';
-
-export default () => {
-  return new SingletonPlugin({
-    Service: class {
-      constructor() {
-        console.log('only gets instantiated once');
-      }
-    },
-  })
-}
-```
-
-The singleton service instance can be acquired using the `.of` method. Calling `.of(ctx)` from a middleware returns the same instance for all requests.
-
-```js
-const Thing = app.plugin(MyThing);
-const instance = Thing.of();
-```
-
-### Advanced plugins
-
-Plugins can have both services and middlewares at the same time. This is useful for complex plugins where there's a need for a programmatic API _and_ a need to act on `ctx`, such wrapping the React tree with providers.
-
-The plugin instance has the following shape `{Service, middleware, of}`.
-
-#### Encapsulating a middleware
-
-To add a service _and_ a middleware to a plugin, simply declare them both as options to the `Plugin` constructor:
-
-```js
-import {Plugin} from 'fusion-core';
-
-export default () => {
-  return new Plugin({
-    Service: class {
-      constructor() {
-        console.log('only gets instantiated once');
-      }
-    },
-    middleware(ctx, next) {
-      console.log('runs on every request');
-      return next();
-    },
-  })
-}
-```
-
-To use a service instance in the middleware, call `this.of(ctx)` from the middleware:
-
-```js
-import {Plugin} from 'fusion-core';
-
-export default () => {
-  return new Plugin({
-    Service: class UrlTeller {
-      constructor(ctx) {
-        this.url = ctx.url
-      }
-      tellUrl() {
-        console.log('The url is ' + this.url);
-      }
-    },
-    middleware(ctx, next) {
-      const urlTeller = this.of(ctx);
-      urlTeller.tellUrl();
-
-      return next();
-    },
-  });
-}
-```
-
-Note: make sure your middleware function is not an arrow function when you use `this`!
-
-#### Static methods in services
-
-To use static methods from the service, you can access the class via the `Service` property:
-
-```js
-// my-thing.js
-export default () => {
-  return new Plugin({
-    Service: class {
-      static someMethod() {
-        // ...
-      }
-    }
-  })
-}
-
-// elsewhere
-import MyThing from './my-thing';
-
-const Thing = app.plugin(MyThing);
-
-Thing.Service.someMethod();
-```

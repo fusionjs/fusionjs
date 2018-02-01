@@ -37,7 +37,7 @@ import App from 'fusion-react';
 The `App` class constructor takes a React element. This is the root element of the application:
 
 ```js
-new App(<div>Hello world</div>)
+new App(<div>Hello world</div>);
 ```
 
 Now that we configured our application, we just need to export a function that returns it:
@@ -49,7 +49,7 @@ import React from 'react';
 
 export default () => {
   return new App(<div>Hello world</div>);
-}
+};
 ```
 
 To run the application, run this command from your CLI:
@@ -89,10 +89,10 @@ import React from 'react';
 export default () => {
   const app = new App(<div>Hello world</div>);
 
-  app.plugin(Styletron);
+  app.register(Styletron);
 
   return app;
-}
+};
 ```
 
 Now, let's move our `<div>` element to a separate file called `src/components/root.js` and replace the div with a styled one:
@@ -115,7 +115,7 @@ import root from './components/root';
 export default () => {
   const app = new App(root);
 
-  app.plugin(Styletron);
+  app.register(Styletron);
 
   return app;
 }
@@ -138,7 +138,7 @@ import root from './components/root';
 export default () => {
   const app = new App(root);
 
-  app.plugin(Fonts);
+  app.register(Fonts);
 
   return app;
 }
@@ -147,7 +147,9 @@ export default () => {
 import {html} from 'fusion-core';
 
 export default () => (ctx, next) => {
-  ctx.template.head.push(html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`);
+  if (ctx.element) {
+    ctx.template.head.push(html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`);
+  }
   return next();
 }
 ```
@@ -168,7 +170,11 @@ import {assetUrl} from 'fusion-core';
 
 const Panel = styled('div', {background: 'silver'});
 
-export default <Panel><img src={assetUrl('../../static/image.gif')} /></Panel>;
+export default (
+  <Panel>
+    <img src={assetUrl('../../static/image.gif')} />
+  </Panel>
+);
 ```
 
 Note that the argument to `assetUrl` needs to be a compile-time static string literal.
@@ -181,22 +187,21 @@ Here are some more in-depth sections covering various aspects of FusionJS:
 
 #### Core concepts
 
-- [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
-- [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
-  - [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
-  - [Configuring plugins](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/configuring-plugins.md)
-  - [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
-  - [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
-  - [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
-  - [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
+* [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
+* [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
+  * [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
+  * [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
+  * [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
+  * [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
+  * [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
 
 #### Plugins
 
 Check out the links below to help you get familiar with other useful plugins that are provided by the FusionJS team:
 
-- [Styletron](https://github.com/fusionjs/fusion-plugin-styletron-react)
-- [React Router](https://github.com/fusionjs/fusion-plugin-react-router)
-- [RPC/Redux](https://github.com/fusionjs/fusion-plugin-rpc-redux-react)
-- [I18n](https://github.com/fusionjs/fusion-plugin-i18n-react)
-- [Error handling](https://github.com/fusionjs/fusion-plugin-error-handling)
-- [Logging](https://github.com/fusionjs/fusion-plugin-universal-logger)
+* [Styletron](https://github.com/fusionjs/fusion-plugin-styletron-react)
+* [React Router](https://github.com/fusionjs/fusion-plugin-react-router)
+* [RPC/Redux](https://github.com/fusionjs/fusion-plugin-rpc-redux-react)
+* [I18n](https://github.com/fusionjs/fusion-plugin-i18n-react)
+* [Error handling](https://github.com/fusionjs/fusion-plugin-error-handling)
+* [Logging](https://github.com/fusionjs/fusion-plugin-universal-logger)

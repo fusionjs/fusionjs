@@ -2,10 +2,10 @@
 
 The HTML template of a FusionJS plugin can be modified via middleware plugins.
 
-When a page is server-side rendered, the `ctx.body` property in the middleware is an object:
+When a page is server-side rendered, the `ctx.template` property in the middleware is an object:
 
 ```js
-ctx.body = {
+ctx.template = {
   htmlAttrs: {}
   title: '',
   head: [],
@@ -17,18 +17,18 @@ To modify the title, simply do:
 
 ```js
 export default () => (ctx, next) => {
-  ctx.body.title = 'the new title';
+  ctx.template.title = 'the new title';
   return next();
-}
+};
 ```
 
 Similarly, to add attributes to the `<html>` tag, do:
 
 ```js
 export default () => (ctx, next) => {
-  ctx.body.htmlAttrs.lang = 'en-US';
+  ctx.template.htmlAttrs.lang = 'en-US';
   return next();
-}
+};
 ```
 
 To add arbitrary HTML to `<head>` and `<body>`, however, you must sanitize the HTML to ensure that there's no risk of an XSS attack from unsanitized user data.
@@ -39,9 +39,11 @@ To sanitize HTML, simply use the `html` template tag:
 import {html} from 'fusion-core';
 
 export default () => (ctx, next) => {
-  ctx.head.push(html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`);
+  ctx.template.head.push(
+    html`<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />`
+  );
   return next();
-}
+};
 ```
 
 The `html` template tag sanitizes template string interpolations and return a _safe_ string.
@@ -67,12 +69,17 @@ import {html, unescape} from 'fusion-core';
 
 export default () => (ctx, next) => {
   if (__NODE__) {
-    const data = {/* some data */}
-    ctx.head.push(html`<meta id="__MY_DATA__" content="${JSON.stringify(data)}">`);
+    const data = {
+      /* some data */
+    };
+    ctx.template.head.push(
+      html`<meta id="__MY_DATA__" content="${JSON.stringify(data)}">`
+    );
   } else {
-    const data = JSON.parse(unescape(document.getElementById('__MY_DATA__').content));
+    const data = JSON.parse(
+      unescape(document.getElementById('__MY_DATA__').content)
+    );
   }
   return next();
-}
+};
 ```
-
