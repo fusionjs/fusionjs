@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.59.0",
-    "fusion-core": "0.2.8",
+    "fusion-core": "0.3.0",
     "fusion-react-async": "0.1.4",
     "prettier": "1.4.2",
     "react": "16.2.0",
@@ -52,7 +52,7 @@
     "prepublish": "npm run transpile"
   },
   "peerDependencies": {
-    "fusion-core": "^0.2.4",
+    "fusion-core": "^0.3.0",
     "fusion-react-async": "^0.1.4",
     "react": "14.x - 16.x",
     "react-apollo": "^2.0.1",
