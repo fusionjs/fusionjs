@@ -9,13 +9,13 @@ export class TokenImpl {
   name: string;
   ref: mixed;
   type: $Values<typeof TokenType>;
+  optional: ?TokenImpl;
 
   constructor(name: string, ref: mixed) {
     this.name = name;
     this.ref = ref || new Ref();
     this.type = ref ? TokenType.Optional : TokenType.Required;
     if (!ref) {
-      // $FlowFixMe
       this.optional = new TokenImpl(name, this.ref);
     }
   }
