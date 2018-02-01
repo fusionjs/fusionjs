@@ -45,7 +45,7 @@
     "flow-bin": "0.64.0",
     "fusion-core": "0.3.0-5",
     "fusion-plugin-universal-events": "0.3.0",
-    "fusion-react": "0.4.1",
+    "fusion-react": "0.4.2",
     "fusion-react-async": "0.1.4",
     "fusion-test-utils": "0.4.0",
     "fusion-tokens": "0.0.5",
