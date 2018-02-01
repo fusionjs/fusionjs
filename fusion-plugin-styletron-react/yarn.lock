@@ -723,8 +723,8 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.0.tgz#b85a0bcf1e1cc84eb4901b7e96966aedc6f078d1"
 
 "@types/react@*":
-  version "16.0.35"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.35.tgz#7ce8a83cad9690fd965551fc513217a74fc9e079"
+  version "16.0.36"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.36.tgz#ceb5639013bdb92a94147883052e69bb2c22c69b"
 
 "@types/rimraf@^0.0.28":
   version "0.0.28"
@@ -2421,9 +2421,9 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@0.3.0-5:
-  version "0.3.0-5"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0-5.tgz#b6ad6ea3f7dcdb6517dc31214f64856727c5800c"
+fusion-core@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0.tgz#0ce2a5b17c2e1948f05fbcdee808c7bcf5d8eadf"
   dependencies:
     koa "^2.3.0"
     koa-compose "^4.0.0"
