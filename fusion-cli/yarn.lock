@@ -11,18 +11,18 @@
     js-tokens "^3.0.0"
 
 "@babel/code-frame@^7.0.0-beta.35":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.38.tgz#c0af5930617e55e050336838e3a3670983b0b2b2"
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.39.tgz#91c90bb65207fc5a55128cb54956ded39e850457"
   dependencies:
     chalk "^2.0.0"
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/helper-builder-react-jsx@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.38.tgz#a6f8ffcdd3d48a257e33cfcc1f089e16bd2ce7de"
+"@babel/helper-builder-react-jsx@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.39.tgz#ccac98469704b15c27ef0752bb125aec900c405a"
   dependencies:
-    "@babel/types" "7.0.0-beta.38"
+    "@babel/types" "7.0.0-beta.39"
     esutils "^2.0.0"
 
 "@babel/helper-function-name@7.0.0-beta.36":
@@ -39,42 +39,42 @@
   dependencies:
     "@babel/types" "7.0.0-beta.36"
 
-"@babel/plugin-syntax-jsx@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-beta.38.tgz#1644f05630105cdbf0d6b4285f62af79fd8dd37f"
+"@babel/plugin-syntax-jsx@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-beta.39.tgz#c7f0d1a7e6bbe503a814a265d7d7322f2b230bf6"
 
-"@babel/plugin-transform-react-display-name@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.38.tgz#95b406c30fd6569f90e15003b2b9296c38d0b77e"
+"@babel/plugin-transform-react-display-name@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.39.tgz#450f3ff1e42761af45119888d9c32c6cc54ad091"
 
-"@babel/plugin-transform-react-jsx-self@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-beta.38.tgz#1cd41178d16373a64280de0d62355c96e8fbe6af"
+"@babel/plugin-transform-react-jsx-self@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-beta.39.tgz#ad2f4f357b5be61929d989b5be60dac943e8434a"
   dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.38"
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.39"
 
-"@babel/plugin-transform-react-jsx-source@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-beta.38.tgz#05e4420dc2b6368f22ce83b29fb86a08ad22fadf"
+"@babel/plugin-transform-react-jsx-source@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-beta.39.tgz#632decbb1ad66592a3fae6cac3103b820bc89877"
   dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.38"
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.39"
 
-"@babel/plugin-transform-react-jsx@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-beta.38.tgz#6abd97c2dde5a007f0fba77d4c4bd7b2a68e7316"
+"@babel/plugin-transform-react-jsx@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-beta.39.tgz#43157bc2274fa3b6925f67ae1ccec03f9421432f"
   dependencies:
-    "@babel/helper-builder-react-jsx" "7.0.0-beta.38"
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.38"
+    "@babel/helper-builder-react-jsx" "7.0.0-beta.39"
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.39"
 
 "@babel/preset-react@^7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.38.tgz#eb42433a72314f14f28be7fe2b092c9a9a3294cb"
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.39.tgz#e2ee52660233016c05fc1f211ab20d1141e848d0"
   dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.38"
-    "@babel/plugin-transform-react-display-name" "7.0.0-beta.38"
-    "@babel/plugin-transform-react-jsx" "7.0.0-beta.38"
-    "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.38"
-    "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.38"
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.39"
+    "@babel/plugin-transform-react-display-name" "7.0.0-beta.39"
+    "@babel/plugin-transform-react-jsx" "7.0.0-beta.39"
+    "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.39"
+    "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.39"
 
 "@babel/template@7.0.0-beta.36":
   version "7.0.0-beta.36"
@@ -106,9 +106,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@babel/types@7.0.0-beta.38":
-  version "7.0.0-beta.38"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.38.tgz#2ce2443f7dc6ad535a67db4940cbd34e64035a6f"
+"@babel/types@7.0.0-beta.39":
+  version "7.0.0-beta.39"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.39.tgz#2ea0d97efe4781688751edc68cde640d6559938c"
   dependencies:
     esutils "^2.0.2"
     lodash "^4.2.0"
@@ -1674,7 +1674,7 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-coa@~2.0.0:
+coa@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/coa/-/coa-2.0.1.tgz#f3f8b0b15073e35d70263fb1042cb2c023db38af"
   dependencies:
@@ -2002,7 +2002,7 @@ css-what@2.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-2.1.0.tgz#9467d032c38cfaefb9f2d79501253062f87fa1bd"
 
-csso@^3.3.1:
+csso@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/csso/-/csso-3.5.0.tgz#acdbba5719e2c87bc801eadc032764b2e4b9d4e7"
   dependencies:
@@ -3246,8 +3246,8 @@ fusion-plugin-react-router@0.4.0:
     react-router-dom "^4.2.2"
 
 fusion-plugin-universal-events@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.0.tgz#fb88370679b36ae70a6140ac89f84a1e2009ddd1"
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.2.tgz#110c4bb7a4387cf204d10913b2c572e22f99df4c"
   dependencies:
     koa-bodyparser "4.2.0"
 
@@ -3257,9 +3257,9 @@ fusion-react-async@0.1.4:
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.1.tgz#d411ebc389ae22e1bfd7e1058d66ac0d19b4d64a"
+fusion-react@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.2.tgz#00fbaebb62c4a616feb0be1c4dc3f0202e4d3371"
 
 fusion-test-utils@0.4.2:
   version "0.4.2"
@@ -3403,8 +3403,8 @@ globals@^10.0.0:
   resolved "https://registry.yarnpkg.com/globals/-/globals-10.4.0.tgz#5c477388b128a9e4c5c5d01c7a2aca68c68b2da7"
 
 globals@^11.0.1, globals@^11.1.0:
-  version "11.2.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-11.2.0.tgz#aa2ece052a787563ba70a3dcd9dc2eb8a9a0488c"
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-11.3.0.tgz#e04fdb7b9796d8adac9c8f64c14837b2313378b0"
 
 globals@^9.18.0:
   version "9.18.0"
@@ -4671,8 +4671,8 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jsdom@^11.5.1:
-  version "11.6.1"
-  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-11.6.1.tgz#43fffc10072597a8ee9680cba46900d9e4dbeba2"
+  version "11.6.2"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-11.6.2.tgz#25d1ef332d48adf77fc5221fe2619967923f16bb"
   dependencies:
     abab "^1.0.4"
     acorn "^5.3.0"
@@ -4687,7 +4687,7 @@ jsdom@^11.5.1:
     html-encoding-sniffer "^1.0.2"
     left-pad "^1.2.0"
     nwmatcher "^1.4.3"
-    parse5 "^4.0.0"
+    parse5 "4.0.0"
     pn "^1.1.0"
     request "^2.83.0"
     request-promise-native "^1.0.5"
@@ -5973,15 +5973,15 @@ parse-passwd@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/parse-passwd/-/parse-passwd-1.0.0.tgz#6d5b934a456993b23d37f40a382d6f1666a8e5c6"
 
+parse5@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
+
 parse5@^3.0.1:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-3.0.3.tgz#042f792ffdd36851551cf4e9e066b3874ab45b5c"
   dependencies:
     "@types/node" "*"
-
-parse5@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
 
 parseurl@^1.3.0, parseurl@^1.3.1, parseurl@~1.3.2:
   version "1.3.2"
@@ -6372,8 +6372,8 @@ raw-body@2.3.2, raw-body@^2.2.0:
     unpipe "1.0.0"
 
 rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.4.tgz#a0f606caae2a3b862bbd0ef85482c0125b315fa3"
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.5.tgz#275cd687f6e3b36cc756baa26dfee80a790301fd"
   dependencies:
     deep-extend "~0.4.0"
     ini "~1.3.0"
@@ -7489,22 +7489,22 @@ supports-color@^5.1.0:
     has-flag "^2.0.0"
 
 svgo@^1.0.0:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/svgo/-/svgo-1.0.3.tgz#c93be52d98ffa2a7273c7a0ac5bf34f470973dad"
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/svgo/-/svgo-1.0.4.tgz#b4c6c275316bc35022a5413a724abfd78bd26b9f"
   dependencies:
-    coa "~2.0.0"
+    coa "~2.0.1"
     colors "~1.1.2"
     css-select "~1.3.0-rc0"
     css-select-base-adapter "~0.1.0"
     css-tree "1.0.0-alpha25"
     css-url-regex "^1.1.0"
-    csso "^3.3.1"
+    csso "^3.5.0"
     js-yaml "~3.10.0"
     mkdirp "~0.5.1"
     object.values "^1.0.4"
     sax "~1.2.4"
     stable "~0.1.6"
-    unquote "^1.1.0"
+    unquote "~1.1.1"
     util.promisify "~1.0.0"
 
 symbol-tree@^3.2.2:
@@ -7979,7 +7979,7 @@ unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
 
-unquote@^1.1.0:
+unquote@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/unquote/-/unquote-1.1.1.tgz#8fded7324ec6e88a0ff8b905e7c098cdc086d544"
 
