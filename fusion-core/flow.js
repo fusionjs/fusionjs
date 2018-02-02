@@ -11,6 +11,11 @@ type aliaser<Token> = {
   alias: (sourceToken: Token, destToken: Token) => aliaser<*>,
 };
 
+declare type Token<T> = {
+  (): T,
+  optional: () => void | T,
+};
+
 declare type SSRContext = {
   element: any,
   template: {

@@ -5,7 +5,6 @@ import ClientAppFactory from '../client-app';
 import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
 import {createToken} from '../create-token';
-import type {Token} from '../create-token';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 

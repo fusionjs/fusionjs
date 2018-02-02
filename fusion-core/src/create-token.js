@@ -21,10 +21,6 @@ export class TokenImpl {
   }
 }
 
-export type Token<T> = {
-  (): T,
-  optional: () => void | T,
-};
 export function createToken(name: string): Token<any> {
   // $FlowFixMe
   return new TokenImpl(name);
