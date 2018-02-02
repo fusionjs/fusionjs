@@ -27,7 +27,9 @@ export default class App extends CoreApp {
           });
         };
       },
-      middleware,
+      middleware() {
+        return middleware;
+      },
     });
     super(root, renderer);
   }
