@@ -6,15 +6,14 @@
 
 /* eslint-env node */
 import querystring from 'querystring';
-import {createOptionalToken} from 'fusion-tokens';
-import {createPlugin, memoize, html} from 'fusion-core';
+import {createToken, createPlugin, memoize, html} from 'fusion-core';
 import createLoader from './loader';
 
-export const I18nLoaderToken = createOptionalToken('I18nLoaderToken', null);
+export const I18nLoaderToken = createToken('I18nLoaderToken');
 export default __NODE__ &&
   createPlugin({
     deps: {
-      loader: I18nLoaderToken,
+      loader: I18nLoaderToken.optional,
     },
     provides: ({loader}) => {
       class I18n {
