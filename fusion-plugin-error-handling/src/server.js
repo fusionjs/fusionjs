@@ -6,8 +6,7 @@
 
 /* eslint-env node */
 
-import {createPlugin, html} from 'fusion-core';
-import {createToken} from 'fusion-tokens';
+import {createPlugin, html, createToken} from 'fusion-core';
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
 

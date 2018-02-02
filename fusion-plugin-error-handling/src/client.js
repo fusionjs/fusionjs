@@ -6,17 +6,15 @@
 
 /* eslint-env browser */
 
-import {createPlugin} from 'fusion-core';
-import {createOptionalToken} from 'fusion-tokens';
+import {createPlugin, createToken} from 'fusion-core';
 
-export const ErrorHandlingEmitterToken = createOptionalToken(
-  'ErrorHandlingEmitterToken',
-  null
+export const ErrorHandlingEmitterToken = createToken(
+  'ErrorHandlingEmitterToken'
 );
 
 export default __BROWSER__ &&
   createPlugin({
-    deps: {emit: ErrorHandlingEmitterToken},
+    deps: {emit: ErrorHandlingEmitterToken.optional},
     provides: ({emit}) => {
       let _emit =
         emit ||

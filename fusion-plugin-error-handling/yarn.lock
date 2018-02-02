@@ -3853,9 +3853,9 @@ fusion-cli@^0.3.1:
     winston "2.4.0"
     yargs "10.1.1"
 
-fusion-core@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0.tgz#0ce2a5b17c2e1948f05fbcdee808c7bcf5d8eadf"
+fusion-core@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.1.tgz#2bf90f1b3eb5dbfec8a7659f8a368d3ff9fcd6dd"
   dependencies:
     koa "^2.3.0"
     koa-compose "^4.0.0"
@@ -3876,9 +3876,9 @@ fusion-test-utils@0.4.2:
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.5.tgz#71af057ab696046c43e89ca06dfe47cdbaeac6d8"
+fusion-tokens@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.6.tgz#71606a0109918dc098eb43cc0a3b877beb111d4d"
 
 gauge@~2.7.3:
   version "2.7.4"
