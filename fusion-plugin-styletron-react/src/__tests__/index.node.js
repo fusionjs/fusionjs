@@ -22,7 +22,7 @@ tape('Server plugin', t => {
     element: <SilverPanel />,
     template: {
       head: {
-        push: h => {
+        push(h) {
           t.equal(
             consumeSanitizedHTML(h),
             '<style class="_styletron_hydrate_">.a{background-color:silver}</style>',

@@ -28,7 +28,7 @@
     "styletron-server": "^3.0.4"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.38",
+    "@babel/preset-react": "7.0.0-beta.39",
     "babel-eslint": "8.2.1",
     "create-universal-package": "3.4.0",
     "enzyme": "3.3.0",
@@ -38,10 +38,11 @@
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
     "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-prettier": "2.5.0",
+    "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.64.0",
-    "fusion-core": "0.3.0",
+    "fusion-core": "^0.3.3",
+    "fusion-tokens": "^0.0.6",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
@@ -51,6 +52,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^0.3.0-5",
+    "fusion-tokens": "^0.0.6",
     "react": "14.x - 16.x"
   },
   "scripts": {
