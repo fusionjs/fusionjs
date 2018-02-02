@@ -14,7 +14,7 @@ import get from 'just-safe-get';
 import set from 'just-safe-set';
 
 import {createPlugin, memoize} from 'fusion-core';
-import type {Context, FusionPlugin} from 'fusion-core';
+import type {Context} from 'fusion-core';
 
 import {
   SessionSecretToken,
@@ -67,18 +67,17 @@ class JWTSession {
 }
 
 export type SessionService = {from: (ctx: Context) => JWTSession};
-type SessionPluginType = FusionPlugin<JWTConfig, SessionService>;
-const p: SessionPluginType =
+const p =
   // $FlowFixMe
   __NODE__ &&
   createPlugin({
     deps: {
       secret: SessionSecretToken,
       cookieName: SessionCookieNameToken,
-      expires: SessionCookieExpiresToken,
+      expires: SessionCookieExpiresToken.optional,
     },
     provides: deps => {
-      const {secret, cookieName, expires} = deps;
+      const {secret, cookieName, expires = 86400} = deps;
       const service = {
         from: memoize((ctx: Context) => {
           return new JWTSession(ctx, {secret, cookieName, expires});
@@ -87,7 +86,7 @@ const p: SessionPluginType =
       return service;
     },
     middleware: (deps, service) => {
-      const {secret, cookieName, expires} = deps;
+      const {secret, cookieName, expires = 86400} = deps;
       return async function jwtMiddleware(
         ctx: Context,
         next: () => Promise<void>

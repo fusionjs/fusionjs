@@ -6,10 +6,10 @@
 
 // @flow
 import tape from 'tape-cup';
-import App from 'fusion-core';
+import App, {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 import {createServer} from 'http';
 import fetch from 'node-fetch';
-import {createToken} from 'fusion-tokens';
 import JWTServer, {
   SessionSecretToken,
   SessionCookieNameToken,
@@ -17,7 +17,7 @@ import JWTServer, {
 } from '../index';
 import type {SessionService} from '../jwt-server';
 
-const JWTToken: SessionService = createToken('Session');
+const JWTToken: Token<SessionService> = createToken('Session');
 
 tape('JWTServer', async t => {
   const app = new App('fake-element', el => el);

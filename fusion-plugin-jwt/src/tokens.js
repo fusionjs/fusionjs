@@ -1,9 +1,11 @@
 // @flow
-import {createToken, createOptionalToken} from 'fusion-tokens';
+import type {Token} from 'fusion-core';
+import {createToken} from 'fusion-core';
 
-export const SessionSecretToken: string = createToken('SessionSecret');
-export const SessionCookieNameToken: string = createToken('SessionCookieName');
-export const SessionCookieExpiresToken: number = createOptionalToken(
-  'SessionCookieExpires',
-  86400
+export const SessionSecretToken: Token<string> = createToken('SessionSecret');
+export const SessionCookieNameToken: Token<string> = createToken(
+  'SessionCookieName'
+);
+export const SessionCookieExpiresToken: Token<number> = createToken(
+  'SessionCookieExpires'
 );
