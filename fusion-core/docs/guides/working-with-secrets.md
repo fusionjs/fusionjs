@@ -1,6 +1,6 @@
 # Working with secrets
 
-Secrets can be handled like any other plugin configuration - just pass them to the plugin you're using.
+Secrets can be handled like any other plugin configuration - just register them in order to provide them to the plugin you're using.
 
 In the example below, the secret for the JWT session plugin is being provisioned via environment variables.
 
@@ -8,12 +8,14 @@ In the example below, the secret for the JWT session plugin is being provisioned
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import JWTSession from 'fusion-plugin-jwt-session';
+import JWTSession, {SessionSecretToken} from 'fusion-plugin-jwt';
+import {SessionToken} from 'fusion-tokens';
 
 export default () => {
   const app = new App(<div>Hello</div>);
 
-  const Session = app.plugin(JWTSession, {secret: __NODE__ && process.env.SESSION_SECRET});
+  app.register(SessionToken, JWTSession);
+  app.register(SessionSecretToken, __NODE__ && process.env.SESSION_SECRET);
 
   return app;
 }
@@ -28,21 +30,23 @@ It's good security practice to rotate secrets regularly, but we might not necess
 In order to accomplish dynamic secret rotation, plugins can receive an EventEmitter or similar abstraction as an argument:
 
 ```js
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 const {SingletonPlugin} = require('fusion-core');
 
-export default ({SecretsEmitter}) => {
-  const plugin = new SingletonPlugin({
-    Service: class Foo {
+export default createPlugin({
+  deps: {SecretsEmitter: UniversalEventsToken},
+  provides: ({SecretsEmitter}) => {
+    const service = class Foo {
       //...
-    },
-  });
+    };
 
-  const emitter = SecretsEmitter.of()
-  emitter.on('secret-rotation:foo', () => {
-    const foo = plugin.of();
-    // apply new secret
-  });
+    const emitter = SecretsEmitter.from()
+    emitter.on('secret-rotation:foo', () => {
+      const foo = service.from();
+      // apply new secret
+    });
 
-  return plugin;
-};
+    return service;
+});
 ```

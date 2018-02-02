@@ -9,15 +9,22 @@ Let's see how we can depend on a service that gets instantiated per request:
 ```js
 // src/main.js
 import App from 'fusion-react';
-import Session from 'fusion-plugin-jwt-session';
+import JWTSession from 'fusion-plugin-jwt';
+import {SessionToken} from 'fusion-tokens';
+
+import Name from './plugins/name'
 
 export default () => {
   const app = new App();
-  const Session = app.register(Session);
-};
+  app.register(SessionToken, JWTSession);
+  app.register(Name);
+}
 
 // src/plugins/name.js
-export default {
+import {createPlugin} from 'fusion-core';
+import {SessionToken} from 'fusion-tokens';
+
+export default createPlugin({
   deps: {Session: SessionToken},
   middleware({Session}) {
     return (ctx, next) => {
@@ -29,23 +36,12 @@ export default {
       return next();
     }
   }
-};
-
-// src/main.js
-import App from 'fusion-react';
-import JWTSession from 'fusion-plugin-jwt-session';
-import Name from './plugins/name'
-
-export default () => {
-  const app = new App();
-  const Session = app.plugin(JWTSession);
-  app.plugin(Name, {Session});
-}
+});
 ```
 
 The `Name` plugin simply saves the value in `?name=[value]` to a cookie session if that querystring value is defined.
 
-Notice that the `middleware` method of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.register(SessionToken, Session)` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#configuration).
+Notice that the `middleware` method of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.register(SessionToken, JWTSession)` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#configuration).
 
 We then called `Session.from(ctx)`, which is how that plugin creates a memoized instance per request.
 
@@ -53,23 +49,31 @@ Let's create another contrived plugin to print the the value of the `name` key f
 
 ```js
 // src/plugins/greeting.js
-export default ({Session}) => async (ctx, next) => {
-  if (ctx.path === '/greet') {
-    const session = Session.from(ctx);
-    ctx.body = {greeting: 'hello ' + await session.get('name')};
+import {createPlugin} from 'fusion-core';
+import {SessionToken} from 'fusion-tokens';
+
+export default createPlugin({
+  deps: {Session: SessionToken},
+  middleware: ({Session}) => async (ctx, next) => {
+    if (ctx.path === '/greet') {
+      const session = Session.from(ctx);
+      ctx.body = {greeting: 'hello ' + await session.get('name')};
+    }
+    return next();
   }
-  return next();
-}
+});
 
 // src/main.js
 import App from 'fusion-react';
-import Session, {SessionToken} from 'fusion-plugin-jwt';
+import JWTSession from 'fusion-plugin-jwt';
+import {SessionToken} from 'fusion-tokens';
+
 import Name from './plugins/name';
 import Greeting from './plugins/greeting';
 
 export default () => {
   const app = new App();
-  const Session = app.register(SessionToken, Session);
+  app.register(SessionToken, JWTSession);
   app.register(Name);
   app.register(Greeting);
 }
@@ -81,4 +85,4 @@ Here, the `Name` plugin sets state in an instance of the session service, and th
 
 Notice that in the example above, once we have the memoized instance of the session service (which the plugin provided to us) we only ever call `session.set` and `session.get`.
 
-This means we can easily mock the `Session` dependency in both `Name` and `Greeting` plugins when unit testing them, and it also means that if we want to use, for example, Redis as a session store, all we need to do is replace `fusion-plugin-jwt-session` with a plugin that uses Redis.
+This means we can easily mock the `Session` dependency in both `Name` and `Greeting` plugins when unit testing them, and it also means that if we want to use, for example, Redis as a session store, all we need to do is replace `fusion-plugin-jwt` with a plugin that uses Redis.
