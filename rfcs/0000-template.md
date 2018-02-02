@@ -1,6 +1,6 @@
 * Start Date: (fill me in with today's date, YYYY-MM-DD)
 * RFC PR: (leave this empty)
-* React Issue: (leave this empty)
+* Fusion Issue: (leave this empty)
 
 # Summary
 
@@ -24,7 +24,7 @@ closely to the solution you have in mind.
 # Detailed design
 
 This is the bulk of the RFC. Explain the design in enough detail for somebody
-familiar with React to understand, and for somebody familiar with the
+familiar with Fusion to understand, and for somebody familiar with the
 implementation to implement. This should get into specifics and corner-cases,
 and include examples of how the feature is used. Any new terminology should be
 defined here.
@@ -35,9 +35,9 @@ Why should we _not_ do this? Please consider:
 
 * implementation cost, both in term of code size and complexity
 * whether the proposed feature can be implemented in user space
-* the impact on teaching people React
+* the impact on teaching people Fusion
 * integration of this feature with other existing and planned features
-* cost of migrating existing React applications (is it a breaking change?)
+* cost of migrating existing Fusion applications (is it a breaking change?)
 
 There are tradeoffs to choosing any path. Attempt to identify them here.
 
@@ -47,20 +47,20 @@ What other designs have been considered? What is the impact of not doing this?
 
 # Adoption strategy
 
-If we implement this proposal, how will existing React developers adopt it? Is
+If we implement this proposal, how will existing Fusion developers adopt it? Is
 this a breaking change? Can we write a codemod? Should we coordinate with
 other projects or libraries?
 
 # How we teach this
 
 What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing React patterns?
+idea best presented? As a continuation of existing Fusion patterns?
 
-Would the acceptance of this proposal mean the React documentation must be
-re-organized or altered? Does it change how React is taught to new developers
+Would the acceptance of this proposal mean the Fusion documentation must be
+re-organized or altered? Does it change how Fusion is taught to new developers
 at any level?
 
-How should this feature be taught to existing React developers?
+How should this feature be taught to existing Fusion developers?
 
 # Unresolved questions
 
