@@ -26,7 +26,7 @@ tape('plugin - middleware modifies head as expected', t => {
   const app = new App('content', el => el);
   app.middleware(async (ctx, next) => {
     await next();
-    t.true(ctx.body.head.length > 0, 'head was modified by plugin');
+    t.true(ctx.template.head.length > 0, 'head was modified by plugin');
   });
   app.register(FontLoaderReactToken, FontLoaderReactPlugin);
   app.register(FontLoaderReactConfigToken, mockConfig);

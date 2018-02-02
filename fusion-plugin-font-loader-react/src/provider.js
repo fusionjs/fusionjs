@@ -16,7 +16,7 @@ export default class FontProvider extends Component {
   }
 }
 
-FontProvider.PropTypes = {
+FontProvider.propTypes = {
   getFontDetails: PropTypes.func.isRequired,
   children: PropTypes.element.isRequired,
 };

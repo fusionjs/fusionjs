@@ -1,4 +1,4 @@
-import {createToken} from 'fusion-tokens';
+import {createToken} from 'fusion-core';
 
 export const FontLoaderReactToken = createToken('FontLoaderReactToken');
 
