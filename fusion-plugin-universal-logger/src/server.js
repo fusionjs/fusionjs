@@ -14,7 +14,7 @@ export default __NODE__ &&
   createPlugin({
     deps: {
       emitter: UniversalEventsToken,
-      config: UniversalLoggerConfigToken,
+      config: UniversalLoggerConfigToken.optional,
     },
     provides: ({emitter, config}) => {
       const logger = new Logger(config);

@@ -4,9 +4,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {createOptionalToken} from 'fusion-tokens';
+import {createToken} from 'fusion-core';
 
-export const UniversalLoggerConfigToken = createOptionalToken(
-  'UniversalLoggerConfigToken',
-  null
+export const UniversalLoggerConfigToken = createToken(
+  'UniversalLoggerConfigToken'
 );
