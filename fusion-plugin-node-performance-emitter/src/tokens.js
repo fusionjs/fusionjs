@@ -4,35 +4,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import nodeTimers from 'timers';
-
-import {createToken, createOptionalToken} from 'fusion-tokens';
+import {createToken} from 'fusion-core';
 
 export const NodePerformanceEmitterToken = createToken(
   'NodePerformanceEmitterToken'
 );
 
-export const TimersToken = createOptionalToken(
-  'TimersToken',
-  __NODE__ ? nodeTimers : null
-);
+export const TimersToken = createToken('TimersToken');
 
-/* Configuration Tokens */
-const CONFIG_DEFAULTS = {
-  eventLoopLagInterval: 1000 * 10,
-  memoryInterval: 1000 * 10,
-  socketInterval: 1000 * 10,
-};
-
-export const EventLoopLagIntervalToken = createOptionalToken(
-  'EventLoopLagIntervalToken',
-  CONFIG_DEFAULTS.eventLoopLagInterval
+export const EventLoopLagIntervalToken = createToken(
+  'EventLoopLagIntervalToken'
 );
-export const MemoryIntervalToken = createOptionalToken(
-  'MemoryIntervalToken',
-  CONFIG_DEFAULTS.memoryInterval
-);
-export const SocketIntervalToken = createOptionalToken(
-  'SocketIntervalToken',
-  CONFIG_DEFAULTS.socketInterval
-);
+export const MemoryIntervalToken = createToken('MemoryIntervalToken');
+export const SocketIntervalToken = createToken('SocketIntervalToken');

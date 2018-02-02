@@ -7,8 +7,7 @@
 /* eslint-env browser */
 import test from 'tape-cup';
 
-import App from 'fusion-core';
-import {createToken} from 'fusion-tokens';
+import App, {createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
 import NodePerformanceEmitterPlugin from '../browser';

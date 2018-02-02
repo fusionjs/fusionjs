@@ -5,6 +5,9 @@
  */
 
 /* eslint-env node */
+
+/* Configuration Tokens */
+import nodeTimers from 'timers';
 import profiler from 'gc-profiler';
 import {globalAgent} from 'http';
 import assert from 'assert';
@@ -18,6 +21,12 @@ import {
   MemoryIntervalToken,
   SocketIntervalToken,
 } from './tokens';
+
+const CONFIG_DEFAULTS = {
+  eventLoopLagInterval: 1000 * 10,
+  memoryInterval: 1000 * 10,
+  socketInterval: 1000 * 10,
+};
 
 /* Helper Functions */
 function getCountFromGlobalAgent(data) {
@@ -196,19 +205,19 @@ const plugin =
   createPlugin({
     deps: {
       emitter: UniversalEventsToken,
-      timers: TimersToken,
+      timers: TimersToken.optional,
 
       /* Config */
-      eventLoopLagInterval: EventLoopLagIntervalToken,
-      memoryInterval: MemoryIntervalToken,
-      socketInterval: SocketIntervalToken,
+      eventLoopLagInterval: EventLoopLagIntervalToken.optional,
+      memoryInterval: MemoryIntervalToken.optional,
+      socketInterval: SocketIntervalToken.optional,
     },
     provides: ({
       emitter,
-      timers,
-      eventLoopLagInterval,
-      memoryInterval,
-      socketInterval,
+      timers = nodeTimers,
+      eventLoopLagInterval = CONFIG_DEFAULTS.eventLoopLagInterval,
+      memoryInterval = CONFIG_DEFAULTS.memoryInterval,
+      socketInterval = CONFIG_DEFAULTS.socketInterval,
     }) => {
       const config = {
         eventLoopLagInterval: eventLoopLagInterval,
