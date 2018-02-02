@@ -7,8 +7,7 @@
 import test from 'tape-cup';
 import MockEmitter from 'events';
 
-import App, {createPlugin} from 'fusion-core';
-import {createToken} from 'fusion-tokens';
+import App, {createPlugin, createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 

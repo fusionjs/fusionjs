@@ -4,6 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {createToken} from 'fusion-tokens';
+import {createToken} from 'fusion-core';
 
 export const RPCHandlersToken = createToken('RPCHandlersToken');

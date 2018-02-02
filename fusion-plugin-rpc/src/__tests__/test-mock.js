@@ -5,8 +5,7 @@
  */
 
 import test from 'tape-cup';
-import App, {createPlugin} from 'fusion-core';
-import {createToken} from 'fusion-tokens';
+import App, {createPlugin, createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
 import {RPCHandlersToken} from '../tokens';

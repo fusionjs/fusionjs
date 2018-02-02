@@ -6,22 +6,19 @@
 
 import test from 'tape-cup';
 
-import App, {createPlugin} from 'fusion-core';
-import {FetchToken, createToken} from 'fusion-tokens';
+import App, {createPlugin, createToken} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
-import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../browser';
 
 const MockPluginToken = createToken('test-plugin-token');
 function createTestFixture() {
   const mockFetch = (...args) =>
     Promise.resolve({json: () => ({status: 'success', data: args})});
-  const mockHandlers = {};
 
   const app = new App('content', el => el);
   app.register(FetchToken, mockFetch);
-  app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
 }
