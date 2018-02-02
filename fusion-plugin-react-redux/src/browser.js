@@ -18,8 +18,8 @@ export default __BROWSER__ &&
   createPlugin({
     deps: {
       reducer: ReducerToken,
-      preloadedState: PreloadedStateToken,
-      enhancer: EnhancerToken,
+      preloadedState: PreloadedStateToken.optional,
+      enhancer: EnhancerToken.optional,
     },
     provides({reducer, preloadedState, enhancer}) {
       class Redux {

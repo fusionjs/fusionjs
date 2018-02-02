@@ -20,9 +20,9 @@ export default __NODE__ &&
   createPlugin({
     deps: {
       reducer: ReducerToken,
-      preloadedState: PreloadedStateToken,
-      enhancer: EnhancerToken,
-      getInitialState: InitialStateToken,
+      preloadedState: PreloadedStateToken.optional,
+      enhancer: EnhancerToken.optional,
+      getInitialState: InitialStateToken.optional,
     },
     provides({reducer, preloadedState, enhancer, getInitialState}) {
       class Redux {

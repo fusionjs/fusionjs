@@ -36,8 +36,8 @@
     "eslint-plugin-prettier": "2.5.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.64.0",
-    "fusion-core": "^0.3.0-4",
-    "fusion-tokens": "0.0.5",
+    "fusion-core": "^0.3.1",
+    "fusion-tokens": "^0.0.6",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "16.2.0",
@@ -48,8 +48,8 @@
     "unitest": "2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.3.0-4",
-    "fusion-tokens": "0.0.5",
+    "fusion-core": "^0.3.1",
+    "fusion-tokens": "^0.0.6",
     "react": "14.x - 16.x",
     "react-redux": ">=5.0.6",
     "redux": ">=3.7.2"
