@@ -23,7 +23,7 @@ export class TokenImpl {
 
 export type Token<T> = {
   (): T,
-  optional: () => ?T,
+  optional: () => void | T,
 };
 export function createToken(name: string): Token<any> {
   // $FlowFixMe

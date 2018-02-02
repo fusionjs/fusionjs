@@ -383,18 +383,30 @@ tape('dependency registration with null value', t => {
 tape('dependency registration with optional deps', t => {
   const app = new App('el', el => el);
 
+  const checkString = (s: string): void => {
+    t.equals(s, 'hello', 'correct string value is provided');
+  };
+  const checkNumUndefined = (n: void | number): void => {
+    t.equals(
+      n,
+      undefined,
+      'no number value is provided for unregistered optional token'
+    );
+  };
+
+  type Deps = {
+    str: string,
+    numOpt: void | number,
+  };
   const PluginA = createPlugin({
     deps: {
       str: TokenString,
       numOpt: TokenNumber.optional,
     },
-    provides: ({str, numOpt}) => {
-      t.equals(str, 'hello', 'correct string value is provided');
-      t.equals(
-        numOpt,
-        undefined,
-        'no number value is provided for unregistered optional token'
-      );
+    provides: ({str, numOpt}: Deps) => {
+      checkString(str);
+      checkNumUndefined(numOpt);
+
       return {
         a: 'Hello',
       };
