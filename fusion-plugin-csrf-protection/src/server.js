@@ -55,13 +55,13 @@ const CsrfPlugin =
   createPlugin({
     deps: {
       Session: SessionToken,
-      expire: CsrfExpireToken,
-      ignored: CsrfIgnoreRoutesToken,
+      expire: CsrfExpireToken.optional,
+      ignored: CsrfIgnoreRoutesToken.optional,
     },
     provides: () => () =>
       Promise.reject(new Error('Cannot use fetch on the server')),
     middleware: deps => {
-      const {Session, expire, ignored} = deps;
+      const {Session, expire = 86400, ignored = []} = deps;
       const ignoreSet = new Set(ignored);
       function handleTokenPost(ctx, next) {
         const session = Session.from(ctx);

@@ -5,7 +5,8 @@
  */
 
 // @flow
-import {createToken, createOptionalToken} from 'fusion-tokens';
+import type {Token} from 'fusion-core';
+import {createToken} from 'fusion-core';
 
 const methods = {POST: 1, PUT: 1, PATCH: 1, DELETE: 1};
 
@@ -20,9 +21,8 @@ export function verifyExpiry(token: string, expire: number) {
   return true;
 }
 
-export const CsrfExpireToken = createOptionalToken('CsrfExpireToken', 86400);
-export const CsrfIgnoreRoutesToken: Array<string> = createOptionalToken(
-  'CsrfIgnoreRoutesToken',
-  []
+export const CsrfExpireToken: Token<number> = createToken('CsrfExpireToken');
+export const CsrfIgnoreRoutesToken: Token<Array<string>> = createToken(
+  'CsrfIgnoreRoutesToken'
 );
 export const FetchForCsrfToken = createToken('FetchForCsrfToken');

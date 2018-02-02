@@ -20,9 +20,9 @@ const BrowserCSRFPlugin =
   createPlugin({
     deps: {
       fetch: FetchForCsrfToken,
-      expire: CsrfExpireToken,
+      expire: CsrfExpireToken.optional,
     },
-    provides: ({fetch, expire}) => {
+    provides: ({fetch, expire = 86400}) => {
       const prefix = window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
       const tokenElement = document.getElementById('__CSRF_TOKEN__');
 
