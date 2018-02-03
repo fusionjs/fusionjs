@@ -72,7 +72,7 @@ app.register(SessionToken, Session);
 
 The `fusion-plugin-csrf-protection` module provides an api that matches the `fetch` api,
 and therefore can be registered on the standard `FetchToken` exported by `fusion-tokens`.
-i
+
 #### Required dependencies
 
 Name | Type | Description
