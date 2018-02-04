@@ -11,6 +11,7 @@ module.exports = {
     __BROWSER__: process.env.JEST_ENV === 'jsdom',
     __DEV__: process.env.NODE_ENV !== 'production',
   },
+  browser: process.env.JEST_ENV === 'jsdom',
   coverageDirectory: `<rootDir>/coverage-${process.env.JEST_ENV}`,
   // 'cobertura', 'lcov', 'text' coverage reports are written by the merge-coverage script
   coverageReporters: ['json'],

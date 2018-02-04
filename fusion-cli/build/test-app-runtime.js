@@ -8,6 +8,7 @@ const mergeCoverage = require('./merge-coverage');
 module.exports.TestAppRuntime = function({
   dir = '.',
   watch = false,
+  debug = false,
   match,
   env,
   testFolder,
@@ -21,10 +22,18 @@ module.exports.TestAppRuntime = function({
   this.run = () => {
     this.stop();
     const allTestEnvs = env.split(',');
-    let command = require.resolve('jest-cli/bin/jest.js');
 
     const getArgs = () => {
-      let args = ['--config', configPath];
+      let args = [require.resolve('jest/bin/jest.js')];
+      if (debug) {
+        args = [
+          '--inspect-brk',
+          require.resolve('jest/bin/jest.js'),
+          '--runInBand',
+        ];
+      }
+
+      args = args.concat(['--config', configPath]);
 
       if (watch) {
         args.push('--watch');
@@ -78,8 +87,7 @@ module.exports.TestAppRuntime = function({
         if (allTestEnvs.length > 1 && watch) {
           procEnv.CI = 'true';
         }
-
-        const proc = spawn(command, args, {
+        const proc = spawn('node', args, {
           cwd: rootDir,
           stdio: 'inherit',
           env: Object.assign(procEnv, process.env),
@@ -112,8 +120,20 @@ module.exports.TestAppRuntime = function({
       });
     };
 
+    const getResolveChain = () => {
+      if (!debug) {
+        return Promise.all(allTestEnvs.map(spawnProc));
+      }
+      // Run environments in serial when debugging so we don't get a port collision.
+      let chain = Promise.resolve();
+      allTestEnvs.forEach(env => {
+        chain = chain.then(() => spawnProc(env));
+      });
+      return chain;
+    };
+
     return setup()
-      .then(Promise.all(allTestEnvs.map(spawnProc)))
+      .then(getResolveChain())
       .then(finish());
   };
 

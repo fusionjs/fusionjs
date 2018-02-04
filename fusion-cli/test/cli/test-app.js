@@ -4,8 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const test = require('tape');
 
+const CDP = require('chrome-remote-interface');
 const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
+const spawn = require('child_process').spawn;
 
 const readFile = promisify(fs.readFile);
 
@@ -224,4 +226,72 @@ test('`fusion test-app` uses .fusionjs.js', async t => {
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
   t.end();
+});
+
+async function triggerCodeStep() {
+  return new Promise(resolve => {
+    CDP({port: '9229'}, async client => {
+      const {Runtime} = client;
+      await Runtime.runIfWaitingForDebugger();
+      await client.close();
+      resolve();
+    }).on('error', err => {
+      throw err;
+    });
+  });
+}
+
+test('`fusion test-app --debug --env=jsdom,node`', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --debug --env=jsdom,node  --match=passes`;
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  const stderrLines = [];
+  const child = spawn('node', ['-e', cmd]);
+
+  const listenAddresses = {};
+  let numResults = 0;
+  child.stderr &&
+    child.stderr.on('data', data => {
+      const line = data.toString();
+      stderrLines.push(line);
+      // Keep track of all addresses that we start listening to.
+      if (line.startsWith('Debugger listening on ws')) {
+        listenAddresses[line] = true;
+      }
+
+      // Wait until we have results for both environments before ending the test.
+      if (/Tests:.*1\s+passed,\s+1\s+total/.test(line)) {
+        numResults += 1;
+        if (numResults == 2) {
+          t.end();
+        }
+      }
+    });
+
+  // Poll until we get a listener message.
+  async function checkStartedMessageCount(count) {
+    return new Promise(async resolve => {
+      while (Object.keys(listenAddresses).length < count) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+      resolve();
+    });
+  }
+
+  // Step through jsdom environment
+  await checkStartedMessageCount(1);
+  await triggerCodeStep();
+
+  // Step through node environment
+  await checkStartedMessageCount(2);
+  await triggerCodeStep();
+
+  t.equal(
+    Object.keys(listenAddresses).length,
+    2,
+    'listened for two remote debug connections'
+  );
+
+  child.kill();
 });

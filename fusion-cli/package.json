@@ -90,6 +90,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
+    "chrome-remote-interface": "^0.25.5",
     "enzyme": "3.3.0",
     "eslint": "4.16.0",
     "eslint-config-fusion": "0.2.1",

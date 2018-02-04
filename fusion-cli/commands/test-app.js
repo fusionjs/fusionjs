@@ -8,6 +8,11 @@ exports.builder = {
     default: '.',
     describe: 'Root path for the application relative to CLI CWD',
   },
+  debug: {
+    type: 'boolean',
+    default: false,
+    describe: 'Debug tests',
+  },
   watch: {
     type: 'boolean',
     default: false,
@@ -49,6 +54,7 @@ exports.builder = {
 exports.run = async function({
   dir = '.',
   watch,
+  debug,
   match,
   env,
   testFolder,
@@ -59,6 +65,7 @@ exports.run = async function({
   const testRuntime = new TestAppRuntime({
     dir,
     watch,
+    debug,
     match,
     env,
     testFolder,
