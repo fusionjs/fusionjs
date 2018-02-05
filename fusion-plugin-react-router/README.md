@@ -70,15 +70,18 @@ export default root;
 
 #### Dependency registration
 
-```jsx
-import Router from 'fusion-plugin-react-router';
+```js
 import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-app.register(Router);
 app.register(UniversalEventsToken, UniversalEvents);
 ```
 
-- `UniversalEvents` - a universal event emitter. Used internally to emit routing events
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin to emit routing events to, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+
 
 #### `Router`
 
