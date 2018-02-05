@@ -233,6 +233,7 @@ const plugin =
 
       return service;
     },
+    cleanup: service => service.stop(),
   });
 
 export default plugin;
