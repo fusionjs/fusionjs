@@ -101,24 +101,20 @@ events.map('*', payload => {
 
 ### API
 
-#### Plugin registration
-
-```js
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-app.register(UniversalEventsToken, UniversalEvents);
-```
-
-#### Dependencies
-
-##### `FetchToken`
-
-- `fetch` - UniversalEvents in the browser depends on an implementation of `fetch` registered on the standard `FetchToken` exported from `fusion-tokens`.
+#### Dependency registration
 
 ```js
 import {FetchToken} from 'fetch-tokens';
 __BROWSER__ && app.register(FetchToken, window.fetch);
+```
 
-#### Instance API 
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`FetchToken` | `(url: string, options: Object) => Promise` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
+
+#### Instance API
 
 #### `events.on`
 
