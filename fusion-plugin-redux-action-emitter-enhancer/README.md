@@ -40,7 +40,23 @@ export default (state, action) => {
 
 ### API
 
-The following events are emitted:
+#### Dependency registration
+
+```js
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+app.register(UniversalEventsToken, UniversalEvents);
+```
+
+#### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+
+#### Instance API
+
+To consume action events, add an event listener for the following emitted events:
 
 - `redux-action-emitter:action`
 
