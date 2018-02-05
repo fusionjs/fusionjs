@@ -44,22 +44,22 @@ export default withBatchEvents(Component);
 
 ### API
 
-#### plugin
+#### Dependency registration
 
 ```js
-// main.js
-import App from 'fusion-react';
 import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events-react';
 import {FetchToken} from 'fusion-tokens';
-import fetch from 'unfetch';
 
-export default function() {
-  const app = new App(root);
-  app.register(UniversalEventsToken, UniversalEvents);
-  __BROWSER__ && app.register(FetchToken, fetch);
-  return app;
-}
+app.register(UniversalEventsToken, UniversalEvents);
+__BROWSER__ && app.register(FetchToken, fetch);
 ```
+
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+`FetchToken` | `(url: string, options: Object) => Promise` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
 
 #### `withBatchEvents`
 
