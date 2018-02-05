@@ -13,8 +13,6 @@ export default function(): Class<FusionApp> {
       super(el, render);
       this.register(TimingToken, timing);
       this.middleware({element: ElementToken}, createClientHydrate);
-      el && this.register(ElementToken, el);
-      render && this.register(RenderToken, render);
     }
     resolve() {
       this.middleware({render: RenderToken}, createClientRenderer);

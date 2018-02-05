@@ -1,16 +1,26 @@
 import {createPlugin} from './create-plugin';
 import {TokenType, TokenImpl} from './create-token';
+import {ElementToken, RenderToken} from './tokens';
 
 class FusionApp {
-  constructor() {
+  constructor(el, render) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.plugins = []; // Token
+    el && this.register(ElementToken, el);
+    render && this.register(RenderToken, render);
   }
   register(token, value) {
     if (value === undefined) {
       value = token;
     }
     // the renderer is a special case, since it needs to be always run last
+    if (token === RenderToken) {
+      this.renderer = value;
+      return;
+    }
+    return this._register(token, value);
+  }
+  _register(token, value) {
     this.plugins.push(token);
     const {aliases, enhancers} = this.registered.get(getTokenRef(token)) || {
       aliases: new Map(),
@@ -40,6 +50,10 @@ class FusionApp {
     this.registered.set(getTokenRef(token), {value, aliases, enhancers});
   }
   resolve() {
+    if (!this.renderer) {
+      throw new Error('Missing registration for RenderToken');
+    }
+    this._register(RenderToken, this.renderer);
     const resolved = new Map(); // Token.ref || Token => Service
     const dependedOn = new Set(); // Token.ref || Token
     const nonPluginTokens = new Set(); // Token
