@@ -64,17 +64,25 @@ app.register(UniversalLoggerConfigToken, config);
 #### Dependency registration
 
 ```js
-import UniversalLogger, {UniversalLoggerToken} from 'fusion-plugin-universal-logger';
-import UniversalEvents from 'fusion-plugin-universal-events';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
 
-app.register(UniversalLoggerToken, UniversalLogger);
 app.register(UniversalEventsToken, UniversalEvents);
 app.register(UniversalLoggerConfigToken, config);
 ```
 
-- `UniversalLogger` - the logger implementation
-- `UniversalEvents` - an universal event emitter. Used internally to upload logs from the browser to the server
-- `config` - a Winston config object
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+
+##### Optional dependencies
+
+Name | Type | Default | Description
+-|-|-|-
+`UniversalLoggerConfigToken` | `WinstonConfig` | `undefined` | A [Winston](https://github.com/winstonjs/winston) configuration object.
+
 
 #### Instance methods
 
