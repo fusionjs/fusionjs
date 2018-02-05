@@ -3,6 +3,7 @@ import test from './test-helper';
 import ClientAppFactory from '../client-app';
 import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
+
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
 test('app.cleanup with no cleanup plugins', async t => {

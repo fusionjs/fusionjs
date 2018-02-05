@@ -5,7 +5,7 @@ import {
   dangerouslySetHTML,
   escape,
   unescape,
-} from '../../sanitization';
+} from '../sanitization';
 
 test('escaping works', async t => {
   t.equals(

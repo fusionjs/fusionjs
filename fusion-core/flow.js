@@ -1,5 +1,6 @@
 /* @flow */
 import type {Context as KoaContext} from 'koa';
+
 declare var __NODE__: Boolean;
 declare var __BROWSER__: Boolean;
 

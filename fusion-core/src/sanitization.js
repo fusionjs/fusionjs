@@ -5,6 +5,7 @@ Instead, they should use html`<div>{stuff}</div>` so interpolated data gets auto
 We trust the markup outside of interpolation because it's code written by a developer with commit permissions,
 which can be audited via code reviews
 */
+// eslint-disable-next-line import/no-mutable-exports
 let html, dangerouslySetHTML, consumeSanitizedHTML, escape;
 if (__NODE__) {
   const forbiddenChars = {

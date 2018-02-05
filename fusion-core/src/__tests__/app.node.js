@@ -1,6 +1,6 @@
 import test from 'tape-cup';
-import App from '../../index';
-import {compose} from '../../compose.js';
+import App from '../index';
+import {compose} from '../compose.js';
 
 test('context composition', async t => {
   const element = 'hello';

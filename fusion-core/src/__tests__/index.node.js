@@ -1,6 +1,6 @@
 import test from 'tape-cup';
-import App, {html} from '../../index';
-import {run} from '../test-helper';
+import App, {html} from '../index';
+import {run} from './test-helper';
 
 test('ssr with accept header', async t => {
   const flags = {render: false};
