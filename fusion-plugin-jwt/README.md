@@ -35,9 +35,9 @@ export default () => {
   if (__NODE__) {
     app.register(SessionToken, JWTSession);
     app.register(SessionSecretToken, 'some-secret'); // required
-    app.register(SessionCookieNameToken, 'some-cookie-name'); // required 
-    app.register(SessionCookieExpiresToken, 86400); // optional 
-    
+    app.register(SessionCookieNameToken, 'some-cookie-name'); // required
+    app.register(SessionCookieExpiresToken, 86400); // optional
+
     app.middleware({Session: SessionToken}, ({Session}) => {
       return async (ctx, next) => {
         const session = Session.from(ctx);
@@ -56,43 +56,34 @@ export default () => {
 
 ### API
 
-#### Plugin registration
+#### Dependency registration
 
 ```js
-import {SessionToken} from 'fusion-tokens';
-app.register(SessionToken, JWTSession);
+import {
+  SessionSecretToken
+  SessionCookieNameToken
+  SessionCookieExpiresToken
+} from 'fusion-plugin-jwt';
+
+__NODE__ && app.register(SessionSecretToken, 'some-secret');
+__NODE__ && app.register(SessionCookieNameToken, 'some-cookie-name');
+__NODE__ && app.register(SessionCookieExpiresToken, 86400);
 ```
 
-`fusion-plugin-jwt` conforms to the standard fusion session api token exposed as `{SessionToken}` from 'fusion-tokens`.
+`fusion-plugin-jwt` conforms to the standard fusion session API token exposed as `{SessionToken}` from `fusion-tokens`.
 
-#### Dependencies
+##### Required dependencies
 
-##### SessionSecretToken
+Name | Type | Description
+-|-|-
+`SessionSecretToken` | `string` | Encryption secret for JWTs. Required on the server, required to be falsy in client.  Server-side only.
+`SessionCookieNameToken` | `string` | Cookie name.  Server-side only.
 
-- `string` - Encryption secret for JWTs. Required on the server, required to be falsy in client.
+##### Optional dependencies
 
-```js
-import {SessionSecretToken} from 'fusion-plugin-jwt';
-__NODE__ && app.register(SessionSecretToken, 'some-secret'); 
-```
-
-##### SessionCookieNameToken
-
-- `string` - Cookie name. Required on the server.
-
-```js
-import {SessionCookieNameToken} from 'fusion-plugin-jwt';
-__NODE__ && app.register(SessionCookieNameToken, 'some-cookie-name'); 
-```
-
-##### SessionCookieExpiresToken
-
-- `number` - Time in seconds until session/cookie expiration. Defaults to `86400` (24 hours)
-
-```js
-import {SessionCookieExpiresToken} from 'fusion-plugin-jwt';
-__NODE__ && app.register(SessionCookieNameToken, 86400); 
-```
+Name | Type | Default | Description
+-|-|-|-
+`SessionCookieExpiresToken` | `number` | `86400` | Time, in seconds, until session/cookie expiration. Defaults to 24 hours.
 
 #### Instance API
 
