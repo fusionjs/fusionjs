@@ -1,3 +1,5 @@
+[![Build status](https://badge.buildkite.com/563f51722957765c351dcfc3980a0dc0e96a674cc3b6afcd41.svg?branch=master)](https://buildkite.com/uberopensource/fusion-scaffolder)
+
 # fusion-scaffolder
 
 Scaffolds new projects from templates.

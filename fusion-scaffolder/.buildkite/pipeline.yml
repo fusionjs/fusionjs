@@ -1,0 +1,30 @@
+steps:
+  - name: ':docker: :package:'
+    plugins:
+      'docker-compose#v1.7.0':
+        build: fusion-scaffolder
+        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+    agents:
+      queue: builders
+  - wait
+  - command: yarn flow
+    name: ':flowtype:'
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-scaffolder
+    agents:
+      queue: workers
+  - name: ':eslint:'
+    command: yarn lint
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-scaffolder
+    agents:
+      queue: workers
+  - name: ':chrome: :white_check_mark:'
+    command: yarn fast-test
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-scaffolder
+    agents:
+      queue: workers
