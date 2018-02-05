@@ -1,7 +1,7 @@
 {
   "name": "fusion-core",
   "description": "A generic entry point class for FusionJS applications that is used by the FusionJS runtime.",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "license": "MIT",
   "repository": "fusionjs/fusion-core",
   "files": [
