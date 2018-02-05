@@ -51,22 +51,34 @@ export default (state, action) => {
 #### Dependency registration
 
 ```js
-import Redux, {ReduxToken, ReducerToken, EnhancerToken, InitialStateToken} from 'fusion-plugin-react-redux';
+import {
+  ReducerToken,
+  PreloadedStateToken,
+  EnhancerToken,
+  InitialStateToken
+} from 'fusion-plugin-react-redux';
 
-app.register(ReduxToken, Redux);
 app.register(ReducerToken, reducer);
+app.register(PreloadedStateToken, preloadedState);
 app.register(EnhancerToken, enhancer);
 __NODE__ && app.register(InitialStateToken, getInitialState);
 ```
 
-Creates the redux store and integrates it into the Fusion application
+Creates the redux store and integrates it into the FusionJS application.
 
-- `Redux` - The Redux plugin
-- `reducer: (state: any, action: Object) => any` - required. The root reducer
-- `preloadedState: any` - optional. Overrides the initial state in the server, and the hydrated state in the client
-- `enhancer: Plugin` - optional. Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. We are currently investigating enhancer composition in fusionjs/fusion-core#90, but for now you can use plugin aliasing for registering multiple enhancers: `app.register(EnhancerToken, ReduxActionEmitterEnhancer).alias(EnhancerToken, AnotherEnhancerPlugin);`.
+##### Required dependencies
 
-- `getInitialState: (ctx) => Promise<any>` - optional. A function that returns the initial state for your redux store.
+Name | Type | Description
+-|-|-
+`ReducerToken` | `(state: any, action: Object) => any` | The root reducer.
+
+##### Optional dependencies
+
+Name | Type | Default | Description
+-|-|-|-
+`PreloadedStateToken` | `any` | `undefined` | Overrides the initial state in the server, and the hydrated state in the client
+`EnhancerToken` | `FusionPlugin` | `undefined` | Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. We are currently investigating enhancer composition in fusionjs/fusion-core#90, but for now you can use plugin aliasing for registering multiple enhancers: `app.register(EnhancerToken, ReduxActionEmitterEnhancer).alias(EnhancerToken, AnotherEnhancerPlugin);`.
+`InitialStateToken` | `(ctx) => Promise<any>` | `undefined` | A function that returns the initial state for your redux store.  Server-side only.
 
 #### Factory
 
