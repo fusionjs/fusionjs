@@ -57,4 +57,20 @@ export default createPlugin({
 
 ### API
 
+#### Dependency registration
+
+```js
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+app.register(UniversalEventsToken, UniversalEvents);
+```
+
+#### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin to emit stats to, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+
+#### Instance API
+
 This package has no public API methods. To consume performance events, add an event listener for the `browser-performance-emitter:stats` event.
