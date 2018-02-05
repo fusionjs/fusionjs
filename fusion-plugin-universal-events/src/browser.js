@@ -59,6 +59,9 @@ const plugin =
     provides: ({fetch}) => {
       return new UniversalEmitter(fetch);
     },
+    cleanup: emitter => {
+      return emitter.teardown();
+    },
   });
 
 export default plugin;
