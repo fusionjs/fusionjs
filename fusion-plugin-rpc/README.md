@@ -60,11 +60,25 @@ export default () => {
 
 #### Dependency registration
 
-- `RPC` - the RPC library.
-- `UniversalEvents` - Required. A universal event emitter.
-- `handlers: Object<(...args: any) => Promise>` - Server-only. Required. A map of server-side RPC method implementations.
-- `fetch: (url: string, options: Object) => Promise` - Browser-only. Required. A `fetch` implementation.
-- `EventEmitter` - Server-only. Optional. An event emitter plugin such as [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events).
+```js
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+
+app.register(UniversalEventsToken, UniversalEvents);
+__NODE__
+  ? app.register(RPCHandlersToken, handlers);
+  : app.register(FetchToken, fetch);
+}
+```
+
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+`RPCHandlersToken` | `Object<(...args: any) => Promise>` | A map of server-side RPC method implementations.  Server-only.
+`FetchToken` | `(url: string, options: Object) => Promise` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
 
 ##### Factory
 
