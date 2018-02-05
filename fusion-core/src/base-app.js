@@ -6,6 +6,7 @@ class FusionApp {
   constructor(el, render) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.plugins = []; // Token
+    this.cleanups = [];
     el && this.register(ElementToken, el);
     render && this.register(RenderToken, render);
   }
@@ -48,6 +49,9 @@ class FusionApp {
     };
     enhancers.push(enhancer);
     this.registered.set(getTokenRef(token), {value, aliases, enhancers});
+  }
+  cleanup() {
+    return Promise.all(this.cleanups.map(fn => fn()));
   }
   resolve() {
     if (!this.renderer) {
@@ -118,6 +122,9 @@ class FusionApp {
       let provides = value;
       if (value && value.__plugin__) {
         provides = resolvePlugin(provides);
+        if (value.cleanup) {
+          this.cleanups.push(() => value.cleanup(provides));
+        }
       } else {
         nonPluginTokens.add(token);
       }

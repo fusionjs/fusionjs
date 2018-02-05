@@ -7,6 +7,8 @@ type aliaser<Token> = {
   alias: (sourceToken: Token, destToken: Token) => aliaser<*>,
 };
 
+type cleanupFn = (thing: any) => Promise<any>;
+
 type ExtractReturnType = <V>(() => V) => V;
 
 declare module 'fusion-core' {
@@ -33,6 +35,7 @@ declare module 'fusion-core' {
       Deps: $ObjMap<Deps, ExtractReturnType>,
       Service: Service
     ) => Middleware,
+    cleanup?: (service: Service) => Promise<any>,
   };
   declare export type Middleware = (
     ctx: Context,
@@ -42,9 +45,11 @@ declare module 'fusion-core' {
   declare export function memoize<A>(fn: MemoizeFn<A>): MemoizeFn<A>;
   declare class FusionApp {
     constructor<Element>(element: Element, render: (Element) => any): FusionApp;
+    cleanups: Array<cleanupFn>;
     registered: Map<any, any>;
     plugins: Array<any>;
     renderer: any;
+    cleanup(): Promise<any>;
     enhance<Token, Deps>(
       token: Token,
       enhancer: (

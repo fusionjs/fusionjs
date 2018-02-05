@@ -143,6 +143,14 @@ app.enhance(FetchToken, fetch => {
 });
 ```
 
+##### app.cleanup
+
+```js
+await app.cleanup();
+```
+
+Calls all plugin cleanup methods. Useful for testing.
+
 ##### ElementToken
 
 ```js
@@ -196,6 +204,12 @@ export default createPlugin({
       return next();
     };
   },
+  // dependency injected async cleanup function
+  cleanup: (thing) => {
+    return new Promise(resolve => {
+      thing.close(resolve);
+    });
+  }
 });
 ```
 
