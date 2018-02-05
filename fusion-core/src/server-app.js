@@ -17,6 +17,8 @@ export default function(): Class<FusionApp> {
       this._app = new Koa();
       this.register(TimingToken, Timing);
       this.middleware({element: ElementToken}, ssrPlugin);
+      el && this.register(ElementToken, el);
+      render && this.register(RenderToken, render);
     }
     resolve() {
       this.middleware(

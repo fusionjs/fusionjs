@@ -58,6 +58,38 @@ test('sync render', async t => {
   t.end();
 });
 
+test('render plugin order', async t => {
+  let numRenders = 0;
+  const element = 'hi';
+  const renderFn = el => {
+    t.equals(el, element, 'render receives correct args');
+    return delay().then(() => {
+      numRenders++;
+      return el;
+    });
+  };
+  const renderPlugin = createPlugin({
+    provides: () => renderFn,
+    middleware: () => (ctx, next) => {
+      t.equal(
+        ctx.element,
+        element,
+        'sets ctx.element before running render middleware'
+      );
+      return next();
+    },
+  });
+  // TODO(#137): fix flow types for renderPlugin
+  // $FlowFixMe
+  const app = new App(element, renderPlugin);
+  const ctx = await run(app);
+  t.ok(ctx.element, 'sets ctx.element');
+  t.equal(ctx.rendered, element);
+  t.equal(numRenders, 1, 'calls render once');
+  t.equal(ctx.element, element, 'sets ctx.element');
+  t.end();
+});
+
 test('app.register - async render with async middleware', async t => {
   let numRenders = 0;
   const element = 'hi';

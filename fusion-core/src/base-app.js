@@ -1,13 +1,10 @@
 import {createPlugin} from './create-plugin';
-import {ElementToken, RenderToken} from './tokens';
 import {TokenType, TokenImpl} from './create-token';
 
 class FusionApp {
-  constructor(element, render) {
+  constructor() {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.plugins = []; // Token
-    element && this.register(ElementToken, element);
-    render && this.register(RenderToken, render);
   }
   register(token, value) {
     if (value === undefined) {
