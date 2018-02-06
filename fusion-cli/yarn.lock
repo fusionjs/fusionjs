@@ -1745,9 +1745,9 @@ compressible@~2.0.11:
   dependencies:
     mime-db ">= 1.30.0 < 2"
 
-compression-webpack-plugin@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/compression-webpack-plugin/-/compression-webpack-plugin-1.1.3.tgz#4b936c627eda09304e3153499ece7830289ab95a"
+compression-webpack-plugin@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/compression-webpack-plugin/-/compression-webpack-plugin-1.1.6.tgz#450808fe143b4c5216a14f0c315c47bec3d83cec"
   dependencies:
     async "^2.4.1"
     cacache "^10.0.1"
@@ -2663,9 +2663,9 @@ eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
-eslint@4.16.0:
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.16.0.tgz#934ada9e98715e1d7bbfd6f6f0519ed2fab35cc1"
+eslint@4.17.0:
+  version "4.17.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.17.0.tgz#dc24bb51ede48df629be7031c71d9dc0ee4f3ddf"
   dependencies:
     ajv "^5.3.0"
     babel-code-frame "^6.22.0"
@@ -3227,39 +3227,39 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.0.tgz#0ce2a5b17c2e1948f05fbcdee808c7bcf5d8eadf"
+fusion-core@0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.6.tgz#14903281aa94c37c898243f6061299aece31cc2a"
   dependencies:
     koa "^2.3.0"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
 
-fusion-plugin-react-router@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-0.4.0.tgz#ec4c5987821c2ba20b1a5ac2f0007638f0182b58"
+fusion-plugin-react-router@0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-0.4.3.tgz#d11effe831053989ab94013d7149976d83fd9fc8"
   dependencies:
     "@babel/preset-react" "^7.0.0-beta.38"
     history "^4.7.2"
     prop-types "^15.6.0"
     react-router-dom "^4.2.2"
 
-fusion-plugin-universal-events@^0.3.0:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.2.tgz#110c4bb7a4387cf204d10913b2c572e22f99df4c"
+fusion-plugin-universal-events@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.4.tgz#1edd179cfeee94786910b2ae77c5961e1416110a"
   dependencies:
     koa-bodyparser "4.2.0"
 
-fusion-react-async@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-0.1.4.tgz#f664a5bbe37aafd73e5b721586606940bda20398"
+fusion-react-async@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-0.2.0.tgz#d835ef85d4342fc083cc82a13eafd87bb7e69617"
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.2.tgz#00fbaebb62c4a616feb0be1c4dc3f0202e4d3371"
+fusion-react@0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.3.tgz#cd62c1ddfbe1480b948c65aca2b88a7bcf1d9257"
 
 fusion-test-utils@0.4.2:
   version "0.4.2"
@@ -3269,9 +3269,9 @@ fusion-test-utils@0.4.2:
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.5.tgz#71af057ab696046c43e89ca06dfe47cdbaeac6d8"
+fusion-tokens@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.6.tgz#71606a0109918dc098eb43cc0a3b877beb111d4d"
 
 gauge@~2.7.3:
   version "2.7.4"
