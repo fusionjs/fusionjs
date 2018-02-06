@@ -1,6 +1,6 @@
 # Working with secrets
 
-Secrets can be handled like any other plugin configuration - just register them in order to provide them to the plugin you're using.
+Handle secrets like any other plugin configuration. Just register them to provide them to the plugin you're using.
 
 In the example below, the secret for the JWT session plugin is being provisioned via environment variables.
 
@@ -25,9 +25,9 @@ Remember that typically we should only expose secrets in the server. In the exam
 
 # Secret rotation
 
-It's good security practice to rotate secrets regularly, but we might not necessarily want to restart the application every time rotation needs to happen.
+It's good security practice to rotate secrets regularly, but we might not want to restart the application every time rotation needs to happen.
 
-In order to accomplish dynamic secret rotation, plugins can receive an EventEmitter or similar abstraction as an argument:
+To accomplish dynamic secret rotation, plugins can receive an EventEmitter or similar abstraction as an argument:
 
 ```js
 import {createPlugin} from 'fusion-core';

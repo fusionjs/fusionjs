@@ -2,7 +2,7 @@
 
 FusionJS provides an [RPC plugin](https://github.com/fusionjs/fusion-plugin-rpc-redux-react) that integrates with Redux and React/Preact. We recommend using that RPC plugin rather than writing HTTP endpoints manually.
 
-With that being said, here we will implement an HTTP endpoint manually in order to better understand how FusionJS middlewares work.
+Here we will implement an HTTP endpoint manually to better understand how FusionJS middlewares work.
 
 The simplest way to write a FusionJS plugin is a [middleware plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#middlewares):
 
@@ -19,7 +19,7 @@ export default createPlugin({
 };
 ```
 
-To write a middleware plugin, we export a _factory_ function that return a _middleware_ function. The middleware receives a `ctx` argument that has various properties, and a `next` function that it must call. It works the same was as a [Koa](http://koajs.com) middleware.
+To write a middleware plugin, we export a _factory_ function that return a _middleware_ function. The middleware receives a `ctx` argument that has various properties, and a `next` function that it must call. It works the same way as a [Koa](http://koajs.com) middleware.
 
 Let's say we want to implement a `GET /api/ping` endpoint. This endpoint simply responds with `{ok: 1}`. To do that, we check that the `method` and `path` are correct and we set `body` to the data we want to return:
 
@@ -39,7 +39,7 @@ export default createPlugin({
 });
 ```
 
-There's one issue left with the code above: FusionJS code runs isomorphically by default, but we only want to run that code in the server. To do so, simply add a [code fence](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md):
+There's one issue left with the code above: FusionJS code runs isomorphically by default, but we only want to run that code in the server. To do so, add a [code fence](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md):
 
 ```js
 // src/plugins/example.js

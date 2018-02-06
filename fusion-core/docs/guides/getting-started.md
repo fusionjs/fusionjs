@@ -1,6 +1,6 @@
 # Getting started
 
-### Setup FusionJS packages
+### Set up FusionJS packages
 
 FusionJS let's you customize virtually all aspects of an application. In this example, we'll see how to setup a React-based application.
 
@@ -62,7 +62,7 @@ The application will be available at `http://localhost:3000` and will render `He
 
 Try changing the text to see hot reloading in action.
 
-While the FusionJS CLI takes care of developer productivity concerns such as babel configuration, build-time orchestration and hot module reloading, the FusionJS runtime does very little. This ensure that the baseline build of a FusionJS app is lean and flexible.
+While the FusionJS CLI takes care of developer productivity concerns such as Babel configuration, build-time orchestration and hot module reloading, the FusionJS runtime does very little. This ensures that the baseline build of a FusionJS app is lean and flexible.
 
 However, apps can gain more functionality via plugins. In the next section, we'll look at how to use a plugin.
 
@@ -154,13 +154,13 @@ export default () => (ctx, next) => {
 }
 ```
 
-Note: stay tuned, we're working on an official FusionJS plugin for optimized font loading, which will replace the workflow above.
+**Note**: Stay tuned, we're working on an official FusionJS plugin for optimized font loading, which will replace the workflow above.
 
 ---
 
 ### Assets
 
-The virtual module `assetUrl` should also be used for other asset types, such as images.
+Use the virtual module `assetUrl` for other asset types, such as images.
 
 ```js
 // src/components/root.js

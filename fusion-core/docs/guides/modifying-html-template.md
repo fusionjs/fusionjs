@@ -1,6 +1,6 @@
 # Modifying the HTML template
 
-The HTML template of a FusionJS plugin can be modified via middleware plugins.
+Modify the HTML template of a FusionJS plugin with middleware plugins.
 
 When a page is server-side rendered, the `ctx.template` property in the middleware is an object:
 
@@ -13,7 +13,7 @@ ctx.template = {
 }
 ```
 
-To modify the title, simply do:
+To modify the title, use:
 
 ```js
 export default () => (ctx, next) => {
@@ -22,7 +22,7 @@ export default () => (ctx, next) => {
 };
 ```
 
-Similarly, to add attributes to the `<html>` tag, do:
+Similarly, to add attributes to the `<html>` tag, use:
 
 ```js
 export default () => (ctx, next) => {
@@ -33,7 +33,7 @@ export default () => (ctx, next) => {
 
 To add arbitrary HTML to `<head>` and `<body>`, however, you must sanitize the HTML to ensure that there's no risk of an XSS attack from unsanitized user data.
 
-To sanitize HTML, simply use the `html` template tag:
+To sanitize HTML, use the `html` template tag:
 
 ```js
 import {html} from 'fusion-core';

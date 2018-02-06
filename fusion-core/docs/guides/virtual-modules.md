@@ -1,8 +1,8 @@
 # Framework virtual modules
 
-Virtual modules are the means for userland consumption of fusion-owned static analysis and build artifacts in a way that:
+Virtual modules are the means for userland consumption of Fusion-owned static analysis and build artifacts in a way that:
 1) Does not expose any underlying implementation details, such as module bundlers or transpilers
-2) Provides a strong API contract with type safety w/ editor support
+2) Provides a strong API contract with type safety with editor support
 3) Provides a high degree of robustness with build-time errors in cases where static analysis will fail, including user misuse like not providing statically analyzable arguments.
 
 In practice, a virtual module is implemented via a coupled agglomeration of babel plugin(s), webpack loader(s), and webpack plugin(s).

@@ -4,9 +4,9 @@ FusionJS has first class support for universal code.
 
 By default, code runs in both server and browser. This means that plugin registration code only needs to be written once, and that plugins can activate behavior across the entire lifecycle of an application without the need to configure things in different parts of the app. It also means that you can write React code once and have that code be automatically server-side rendered as you would expect.
 
-However it is also sometimes desirable to be able to write server-only code, browser-only code, and at times, development-only code. To enable that, FusionJS provides the `__NODE__`, `__BROWSER__` and `__DEV__` global flags. These special flags are statically replaced by the compiler with the appropriate boolean value, depending on which bundle the code is compiled for. Then, unused code gets removed via tree shaking and dead code elimination.
+However, it is also sometimes desirable to write server-only code, browser-only code, and at times, development-only code. To enable that, FusionJS provides the `__NODE__`, `__BROWSER__` and `__DEV__` global flags. These special flags are statically replaced by the compiler with the appropriate boolean value, depending on which bundle the code is compiled for. Then, unused code gets removed via tree shaking and dead code elimination.
 
-To write code that only runs in the server, simply wrap your code in the appropriate code fence:
+To write code that only runs in the server, wrap your code in the appropriate code fence:
 
 ```js
 if (__NODE__) {
@@ -22,7 +22,7 @@ if (__BROWSER__) {
 }
 ```
 
-It's recommended that you only use `__DEV__` to enhance developer experience with regards to error conditions:
+We recommend that you only use `__DEV__` to enhance developer experience with regards to error conditions:
 
 ```js
 // this conditional gets removed from the browser bundle in production, saving a few bytes
@@ -33,7 +33,7 @@ if (__DEV__) {
 
 You should avoid writing significantly different code branches for different environments since doing so introduces more potential points of failure, and makes it more difficult to reproduce issues with confidence.
 
-It's also recommended that you use `__DEV__` and avoid using `process.env.NODE_ENV === 'production'`, since FusionJS provides better static compilation and eslint support for the former.
+We also recommend that you use `__DEV__` and avoid using `process.env.NODE_ENV === 'production'`, since FusionJS provides better static compilation and eslint support for the former.
 
 # Imports
 
@@ -55,7 +55,7 @@ The `import` statement is outside of the code fence, but it is also removed beca
 
 On some rare occasions, poorly written server-side packages might incur top-level side-effects. In those cases, the compiler becomes unable to treeshake the misbehaving dependency in the browser bundle, and compilation typically fails due to unpolyfilled server dependencies.
 
-A simple way to avoid this issue is to simply load the module dynamically via a good old CommonJS `require` call.
+A simple way to avoid this issue is to load the module dynamically via a good old CommonJS `require` call.
 
 ```js
 // before

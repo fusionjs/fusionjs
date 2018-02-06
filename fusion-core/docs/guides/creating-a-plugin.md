@@ -12,7 +12,7 @@ Examples of areas of concern that a plugin can encapsulate include CSS-in-JS, RP
 
 ## Plugin structure
 
-A plugin is created via the `createPlugin`:
+Create a plugin with the `createPlugin`:
 
 ```js
 import {createPlugin} from 'fusion-core';
@@ -32,13 +32,13 @@ The `createPlugin` function accepts three optional named parameters: `deps`, `pr
 
 * `deps: Object` - a map of dependencies
 * `provides: (deps: Object) => T` - receives resolved dependencies as named arguments and returns a service
-* `middleware: (deps: Object, service: T) => (ctx: FusionContext, next: () => Promise) => Promise` - receives dependencies and the provided service and returns a middleware.
+* `middleware: (deps: Object, service: T) => (ctx: FusionContext, next: () => Promise) => Promise` - receives dependencies and the provided service and returns a middleware
 
 ---
 
 ## Dependency injection
 
-A dependency is anything that has a programmatic API which can be consumed by another part of your web application, and which one might reasonably want to mock in a test.
+A dependency is anything that has a programmatic API that can be consumed by another part of your web application, and that you might reasonably want to mock in a test.
 
 In FusionJS, dependencies are registered to tokens via `app.register`:
 
@@ -356,7 +356,7 @@ export default createPlugin({
 
 ##### Troubleshooting hang-ups
 
-Note that the `next` function should normally be called once - and only once - per middleware call. We recommend avoiding complex conditional trees to prevent unexpected bugs that could occur when the function inadvertedly gets called multiple times (resulting in an error), or cases where it doesn't get called at all.
+**Note**: The `next` function should normally be called once - and only once - per middleware call. We recommend avoiding complex conditional trees to prevent unexpected bugs that could occur when the function inadvertedly gets called multiple times (resulting in an error), or cases where it doesn't get called at all.
 
 It's important to keep in mind that the middleware stack will remain in a pending status if you forget to call `return next()` or will potentially behave erratically if you break the promise chain (for example, by forgetting to use `async/await` or by forgetting to `return` in a non-async function). Breaking the promise chain is useful in a few select obscure cases, for example, short-circuiting the stack when dealing with static assets, but can lead to surprising behavior if done inadvertedly.
 

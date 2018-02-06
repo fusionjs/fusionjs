@@ -69,7 +69,7 @@ const app = new App();
 
 Creates an application that can be registered into the Fusion server.
 
-The application is responsible for rendering (both virtual dom and server-side rendering)
+The application is responsible for rendering (both virtual dom and server-side rendering).
 
 An application can receive any number of plugins, which can augment the behavior of the application.
 
@@ -87,7 +87,7 @@ app.register([Token,] Plugin | Value);
 * `Plugin: Object` - The result from calling `createPlugin` to be registered
 * `Value: any` - The value to be registered. Alternative to Plugin.
 
-Call this method to register a plugin into a FusionJS application. An optional token can be passed as the first
+Call this method to register a plugin into a FusionJS application. Optionally pass a token as the first
 argument to allow integrating the plugin into the FusionJS dependency injection system.
 
 ##### app.middleware
@@ -225,8 +225,8 @@ const ConsoleLoggerPlugin = createPlugin({
 });
 ```
 
-In order to use plugins, you need to register them with your FusionJS application. You do this by calling
-`app.register` with the plugin and a token for that plugin. The token is simply a value used to keep track of
+To use plugins, you need to register them with your FusionJS application. You do this by calling
+`app.register` with the plugin and a token for that plugin. The token is a value used to keep track of
 what plugins are registered, and to allow plugins to depend on one another. Tokens also work nicely with `flow`.
 You can think of Tokens like interfaces. We keep a list of standard tokens in the `fusion-tokens` repository.
 Lets finish up this logger example:
@@ -261,7 +261,7 @@ const APIPlugin = createPlugin({
 });
 ```
 
-The API plugin is declaring that it needs a logger that matches the api documented by the `LoggerToken`. The user then provides an implementation of that logger by registering the `fusion-plugin-console-logger` plugin with the `LoggerToken`.
+The API plugin is declaring that it needs a logger that matches the API documented by the `LoggerToken`. The user then provides an implementation of that logger by registering the `fusion-plugin-console-logger` plugin with the `LoggerToken`.
 
 ## Middleware
 
@@ -290,7 +290,7 @@ const middleware = () => async (ctx, next) => {
 };
 ```
 
-Plugins can add dependency injected middlewares. Lets try adding a middleware to our api plugin.
+Plugins can add dependency injected middlewares. Lets try adding a middleware to our API plugin.
 
 ```js
 // fusion-plugin-some-api
@@ -317,7 +317,7 @@ const APIPlugin = createPlugin({
 
 #### Implementing HTTP endpoints
 
-A plugin can be used to implement a RESTful HTTP endpoint. To achieve this, simply run code conditionally based on the url of the request
+You can use a plugin to implement a RESTful HTTP endpoint. To achieve this, run code conditionally based on the URL of the request
 
 ```js
 app.middleware(async (ctx, next) => {
@@ -394,14 +394,14 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
   * `headers: Object` - map of parsed HTTP headers
   * `method: string` - HTTP method
   * `url: string` - request URL
-  * `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for url rewriting)
+  * `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for URL rewriting)
   * `path: string` - request pathname
   * `query: Object` - parsed querystring as an object
   * `querystring: string` - querystring without `?`
   * `host: string` - host and port
   * `hostname: string`
   * `origin: string` - request origin, including protocol and host
-  * `href: string` - full URL including protocol, host and url
+  * `href: string` - full URL including protocol, host, and URL
   * `fresh: boolean` - check for cache negotiation
   * `stale: boolean` - inverse of `fresh`
   * `socket: Socket` - request socket
