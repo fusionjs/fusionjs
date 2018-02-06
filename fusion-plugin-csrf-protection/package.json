@@ -28,7 +28,7 @@
     "babel-eslint": "8.2.1",
     "body-parser": "1.18.2",
     "create-universal-package": "3.4.0",
-    "eslint": "4.16.0",
+    "eslint": "4.17.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
