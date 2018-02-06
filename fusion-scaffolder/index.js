@@ -34,6 +34,7 @@ module.exports = async function scaffold(ctx = {}) {
   const contentPath = join(templatePath, 'content');
 
   // Get context from index.js
+  // eslint-disable-next-line import/no-dynamic-require
   const getContext = require(join(templatePath, 'index.js'));
   const newCtx = await getContext(ctx);
 
