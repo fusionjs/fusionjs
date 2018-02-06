@@ -1,16 +1,17 @@
 /* eslint-env node */
 const fs = require('fs');
 const path = require('path');
+const cp = require('child_process');
 
 exports.command = 'start [--dir] [--environment]';
 exports.desc = 'Run your app';
 exports.builder = {
   // TODO(#20) ensure --debug works with start and test commands
-  // debug: {
-  //   type: 'boolean',
-  //   default: false,
-  //   describe: 'Debug application',
-  // },
+  debug: {
+    type: 'boolean',
+    default: false,
+    describe: 'Debug application',
+  },
   port: {
     type: 'number',
     describe:
@@ -28,7 +29,20 @@ exports.builder = {
   },
 };
 
-exports.run = async function({dir = '.', environment, port}) {
+exports.run = async function({dir = '.', environment, port, debug}) {
+  if (debug && !process.env.__FUSION_DEBUGGING__) {
+    const command = process.argv.shift();
+    const args = process.argv;
+    args.unshift('--inspect-brk');
+    return cp.spawn(command, args, {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        __FUSION_DEBUGGING__: true,
+      },
+    });
+  }
+
   const getEntry = env => {
     const entryPath = `.fusion/dist/${env}/server/server-main.js`;
     return path.resolve(dir, entryPath);
