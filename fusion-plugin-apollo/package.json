@@ -34,7 +34,7 @@
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.59.0",
     "fusion-core": "0.3.0",
-    "fusion-react-async": "0.1.4",
+    "fusion-react-async": "0.2.0",
     "prettier": "1.4.2",
     "react": "16.2.0",
     "react-apollo": "2.0.4",
@@ -53,7 +53,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^0.3.0",
-    "fusion-react-async": "^0.1.4",
+    "fusion-react-async": "^0.2.0",
     "react": "14.x - 16.x",
     "react-apollo": "^2.0.1",
     "react-dom": "14.x - 16.x"
