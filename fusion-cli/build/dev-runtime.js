@@ -43,7 +43,10 @@ function Lifecycle() {
         else {
           listening = true;
           emitter.once('started', resolve);
-          emitter.once('error', () => reject(state.error));
+          emitter.once('error', () => {
+            listening = false;
+            reject(state.error);
+          });
         }
       });
     },
