@@ -19,12 +19,12 @@ yarn add fusion-apollo
 ```js
 // ./src/main.js
 import React from 'react';
-import App from 'fusion-apollo';
-import createApolloClient from 'fusion-apollo-universal-client';
+import App, {ApolloClientToken} from 'fusion-apollo';
+import ApolloClient from 'fusion-apollo-universal-client';
 
 export default function() {
-  const apolloClient = createApolloClient(clientConfig);
-  return new App(<Hello />, apolloClient);
+  const app = new App(<Hello />);
+  app.register(ApolloClientToken, ApolloClient);
+  return app;
 }
 ```
-

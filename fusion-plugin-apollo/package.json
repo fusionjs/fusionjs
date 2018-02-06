@@ -24,18 +24,18 @@
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.39",
     "babel-eslint": "8.2.1",
-    "create-universal-package": "3.2.6",
+    "create-universal-package": "3.4.0",
     "eslint": "4.17.0",
     "eslint-config-fusion": "0.2.1",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
     "eslint-plugin-import": "2.8.0",
-    "eslint-plugin-prettier": "2.5.0",
+    "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
-    "flow-bin": "0.59.0",
-    "fusion-core": "0.3.0",
+    "flow-bin": "0.64.0",
+    "fusion-core": "0.3.6",
     "fusion-react-async": "0.2.0",
-    "prettier": "1.4.2",
+    "prettier": "1.10.2",
     "react": "16.2.0",
     "react-apollo": "2.0.4",
     "react-dom": "16.2.0",
@@ -62,6 +62,6 @@
     "node": ">= 8.9.0"
   },
   "dependencies": {
-    "fusion-react": "^0.4.0"
+    "fusion-react": "^0.4.3"
   }
 }
