@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
-    "eslint": "4.16.0",
+    "eslint": "4.17.0",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
     "eslint-plugin-import": "2.8.0",
