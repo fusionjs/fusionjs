@@ -19,9 +19,11 @@ yarn add fusion-plugin-rpc-redux-react
 ```js
 // src/main.js
 import App from 'fusion-react';
-import UniversalEvents from 'fusion-plugin-universal-events';
-import Redux from 'fusion-plugin-react-redux';
-import RPC from 'fusion-plugin-rpc-redux-react';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import Redux, {ReduxToken, ReducerToken} from 'fusion-plugin-react-redux';
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+import {FetchToken} from 'fusion-tokens';
+import fetch from 'unfetch';
 
 import reducer from './reducer';
 import handlers from './rpc';
@@ -29,9 +31,13 @@ import handlers from './rpc';
 export default () => {
   const app = new App(root);
 
-  const EventEmitter = app.plugin(UniversalEvents, {fetch});
-  app.plugin(Redux, {reducer});
-  app.plugin(RPC, __NODE__ ? {handlers, EventEmitter} : {fetch});
+  app.register(RPCToken, RPC);
+  app.register(UniversalEventsToken, UniversalEvents);
+  __NODE__
+    ? app.register(RPCHandlersToken, handlers);
+    : app.register(FetchToken, fetch);
+  app.register(ReduxToken, Redux);
+  app.register(ReducerToken, reducer);
 }
 
 // src/reducer.js
@@ -89,16 +95,29 @@ To use it, register the `fusion-plugin-react-redux` plugin with `reactorEnhancer
 ```js
 // src/main.js
 import App from 'fusion-react';
-import Redux from 'fusion-plugin-react-redux';
+import Redux, {
+  ReduxToken,
+  ReducerToken,
+  EnhancerToken
+} from 'fusion-plugin-react-redux';
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+import {FetchToken} from 'fusion-tokens';
 import {reactorEnhancer} from 'redux-reactors';
+import fetch from 'unfetch';
+
 import reducer from './redux';
 import handlers from './rpc';
-import fetch from 'unfetch';
 
 export default () => {
   const app = new App();
-  app.plugin(Redux, {reducer, enhancer: reactorEnhancer});
-  app.plugin(RPC, {handlers, fetch});
+
+  app.register(ReduxToken, Redux);
+  app.register(ReducerToken, reducer);
+  app.register(EnhancerToken, reactorEnhancer);
+
+  app.register(RPCToken, RPC);
+  app.register(RPCHandlersToken, handlers);
+  app.register(FetchToken, fetch);
   return app;
 }
 
@@ -180,6 +199,29 @@ However doing large refactors to the shape of the state tree isn't necessarily a
 ---
 
 ### API
+
+#### Dependency registration
+
+```js
+// src/main.js
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+import Redux, {ReduxToken, ReducerToken} from 'fusion-plugin-react-redux';
+
+app.register(UniversalEventsToken, UniversalEvents);
+__NODE__
+  ? app.register(RPCHandlersToken, handlers);
+  : app.register(FetchToken, fetch);
+```
+
+##### Required dependencies
+
+Name | Type | Description
+-|-|-
+`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+`RPCHandlersToken` | `Object<(...args: any) => Promise>` | A map of server-side RPC method implementations.  Server-only.
+`FetchToken` | `(url: string, options: Object) => Promise` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
 
 #### `withRPCRedux`
 
