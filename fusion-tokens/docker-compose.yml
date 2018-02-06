@@ -2,6 +2,3 @@ version: '2'
 services:
   fusion-tokens:
     build: .
-    volumes:
-      - '.:/fusion-tokens'
-      - /fusion-tokens/node_modules/

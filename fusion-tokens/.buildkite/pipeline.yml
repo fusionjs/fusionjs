@@ -14,3 +14,10 @@ steps:
         run: fusion-tokens
     agents:
       queue: workers
+  - name: ':node:'
+    command: yarn test
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-tokens
+    agents:
+      queue: workers

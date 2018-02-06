@@ -1,7 +1,7 @@
-FROM node:8.9.4@sha256:6054aa20c5b7d198524d9bd56c7b2d4fde046b6825e8261ccbf441444a5f4d39
+FROM uber/web-base-image:1.0.2@sha256:50825281ac5f6044ab318f37f57073e007afd6d2e25f91ac8a4448aa8b9f28b2
 
 WORKDIR /fusion-tokens
 
-COPY package.json yarn.lock /fusion-tokens/
+COPY . .
 
 RUN yarn

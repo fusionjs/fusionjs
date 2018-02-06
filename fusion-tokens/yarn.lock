@@ -26,7 +26,7 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/core@^7.0.0-beta.36":
+"@babel/core@^7.0.0-beta.38":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.39.tgz#242b8c0b99573de0395eaaa94e2d82a9cd008cf3"
   dependencies:
@@ -405,7 +405,7 @@
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
 
-"@babel/plugin-transform-flow-strip-types@7.0.0-beta.39", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.36":
+"@babel/plugin-transform-flow-strip-types@7.0.0-beta.39", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.38":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.39.tgz#3a03fc8ebaa9eddd62bdf501ceeff2a8e048bc4d"
   dependencies:
@@ -513,7 +513,7 @@
     "@babel/helper-regex" "7.0.0-beta.31"
     regexpu-core "^4.1.3"
 
-"@babel/preset-stage-3@^7.0.0-beta.36":
+"@babel/preset-stage-3@^7.0.0-beta.38":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/preset-stage-3/-/preset-stage-3-7.0.0-beta.39.tgz#30a313d79369aa1b4d6652ae621dc1d162255ac9"
   dependencies:
@@ -1439,13 +1439,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.2.5:
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.2.5.tgz#6b4e9106000e2ebf372e6f09badf4ccf74b9d94a"
+create-universal-package@3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.0.tgz#b396953b77fa7f38ecf18f5331315a71cd96f8e4"
   dependencies:
-    "@babel/core" "^7.0.0-beta.36"
-    "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.36"
-    "@babel/preset-stage-3" "^7.0.0-beta.36"
+    "@babel/core" "^7.0.0-beta.38"
+    "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.38"
+    "@babel/preset-stage-3" "^7.0.0-beta.38"
     "@rtsao/babel-preset-env" "^7.0.0-beta.31"
     args "^3.0.8"
     babel-plugin-istanbul "^4.1.5"
@@ -1454,12 +1454,11 @@ create-universal-package@3.2.5:
     draftlog "^1.0.12"
     fast-async "^6.3.0"
     import-lazy "^3.1.0"
-    jest-worker "^22.0.3"
+    jest-worker "^22.1.0"
     loader-utils "^1.1.0"
     multi-entry-loader "^1.1.2"
     rimraf "^2.6.2"
-    rollup "^0.53.2"
-    rollup-plugin-memory "^2.0.0"
+    rollup "^0.55.1"
     rollup-plugin-multi-entry "^2.0.2"
     rollup-pluginutils "^2.0.1"
     webpack "^3.10.0"
@@ -1868,9 +1867,9 @@ eslint-plugin-import@2.8.0:
     minimatch "^3.0.3"
     read-pkg-up "^2.0.0"
 
-eslint-plugin-prettier@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.5.0.tgz#39a91dd7528eaf19cd42c0ee3f2c1f684606a05f"
+eslint-plugin-prettier@2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.0.tgz#33e4e228bdb06142d03c560ce04ec23f6c767dd7"
   dependencies:
     fast-diff "^1.1.1"
     jest-docblock "^21.0.0"
@@ -2806,7 +2805,7 @@ jest-docblock@^21.0.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
 
-jest-worker@^22.0.3:
+jest-worker@^22.1.0:
   version "22.1.0"
   resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-22.1.0.tgz#0987832fe58fbdc205357f4c19b992446368cafb"
   dependencies:
@@ -3955,10 +3954,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-rollup-plugin-memory@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-memory/-/rollup-plugin-memory-2.0.0.tgz#0a8ac6b57fa0e714f89a15c3ac82bc93f89c47c5"
-
 rollup-plugin-multi-entry@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-multi-entry/-/rollup-plugin-multi-entry-2.0.2.tgz#ab50fbabec62526706492badadd8d59f139e4d58"
@@ -3972,9 +3967,9 @@ rollup-pluginutils@^2.0.1:
     estree-walker "^0.3.0"
     micromatch "^2.3.11"
 
-rollup@^0.53.2:
-  version "0.53.4"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.53.4.tgz#f92ce56ee1d097ad5b6f13951bc80db5fef18113"
+rollup@^0.55.1:
+  version "0.55.3"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.55.3.tgz#0af082a766d51c3058430c8372442ff5207d8736"
 
 run-async@^2.2.0:
   version "2.3.0"
