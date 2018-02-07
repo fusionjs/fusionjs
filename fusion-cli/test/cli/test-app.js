@@ -93,9 +93,14 @@ test('`fusion test-app` snapshotting', async t => {
 
   const snapshotFile =
     __dirname +
-    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-no-match.js.snap';
+    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-no-match.js.fixture';
   const backupSnapshot =
-    __dirname + '/../fixtures/snapshots/snapshot-no-match.js.snap';
+    __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
+
+  // Copy fixture to snapshot
+  fs
+    .createReadStream(snapshotFile)
+    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
@@ -113,8 +118,7 @@ test('`fusion test-app` snapshotting', async t => {
   const originalSnapshotCode = await readFile(backupSnapshot);
   t.notEqual(newSnapshotCode, originalSnapshotCode, 'snapshot is updated');
 
-  // Restore the failing snapshot
-  fs.createReadStream(backupSnapshot).pipe(fs.createWriteStream(snapshotFile));
+  fs.unlinkSync(snapshotFile.replace(/fixture$/, 'snap'));
 
   t.end();
 });
@@ -125,9 +129,14 @@ test('`fusion test-app` snapshotting - enzyme serializer', async t => {
 
   const snapshotFile =
     __dirname +
-    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-enzyme-no-match.js.snap';
+    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-enzyme-no-match.js.fixture';
   const backupSnapshot =
-    __dirname + '/../fixtures/snapshots/snapshot-enzyme-no-match.js.snap';
+    __dirname + '/../fixtures/snapshots/snapshot-enzyme-no-match.js.fixture';
+
+  // Copy fixture to snapshot
+  fs
+    .createReadStream(snapshotFile)
+    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
@@ -145,8 +154,7 @@ test('`fusion test-app` snapshotting - enzyme serializer', async t => {
   const originalSnapshotCode = await readFile(backupSnapshot);
   t.notEqual(newSnapshotCode, originalSnapshotCode, 'snapshot is updated');
 
-  // Restore the failing snapshot
-  fs.createReadStream(backupSnapshot).pipe(fs.createWriteStream(snapshotFile));
+  fs.unlinkSync(snapshotFile.replace(/fixture$/, 'snap'));
 
   t.end();
 });
@@ -174,7 +182,7 @@ test('`fusion test-app` coverage', async t => {
   t.end();
 });
 
-test('`fusion test-app` merge coverage reports', async t => {
+test('`fusion test-app` cobertura coverage reports', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --coverage --match=passes`;
 
@@ -197,6 +205,7 @@ test('`fusion test-app` merge coverage reports', async t => {
   const combinedReport = await readFile(
     path.resolve(dir, 'coverage/cobertura-coverage.xml')
   );
+
   t.ok(combinedReport.includes('<line number="1" hits="2"/>'));
   t.ok(!combinedReport.includes('<line number="1" hits="1"/>'));
   t.end();
@@ -259,11 +268,10 @@ test('`fusion test-app --debug --env=jsdom,node`', async t => {
       if (line.startsWith('Debugger listening on ws')) {
         listenAddresses[line] = true;
       }
-
       // Wait until we have results for both environments before ending the test.
-      if (/Tests:.*1\s+passed,\s+1\s+total/.test(line)) {
+      if (/Tests:.*2\s+passed,\s+2\s+total/.test(line)) {
         numResults += 1;
-        if (numResults == 2) {
+        if (numResults == 1) {
           t.end();
         }
       }
@@ -279,18 +287,14 @@ test('`fusion test-app --debug --env=jsdom,node`', async t => {
     });
   }
 
-  // Step through jsdom environment
+  // Step through the environment
   await checkStartedMessageCount(1);
-  await triggerCodeStep();
-
-  // Step through node environment
-  await checkStartedMessageCount(2);
   await triggerCodeStep();
 
   t.equal(
     Object.keys(listenAddresses).length,
-    2,
-    'listened for two remote debug connections'
+    1,
+    'found a remote debug connection'
   );
 
   child.kill();

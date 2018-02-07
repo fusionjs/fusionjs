@@ -3,7 +3,7 @@ const path = require('path');
 const {spawn} = require('child_process');
 const rimraf = require('rimraf');
 
-const mergeCoverage = require('./merge-coverage');
+const convertCoverage = require('./convert-coverage');
 
 module.exports.TestAppRuntime = function({
   dir = '.',
@@ -21,8 +21,6 @@ module.exports.TestAppRuntime = function({
 
   this.run = () => {
     this.stop();
-    const allTestEnvs = env.split(',');
-
     const getArgs = () => {
       let args = [require.resolve('jest/bin/jest.js')];
       if (debug) {
@@ -51,6 +49,8 @@ module.exports.TestAppRuntime = function({
         args.push('--updateSnapshot');
       }
 
+      args.push('--verbose');
+
       return args;
     };
 
@@ -60,11 +60,7 @@ module.exports.TestAppRuntime = function({
       }
 
       // Remove existing coverage directories
-      const folders = [
-        `${rootDir}/coverage/`,
-        `${rootDir}/coverage-node/`,
-        `${rootDir}/coverage-jsdom/`,
-      ];
+      const folders = [`${rootDir}/coverage/`];
       return Promise.all(
         folders.map(
           folder => new Promise(resolve => rimraf(folder, () => resolve))
@@ -72,21 +68,14 @@ module.exports.TestAppRuntime = function({
       );
     };
 
-    const spawnProc = testEnv => {
+    const spawnProc = () => {
       return new Promise((resolve, reject) => {
         const args = getArgs();
-        args.push('--env');
-        args.push(testEnv);
 
         const procEnv = {
-          JEST_ENV: testEnv,
+          JEST_ENV: env,
           TEST_FOLDER: testFolder,
         };
-
-        // Pass in the CI flag to prevent console clearing when watching on more than one suite
-        if (allTestEnvs.length > 1 && watch) {
-          procEnv.CI = 'true';
-        }
         const proc = spawn('node', args, {
           cwd: rootDir,
           stdio: 'inherit',
@@ -114,26 +103,11 @@ module.exports.TestAppRuntime = function({
       if (!coverage) {
         return Promise.resolve();
       }
-      return mergeCoverage({
-        dir: rootDir,
-        environments: allTestEnvs,
-      });
-    };
-
-    const getResolveChain = () => {
-      if (!debug) {
-        return Promise.all(allTestEnvs.map(spawnProc));
-      }
-      // Run environments in serial when debugging so we don't get a port collision.
-      let chain = Promise.resolve();
-      allTestEnvs.forEach(env => {
-        chain = chain.then(() => spawnProc(env));
-      });
-      return chain;
+      return convertCoverage(rootDir);
     };
 
     return setup()
-      .then(getResolveChain())
+      .then(spawnProc())
       .then(finish());
   };
 

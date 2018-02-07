@@ -21,16 +21,4 @@ if (fusionConfig.babel && fusionConfig.babel.plugins) {
 
 const transformer = require('babel-jest').createTransformer(babelConfig);
 
-const originalProcessFn = transformer.process;
-
-transformer.process = function(src, filename, config, transformOptions) {
-  return originalProcessFn.call(
-    transformer,
-    src,
-    filename,
-    config,
-    transformOptions
-  );
-};
-
 module.exports = transformer;
