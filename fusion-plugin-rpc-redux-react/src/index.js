@@ -3,16 +3,22 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-import plugin, {mock} from './plugin';
-
-export {createRPCReducer} from 'fusion-rpc-redux';
-export {withRPCRedux, withRPCReactor} from './hoc';
-
-export default plugin;
-export {mock};
-export {
+import {
   RPCToken,
   RPCHandlersToken,
   RPCRoutePrefixConfigToken,
 } from 'fusion-plugin-rpc';
+import {createRPCReducer} from 'fusion-rpc-redux';
+import {withRPCRedux, withRPCReactor} from './hoc';
+import plugin, {mock} from './plugin';
+
+export default plugin;
+export {
+  createRPCReducer,
+  mock,
+  RPCToken,
+  RPCHandlersToken,
+  RPCRoutePrefixConfigToken,
+  withRPCRedux,
+  withRPCReactor,
+};

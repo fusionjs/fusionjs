@@ -13,7 +13,6 @@ import {Provider, connect} from 'react-redux';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import {reactorEnhancer} from 'redux-reactors';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
 import Plugin from '../plugin';
@@ -33,9 +32,6 @@ function teardown() {
 
 test('browser plugin integration test withRPCRedux', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
     t.deepLooseEqual(
@@ -90,8 +86,6 @@ test('browser plugin integration test withRPCRedux', async t => {
   );
   const app = new App(element);
   app.register(Plugin);
-  app.register(RPCHandlersToken, {});
-  app.register(UniversalEventsToken, EventEmitter);
   app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
@@ -102,9 +96,6 @@ test('browser plugin integration test withRPCRedux', async t => {
 
 test('browser plugin integration test withRPCRedux - failure', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
     t.deepLooseEqual(
@@ -165,8 +156,6 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   );
   const app = new App(element);
   app.register(Plugin);
-  app.register(RPCHandlersToken, {});
-  app.register(UniversalEventsToken, EventEmitter);
   app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
@@ -176,9 +165,6 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
 
 test('browser mock integration test withRPCRedux', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const handlers = {
     test(args) {
       t.deepLooseEqual(
@@ -224,8 +210,6 @@ test('browser mock integration test withRPCRedux', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(UniversalEventsToken, EventEmitter);
-  app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
@@ -234,9 +218,6 @@ test('browser mock integration test withRPCRedux', async t => {
 
 test('browser mock integration test withRPCRedux - failure', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const e = new Error('message');
   e.code = 'code';
   e.meta = {hello: 'world'};
@@ -289,8 +270,6 @@ test('browser mock integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(UniversalEventsToken, EventEmitter);
-  app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
@@ -299,9 +278,6 @@ test('browser mock integration test withRPCRedux - failure', async t => {
 
 test('browser plugin integration test withRPCReactor', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
     t.deepLooseEqual(
@@ -387,8 +363,6 @@ test('browser plugin integration test withRPCReactor', async t => {
   );
   const app = new App(element);
   app.register(Plugin);
-  app.register(RPCHandlersToken, {});
-  app.register(UniversalEventsToken, EventEmitter);
   app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
@@ -400,9 +374,6 @@ test('browser plugin integration test withRPCReactor', async t => {
 
 test('browser mock plugin integration test withRPCReactor', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const handlers = {
     test(args) {
       t.deepLooseEqual(
@@ -480,8 +451,6 @@ test('browser mock plugin integration test withRPCReactor', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(UniversalEventsToken, EventEmitter);
-  app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -492,9 +461,6 @@ test('browser mock plugin integration test withRPCReactor', async t => {
 
 test('browser plugin integration test withRPCReactor - failure', async t => {
   setup();
-  const EventEmitter = {
-    from() {},
-  };
   const e = new Error('Some failure');
   e.code = 'ERR_CODE';
   e.meta = {error: 'meta'};
@@ -580,8 +546,6 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(UniversalEventsToken, EventEmitter);
-  app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -590,14 +554,11 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   t.end();
 });
 
-test('browser plugin integration test withRPCReactor - failure', async t => {
+test('browser plugin integration test withRPCReactor - failure 2', async t => {
   setup();
   const e = new Error('Some failure');
   e.code = 'ERR_CODE';
   e.meta = {error: 'meta'};
-  const EventEmitter = {
-    from() {},
-  };
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
     t.deepLooseEqual(
@@ -690,8 +651,6 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   );
   const app = new App(element);
   app.register(Plugin);
-  app.register(RPCHandlersToken, {});
-  app.register(UniversalEventsToken, EventEmitter);
   app.register(FetchToken, fetch);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
