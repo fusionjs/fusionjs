@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export {
+import {
   HashRouter,
   Link,
   MemoryRouter,
@@ -15,7 +15,25 @@ export {
   matchPath,
   withRouter,
 } from 'react-router-dom';
-export {Status, NotFound} from './modules/Status';
-export {Redirect} from './modules/Redirect';
-export {Router} from './modules/BrowserRouter';
-export {Route} from './modules/Route';
+
+import {Status, NotFound} from './modules/Status';
+import {Redirect} from './modules/Redirect';
+import {Router} from './modules/BrowserRouter';
+import {Route} from './modules/Route';
+
+export {
+  HashRouter,
+  Link,
+  MemoryRouter,
+  NavLink,
+  Prompt,
+  StaticRouter,
+  Switch,
+  matchPath,
+  withRouter,
+  Status,
+  NotFound,
+  Redirect,
+  Router,
+  Route,
+};
