@@ -263,6 +263,8 @@ test('`fusion test-app --debug --env=jsdom,node`', async t => {
   child.stderr &&
     child.stderr.on('data', data => {
       const line = data.toString();
+      // eslint-disable-next-line no-console
+      console.log(` - received spawn line: ${line}`);
       stderrLines.push(line);
       // Keep track of all addresses that we start listening to.
       if (line.startsWith('Debugger listening on ws')) {
