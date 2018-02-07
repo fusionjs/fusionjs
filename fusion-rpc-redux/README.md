@@ -21,7 +21,7 @@ yarn add fusion-rpc-redux
 #### `createRPCActions`
 
 ```js
-const {start, success, failure} = createRPCActions('foo');
+const {start, success, failure} = createRPCActions('rpcMethodName');
 start('payload') // { type: 'FOO_START', payload: 'payload' }
 success('payload') // { type: 'FOO_SUCCESS', payload: 'payload' }
 failure('payload') // { type: 'FOO_FAILURE', payload: 'payload' }
@@ -30,17 +30,17 @@ failure('payload') // { type: 'FOO_FAILURE', payload: 'payload' }
 #### `createRPCReducer`
 
 ```js
-const reducer = createRPCReducer('foo', {
+const reducer = createRPCReducer('rpcMethodName', {
   start: (state, action) => {}, // optional,
   success: (state, action) => {}, // optional,
   failure: (state, action) => {}, // optional,
-});
+}, 'defaultStateValue');
 ```
 
 #### `createRPCReactors`
 
 ```js
-const reactors = createRPCReactors('foo', {
+const reactors = createRPCReactors('rpcMethodName', {
   start: (state, action) => {}, // optional,
   success: (state, action) => {}, // optional,
   failure: (state, action) => {}, // optional,

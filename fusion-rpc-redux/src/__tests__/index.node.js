@@ -246,3 +246,12 @@ test('createRPCReducer default reducers', t => {
   t.equal(reducer(initialState, {type: 'GET_COUNT_FAILURE'}), initialState);
   t.end();
 });
+
+test('createRPCReducer custom default state', t => {
+  const initialState = 123;
+  const reducer = createRPCReducer('getCount', {}, initialState);
+  t.equal(reducer(initialState, {type: 'GET_COUNT_START'}), initialState);
+  t.equal(reducer(initialState, {type: 'GET_COUNT_SUCCESS'}), initialState);
+  t.equal(reducer(initialState, {type: 'GET_COUNT_FAILURE'}), initialState);
+  t.end();
+});

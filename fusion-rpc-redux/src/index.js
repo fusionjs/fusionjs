@@ -38,11 +38,11 @@ function getNormalizedReducers(reducers) {
   }, {});
 }
 
-export function createRPCReducer(rpcId, reducers) {
+export function createRPCReducer(rpcId, reducers, startValue = {}) {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
 
-  return function rpcReducer(state = {}, action) {
+  return function rpcReducer(state = startValue, action) {
     if (actionNames.start === action.type) {
       return reducers.start(state, action);
     }
