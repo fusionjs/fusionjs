@@ -36,7 +36,7 @@
     "fusion-core": "^0.3.0-4",
     "fusion-plugin-universal-events": "^0.3.0",
     "fusion-test-utils": "^0.4.2",
-    "fusion-tokens": "^0.0.5",
+    "fusion-tokens": "^0.0.6",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "tape-cup": "4.7.1",
@@ -44,7 +44,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^0.3.0-4",
-    "fusion-tokens": "^0.0.5"
+    "fusion-tokens": "^0.0.6"
   },
   "scripts": {
     "clean": "rm -rf dist",
