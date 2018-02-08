@@ -40,7 +40,7 @@ import {withFontLoading} from 'fusion-plugin-font-loader-react';
 const FancyLink1 = withFontLoading('Lato-Bold'.(
   styled('a', props => ({
     ':hover': {fontSize: `${props.answer}px`}.
-    ...props.fontStyles,
+    ...props.$fontStyles,
   }))
 );
 ```
@@ -106,7 +106,7 @@ Based on the example configuration file above the following @font-face would be 
 2. Fallbacks at and above the specified `preloadDepth` will be preloaded/prefetched on page load
 3. Remaining fonts will lazily loaded.
 
-Based on the sample config above (`preloadDepth` is set to 1), the HOC example above would yield the following values for `prop.fontStyles`:
+Based on the sample config above (`preloadDepth` is set to 1), the HOC example above would yield the following values for `prop.$fontStyles`:
 
 while loading font:
 ```js
@@ -131,19 +131,19 @@ If `preloadDepth` were 2 then the only fallback font would be Helvetica, and sin
 
 This repo also supplies a `with-font-loading.js` Higher Order Component which is used to:
 1. Load a specified font
-2. Temporarily assign a fallback font and styles to the wrapped component via `props.fontStyles`
-3. When the font is loaded assign the true font to child component via `props.fontStyles`
+2. Temporarily assign a fallback font and styles to the wrapped component via `props.$fontStyles`
+3. When the font is loaded assign the true font to child component via `props.$fontStyles`
 
 ```js
 const FancyLink1 = withFontLoading('Lato-Bold'.(
   styled('a', props => ({
     ':hover': {fontSize: `${props.answer}px`}.
-    ...props.fontStyles,
+    ...props.$fontStyles,
   }))
 );
 ```
 
-This will lazy-load `Lato-Bold` and meanwhile assign a fallback font and styling to the element via `props.fontStyles`.
+This will lazy-load `Lato-Bold` and meanwhile assign a fallback font and styling to the element via `props.$fontStyles`.
 
 ---
 
