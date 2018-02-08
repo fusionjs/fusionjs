@@ -37,7 +37,7 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
-    "fusion-core": "0.3.0",
+    "fusion-core": "0.3.6",
     "fusion-tokens": "0.0.5",
     "jest": "22.2.1",
     "jest-cli": "22.2.1",
@@ -62,7 +62,7 @@
     "node-mocks-http": "^1.6.6"
   },
   "peerDependencies": {
-    "fusion-core": "0.3.0",
+    "fusion-core": "0.3.6",
     "fusion-tokens": "^0.0.5"
   },
   "engines": {
