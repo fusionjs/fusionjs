@@ -23,7 +23,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-universal-events": "^0.3.3",
+    "fusion-plugin-universal-events": "^0.3.4",
     "fusion-test-utils": "^0.4.2"
   },
   "devDependencies": {
@@ -37,9 +37,9 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
-    "fusion-core": "^0.3.3",
-    "fusion-react": "0.4.2",
-    "fusion-react-async": "0.1.4",
+    "fusion-core": "^0.3.6",
+    "fusion-react": "0.4.3",
+    "fusion-react-async": "0.2.0",
     "fusion-tokens": "^0.0.6",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
@@ -48,7 +48,7 @@
     "tape-cup": "4.7.1"
   },
   "peerDependencies": {
-    "fusion-core": "^0.3.3",
+    "fusion-core": "^0.3.6",
     "fusion-react": "^0.4.0",
     "fusion-tokens": "^0.0.6"
   },
