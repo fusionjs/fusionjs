@@ -35,7 +35,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
-    "flow-bin": "0.64.0",
+    "flow-bin": "0.65.0",
     "fusion-core": "^0.3.1",
     "fusion-tokens": "^0.0.6",
     "nyc": "11.4.1",
