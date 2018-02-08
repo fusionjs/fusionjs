@@ -32,7 +32,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
-    "flow-bin": "0.64.0",
+    "flow-bin": "0.65.0",
     "fusion-core": "^0.3.0-4",
     "fusion-plugin-universal-events": "^0.3.0",
     "fusion-test-utils": "^0.4.2",
