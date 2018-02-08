@@ -14,5 +14,5 @@ export {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
-  InitialStateToken,
+  GetInitialStateToken,
 } from './tokens';

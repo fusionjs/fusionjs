@@ -13,7 +13,7 @@ import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
-  InitialStateToken,
+  GetInitialStateToken,
 } from './tokens.js';
 
 export default __NODE__ &&
@@ -22,7 +22,7 @@ export default __NODE__ &&
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
       enhancer: EnhancerToken.optional,
-      getInitialState: InitialStateToken.optional,
+      getInitialState: GetInitialStateToken.optional,
     },
     provides({reducer, preloadedState, enhancer, getInitialState}) {
       class Redux {

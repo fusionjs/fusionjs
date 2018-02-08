@@ -21,7 +21,7 @@ yarn add fusion-plugin-react-redux
 ```js
 // in your main.js file
 import React from 'react';
-import Redux, {ReduxToken, ReducerToken, EnhancerToken, InitialStateToken} from 'fusion-plugin-react-redux';
+import Redux, {ReduxToken, ReducerToken, EnhancerToken, GetInitialStateToken} from 'fusion-plugin-react-redux';
 import ReduxActionEmitterEnhancer from 'fusion-plugin-redux-action-emitter-enhancer';
 import App from 'fusion-react';
 import reducer from './reducer';
@@ -31,7 +31,7 @@ export default function start() {
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
   app.register(EnhancerToken, ReduxActionEmitterEnhancer);
-  __NODE__ && app.register(InitialStateToken, async (ctx) => {
+  __NODE__ && app.register(GetInitialStateToken, async (ctx) => {
     return {};
   });
 
@@ -55,13 +55,13 @@ import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
-  InitialStateToken
+  GetInitialStateToken
 } from 'fusion-plugin-react-redux';
 
 app.register(ReducerToken, reducer);
 app.register(PreloadedStateToken, preloadedState);
 app.register(EnhancerToken, enhancer);
-__NODE__ && app.register(InitialStateToken, getInitialState);
+__NODE__ && app.register(GetInitialStateToken, getInitialState);
 ```
 
 Creates the redux store and integrates it into the FusionJS application.
@@ -78,7 +78,7 @@ Name | Type | Default | Description
 -|-|-|-
 `PreloadedStateToken` | `any` | `undefined` | Overrides the initial state in the server, and the hydrated state in the client
 `EnhancerToken` | `FusionPlugin` | `undefined` | Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. We are currently investigating enhancer composition in fusionjs/fusion-core#90, but for now you can use plugin aliasing for registering multiple enhancers: `app.register(EnhancerToken, ReduxActionEmitterEnhancer).alias(EnhancerToken, AnotherEnhancerPlugin);`.
-`InitialStateToken` | `(ctx) => Promise<any>` | `undefined` | A function that returns the initial state for your redux store.  Server-side only.
+`GetInitialStateToken` | `(ctx) => Promise<any>` | `undefined` | A function that returns the initial state for your redux store.  Server-side only.
 
 #### Factory
 
