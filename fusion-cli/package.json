@@ -55,7 +55,7 @@
     "koa-mount": "3.0.0",
     "koa-static": "4.0.2",
     "koa-webpack-hot-middleware": "1.0.3",
-    "lighthouse": "2.8.0",
+    "lighthouse": "2.9.0",
     "memory-fs": "0.4.1",
     "mime": "2.2.0",
     "mime-db": "1.32.0",
