@@ -46,12 +46,14 @@ const app = new App(element);
 #### Instance methods
 
 ```js
-const plugin = app.plugin(factory, dependencies)
+app.register([Token,] Plugin | Value);
+app.middleware(Dependencies, deps => Middleware);
+app.middleware(Middleware);
+app.enhance(Token, value => Plugin | Value);
+app.cleanup();
 ```
 
-- `factory: (dependencies: Object) => Plugin` - Required. The export value of a plugin package
-- `dependencies: Object` - Optional. A map of dependencies for the plugin
-- `plugin: Plugin` - A Fusion [plugin](https://github.com/fusionjs/fusion-core#plugin)
+The `fusion-react` class extends the [fusion-core base app](https://github.com/fusionjs/fusion-core/blob/master/src/base-app.js) class. See [fusion-core instance members](https://github.com/fusionjs/fusion-core#app-instance-members) for more details.
 
 ### Provider
 
