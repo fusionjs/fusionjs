@@ -15,12 +15,14 @@ class Timing {
   end: Deferred<number>;
   downstream: Deferred<number>;
   upstream: Deferred<number>;
+  upstreamStart: number;
   constructor() {
     this.start = now();
     this.render = deferred();
     this.end = deferred();
     this.downstream = deferred();
     this.upstream = deferred();
+    this.upstreamStart = -1;
   }
 }
 type TimingPlugin = {
@@ -44,6 +46,8 @@ function middleware(ctx, next) {
     upstream: upstream.promise,
   };
   return next().then(() => {
+    const upstreamTime = now() - timing.from(ctx).upstreamStart;
+    upstream.resolve(upstreamTime);
     const endTime = now() - ctx.timing.start;
     end.resolve(endTime);
   });
