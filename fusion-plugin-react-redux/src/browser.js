@@ -14,8 +14,9 @@ import {compose, createStore} from 'redux';
 import ctxEnhancer from './ctx-enhancer';
 import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
 
-export default __BROWSER__ &&
-  createPlugin({
+export default () => {
+  let storeCache = null;
+  return createPlugin({
     deps: {
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
@@ -24,31 +25,36 @@ export default __BROWSER__ &&
     provides({reducer, preloadedState, enhancer}) {
       class Redux {
         constructor(ctx) {
-          // We only use initialState for client-side hydration
-          // The real initial state should be derived from the reducer and the @@INIT action
-          if (!preloadedState) {
-            const stateElement = document.getElementById('__REDUX_STATE__');
-            if (stateElement) {
-              preloadedState = JSON.parse(unescape(stateElement.textContent));
+          if (storeCache) {
+            this.store = storeCache;
+          } else {
+            // We only use initialState for client-side hydration
+            // The real initial state should be derived from the reducer and the @@INIT action
+            if (!preloadedState) {
+              const stateElement = document.getElementById('__REDUX_STATE__');
+              if (stateElement) {
+                preloadedState = JSON.parse(unescape(stateElement.textContent));
+              }
             }
-          }
-          const devTool =
-            __DEV__ &&
-            window.__REDUX_DEVTOOLS_EXTENSION__ &&
-            __REDUX_DEVTOOLS_EXTENSION__();
+            const devTool =
+              __DEV__ &&
+              window.__REDUX_DEVTOOLS_EXTENSION__ &&
+              __REDUX_DEVTOOLS_EXTENSION__();
 
-          const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
-            Boolean
-          );
-          this.store = createStore(
-            reducer,
-            preloadedState,
-            compose(...enhancers)
-          );
+            const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
+              Boolean
+            );
+            this.store = createStore(
+              reducer,
+              preloadedState,
+              compose(...enhancers)
+            );
+            storeCache = this.store;
+          }
         }
       }
       return {
-        from(ctx) {
+        from: ctx => {
           return new Redux(ctx);
         },
       };
@@ -61,3 +67,4 @@ export default __BROWSER__ &&
       };
     },
   });
+};

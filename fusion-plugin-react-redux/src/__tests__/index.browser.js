@@ -10,11 +10,12 @@ import Enzyme, {mount} from 'enzyme';
 import {connect} from 'react-redux';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
-import Redux from '../index.js';
+import GetReduxPlugin from '../browser.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
 tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
+  const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
       ...state,
@@ -29,6 +30,7 @@ tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
 });
 
 tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
+  const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
       ...state,
@@ -46,6 +48,7 @@ tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
 });
 
 tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
+  const Redux = GetReduxPlugin();
   const reduxState = document.createElement('script');
   reduxState.setAttribute('type', 'application/json');
   reduxState.setAttribute('id', '__REDUX_STATE__');
@@ -66,6 +69,7 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
 });
 
 tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
+  const Redux = GetReduxPlugin();
   const reduxState = document.createElement('script');
   reduxState.setAttribute('type', 'application/json');
   reduxState.setAttribute('id', '__REDUX_STATE__');
@@ -92,6 +96,7 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
 });
 
 tape('browser with enhancer', t => {
+  const Redux = GetReduxPlugin();
   const mockCtx = {mock: true};
   const reducer = (state, action) => {
     return {
@@ -120,6 +125,7 @@ tape('browser with enhancer', t => {
 });
 
 tape('browser with devtools enhancer', t => {
+  const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
       ...state,
@@ -145,6 +151,7 @@ tape('browser with devtools enhancer', t => {
 });
 
 tape('browser with devtools enhancer and normal enhancer', t => {
+  const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
       ...state,
@@ -180,6 +187,7 @@ tape('browser with devtools enhancer and normal enhancer', t => {
 });
 
 tape('browser middleware', async t => {
+  const Redux = GetReduxPlugin();
   const reducer = (state, action) => ({
     test: action.payload || 1,
   });
