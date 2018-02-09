@@ -22,7 +22,6 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-cli": "^0.3.1",
     "koa-bodyparser": "4.2.0"
   },
   "devDependencies": {
