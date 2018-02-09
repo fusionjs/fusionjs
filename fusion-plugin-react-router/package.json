@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-react-router",
   "description": "The `fusion-plugin-react-router` package provides a universal router plugin for React.",
-  "version": "0.4.3",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-router",
   "files": [
