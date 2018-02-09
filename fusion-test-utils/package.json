@@ -1,7 +1,7 @@
 {
   "name": "fusion-test-utils",
   "description": "Test utilities for FusionJS",
-  "version": "0.4.2",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-test-utils",
   "files": [
