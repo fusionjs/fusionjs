@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-universal-events",
   "description": "Events Emitter",
-  "version": "0.3.4",
+  "version": "1.0.0",
   "repository": "fusionjs/fusion-plugin-universal-events",
   "keywords": [],
   "license": "MIT",
