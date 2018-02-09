@@ -1838,9 +1838,9 @@ eslint-config-cup@^1.0.0-rc.4:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-config-cup/-/eslint-config-cup-1.0.0.tgz#0fcdb787fe254fc9458ec5258143cb0d47052896"
 
-eslint-config-fusion@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-0.2.1.tgz#39db6979719dab00953e561b2ff0af66981397bb"
+eslint-config-fusion@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-1.0.0.tgz#161df9de6660d8b6172e4a8a2a8c1a196d6bbf67"
   dependencies:
     eslint-config-uber-universal-stage-3 "^1.0.0-rc.7"
 
@@ -2274,56 +2274,56 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@0.3.6:
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-0.3.6.tgz#14903281aa94c37c898243f6061299aece31cc2a"
+fusion-core@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.0.0.tgz#7be714926ead57cdfeaf467b90bb794c9eb46d67"
   dependencies:
-    koa "^2.3.0"
+    koa "^2.4.1"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
 
-fusion-plugin-rpc@^0.6.3:
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-0.6.3.tgz#0177b5516d1bcd595fc4eb156715156910cf34ff"
+fusion-plugin-rpc@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-1.0.0.tgz#71c340c26598458d69269c4e22aa3be40f4e3778"
   dependencies:
     body-parser "^1.18.2"
     koa-bodyparser "4.2.0"
     rollup "0.55.3"
 
-fusion-plugin-universal-events@0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-0.3.4.tgz#1edd179cfeee94786910b2ae77c5961e1416110a"
+fusion-plugin-universal-events@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.0.0.tgz#5f2a058078f7a3ab7c9eb7feb1d588fc4f2cbfb4"
   dependencies:
     koa-bodyparser "4.2.0"
 
-fusion-react-async@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-0.2.0.tgz#d835ef85d4342fc083cc82a13eafd87bb7e69617"
+fusion-react-async@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.0.0.tgz#4753d0bbb8169cdb02d834257f2ae0a89112e85d"
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-0.4.3.tgz#cd62c1ddfbe1480b948c65aca2b88a7bcf1d9257"
+fusion-react@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.0.tgz#182eb4f1702a75c4f3097bc0ad2dbd517fa9dcf2"
 
-fusion-rpc-redux@^0.3.6:
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-0.3.6.tgz#e1a3e21287dfaaa58e287050f36375e75bd56323"
+fusion-rpc-redux@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-1.0.0.tgz#355d39a00f16dfd64ca7e15563440a36a627ba7f"
   dependencies:
     redux-reactors "^1.0.3"
 
-fusion-test-utils@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-0.4.2.tgz#a8cc45eea3c6943cb41ba4b61f699adb126ef531"
+fusion-test-utils@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.0.tgz#f3ef434aff74186a77837828b84e2b50b524218f"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-0.0.6.tgz#71606a0109918dc098eb43cc0a3b877beb111d4d"
+fusion-tokens@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.0.tgz#84ce2755ef444259a63b6287d6b279c48e5f4f62"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -3024,7 +3024,7 @@ koa-is-json@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/koa-is-json/-/koa-is-json-1.0.0.tgz#273c07edcdcb8df6a2c1ab7d59ee76491451ec14"
 
-koa@^2.3.0, koa@^2.4.1:
+koa@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/koa/-/koa-2.4.1.tgz#d449cfb970a7e9da571f699eda40bb9e32eb1484"
   dependencies:
