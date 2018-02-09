@@ -26,17 +26,18 @@
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "create-universal-package": "3.4.0",
     "eslint": "4.17.0",
-    "eslint-config-fusion": "0.1.2",
+    "eslint-config-fusion": "^1.0.0",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.42.0",
+    "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
-    "fusion-core": "^0.3.0-5",
-    "fusion-plugin-react-redux": "^0.3.0",
-    "fusion-plugin-universal-events": "^0.3.0",
-    "fusion-test-utils": "^0.4.1",
-    "fusion-tokens": "^0.0.5",
+    "fusion-core": "^1.0.0",
+    "fusion-plugin-react-redux": "^1.0.0",
+    "fusion-plugin-universal-events": "^1.0.0",
+    "fusion-test-utils": "^1.0.0",
+    "fusion-tokens": "^1.0.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "^16.2.0",
@@ -58,7 +59,7 @@
     "node": ">= 8.9.0"
   },
   "peerDependencies": {
-    "fusion-core": "^0.3.0-5",
-    "fusion-plugin-universal-events": "^0.3.0"
+    "fusion-core": "^1.0.0",
+    "fusion-plugin-universal-events": "^1.0.0"
   }
 }
