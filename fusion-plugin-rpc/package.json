@@ -23,7 +23,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "koa-bodyparser": "4.2.0",
-    "rollup": "0.55.3"
+    "rollup": "0.55.5"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
