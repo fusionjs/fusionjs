@@ -1,7 +1,7 @@
 {
   "name": "fusion-tokens",
   "description": "Dependency injection tokens for FusionJS",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "dist",
     "src"
@@ -30,8 +30,8 @@
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
-    "fusion-core": "^1.0.0",
     "flow-bin": "0.65.0",
+    "fusion-core": "^1.0.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "tape-cup": "4.7.1",
