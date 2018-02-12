@@ -8,6 +8,7 @@
 import ServerLogger from './server.js';
 import BrowserLogger from './browser.js';
 
+declare var __BROWSER__: Boolean;
 const UniversalLogger = __BROWSER__ ? BrowserLogger : ServerLogger;
 
 export default UniversalLogger;
