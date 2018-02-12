@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-browser-performance-emitter",
   "decsription": "Emit performance stats from the browser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-browser-performance-emitter",
   "files": [
