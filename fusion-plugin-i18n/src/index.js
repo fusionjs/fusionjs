@@ -4,7 +4,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import {createToken} from 'fusion-core';
+
 import serverPlugin, {I18nLoaderToken} from './node';
 import clientPlugin, {HydrationStateToken} from './browser';
 import createI18nLoader from './loader';
