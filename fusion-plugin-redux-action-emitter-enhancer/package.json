@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-redux-action-emitter-enhancer",
   "description": "Redux store enhancer that emits actions via an injected event emitter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-redux-action-emitter-enhancer",
   "files": [
