@@ -9,6 +9,7 @@ import {createToken} from 'fusion-core';
 import ServerEvents from './server.js';
 import BrowserEvents from './browser.js';
 
+declare var __BROWSER__: Boolean;
 const UniversalEvents = __BROWSER__ ? BrowserEvents : ServerEvents;
 
 export default UniversalEvents;
