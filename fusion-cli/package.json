@@ -51,7 +51,7 @@
     "jest": "22.2.1",
     "jest-cli": "22.2.1",
     "just-snake-case": "1.0.0",
-    "koa": "2.4.1",
+    "koa": "2.5.0",
     "koa-mount": "3.0.0",
     "koa-static": "4.0.2",
     "koa-webpack-hot-middleware": "1.0.3",
