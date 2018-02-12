@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import {createToken} from 'fusion-core';
 import ServerEvents from './server.js';
 import BrowserEvents from './browser.js';
