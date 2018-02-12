@@ -4,7 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @flow
 import tape from 'tape-cup';
 import App, {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
