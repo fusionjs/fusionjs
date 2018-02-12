@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import {createReactor} from 'redux-reactors';
 
 function camelUpper(key) {
@@ -21,10 +22,10 @@ function createActionNames(rpcId) {
   }, {});
 }
 
-export function createRPCActions(rpcId) {
+export function createRPCActions(rpcId: String) {
   const actionNames = createActionNames(rpcId);
   return types.reduce((obj, type) => {
-    obj[type] = payload => {
+    obj[type] = (payload: any) => {
       return {type: actionNames[type], payload};
     };
     return obj;
@@ -38,11 +39,15 @@ function getNormalizedReducers(reducers) {
   }, {});
 }
 
-export function createRPCReducer(rpcId, reducers, startValue = {}) {
+export function createRPCReducer(
+  rpcId: String,
+  reducers: any,
+  startValue: any = {}
+) {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
 
-  return function rpcReducer(state = startValue, action) {
+  return function rpcReducer(state: * = startValue, action: any) {
     if (actionNames.start === action.type) {
       return reducers.start(state, action);
     }
@@ -56,7 +61,7 @@ export function createRPCReducer(rpcId, reducers, startValue = {}) {
   };
 }
 
-export function createRPCReactors(rpcId, reducers) {
+export function createRPCReactors(rpcId: String, reducers: any) {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
@@ -73,11 +78,11 @@ export function createRPCHandler({
   rpcId,
   mapStateToParams,
   transformParams,
-}) {
+}: any) {
   if (!actions) {
     actions = createRPCActions(rpcId);
   }
-  return args => {
+  return (args: any) => {
     if (mapStateToParams) {
       args = mapStateToParams(store.getState());
     }
