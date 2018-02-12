@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import Server from './server.js';
 import Browser from './browser.js';
 
