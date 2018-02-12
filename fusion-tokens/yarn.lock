@@ -326,6 +326,10 @@
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0-beta.39.tgz#b9247a81e4dacaa57aac3670792d788a64253f68"
 
+"@babel/plugin-syntax-flow@7.0.0-beta.40":
+  version "7.0.0-beta.40"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0-beta.40.tgz#2326da177cd83ad3d12e8324ad003edb702c384c"
+
 "@babel/plugin-syntax-import-meta@7.0.0-beta.39":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-import-meta/-/plugin-syntax-import-meta-7.0.0-beta.39.tgz#56658e7487227ca7c350b67031c0e16ce987558d"
@@ -405,7 +409,13 @@
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
 
-"@babel/plugin-transform-flow-strip-types@7.0.0-beta.39", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.38":
+"@babel/plugin-transform-flow-strip-types@7.0.0-beta.40":
+  version "7.0.0-beta.40"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.40.tgz#fe3afe922de6dfbd21d9f53f01cbe1bac89e0423"
+  dependencies:
+    "@babel/plugin-syntax-flow" "7.0.0-beta.40"
+
+"@babel/plugin-transform-flow-strip-types@^7.0.0-beta.38":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.39.tgz#3a03fc8ebaa9eddd62bdf501ceeff2a8e048bc4d"
   dependencies:
