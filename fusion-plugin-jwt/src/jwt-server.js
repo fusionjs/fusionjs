@@ -14,7 +14,7 @@ import get from 'just-safe-get';
 import set from 'just-safe-set';
 
 import {createPlugin, memoize} from 'fusion-core';
-import type {Context} from 'fusion-core';
+import type {Context, FusionPlugin} from 'fusion-core';
 
 import {
   SessionSecretToken,
@@ -67,7 +67,12 @@ class JWTSession {
 }
 
 export type SessionService = {from: (ctx: Context) => JWTSession};
-const p =
+type SessionDeps = {
+  secret: typeof SessionSecretToken,
+  cookieName: typeof SessionCookieNameToken,
+  expires: typeof SessionCookieExpiresToken.optional,
+};
+const p: FusionPlugin<SessionDeps, SessionService> =
   // $FlowFixMe
   __NODE__ &&
   createPlugin({
