@@ -3,6 +3,7 @@
 import {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
 
+// @flow
 // Tokens
 type Fetch = (
   input: string | Request,
