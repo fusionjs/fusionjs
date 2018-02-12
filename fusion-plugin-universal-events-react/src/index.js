@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import plugin from './plugin';
 import withBatchEvents from './hoc';
