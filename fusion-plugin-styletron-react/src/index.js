@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 /* eslint-env browser */
 import {styled} from 'styletron-react';
 import server from './server';
