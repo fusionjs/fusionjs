@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import serverCsrf from './server.js';
 import clientCsrf from './browser.js';
 
