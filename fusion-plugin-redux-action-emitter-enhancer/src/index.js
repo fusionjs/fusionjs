@@ -9,6 +9,7 @@
 import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
+declare var __DEV__: Boolean;
 export default createPlugin({
   deps: {
     emitter: UniversalEventsToken,

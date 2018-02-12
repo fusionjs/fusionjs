@@ -34,10 +34,10 @@
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
     "fusion-core": "^1.0.0",
-    "fusion-plugin-react-redux": "^1.0.0",
-    "fusion-plugin-universal-events": "^1.0.0",
-    "fusion-test-utils": "^1.0.0",
-    "fusion-tokens": "^1.0.0",
+    "fusion-plugin-react-redux": "^1.0.1",
+    "fusion-plugin-universal-events": "^1.0.1",
+    "fusion-test-utils": "^1.0.1",
+    "fusion-tokens": "^1.0.1",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "react": "^16.2.0",
@@ -60,6 +60,6 @@
   },
   "peerDependencies": {
     "fusion-core": "^1.0.0",
-    "fusion-plugin-universal-events": "^1.0.0"
+    "fusion-plugin-universal-events": "^1.0.1"
   }
 }
