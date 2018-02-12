@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 /* eslint-env browser */
 import CoreApp, {createPlugin} from 'fusion-core';
 import {prepare, middleware} from 'fusion-react-async';
@@ -15,7 +16,7 @@ import ProvidedHOC from './hoc';
 import Provider from './provider';
 
 export default class App extends CoreApp {
-  constructor(root, render) {
+  constructor(root: any, render?: any => String) {
     const renderer = createPlugin({
       provides() {
         return el => {
