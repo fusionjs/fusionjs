@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-universal-logger",
   "description": "A logger utility that batches logs from the browser to the server at set intervals.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": "fusionjs/fusion-plugin-universal-logger",
   "keywords": [],
   "license": "MIT",
