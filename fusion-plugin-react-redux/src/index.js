@@ -8,6 +8,7 @@
 import browserPlugin from './browser';
 import serverPlugin from './server';
 
+declare var __NODE__: Boolean;
 export default (__NODE__ ? serverPlugin : browserPlugin());
 
 export {
