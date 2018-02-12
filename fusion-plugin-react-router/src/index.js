@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 import plugin from './plugin';
 import * as server from './server';
 import * as browser from './browser';
