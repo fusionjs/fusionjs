@@ -9,6 +9,7 @@ import plugin from './plugin';
 import * as server from './server';
 import * as browser from './browser';
 
+declare var __BROWSER__: Boolean;
 const BrowserRouter = __BROWSER__
   ? browser.BrowserRouter
   : server.BrowserRouter;
