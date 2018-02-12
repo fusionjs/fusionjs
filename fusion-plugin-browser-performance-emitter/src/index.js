@@ -8,6 +8,7 @@
 import Server from './server.js';
 import Browser from './browser.js';
 
+declare var __BROWSER__: Boolean;
 const BrowserPerformanceEmitter = __BROWSER__ ? Browser : Server;
 
 export default BrowserPerformanceEmitter;
