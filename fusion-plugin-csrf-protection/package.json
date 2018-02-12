@@ -31,15 +31,15 @@
     "eslint": "4.17.0",
     "eslint-config-fusion": "^1.0.0",
     "eslint-plugin-cup": "1.0.0",
-    "eslint-plugin-flowtype": "2.42.0",
+    "eslint-plugin-flowtype": "2.43.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "express": "4.16.2",
     "flow-bin": "0.65.0",
     "fusion-core": "^1.0.0",
-    "fusion-test-utils": "^1.0.0",
-    "fusion-tokens": "^1.0.0",
+    "fusion-test-utils": "^1.0.1",
+    "fusion-tokens": "^1.0.1",
     "generic-session": "0.1.2",
     "get-port": "3.2.0",
     "nyc": "11.4.1",
@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^1.0.0",
-    "fusion-tokens": "^1.0.0"
+    "fusion-tokens": "^1.0.1"
   },
   "scripts": {
     "clean": "rm -rf dist",
