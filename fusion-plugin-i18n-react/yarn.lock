@@ -2292,34 +2292,34 @@ fusion-core@^1.0.0:
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
 
-fusion-plugin-i18n@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.0.0.tgz#fae312e71c093e6171745e5bdb75831c849738cf"
+fusion-plugin-i18n@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.0.1.tgz#11986c617cb6e3cad2f798ef6a2ab288e9b35f69"
   dependencies:
     locale "^0.1.0"
     rollup "^0.55.1"
 
-fusion-react-async@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.0.0.tgz#4753d0bbb8169cdb02d834257f2ae0a89112e85d"
+fusion-react-async@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.0.1.tgz#b6bc9dc18bbc2abbf8fcc7db3509c6a5388dad23"
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.0.tgz#182eb4f1702a75c4f3097bc0ad2dbd517fa9dcf2"
+fusion-react@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.1.tgz#7119ebf578765dc3dc99d66582ff97da7fbdb52c"
 
-fusion-test-utils@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.0.tgz#f3ef434aff74186a77837828b84e2b50b524218f"
+fusion-test-utils@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.1.tgz#9ff6b0747ddacf0b89d101b325885cd6fbecd59b"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.0.tgz#84ce2755ef444259a63b6287d6b279c48e5f4f62"
+fusion-tokens@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.1.tgz#b2ef62f515c1a314c7d2590a6e7caf5dca737cc4"
 
 gauge@~2.7.3:
   version "2.7.4"
