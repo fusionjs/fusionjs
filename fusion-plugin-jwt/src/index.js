@@ -15,7 +15,7 @@ import {
   SessionSecretToken,
 } from './tokens';
 
-declare var __BROWSER__ : Boolean;
+declare var __BROWSER__: Boolean;
 export default (__BROWSER__ ? browser : server);
 
 export {SessionCookieExpiresToken, SessionCookieNameToken, SessionSecretToken};
