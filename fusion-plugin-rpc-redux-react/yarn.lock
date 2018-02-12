@@ -1889,9 +1889,9 @@ eslint-plugin-cup@^1.0.0:
   dependencies:
     globals "^10.0.0"
 
-eslint-plugin-flowtype@^2.42.0:
-  version "2.42.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.42.0.tgz#7fcc98df4ed9482a22ac10ba4ca48d649c4c733a"
+eslint-plugin-flowtype@^2.43.0:
+  version "2.43.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.43.0.tgz#47cdac5f01cda53f1c3e8477f0c83fee66a1606e"
   dependencies:
     lodash "^4.15.0"
 
@@ -2283,47 +2283,47 @@ fusion-core@^1.0.0:
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
 
-fusion-plugin-rpc@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-1.0.0.tgz#71c340c26598458d69269c4e22aa3be40f4e3778"
+fusion-plugin-rpc@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-rpc/-/fusion-plugin-rpc-1.0.1.tgz#d4dadd59a9a054c18526a0ef42436e9eecf0e31b"
   dependencies:
     body-parser "^1.18.2"
     koa-bodyparser "4.2.0"
-    rollup "0.55.3"
+    rollup "0.55.5"
 
-fusion-plugin-universal-events@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.0.0.tgz#5f2a058078f7a3ab7c9eb7feb1d588fc4f2cbfb4"
+fusion-plugin-universal-events@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.0.1.tgz#3bc31b6450212a1a973a7f9674a6d28b0995eac8"
   dependencies:
     koa-bodyparser "4.2.0"
 
-fusion-react-async@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.0.0.tgz#4753d0bbb8169cdb02d834257f2ae0a89112e85d"
+fusion-react-async@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.0.1.tgz#b6bc9dc18bbc2abbf8fcc7db3509c6a5388dad23"
   dependencies:
     prop-types "^15.5.8"
 
-fusion-react@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.0.tgz#182eb4f1702a75c4f3097bc0ad2dbd517fa9dcf2"
+fusion-react@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.1.tgz#7119ebf578765dc3dc99d66582ff97da7fbdb52c"
 
-fusion-rpc-redux@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-1.0.0.tgz#355d39a00f16dfd64ca7e15563440a36a627ba7f"
+fusion-rpc-redux@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-1.0.1.tgz#82731d0244371ae75ce5ee7c09bf06051aaa0d2d"
   dependencies:
     redux-reactors "^1.0.3"
 
-fusion-test-utils@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.0.tgz#f3ef434aff74186a77837828b84e2b50b524218f"
+fusion-test-utils@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.1.tgz#9ff6b0747ddacf0b89d101b325885cd6fbecd59b"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.0.tgz#84ce2755ef444259a63b6287d6b279c48e5f4f62"
+fusion-tokens@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.1.tgz#b2ef62f515c1a314c7d2590a6e7caf5dca737cc4"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -4134,7 +4134,11 @@ rollup-pluginutils@^2.0.1:
     estree-walker "^0.3.0"
     micromatch "^2.3.11"
 
-rollup@0.55.3, rollup@^0.55.1:
+rollup@0.55.5:
+  version "0.55.5"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.55.5.tgz#2f88c300f7cf24b5ec2dca8a6aba73b04e087e93"
+
+rollup@^0.55.1:
   version "0.55.3"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.55.3.tgz#0af082a766d51c3058430c8372442ff5207d8736"
 
