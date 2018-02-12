@@ -13,5 +13,6 @@ import createI18nLoader from './loader';
 
 const I18nToken = createToken('I18nToken');
 
+declare var __NODE__ : Boolean;
 export default (__NODE__ ? serverPlugin : clientPlugin);
 export {I18nToken, I18nLoaderToken, HydrationStateToken, createI18nLoader};

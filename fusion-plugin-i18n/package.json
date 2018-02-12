@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "locale": "^0.1.0",
-    "rollup": "^0.55.1"
+    "rollup": "^0.55.5"
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
@@ -47,8 +47,8 @@
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
     "fusion-core": "^1.0.0",
-    "fusion-test-utils": "^1.0.0",
-    "fusion-tokens": "^1.0.0",
+    "fusion-test-utils": "^1.0.1",
+    "fusion-tokens": "^1.0.1",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "tape-cup": "4.7.1",
@@ -56,7 +56,7 @@
   },
   "peerDependencies": {
     "fusion-core": "^1.0.0",
-    "fusion-tokens": "^1.0.0"
+    "fusion-tokens": "^1.0.1"
   },
   "engines": {
     "node": ">= 8.9.0"
