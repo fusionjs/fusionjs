@@ -11,6 +11,7 @@ import serverDataFetching from './server';
 
 export {default as mock} from './mock';
 
+declare var __BROWSER__: Boolean;
 const RPC = __BROWSER__ ? browserDataFetching : serverDataFetching;
 
 export default RPC;
