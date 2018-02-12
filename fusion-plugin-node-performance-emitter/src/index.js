@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 // Main export file
 import browser from './browser';
 import server from './server';
