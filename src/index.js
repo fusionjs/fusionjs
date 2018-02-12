@@ -15,6 +15,8 @@ import ProviderPlugin from './plugin';
 import ProvidedHOC from './hoc';
 import Provider from './provider';
 
+declare var __NODE__: Boolean;
+
 export default class App extends CoreApp {
   constructor(root: any, render?: any => String) {
     const renderer = createPlugin({
