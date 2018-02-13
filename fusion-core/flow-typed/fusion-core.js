@@ -19,7 +19,7 @@ declare module 'fusion-core' {
     template: {
       htmlAttrs: Object,
       title: string,
-      head: Array<string>,
+      head: Array<string | SanitizedHTMLWrapper>,
       body: Array<string>,
     },
   } & KoaContext;
@@ -79,10 +79,11 @@ declare module 'fusion-core' {
     options: FusionPlugin<Deps, Service>
   ): FusionPlugin<Deps, Service>;
   declare export function createToken(name: string): Token<any>;
+  declare export type SanitizedHTMLWrapper = Object;
   declare export function html(
     strings: Array<string>,
     ...expressions: Array<string>
-  ): Object;
+  ): SanitizedHTMLWrapper;
   declare export function assetUrl(str: string): string;
   declare export function consumeSanitizedHTML(str: string): string;
   declare export function dangerouslySetHTML(html: string): Object;
