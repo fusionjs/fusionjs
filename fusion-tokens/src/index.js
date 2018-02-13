@@ -1,19 +1,19 @@
 // @flow
 
 import {createToken} from 'fusion-core';
-import type {Token} from 'fusion-core';
+import type {Context, Token} from 'fusion-core';
 
 // @flow
 // Tokens
-type Fetch = (
+export type Fetch = (
   input: string | Request,
   init?: RequestOptions
 ) => Promise<Response>;
 export const FetchToken: Token<Fetch> = createToken('FetchToken');
 
-type Session = {
+export type Session = {
   from(
-    ctx: Object
+    ctx: Context
   ): {
     get(keyPath: string): any,
     set(keyPath: string, val: any): void,
@@ -21,7 +21,7 @@ type Session = {
 };
 export const SessionToken: Token<Session> = createToken('SessionToken');
 
-type Logger = {
+export type Logger = {
   log(level: string, arg: any): void,
   error(arg: any): void,
   warn(arg: any): void,
