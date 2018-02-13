@@ -44,7 +44,7 @@ declare module 'fusion-core' {
   declare type MemoizeFn<A> = (ctx: Context) => A;
   declare export function memoize<A>(fn: MemoizeFn<A>): MemoizeFn<A>;
   declare class FusionApp {
-    constructor<Element>(element: Element, render: (Element) => any): FusionApp;
+    constructor<Element>(element: Element, render: *): FusionApp;
     cleanups: Array<cleanupFn>;
     registered: Map<any, any>;
     plugins: Array<any>;
