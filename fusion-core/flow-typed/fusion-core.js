@@ -83,6 +83,7 @@ declare module 'fusion-core' {
     strings: Array<string>,
     ...expressions: Array<string>
   ): Object;
+  declare export function assetUrl(str: string): string;
   declare export function consumeSanitizedHTML(str: string): string;
   declare export function dangerouslySetHTML(html: string): Object;
   declare export function escape(str: string): string;
