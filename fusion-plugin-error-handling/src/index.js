@@ -8,6 +8,6 @@
 import serverPlugin from './server';
 import clientPlugin from './client';
 
-declare var __NODE__ : Boolean;
+declare var __NODE__: Boolean;
 export default (__NODE__ ? serverPlugin : clientPlugin);
 export {ErrorHandlerToken} from './server';
