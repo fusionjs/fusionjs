@@ -2,10 +2,10 @@
 
 # fusion-tokens
 
-Dependency injection tokens for FusionJS.
+Dependency injection tokens for Fusion.js.
 
-FusionJS dependency injection is based on tokens rather than strings. This avoids naming collision issues.
-This package provides utilities to create named tokens, as well as common tokens that are used by packages maintained by the FusionJS team.
+Fusion.js dependency injection is based on tokens rather than strings. This avoids naming collision issues.
+This package provides utilities to create named tokens, as well as common tokens that are used by packages maintained by the Fusion.js team.
 
 ### Installation
 
