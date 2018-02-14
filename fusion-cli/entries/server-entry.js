@@ -1,7 +1,5 @@
 /* eslint-env node */
 import http from 'http';
-// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
-import main from '__FRAMEWORK_SHARED_ENTRY__';
 import getCompilationMetaData from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
@@ -30,6 +28,11 @@ into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 */
 // eslint-disable-next-line
 __webpack_public_path__ = getCompilationMetaData().webpackPublicPath + '/';
+
+// The shared entry must be imported after setting __webpack_public_path__.
+// We use a require as imports are hoisted and would be run before setting __webpack_public_path__.
+// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
+const main = require('__FRAMEWORK_SHARED_ENTRY__');
 
 const state = {serve: null};
 const initialize = main
