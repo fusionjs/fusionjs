@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/3f2d84d5538d87a19677f5d79304ac46a8a67f970520d13884.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-i18n)
 
-Adds I18n (Internationalization) support to a FusionJS app
+Adds I18n (Internationalization) support to a Fusion.js app
 
 For date i18n, consider using [date-fns](https://date-fns.org/)
 
@@ -125,7 +125,7 @@ Name | Type | Default | Description
 
 `const i18n = I18n.from(ctx)`
 
-- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+- `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
 
 #### Instance methods
 
@@ -155,6 +155,6 @@ app.register(I18nLoaderToken, createI18nLoader());
 `const loader = createI18nLoader()`
 
 - `loader.from: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
-  - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  - `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
   - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
   - `translations: Object` - A object that maps translation keys to translated values for the given locale
