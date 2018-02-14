@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/b1165dac1a1aea4fee2d97e52c74f5101efeed82f6907bb16c.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-redux?branch=master)
 
-Integrates React and Redux to a FusionJS application
+Integrates React and Redux to a Fusion.js application
 
 It handles creating your store, wrapping your element tree in a provider, and serializing/deserializing your store between server and client.
 
@@ -64,7 +64,7 @@ app.register(EnhancerToken, enhancer);
 __NODE__ && app.register(GetInitialStateToken, getInitialState);
 ```
 
-Creates the redux store and integrates it into the FusionJS application.
+Creates the redux store and integrates it into the Fusion.js application.
 
 ##### Required dependencies
 
@@ -84,7 +84,7 @@ Name | Type | Default | Description
 
 `const redux = Redux.from(ctx);`
 
-- `ctx: FusionContext` - Required. A [FusionJS Context](https://github.com/fusionjs/fusion-core#context).
+- `ctx: FusionContext` - Required. A [Fusion.js Context](https://github.com/fusionjs/fusion-core#context).
 - `redux: {initStore, store}`
   - `initStore: () => Promise<ReduxStore>` - Runs `getInitialState` and populates the store asynchronously.
   - `store: ReduxStore` - A [Redux store](https://redux.js.org/docs/api/Store.html)
