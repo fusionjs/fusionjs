@@ -164,7 +164,7 @@ if (__BROWSER__) {
 
 function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
   const expected = __NODE__
-    ? ['render:server', 'pageview:server']
+    ? ['pageview:server', 'render:server']
     : ['pageview:browser'];
   return createPlugin({
     provides: () => ({

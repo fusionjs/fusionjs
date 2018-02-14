@@ -62,8 +62,10 @@ export default createPlugin({
             }
             return payload;
           });
-          ctx.timing.render.then(emitTiming('render:server'));
-          ctx.timing.end.then(emitTiming('pageview:server'));
+          ctx.timing.end.then(timing => {
+            emitTiming('pageview:server')(timing);
+            ctx.timing.render.then(emitTiming('render:server'));
+          });
         });
       } else if (__BROWSER__) {
         // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
