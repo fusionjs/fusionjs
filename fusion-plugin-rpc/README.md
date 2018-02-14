@@ -86,7 +86,7 @@ Name | Type | Description
 const instance = RPC.from(ctx);
 ```
 
-- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context).
+- `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context).
 
 #### Instance methods
 
