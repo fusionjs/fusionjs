@@ -16,6 +16,6 @@ export default function generateFontFaces(fontDictionary) {
 function asFontFaceSrc(urls) {
   // `urls` is a dictionary of font types (woff, woff2 etc) to url string
   return Object.keys(urls).map(
-    type => `url("/_static/${urls[type]}") format("${type}")\n`
+    type => `url("${urls[type]}") format("${type}")\n`
   );
 }

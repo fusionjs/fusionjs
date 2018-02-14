@@ -59,6 +59,7 @@ export const preloadDepth = 1;
 export const fonts = {
   'Lato-Regular': {
     urls: {
+      woff: assetUrl('../static/Lato-Regular.woff'),
       woff2: assetUrl('../static/Lato-Regular.woff2'),
     },
     fallback: {
@@ -67,6 +68,7 @@ export const fonts = {
   },
   'Lato-Bold': {
     urls: {
+      woff: assetUrl('../static/Lato-Bold.woff')
       woff2: assetUrl('../static/Lato-Bold.woff2'),
     },
     fallback: {
@@ -78,6 +80,7 @@ export const fonts = {
   },
   'Lato-Thin': {
     urls: {
+      woff: assetUrl('../static/Lato-Thin.woff'),
       woff2: assetUrl('./static/Lato-Thin.woff2'),
     },
     fallback: {
@@ -92,7 +95,7 @@ export const fonts = {
 
 ##### @font-face generation
 
-Based on the example configuration file above the following @font-face would be generated in <head>
+Based on the example configuration file above the following @font-face would typically be generated in <head>
 
 ```css
 @font-face {font-family: "Lato-Regular"; src: url("/_static/ca614426b50ca7d007056aa00954764b.woff2") format("woff2");}
