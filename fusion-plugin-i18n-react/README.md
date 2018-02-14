@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/fd8fcdba7b74ed2e6dcbca1b5c4998797b400f536029c45483.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-i18n-react)
 
-Adds I18n (Internationalization) support to a FusionJS app.
+Adds I18n (Internationalization) support to a Fusion.js app.
 
 This plugin looks for translations in the `./translations` folder. Translations for each language are expected to be in a JSON file with a locale as a filename, for example, for US english, translations should be in `./translations/en-US.json`
 
@@ -198,7 +198,7 @@ Name | Type | Default | Description
 
 `const i18n = I18n.from(ctx)`
 
-- `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+- `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
 
 #### Instance methods
 
@@ -228,7 +228,7 @@ app.register(I18nLoaderToken, createI18nLoader());
 `const loader = createI18nLoader()`
 
 - `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
-  - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  - `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
   - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
   - `translations: Object` - A object that maps translation keys to translated values for the given locale
 
