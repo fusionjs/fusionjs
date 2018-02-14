@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-font-loader-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The Fusion plugin for declaring and optimizing the loading of cutsom fonts",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-font-loading",
