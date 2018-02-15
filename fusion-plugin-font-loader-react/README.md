@@ -37,9 +37,9 @@ export default () => {
 // src/some-component.js
 import {withFontLoading} from 'fusion-plugin-font-loader-react';
 
-const FancyLink1 = withFontLoading('Lato-Bold'.(
+const FancyLink1 = withFontLoading('Lato-Bold')(
   styled('a', props => ({
-    ':hover': {fontSize: `${props.answer}px`}.
+    ':hover': {fontSize: `${props.answer}px`},
     ...props.$fontStyles,
   }))
 );
@@ -138,9 +138,9 @@ This repo also supplies a `with-font-loading.js` Higher Order Component which is
 3. When the font is loaded assign the true font to child component via `props.$fontStyles`
 
 ```js
-const FancyLink1 = withFontLoading('Lato-Bold'.(
+const FancyLink1 = withFontLoading('Lato-Bold')(
   styled('a', props => ({
-    ':hover': {fontSize: `${props.answer}px`}.
+    ':hover': {fontSize: `${props.answer}px`},
     ...props.$fontStyles,
   }))
 );
