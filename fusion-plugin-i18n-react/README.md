@@ -45,15 +45,18 @@ export default () => {
 // src/hello.js
 import {I18nToken} from 'fusion-plugin-i18n-react';
 
-export default withDependencies({I18n: I18nToken})({I18n}) => (ctx, next) => {
-  // use the service
-  if (__NODE__ && ctx.path === '/hello') {
-    const i18n = I18n(ctx);
-    ctx.body = {
-      message: i18n.translate('test', {name: 'world'}), // hello world
+export default createPlugin({
+  deps: {I18n: I18nToken},
+  middleware: ({I18n}) => (ctx, next) => {
+    // use the service
+    if (__NODE__ && ctx.path === '/hello') {
+      const i18n = I18n(ctx);
+      ctx.body = {
+        message: i18n.translate('test', {name: 'world'}), // hello world
+      }
     }
+    return next();
   }
-  return next();
 }
 
 // translations/en-US.json
@@ -88,10 +91,12 @@ export default () => {
 }
 
 // src/hello.js
+import {createPlugin} from 'fusion-core';
 import {I18nToken} from 'fusion-plugin-i18n-react';
 
-export default withDependencies({I18n: I18nToken})(({I18n}) => {
-  return withMiddleware((ctx, next) => {
+export default createPlugin({
+  deps: {I18n: I18nToken},
+  middleware: ({I18n}) => (ctx, next) => {
     if (__NODE__ && ctx.path === '/hello') {
       const i18n = I18n(ctx);
       ctx.body = {
@@ -99,7 +104,7 @@ export default withDependencies({I18n: I18nToken})(({I18n}) => {
       }
     }
     return next();
-  });
+  };
 });
 
 // src/translation-loader.js
@@ -176,39 +181,36 @@ Usage:
 #### Dependency registration
 
 ```js
-import {I18nLoaderToken, HydrationStateToken} from 'fusion-plugin-i18n';
+import I18n, {I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n-react';
 import {FetchToken} from 'fusion-tokens';
 
-__NODE__ && app.register(I18nLoaderToken, I18nLoader);
-__BROWSER__ && app.register(FetchToken, fetch);
-
-// some-test.js
-__BROWSER__ && app.register(HydrationStateToken, hydrationState);
+app.register(I18nToken, I18n);
+__NODE__
+  ? app.register(I18nLoaderToken, I18nLoader);
+  : app.register(FetchToken, fetch);
 ```
 
-##### Optional dependencies
-
-Name | Type | Default | Description
--|-|-|-
-`I18nLoaderToken` | `{from: (ctx: Context) => ({locale: string, translations: Object<string, string>})}` | `createI18nLoader()` | A function that provides translations.  `ctx: {headers: {'accept-language': string}}` is a Koa context object.  Server-side only.
-`HydrationStateToken` | `{chunks: Array, translations: Object}` | `undefined` | Sets the hydrated state in the client, and can be useful for testing purposes.  Browser only.
-`FetchToken` | `(url: string, options: Object) => Promise` | `window.fetch` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
+| Name                   | Type                                                                                 | Default              | Description                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| -`I18nLoaderToken`     | `{from: (ctx: Context) => ({locale: string, translations: Object<string, string>})}` | `createI18nLoader()` | A function that provides translations. `ctx: {headers: {'accept-language': string}}` is a Koa context object. Server-side only. |
+| -`HydrationStateToken` | `{chunks: Array, translations: Object}`                                              | `undefined`          | Sets the hydrated state in the client, and can be useful for testing purposes. Browser only.                                    |
+| -`FetchToken`          | `(url: string, options: Object) => Promise`                                          | `window.fetch`       | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation. Browser-only.                           |
 
 #### Factory
 
-`const i18n = I18n.from(ctx)`
+`const i18n = I18n(ctx)`
 
-- `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
+* `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
 
 #### Instance methods
 
 ```js
-const translation = i18n.translate(key, interpolations)
+const translation = i18n.translate(key, interpolations);
 ```
 
-- `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
-- `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
-- `translation: string` - A translation, or `key` if a matching translation could not be found.
+* `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
+* `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
+* `translation: string` - A translation, or `key` if a matching translation could not be found.
 
 #### Server-side loader
 
@@ -227,10 +229,10 @@ app.register(I18nLoaderToken, createI18nLoader());
 
 `const loader = createI18nLoader()`
 
-- `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
-  - `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
-  - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
-  - `translations: Object` - A object that maps translation keys to translated values for the given locale
+* `loader: (ctx) => ({locale, translations})` - A function that loads appropriate translations and locale information given an HTTP request context
+  * `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context) object.
+  * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  * `translations: Object` - A object that maps translation keys to translated values for the given locale
 
 #### React component
 
@@ -239,11 +241,11 @@ It's recommended that you use the React component rather than the HOC
 ```js
 import {Translate} from 'fusion-plugin-i18n-react';
 
-<Translate id="key" data={interpolations} />
+<Translate id="key" data={interpolations} />;
 ```
 
-- `key: string` - Required. Must be a hard-coded value. This plugin uses a babel transform, i.e you cannot pass a value via JSX interpolation.
-- `interpolations: Object` - Optional. Replaces `${value}` interpolation placeholders in a translation string with the property of the specified name
+* `key: string` - Required. Must be a hard-coded value. This plugin uses a babel transform, i.e you cannot pass a value via JSX interpolation.
+* `interpolations: Object` - Optional. Replaces `${value}` interpolation placeholders in a translation string with the property of the specified name
 
 #### Higher order component
 
@@ -252,11 +254,11 @@ It's recommended that you use the React component rather than the HOC
 ```js
 import {withTranslations} from 'fusion-plugin-i18n-react';
 
-const TranslatedComponent = withTranslations(['key'])(Component)
+const TranslatedComponent = withTranslations(['key'])(Component);
 ```
 
 Note: the `withTranslations` function expects an array of strings. This plugin uses a babel transform and the argument to this function must be an inline value, i.e. you cannot pass a variable.
 
 The original `Component` receives a prop called `{translate}`
 
-- `translate: (key: string, interpolations: Object) => string` - returns the translation for the given key, with the provided interpolations
+* `translate: (key: string, interpolations: Object) => string` - returns the translation for the given key, with the provided interpolations
