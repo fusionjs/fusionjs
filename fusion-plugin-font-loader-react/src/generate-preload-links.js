@@ -3,9 +3,10 @@ export default function generatePreloadLinks(fontNames, fontDictionary) {
   Object.keys(fontNames).forEach(fontName => {
     const font = fontDictionary[fontName];
     if (font) {
-      // we can't detect woff2 support on the server, but in the cases where it's
-      // not supported (IE 8, Safari <= El Capitan) this will silently fail and
-      // styles will trigger load a little later
+      // We can't detect woff2 support on the server, but rel=prelaod
+      // is only supported by browsers that support woff2.
+      // Others will fail silently and pick up the font a little later
+      // via the style
       links.push(
         `\n<link rel="preload" href="${
           font.urls.woff2
