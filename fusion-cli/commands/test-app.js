@@ -61,6 +61,10 @@ exports.run = async function({
   updateSnapshot,
   coverage,
   configPath,
+  // Allow snapshots to be updated using `-u` as well as --updateSnapshot.
+  // We don't document this argument, but since jest output automatically
+  // suggests this as a valid argument, we support it in case it's used.
+  u,
 }) {
   const testRuntime = new TestAppRuntime({
     dir,
@@ -69,7 +73,7 @@ exports.run = async function({
     match,
     env,
     testFolder,
-    updateSnapshot,
+    updateSnapshot: updateSnapshot || u,
     coverage,
     configPath,
   });

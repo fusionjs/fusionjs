@@ -123,6 +123,42 @@ test('`fusion test-app` snapshotting', async t => {
   t.end();
 });
 
+test('`fusion test-app` snapshotting with -u option', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=snapshot-no-match`;
+
+  const snapshotFile =
+    __dirname +
+    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-no-match.js.fixture';
+  const backupSnapshot =
+    __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
+
+  // Copy fixture to snapshot
+  fs
+    .createReadStream(snapshotFile)
+    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  try {
+    await exec(`node -e "${cmd}"`);
+    t.fail('should not succeed');
+  } catch (e) {
+    t.notEqual(e.code, 0, 'exits with non-zero status code');
+    t.equal(countTests(e.message), 2, 'ran 2 tests');
+  }
+
+  const updateSnapshot = `require('${runnerPath}').run('${args} -u')`;
+  await exec(`node -e "${updateSnapshot}"`);
+
+  const newSnapshotCode = await readFile(snapshotFile);
+  const originalSnapshotCode = await readFile(backupSnapshot);
+  t.notEqual(newSnapshotCode, originalSnapshotCode, 'snapshot is updated');
+
+  fs.unlinkSync(snapshotFile.replace(/fixture$/, 'snap'));
+
+  t.end();
+});
+
 test('`fusion test-app` snapshotting - enzyme serializer', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test-app --dir=${dir} --configPath=../../../build/jest-config.js --match=snapshot-enzyme-no-match`;
