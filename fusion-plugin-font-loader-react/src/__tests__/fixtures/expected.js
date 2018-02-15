@@ -24,7 +24,7 @@ export const fallbackLookup = {
 };
 
 export const fontFaces =
-  '\n@font-face {font-family: "Lato-Regular"; src: url("/_static/Lato-Regular.woff") format("woff")\n,url("/_static/Lato-Regular.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Bold"; src: url("/_static/Lato-Bold.woff") format("woff")\n,url("/_static/Lato-Bold.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Thin"; src: url("/_static/Lato-Thin.woff") format("woff")\n,url("/_static/Lato-Thin.woff2") format("woff2")\n;}';
+  '\n@font-face {font-family: "Lato-Regular"; src: url("Lato-Regular.woff") format("woff")\n,url("Lato-Regular.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Bold"; src: url("Lato-Bold.woff") format("woff")\n,url("Lato-Bold.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Thin"; src: url("Lato-Thin.woff") format("woff")\n,url("Lato-Thin.woff2") format("woff2")\n;}';
 
 export const preloadLinks =
-  '\n<link rel="font" href="/_static/Lato-Regular.woff2" as="font" type="font/woff2" crossorigin>';
+  '\n<link rel="preload" href="Lato-Regular.woff2" as="font" type="font/woff2" crossorigin>';
