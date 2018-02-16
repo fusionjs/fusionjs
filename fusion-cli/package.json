@@ -58,7 +58,7 @@
     "lighthouse": "2.9.0",
     "memory-fs": "0.4.1",
     "mime": "2.2.0",
-    "mime-db": "1.32.0",
+    "mime-db": "1.33.0",
     "multi-entry-loader": "1.1.2",
     "node-zopfli": "2.0.2",
     "nyc": "11.4.1",
