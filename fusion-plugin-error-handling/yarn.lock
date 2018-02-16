@@ -1874,9 +1874,9 @@ eslint-plugin-cup@1.0.0:
   dependencies:
     globals "^10.0.0"
 
-eslint-plugin-flowtype@2.43.0:
-  version "2.43.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.43.0.tgz#47cdac5f01cda53f1c3e8477f0c83fee66a1606e"
+eslint-plugin-flowtype@2.44.0:
+  version "2.44.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.44.0.tgz#c0610d0018801e1fbe1eaec1c2174de1338ab4ee"
   dependencies:
     lodash "^4.15.0"
 
