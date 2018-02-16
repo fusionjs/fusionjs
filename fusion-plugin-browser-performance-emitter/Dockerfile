@@ -1,4 +1,4 @@
-FROM node:8.9.4@sha256:6054aa20c5b7d198524d9bd56c7b2d4fde046b6825e8261ccbf441444a5f4d39
+FROM node:8.9.4@sha256:9f4efebdb42aa2c0eb752830a6ce57ff73afa7ee19b24804d32bf3e1252b4b72
 
 WORKDIR /fusion-plugin-browser-performance-emitter
 
