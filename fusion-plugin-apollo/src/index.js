@@ -4,6 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// @flow
 /* eslint-env browser */
 import React from 'react';
 
@@ -14,13 +15,15 @@ import {ApolloProvider} from 'react-apollo';
 
 import {ProviderPlugin, ProvidedHOC, Provider} from 'fusion-react';
 
+import type {Element} from 'react';
+
 import serverRender from './server';
 import clientRender from './client';
 
 export const ApolloClientToken = createToken('ApolloClientToken');
 
 export default class App extends CoreApp {
-  constructor(root) {
+  constructor(root: Element<*>) {
     const renderer = createPlugin({
       deps: {
         getApolloClient: ApolloClientToken,
@@ -42,9 +45,10 @@ export default class App extends CoreApp {
           // Deserialize initial state for the browser
           let initialState = null;
           if (__BROWSER__) {
-            initialState = JSON.parse(
-              unescape(document.getElementById('__APOLLO_STATE__').textContent)
-            );
+            const apolloState = document.getElementById('__APOLLO_STATE__');
+            if (apolloState) {
+              initialState = JSON.parse(unescape(apolloState.textContent));
+            }
           }
 
           // Create the client and apollo provider
