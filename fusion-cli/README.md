@@ -2,6 +2,14 @@
 
 [![Build status](https://badge.buildkite.com/849975159b112300b6a2923f8ab4e58db8d3bf35227cf39a37.svg?branch=master)](https://buildkite.com/uberopensource/fusion-cli)
 
+The CLI interface for Fusion.js
+
+The `fusion-cli` package is responsible for orchestrating compile-time configuration for server and browser bundles, as well as development, test and production variations. It provides a standardized Babel configuration that includes async/await support as well as stage 3+ Ecmascript features.
+
+Due to the complexity involved in configuring many permutations of configurations, Fusion.js does not support custom `webpack.config`. This design decision allows Fusion.js to eventually move away from Webpack if faster and better bundlers become available.
+
+The CLI is also responsible for hot module reloading in development mode, and for running the web server.
+
 ### Installation
 
 ```sh
