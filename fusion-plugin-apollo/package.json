@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "flow-bin": "0.65.0",
-    "fusion-core": "1.0.1",
+    "fusion-core": "1.0.2",
     "fusion-react-async": "1.0.0",
     "prettier": "1.10.2",
     "react": "16.2.0",
