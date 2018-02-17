@@ -42,7 +42,7 @@
     "prettier": "1.10.2",
     "react": "16.2.0",
     "react-dom": "16.2.0",
-    "react-redux": "5.0.6",
+    "react-redux": "5.0.7",
     "redux": "3.7.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
