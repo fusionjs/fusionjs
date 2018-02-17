@@ -329,9 +329,8 @@ test('`fusion test-app --debug --env=jsdom,node`', async t => {
   await checkStartedMessageCount(1);
   await triggerCodeStep();
 
-  t.equal(
-    Object.keys(listenAddresses).length,
-    1,
+  t.ok(
+    Object.keys(listenAddresses).length >= 1,
     'found a remote debug connection'
   );
 
