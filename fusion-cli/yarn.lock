@@ -1757,9 +1757,9 @@ compressible@~2.0.11:
   dependencies:
     mime-db ">= 1.30.0 < 2"
 
-compression-webpack-plugin@1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/compression-webpack-plugin/-/compression-webpack-plugin-1.1.6.tgz#450808fe143b4c5216a14f0c315c47bec3d83cec"
+compression-webpack-plugin@1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/compression-webpack-plugin/-/compression-webpack-plugin-1.1.7.tgz#b0dfb97cf1d26baab997b584b8c36fe91872abe2"
   dependencies:
     async "^2.4.1"
     cacache "^10.0.1"
