@@ -1,88 +1,13 @@
 /* eslint-env node */
-const {TestAppRuntime} = require('../build/test-app-runtime');
+const testTarget = require('./test');
 
-exports.desc = 'Run browser tests, using Jest';
-exports.builder = {
-  dir: {
-    type: 'string',
-    default: '.',
-    describe: 'Root path for the application relative to CLI CWD',
-  },
-  debug: {
-    type: 'boolean',
-    default: false,
-    describe: 'Debug tests',
-  },
-  watch: {
-    type: 'boolean',
-    default: false,
-    describe: 'Automatically re-run tests on file changes',
-  },
-  match: {
-    type: 'string',
-    default: null,
-    describe: 'Runs test files that match a given string',
-  },
-  env: {
-    type: 'string',
-    default: 'jsdom,node',
-    describe:
-      'Comma-separated list of environments to run tests in. Defaults to running both node and browser tests.',
-  },
-  testFolder: {
-    type: 'string',
-    default: '__tests__',
-    describe: 'Which folder to look for tests in.',
-  },
-  updateSnapshot: {
-    type: 'boolean',
-    default: false,
-    describe: 'Updates snapshots',
-  },
-  coverage: {
-    type: 'boolean',
-    default: false,
-    describe: 'Runs test coverage',
-  },
-  configPath: {
-    type: 'string',
-    default: './node_modules/fusion-cli/build/jest-config.js',
-    describe: 'Path to the jest configuration',
-  },
-};
+exports.desc = testTarget.desc;
+exports.builder = testTarget.builder;
 
-exports.run = async function({
-  dir = '.',
-  watch,
-  debug,
-  match,
-  env,
-  testFolder,
-  updateSnapshot,
-  coverage,
-  configPath,
-  // Allow snapshots to be updated using `-u` as well as --updateSnapshot.
-  // We don't document this argument, but since jest output automatically
-  // suggests this as a valid argument, we support it in case it's used.
-  u,
-}) {
-  const testRuntime = new TestAppRuntime({
-    dir,
-    watch,
-    debug,
-    match,
-    env,
-    testFolder,
-    updateSnapshot: updateSnapshot || u,
-    coverage,
-    configPath,
-  });
-
-  await testRuntime.run();
-
-  return {
-    stop() {
-      testRuntime.stop();
-    },
-  };
+exports.run = (...args) => {
+  // eslint-disable-next-line no-console
+  console.warn(
+    'Deprecation warning: `fusion test-app` is deprecated, use `fusion test` instead.'
+  );
+  return testTarget.run(...args);
 };

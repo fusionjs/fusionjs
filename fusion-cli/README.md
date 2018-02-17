@@ -37,11 +37,7 @@ yarn add fusion-cli
   * `--file-count`: The number of file sizes to output, sorted largest to smallest (-1 for all files) `[default: 20]`
 * `fusion start [--environment]`: Run your application
   * `--environment`: Which environment/assets to run - defaults to first available assets among `["development", "test", "production"]`
-* `fusion test [--cover] [--watch] [--skip-build]`: Run tests
-  * `--cover`: Run tests with coverage
-  * `--watch`: Automatically re-profile your application on changes
-  * `--skip-build`: Use existing built assets
-* `fusion test-app [--watch] [--match]`: Run tests
+* `fusion test [--watch] [--match] [--coverage] [--env] [--debug] [--updateSnapshot]`: Run tests
   * `--watch`: Automatically run tests when code changes.
   * `--match="somestring"`: Only runs tests against files which match this string.
   * `--coverage`: Collects and outputs test coverage

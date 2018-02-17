@@ -1,66 +1,120 @@
 /* eslint-env node */
 const path = require('path');
 const {spawn} = require('child_process');
+const rimraf = require('rimraf');
 
-module.exports.TestRuntime = function({
+const convertCoverage = require('./convert-coverage');
+
+module.exports.TestAppRuntime = function({
   dir = '.',
-  cover = false,
-  // This should only be set for dev.js cli command in which we explicitly want
-  // the built NODE_ENV for tests ('production') to not match the process NODE_ENV ('development')
-  overrideNodeEnv = false,
+  watch = false,
+  debug = false,
+  match,
+  env,
+  testFolder,
+  updateSnapshot,
+  coverage,
+  configPath,
 }) {
-  const state = {proc: null};
+  const state = {procs: []};
+  const rootDir = path.resolve(process.cwd(), dir);
 
   this.run = () => {
     this.stop();
+    const getArgs = () => {
+      let args = [require.resolve('jest/bin/jest.js')];
+      if (debug) {
+        args = [
+          '--inspect-brk',
+          require.resolve('jest/bin/jest.js'),
+          '--runInBand',
+        ];
+      }
 
-    const base = '.fusion/dist/test';
-    const server = path.resolve(dir, base, 'server/server-main.js');
-    const client = path.resolve(dir, base, 'client/client-main.js');
-    let command = require.resolve('unitest/bin/cli.js');
-    let args = [`--browser=${client}`, `--node=${server}`];
-    if (cover) {
-      const unitest = command;
-      command = require.resolve('nyc/bin/nyc.js');
-      args = [
-        '--reporter=text',
-        '--reporter=html',
-        '--reporter=cobertura',
-        unitest,
-        ...args,
-      ];
-    }
+      args = args.concat(['--config', configPath]);
 
-    return new Promise((resolve, reject) => {
-      state.proc = spawn(command, args, {
-        cwd: path.resolve(process.cwd(), dir),
-        stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-        env: Object.assign(
-          {},
-          process.env,
-          overrideNodeEnv ? {NODE_ENV: 'production'} : {}
-        ),
+      if (watch) {
+        args.push('--watch');
+      }
+
+      if (coverage) {
+        args.push('--coverage');
+      }
+
+      if (match && match.length > 0) {
+        args.push(match);
+      }
+
+      if (updateSnapshot) {
+        args.push('--updateSnapshot');
+      }
+
+      args.push('--verbose');
+
+      return args;
+    };
+
+    const setup = () => {
+      if (!coverage) {
+        return Promise.resolve();
+      }
+
+      // Remove existing coverage directories
+      const folders = [`${rootDir}/coverage/`];
+      return Promise.all(
+        folders.map(
+          folder => new Promise(resolve => rimraf(folder, () => resolve))
+        )
+      );
+    };
+
+    const spawnProc = () => {
+      return new Promise((resolve, reject) => {
+        const args = getArgs();
+
+        const procEnv = {
+          JEST_ENV: env,
+          TEST_FOLDER: testFolder,
+        };
+        const proc = spawn('node', args, {
+          cwd: rootDir,
+          stdio: 'inherit',
+          env: Object.assign(procEnv, process.env),
+        });
+        proc.on('error', reject);
+        proc.on('exit', (code, signal) => {
+          if (code) {
+            return reject(new Error(`Test exited with code ${code}`));
+          }
+
+          if (signal) {
+            return reject(
+              new Error(`Test process exited with signal ${signal}`)
+            );
+          }
+
+          return resolve();
+        });
+        state.procs.push(proc);
       });
+    };
 
-      state.proc.on('error', reject);
-      state.proc.on('close', (code, signal) => {
-        if (code) {
-          return reject(new Error(`Test exited with code ${code}`));
-        }
+    const finish = () => {
+      if (!coverage) {
+        return Promise.resolve();
+      }
+      return convertCoverage(rootDir);
+    };
 
-        if (signal) {
-          return reject(new Error(`Test process exited with signal ${signal}`));
-        }
-
-        return resolve();
-      });
-    });
+    return setup()
+      .then(spawnProc())
+      .then(finish());
   };
 
   this.stop = () => {
-    if (state.proc) {
-      state.proc.kill();
-      state.proc = null;
+    if (state.procs.length) {
+      state.procs.forEach(proc => proc.kill());
+      state.procs = [];
     }
   };
 };

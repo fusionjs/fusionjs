@@ -1,78 +1,87 @@
 /* eslint-env node */
-const {Compiler} = require('../build/compiler');
-const {TestRuntime} = require('../build/test-runtime');
+const {TestAppRuntime} = require('../build/test-runtime');
 
-exports.desc = 'Run tests';
+exports.desc = 'Run browser tests, using Jest';
 exports.builder = {
   dir: {
     type: 'string',
     default: '.',
     describe: 'Root path for the application relative to CLI CWD',
   },
-  cover: {
+  debug: {
     type: 'boolean',
     default: false,
-    describe: 'Run tests with coverage',
-  },
-  // TODO(#20): ensure --debug works with start and test commands
-  // debug: {
-  //   type: 'boolean',
-  //   default: false,
-  //   describe: 'Debug tests',
-  // },
-  'skip-build': {
-    type: 'boolean',
-    default: false,
-    describe: 'Use existing built assets',
+    describe: 'Debug tests',
   },
   watch: {
     type: 'boolean',
     default: false,
-    describe: 'Automatically re-profile your application on changes',
+    describe: 'Automatically re-run tests on file changes',
+  },
+  match: {
+    type: 'string',
+    default: null,
+    describe: 'Runs test files that match a given string',
+  },
+  env: {
+    type: 'string',
+    default: 'jsdom,node',
+    describe:
+      'Comma-separated list of environments to run tests in. Defaults to running both node and browser tests.',
+  },
+  testFolder: {
+    type: 'string',
+    default: '__tests__',
+    describe: 'Which folder to look for tests in.',
+  },
+  updateSnapshot: {
+    type: 'boolean',
+    default: false,
+    describe: 'Updates snapshots',
+  },
+  coverage: {
+    type: 'boolean',
+    default: false,
+    describe: 'Runs test coverage',
+  },
+  configPath: {
+    type: 'string',
+    default: './node_modules/fusion-cli/build/jest-config.js',
+    describe: 'Path to the jest configuration',
   },
 };
 
-exports.run = async function({dir = '.', cover, watch, skipBuild}) {
-  const testRuntime = new TestRuntime({dir, cover});
-
-  if (skipBuild) {
-    await testRuntime.run();
-    return {
-      stop() {
-        testRuntime.stop();
-      },
-    };
-  }
-
-  const compiler = new Compiler({envs: ['test'], dir, watch, cover});
-  await compiler.clean();
-
-  const watcher = await new Promise((resolve, reject) => {
-    const watcher = compiler.start((err, stats) => {
-      if (err || stats.hasErrors()) {
-        return reject(err || new Error('Compiler stats included errors.'));
-      }
-
-      return resolve(watcher);
-    });
+exports.run = async function({
+  dir = '.',
+  watch,
+  debug,
+  match,
+  env,
+  testFolder,
+  updateSnapshot,
+  coverage,
+  configPath,
+  // Allow snapshots to be updated using `-u` as well as --updateSnapshot.
+  // We don't document this argument, but since jest output automatically
+  // suggests this as a valid argument, we support it in case it's used.
+  u,
+}) {
+  const testRuntime = new TestAppRuntime({
+    dir,
+    watch,
+    debug,
+    match,
+    env,
+    testFolder,
+    updateSnapshot: updateSnapshot || u,
+    coverage,
+    configPath,
   });
 
-  const runTests = async () => {
-    await testRuntime.run();
-  };
-
-  await runTests();
-
-  if (watch) {
-    compiler.on('done', () => {
-      runTests().catch(() => {}); // ignore error, since test output is already actionable enough
-    });
-  }
+  await testRuntime.run();
 
   return {
-    compiler,
     stop() {
-      watcher.close();
       testRuntime.stop();
     },
   };
