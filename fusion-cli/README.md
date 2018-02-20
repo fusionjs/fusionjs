@@ -20,24 +20,48 @@ yarn add fusion-cli
 
 ### CLI API
 
-* `fusion build [dir] [--test] [--cover] [--production] [--log-level]`: Build your appplication
+The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusion build` or `npx fusion build`.
+
+* `fusion build [dir] [--test] [--cover] [--production] [--log-level]`
+  Builds your appplication assets
+
+  This command generates transpiled javascript/source map files (aka assets, artifacts) for browser and server. By default it builds development assets, but can also build test and production assets, given the respective flags.
+
+  Build artifacts are stored in the `.fusion` directory.
+
   * `--test`: Build tests as well as application
   * `--cover`: Build tests (with coverage) as well as application
   * `--production`: Build production assets
   * `--log-level`: Log level to output to console `[default: "info"]`
-* `fusion dev [dir] [--port] [--no-hmr] [--test] [--cover] [--log-level]`: Run your application in development
+
+* `fusion dev [dir] [--port] [--no-hmr] [--test] [--cover] [--log-level]`
+  Builds development assets and runs the application in development mode
+
+  Note that this command only builds browser artifacts in memory, and it doesn't save them to the filesystem. This allows hot module reloading to occur faster since there's no performance cost due to I/O access.
+
   * `--port`: The port on which the application runs `[default: 3000]`
   * `--no-hmr`: Run without hot modules replacement
   * `--test`: Run tests as well as application
   * `--cover`: Run tests (with coverage) as well as application
   * `--log-level`: Log level to output to console `[default: "info"]`
+
+<!--
 * `fusion profile [--environment] [--watch] [--file-count]`: Profile your application
   * `--environment`: Either `production` or `development` `[default: "production"]`
   * `--watch`: After profiling, launch source-map-explorer with file watch
   * `--file-count`: The number of file sizes to output, sorted largest to smallest (-1 for all files) `[default: 20]`
-* `fusion start [--environment]`: Run your application
+-->
+
+* `fusion start [--environment]`
+  Runs your application, assuming you have previously built them via `fusion build`. Note that build artifacts must be saved to disk (i.e. this command will fail if you use `fusion dev` to build artifacts instead of `fusion build`.
+
   * `--environment`: Which environment/assets to run - defaults to first available assets among `["development", "test", "production"]`
-* `fusion test [--watch] [--match] [--coverage] [--env] [--debug] [--updateSnapshot]`: Run tests
+
+* `fusion test [--watch] [--match] [--coverage] [--env] [--debug] [--updateSnapshot]`
+  Builds test assets and runs tests
+
+  Tests are run with Jest
+
   * `--watch`: Automatically run tests when code changes.
   * `--match="somestring"`: Only runs tests against files which match this string.
   * `--coverage`: Collects and outputs test coverage
