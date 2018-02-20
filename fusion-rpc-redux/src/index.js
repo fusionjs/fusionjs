@@ -22,7 +22,7 @@ function createActionNames(rpcId) {
   }, {});
 }
 
-export function createRPCActions(rpcId: String) {
+export function createRPCActions(rpcId: string) {
   const actionNames = createActionNames(rpcId);
   return types.reduce((obj, type) => {
     obj[type] = (payload: any) => {
@@ -40,7 +40,7 @@ function getNormalizedReducers(reducers) {
 }
 
 export function createRPCReducer(
-  rpcId: String,
+  rpcId: string,
   reducers: any,
   startValue: any = {}
 ) {
@@ -61,7 +61,7 @@ export function createRPCReducer(
   };
 }
 
-export function createRPCReactors(rpcId: String, reducers: any) {
+export function createRPCReactors(rpcId: string, reducers: any) {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
