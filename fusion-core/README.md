@@ -78,7 +78,7 @@ A class that represents an application. An application is responsible for render
 
 **Constructor**
 
-```js-flow
+```flow
 const app: App = new App(el: any, render: Plugin<Render>|Render);
 ```
 
@@ -88,7 +88,7 @@ const app: App = new App(el: any, render: Plugin<Render>|Render);
 
 **app.register**
 
-```js-flow
+```flow
 app.register(plugin: Plugin);
 app.register(token: Token, plugin: Plugin);
 app.register(token: Token, value: any);
@@ -118,7 +118,7 @@ This method is a shortcut for registering middleware plugins. Typically, you sho
 
 **app.enhance**
 
-```js-flow
+```flow
 app.enhance(token: Token, value: any => Plugin | Value);
 ```
 
@@ -172,7 +172,7 @@ A plugin encapsulates some functionality into a single coherent package that exp
 
 Plugins can be created via `createPlugin`
 
-```js-flow
+```flow
 type Plugin {
   deps: Object<string, Token>,
   provides: (deps: Object) => any,
@@ -189,7 +189,7 @@ import {createPlugin} from 'fusion-core';
 
 Creates a plugin that can be registered via `app.register()`
 
-```js-flow
+```flow
 const plugin: Plugin = createPlugin({
   deps: Object,
   provides: (deps: Object) => any,
@@ -210,7 +210,7 @@ const plugin: Plugin = createPlugin({
 
 A token is a label that can be associated to a plugin or configuration when they are registered to an application. Other plugins can then import them via dependency injection, by mapping a object key in `deps` to a token
 
-```js-flow
+```flow
 type Token {
   name: string,
   ref: mixed,
@@ -221,7 +221,7 @@ type Token {
 
 ##### createToken
 
-```js-flow
+```flow
 const token:Token = createToken(name: string);
 ```
 
@@ -232,7 +232,7 @@ const token:Token = createToken(name: string);
 
 #### Memoization
 
-```js-flow
+```flow
 import {memoize} from 'fusion-core';
 ```
 
@@ -264,7 +264,7 @@ createPlugin({
 
 #### Middleware
 
-```js-flow
+```flow
 type Middleware = (ctx: Context, next: () => Promise) => Promise
 ```
 
@@ -401,7 +401,7 @@ import {html} from 'fusion-core';
 
 A template tag that creates safe HTML objects that are compatible with `ctx.template.head` and `ctx.template.body`. Template string interpolations are escaped. Use this function to prevent XSS attacks.
 
-```js-flow
+```flow
 const sanitized: SanitizedHTML = html`<meta name="viewport" content="width=device-width, initial-scale=1">`
 ```
 
@@ -413,7 +413,7 @@ import {escape} from 'fusion-core';
 
 Escapes HTML
 
-```js-flow
+```flow
 const escaped:string = escape(value: string)
 ```
 
@@ -427,7 +427,7 @@ import {unescape} from 'fusion-core';
 
 Unescapes HTML
 
-```js-flow
+```flow
 const unescaped:string = unescape(value: string)
 ```
 
@@ -441,7 +441,7 @@ import {dangerouslySetHTML} from 'fusion-core';
 
 A function that blindly creates a trusted SanitizedHTML object without sanitizing against XSS. Do not use this function unless you have manually sanitized your input and written tests against XSS attacks.
 
-```js-flow
+```flow
 const trusted:string = dangerouslySetHTML(value: string)
 ```
 
