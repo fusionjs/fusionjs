@@ -14,13 +14,15 @@ if (!(env === 'development' || env === 'production')) {
 }
 const prefix = load('ROUTE_PREFIX', '');
 assert(!prefix.endsWith('/'), 'ROUTE_PREFIX must not end with /');
-const assetPath = load('FRAMEWORK_STATIC_ASSET_PATH', `${prefix}/_static`);
+const baseAssetPath = load('FRAMEWORK_STATIC_ASSET_PATH', `/_static`);
 assert(
-  !assetPath.endsWith('/'),
+  !baseAssetPath.endsWith('/'),
   'FRAMEWORK_STATIC_ASSET_PATH must not end with /'
 );
 const cdnUrl = load('CDN_URL', '');
 assert(!cdnUrl.endsWith('/'), 'CDN_URL must not end with /');
+
+const assetPath = `${prefix}${baseAssetPath}`;
 
 module.exports = () => {
   return {
@@ -28,6 +30,7 @@ module.exports = () => {
     env,
     prefix,
     assetPath,
+    baseAssetPath,
     cdnUrl,
   };
 };

@@ -36,6 +36,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const globby = require('globby');
 const loadFusionRC = require('./load-fusionrc.js');
 const rimraf = require('rimraf');
+const getEnv = require('../plugins/environment-variables-plugin.js');
 
 function getConfig({target, env, dir, watch, cover}) {
   const main = 'src/main.js';
@@ -608,7 +609,7 @@ function Compiler({
       },
       reporter: null,
       serverSideRender: true,
-      publicPath: '/_static', // keep in sync with defaults in environment-variables-plugin.js
+      publicPath: getEnv().assetPath,
     });
     const hot = webpackHotMiddleware(compiler, {log: false});
     return (req, res, next) => {

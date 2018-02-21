@@ -4,7 +4,8 @@ import getCompilationMetaData from '../plugins/compilation-metadata-plugin';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
-import RoutePrefixPlugin from '../plugins/route-prefix-context-plugin';
+import getEnv from '../plugins/environment-variables-plugin.js';
+import stripRoutePrefix from '../lib/strip-prefix.js';
 
 let AssetsPlugin;
 
@@ -45,8 +46,10 @@ export async function start({port, dir = '.'}) {
   AssetsPlugin = AssetsFactory(dir);
   await reload();
 
+  const {prefix} = getEnv();
   // TODO(#21): support https.createServer(credentials, listener);
   const server = http.createServer((req, res) => {
+    if (prefix) stripRoutePrefix(req, prefix);
     state.serve(req, res).catch(e => {
       state.app.onerror(e);
     });
@@ -64,7 +67,6 @@ async function reload() {
   const app = await initialize();
   reverseRegister(app, AssetsPlugin);
   reverseRegister(app, ContextPlugin);
-  reverseRegister(app, RoutePrefixPlugin);
   if (__DEV__) {
     reverseRegister(app, ServerErrorPlugin);
   }

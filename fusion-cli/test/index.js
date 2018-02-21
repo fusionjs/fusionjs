@@ -4,6 +4,7 @@ require('./cli/test');
 require('./cli/build');
 require('./compiler/api');
 require('./compiler/errors');
+require('./route-prefix.js');
 
 /*
 require('./browser-support');

@@ -60,7 +60,7 @@ test('`fusion dev` works with assets', async t => {
   t.end();
 });
 
-test('`fusion dev` works with route prefix', async t => {
+test('`fusion dev` assets work with route prefix', async t => {
   const dir = path.resolve(__dirname, '../fixtures/assets');
   const entryPath = path.resolve(
     dir,
@@ -70,11 +70,47 @@ test('`fusion dev` works with route prefix', async t => {
   const {proc, port} = await dev(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
   });
+  const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   t.equal(
     await request(`http://localhost:${port}/test-prefix/test`),
     '/test-prefix/_static/c300a7df05c8142598558365dbdaa451.css',
     'sets correct route prefix in path'
+  );
+  t.ok(
+    await request(`http://localhost:${port}/test-prefix/_static/client-main.js`)
+  );
+  t.ok(
+    await request(
+      `http://localhost:${port}/test-prefix/_static/client-vendor.js`
+    ),
+    'serves client-vendor from memory correctly'
+  );
+  t.equal(
+    await request(`http://localhost:${port}/test-prefix${expectedAssetPath}`),
+    fs.readFileSync(path.resolve(dir, 'src/static/test.css')).toString(),
+    'serves css file from memory correctly'
+  );
+  proc.kill();
+  t.end();
+});
+
+test('`fusion dev` with route prefix and custom routes', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/prefix');
+  const {proc, port} = await dev(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
+  });
+  const rootRes = await request(`http://localhost:${port}/test-prefix`);
+  t.equal(
+    rootRes,
+    'ROOT REQUEST',
+    'strips route prefix correctly for root requests'
+  );
+  const testRes = await request(`http://localhost:${port}/test-prefix/test`);
+  t.equal(
+    testRes,
+    'TEST REQUEST',
+    'strips route prefix correctly for deep path requests'
   );
   proc.kill();
   t.end();
