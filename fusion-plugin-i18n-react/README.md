@@ -146,6 +146,8 @@ import {I18nToken} from 'fusion-plugin-i18n-react';
 
 The canonical token for the I18n plugin. Typically, it should be registered with the [`I18n`](#i18n) plugin.
 
+#### Dependencies
+
 ##### `I18nLoaderToken`
 
 ```js
@@ -218,8 +220,8 @@ If no fetch implementation is provided, [`window.fetch`](https://developer.mozil
 
 ```js
 const translations: string = i18n.translate(
-  (key: string),
-  (interpolations: Object)
+  key: string,
+  interpolations: Object
 );
 ```
 
