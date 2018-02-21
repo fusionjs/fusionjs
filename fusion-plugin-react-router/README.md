@@ -2,7 +2,26 @@
 
 [![Build status](https://badge.buildkite.com/e7e66157aa0c6e75c355db44ddf818637e7f00f9d7d640c879.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-router)
 
-The `fusion-plugin-react-router` package provides a universal router plugin for React.
+The `fusion-plugin-react-router` package provides a universal router plugin for React. The plugin automatically configures a router provider to account for route prefix, routing events, hydration in bundle splitting scenarios, etc.
+
+The package also offers components to control HTTP status server-side.
+
+---
+
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+  * [Router](#router)
+  * [Route](#route)
+  * [Link](#link)
+  * [Switch](#switch)
+  * [Status](#status)
+  * [NotFound](#notfound)
+  * [Redirect](#redirect)
 
 ---
 
@@ -14,36 +33,39 @@ yarn add fusion-plugin-react-router
 
 ---
 
-### Example
+### Usage
 
-```jsx
-// src/main.js
-import App from 'fusion-react';
-import Router from 'fusion-plugin-react-router';
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import root from './components/root';
-
-export default function start(App) {
-  const app = new App(root);
-  app.register(Router);
-  app.register(UniversalEventsToken, UniversalEvents);
-  return app;
-}
-
+```js
 // src/components/root.js
 import React from 'react';
-import {Router, Route, Link, Switch, NotFound} from 'fusion-plugin-react-router';
+import {
+  Router,
+  Route,
+  Link,
+  Switch,
+  NotFound,
+} from 'fusion-plugin-react-router';
 
 const Home = () => <div>Hello</div>;
 const Test = () => <div>Test</div>;
-const PageNotFound = () => <NotFound><div>404</div></NotFound>;
+const PageNotFound = () => (
+  <NotFound>
+    <div>404</div>
+  </NotFound>
+);
 
 const root = (
   <div>
     <ul>
-      <li><Link to="/">Home</Link></li>
-      <li><Link to="/test">Test</Link></li>
-      <li><Link to="/404">404</Link></li>
+      <li>
+        <Link to="/">Home</Link>
+      </li>
+      <li>
+        <Link to="/test">Test</Link>
+      </li>
+      <li>
+        <Link to="/404">404</Link>
+      </li>
     </ul>
     <Switch>
       <Route exact path="/" component={Home} />
@@ -57,33 +79,50 @@ export default root;
 
 ---
 
-### API
+### Setup
 
-- [Dependency registration](#dependency-registration)
-- [Router](#router)
-- [Route](#route)
-- [Link](#link)
-- [Switch](#switch)
-- [Status](#status)
-- [NotFound](#notfound)
-- [Redirect](#redirect)
+```jsx
+// src/main.js
+import App from 'fusion-react';
+import Router from 'fusion-plugin-react-router';
+import UniversalEvents, {
+  UniversalEventsToken,
+} from 'fusion-plugin-universal-events';
+import root from './components/root';
 
-#### Dependency registration
-
-```js
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-
-app.register(UniversalEventsToken, UniversalEvents);
+export default function start(App) {
+  const app = new App(root);
+  app.register(Router);
+  app.register(UniversalEventsToken, UniversalEvents);
+  return app;
+}
 ```
 
-##### Required dependencies
+---
 
-Name | Type | Description
--|-|-
-`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin to emit routing events to, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+### API
 
+#### Registration API
 
-#### `Router`
+##### Plugin
+
+```js
+import Router from 'fusion-plugin-react-router';
+```
+
+The plugin.
+
+##### `UniversalEventsToken`
+
+```jsx
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+```
+
+The [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin. Required.
+
+---
+
+#### Router
 
 Configures a router and acts as a React context provider for routing concerns. You don't need to use a Router component if you use `getRouter`
 
@@ -98,14 +137,14 @@ import {Router} from 'fusion-plugin-react-router';
 >{child}</Router>
 ```
 
-- `location: string` - Required. The current pathname. Should be `ctx.url` in a Fusion plugin, or `req.url` in the server or `location.pathname` in the client
-- `basename: string` - Optional. Defaults to `''`. A route prefix.
-- `context: {setCode: (string) => void}` - Optional.
-  - `setCode: (string) => void` - Called when `<Status />` is mounted. Provides an HTTP status code.
-- `onRoute: ({page: string, title: string}) => void` - Optional. Called when a route change happens. Provides a pathname and a title.
-- `child: React.Element` - Required.
+* `location: string` - Required. The current pathname. Should be `ctx.url` in a Fusion plugin, or `req.url` in the server or `location.pathname` in the client
+* `basename: string` - Optional. Defaults to `''`. A route prefix.
+* `context: {setCode: (string) => void}` - Optional.
+  * `setCode: (string) => void` - Called when `<Status />` is mounted. Provides an HTTP status code.
+* `onRoute: ({page: string, title: string}) => void` - Optional. Called when a route change happens. Provides a pathname and a title.
+* `child: React.Element` - Required.
 
-#### `Route`
+#### Route
 
 Defines what gets rendered for a given route. Multiple routes can be rendered at the same time if they exist outside a `Switch` component.
 
@@ -117,10 +156,10 @@ import {Router, Route} from 'fusion-plugin-react-router';
 </Router>
 ```
 
-- `exact: boolean` - Optional. Whether the route matches exact paths only.
-- `component: React.Component` - The component to render if the path matches the current URL.
-- `path: string` - Optional. The route to match. If not defined, and `exact` is not defined, acts as a catch-all route (e.g. for 404s)
-- `children: React.Children` - Optional. Pass-through children. Always render even if the route does not match.
+* `exact: boolean` - Optional. Whether the route matches exact paths only.
+* `component: React.Component` - The component to render if the path matches the current URL.
+* `path: string` - Optional. The route to match. If not defined, and `exact` is not defined, acts as a catch-all route (e.g. for 404s)
+* `children: React.Children` - Optional. Pass-through children. Always render even if the route does not match.
 
 #### `Link`
 
@@ -131,7 +170,7 @@ import {Router, Link} from 'fusion-plugin-react-router';
 
 <Router>
   <Link to="{...}">{children}</Link>
-</Router>
+</Router>;
 ```
 
 See the [react-router documentation](https://reacttraining.com/react-router/web/api/Link).
@@ -145,10 +184,10 @@ import {Router, Switch} from 'fusion-plugin-react-router';
 
 <Router>
   <Switch>{children}</Switch>
-</Router>
+</Router>;
 ```
 
-- `children: React.Children<Route>` - React children must be `Route` components.
+* `children: React.Children<Route>` - React children must be `Route` components.
 
 See the [react-router documentation](https://reacttraining.com/react-router/web/api/Switch).
 
@@ -164,8 +203,8 @@ import {Router, Route, Status} from 'fusion-plugin-react-router';
 </Router>
 ```
 
-- `code: number` - A HTTP Status code to be used if this component is mounted. The status code is sent to a `context.setCode` call in `Router`
-- `child: React.Element` - A React element
+* `code: number` - A HTTP Status code to be used if this component is mounted. The status code is sent to a `context.setCode` call in `Router`
+* `child: React.Element` - A React element
 
 #### `NotFound`
 
@@ -176,10 +215,10 @@ import {Router, Route, NotFound} from 'fusion-plugin-react-router';
 
 <Router>
   <Route component={() => <NotFound>{child}</NotFound>} />
-</Router>
+</Router>;
 ```
 
-- `child: React.Element` - A React element
+* `child: React.Element` - A React element
 
 #### `Redirect`
 
@@ -190,10 +229,9 @@ import {Router, Route, Redirect} from 'fusion-plugin-react-router';
 
 <Router>
   <Route component={() => <Redirect to="/">{child}</Redirect>} />
-</Router>
+</Router>;
 ```
 
-- `to: string|object` - Required. A URL or location to redirect to.
-- `push: boolean` - Optional. When true, redirecting will push a new entry onto the history instead of replacing the current one.
-- `code: number` - Optional. A HTTP Status code to be used if this component is mounted.
-
+* `to: string|object` - Required. A URL or location to redirect to.
+* `push: boolean` - Optional. When true, redirecting will push a new entry onto the history instead of replacing the current one.
+* `code: number` - Optional. A HTTP Status code to be used if this component is mounted.
