@@ -18,6 +18,9 @@ If you're using React, you should use [`fusion-plugin-i18n-react`](https://githu
 * [Setup](#setup)
 * [API](#api)
   * [Registration API](#registration-api)
+    * [`I18n`](#i18n)
+    * [`I18nToken`](#i18ntoken)
+  * [Dependencies](#registration-api)
     * [`I18nLoaderToken`](#i18nloadertoken)
     * [`HydrationStateToken`](#hydrationstatetoken)
     * [`FetchToken`](#fetchtoken)
@@ -130,6 +133,8 @@ import {I18nToken} from 'fusion-plugin-i18n-react';
 
 The canonical token for the I18n plugin. Typically, it should be registered with the [`I18n`](#i18n) plugin.
 
+#### Dependencies
+
 ##### `I18nLoaderToken`
 
 ```js
@@ -202,8 +207,8 @@ If no fetch implementation is provided, [`window.fetch`](https://developer.mozil
 
 ```js
 const translations: string = i18n.translate(
-  (key: string),
-  (interpolations: Object)
+  key: string,
+  interpolations: Object
 );
 ```
 
