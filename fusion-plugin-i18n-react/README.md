@@ -22,7 +22,7 @@ For date I18n, consider using [date-fns](https://date-fns.org/).
   * [Registration API](#registration-api)
     * [`I18n`](#i18n)
     * [`I18nToken`](#i18ntoken)
-  * [Dependencies](#registration-api)
+  * [Dependencies](#dependencies)
     * [`I18nLoaderToken`](#i18nloadertoken)
     * [`HydrationStateToken`](#hydrationstatetoken)
     * [`FetchToken`](#fetchtoken)
