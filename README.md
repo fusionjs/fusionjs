@@ -57,7 +57,7 @@ A class that represents an application. An application is responsible for render
 
 **Constructor**
 
-```js-flow
+```flow
 const app: App = new App(el: ReactElement, render: ?(el: ReactElement) => any);
 ```
 
@@ -67,7 +67,7 @@ const app: App = new App(el: ReactElement, render: ?(el: ReactElement) => any);
 
 **app.register**
 
-```js-flow
+```flow
 app.register(plugin: Plugin);
 app.register(token: Token, plugin: Plugin);
 app.register(token: Token, value: any);
@@ -97,7 +97,7 @@ This method is a shortcut for registering middleware plugins. Typically, you sho
 
 **app.enhance**
 
-```js-flow
+```flow
 app.enhance(token: Token, value: any => Plugin | Value);
 ```
 
@@ -123,7 +123,7 @@ Calls all plugin cleanup methods. Useful for testing.
 import {Provider} from 'fusion-react';
 ```
 
-```js-flow
+```flow
 const ProviderComponent:React.Component = Provider.create(name: string);
 ```
 
@@ -140,7 +140,7 @@ Creates a plugin that wraps the React tree with a context provider component.
 
 **ProviderPlugin.create**
 
-```js-flow
+```flow
 const plugin:Plugin = ProviderPlugin.create(name: string, plugin: Plugin, ProviderComponent: React.Component);
 ```
 
@@ -159,7 +159,7 @@ Creates a HOC that exposes a value from React context to the component's props.
 
 **ProvidedHOC.create**
 
-```js-flow
+```flow
 const hoc:HOC = ProvidedHOC.create(name: string, mapProvidesToProps: Object => Object);
 ```
 
