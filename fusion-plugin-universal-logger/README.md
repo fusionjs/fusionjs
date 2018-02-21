@@ -2,13 +2,25 @@
 
 [![Build status](https://badge.buildkite.com/b2263b681b25bfe410fdf3ba640e682491c77bd61b4f0e63c9.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-logger)
 
-A logger utility that batches logs from the browser to the server at set intervals.
-
-Uses [winston](https://github.com/winstonjs/winston) on the server and exposes the same API on the client.
+A logger plugin that can handle logging both server side and client side. On the server it uses [winston](https://github.com/winstonjs/winston) directly. On the client, it batches logs and sends them via network to the server at set intervals.
 
 Depends on [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
 
 ---
+
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+    * [`UniversalLogger`](#UniversalLogger)
+    * [`LoggerToken`](#loggertoken)
+  * [Dependencies](#dependencies)
+    * [`UniversalEventsToken`](#universaleventstoken)
+    * [`UniversalLoggerConfigToken`](#universalloggerconfigtoken)
+  * [Service API](#service-api)
 
 ### Installation
 
@@ -18,103 +30,131 @@ yarn add fusion-plugin-universal-logger
 
 ---
 
-### Example
+### Usage
+
+```js
+import {LoggerToken} from 'fusion-tokens';
+// ...
+app.middleware({logger: LoggerToken}, ({logger}) => {
+  return (ctx, next) => {
+    if (__NODE__) logger.info(`Received request at ${ctx.url}`);
+    else logger.info(`Pageload at ${ctx.url}`);
+    return next();
+  }
+});
+```
+
+### Setup 
 
 ```js
 import App from 'fusion-core';
-import {LoggerToken} from 'fusion-tokens';
+import winston from 'winston';
 import UniversalEvents from 'fusion-plugin-universal-events';
-import UniversalLogger from 'fusion-plugin-universal-logger';
+import UniversalLogger, {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
 
 export default () => {
   const app = new App(<div>Hello</div>);
-
   app.register(UniversalEventsToken, UniversalEvents)
   app.register(LoggerToken, UniversalLogger);
-
-  app.middleware({logger: LoggerToken}, ({logger}) => {
-    return (ctx, next) => {
-      if (__NODE__) logger.info(`Received request at ${ctx.url}`);
-      else logger.info(`Pageload at ${ctx.url}`);
-      return next();
-    }
-  });
-
+  if (__NODE__) { 
+    // optional winston configuration
+    const config = {
+      transports: [
+        new winston.transports.File({filename: 'logs.log'}),
+      ],
+    };
+    app.register(UniversalLoggerConfigToken, config);
+  }
   return app;
 }
-```
-
-### Configuring Winston
-
-```js
-import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
-
-const config = __NODE__ && {
-  transports: [
-    new winston.transports.File({filename: 'logs.log'}),
-  ],
-};
-app.register(UniversalLoggerConfigToken, config);
 ```
 
 ---
 
 ### API
 
-#### Dependency registration
+#### Registration API
+
+##### `UniversalLogger`
 
 ```js
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
-
-app.register(UniversalEventsToken, UniversalEvents);
-app.register(UniversalLoggerConfigToken, config);
+import UniversalLogger from 'fusion-plugin-universal-logger';
 ```
 
-##### Required dependencies
+The universal logger plugin. Typically it should be registered to the [`LoggerToken`](#loggertoken). Provides the [logger service api](#service-api)
 
-Name | Type | Description
--|-|-
-`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+##### `LoggerToken`
 
-##### Optional dependencies
+```js
+import {LoggerToken} from 'fusion-tokens';
+```
 
-Name | Type | Default | Description
--|-|-|-
-`UniversalLoggerConfigToken` | `WinstonConfig` | `undefined` | A [Winston](https://github.com/winstonjs/winston) configuration object.
+`fusion-plugin-universal-logger` conforms to the standard logger api designated by the `LoggerToken` from the `fusion-tokens` library, and is most commonly registered with this token.
 
+#### Dependencies
 
-#### Instance methods
+##### `UniversalEventsToken`
 
-`logger.log(level, ...args)`
+```js
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+```
 
-- `level: string` - Valid levels: `'trace'`, `'debug'`, `'info'`, `'access'`, `'warn'`, `'error'`, `'fatal'`
-- `args: [string]`
+An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events). Required. 
 
-`logger.trace(...args)`
+##### `UniversalLoggerConfigToken`
+```js
+import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
+```
 
-- `args: [string]`
+A [Winston](https://github.com/winstonjs/winston) configuration object. Optional. Server-side only.
 
-`logger.debug(...args)`
+#### Service API
 
-- `args: [string]`
+```js
+logger.log(level, ...args)
+```
 
-`logger.info(...args)`
+* `level: string` - Valid levels: `'trace'`, `'debug'`, `'info'`, `'access'`, `'warn'`, `'error'`, `'fatal'`
+* `args: [string]`
 
-- `args: [string]`
+```js
+logger.trace(...args)
+```
 
-`logger.access(...args)`
+* `args: [string]`
 
-- `args: [string]`
+```js
+logger.debug(...args)
+```
 
-`logger.warn(...args)`
+* `args: [string]`
 
-- `args: [string]`
+```js
+logger.info(...args)
+```
 
-`logger.error(...args)`
+* `args: [string]`
 
-- `args: [string]`
+```js
+logger.access(...args)
+```
 
-`logger.fatal(...args)`
+* `args: [string]`
 
-- `args: [string]`
+```js
+logger.warn(...args)
+```
+
+* `args: [string]`
+
+```js
+logger.error(...args)
+```
+
+* `args: [string]`
+
+```js
+logger.fatal(...args)
+```
+
+* `args: [string]`
