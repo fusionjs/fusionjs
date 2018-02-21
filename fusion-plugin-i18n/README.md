@@ -4,7 +4,7 @@
 
 Adds I18n (Internationalization) string support to a Fusion.js app.
 
-This plugin looks for translations in the `./translations` folder by default.  Translations for each language are expected to be in a JSON file with a [locale](https://www.npmjs.com/package/locale) as a filename.  For example, for U.S. English, translations should be in `./translations/en-US.json`.  Language tags are dictated by your browser, and likely follow the [RFC 5646](https://tools.ietf.org/html/rfc5646) specification.
+This plugin looks for translations in the `./translations` folder by default. Translations for each language are expected to be in a JSON file with a [locale](https://www.npmjs.com/package/locale) as a filename. For example, for U.S. English, translations should be in `./translations/en-US.json`. Language tags are dictated by your browser, and likely follow the [RFC 5646](https://tools.ietf.org/html/rfc5646) specification.
 
 If you're using React, you should use [`fusion-plugin-i18n-react`](https://github.com/fusionjs/fusion-plugin-i18n-react) instead of this package.
 
@@ -39,7 +39,7 @@ yarn add fusion-plugin-i18n
 
 #### Simple middleware
 
-The plugin provides a programmatic interface which exposes `translate`.  See [Service API](#service-api) for more details.
+The plugin provides a programmatic interface which exposes `translate`. See [Service API](#service-api) for more details.
 
 ```js
 // src/some-middleware-plugin.js
@@ -53,11 +53,11 @@ export default createPlugin({
         const i18n = I18n.from(ctx);
         ctx.body = {
           message: i18n.translate('test', {name: 'world'}), // hello world
-        }
+        };
       }
       return next();
-    }
-  }
+    };
+  },
 });
 ```
 
@@ -88,12 +88,16 @@ The default loader expects translation files to live in `./translations/{locale}
 ```js
 // src/main.js
 import App from 'fusion-core';
-import I18n, {I18nToken, I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n';
+import I18n, {
+  I18nToken,
+  I18nLoaderToken,
+  createI18nLoader,
+} from 'fusion-plugin-i18n';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
 export default () => {
-  const app = new App(<div></div>);
+  const app = new App(<div />);
 
   app.register(I18nToken, I18n);
   __NODE__
@@ -101,7 +105,7 @@ export default () => {
     : app.register(FetchToken, fetch);
 
   return app;
-}
+};
 ```
 
 ---
@@ -110,28 +114,46 @@ export default () => {
 
 #### Registration API
 
+##### `I18n`
+
+```js
+import I18n from 'fusion-plugin-i18n-react';
+```
+
+The i18n plugin. Typically, it should be registered to [`I18nToken`](#i18ntoken). Provides the [i18n service](#service-api)
+
+##### `I18nToken`
+
+```js
+import {I18nToken} from 'fusion-plugin-i18n-react';
+```
+
+The canonical token for the I18n plugin. Typically, it should be registered with the [`I18n`](#i18n) plugin.
+
 ##### `I18nLoaderToken`
 
 ```js
 import {I18nLoaderToken} from 'fusion-plugin-i18n';
 ```
 
-A function that provides translations.  Optional.  Server-side only.
+A function that provides translations. Optional. Server-side only.
 
 ###### Type
+
 ```js
 type I18nLoader = {
-  from: (ctx: Context) => ({locale: string, translations: Object})
+  from: (ctx: Context) => {locale: string, translations: Object},
 };
 ```
-- `loader.from: (ctx) => ({locale, translations})` -
-  - `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
-  - `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
-  - `translations: Object` - A object that maps translation keys to translated values for the given locale
+
+* `loader.from: (ctx) => ({locale, translations})` -
+  * `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  * `translations: Object` - A object that maps translation keys to translated values for the given locale
 
 ###### Default value
 
-If no loader is provided, the default loader will read translations from `./translations/{locale}.json`.  See [src/loader.js](https://github.com/fusionjs/fusion-plugin-i18n/blob/master/src/loader.js#L12) for more details.
+If no loader is provided, the default loader will read translations from `./translations/{locale}.json`. See [src/loader.js](https://github.com/fusionjs/fusion-plugin-i18n/blob/master/src/loader.js#L12) for more details.
 
 ##### `HydrationStateToken`
 
@@ -139,13 +161,14 @@ If no loader is provided, the default loader will read translations from `./tran
 import {HydrationStateToken} from 'fusion-plugin-i18n';
 ```
 
-Sets the hydrated state in the client, and can be useful for testing purposes.  Optional.  Browser only.
+Sets the hydrated state in the client, and can be useful for testing purposes. Optional. Browser only.
 
 ###### Type
+
 ```js
 type HydrationState = {
   chunks: Array,
-  translations: Object
+  translations: Object,
 };
 ```
 
@@ -159,16 +182,17 @@ If no hydration state is provided, this will be an empty object (`{}`) and have 
 import {FetchToken} from 'fusion-tokens';
 ```
 
-A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
+A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation. Browser-only.
 
 ###### Type
+
 ```js
 type Fetch = (url: string, options: Object) => Promise<Response>;
 ```
 
-- `url: string` - Required.  Path or URL to the resource you wish to fetch.
-- `options: Object` - Optional.  You may optionally pass an `init` options object as the second argument.  See [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) for more details.
-- `[return]: Promise<Request>` - Return value from fetch.  See [Response](A function that loads appropriate translations and locale information given an HTTP request context) for more details.
+* `url: string` - Required. Path or URL to the resource you wish to fetch.
+* `options: Object` - Optional. You may optionally pass an `init` options object as the second argument. See [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) for more details.
+* `[return]: Promise<Request>` - Return value from fetch. See [Response](A function that loads appropriate translations and locale information given an HTTP request context) for more details.
 
 ###### Default value
 
@@ -177,12 +201,15 @@ If no fetch implementation is provided, [`window.fetch`](https://developer.mozil
 #### Service API
 
 ```js
-const translations: string = i18n.translate(key: string, interpolations: Object)
+const translations: string = i18n.translate(
+  (key: string),
+  (interpolations: Object)
+);
 ```
 
-- `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
-- `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
-- `translation: string` - A translation, or `key` if a matching translation could not be found.
+* `key: string` - A translation key. When using `createI18nLoader`, it refers to a object key in a translation json file.
+* `interpolations: object` - A object that maps an interpolation key to a value. For example, given a translation file `{"foo": "${bar} world"}`, the code `i18n.translate('foo', {bar: 'hello'})` returns `"hello world"`.
+* `translation: string` - A translation, or `key` if a matching translation could not be found.
 
 ---
 
