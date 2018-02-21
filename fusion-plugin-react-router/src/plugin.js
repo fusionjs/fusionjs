@@ -17,6 +17,7 @@ export default createPlugin({
   },
   middleware: ({emitter}) => {
     return (ctx, next) => {
+      const prefix = ctx.prefix || '';
       if (!ctx.element) {
         return next();
       }
@@ -35,8 +36,8 @@ export default createPlugin({
             onRoute={d => {
               pageData = d;
             }}
-            basename={ctx.routePrefix}
-            location={ctx.url}
+            basename={prefix}
+            location={prefix + ctx.url}
             context={context}
           >
             {ctx.element}
@@ -82,7 +83,7 @@ export default createPlugin({
         });
         ctx.element = (
           <Router
-            basename={ctx.routePrefix}
+            basename={ctx.prefix}
             onRoute={payload => {
               pageData = payload;
               emitter.emit('pageview:browser', payload);
