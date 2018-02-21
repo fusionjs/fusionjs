@@ -1,10 +1,10 @@
-# Creating a FusionJS Plugin
+# Creating a Fusion.js Plugin
 
-FusionJS provides official plugins for a wide variety of tasks, and it's possible to write complex applications without ever writing a single custom plugin. With that said, it's possible you might find that there's no plugin available for a task you're trying to accomplish, or that you don't agree with the opinions of an existing plugin. This section explains the FusionJS plugin architecture and how to implement various types of plugins.
+Fusion.js provides official plugins for a wide variety of tasks, and it's possible to write complex applications without ever writing a single custom plugin. With that said, it's possible you might find that there's no plugin available for a task you're trying to accomplish, or that you don't agree with the opinions of an existing plugin. This section explains the Fusion.js plugin architecture and how to implement various types of plugins.
 
-## FusionJS plugin architecture
+## Fusion.js plugin architecture
 
-Plugins in FusionJS exist to encapsulate all code required to address a logic area of concern, regardless of whether the code runs server-side, in the browser, on a per-request basis, on multiple HTTP endpoints, whether it affects React context, etc.
+Plugins in Fusion.js exist to encapsulate all code required to address a logic area of concern, regardless of whether the code runs server-side, in the browser, on a per-request basis, on multiple HTTP endpoints, whether it affects React context, etc.
 
 At the same time, plugins are designed so that dependencies are injectable, and therefore modular and testable.
 
@@ -40,7 +40,7 @@ The `createPlugin` function accepts three optional named parameters: `deps`, `pr
 
 A dependency is anything that has a programmatic API that can be consumed by another part of your web application, and that you might reasonably want to mock in a test.
 
-In FusionJS, dependencies are registered to tokens via `app.register`:
+In Fusion.js, dependencies are registered to tokens via `app.register`:
 
 ```js
 // src/main.js
@@ -326,7 +326,7 @@ Both dependencies and configuration need to be specified when the plugin is regi
 
 ### Request lifecycle
 
-On the server, the middleware function is a [Koa.js](http://koajs.com/) middleware, with a few additional FusionJS-specific properties. A middleware represents the lifecycle of an HTTP request.
+On the server, the middleware function is a [Koa.js](http://koajs.com/) middleware, with a few additional Fusion.js-specific properties. A middleware represents the lifecycle of an HTTP request.
 
 On the browser, the middleware function represents the timeline of what happens during page load.
 
@@ -334,7 +334,7 @@ Koa middlewares are functions that receive a `ctx` object and a `next` function 
 
 In a nutshell, The Koa `ctx` object has properties for various HTTP values (`url`, `method`, `headers`, etc), and `next` is an async function that the middleware is responsible for calling.
 
-In FusionJS, the `next()` call represents the time when virtual dom rendering happens. Typically, you'll want to run all your logic before that, and simply have a `return next()` statement at the end of the function. Even in cases where virtual DOM rendering is not applicable, this pattern is still the simplest way to write a middleware.
+In Fusion.js, the `next()` call represents the time when virtual dom rendering happens. Typically, you'll want to run all your logic before that, and simply have a `return next()` statement at the end of the function. Even in cases where virtual DOM rendering is not applicable, this pattern is still the simplest way to write a middleware.
 
 In a few more advanced cases, however, you might want to do things _after_ virtual dom rendering. In that case, you can call `await next()` instead:
 

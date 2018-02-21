@@ -1,6 +1,6 @@
 # Dependencies
 
-The FusionJS plugin architecture allows plugins to explicitly depend on other service plugins. This allows us to swap implementations of various subsystems, for example for testing, or to provide extended functionality.
+The Fusion.js plugin architecture allows plugins to explicitly depend on other service plugins. This allows us to swap implementations of various subsystems, for example for testing, or to provide extended functionality.
 
 A [service plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#services) is a plugin that contains a service that exposes a programmatic API. The benefit of encapsulating a service into a plugin is that a plugin allows the service instance to be memoized on a per-request basis without polluting the middleware context, and the plugin can also encapsulate the colocation of all code needed to implement related [endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md), [providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md) and [HTML template modifications](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md).
 
@@ -41,7 +41,7 @@ export default createPlugin({
 
 The `Name` plugin simply saves the value in `?name=[value]` to a cookie session if that querystring value is defined.
 
-Notice that the `middleware` method of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.register(SessionToken, JWTSession)` and it's [how FusionJS plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#configuration).
+Notice that the `middleware` method of the `Name` plugin receives `{Session}` as an argument. This is the same `{Session}` that we passed to `app.register(SessionToken, JWTSession)` and it's [how Fusion.js plugins do dependency injection](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md#configuration).
 
 We then called `Session.from(ctx)`, which is how that plugin creates a memoized instance per request.
 

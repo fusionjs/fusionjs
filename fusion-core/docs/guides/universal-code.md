@@ -1,10 +1,10 @@
 # Universal code
 
-FusionJS has first class support for universal code.
+Fusion.js has first class support for universal code.
 
 By default, code runs in both server and browser. This means that plugin registration code only needs to be written once, and that plugins can activate behavior across the entire lifecycle of an application without the need to configure things in different parts of the app. It also means that you can write React code once and have that code be automatically server-side rendered as you would expect.
 
-However, it is also sometimes desirable to write server-only code, browser-only code, and at times, development-only code. To enable that, FusionJS provides the `__NODE__`, `__BROWSER__` and `__DEV__` global flags. These special flags are statically replaced by the compiler with the appropriate boolean value, depending on which bundle the code is compiled for. Then, unused code gets removed via tree shaking and dead code elimination.
+However, it is also sometimes desirable to write server-only code, browser-only code, and at times, development-only code. To enable that, Fusion.js provides the `__NODE__`, `__BROWSER__` and `__DEV__` global flags. These special flags are statically replaced by the compiler with the appropriate boolean value, depending on which bundle the code is compiled for. Then, unused code gets removed via tree shaking and dead code elimination.
 
 To write code that only runs in the server, wrap your code in the appropriate code fence:
 
@@ -33,11 +33,11 @@ if (__DEV__) {
 
 You should avoid writing significantly different code branches for different environments since doing so introduces more potential points of failure, and makes it more difficult to reproduce issues with confidence.
 
-We also recommend that you use `__DEV__` and avoid using `process.env.NODE_ENV === 'production'`, since FusionJS provides better static compilation and eslint support for the former.
+We also recommend that you use `__DEV__` and avoid using `process.env.NODE_ENV === 'production'`, since Fusion.js provides better static compilation and eslint support for the former.
 
 # Imports
 
-The ES6 standard specifies that `import`/`export` syntax cannot appear inside of `if` statement of conditional expressions, but FusionJS is still able to intelligently eliminate server-side imports from client-side bundles, thanks to tree-shaking.
+The ES6 standard specifies that `import`/`export` syntax cannot appear inside of `if` statement of conditional expressions, but Fusion.js is still able to intelligently eliminate server-side imports from client-side bundles, thanks to tree-shaking.
 
 Consider the example below:
 
@@ -71,7 +71,7 @@ Now the code follows the basic dead code elimination rules and the browser bundl
 
 # Linting
 
-FusionJS provides an `eslint-config-fusion` configuration that issues contextual warnings depending on whether code is server-side or client-side.
+Fusion.js provides an `eslint-config-fusion` configuration that issues contextual warnings depending on whether code is server-side or client-side.
 
 ```sh
 yarn add eslint-config-fusion

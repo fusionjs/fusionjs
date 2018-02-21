@@ -1,6 +1,6 @@
 # Modifying the HTML template
 
-Modify the HTML template of a FusionJS plugin with middleware plugins.
+Modify the HTML template of a Fusion.js plugin with middleware plugins.
 
 When a page is server-side rendered, the `ctx.template` property in the middleware is an object:
 
@@ -52,7 +52,7 @@ Note that pushing unsanitized strings to either `head` or `body` will result in 
 
 ### When is a page server-side rendered
 
-FusionJS assumes a page requires server-side rendering if the HTTP request has an `Accept` header containing `text/html`. This header value exists when URLs that are requested from a browser address bar, but it does not for programmatic requests such as XHR/fetch or assets (e.g. `<link href="...">`, `<img src="...">`)
+Fusion.js assumes a page requires server-side rendering if the HTTP request has an `Accept` header containing `text/html`. This header value exists when URLs that are requested from a browser address bar, but it does not for programmatic requests such as XHR/fetch or assets (e.g. `<link href="...">`, `<img src="...">`)
 
 A caveat of this approach is that hitting an endpoint from the browser address bar (as one might do during development) will include the header on an endpoint that isn't meant to be server-side rendered, and similarly, hitting a page via `curl` or similar tool without the header will not trigger server-side rendering correctly.
 

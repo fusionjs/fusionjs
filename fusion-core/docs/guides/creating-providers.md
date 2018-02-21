@@ -2,7 +2,7 @@
 
 When using services in React/Preact, it's good practice to use providers and HOCs that communicate via `context` because having global service instances floating around makes testing harder.
 
-The FusionJS plugin architecture makes it possible to automatically install providers when a plugin is registered. This, in turn, means all logic related to a service - including integration with React/Preact - can be colocated into a single plugin.
+The Fusion.js plugin architecture makes it possible to automatically install providers when a plugin is registered. This, in turn, means all logic related to a service - including integration with React/Preact - can be colocated into a single plugin.
 
 You can create providers and HOCs by implementing their respective patterns manually or by using the [`fusion-react`](https://github.com/fusionjs/fusion-react) package.
 
@@ -34,6 +34,6 @@ export default () => (ctx, next) => {
 }
 ```
 
-The `ctx.element` property is a FusionJS-specific value that holds the root element of an application when a request is server-side rendered. The `if (ctx.element)` check is important because we don't want to do server-side rendering related things for data endpoints, asset requests, etc.
+The `ctx.element` property is a Fusion.js-specific value that holds the root element of an application when a request is server-side rendered. The `if (ctx.element)` check is important because we don't want to do server-side rendering related things for data endpoints, asset requests, etc.
 
 Also note that we don't need an `if (__NODE__)` code fence as we want the provider to exist both in server and browser.

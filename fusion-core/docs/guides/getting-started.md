@@ -1,8 +1,8 @@
 # Getting started
 
-### Set up FusionJS packages
+### Set up Fusion.js packages
 
-FusionJS let's you customize virtually all aspects of an application. In this example, we'll see how to setup a React-based application.
+Fusion.js let's you customize virtually all aspects of an application. In this example, we'll see how to setup a React-based application.
 
 First, let's install packages we'll need:
 
@@ -62,7 +62,7 @@ The application will be available at `http://localhost:3000` and will render `He
 
 Try changing the text to see hot reloading in action.
 
-While the FusionJS CLI takes care of developer productivity concerns such as Babel configuration, build-time orchestration and hot module reloading, the FusionJS runtime does very little. This ensures that the baseline build of a FusionJS app is lean and flexible.
+While the Fusion.js CLI takes care of developer productivity concerns such as Babel configuration, build-time orchestration and hot module reloading, the Fusion.js runtime does very little. This ensures that the baseline build of a Fusion.js app is lean and flexible.
 
 However, apps can gain more functionality via plugins. In the next section, we'll look at how to use a plugin.
 
@@ -154,7 +154,7 @@ export default () => (ctx, next) => {
 }
 ```
 
-**Note**: Stay tuned, we're working on an official FusionJS plugin for optimized font loading, which will replace the workflow above.
+**Note**: Stay tuned, we're working on an official Fusion.js plugin for optimized font loading, which will replace the workflow above.
 
 ---
 
@@ -183,7 +183,7 @@ Note that the argument to `assetUrl` needs to be a compile-time static string li
 
 ### Next steps
 
-Here are some more in-depth sections covering various aspects of FusionJS:
+Here are some more in-depth sections covering various aspects of Fusion.js:
 
 #### Core concepts
 
@@ -197,7 +197,7 @@ Here are some more in-depth sections covering various aspects of FusionJS:
 
 #### Plugins
 
-Check out the links below to help you get familiar with other useful plugins that are provided by the FusionJS team:
+Check out the links below to help you get familiar with other useful plugins that are provided by the Fusion.js team:
 
 * [Styletron](https://github.com/fusionjs/fusion-plugin-styletron-react)
 * [React Router](https://github.com/fusionjs/fusion-plugin-react-router)
