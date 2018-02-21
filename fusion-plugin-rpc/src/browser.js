@@ -6,13 +6,9 @@
 
 // @flow
 /* eslint-env browser */
-import {createPlugin, createToken} from 'fusion-core';
-import type {FusionPlugin, Token} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
-
-export const RPCRoutePrefixConfigToken: Token<string> = createToken(
-  'RPCRoutePrefixConfigToken'
-);
 
 // TODO(#54) Web Platform | 2018-01-19 - Import Flow declaration for 'fetch' from libdef
 type Fetch = (
@@ -22,16 +18,14 @@ type Fetch = (
 
 class RPC {
   fetch: *;
-  prefix: string;
 
-  constructor(fetch: Fetch, prefix: string) {
+  constructor(fetch: Fetch) {
     this.fetch = fetch;
-    this.prefix = prefix;
   }
 
   request(rpcId: string, args: *): Promise<*> {
     // TODO(#3) handle args instanceof FormData
-    return this.fetch(`${this.prefix}/api/${rpcId}`, {
+    return this.fetch(`/api/${rpcId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,17 +52,11 @@ const plugin: RPCPluginType =
   createPlugin({
     deps: {
       fetch: FetchToken,
-      routePrefix: RPCRoutePrefixConfigToken.optional,
     },
     provides: deps => {
-      const {fetch = window.fetch, routePrefix} = deps;
+      const {fetch = window.fetch} = deps;
 
-      const prefix =
-        routePrefix != null
-          ? routePrefix // this hook is mostly for testing
-          : window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
-
-      return {from: () => new RPC(fetch, prefix)};
+      return {from: () => new RPC(fetch)};
     },
   });
 

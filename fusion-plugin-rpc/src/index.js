@@ -17,4 +17,3 @@ const RPC = __BROWSER__ ? browserDataFetching : serverDataFetching;
 export default RPC;
 export const RPCToken = createToken('RPCToken');
 export {RPCHandlersToken} from './tokens';
-export {RPCRoutePrefixConfigToken} from './browser';
