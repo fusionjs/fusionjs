@@ -20,7 +20,7 @@ If you're using React, you should use [`fusion-plugin-i18n-react`](https://githu
   * [Registration API](#registration-api)
     * [`I18n`](#i18n)
     * [`I18nToken`](#i18ntoken)
-  * [Dependencies](#registration-api)
+  * [Dependencies](#dependencies)
     * [`I18nLoaderToken`](#i18nloadertoken)
     * [`HydrationStateToken`](#hydrationstatetoken)
     * [`FetchToken`](#fetchtoken)
