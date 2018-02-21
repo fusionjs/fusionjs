@@ -8,6 +8,19 @@ If you're using React/Redux, you should use [`fusion-plugin-rpc-redux-react`](ht
 
 ---
 
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+  * [Dependencies](#dependencies)
+  * [Service API](#service-api)
+  * [`mock`](#mock)
+
+---
+
 ### Installation
 
 ```
@@ -16,7 +29,21 @@ yarn add fusion-plugin-rpc
 
 ---
 
-### Example
+### Usage
+
+```js
+import {createPlugin} from 'fusion-core';
+export default createPlugin({
+  deps: {RPC: RPCToken},
+  middleware: ({RPCFactory}) => (ctx, next) => {
+    RPC.from(ctx).request('getUser', 1).then(console.log);
+  }
+);
+```
+
+---
+
+### Setup
 
 ```js
 // src/main.js
@@ -36,20 +63,13 @@ const handlers = __NODE__ && {
 
 export default () => {
   const app = new App(<div></div>);
-  // ...
+
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
   __NODE__
     ? app.register(RPCHandlersToken, handlers);
     : app.register(FetchToken, fetch);
 
-  app.middleware(
-    { RPCFactory: RPCToken },
-    ({RPCFactory}) => (ctx, next) => {
-      RPCFactory(ctx).request('getUser', 1).then(console.log) // {some: 'data1'}
-    }
-  );
-  // ...
   return app;
 }
 ```
@@ -58,50 +78,85 @@ export default () => {
 
 ### API
 
-#### Dependency registration
+#### Registration API
+
+##### RPC
 
 ```js
-import {RPCHandlersToken} from 'fusion-plugin-rpc';
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {FetchToken} from 'fusion-tokens';
-
-app.register(UniversalEventsToken, UniversalEvents);
-__NODE__
-  ? app.register(RPCHandlersToken, handlers);
-  : app.register(FetchToken, fetch);
-}
+import RPC from 'fusion-plugin-rpc';
 ```
 
-##### Required dependencies
+The RPC plugin. Provides the RPC [service API](#service-api).
 
-Name | Type | Description
--|-|-
-`UniversalEventsToken` | `UniversalEvents` | An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
-`RPCHandlersToken` | `Object<(...args: any) => Promise>` | A map of server-side RPC method implementations.  Server-only.
-`FetchToken` | `(url: string, options: Object) => Promise` | A [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation.  Browser-only.
-
-##### Factory
+###### `RPCToken`
 
 ```js
-const instance = RPC.from(ctx);
+import {RPCToken} from 'fusion-plugin-rpc-redux-react';
 ```
 
-- `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context).
+The canonical token for the RPC plugin. Typically, it should be registered with the [RPC](#rpc) plugin.
 
-#### Instance methods
+#### Dependencies
 
-- `instance.request(method: string, args: any)` - make an rpc call to the `method` handler with `args`.
+##### `UniversalEventsToken`
 
-If on the server, this will directly call the `method` handler with `(args, ctx)`.
+Required. See [https://github.com/fusionjs/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusion-plugin-universal-events#api)
 
-If on the browser, this will `POST` to `/api/${method}` endpoint with JSON serialized args as the request body. The server will then deserialize the args and call the rpc handler. The response will be serialized and send back to the browser.
+##### `RPCHandlersToken`
 
-### Testing
+```js
+import {RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+```
+
+Configures what RPC handlers exist. Required. Server-only.
+
+###### Types
+
+```flow
+type RPCHandlers = Object<string, () => any>
+```
+
+You can register a value of type `RPCHandlers` or a Plugin that provides a value of type `RPCHandlers`.
+
+##### `FetchToken`
+
+Required. Browser-only. See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+
+##### `ReduxToken`
+
+Required. See [https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+
+##### `ReducerToken`
+
+Required. See [https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+
+---
+
+#### Service API
+
+```js
+const rpc:RPC = Rpc.from(ctx: Context);
+```
+
+* `ctx: Context` - Required. A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* returns `rpc: {request: (method: string, args: any) => Promise<any>}`
+  * `request: (method: string, args: any) => Promise<any>` - Makes an RPC call via an HTTP request. If on the server, this will directly call the `method` handler with `(args, ctx)`.
+
+    If on the browser, this will `POST` to `/api/${method}` endpoint with JSON serialized args as the request body. The server will then deserialize the args and call the rpc handler. The response will be serialized and send back to the browser.
+
+    * `method: string` - Required. The RPC method name
+    * `args: any` - Optional. Arguments to pass to the server-side RPC handler. Must be JSON-serializable.
+
+### mock
 
 The package also exports a mock rpc plugin which can be useful for testing. For example:
 
 ```js
 import {mock as MockRPC} from 'fusion-plugin-rpc';
+```
 
+The package also exports a mock RPC plugin which can be useful for testing. For example:
+
+```js
 app.register(RPCToken, mock);
 ```
