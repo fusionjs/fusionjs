@@ -7,43 +7,85 @@ Dependency injection tokens for Fusion.js.
 Fusion.js dependency injection is based on tokens rather than strings. This avoids naming collision issues.
 This package provides utilities to create named tokens, as well as common tokens that are used by packages maintained by the Fusion.js team.
 
+---
+
+### Table of contents
+
+* [Installation](#installation)
+* [API](#api)
+  * [FetchToken](#fetchtoken)
+  * [LoggerToken](#loggertoken)
+  * [SessionToken](#sessiontoken)
+
+---
+
 ### Installation
 
 ```sh
 yarn add fusion-tokens
 ```
 
+---
+
 ### API
 
-#### createToken
+#### `FetchToken`
 
 ```js
-import {createToken} from 'fusion-tokens';
-
-const token = createToken(name);
+import {FetchToken} from 'fusion-tokens';
 ```
 
-Creates a DI token
+A token for a fetch implementation.
 
-* `name: string` - A human-readable name for the token. Used in error messsages.
-* `token: Token` - A token
+##### Types
 
-#### createOptionalToken
+```flow
+type Fetch = (input: string, options: Object) => Promise<Response>
+```
+
+Typically, [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) or a polyfill such as [unfetch](https://github.com/developit/unfetch).
+
+#### `LoggerToken`
 
 ```js
-import {createOptionalToken} from 'fusion-tokens';
-
-const token = createOptionalToken(name, defaultValue);
+import {LoggerToken} from 'fusion-tokens';
 ```
 
-Creates a special DI token with a default value associated with it
+A token for a logger implementation.
 
-* `name: string` - A human-readable name for the token. Used in error messsages.
-* `defaultValue: any` - The token's default value
-* `token: Token` - A token
+##### Types
 
-#### Tokens
+```flow
+type Logger = {
+  log(level: string, arg: any): void,
+  error(arg: any): void,
+  warn(arg: any): void,
+  info(arg: any): void,
+  verbose(arg: any): void,
+  debug(arg: any): void,
+  silly(arg: any): void,
+}
+```
 
-`import {FetchToken} from 'fusion-tokens';`
-`import {LoggerToken} from 'fusion-tokens';`
-`import {SessionToken} from 'fusion-tokens';`
+Typically, `console` or a logger library such as [Winston](https://github.com/winstonjs/winston).
+
+#### `SessionToken`
+
+```js
+import {SessionToken} from 'fusion-tokens';
+```
+
+A token for a session implementation.
+
+##### Types
+
+```flow
+type Session = {
+  from(ctx: Context): {
+    get(key: string): any,
+    set(key: string, val: any): void,
+  },
+}
+```
+
+Typically, the service provided by [`fusion-plugin-jwt`](https://github.com/fusionjs/fusion-plugin-jwt) or a custom wrapper around similar key-value store APIs (such as [Redis](https://redis.io/)).
