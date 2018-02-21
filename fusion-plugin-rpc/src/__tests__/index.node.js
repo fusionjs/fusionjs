@@ -299,6 +299,51 @@ test('middleware - valid endpoint', async t => {
   t.end();
 });
 
+test('middleware - valid endpoint with route prefix', async t => {
+  const mockCtx = {
+    headers: {},
+    prefix: '/lol',
+    path: '/api/test',
+    method: 'POST',
+    body: {},
+    request: {
+      body: 'test-args',
+    },
+  };
+  const mockHandlers = {
+    test(args, ctx) {
+      t.equal(args, 'test-args');
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+  const mockEmitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+    from() {
+      return this;
+    },
+  };
+
+  const middleware = RPCPlugin.middleware({
+    emitter: mockEmitter,
+    handlers: mockHandlers,
+  });
+  try {
+    await middleware(mockCtx, () => Promise.resolve());
+    t.equal(mockCtx.body.data, 1);
+    t.equal(mockCtx.body.status, 'success');
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
+});
+
 test('middleware - valid endpoint failure', async t => {
   const mockCtx = {
     headers: {},

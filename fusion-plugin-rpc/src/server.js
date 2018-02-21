@@ -101,10 +101,7 @@ const plugin: RPCPluginType =
 
       return async (ctx, next) => {
         const scopedEmitter = emitter.from(ctx);
-        if (
-          ctx.method === 'POST' &&
-          ctx.path.startsWith(`${ctx.prefix}/api/`)
-        ) {
+        if (ctx.method === 'POST' && ctx.path.startsWith('/api/')) {
           const startTime = ms();
           const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
           if (hasHandler(handlers, method)) {
