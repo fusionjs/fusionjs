@@ -6,6 +6,20 @@ Integrates React and Redux to a Fusion.js application
 
 It handles creating your store, wrapping your element tree in a provider, and serializing/deserializing your store between server and client.
 
+Note that this plugin extends the Redux state with a property called `ctx` that references the request's [context](https://github.com/fusionjs/fusion-core#context)
+
+---
+
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+  * [Dependencies](#dependencies)
+  * [Service API](#service-api)
+* [Redux devtools integration](#redux-devtools-integration)
 ---
 
 ### Installation
@@ -16,7 +30,32 @@ yarn add fusion-plugin-react-redux
 
 ---
 
-### Example
+### Usage
+
+```js
+// you can just use standard Redux reducers
+export default (state, action) => ({
+  count: countReducer(state.count, action),
+  things: thingsReducer(state.things, action),
+});
+
+function countReducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT': return state + 1;
+    case 'DECREMENT': return state - 1;
+    default: return state;
+  }
+}
+
+function thingsReducer(state, action) {
+  switch (action.type) {
+    case 'ADD_THING': return [...state, action.payload];
+    default: return state;
+  }
+}
+```
+
+### Setup
 
 ```js
 // in your main.js file
@@ -30,76 +69,114 @@ export default function start() {
   const app = new App(root);
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
-  app.register(EnhancerToken, ReduxActionEmitterEnhancer);
-  __NODE__ && app.register(GetInitialStateToken, async (ctx) => {
-    return {};
-  });
+  app.register(EnhancerToken, enhancer);
+  __NODE__ && app.register(InitialStateToken, async ctx => ({}));
 
   return app;
 }
-
-// reducer.js file
-export default (state, action) => {
-  return state;
-};
 ```
 
 ---
 
 ### API
 
-#### Dependency registration
+#### Registration API
+
+##### `Redux`
 
 ```js
-import {
-  ReducerToken,
-  PreloadedStateToken,
-  EnhancerToken,
-  GetInitialStateToken
-} from 'fusion-plugin-react-redux';
-
-app.register(ReducerToken, reducer);
-app.register(PreloadedStateToken, preloadedState);
-app.register(EnhancerToken, enhancer);
-__NODE__ && app.register(GetInitialStateToken, getInitialState);
+import Redux from 'fusion-plugin-react-redux';
 ```
 
-Creates the redux store and integrates it into the Fusion.js application.
+The Redux plugin. Provides the [service API](#service-api) and installs a redux provider at the top of the React tree. Typically it's registered to [`ReduxToken`](#reduxtoken)
 
-##### Required dependencies
+##### `ReduxToken`
 
-Name | Type | Description
--|-|-
-`ReducerToken` | `(state: any, action: Object) => any` | The root reducer.
+```js
+import {ReduxToken} from 'fusion-plugin-react-redux';
+```
 
-##### Optional dependencies
+Typically, it's registered with [`Redux`](#redux)
 
-Name | Type | Default | Description
--|-|-|-
-`PreloadedStateToken` | `any` | `undefined` | Overrides the initial state in the server, and the hydrated state in the client
-`EnhancerToken` | `FusionPlugin` | `undefined` | Enhances the store with 3rd party capabilities, such as middlewares, time travel, persistence, etc. We are currently investigating enhancer composition in fusionjs/fusion-core#90, but for now you can use plugin aliasing for registering multiple enhancers: `app.register(EnhancerToken, ReduxActionEmitterEnhancer).alias(EnhancerToken, AnotherEnhancerPlugin);`.
-`GetInitialStateToken` | `(ctx) => Promise<any>` | `undefined` | A function that returns the initial state for your redux store.  Server-side only.
+#### Dependencies
 
-#### Factory
+##### `ReducerToken`
 
-`const redux = Redux.from(ctx);`
+```js
+import {ReducerToken} from 'fusion-plugin-react-redux';
+```
 
-- `ctx: FusionContext` - Required. A [Fusion.js Context](https://github.com/fusionjs/fusion-core#context).
-- `redux: {initStore, store}`
-  - `initStore: () => Promise<ReduxStore>` - Runs `getInitialState` and populates the store asynchronously.
-  - `store: ReduxStore` - A [Redux store](https://redux.js.org/docs/api/Store.html)
+The root [reducer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#reducer). Required.
+
+###### Types
+
+```flow
+type Reducer = (state: any, action: Object) => any
+```
+
+##### `EnhancerToken`
+
+```js
+import {ReducerToken} from 'fusion-plugin-react-redux';
+```
+
+Redux [enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer). Optional.
+
+###### Types
+
+```flow
+type Enhancer = (next: StoreCreator) => StoreCreator
+type StoreCreator = (reducer: Reducer, preloadedState: State) => Store
+```
+
+##### `InitialStateToken`
+
+```js
+import {ReducerToken} from 'fusion-plugin-react-redux';
+```
+
+A function that gets initial state asynchronously without triggering actions. Optional. Useful for testing. When architecting application state, prefer using standard reducers to specify initial state.
+
+###### Types
+
+```flow
+type InitialState = () => Promise<State>
+```
 
 ---
 
-### Redux Devtools integration
+#### Service API
 
-The plugin automatically integrates with the [redux devtools Chrome extension](https://github.com/zalmoxisus/redux-devtools-extension)
+```js
+const service: ReduxServiceInstance = Redux.from(ctx: Context)
+```
 
----
+- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+- returns `service:ReduxServiceInstance`
 
-### `store.ctx` - Enhancers have access to `ctx`
+###### Types
+
+```flow
+type ReduxServiceInstance = {
+  ctx: Context,
+  store: Store,
+  initStore: () => Promise<Store>
+}
+```
+
+- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+- `store: Store` - A Redux store
+- `initStore: () => Promise<Store>` - calls the function provided by [`InitialStateToken`](#initialstatetoken)
+
+###### `store.ctx`
 
 For convenience, Redux stores are composed with a default right-most enhancer to add `store.ctx` along side with other [Store APIs](https://github.com/reactjs/redux/blob/master/docs/api/Store.md).
 This is particular useful for your custom store enhancers to access to `ctx` for use-cases such as logging, analytics...etc.
 
-See [redux-action-emitter-enhancer](https://github.com/fusionjs/fusion-plugin-redux-action-emitter-enhancer/) for an usage example.
+See [redux-action-emitter-enhancer](https://github.com/fusionjs/fusion-redux-action-emitter-enhancer/) for an usage example.
+
+---
+
+### Redux devtools integration
+
+The plugin automatically integrates with the [redux devtools Chrome extension](https://github.com/zalmoxisus/redux-devtools-extension)
