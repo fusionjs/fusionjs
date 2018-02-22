@@ -1467,9 +1467,9 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.0.tgz#b396953b77fa7f38ecf18f5331315a71cd96f8e4"
+create-universal-package@3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.1.tgz#3fe13f7688b06ad44380290ce8a4f28fc344f4d4"
   dependencies:
     "@babel/core" "^7.0.0-beta.38"
     "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.38"
