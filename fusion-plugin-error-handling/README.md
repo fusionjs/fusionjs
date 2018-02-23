@@ -2,7 +2,20 @@
 
 [![Build status](https://badge.buildkite.com/1a76dbe95f76cd888a286290c365fabd54fcc62edb3895aa5d.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-error-handling)
 
-Collects browser errors, server request errors, and uncaught exceptions, and provides an API for handling them.
+Collects browser errors, server request errors, and uncaught exceptions, and provides an API for consuming them.
+
+---
+
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+    * [`ErrorHandling`](#errorhandling)
+  * [Dependencies](#dependencies)
+    * [`ErrorHandlingToken`](#errorhandlingtoken)
 
 ---
 
@@ -14,54 +27,84 @@ yarn add fusion-plugin-error-handling
 
 ---
 
-### Example
+### Usage
+
+```js
+// src/monitoring.js
+import {createPlugin} from 'fusion-core';
+
+export default __NODE__ && createPlugin({
+  provides() {
+    return (e, captureType) => {
+        if (captureType === 'browser') {
+          const {message, source, line, col, error} = e;
+          console.log({message, source, line, col, error});
+        } else if (captureType === 'server') {
+          console.log('UNCAUGHT EXCEPTION', e);
+        } else if (captureType === 'request') {
+          console.log('REQUEST ERROR');
+        }
+      }
+    }
+  }
+});
+```
+
+Normally, instead of using `console`, you would consume errors via something like [Kafka](https://kafka.apache.org/) or at least use a production logger (such as [`fusion-plugin-universal-logger`](https://github.com/fusionjs/fusion-plugin-universal-logger)) in conjunction with a logging service such as LogEntries or Papertrail.
+
+---
+
+### Setup
 
 ```js
 // src/main.js
 import React from 'react';
 import App from 'fusion-react';
-import registerMonitoring from './monitoring';
+import ErrorHandling, {ErrorHandlerToken} from 'fusion-plugin-error-handling';
+import log from './monitoring';
 
 export default () => {
-  const app = new App(<div></div>);
-  registerMonitoring(app);
-  return app;
-}
-
-// src/monitoring.js
-import ErrorHandlingPlugin, {ErrorHandlerToken} from 'fusion-plugin-error-handling';
-
-export default (app) => {
+  const app = new App(<div />);
   if (__NODE__) {
-    const log = (e, captureType) => {
-      if (captureType === 'browser') {
-        const {message, source, line, col, error} = e;
-        console.log({message, source, line, col, error});
-      } else if (captureType === 'server') {
-        console.log('UNCAUGHT EXCEPTION', e);
-      } else if (captureType === 'request') {
-        console.log('REQUEST ERROR');
-      }
-    }
-    // Register dependencies
     app.register(ErrorHandlerToken, log);
-    app.register(ErrorHandlingPlugin);
+    app.register(ErrorHandling);
   }
-}
+  return app;
+};
 ```
 
 ---
 
 ### API
 
-#### Dependency registration
-```js
-import {ErrorHandlerToken} from 'fusion-plugin-error-handling';
+#### Registration API
 
-__NODE__ && app.register(ErrorHandlerToken, /*some error handler*/);
+##### `ErrorHandling`
+
+```js
+import ErrorHandling from 'fusion-plugin-error-handling';
 ```
 
-##### Required dependencies
-Name | Type | Description
--|-|-
-`ErrorHandlerToken` | `(e: Error, captureType: 'browser' or 'uncaught' or 'request') => Promise` | A function that gets called on server errors. If the error is a global uncaught exception or unhandled rejection, the process exits when the returned Promise resolves/rejects.  Server-side only.
+The plugin. Typically doesn't need to be associated with a [token](https://github.com/fusionjs/fusion-core#token).
+
+#### Dependencies
+
+##### `ErrorHandlerToken`
+
+```js
+import {ErrorHandlerToken} from 'fusion-plugin-error-handling';
+```
+
+A function to be called when an error is reported.
+
+###### Types
+
+```flow
+type ErrorHandler = (e: Error, captureType: string) => Promise
+```
+
+If the error is a global uncaught exception or unhandled rejection, the process exits when the returned Promise resolves/rejects.
+
+* `e: Error` - The error that was reported
+* `captureType: string` - Either 'browser', 'uncaught' or 'request'.
+* returns `Promise`
