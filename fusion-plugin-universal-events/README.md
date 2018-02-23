@@ -23,7 +23,9 @@ The `UniversalEvents` abstraction was designed to allow you to emit and react to
 * [Setup](#setup)
 * [API](#api)
   * [Registration API](#registration-api)
+    * [`UniversalEvents`](#universalevents)
   * [Dependencies](#dependencies)
+    * [`FetchToken`](#fetchtoken)
   * [Service API](#service-api)
 * [Other examples](#other-examples)
 
@@ -94,17 +96,17 @@ import UniversalEvents from 'fusion-plugin-universal-events';
 
 The plugin. Provides the [service API](#service-api). Typically should be registered to `UniversalEventsToken`.
 
-##### `UniversalEventsToken`
+#### Dependencies
+
+##### `FetchToken`
 
 ```js
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+// ...
+__BROWSER__ && app.register(FetchToken, window.fetch);
 ```
 
-Typically it's registered with [`UniversalEvents`](#universalevents).
-
-##### Required dependencies
-
-Required. Browser-only. See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+**Required. Browser-only.** See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
 
 ---
 
