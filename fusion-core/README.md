@@ -2,26 +2,6 @@
 
 [![Build status](https://badge.buildkite.com/f21b82191811f668ef6fe24f6151058a84fa2c645cfa8810d0.svg?branch=master)](https://buildkite.com/uberopensource/fusion-core)
 
-### Guides
-
-* [What is Fusion.js](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/what-is-fusion.md)
-* [Getting started](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/getting-started.md)
-* [Framework comparison](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/framework-comparison.md)
-
-### Core concepts
-
-* [Universal code](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/universal-code.md)
-* [Creating a plugin](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-a-plugin.md)
-  * [Dependencies](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/dependencies.md)
-  * [Creating endpoints](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-endpoints.md)
-  * [Creating providers](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/creating-providers.md)
-  * [Modifying the HTML template](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/modifying-html-template.md)
-  * [Working with secrets](https://github.com/fusionjs/fusion-core/blob/master/docs/guides/working-with-secrets.md)
-
----
-
-## fusion-core
-
 The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime. It also provides primitives for implementing server-side code, and utilities for assembling plugins into an application to augment its functionality.
 
 If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusion-react) package instead of `fusion-core`.
