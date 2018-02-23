@@ -6,6 +6,24 @@ Session library that uses JSON Web Token and cookies
 
 ---
 
+### Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Setup](#setup)
+* [API](#api)
+  * [Registration API](#registration-api)
+    * [`Session`](#session)
+    * [`SessionToken`](#sessiontoken)
+  * [Dependencies](#dependencies)
+    * [`SessionSecretToken`](#sessionsecrettoken)
+    * [`SessionCookieNameToken`](#sessioncookienametoken)
+    * [`SessionCookieExpiresToken`](#sessioncookieexpirestoken)
+  * [Service API](#service-api)
+* [Caveats](#caveats)
+
+---
+
 ### Installation
 
 ```sh
@@ -14,7 +32,27 @@ yarn add fusion-plugin-jwt
 
 ---
 
-### Example
+### Usage
+
+```js
+export default createPlugin({
+  deps: {Session: SessionToken},
+  middleware() {
+    return ({Session}) => {
+      return async (ctx, next) => {
+        const session = Session.from(ctx);
+        session.set('some-key', 'some-value');
+        const someValue = session.get('some-key');
+        return next();
+      }
+    });
+  }
+});
+```
+
+---
+
+### Setup
 
 ```js
 // src/main.js
@@ -25,10 +63,8 @@ import JWTSession, {
   SessionCookieNameToken
   SessionCookieExpiresToken
 } from 'fusion-plugin-jwt';
-
 import {SessionToken} from 'fusion-tokens';
 
-// src/main.js
 export default () => {
   const app = new App();
   // ...
@@ -37,15 +73,6 @@ export default () => {
     app.register(SessionSecretToken, 'some-secret'); // required
     app.register(SessionCookieNameToken, 'some-cookie-name'); // required
     app.register(SessionCookieExpiresToken, 86400); // optional
-
-    app.middleware({Session: SessionToken}, ({Session}) => {
-      return async (ctx, next) => {
-        const session = Session.from(ctx);
-        session.set('some-key', 'some-value');
-        const someValue = session.get('some-key');
-        return next();
-      }
-    });
   }
   // ...
   return app;
@@ -56,63 +83,102 @@ export default () => {
 
 ### API
 
-#### Dependency registration
+#### Registration API
+
+##### `Session`
 
 ```js
-import {
-  SessionSecretToken
-  SessionCookieNameToken
-  SessionCookieExpiresToken
-} from 'fusion-plugin-jwt';
-
-__NODE__ && app.register(SessionSecretToken, 'some-secret');
-__NODE__ && app.register(SessionCookieNameToken, 'some-cookie-name');
-__NODE__ && app.register(SessionCookieExpiresToken, 86400);
+import Session from 'fusion-plugin-jwt';
 ```
 
-`fusion-plugin-jwt` conforms to the standard fusion session API token exposed as `{SessionToken}` from `fusion-tokens`.
+The plugin. Should typically be registered to [`SessionToken`](https://github.com/fusionjs/fusion-tokens#sessiontoken)
 
-##### Required dependencies
+##### `SessionToken`
 
-Name | Type | Description
--|-|-
-`SessionSecretToken` | `string` | Encryption secret for JWTs. Required on the server, required to be falsy in client.  Server-side only.
-`SessionCookieNameToken` | `string` | Cookie name.  Server-side only.
+Typically should be registered with [`Session`](#session). See [https://github.com/fusionjs/fusion-tokens#sessiontoken](https://github.com/fusionjs/fusion-tokens#sessiontoken)
 
-##### Optional dependencies
+#### Dependencies
 
-Name | Type | Default | Description
--|-|-|-
-`SessionCookieExpiresToken` | `number` | `86400` | Time, in seconds, until session/cookie expiration. Defaults to 24 hours.
-
-#### Instance API
+##### `SessionSecretToken`
 
 ```js
-app.middleware({Session: SessionToken}, ({Session}) => {
-  return async (ctx, next) => {
-    const session = Session.from(ctx);
-  }
-});
+import {SessionSecretToken} from 'fusion-plugin-jwt';
 ```
 
-##### set
+Required. A secret for encrypting the JWT token / cookie. Can typically be a random static value.
+
+###### Types
+
+```flow
+type Secret = string;
+```
+
+##### `SessionCookieNameToken`
 
 ```js
-const value = session.set(key, val);
+import {SessionCookieNameToken} from 'fusion-plugin-jwt';
 ```
 
-- `key: string` - Required
-- `val: Object|Array|string|number|boolean` - A serializable value. Required
-- `value: any` - Returns `val`
+Required. A cookie name
 
-##### get
+###### Types
+
+```flow
+type CookieName = string;
+```
+
+##### `SessionCookieExpiresToken`
 
 ```js
-const value = session.get(key);
+import {SessionCookieExpiresToken} from 'fusion-plugin-jwt';
 ```
 
-- `key: string` - Required
-- `value: any`
+Required. An expiration time in seconds.
+
+###### Types
+
+```flow
+type CookieName = number;
+```
+
+---
+
+#### Service API
+
+```js
+const session: Session = Session.from((ctx: Context));
+```
+
+* `ctx: Context` - a [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* returns `session: Session`
+
+###### Types
+
+```js
+type Session = {
+  set: (key: string, value: Object | Array | string | number | boolean) => any,
+  get: (key: string) => any,
+};
+```
+
+**session.set**
+
+```flow
+const value = session.set(key:string, val:Object|Array|string|number|boolean);
+```
+
+* `key: string` - Required
+* `val: Object|Array|string|number|boolean` - A serializable value. Required
+* returns `value: any`
+
+**session.get**
+
+```flow
+const value: any = session.get(key: string);
+```
+
+* `key: string` - Required
+* returns `value: any`
 
 ---
 
