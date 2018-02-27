@@ -4,6 +4,22 @@
 
 Fusion.js entry point for React universal rendering /w Apollo
 
+Provides a Fusion.js application class that is pre-configured with React and Apollo universal rendering for applications leveraging GraphQL.
+
+The App class from this package should be used when you want to perform both server and client rendering with GraphQL querying. This package will also provide initial state hydration on the client.
+
+---
+
+# Table of contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [API](#api)
+  * [Registration API](#registration-api)
+    * [`ApolloClientToken`](#apolloclienttoken)
+  * [App](#app)
+  * [Provider](#providers)
+
 ---
 
 ### Installation
@@ -14,7 +30,7 @@ yarn add fusion-apollo
 
 ---
 
-### Example
+### Usage
 
 ```js
 // ./src/main.js
@@ -28,3 +44,47 @@ export default function() {
   return app;
 }
 ```
+
+---
+
+### API
+
+#### Registration API
+
+##### ApolloClientToken
+
+```js
+import {ApolloClientToken} from 'fusion-apollo';
+```
+
+A plugin, which provides an instance of [Apollo Client](https://www.apollographql.com/docs/react/reference/index.html), to be registered and used as within the Apollo Provider. You can use [fusion-apollo-universal-client](https://github.com/fusionjs/fusion-apollo-universal-client) as a barbones Apollo Client token.
+
+#### App
+
+```js
+import App from 'fusion-apollo';
+```
+
+A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusion-core#plugin).
+
+**Constructor**
+
+```flow
+const app: App = new App(el: ReactElement);
+```
+
+* `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
+
+**app.(register|middleware|enhance|cleanup)**
+
+See the [fusion-core app methods](https://github.com/fusionjs/fusion-core#app) for further information on provided methods. Fusion-apollo does not add additional app methods besides the inherited fusion-core methods.
+
+---
+
+#### Providers
+
+As a convenience, fusion-apollo re-exports providers from fusion-react. You can find additional information on those as follows:
+
+* [Provider](https://github.com/fusionjs/fusion-react/blob/master/README.md#provider)
+* [ProviderPlugin](https://github.com/fusionjs/fusion-react/blob/master/README.md#providerplugin)
+* [ProvidedHOC](https://github.com/fusionjs/fusion-react/blob/master/README.md#providedhoc)
