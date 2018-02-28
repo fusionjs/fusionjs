@@ -7,7 +7,7 @@
 /* eslint-env browser */
 import tape from 'tape-cup';
 import React from 'react';
-import {styled, StyletronProvider} from 'styletron-react';
+import {styled, Provider as StyletronProvider} from 'styletron-react';
 import plugin from '../browser';
 
 // TODO(#2) Test if style is hydrated correctly in the browser test

@@ -10,7 +10,7 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 
 import {consumeSanitizedHTML} from 'fusion-core';
-import {styled, StyletronProvider} from 'styletron-react';
+import {styled, Provider as StyletronProvider} from 'styletron-react';
 import plugin from '../server';
 
 const SilverPanel = styled('div', {
@@ -25,7 +25,7 @@ tape('Server plugin', t => {
         push(h) {
           t.equal(
             consumeSanitizedHTML(h),
-            '<style class="_styletron_hydrate_">.a{background-color:silver}</style>',
+            '<style class="_styletron_hydrate_">.ae{background-color:silver}</style>',
             'Pushes generated styles to head'
           );
         },

@@ -6,25 +6,23 @@
 
 /* eslint-env node */
 import React from 'react';
-import Styletron from 'styletron-server';
-import {StyletronProvider} from 'styletron-react';
-
 import {createPlugin, dangerouslySetHTML} from 'fusion-core';
+
+import {Provider as StyletronProvider} from 'styletron-react';
+import {Server as Styletron} from 'styletron-engine-atomic';
 
 export default __NODE__ &&
   createPlugin({
     middleware: () => (ctx, next) => {
       if (ctx.element) {
-        const styletron = new Styletron();
+        const engine = new Styletron();
 
         ctx.element = (
-          <StyletronProvider styletron={styletron}>
-            {ctx.element}
-          </StyletronProvider>
+          <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
         );
 
         return next().then(() => {
-          const stylesForHead = styletron.getStylesheetsHtml();
+          const stylesForHead = engine.getStylesheetsHtml();
           ctx.template.head.push(dangerouslySetHTML(stylesForHead));
         });
       } else {

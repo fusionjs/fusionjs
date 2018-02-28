@@ -6,10 +6,16 @@
 
 // @flow
 /* eslint-env browser */
-import {styled} from 'styletron-react';
+import {
+  styled,
+  withStyle,
+  withStyleDeep,
+  withTransform,
+  withWrapper,
+} from 'styletron-react';
 import server from './server';
 import browser from './browser';
 
 declare var __NODE__: Boolean;
 export default (__NODE__ ? server : browser);
-export {styled};
+export {styled, withStyle, withStyleDeep, withTransform, withWrapper};
