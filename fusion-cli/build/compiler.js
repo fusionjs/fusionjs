@@ -195,12 +195,7 @@ function getConfig({target, env, dir, watch, cover}) {
       hot: true,
     },
     performance: {
-      // For now, using webpack defaults
-      hints: name === 'client' && env === 'production' && 'warning',
-      // Warn on entrypoint larger than 250kb (webpack default)
-      maxEntrypointSize: 250000,
-      // Warn on assets larger than 250kb (webpack default)
-      maxAssetSize: 250000,
+      hints: false,
     },
     context: dir,
     /**
