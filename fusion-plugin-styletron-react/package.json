@@ -43,7 +43,7 @@
     "fusion-core": "^1.0.0",
     "fusion-tokens": "^1.0.1",
     "nyc": "11.4.1",
-    "prettier": "1.11.0",
+    "prettier": "1.11.1",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "tape-cup": "4.7.1",
