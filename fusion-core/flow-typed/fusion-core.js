@@ -69,7 +69,7 @@ declare module 'fusion-core' {
     callback(): () => Promise<void>;
     resolve(): void;
   }
-  declare export default typeof FusionApp
+  declare export default typeof FusionApp;
   declare export function createPlugin<Deps, Service>(
     options: FusionPlugin<Deps, Service>
   ): FusionPlugin<Deps, Service>;
