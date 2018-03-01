@@ -32,19 +32,24 @@ yarn add fusion-plugin-rpc-redux-react
 ### Usage
 
 ```js
-// src/redux/index.js
-import {createRPCReducer} from 'fusion-plugin-rpc-redux-react';
-export default createRPCReducer('increment', {
-  start: (state, action) => ({count: state.count, loading: true, error: ''});
-  success: (state, action) => ({count: action.payload.count, loading: false, error: ''});
-  failure: (state, action) => ({count: state.count, loading: false, error: action.payload.error});
-});
-
+// Define your handlers
 // src/rpc/index.js
 export default {
-  greet: async () => "hello",
+  greet: async ({name}, ctx) => {
+    return {greeting: 'hello ${name}'}
+  }
 }
 
+// Define your reducers
+// src/redux/index.js
+import {createRPCReducer} from 'fusion-plugin-rpc-redux-react';
+export default createRPCReducer('greet', {
+  start: (state, action) => ({...state, loading: true}),
+  success: (state, action) => ({...state, loading: false, greeting: action.payload.greeting}),
+  failure: (state, action) => ({...state, loading: false, error: action.payload.error}),
+});
+
+// connect your component
 // src/components/index.js
 import React from 'react';
 import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
@@ -54,14 +59,13 @@ import {compose} from 'redux';
 function Example({greet, greeting, loading, error}) {
   return (
     <div>
-      <button onClick={greet}>Greet</button>
+      <button onClick={() => greet({name: 'person'})}>Greet</button>
       {loading && 'loading'}
       {error}
       {greeting}
     </div>
   );
 }
-
 const hoc = compose(
   withRPCRedux('greet'),
   connect(({greeting, loading, error}) => ({greeting, loading, error})),
@@ -138,7 +142,7 @@ Configures what RPC handlers exist. Required. Server-only.
 ###### Types
 
 ```flow
-type RPCHandlers = Object<string, () => any>
+type RPCHandlers = {[string]: (rpcArgs: Object, ctx: Context) => Promise<Object>}
 ```
 
 You can register a value of type `RPCHandlers` or a Plugin that provides a value of type `RPCHandlers`.
