@@ -81,7 +81,7 @@
     "webpack": "^3.11.0",
     "webpack-chunk-hash": "^0.5.0",
     "webpack-dev-middleware": "^2.0.5",
-    "webpack-dev-server": "^2.11.1",
+    "webpack-dev-server": "^3.0.0",
     "webpack-hot-middleware": "^2.21.0",
     "webpack-node-externals": "^1.6.0",
     "webpack-sources": "^1.1.0",
