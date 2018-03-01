@@ -1,9 +1,27 @@
 import path from 'path';
+import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML} from '../sanitization';
 
-export default function createSSRPlugin({element}) {
+const SSRDecider = createPlugin({
+  provides: () => {
+    return ctx => {
+      // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
+      // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
+      if (ctx.path.match(/\.(js|gif|jpg|png|pdf|json)$/)) return false;
+      // The Accept header is a good proxy for whether SSR should happen
+      // Requesting an HTML page via the browser url bar generates a request with `text/html` in its Accept headers
+      // XHR/fetch requests do not have `text/html` in the Accept headers
+      if (!ctx.headers.accept) return false;
+      if (!ctx.headers.accept.includes('text/html')) return false;
+      return true;
+    };
+  },
+});
+export {SSRDecider};
+
+export default function createSSRPlugin({element, ssrDecider}) {
   return async function ssrPlugin(ctx, next) {
-    if (!isSSR(ctx)) return next();
+    if (!ssrDecider(ctx)) return next();
 
     const template = {
       htmlAttrs: {},
@@ -53,19 +71,6 @@ export default function createSSRPlugin({element}) {
       '</html>',
     ].join('');
   };
-}
-
-function isSSR(ctx) {
-  // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
-  // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
-  if (ctx.path.match(/\.js$/)) return false;
-  // The Accept header is a good proxy for whether SSR should happen
-  // Requesting an HTML page via the browser url bar generates a request with `text/html` in its Accept headers
-  // XHR/fetch requests do not have `text/html` in the Accept headers
-  if (!ctx.headers.accept) return false;
-  if (!ctx.headers.accept.includes('text/html')) return false;
-  //TODO(#45): Investigate alternatives to checking accept header
-  return true;
 }
 
 function getCoreGlobals(ctx) {

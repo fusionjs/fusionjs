@@ -4,7 +4,7 @@ import {compose} from './compose.js';
 import Timing, {TimingToken} from './plugins/timing';
 import BaseApp from './base-app';
 import serverRenderer from './plugins/server-renderer';
-import {RenderToken, ElementToken} from './tokens';
+import {RenderToken, ElementToken, SSRDeciderToken} from './tokens';
 import ssrPlugin from './plugins/ssr';
 
 export default function(): Class<FusionApp> {
@@ -16,7 +16,10 @@ export default function(): Class<FusionApp> {
       super(el, render);
       this._app = new Koa();
       this.register(TimingToken, Timing);
-      this.middleware({element: ElementToken}, ssrPlugin);
+      this.middleware(
+        {element: ElementToken, ssrDecider: SSRDeciderToken},
+        ssrPlugin
+      );
     }
     resolve() {
       this.middleware(

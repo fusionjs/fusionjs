@@ -1,6 +1,7 @@
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
-import {ElementToken, RenderToken} from './tokens';
+import {ElementToken, RenderToken, SSRDeciderToken} from './tokens';
+import {SSRDecider} from './plugins/ssr';
 
 class FusionApp {
   constructor(el, render) {
@@ -9,6 +10,7 @@ class FusionApp {
     this.cleanups = [];
     el && this.register(ElementToken, el);
     render && this.register(RenderToken, render);
+    this.register(SSRDeciderToken, SSRDecider);
   }
   register(token, value) {
     if (token && token.__plugin__) {

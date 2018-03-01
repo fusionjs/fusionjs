@@ -144,6 +144,15 @@ app.register(RenderToken, render);
 The render token is used to register the render function with the fusion app. This is a function that knows how to
 render your application on the server/browser, and allows `fusion-core` to remain agnostic of the virtualdom library.
 
+##### SSRDeciderEnhancer
+
+```js
+import App, {SSRDeciderToken} from 'fusion-core';
+app.enhance(SSRDeciderToken, SSRDeciderEnhancer);
+```
+
+Ths SSRDeciderToken can be enhanced to control server rendering logic.
+
 ---
 
 #### Plugin
@@ -624,4 +633,15 @@ app.enhance(FetchToken, fetch => {
     },
   });
 });
+```
+
+#### Controlling SSR behavior
+
+By default we do not perfrom SSR for any paths that match the following extensions: js, gif, jpg, png, pdf and json. You can control SSR behavior by enhancing the SSRDeciderToken. This will give you the ability to apply custom logic around which routes go through the renderer. You may enhance the SSRDeciderToken with either a function, or a plugin if you need dependencies.
+
+```js
+import {SSRDeciderToken} from 'fusion-core';
+app.enhance(SSRDeciderToken, decide => ctx =>
+  decide(ctx) && !ctx.path.match(/ignore-ssr-route/)
+);
 ```

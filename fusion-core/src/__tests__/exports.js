@@ -13,6 +13,7 @@ import App, {
   syncChunkPaths,
   RenderToken,
   ElementToken,
+  SSRDeciderToken,
   createPlugin,
 } from '../index.js';
 
@@ -44,6 +45,7 @@ test('fusion-core api', t => {
   t.ok(syncChunkPaths, 'exports syncChunkPaths');
   t.ok(RenderToken, 'exports RenderToken');
   t.ok(ElementToken, 'exports ElementToken');
+  t.ok(SSRDeciderToken, 'exports SSRDeciderToken');
   t.ok(createPlugin, 'exports createPlugin');
   t.end();
 });

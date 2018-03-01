@@ -86,4 +86,5 @@ declare module 'fusion-core' {
   declare export function unescape(str: string): string;
   declare export var RenderToken: (Element: any) => string;
   declare export var ElementToken: any;
+  declare export var SSRDeciderToken: any;
 }

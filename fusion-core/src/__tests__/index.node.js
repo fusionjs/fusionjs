@@ -1,6 +1,8 @@
 import test from 'tape-cup';
 import App, {html} from '../index';
 import {run} from './test-helper';
+import {SSRDeciderToken} from '../tokens';
+import {createPlugin} from '../create-plugin';
 
 test('ssr with accept header', async t => {
   const flags = {render: false};
@@ -73,6 +75,147 @@ test('ssr without valid accept header', async t => {
     t.notok(ctx.body, 'does not set ctx.body');
     t.ok(!flags.render, 'does not call render');
     t.notok(ctx.body, 'does not render ctx.body to string');
+  } catch (e) {
+    t.ifError(e, 'does not error');
+  }
+  t.end();
+});
+
+test('disable SSR by composing SSRDecider with a plugin', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+  };
+
+  function buildApp() {
+    const app = new App(element, render);
+
+    app.middleware((ctx, next) => {
+      ctx.body = '_NO_SSR_';
+      return next();
+    });
+
+    const SSRDeciderEnhancer = ssrDecider => {
+      return createPlugin({
+        provides: () => {
+          return ctx => {
+            return (
+              ssrDecider(ctx) &&
+              !ctx.path.startsWith('/foo') &&
+              !ctx.path.startsWith('/bar')
+            );
+          };
+        },
+      });
+    };
+    app.enhance(SSRDeciderToken, SSRDeciderEnhancer);
+    return app;
+  }
+
+  try {
+    let initialCtx = {
+      path: '/foo',
+    };
+    const ctx = await run(buildApp(), initialCtx);
+
+    t.notok(ctx.element, 'non-ssr route does not set ctx.element');
+    t.notok(ctx.type, 'non-ssr route does not set ctx.type');
+    t.ok(!flags.render, 'non-ssr route does not call render');
+    t.equals(ctx.body, '_NO_SSR_', 'can set body in plugin during non-ssr');
+
+    let validSSRPathCtx = {
+      path: '/some-path',
+    };
+    const renderCtx = await run(buildApp(), validSSRPathCtx);
+    t.equals(renderCtx.element, element, 'ssr route sets ctx.element');
+    t.equals(renderCtx.type, 'text/html', 'ssr route sets ctx.type');
+  } catch (e) {
+    t.ifError(e, 'does not error');
+  }
+  t.end();
+});
+
+test('disable SSR by composing SSRDecider with a function', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+  };
+
+  function buildApp() {
+    const app = new App(element, render);
+
+    app.middleware((ctx, next) => {
+      ctx.body = '_NO_SSR_';
+      return next();
+    });
+
+    app.enhance(SSRDeciderToken, decide => ctx =>
+      decide(ctx) && !ctx.path.startsWith('/foo')
+    );
+    return app;
+  }
+
+  try {
+    let initialCtx = {
+      path: '/foo',
+    };
+    const ctx = await run(buildApp(), initialCtx);
+
+    t.notok(ctx.element, 'non-ssr route does not set ctx.element');
+    t.notok(ctx.type, 'non-ssr route does not set ctx.type');
+    t.ok(!flags.render, 'non-ssr route does not call render');
+    t.equals(ctx.body, '_NO_SSR_', 'can set body in plugin during non-ssr');
+
+    let validSSRPathCtx = {
+      path: '/some-path',
+    };
+    const renderCtx = await run(buildApp(), validSSRPathCtx);
+    t.equals(renderCtx.element, element, 'ssr route sets ctx.element');
+    t.equals(renderCtx.type, 'text/html', 'ssr route sets ctx.type');
+  } catch (e) {
+    t.ifError(e, 'does not error');
+  }
+  t.end();
+});
+
+test('SSR extension handling', async t => {
+  const extensionToSSRSupported = {
+    js: false,
+    gif: false,
+    jpg: false,
+    png: false,
+    pdf: false,
+    json: false,
+    html: true,
+  };
+
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+  };
+
+  function buildApp() {
+    const app = new App(element, render);
+    return app;
+  }
+
+  try {
+    for (let i in extensionToSSRSupported) {
+      flags.render = false;
+      let initialCtx = {
+        path: `/some-path.${i}`,
+      };
+      await run(buildApp(), initialCtx);
+      const shouldSSR = extensionToSSRSupported[i];
+      t.equals(
+        flags.render,
+        shouldSSR,
+        `extension of ${i} should ${shouldSSR ? '' : 'not'} have ssr`
+      );
+    }
   } catch (e) {
     t.ifError(e, 'does not error');
   }
