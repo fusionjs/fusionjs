@@ -10,14 +10,14 @@ export type Fetch = (
 ) => Promise<Response>;
 export const FetchToken: Token<Fetch> = createToken('FetchToken');
 
-export interface Session {
+export type Session = {
   from(
     ctx: Context
   ): {
     get(keyPath: string): any,
     set(keyPath: string, val: any): void,
-  };
-}
+  },
+};
 export const SessionToken: Token<Session> = createToken('SessionToken');
 
 export interface Logger {
