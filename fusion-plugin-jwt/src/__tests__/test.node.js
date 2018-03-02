@@ -1,8 +1,9 @@
-// @flow
 /** Copyright (c) 2018 Uber Technologies, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import tape from 'tape-cup';
@@ -15,6 +16,7 @@ import JWTServer, {
   SessionCookieNameToken,
   SessionCookieExpiresToken,
 } from '../index';
+
 import type {SessionService} from '../jwt-server';
 
 const JWTToken: Token<SessionService> = createToken('Session');

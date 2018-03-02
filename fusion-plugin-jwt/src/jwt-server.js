@@ -15,6 +15,7 @@ import set from 'just-safe-set';
 
 import {createPlugin, memoize} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
+import type {Session} from 'fusion-tokens';
 
 import {
   SessionSecretToken,
@@ -66,7 +67,16 @@ class JWTSession {
   }
 }
 
-export type SessionService = {from: (ctx: Context) => JWTSession};
+export type SessionService = {
+  from(
+    ctx: Context
+  ): {
+    loadToken(): ?Object | string,
+    get(keyPath: string): any,
+    set(keyPath: string, val: any): void,
+  },
+};
+
 type SessionDeps = {
   secret: typeof SessionSecretToken,
   cookieName: typeof SessionCookieNameToken,
@@ -117,4 +127,4 @@ const p: FusionPlugin<SessionDeps, SessionService> =
     },
   });
 
-export default p;
+export default ((p: any): FusionPlugin<SessionDeps, Session>);
