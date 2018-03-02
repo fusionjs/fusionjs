@@ -1,13 +1,11 @@
 {
   "name": "fusion-core",
-  "description": "A generic entry point class for FusionJS applications that is used by the FusionJS runtime.",
-  "version": "1.0.2",
+  "description":
+    "A generic entry point class for FusionJS applications that is used by the FusionJS runtime.",
+  "version": "1.1.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-core",
-  "files": [
-    "dist",
-    "flow-typed"
-  ],
+  "files": ["dist", "flow-typed"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -44,7 +42,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build --skip-flow",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=html npm run just-test",
