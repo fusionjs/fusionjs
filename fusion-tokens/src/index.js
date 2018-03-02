@@ -20,13 +20,13 @@ export type Session = {
 };
 export const SessionToken: Token<Session> = createToken('SessionToken');
 
-export interface Logger {
-  log(level: string, arg: any): void;
-  error(arg: any): void;
-  warn(arg: any): void;
-  info(arg: any): void;
-  verbose(arg: any): void;
-  debug(arg: any): void;
-  silly(arg: any): void;
-}
+export type Logger = {
+  log(level: string, arg: any): void,
+  error(arg: any): void,
+  warn(arg: any): void,
+  info(arg: any): void,
+  verbose(arg: any): void,
+  debug(arg: any): void,
+  silly(arg: any): void,
+};
 export const LoggerToken: Token<Logger> = createToken('LoggerToken');
