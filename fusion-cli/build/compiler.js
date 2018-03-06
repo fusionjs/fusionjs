@@ -198,30 +198,7 @@ function getConfig({target, env, dir, watch, cover}) {
       hints: false,
     },
     context: dir,
-    /**
-     * Don't polyfill or mock node things in the browser. Default settings can be found at:
-     * https://github.com/webpack/webpack/blob/master/lib/WebpackOptionsDefaulter.js
-     */
-    node: Object.assign(
-      {
-        // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
-        // Tape requires process to be defined
-        process: env === 'test' && target === 'web' ? 'mock' : false,
-        // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
-        Buffer: env === 'test' && target === 'web' ? 'mock' : false,
-        // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
-        setImmediate: false,
-        // We want these to resolve to the original file source location, not the compiled location
-        // in the future, we may want to consider using `import.meta`
-        __filename: true,
-        __dirname: true,
-        /**
-         * Tape requires `fs` to be defined
-         */
-        fs: target === 'web' ? 'empty' : false,
-      },
-      node
-    ),
+    node: Object.assign(getNodeConfig(target, env), node),
     module: {
       /**
        * Compile-time error for importing a non-existent export
@@ -619,6 +596,35 @@ function Compiler({
     return new Promise((resolve, reject) => {
       rimraf(`${dir}/.fusion`, e => (e ? reject(e) : resolve()));
     });
+  };
+}
+
+function getNodeConfig(target, env) {
+  const tapeConfig = env === 'test' && target === 'web' ? 'mock' : false;
+  const emptyForWeb = target === 'web' ? 'empty' : false;
+  return {
+    // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
+    // Tape requires process to be defined
+    process: tapeConfig,
+    // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
+    Buffer: tapeConfig,
+    // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
+    setImmediate: false,
+    // We want these to resolve to the original file source location, not the compiled location
+    // in the future, we may want to consider using `import.meta`
+    __filename: true,
+    __dirname: true,
+    // This is required until we have better tree shaking. See https://github.com/fusionjs/fusion-cli/issues/254
+    child_process: emptyForWeb,
+    cluster: emptyForWeb,
+    dgram: emptyForWeb,
+    dns: emptyForWeb,
+    fs: emptyForWeb,
+    module: emptyForWeb,
+    net: emptyForWeb,
+    readline: emptyForWeb,
+    repl: emptyForWeb,
+    tls: emptyForWeb,
   };
 }
 
