@@ -218,7 +218,7 @@ function getConfig({target, env, dir, watch, cover}) {
         /**
          * Tape requires `fs` to be defined
          */
-        fs: env === 'test' && target === 'web' ? 'empty' : false,
+        fs: target === 'web' ? 'empty' : false,
       },
       node
     ),

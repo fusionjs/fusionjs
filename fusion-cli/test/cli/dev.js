@@ -151,6 +151,22 @@ test('`fusion dev` server render error', async t => {
   t.end();
 });
 
+test('`fusion dev` works with fs', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/tree-shaking');
+  const {proc, port} = await dev(`--dir=${dir}`);
+  const res = await request(`http://localhost:${port}/fs`);
+  t.ok(res.includes('writeFile'), 'supports fs api on the server');
+  const mainRes = await request(
+    `http://localhost:${port}/_static/client-main.js`
+  );
+  t.ok(
+    mainRes.includes('node-libs-browser/mock/empty.js'),
+    'includes empty fs for browser in dev'
+  );
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` recovering from errors', async t => {
   const dir = path.resolve(__dirname, '../fixtures/server-startup-error');
   const {res, proc} = await dev(`--dir=${dir}`, {
