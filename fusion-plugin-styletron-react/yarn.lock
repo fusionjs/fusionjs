@@ -4536,9 +4536,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-styletron-engine-atomic@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.0.tgz#b8390fc6345d5864902cc2524da0749e559651b5"
+styletron-engine-atomic@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.1.tgz#1f2047463fa50f78264ed8237ca5da1a7b72ee2b"
   dependencies:
     inline-style-prefixer "^4.0.0"
     styletron-standard "^1.0.0"
