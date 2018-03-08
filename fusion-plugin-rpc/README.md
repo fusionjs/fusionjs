@@ -2,7 +2,9 @@
 
 [![Build status](https://badge.buildkite.com/5165e82185b13861275cd0a69f29c2a13bc66dfb9461ee4af5.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc)
 
-Fetch data on the server and client with an RPC style interface.
+Fetch data on the server and client with an [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call) style interface.
+
+RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. Unlike [RESTful architectures](https://en.wikipedia.org/wiki/Representational_state_transfer), RPC-based architectures are not required to conform to statelessness constraints and are free to return session-scoped data. Additionally, the semantics of RPC calls are not constrained by the availability of suitably-descriptive HTTP methods and RPC calls can express complex state change requests more naturally as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g. `PATCH /api/orders/:id`).
 
 If you're using React/Redux, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react) instead of this package.
 
