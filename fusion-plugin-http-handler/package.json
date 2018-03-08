@@ -1,0 +1,64 @@
+{
+  "name": "fusion-plugin-http-handler",
+  "description": "Allows integration of an existing http handler into the fusion request lifecycle",
+  "version": "1.0.0",
+  "repository": "fusionjs/fusion-plugin-http-handler",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel-eslint": "8.2.1",
+    "create-universal-package": "3.4.0",
+    "eslint": "4.18.0",
+    "eslint-config-fusion": "^1.0.0",
+    "eslint-config-uber-universal-stage-3": "1.0.0-rc.7",
+    "eslint-plugin-cup": "1.0.0",
+    "eslint-plugin-flowtype": "2.44.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-react": "7.6.1",
+    "flow-bin": "0.66.0",
+    "fusion-core": "^1.0.0",
+    "fusion-test-utils": "^1.0.1",
+    "fusion-tokens": "^1.0.1",
+    "nyc": "11.4.1",
+    "prettier": "1.10.2",
+    "tape-cup": "4.7.1",
+    "unitest": "2.1.1"
+  },
+  "peerDependencies": {
+    "fusion-core": "^1.0.0",
+    "fusion-tokens": "^1.0.1"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "build": "cup build",
+    "build-tests": "cup build-tests",
+    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "test": "npm run build-tests && npm run just-test",
+    "cover": "npm run build-tests && nyc npm run just-test",
+    "transpile": "npm run clean && npm run build",
+    "prepublish": "npm run transpile"
+  },
+  "engines": {
+    "node": ">= 8.9.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,19 @@
+version: '2'
+services:
+  fusion-plugin-http-handler:
+    build: .
+    volumes:
+      - '.:/fusion-plugin-http-handler'
+      - /fusion-plugin-http-handler/node_modules/
+      - /fusion-plugin-http-handler/dist/
+      - /fusion-plugin-http-handler/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
