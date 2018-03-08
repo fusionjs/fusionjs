@@ -4,6 +4,8 @@
 
 Provides a higher order component that connects RPC methods to Redux as well as React component props
 
+RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. Unlike [RESTful architectures](https://en.wikipedia.org/wiki/Representational_state_transfer), RPC-based architectures are not required to conform to statelessness constraints and are free to return session-scoped data. Additionally, the semantics of RPC calls are not constrained by the availability of suitably-descriptive HTTP methods and RPC calls can express complex state change requests more naturally as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g. `PATCH /api/orders/:id`).
+
 ---
 
 ### Table of contents
@@ -175,6 +177,7 @@ const hoc:HOC = withRPCRedux(rpcId: string, {
   mapStateToParams: ?(state: any) => any,
   transformParams: ?(params: any) => any,
 })
+
 ```
 
 * `rpcId: string` - The name of the RPC method to expose in the component's props
