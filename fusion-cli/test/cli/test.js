@@ -214,7 +214,7 @@ test('`fusion test` coverage', async t => {
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
   // Look for something like coverage
-  t.ok(response.stdout.includes('Uncovered Lines'));
+  t.ok(response.stdout.includes('Uncovered Line #s'));
   t.end();
 });
 

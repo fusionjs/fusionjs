@@ -74,10 +74,8 @@
     "rimraf": "^2.6.2",
     "source-map-explorer": "^1.5.0",
     "source-map-support": "^0.5.3",
-    "ua-parser-js": "^0.7.17",
     "uglifyjs-webpack-plugin": "^1.2.0",
     "unitest": "^2.1.1",
-    "uuid": "^3.2.1",
     "webpack": "^3.11.0",
     "webpack-chunk-hash": "^0.5.0",
     "webpack-dev-middleware": "^2.0.5",
@@ -100,7 +98,7 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.7.0",
     "flow-bin": "0.66.0",
-    "fusion-core": "^1.0.2",
+    "fusion-core": "^1.2.0",
     "fusion-plugin-react-router": "^1.0.2",
     "fusion-react": "^1.0.2",
     "fusion-react-async": "^1.0.2",
@@ -117,7 +115,7 @@
   },
   "peerDependencies": {
     "enzyme": "^3.3.0",
-    "fusion-core": "^1.0.2",
+    "fusion-core": "^1.2.0",
     "fusion-tokens": "^1.0.1"
   },
   "engines": {

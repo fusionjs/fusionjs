@@ -1,11 +1,12 @@
 /* eslint-env node */
 import http from 'http';
-import getCompilationMetaData from '../plugins/compilation-metadata-plugin';
+import {getEnv} from 'fusion-core';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
-import getEnv from '../plugins/environment-variables-plugin.js';
 import stripRoutePrefix from '../lib/strip-prefix.js';
+
+const {prefix, webpackPublicPath} = getEnv();
 
 let AssetsPlugin;
 
@@ -19,16 +20,11 @@ global variable called `__webpack_public_path__`.
 We set this value at runtime because its value depends on the
 `ROUTE_PREFIX` and `CDN_URL` environment variables.
 
-The value of the env var is sent from the server to the client
-by the `/plugins/compilation-metadata-plugin.js` file. It creates
-a `window.__WEBPACK_PUBLIC_PATH__` global variable in the entry point html with the
-value from the environment variables above
-
 Webpack compiles the `__webpack_public_path__ = ...` assignment expression
 into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 */
 // eslint-disable-next-line
-__webpack_public_path__ = getCompilationMetaData().webpackPublicPath + '/';
+__webpack_public_path__ = webpackPublicPath + '/';
 
 // The shared entry must be imported after setting __webpack_public_path__.
 // We use a require as imports are hoisted and would be run before setting __webpack_public_path__.
@@ -46,7 +42,6 @@ export async function start({port, dir = '.'}) {
   AssetsPlugin = AssetsFactory(dir);
   await reload();
 
-  const {prefix} = getEnv();
   // TODO(#21): support https.createServer(credentials, listener);
   const server = http.createServer((req, res) => {
     if (prefix) stripRoutePrefix(req, prefix);

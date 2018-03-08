@@ -18,7 +18,7 @@ We set this value at runtime because its value depends on the
 `ROUTE_PREFIX` and `CDN_URL` environment variables.
 
 The value of the env var is sent from the server to the client
-by the `/plugins/compilation-metadata-plugin.js` file. It creates
+by the `../get-compilation-metadata.js` file. It creates
 a `window.__WEBPACK_PUBLIC_PATH__` global variable in the entry point html with the
 value from the environment variables above
 

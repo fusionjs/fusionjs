@@ -1,7 +1,6 @@
 //@flow
 /* eslint-env node */
-const getEnv = require('./environment-variables-plugin');
-const {createPlugin} = require('fusion-core');
+const {createPlugin, getEnv} = require('fusion-core');
 
 const path = require('path');
 const mount = require('koa-mount');
