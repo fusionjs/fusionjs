@@ -33,9 +33,6 @@ export default function createSSRPlugin({element, ssrDecider}) {
     ctx.rendered = '';
     ctx.template = template;
     ctx.type = 'text/html';
-    if (!ctx.chunkUrlMap) ctx.chunkUrlMap = new Map();
-    if (!ctx.syncChunks) ctx.syncChunks = [];
-    if (!ctx.preloadChunks) ctx.preloadChunks = [];
 
     await next();
 

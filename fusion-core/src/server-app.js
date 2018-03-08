@@ -6,6 +6,7 @@ import BaseApp from './base-app';
 import serverRenderer from './plugins/server-renderer';
 import {RenderToken, ElementToken, SSRDeciderToken} from './tokens';
 import ssrPlugin from './plugins/ssr';
+import contextMiddleware from './plugins/server-context.js';
 
 export default function(): Class<FusionApp> {
   const Koa = require('koa');
@@ -15,6 +16,7 @@ export default function(): Class<FusionApp> {
     constructor(el, render) {
       super(el, render);
       this._app = new Koa();
+      this.middleware(contextMiddleware);
       this.register(TimingToken, Timing);
       this.middleware(
         {element: ElementToken, ssrDecider: SSRDeciderToken},

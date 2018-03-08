@@ -1,6 +1,7 @@
 /* @flow */
 import serverApp from './server-app';
 import clientApp from './client-app';
+import getEnv from './get-env.js';
 // $FlowFixMe
 export default (__BROWSER__ ? clientApp() : serverApp());
 
@@ -27,3 +28,4 @@ export {
 export {RenderToken, ElementToken, SSRDeciderToken} from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
+export {getEnv};
