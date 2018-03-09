@@ -4,11 +4,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @flow
 import browser from './browser';
 import server from './server';
 
-declare var __BROWSER__: Boolean;
-const plugin = __BROWSER__ ? browserDataFetching : serverDataFetching;
+const plugin = __BROWSER__ ? browser : server;
 
 export default plugin;
+export {HttpHandlerToken} from './tokens.js';

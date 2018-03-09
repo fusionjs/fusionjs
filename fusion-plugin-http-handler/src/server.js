@@ -6,17 +6,37 @@
 
 /* eslint-env node */
 
-import {createPlugin, memoize} from 'fusion-core';
-import type {Context, FusionPlugin} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
+import {HttpHandlerToken} from './tokens.js';
 
 const plugin =
   __NODE__ &&
   createPlugin({
-    deps: {},
+    deps: {
+      handler: HttpHandlerToken,
+    },
 
-    provides: deps => {},
-
-    middleware: deps => {},
+    middleware: deps => {
+      const {handler} = deps;
+      return (ctx, next) => {
+        if (ctx.body) {
+          return next();
+        }
+        return new Promise(resolve => {
+          const oldEnd = ctx.res.end.bind(ctx.res);
+          ctx.res.end = (data, encoding, cb) => {
+            ctx.respond = false;
+            oldEnd(data, encoding, cb);
+            return next().then(resolve);
+          };
+          ctx.res.fusionRender = () => {
+            ctx.res.end = oldEnd;
+            next().then(resolve);
+          };
+          handler(ctx.req, ctx.res);
+        });
+      };
+    },
   });
 
 export default plugin;

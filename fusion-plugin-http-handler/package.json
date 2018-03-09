@@ -20,8 +20,7 @@
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-eslint": "8.2.2",
     "create-universal-package": "3.4.0",
@@ -33,12 +32,16 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
+    "express": "^4.16.2",
     "flow-bin": "0.66.0",
     "fusion-core": "^1.0.0",
     "fusion-test-utils": "^1.0.1",
     "fusion-tokens": "^1.0.1",
+    "get-port": "^3.2.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
