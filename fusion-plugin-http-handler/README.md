@@ -1,5 +1,7 @@
 # fusion-plugin-http-handler
 
+[![Build status](https://badge.buildkite.com/14a7cf8799610714c295d2d38333b8cd941dfbf50efec06c03.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-http-handler)
+
 Provides a way to hook http handlers into the fusion request lifecycle.
 
 ---
@@ -8,7 +10,7 @@ Provides a way to hook http handlers into the fusion request lifecycle.
 
 * [Installation](#installation)
 * [Usage](#usage)
- 
+
 ---
 
 ### Installation
@@ -19,7 +21,7 @@ yarn add fusion-plugin-http-handler
 
 ---
 
-### Usage 
+### Usage
 
 ```js
 import HttpHandlerPlugin, {HttpHandlerToken} from 'fusion-plugin-http-handler';
