@@ -59,7 +59,7 @@ onerror = function(m,s,l,c,e) {
 };
 </script>`;
           ctx.template.head.unshift(script);
-        } else if (ctx.path === ctx.prefix + '/_errors') {
+        } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
           await onError(ctx.request.body, captureTypes.browser);
           ctx.body = {ok: 1};

@@ -12,12 +12,14 @@ import {fork} from 'child_process';
 import ErrorHandling, {ErrorHandlerToken} from '../server';
 
 test('request errors', async t => {
-  t.plan(2);
+  t.plan(4);
 
   const app = new App('test', el => el);
 
   let called = 0;
-  const onError = () => {
+  const expectedTypes = ['browser', 'request'];
+  const onError = (body, type) => {
+    t.equal(type, expectedTypes.shift());
     called++;
   };
   app.register(ErrorHandling);
@@ -26,14 +28,13 @@ test('request errors', async t => {
 
   await getSimulator(app)
     .request('/_errors', {
-      prefix: '',
-      request: {body: {message: 'test'}},
+      body: {message: 'test'},
     })
     .catch(e => {
       t.equals(e, 'REJECTED');
     });
 
-  t.equals(called, 1, 'emits browser error');
+  t.equals(called, 2, 'emits browser error');
   process.removeAllListeners('uncaughtException');
   process.removeAllListeners('unhandledRejection');
 
@@ -55,9 +56,8 @@ test('request errors send early response', async t => {
   app.register(ErrorHandlerToken, onError);
   app.middleware(() => Promise.reject('REJECTED'));
   await getSimulator(app)
-    .request('/_errors', {
-      prefix: '',
-      request: {body: {message: 'test'}},
+    .request('/someRoute', {
+      body: {message: 'test'},
     })
     .catch(e => {
       t.equals(e, 'REJECTED');
