@@ -21,11 +21,11 @@
   "dependencies": {
     "@babel/preset-react": "^7.0.0-beta.40",
     "history": "^4.7.2",
-    "prop-types": "^15.6.0",
+    "prop-types": "^15.6.1",
     "react-router-dom": "^4.2.2"
   },
   "peerDependencies": {
-    "fusion-core": "^1.0.0",
+    "fusion-core": "^1.0.2",
     "react": "14.x - 16.x",
     "react-dom": "14.x - 16.x"
   },
@@ -36,14 +36,14 @@
     "eslint-config-fusion": "^1.0.0",
     "eslint-plugin-cup": "1.0.0",
     "eslint-plugin-flowtype": "2.46.1",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.7.0",
     "flow-bin": "0.66.0",
-    "fusion-core": "^1.0.0",
-    "fusion-plugin-universal-events": "^1.0.1",
-    "fusion-react": "^1.0.1",
-    "fusion-react-async": "^1.0.1",
+    "fusion-core": "^1.0.2",
+    "fusion-plugin-universal-events": "^1.0.2",
+    "fusion-react": "^1.0.2",
+    "fusion-react-async": "^1.1.0",
     "fusion-test-utils": "^1.0.1",
     "fusion-tokens": "^1.0.1",
     "nyc": "11.4.1",

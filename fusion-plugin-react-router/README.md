@@ -15,13 +15,18 @@ The package also offers components to control HTTP status server-side.
 * [Setup](#setup)
 * [API](#api)
   * [Registration API](#registration-api)
-  * [Router](#router)
-  * [Route](#route)
-  * [Link](#link)
-  * [Switch](#switch)
-  * [Status](#status)
-  * [NotFound](#notfound)
-  * [Redirect](#redirect)
+  * [`Router`](#router)
+  * [`Route`](#route)
+  * [`Link`](#link)
+  * [`Switch`](#switch)
+  * [`Status`](#status)
+  * [`NotFound`](#notfound)
+  * [`Redirect`](#redirect)
+  * [`BrowserRouter`](#browserrouter)
+  * [`HashRouter`](#hashrouter)
+  * [`MemoryRouter`](#memoryrouter)
+  * [`withRouter`](#withrouter)
+  * [`matchPath`](#matchpath)
 
 ---
 
@@ -235,3 +240,53 @@ import {Router, Route, Redirect} from 'fusion-plugin-react-router';
 * `to: string|object` - Required. A URL or location to redirect to.
 * `push: boolean` - Optional. When true, redirecting will push a new entry onto the history instead of replacing the current one.
 * `code: number` - Optional. A HTTP Status code to be used if this component is mounted.
+
+#### `BrowserRouter`
+
+A `<Router>` that uses the HTML5 history API to keep your UI in sync with the URL.. This is a re-export of React Router's `BrowserRouter` (from `react-router-dom`)
+
+```js
+import {BrowserRouter} from 'fusion-plugin-react-router';
+```
+
+See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md)
+
+#### `HashRouter`
+
+A `<Router>` that uses `window.location.hash` to keep your UI in sync with the URL. This is a re-export of React Router's `HashRouter` (from `react-router-dom`)
+
+```js
+import {HashRouter} from 'fusion-plugin-react-router';
+```
+
+See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md)
+
+#### `MemoryRouter`
+
+A `<Router>` that keeps the history of your "URL" in memory (does not read or write to the address bar). This is a re-export of React Router's `MemoryRouter`
+
+```js
+import {MemoryRouter} from 'fusion-plugin-react-router';
+```
+
+See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/MemoryRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/MemoryRouter.md)
+
+#### `withRouter`
+
+Exposes `match`, `location` and `history` properties of the React Router history object as props. This is a re-export of React Router's `withRouter`.
+
+```js
+import {withRouter} from 'fusion-plugin-react-router';
+```
+
+See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md)
+
+#### `matchPath`
+
+Programmatic API to run React Router's route matching algorithm. This is a re-export of React Router's `matchPath`.
+
+```js
+import {matchPath} from 'fusion-plugin-react-router';
+```
+
+See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md)
