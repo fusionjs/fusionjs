@@ -22,7 +22,7 @@ const plugin =
         if (ctx.body) {
           return next();
         }
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
           const oldEnd = ctx.res.end.bind(ctx.res);
           ctx.res.end = (data, encoding, cb) => {
             ctx.respond = false;
@@ -31,7 +31,9 @@ const plugin =
           };
           ctx.res.fusionRender = () => {
             ctx.res.end = oldEnd;
-            next().then(resolve);
+            return next()
+              .then(resolve)
+              .catch(reject);
           };
           handler(ctx.req, ctx.res);
         });
