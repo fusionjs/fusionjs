@@ -104,7 +104,7 @@ This plugin.  It can be registered as a dependency to any plugin that expects a 
 import {EnhancerToken} from 'fusion-plugin-react-redux';
 ```
 
-If you are using [`fusion-plugin-react-redux`](github.com/fusionjs/fusion-plugin-react-redux), we recommend registering this plugin to the `EnhancerToken`.
+If you are using [`fusion-plugin-react-redux`](https://github.com/fusionjs/fusion-plugin-react-redux), we recommend registering this plugin to the `EnhancerToken`.
 
 #### Dependencies
 
