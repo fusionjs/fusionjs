@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
-const {cmd, start} = require('../run-command');
+const {cmd, run, start} = require('../run-command');
 const {promisify} = require('util');
 const request = require('request-promise');
 
@@ -239,5 +239,32 @@ test('`fusion build` with assets', async t => {
   } catch (e) {
     t.ifError(e);
   }
+  t.end();
+});
+
+test('`fusion build` with dynamic imports', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/dynamic-import');
+  await cmd(`build --dir=${dir}`);
+
+  // Execute node script to validate dynamic imports
+  const entryPath = `.fusion/dist/development/server/server-main.js`;
+  const entry = path.resolve(dir, entryPath);
+  const command = `require('${entry}');`;
+  const {stdout} = await run(command, {stdio: 'pipe'});
+  const testContent = JSON.parse(stdout);
+  t.ok(
+    testContent.dynamicContent.includes('loaded dynamic import'),
+    'dynamic import is executed'
+  );
+  t.deepEqual(testContent.chunkIds, [[1], [0]], 'Chunk IDs are populated');
+
+  t.ok(
+    await exists(path.resolve(dir, `.fusion/dist/development/client/0.js`)),
+    'client dynamic import bundle exists'
+  );
+  t.ok(
+    await exists(path.resolve(dir, `.fusion/dist/development/server/0.js`)),
+    'server dynamic import bundle exists'
+  );
   t.end();
 });
