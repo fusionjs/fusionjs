@@ -21,27 +21,28 @@ class ChunkManifestPlugin {
     const manifestVariable = this.manifestVariable;
     let oldChunkFilename;
 
-    compiler.plugin('this-compilation', compilation => {
-      compilation.mainTemplate.plugin('require-ensure', function(_) {
-        oldChunkFilename = this.outputOptions.chunkFilename;
-        this.outputOptions.chunkFilename = '__CHUNK_MANIFEST__';
-        return _;
-      });
+    compiler.hooks.thisCompilation.tap('ChunkManifestPlugin', compilation => {
+      compilation.mainTemplate.hooks.requireEnsure.tap(
+        'ChunkManifestPlugin',
+        function(_) {
+          oldChunkFilename = this.outputOptions.chunkFilename;
+          this.outputOptions.chunkFilename = '__CHUNK_MANIFEST__';
+          return _;
+        }
+      );
     });
 
-    compiler.plugin('compilation', compilation => {
-      compilation.mainTemplate.plugin('require-ensure', function(
-        _,
-        chunk,
-        hash,
-        chunkIdVar
-      ) {
-        this.outputOptions.chunkFilename = oldChunkFilename;
-        return _.replace(
-          '"__CHUNK_MANIFEST__"',
-          `window["${manifestVariable}"][${chunkIdVar}]`
-        );
-      });
+    compiler.hooks.compilation.tap('ChunkManifestPlugin', compilation => {
+      compilation.mainTemplate.hooks.requireEnsure.tap(
+        'ChunkManifestPlugin',
+        function(_, chunk, hash, chunkIdVar) {
+          this.outputOptions.chunkFilename = oldChunkFilename;
+          return _.replace(
+            '"__CHUNK_MANIFEST__"',
+            `window["${manifestVariable}"][${chunkIdVar}]`
+          );
+        }
+      );
     });
   }
 }

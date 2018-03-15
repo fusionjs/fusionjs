@@ -113,10 +113,10 @@ module.exports = function Shared(context) {
   };
   share.setFs(context.compiler);
 
-  context.compiler.plugin('done', share.compilerDone);
-  context.compiler.plugin('invalid', share.compilerInvalid);
-  context.compiler.plugin('watch-run', share.compilerInvalid);
-  context.compiler.plugin('run', share.compilerInvalid);
+  context.compiler.hooks.done.tap('Shared', share.compilerDone);
+  context.compiler.hooks.invalid.tap('Shared', share.compilerInvalid);
+  context.compiler.hooks.watchRun.tap('Shared', share.compilerInvalid);
+  context.compiler.hooks.run.tap('Shared', share.compilerInvalid);
 
   return share;
 };
