@@ -4,19 +4,15 @@
  * This is meant for the client
  */
 
-const Template = require('webpack/lib/Template');
-
 class ChunkPreloadPlugin {
   apply(compiler) {
-    compiler.hooks.compilation.tap('ChunkPreloadPlugin', function(compilation) {
-      compilation.mainTemplate.hooks.localVars.tap(
-        'ChunkPreloadPlugin',
-        function(source) {
-          var buf = [source];
-          buf.push('');
-          buf.push('// chunk preloading');
-          buf.push(
-            `
+    compiler.plugin('compilation', function(compilation) {
+      compilation.mainTemplate.plugin('local-vars', function(source) {
+        var buf = [source];
+        buf.push('');
+        buf.push('// chunk preloading');
+        buf.push(
+          `
   if (window.__PRELOADED_CHUNKS__) {
     window.__PRELOADED_CHUNKS__.forEach(function(chunkId) {
       var result;
@@ -42,10 +38,9 @@ class ChunkPreloadPlugin {
     window.__UNHANDLED_ERRORS__.forEach(rejectChunkPreload);
   }
         `
-          );
-          return Template.asString(buf);
-        }
-      );
+        );
+        return this.asString(buf);
+      });
     });
   }
 }

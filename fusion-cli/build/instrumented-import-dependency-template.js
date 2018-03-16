@@ -1,6 +1,7 @@
 /* eslint-env node */
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
+const DepBlockHelpers = require('webpack/lib/dependencies/DepBlockHelpers');
 
 /**
  * We create an extension to the original ImportDependency template
@@ -34,15 +35,18 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
    * For now, we'll just override this method entirely with a modified version
    * Based on https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/ImportDependency.js
    */
-  apply(dep, source, runtime) {
+  apply(dep, source, outputOptions, requestShortener) {
     const depBlock = dep.block;
-    const content = runtime.moduleNamespacePromise({
-      block: dep.block,
-      module: dep.module,
-      request: dep.request,
-      strict: dep.originModule.buildMeta.strictHarmonyModule,
-      message: 'import()',
-    });
+    const promise = DepBlockHelpers.getDepBlockPromise(
+      depBlock,
+      outputOptions,
+      requestShortener,
+      'import()'
+    );
+    const comment = this.getOptionalComment(
+      outputOptions.pathinfo,
+      requestShortener.shorten(dep.request)
+    );
 
     if (this.clientChunkMap && dep.module) {
       /**
@@ -50,8 +54,8 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
        */
       const stringifiedId = JSON.stringify(dep.module.id);
 
-      const request = content
-        ? `${content};__webpack_require__(${stringifiedId});`
+      const request = promise
+        ? `${promise};__webpack_require__(${stringifiedId});`
         : `__webpack_require__(${stringifiedId});`;
 
       const preloadSrc = `/* PRE-REQUIRE DYNAMIC IMPORTS */${request}`;
@@ -59,12 +63,14 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       source.insert(0, preloadSrc);
     }
 
+    const content = this.getContent(promise, dep, comment);
     // TODO(#17): throw with nice error message here if not in manifest
     const chunkIds = this.clientChunkMap
       ? // server-side, use values from client bundle
         Array.from(this.clientChunkMap.get(dep.module.resource))
       : // client-side, use built-in values
-        getChunkGroupIds(depBlock.chunkGroup);
+        getChunkIds(depBlock.chunks);
+
     // Add `__CHUNK_IDS` property to promise returned by `import()`` if they exist
     const customContent = chunkIds
       ? `Object.defineProperty(${content}, "__CHUNK_IDS", {value:${JSON.stringify(
@@ -83,8 +89,11 @@ module.exports = InstrumentedImportDependencyTemplate;
  * Adapted from
  * https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/DepBlockHelpers.js
  */
-function getChunkGroupIds(chunkGroup) {
-  if (chunkGroup && !chunkGroup.isInitial()) {
-    return [chunkGroup.id];
+function getChunkIds(chunks) {
+  if (chunks) {
+    const nonEntryChunks = chunks.filter(chunk => {
+      return !chunk.hasRuntime() && typeof chunk.id === 'number';
+    });
+    return nonEntryChunks.map(chunk => chunk.id);
   }
 }

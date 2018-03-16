@@ -10,26 +10,20 @@ const {ConcatSource} = require('webpack-sources');
  */
 class ServiceWorkerTimestampPlugin {
   apply(compiler) {
-    compiler.hooks.compilation.tap(
-      'ServiceWorkerTimestampPlugin',
-      compilation => {
-        compilation.hooks.optimizeChunkAssets.tapAsync(
-          'ServiceWorkerTimestampPlugin',
-          (chunks, cb) => {
-            chunks.forEach(chunk => {
-              chunk.files.forEach(f => {
-                compilation.assets[f] = new ConcatSource(
-                  `var ts = ${Date.now()};`,
-                  '\n',
-                  compilation.assets[f]
-                );
-              });
-            });
-            return cb();
-          }
-        );
-      }
-    );
+    compiler.plugin('compilation', compilation => {
+      compilation.plugin('optimize-chunk-assets', (chunks, cb) => {
+        chunks.forEach(chunk => {
+          chunk.files.forEach(f => {
+            compilation.assets[f] = new ConcatSource(
+              `var ts = ${Date.now()};`,
+              '\n',
+              compilation.assets[f]
+            );
+          });
+        });
+        return cb();
+      });
+    });
   }
 }
 

@@ -5,6 +5,8 @@ const path = require('path');
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
+const progress = new ProgressBarPlugin();
+const WebpackChunkHash = require('webpack-chunk-hash');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const ChunkManifestPlugin = require('./external-chunk-manifest-plugin.js');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -145,7 +147,6 @@ function getConfig({target, env, dir, watch, cover}) {
         entry,
       ].filter(Boolean),
     },
-    mode: env === 'production' ? 'production' : 'development',
     // TODO(#47): Do we need to do something different here for production?
     stats: 'minimal',
     /**
@@ -355,7 +356,7 @@ function getConfig({target, env, dir, watch, cover}) {
       },
     },
     plugins: [
-      new ProgressBarPlugin(),
+      progress,
       // TODO(#9): relying only on timestamp will invalidate service worker after every build
       // optimize by importing all chunk names to sw and then remove timestamp in non-dev.
       target === 'webworker' && new ServiceWorkerTimestampPlugin(),
@@ -388,6 +389,16 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'development' &&
         watch &&
         new webpack.HotModuleReplacementPlugin(),
+      target === 'web' &&
+        env !== 'test' &&
+        // Bundles all node_modules code into vendor chunk
+        // See https://webpack.js.org/guides/code-splitting-libraries/#implicit-common-vendor-chunk
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'vendor',
+          minChunks: module => {
+            return module.context && module.context.includes('node_modules');
+          },
+        }),
       // The next two plugins are required for deterministic file hashes
       // See https://github.com/webpack/webpack/issues/1315 and
       // https://webpack.js.org/guides/caching/#generating-unique-hashes-for-each-file
@@ -395,6 +406,8 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'production' && target === 'web'
         ? new webpack.HashedModuleIdsPlugin()
         : new webpack.NamedModulesPlugin(),
+      // Adds md5 hashing of webpack chunks
+      env === 'production' && target === 'web' && new WebpackChunkHash(),
       // This is necessary to tell webpack not to inline code referencing
       // assets. See https://github.com/webpack/webpack/issues/1315
       env === 'production' &&
@@ -455,36 +468,6 @@ function getConfig({target, env, dir, watch, cover}) {
           sourceMap: true,
         }),
     ].filter(Boolean),
-    optimization: {
-      splitChunks: target === 'web' && {
-        // See https://webpack.js.org/guides/code-splitting/
-        // See https://gist.github.com/sokra/1522d586b8e5c0f5072d7565c2bee693
-        // See https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-        // Bundles all node_modules code into vendor chunk
-        chunks: 'async',
-        minSize: 30000,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        name: true,
-        cacheGroups: {
-          default: {
-            minChunks: 2,
-            reuseExistingChunk: true,
-          },
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendor',
-            filename:
-              env === 'production' && target === 'web'
-                ? `${name}-[name]-[chunkhash].js`
-                : `${name}-[name].js`,
-            chunks: 'initial',
-            enforce: true,
-          },
-        },
-      },
-    },
   };
 }
 
@@ -564,7 +547,7 @@ function Compiler({
 
   const statsLogger = getStatsLogger({dir, logger, envs});
 
-  this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
+  this.on = (type, callback) => compiler.plugin(type, callback);
   this.start = cb => {
     cb = cb || function noop() {};
     // Handler may be called multiple times by `watch`
@@ -589,7 +572,6 @@ function Compiler({
       };
     }
   };
-
   this.getMiddleware = () => {
     const dev = webpackDevMiddleware(compiler, {
       filter: c => c.name === 'client' || c.name === 'client-evergreen',

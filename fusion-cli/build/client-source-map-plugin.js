@@ -15,38 +15,35 @@ const clientSourceMap = require('./client-source-map');
  */
 class ClientSourceMapPlugin {
   apply(compiler) {
-    compiler.hooks.invalid.tap('ClientSourceMapPlugin', () => {
+    compiler.plugin('invalid', () => {
       clientSourceMap.invalidate();
     });
-    compiler.hooks.emit.tapAsync(
-      'ClientSourceMapPlugin',
-      (compilation, done) => {
-        const sourcemaps = new Map();
-        compilation.chunks.forEach(chunk => {
-          const len = chunk.files.length;
-          if (len % 2 !== 0) {
-            throw new Error(
-              'Chunk had odd number of files, probably due missing sourcemaps'
+    compiler.plugin('emit', (compilation, done) => {
+      const sourcemaps = new Map();
+      compilation.chunks.forEach(chunk => {
+        const len = chunk.files.length;
+        if (len % 2 !== 0) {
+          throw new Error(
+            'Chunk had odd number of files, probably due missing sourcemaps'
+          );
+        }
+        const files = new Map();
+        const canonicalSize = len / 2;
+        chunk.files.forEach((filename, index) => {
+          const canonicalIndex = index % canonicalSize;
+          if (!files.has(canonicalIndex)) {
+            files.set(canonicalIndex, filename);
+          } else {
+            sourcemaps.set(
+              files.get(canonicalIndex),
+              JSON.parse(compilation.assets[filename].source())
             );
           }
-          const files = new Map();
-          const canonicalSize = len / 2;
-          chunk.files.forEach((filename, index) => {
-            const canonicalIndex = index % canonicalSize;
-            if (!files.has(canonicalIndex)) {
-              files.set(canonicalIndex, filename);
-            } else {
-              sourcemaps.set(
-                files.get(canonicalIndex),
-                JSON.parse(compilation.assets[filename].source())
-              );
-            }
-          });
         });
-        clientSourceMap.set(sourcemaps);
-        done();
-      }
-    );
+      });
+      clientSourceMap.set(sourcemaps);
+      done();
+    });
   }
 }
 

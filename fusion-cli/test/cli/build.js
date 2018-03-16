@@ -249,7 +249,8 @@ test('`fusion build` with dynamic imports', async t => {
   // Execute node script to validate dynamic imports
   const entryPath = `.fusion/dist/development/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
-  const {stdout} = await run(entry, {stdio: 'pipe'});
+  const command = `require('${entry}');`;
+  const {stdout} = await run(command, {stdio: 'pipe'});
   const testContent = JSON.parse(stdout);
   t.ok(
     testContent.dynamicContent.includes('loaded dynamic import'),

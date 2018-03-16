@@ -1,16 +1,15 @@
 /* eslint-env node */
-const binPath = require.resolve('../bin/cli.js');
+const binPath = require.resolve('../bin/cli-runner.js');
 const {spawn} = require('child_process');
 const getPort = require('get-port');
 const request = require('request-promise');
 
-function run(args, options) {
+function run(command, options) {
   const opts = {
     stdio: 'inherit',
     ...options,
   };
-  const command = Array.isArray(args) ? args : [args];
-  const child = spawn('node', command, opts);
+  const child = spawn('node', ['-e', command], opts);
   const stdoutLines = [];
   const stderrLines = [];
   const promise = new Promise((resolve, reject) => {
@@ -39,8 +38,12 @@ function run(args, options) {
   return promise;
 }
 
+function withRunner(args) {
+  return `require('${binPath}').run('${args}')`;
+}
+
 function cmd(args, options) {
-  return run([binPath, args], options);
+  return run(withRunner(args), options);
 }
 
 async function start(args, options) {
