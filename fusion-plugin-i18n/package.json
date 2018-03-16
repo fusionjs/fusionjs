@@ -23,6 +23,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
+    "flow": "flow check",
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",

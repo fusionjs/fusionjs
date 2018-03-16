@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {Locales} from 'locale';
+import {Locale, Locales} from 'locale';
 import {memoize} from 'fusion-core';
 import fs from 'fs';
 import path from 'path';
@@ -23,7 +23,8 @@ export default (__NODE__
         .filter(p => p.match(/json$/))
         .map(p => p.replace(/\.json$/, ''));
       const data = locales.reduce((memo, locale) => {
-        memo[locale] = JSON.parse(
+        const parsedLocale = new Locale(locale);
+        memo[parsedLocale.normalized] = JSON.parse(
           fs.readFileSync(path.join(root, locale + '.json'), 'utf8')
         );
         return memo;
