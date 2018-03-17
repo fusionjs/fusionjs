@@ -197,3 +197,12 @@ test('`fusion dev` recovering from errors', async t => {
   });
   fs.writeFileSync(mainPath, fs.readFileSync(mainPath));
 });
+
+test('`fusion dev` with named async function', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/named-async-main');
+  const {proc} = await dev(`--dir=${dir}`, {
+    stdio: 'inherit',
+  });
+  proc.kill();
+  t.end();
+});

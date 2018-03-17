@@ -16,14 +16,12 @@ test('translation component', t => {
   `
   );
   const expected = getExpected(
-    `
-    var _translations = ['foo'];
-    import { Translate } from 'fusion-plugin-i18n-react';
+    `var _translations = ['foo'];
+import { Translate } from 'fusion-plugin-i18n-react';
 
-    function Component() {
-      return <Translate id='foo' />;
-    }
-  `
+function Component() {
+  return <Translate id='foo' />;
+}\n`
   );
   t.equal(result, expected);
   t.end();
@@ -41,13 +39,11 @@ test('no translations', t => {
   `
   );
   const expected = getExpected(
-    `
-    import { Translate } from 'fusion-plugin-i18n-react';
+    `import { Translate } from 'fusion-plugin-i18n-react';
 
-    function Component() {
-      return <div>foo</div>;
-    }
-  `,
+function Component() {
+  return <div>foo</div>;
+}`,
     false
   );
   t.equal(result, expected);

@@ -1,5 +1,4 @@
 import { syncChunkPaths as frameworkSyncChunkPaths } from 'fusion-core';
 import syncChunkPaths from 'syncChunkPaths';
-
-frameworkSyncChunkPaths(require('__SECRET_SYNC_CHUNK_PATHS_LOADER__!'));
+frameworkSyncChunkPaths(require("__SECRET_SYNC_CHUNK_PATHS_LOADER__!"));
 syncChunkPaths();

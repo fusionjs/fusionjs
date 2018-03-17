@@ -1,5 +1,4 @@
 import { syncChunkIds as frameworkSyncChunkIds } from 'fusion-core';
 import syncChunkIds from 'syncChunkIds';
-
-frameworkSyncChunkIds(require('__SECRET_SYNC_CHUNK_IDS_LOADER__!'));
+frameworkSyncChunkIds(require("__SECRET_SYNC_CHUNK_IDS_LOADER__!"));
 syncChunkIds();

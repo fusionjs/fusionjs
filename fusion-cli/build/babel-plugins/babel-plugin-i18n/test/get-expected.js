@@ -4,5 +4,5 @@ const sharedExpectedContent = require('./shared-expected-content.js');
 
 module.exports = function getExpected(inputString, includeShared = true) {
   const sharedContent = includeShared ? '\n' + sharedExpectedContent() : '';
-  return (stripIndent(inputString).trim() + sharedContent).replace(/"/g, "'");
+  return (stripIndent(inputString) + sharedContent).replace(/"/g, "'");
 };

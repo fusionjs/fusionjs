@@ -26,7 +26,10 @@ test('withExperiment hoc', t => {
       return <div>Hello World</div>;
     }
 
-    export default withExperiment({ experimentName: 'test-experiment', onError: () => {} })(Component);
+    export default withExperiment({
+      experimentName: 'test-experiment',
+      onError: () => {}
+    })(Component);
   `
   );
   t.equal(result, expected);
@@ -55,7 +58,11 @@ test('withExperiment hoc, manualInclusionLogging', t => {
       return <div>Hello World</div>;
     }
 
-    export default withExperiment({ experimentName: 'test-experiment', onError: () => {}, manualInclusionLogging: true })(Component);
+    export default withExperiment({
+      experimentName: 'test-experiment',
+      onError: () => {},
+      manualInclusionLogging: true
+    })(Component);
   `
   );
   t.equal(result, expected);

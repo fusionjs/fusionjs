@@ -1,6 +1,6 @@
 // @flow
 /* eslint-env node */
-const template = require('babel-template');
+const template = require('@babel/template').default;
 const createModuleVisitor = require('../babel-plugin-utils/visit-named-module');
 
 const PACKAGE_NAME = [

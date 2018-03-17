@@ -1,7 +1,7 @@
 /* eslint-env node */
-const {transform} = require('babel-core');
+const {transform} = require('@babel/core');
 const plugin = require('../');
-const babelPluginSyntaxJsx = require('babel-plugin-syntax-jsx');
+const babelPluginSyntaxJsx = require('@babel/plugin-syntax-jsx');
 
 module.exports = function doTransform(inputString) {
   return (

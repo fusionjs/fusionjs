@@ -1,7 +1,6 @@
 import { assetUrl } from 'fusion-core';
 import { assetUrl as assetUrlOther } from 'assetUrl';
-
 const path = './test';
-assetUrl(require('__SECRET_FILE_LOADER__?storeFile=true&storeFileTarget=node!./path'));
+assetUrl(require("__SECRET_FILE_LOADER__?storeFile=true&storeFileTarget=node!./path"));
 assetUrlOther(path);
-assetUrl(require('__SECRET_FILE_LOADER__?storeFile=true&storeFileTarget=node!./path'));
+assetUrl(require("__SECRET_FILE_LOADER__?storeFile=true&storeFileTarget=node!./path"));

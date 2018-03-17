@@ -11,26 +11,28 @@ class ChunkModuleManifestPlugin {
     this.opts = opts;
   }
   apply(compiler) {
-    compiler.plugin('invalid', () => {
+    compiler.hooks.invalid.tap('ChunkModuleManifestPlugin', () => {
       this.opts.onInvalidate();
     });
 
-    compiler.plugin('compilation', compilation => {
-      compilation.plugin('after-optimize-chunk-assets', chunks => {
-        const chunkIdsByFile = new Map();
-        chunks.forEach(c => {
-          const chunkId = c.id;
-          const files = c.mapModules(m => m.resource);
-
-          files.forEach(path => {
-            if (!chunkIdsByFile.has(path)) {
-              chunkIdsByFile.set(path, new Set());
-            }
-            chunkIdsByFile.get(path).add(chunkId);
+    compiler.hooks.compilation.tap('ChunkModuleManifestPlugin', compilation => {
+      compilation.hooks.afterOptimizeChunkAssets.tap(
+        'ChunkModuleManifestPlugin',
+        chunks => {
+          const chunkIdsByFile = new Map();
+          chunks.forEach(c => {
+            const chunkId = c.id;
+            const files = Array.from(c.modulesIterable, m => m.resource);
+            files.forEach(path => {
+              if (!chunkIdsByFile.has(path)) {
+                chunkIdsByFile.set(path, new Set());
+              }
+              chunkIdsByFile.get(path).add(chunkId);
+            });
           });
-        });
-        this.opts.onChunkIndex(chunkIdsByFile);
-      });
+          this.opts.onChunkIndex(chunkIdsByFile);
+        }
+      );
     });
   }
 }

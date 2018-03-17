@@ -1,7 +1,7 @@
 // @flow
 /* eslint-env node */
 const test = require('tape');
-const {transform} = require('babel-core');
+const {transform} = require('@babel/core');
 const createNamedModuleVisitor = require('../visit-named-module');
 const replaceImportDeclaration = require('../replace-import-declaration');
 
@@ -16,6 +16,24 @@ function createTestPlugin(handler) {
     return {visitor};
   };
 }
+
+test('with flow types', t => {
+  t.plan(2);
+
+  const plugin = createTestPlugin((types, context, refs) => {
+    t.equal(refs.length, 1);
+    t.ok(types.isCallExpression(refs[0].parent));
+  });
+
+  transform(
+    `
+    import {foo} from 'bar';
+    import type {footype} from 'bar';
+    let baz: string = foo();
+  `,
+    {plugins: [plugin, require('@babel/plugin-transform-flow-strip-types')]}
+  );
+});
 
 test('import case', t => {
   t.plan(2);

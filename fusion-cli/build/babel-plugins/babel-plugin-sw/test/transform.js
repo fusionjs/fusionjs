@@ -1,4 +1,4 @@
-const {transform} = require('babel-core');
+const {transform} = require('@babel/core');
 const plugin = require('../');
 /* eslint-env node */
 module.exports = function doTransform(inputString) {

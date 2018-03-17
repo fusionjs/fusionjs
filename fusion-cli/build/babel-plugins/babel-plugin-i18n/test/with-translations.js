@@ -18,16 +18,14 @@ test('withTranslations hoc', t => {
   `
   );
   const expected = getExpected(
-    `
-    var _translations = ['foo'];
-    import { withTranslations } from 'fusion-plugin-i18n-react';
+    `var _translations = ['foo'];
+import { withTranslations } from 'fusion-plugin-i18n-react';
 
-    function Component() {
-      return <div>Hello World</div>;
-    }
+function Component() {
+  return <div>Hello World</div>;
+}
 
-    export default withTranslations(['foo'])(Component);
-  `
+export default withTranslations(['foo'])(Component);`
   );
   t.equal(result, expected);
   t.end();
@@ -47,16 +45,14 @@ test('withTranslations hoc with multiple translations', t => {
   `
   );
   const expected = getExpected(
-    `
-    var _translations = ['foo', 'baz'];
-    import { withTranslations } from 'fusion-plugin-i18n-react';
+    `var _translations = ['foo', 'baz'];
+import { withTranslations } from 'fusion-plugin-i18n-react';
 
-    function Component() {
-      return <div>Hello World</div>;
-    }
+function Component() {
+  return <div>Hello World</div>;
+}
 
-    export default withTranslations(['foo', 'baz'])(Component);
-  `
+export default withTranslations(['foo', 'baz'])(Component);`
   );
   t.equal(result, expected);
   t.end();
@@ -91,13 +87,11 @@ test('withTranslations hoc with no translations', t => {
   `
   );
   const expected = getExpected(
-    `
-    import { withTranslations } from 'fusion-plugin-i18n-react';
+    `import { withTranslations } from 'fusion-plugin-i18n-react';
 
-    function Component() {
-      return <div>foo</div>;
-    }
-  `,
+function Component() {
+  return <div>foo</div>;
+}`,
     false
   );
   t.equal(result, expected);
