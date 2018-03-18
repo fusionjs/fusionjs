@@ -123,7 +123,9 @@ The plugin.
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 ```
 
-The [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin. Required.
+The [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin. Optional.
+
+Provide the UniversalEventsToken when you would like to emit routing events for data collection.
 
 ---
 

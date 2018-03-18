@@ -13,7 +13,7 @@ import {Router as BrowserRouter} from './browser';
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
 export default createPlugin({
   deps: {
-    emitter: UniversalEventsToken,
+    emitter: UniversalEventsToken.optional,
   },
   middleware: ({emitter}) => {
     return (ctx, next) => {
@@ -49,24 +49,27 @@ export default createPlugin({
               pageData
             )}</script>`
           );
-          const emitTiming = type => timing => {
-            emitter.emit(type, {
-              title: pageData.title,
-              page: pageData.page,
-              status: ctx.status,
-              timing,
+
+          if (emitter) {
+            const emitTiming = type => timing => {
+              emitter.emit(type, {
+                title: pageData.title,
+                page: pageData.page,
+                status: ctx.status,
+                timing,
+              });
+            };
+            emitter.map(payload => {
+              if (payload && typeof payload === 'object') {
+                payload.__url__ = pageData.title;
+              }
+              return payload;
             });
-          };
-          emitter.map(payload => {
-            if (payload && typeof payload === 'object') {
-              payload.__url__ = pageData.title;
-            }
-            return payload;
-          });
-          ctx.timing.end.then(timing => {
-            emitTiming('pageview:server')(timing);
-            ctx.timing.render.then(emitTiming('render:server'));
-          });
+            ctx.timing.end.then(timing => {
+              emitTiming('pageview:server')(timing);
+              ctx.timing.render.then(emitTiming('render:server'));
+            });
+          }
         });
       } else if (__BROWSER__) {
         // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
@@ -75,18 +78,19 @@ export default createPlugin({
         if (element) {
           pageData = JSON.parse(unescape(element.textContent));
         }
-        emitter.map(payload => {
-          if (payload && typeof payload === 'object') {
-            payload.__url__ = pageData.title;
-          }
-          return payload;
-        });
+        emitter &&
+          emitter.map(payload => {
+            if (payload && typeof payload === 'object') {
+              payload.__url__ = pageData.title;
+            }
+            return payload;
+          });
         ctx.element = (
           <Router
             basename={ctx.prefix}
             onRoute={payload => {
               pageData = payload;
-              emitter.emit('pageview:browser', payload);
+              emitter && emitter.emit('pageview:browser', payload);
             }}
           >
             {ctx.element}

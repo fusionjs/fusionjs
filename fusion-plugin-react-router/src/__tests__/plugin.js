@@ -181,6 +181,24 @@ test('events with no tracking id and deep path and route prefix', async t => {
   t.end();
 });
 
+test('without UniversalEventsToken', async t => {
+  const Hello = () => <div>Hello</div>;
+  const element = (
+    <div>
+      <Route path="/" trackingId="home" component={Hello} />
+    </div>
+  );
+  const app = getApp(element);
+  app.register(getMockBodySetter());
+  const simulator = setup(app);
+  const ctx = await simulator.render('/');
+  if (__NODE__) {
+    t.ok(ctx.rendered.includes('<div>Hello</div>'), 'matches route');
+  }
+  cleanup();
+  t.end();
+});
+
 if (__BROWSER__) {
   test('mapping events in browser', async t => {
     const Home = withRouter(({location, history}) => {
