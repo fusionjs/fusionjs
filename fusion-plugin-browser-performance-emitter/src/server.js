@@ -20,7 +20,7 @@ export default __NODE__ &&
 
       /* Helper Functions */
       function mapPerfEvent(event) {
-        const {timing, resourceEntries, firstPaint, tags} = event;
+        const {timing, resourceEntries, firstPaint} = event;
 
         const calculatedStats = getCalculatedStats(
           timing,
@@ -29,11 +29,9 @@ export default __NODE__ &&
         );
 
         return {
-          ...event.payload,
+          ...event,
           calculatedStats,
           timingValues: timing,
-          resourceEntries,
-          tags,
         };
       }
 

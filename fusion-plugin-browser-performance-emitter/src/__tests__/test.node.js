@@ -195,3 +195,39 @@ test('Correct metrics are emitted', t => {
 
   t.end();
 });
+
+test('Re-emitting events from browser to server correctly', t => {
+  const mockEmitter = new MockEmitter();
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
+
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitterPlugin);
+
+  const mockEvent = {foo: {bar: 99}};
+
+  t.plan(1);
+
+  /* Simulator */
+  getSimulator(
+    app,
+    createPlugin({
+      provides: () => {
+        mockEmitter.on('browser-performance-emitter:stats', e => {
+          t.deepEqual(
+            e.foo,
+            mockEvent.foo,
+            'Browser event payload is inherited'
+          );
+        });
+        mockEmitter.emit(
+          'browser-performance-emitter:stats:browser-only',
+          mockEvent
+        );
+      },
+    })
+  );
+
+  t.end();
+});
