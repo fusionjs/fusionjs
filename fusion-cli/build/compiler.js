@@ -241,10 +241,6 @@ function getConfig({target, env, dir, watch, cover}) {
                     require.resolve('@babel/plugin-transform-react-jsx'),
                     {pragma},
                   ],
-                  env === 'development' &&
-                    watch &&
-                    target === 'web' &&
-                    require.resolve('react-hot-loader/babel'),
                   cover && require.resolve('babel-plugin-istanbul'),
                   target === 'node' &&
                     require.resolve('./babel-plugins/babel-plugin-i18n'),
