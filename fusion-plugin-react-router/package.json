@@ -46,7 +46,7 @@
     "fusion-react-async": "^1.1.0",
     "fusion-test-utils": "^1.0.1",
     "fusion-tokens": "^1.0.1",
-    "nyc": "11.4.1",
+    "nyc": "11.6.0",
     "prettier": "1.11.1",
     "react": "16.2.0",
     "react-dom": "16.2.0",
