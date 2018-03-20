@@ -1,0 +1,4 @@
+import {createPlugin} from 'fusion-core';
+
+export const p = createPlugin({});
+export default createPlugin({});
