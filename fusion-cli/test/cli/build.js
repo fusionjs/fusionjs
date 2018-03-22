@@ -310,6 +310,7 @@ test('`fusion build` with assets', async t => {
     const contents = fs
       .readFileSync(path.resolve(dir, 'src/static/test.css'))
       .toString();
+    t.equal(res.headers['cache-control'], 'public, max-age=31536000');
     t.equal(res.body, contents);
     t.equal(res.headers['x-test'], 'test');
     proc.kill();
