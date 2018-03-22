@@ -1,4 +1,7 @@
+// @flow
+
 import test from 'tape-cup';
+
 import {FetchToken, SessionToken, LoggerToken} from '../index.js';
 
 test('fusion-tokens exports', t => {
