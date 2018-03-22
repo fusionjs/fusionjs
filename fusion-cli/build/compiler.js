@@ -4,7 +4,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-
+const WebpackChunkHash = require('webpack-chunk-hash');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const ChunkManifestPlugin = require('./external-chunk-manifest-plugin.js');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -394,6 +394,8 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'production' && target === 'web'
         ? new webpack.HashedModuleIdsPlugin()
         : new webpack.NamedModulesPlugin(),
+      // Adds md5 hashing of webpack chunks
+      env === 'production' && target === 'web' && new WebpackChunkHash(),
       // This is necessary to tell webpack not to inline code referencing
       // assets. See https://github.com/webpack/webpack/issues/1315
       env === 'production' &&

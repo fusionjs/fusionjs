@@ -5,6 +5,7 @@ const test = require('tape');
 const {cmd, run, start} = require('../run-command');
 const {promisify} = require('util');
 const request = require('request-promise');
+const puppeteer = require('puppeteer');
 
 const exists = promisify(fs.exists);
 const readdir = promisify(fs.readdir);
@@ -93,6 +94,103 @@ test('`fusion build` works in production with a CDN_URL', async t => {
     'includes a script reference to client-vendor'
   );
   proc.kill();
+  t.end();
+});
+
+async function getDistFiles(dir) {
+  const clientFiles = await readdir(
+    path.resolve(dir, '.fusion/dist/production/client')
+  );
+  const clientMainFile = clientFiles.filter(f =>
+    /client-main-(.*?).js$/.test(f)
+  )[0];
+  const clientVendorFile = clientFiles.filter(f =>
+    /client-vendor-(.*?).js$/.test(f)
+  )[0];
+  const splitClientChunks = clientFiles.filter(f => /0-(.*?).js$/.test(f));
+  return {
+    clientFiles,
+    clientMainFile,
+    clientVendorFile,
+    splitClientChunks,
+  };
+}
+
+test('`fusion build` app with dynamic imports chunk hashing', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/dynamic-import-app');
+  await cmd(`build --dir=${dir} --production`);
+
+  const distFiles = await getDistFiles(dir);
+  const dynamicFileBundlePath = path.resolve(
+    dir,
+    '.fusion/dist/production/client',
+    distFiles.splitClientChunks[0]
+  );
+
+  // Ensure that we have a dynamic chunk with content
+  const dynamicFileBundleContent = fs
+    .readFileSync(dynamicFileBundlePath)
+    .toString();
+  t.ok(
+    dynamicFileBundleContent.includes('loaded-dynamic-import'),
+    'dynamic content exists in bundle'
+  );
+
+  // Update dynamic file content, and rebuild.
+  const dynamicFileContent = fs
+    .readFileSync(path.resolve(dir, 'src/dynamic.js'))
+    .toString();
+  const newContent = dynamicFileContent.replace(
+    'loaded-dynamic-import',
+    'loaded-dynamic-import-updated'
+  );
+  fs.writeFileSync(path.resolve(dir, 'src/dynamic.js'), newContent);
+  await cmd(`build --dir=${dir} --production`);
+
+  // Ensure that vendor and main chunks do not change.
+  const rebuiltDistFiles = await getDistFiles(dir);
+  t.equal(
+    distFiles.clientVendorFile,
+    rebuiltDistFiles.clientVendorFile,
+    'vendor file hash should not change'
+  );
+  t.equal(
+    distFiles.clientMainFile,
+    rebuiltDistFiles.clientMainFile,
+    'main file hash should not change'
+  );
+  t.notEqual(
+    distFiles.splitClientChunks[0],
+    rebuiltDistFiles.splitClientChunks[0],
+    'split client file hash should change'
+  );
+
+  // Clean up changed files
+  fs.writeFileSync(path.resolve(dir, 'src/dynamic.js'), dynamicFileContent);
+  t.end();
+});
+
+test('`fusion build` app with dynamic imports integration', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/dynamic-import-app');
+  await cmd(`build --dir=${dir} --production`);
+
+  // Run puppeteer test to ensure that page loads with dynamic content.
+  const {proc, port} = await start(`--dir=${dir}`);
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`);
+
+  const content = await page.content();
+  t.ok(
+    content.includes('loaded-dynamic-import'),
+    'app content contains loaded-dynamic-import'
+  );
+
+  await browser.close();
+  proc.kill();
+
   t.end();
 });
 

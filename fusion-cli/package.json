@@ -78,6 +78,7 @@
     "uglifyjs-webpack-plugin": "^1.2.4",
     "unitest": "^2.1.1",
     "webpack": "^4.1.1",
+    "webpack-chunk-hash": "^0.5.0",
     "webpack-dev-middleware": "^3.0.1",
     "webpack-dev-server": "^3.1.1",
     "webpack-hot-middleware": "^2.21.2",
