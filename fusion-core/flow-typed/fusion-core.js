@@ -1,17 +1,17 @@
 /* @flow */
-import type {Context as KoaContext} from 'koa';
-
-// TODO(#61): Type checking here isn't very good, as it allows you to
-// alias tokens that are not of the exact same type.
-type aliaser<Token> = {
-  alias: (sourceToken: Token, destToken: Token) => aliaser<*>,
-};
-
-type cleanupFn = (thing: any) => Promise<any>;
-
-type ExtractReturnType = <V>(() => V) => V;
 
 declare module 'fusion-core' {
+  // $FlowFixMe
+  import type {Context as KoaContext} from 'koa';
+
+  // TODO(#61): Type checking here isn't very good, as it allows you to
+  // alias tokens that are not of the exact same type.
+  declare type aliaser<Token> = {
+    alias: (sourceToken: Token, destToken: Token) => aliaser<*>,
+  };
+  declare type cleanupFn = (thing: any) => Promise<any>;
+  declare type ExtractReturnType = <V>(() => V) => V;
+
   declare var __NODE__: Boolean;
   declare var __BROWSER__: Boolean;
   declare export type SSRContext = {
