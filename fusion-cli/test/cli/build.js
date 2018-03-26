@@ -107,7 +107,7 @@ async function getDistFiles(dir) {
   const clientVendorFile = clientFiles.filter(f =>
     /client-vendor-(.*?).js$/.test(f)
   )[0];
-  const splitClientChunks = clientFiles.filter(f => /0-(.*?).js$/.test(f));
+  const splitClientChunks = clientFiles.filter(f => /[0-9]+-(.*?).js$/.test(f));
   return {
     clientFiles,
     clientMainFile,
@@ -124,7 +124,7 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
   const dynamicFileBundlePath = path.resolve(
     dir,
     '.fusion/dist/production/client',
-    distFiles.splitClientChunks[0]
+    distFiles.splitClientChunks[2]
   );
 
   // Ensure that we have a dynamic chunk with content
@@ -160,8 +160,8 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
     'main file hash should not change'
   );
   t.notEqual(
-    distFiles.splitClientChunks[0],
-    rebuiltDistFiles.splitClientChunks[0],
+    distFiles.splitClientChunks[2],
+    rebuiltDistFiles.splitClientChunks[2],
     'split client file hash should change'
   );
 

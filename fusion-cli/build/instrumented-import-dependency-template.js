@@ -62,7 +62,11 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
     // TODO(#17): throw with nice error message here if not in manifest
     const chunkIds = this.clientChunkMap
       ? // server-side, use values from client bundle
-        Array.from(this.clientChunkMap.get(dep.module.resource))
+        Array.from(
+          this.clientChunkMap.get(
+            dep.module.resource || dep.originModule.resource
+          )
+        )
       : // client-side, use built-in values
         getChunkGroupIds(depBlock.chunkGroup);
     // Add `__CHUNK_IDS` property to promise returned by `import()`` if they exist

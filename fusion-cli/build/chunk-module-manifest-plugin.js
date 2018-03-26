@@ -22,7 +22,17 @@ class ChunkModuleManifestPlugin {
           const chunkIdsByFile = new Map();
           chunks.forEach(c => {
             const chunkId = c.id;
-            const files = Array.from(c.modulesIterable, m => m.resource);
+            const files = Array.from(c.modulesIterable, m => {
+              if (m.resource) {
+                return m.resource;
+              }
+              if (m.modules) {
+                return m.modules.map(module => module.resource);
+              }
+              return [];
+            }).reduce((list, next) => {
+              return list.concat(next);
+            }, []);
             files.forEach(path => {
               if (!chunkIdsByFile.has(path)) {
                 chunkIdsByFile.set(path, new Set());
