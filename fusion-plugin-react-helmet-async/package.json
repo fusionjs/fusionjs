@@ -1,0 +1,58 @@
+{
+  "name": "fusion-plugin-react-helmet-async",
+  "version": "1.0.3",
+  "description": "Allows adding content into head via a component driven api",
+  "repository": "fusionjs/fusion-plugin-react-helmet-async",
+  "files": ["dist", "chunk-translation-map.js", "src"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test",
+    "prepublish": "npm run transpile"
+  },
+  "devDependencies": {
+    "babel-eslint": "8.2.2",
+    "create-universal-package": "3.4.1",
+    "eslint": "4.19.0",
+    "eslint-config-fusion": "^1.0.0",
+    "eslint-plugin-cup": "1.0.0",
+    "eslint-plugin-flowtype": "2.46.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-react": "7.7.0",
+    "flow-bin": "0.66.0",
+    "fusion-core": "^1.0.0",
+    "fusion-test-utils": "^1.0.1",
+    "fusion-tokens": "^1.0.1",
+    "nyc": "11.4.1",
+    "prettier": "1.11.1",
+    "tape-cup": "4.7.1",
+    "unitest": "2.1.1"
+  },
+  "peerDependencies": {
+    "fusion-core": "^1.0.0",
+    "fusion-tokens": "^1.0.1"
+  },
+  "engines": {
+    "node": ">= 8.9.0"
+  },
+  "license": "MIT"
+}

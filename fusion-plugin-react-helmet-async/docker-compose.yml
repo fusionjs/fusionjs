@@ -1,0 +1,19 @@
+version: '2'
+services:
+  fusion-plugin-react-helmet-async:
+    build: .
+    volumes:
+      - '.:/fusion-plugin-react-helmet-async'
+      - /fusion-plugin-react-helmet-async/node_modules/
+      - /fusion-plugin-react-helmet-async/dist/
+      - /fusion-plugin-react-helmet-async/dist-tests/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT
