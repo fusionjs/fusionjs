@@ -312,6 +312,7 @@ Additionally, when server-side rendering a page, FusionJS sets `ctx.template` to
 * `ctx: Object`
   * `template: Object`
     * `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
+    * `bodyAttrs: Object` - attributes for the `<body>` tag. For example `{test: 'test'}` turns into `<body test="test">`. Default: empty object
     * `title: string` - The content for the `<title>` tag. Default: empty string
     * `head: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
     * `body: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array

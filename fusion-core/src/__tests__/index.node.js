@@ -19,6 +19,7 @@ test('ssr with accept header', async t => {
     t.equals(typeof ctx.template, 'object', 'sets ctx.template');
     t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
     t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
     t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
     t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
     await next();
@@ -36,6 +37,11 @@ test('ssr with accept header', async t => {
       typeof ctx.template.htmlAttrs,
       'object',
       'ctx.template.htmlAttrs keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.bodyAttrs,
+      'object',
+      'ctx.template.bodyAttrs keeps structure on upstream'
     );
     t.ok(
       ctx.template.head instanceof Array,
@@ -227,6 +233,7 @@ test('HTML escaping works', async t => {
   const render = el => el;
   const template = (ctx, next) => {
     ctx.template.htmlAttrs = {lang: '">'};
+    ctx.template.bodyAttrs = {test: '">'};
     ctx.template.title = '</title>';
     return next();
   };
@@ -236,6 +243,7 @@ test('HTML escaping works', async t => {
   try {
     const ctx = await run(app);
     t.ok(ctx.body.includes('<html lang="\\u0022\\u003E">'), 'lang works');
+    t.ok(ctx.body.includes('<body test="\\u0022\\u003E">'), 'bodyAttrs work');
     t.ok(
       ctx.body.includes('<title>\\u003C\\u002Ftitle\\u003E</title>'),
       'title works'

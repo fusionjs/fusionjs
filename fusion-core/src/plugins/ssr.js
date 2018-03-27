@@ -25,6 +25,7 @@ export default function createSSRPlugin({element, ssrDecider}) {
 
     const template = {
       htmlAttrs: {},
+      bodyAttrs: {},
       title: '',
       head: [],
       body: [],
@@ -36,12 +37,19 @@ export default function createSSRPlugin({element, ssrDecider}) {
 
     await next();
 
-    const {htmlAttrs, title, head, body} = ctx.template;
+    const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
     const safeAttrs = Object.keys(htmlAttrs)
       .map(attrKey => {
         return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
       })
       .join('');
+
+    const safeBodyAttrs = Object.keys(bodyAttrs)
+      .map(attrKey => {
+        return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
+      })
+      .join('');
+
     const safeTitle = escape(title);
     const safeHead = head.map(consumeSanitizedHTML).join('');
     const safeBody = body.map(consumeSanitizedHTML).join('');
@@ -64,7 +72,9 @@ export default function createSSRPlugin({element, ssrDecider}) {
       `<title>${safeTitle}</title>`,
       `${bundleSplittingBootstrap}${safeHead}`,
       `</head>`,
-      `<body>${ctx.rendered}${safeBody}${chunkPreloaderScript}</body>`,
+      `<body${safeBodyAttrs}>${
+        ctx.rendered
+      }${safeBody}${chunkPreloaderScript}</body>`,
       '</html>',
     ].join('');
   };
