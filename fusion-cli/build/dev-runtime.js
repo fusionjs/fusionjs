@@ -161,7 +161,10 @@ module.exports.DevelopmentRuntime = function({
               hostname: 'localhost',
               port: childPort,
             });
-            const proxyReq = request(newUrl);
+            const proxyReq = request(newUrl, {
+              // let the browser follow the redirect
+              followRedirect: false,
+            });
             proxyReq.on('error', retry);
             req.pipe(proxyReq).pipe(res);
           },
