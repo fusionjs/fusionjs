@@ -31,7 +31,7 @@ test('with flow types', t => {
     import type {footype} from 'bar';
     let baz: string = foo();
   `,
-    {plugins: [plugin, require('@babel/plugin-transform-flow-strip-types')]}
+    {plugins: [plugin], presets: [require('@babel/preset-flow')]}
   );
 });
 

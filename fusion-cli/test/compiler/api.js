@@ -318,6 +318,40 @@ test('compiles with babel plugin', async t => {
   t.end();
 });
 
+test('transpiles node_modules', async t => {
+  const envs = ['development'];
+  const dir = './test/fixtures/transpile-node-modules';
+  const clientVendorPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/client/client-vendor.js`
+  );
+
+  const compiler = new Compiler({envs, dir});
+  await compiler.clean();
+
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
+
+      return resolve(watcher);
+    });
+  });
+  watcher.close();
+
+  t.ok(await exists(clientVendorPath), 'Client vendor file gets compiled');
+
+  const clientVendor = await readFile(clientVendorPath, 'utf8');
+
+  t.ok(
+    clientVendor.includes(`$return('fixturepkg_string')`),
+    'async/await is transpiled in fixture node_module'
+  );
+
+  t.end();
+});
+
 test('production works', async t => {
   const envs = ['production'];
   const dir = './test/fixtures/noop';

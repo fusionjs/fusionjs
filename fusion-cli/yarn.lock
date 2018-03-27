@@ -267,7 +267,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.42"
 
-"@babel/plugin-syntax-object-rest-spread@7.0.0-beta.42":
+"@babel/plugin-syntax-object-rest-spread@7.0.0-beta.42", "@babel/plugin-syntax-object-rest-spread@^7.0.0-beta.42":
   version "7.0.0-beta.42"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-object-rest-spread/-/plugin-syntax-object-rest-spread-7.0.0-beta.42.tgz#aa789865abe78a4895d4a0be9de4d34b1a1d5063"
   dependencies:
@@ -352,7 +352,7 @@
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.42"
     "@babel/helper-plugin-utils" "7.0.0-beta.42"
 
-"@babel/plugin-transform-flow-strip-types@7.0.0-beta.42", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.42":
+"@babel/plugin-transform-flow-strip-types@7.0.0-beta.42":
   version "7.0.0-beta.42"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.42.tgz#0902538b641e1a6fe5d7dc49389560112bfd4071"
   dependencies:

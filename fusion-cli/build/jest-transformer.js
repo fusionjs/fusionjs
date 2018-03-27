@@ -11,6 +11,11 @@ const babelConfig = require('./babel-preset.js')(null, {
 });
 
 const fusionConfig = loadFusionRC(process.cwd());
+
+if (!babelConfig.plugins) {
+  babelConfig.plugins = [];
+}
+
 babelConfig.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
 
 if (fusionConfig.babel && fusionConfig.babel.plugins) {
