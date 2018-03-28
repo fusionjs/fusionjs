@@ -75,7 +75,6 @@
     "rimraf": "^2.6.2",
     "source-map-explorer": "^1.5.0",
     "source-map-support": "^0.5.4",
-    "uglifyjs-webpack-plugin": "^1.2.4",
     "unitest": "^2.1.1",
     "webpack": "^4.2.0",
     "webpack-chunk-hash": "^0.5.0",

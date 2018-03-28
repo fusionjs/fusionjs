@@ -7,7 +7,6 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const WebpackChunkHash = require('webpack-chunk-hash');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const ChunkManifestPlugin = require('./external-chunk-manifest-plugin.js');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const {
   //zopfliWebpackPlugin,
@@ -414,9 +413,9 @@ function getConfig({target, env, dir, watch, cover}) {
       // See https://github.com/webpack/webpack/issues/1315 and
       // https://webpack.js.org/guides/caching/#generating-unique-hashes-for-each-file
       // Use deterministic, internal webpack identifiers based on hashed contents
-      env === 'production' && target === 'web'
-        ? new webpack.HashedModuleIdsPlugin()
-        : new webpack.NamedModulesPlugin(),
+      env === 'production' &&
+        target === 'web' &&
+        new webpack.HashedModuleIdsPlugin(),
       // Adds md5 hashing of webpack chunks
       env === 'production' && target === 'web' && new WebpackChunkHash(),
       // This is necessary to tell webpack not to inline code referencing
@@ -469,15 +468,6 @@ function getConfig({target, env, dir, watch, cover}) {
           banner: nodeEnvBanner,
         }),
       new webpack.EnvironmentPlugin({NODE_ENV: nodeEnv}),
-      target !== 'node' &&
-        env === 'production' &&
-        new UglifyJSPlugin({
-          // TODO(#12): Investigate if these options are still required - they are causing production builds to fail
-          // compress: {warnings: false},
-          // mangle: true,
-          // output: {comments: false},
-          sourceMap: true,
-        }),
     ].filter(Boolean),
     optimization: {
       sideEffects: true,
