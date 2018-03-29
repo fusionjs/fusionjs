@@ -89,6 +89,9 @@ module.exports = InstrumentedImportDependencyTemplate;
  */
 function getChunkGroupIds(chunkGroup) {
   if (chunkGroup && !chunkGroup.isInitial()) {
+    if (Array.isArray(chunkGroup.chunks)) {
+      return chunkGroup.chunks.map(c => c.id);
+    }
     return [chunkGroup.id];
   }
 }

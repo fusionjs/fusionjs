@@ -208,6 +208,21 @@ test('`fusion dev` with named async function', async t => {
   t.end();
 });
 
+test('`fusion dev` CHUNK_ID instrumentation', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/split');
+  const {proc, port} = await dev(`--dir=${dir}`, {
+    stdio: 'inherit',
+  });
+  const resA = await request(`http://localhost:${port}/test-a`);
+  const resB = await request(`http://localhost:${port}/test-b`);
+  const res = await request(`http://localhost:${port}/test`);
+  t.deepLooseEqual(JSON.parse(res), [2]);
+  t.deepLooseEqual(JSON.parse(resA), [0, 2]);
+  t.deepLooseEqual(JSON.parse(resB), [1, 2]);
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` with server side redirects', async t => {
   const dir = path.resolve(__dirname, '../fixtures/redirect');
   const {proc, port} = await dev(`--dir=${dir}`, {

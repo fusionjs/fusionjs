@@ -367,6 +367,25 @@ test('`fusion build` with dynamic imports', async t => {
   t.end();
 });
 
+test('`fusion build` with dynamic imports and group chunks', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/split');
+  await cmd(`build --dir=${dir} --production`);
+  const {proc, port} = await start(`--dir=${dir}`, {
+    env: {
+      ...process.env,
+      NODE_ENV: 'production',
+    },
+  });
+  const resA = await request(`http://localhost:${port}/test-a`);
+  const resB = await request(`http://localhost:${port}/test-b`);
+  const res = await request(`http://localhost:${port}/test`);
+  t.deepLooseEqual(JSON.parse(res), [0]);
+  t.deepLooseEqual(JSON.parse(resA), [0, 2]);
+  t.deepLooseEqual(JSON.parse(resB), [0, 1]);
+  proc.kill();
+  t.end();
+});
+
 test('`fusion build` tree shaking', async t => {
   const dir = path.resolve(__dirname, '../fixtures/tree-shaking');
   await cmd(`build --dir=${dir} --production=true`);
