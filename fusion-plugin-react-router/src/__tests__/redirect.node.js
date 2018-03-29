@@ -12,7 +12,18 @@ import {Router, Route, Redirect} from '../server';
 test('redirects to a new URL', t => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello" />;
-  const state = {code: 0};
+  let setCode = false;
+  let didRedirect = false;
+  const state = {
+    setCode: code => {
+      t.equal(code, 307);
+      setCode = true;
+    },
+    redirect: to => {
+      t.equal(to, '/hello');
+      didRedirect = true;
+    },
+  };
   const ctx = state;
   const el = (
     <Router location="/" context={ctx}>
@@ -23,6 +34,7 @@ test('redirects to a new URL', t => {
     </Router>
   );
   render(el);
-  t.equals(state.code, 307, 'sets code');
+  t.ok(setCode);
+  t.ok(didRedirect);
   t.end();
 });

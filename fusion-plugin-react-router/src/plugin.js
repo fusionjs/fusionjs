@@ -30,6 +30,9 @@ export default createPlugin({
           setCode: code => {
             ctx.status = code;
           },
+          redirect: url => {
+            ctx.redirect(url);
+          },
         };
         ctx.element = (
           <Router

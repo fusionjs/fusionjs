@@ -12,6 +12,7 @@ import {getSimulator} from 'fusion-test-utils';
 import {withRouter, Link} from 'react-router-dom';
 import test from 'tape-cup';
 import {Route} from '../modules/Route';
+import {Redirect} from '../modules/Redirect.js';
 import RouterPlugin from '../plugin';
 
 const addRoutePrefix = (ctx, next) => {
@@ -38,6 +39,30 @@ function cleanup() {
     document.body.removeChild(document.getElementById('root'));
     document.body.removeChild(document.getElementById('__ROUTER_DATA__'));
   }
+}
+
+if (__NODE__) {
+  test('server side redirects', async t => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Redirect from="/" to="/lol" />
+        <Route path="/lol" component={Hello} />
+      </div>
+    );
+    const app = getApp(element);
+    app.register(UniversalEventsToken, {
+      map() {},
+      emit() {},
+    });
+    app.register(getMockBodySetter());
+    const simulator = setup(app);
+    const ctx = await simulator.render('/');
+    t.equal(ctx.status, 307);
+    t.equal(ctx.res.getHeader('Location'), '/lol');
+    cleanup();
+    t.end();
+  });
 }
 
 test('events with trackingId', async t => {

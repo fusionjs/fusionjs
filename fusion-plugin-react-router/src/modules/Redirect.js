@@ -24,8 +24,10 @@ export class Redirect extends React.Component {
     const {history, staticContext} = this.context.router;
     const {push, to, code} = this.props;
 
-    if (staticContext) {
-      staticContext.code = code;
+    if (__NODE__ && staticContext) {
+      staticContext.setCode(parseInt(code, 10));
+      staticContext.redirect(to);
+      return;
     }
 
     if (push) {
