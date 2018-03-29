@@ -2,9 +2,10 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 /* eslint-env node */
 
 import assert from 'assert';
@@ -22,6 +23,7 @@ import {
   SessionCookieNameToken,
   SessionCookieExpiresToken,
 } from './tokens.js';
+import type {SessionDeps, SessionService} from './types.js';
 
 // Scope path to `data.` here since `jsonwebtoken` has some special top-level keys that we do not want to expose (ex: `exp`)
 const getFullPath = keyPath => `data.${keyPath}`;
@@ -33,7 +35,7 @@ type JWTConfig = {
 };
 
 class JWTSession {
-  cookie: string;
+  cookie: string | void;
   token: ?Object | string;
   config: JWTConfig;
 
@@ -51,14 +53,14 @@ class JWTSession {
     }
     return this.token;
   }
-  get(keyPath: string) {
+  get(keyPath: string): mixed {
     assert(
       this.token,
       "Cannot access token before loaded, please use this plugin before any of it's dependencies"
     );
     return get(this.token, getFullPath(keyPath));
   }
-  set(keyPath: string, val: any) {
+  set(keyPath: string, val: mixed): boolean {
     assert(
       this.token,
       "Cannot access token before loaded, please use this plugin before any of it's dependencies"
@@ -67,64 +69,46 @@ class JWTSession {
   }
 }
 
-export type SessionService = {
-  from(
-    ctx: Context
-  ): {
-    loadToken(): ?Object | string,
-    get(keyPath: string): any,
-    set(keyPath: string, val: any): void,
+const p: FusionPlugin<SessionDeps, SessionService> = createPlugin({
+  deps: {
+    secret: SessionSecretToken,
+    cookieName: SessionCookieNameToken,
+    expires: SessionCookieExpiresToken.optional,
   },
-};
-
-type SessionDeps = {
-  secret: typeof SessionSecretToken,
-  cookieName: typeof SessionCookieNameToken,
-  expires: typeof SessionCookieExpiresToken.optional,
-};
-const p: FusionPlugin<SessionDeps, SessionService> =
-  // $FlowFixMe
-  __NODE__ &&
-  createPlugin({
-    deps: {
-      secret: SessionSecretToken,
-      cookieName: SessionCookieNameToken,
-      expires: SessionCookieExpiresToken.optional,
-    },
-    provides: deps => {
-      const {secret, cookieName, expires = 86400} = deps;
-      const service = {
-        from: memoize((ctx: Context) => {
-          return new JWTSession(ctx, {secret, cookieName, expires});
-        }),
-      };
-      return service;
-    },
-    middleware: (deps, service) => {
-      const {secret, cookieName, expires = 86400} = deps;
-      return async function jwtMiddleware(
-        ctx: Context,
-        next: () => Promise<void>
-      ) {
-        const sign = promisify(jwt.sign.bind(jwt));
-        const session = service.from(ctx);
-        const token = await session.loadToken();
-        await next();
-        if (token) {
-          // $FlowFixMe
-          delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
-          const time = Date.now(); // get time *before* async signing
-          const signed = await sign(token, secret, {
-            expiresIn: expires,
-          });
-          if (signed !== session.cookie) {
-            const msExpires = new Date(time + expires * 1000);
-            // TODO(#3) provide way to not set cookie if not needed yet
-            ctx.cookies.set(cookieName, signed, {expires: msExpires});
-          }
+  provides: deps => {
+    const {secret, cookieName, expires = 86400} = deps;
+    const service: SessionService = {
+      from: memoize((ctx: Context) => {
+        return new JWTSession(ctx, {secret, cookieName, expires});
+      }),
+    };
+    return service;
+  },
+  middleware: (deps, service) => {
+    const {secret, cookieName, expires = 86400} = deps;
+    return async function jwtMiddleware(
+      ctx: Context,
+      next: () => Promise<void>
+    ) {
+      const sign = promisify(jwt.sign.bind(jwt));
+      const session = service.from(ctx);
+      const token = await session.loadToken();
+      await next();
+      if (token) {
+        // $FlowFixMe
+        delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
+        const time = Date.now(); // get time *before* async signing
+        const signed = await sign(token, secret, {
+          expiresIn: expires,
+        });
+        if (signed !== session.cookie) {
+          const msExpires = new Date(time + expires * 1000);
+          // TODO(#3) provide way to not set cookie if not needed yet
+          ctx.cookies.set(cookieName, signed, {expires: msExpires});
         }
-      };
-    },
-  });
+      }
+    };
+  },
+});
 
 export default ((p: any): FusionPlugin<SessionDeps, Session>);

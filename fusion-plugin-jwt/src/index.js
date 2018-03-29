@@ -2,9 +2,10 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 // Main export file
 import browser from './jwt-browser';
 import server from './jwt-server';
@@ -15,7 +16,6 @@ import {
   SessionSecretToken,
 } from './tokens';
 
-declare var __BROWSER__: Boolean;
 export default (__BROWSER__ ? browser : server);
 
 export {SessionCookieExpiresToken, SessionCookieNameToken, SessionSecretToken};

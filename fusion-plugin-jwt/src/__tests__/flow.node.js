@@ -5,6 +5,7 @@
  *
  * @flow
  */
+
 import tape from 'tape-cup';
 import App from 'fusion-core';
 import {SessionToken} from 'fusion-tokens';
