@@ -18,6 +18,7 @@ export function mockContext(url: string, options: *): Context {
     const {path} = parsedUrl;
     parsedUrl.path = parsedUrl.pathname;
     parsedUrl.url = path;
+    //$FlowFixMe
     return {parsedUrl};
   }
   const httpMocks = require('node-mocks-http');
