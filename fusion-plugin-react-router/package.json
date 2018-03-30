@@ -1,10 +1,13 @@
 {
   "name": "fusion-plugin-react-router",
   "description": "The `fusion-plugin-react-router` package provides a universal router plugin for React.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-router",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -57,8 +60,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "transpile": "npm run clean && cup build",
