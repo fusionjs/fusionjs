@@ -10,3 +10,4 @@ import clientPlugin from './browser';
 
 declare var __NODE__: Boolean;
 export default (__NODE__ ? serverPlugin : clientPlugin);
+export {Helmet} from 'react-helmet-async';

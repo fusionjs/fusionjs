@@ -9,10 +9,6 @@ Allows adding content into head via a component driven api
 * [Installation](#installation)
 * [Usage](#usage)
 * [Setup](#setup)
-* [API](#api)
-  * [Registration API](#registration-api)
-  * [Dependencies](#dependencies)
-  * [Service API](#service-api)
 
 ### Installation
 
@@ -22,10 +18,35 @@ yarn add fusion-plugin-react-helmet-async
 
 ### Usage
 
+This plugin is a simple wrapper on the [`react-helmet-async`](https://github.com/NYTimes/react-helmet-async) module which handles
+the context provider and server side code for you.
+
+```js
+import {Helmet} from 'fusion-plugin-react-helmet-async';
+
+const app = (
+  <App>
+    <Helmet>
+      <title>Hello World</title>
+      <link rel="canonical" href="https://www.tacobell.com/" />
+    </Helmet>
+    <h1>Hello World</h1>
+  </App>
+);
+```
+
 ### Setup
 
-### API
+This module has no dependencies or configuration. Simply register the plugin.
 
-#### Registration API
-
-#### Dependencies
+```js
+// src/main.js
+import App from 'fusion-react';
+import HelmetPlugin from 'fusion-plugin-react-helmet-async';
+import Root from './components/root';
+export default async function main() {
+  const app = new App(<Root />);
+  app.register(HelmetPlugin);
+  return app;
+}
+```
