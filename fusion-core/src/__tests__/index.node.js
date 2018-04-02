@@ -228,6 +228,130 @@ test('SSR extension handling', async t => {
   t.end();
 });
 
+test('SSR with redirects downstream', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+    return 'lol';
+  };
+  const app = new App(element, render);
+
+  app.middleware(async (ctx, next) => {
+    t.equals(ctx.element, element, 'sets ctx.element');
+    t.equals(ctx.type, 'text/html', 'sets ctx.type');
+    t.equals(typeof ctx.template, 'object', 'sets ctx.template');
+    t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
+    t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
+    t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
+    t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
+    ctx.status = 302;
+    ctx.body = 'redirect';
+    await next();
+    t.equals(
+      typeof ctx.template,
+      'object',
+      'ctx.template keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.title,
+      'string',
+      'ctx.template.title keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.htmlAttrs,
+      'object',
+      'ctx.template.htmlAttrs keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.bodyAttrs,
+      'object',
+      'ctx.template.bodyAttrs keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.head instanceof Array,
+      'ctx.template.head keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.body instanceof Array,
+      'ctx.template.body keeps structure on upstream'
+    );
+  });
+  try {
+    const ctx = await run(app);
+    t.equal(ctx.status, 302, 'sends 302 status code');
+    t.notok(ctx.rendered, 'does not render');
+    t.equal(typeof ctx.body, 'string');
+    t.notok(flags.render, 'does not call render');
+  } catch (e) {
+    t.ifError(e, 'should not error');
+  }
+  t.end();
+});
+
+test('SSR with redirects upstream', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+    return 'lol';
+  };
+  const app = new App(element, render);
+
+  app.middleware(async (ctx, next) => {
+    t.equals(ctx.element, element, 'sets ctx.element');
+    t.equals(ctx.type, 'text/html', 'sets ctx.type');
+    t.equals(typeof ctx.template, 'object', 'sets ctx.template');
+    t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
+    t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
+    t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
+    t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
+    await next();
+    ctx.status = 302;
+    ctx.body = 'redirect';
+    t.equals(
+      typeof ctx.template,
+      'object',
+      'ctx.template keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.title,
+      'string',
+      'ctx.template.title keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.htmlAttrs,
+      'object',
+      'ctx.template.htmlAttrs keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.bodyAttrs,
+      'object',
+      'ctx.template.bodyAttrs keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.head instanceof Array,
+      'ctx.template.head keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.body instanceof Array,
+      'ctx.template.body keeps structure on upstream'
+    );
+  });
+  try {
+    const ctx = await run(app);
+    t.equal(ctx.status, 302, 'sends 302 status code');
+    t.equal(ctx.rendered, 'lol', 'renders');
+    t.equal(typeof ctx.body, 'string');
+    t.ok(flags.render, 'calls render');
+  } catch (e) {
+    t.ifError(e, 'should not error');
+  }
+  t.end();
+});
+
 test('HTML escaping works', async t => {
   const element = 'hi';
   const render = el => el;

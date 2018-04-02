@@ -5,8 +5,8 @@ export default function getRendererPlugin({render, timing}) {
     const timer = timing.from(ctx);
     timer.downstream.resolve(now() - timer.start);
 
-    let renderTime = 0;
-    if (ctx.element) {
+    let renderTime = null;
+    if (ctx.element && !ctx.body) {
       const renderStart = now();
       ctx.rendered = await render(ctx.element);
       renderTime = now() - renderStart;
@@ -15,7 +15,7 @@ export default function getRendererPlugin({render, timing}) {
     timer.upstreamStart = now();
     await next();
 
-    if (ctx.element) {
+    if (ctx.element && typeof renderTime === 'number') {
       timer.render.resolve(renderTime);
     }
   };
