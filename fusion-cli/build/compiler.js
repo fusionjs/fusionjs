@@ -222,6 +222,13 @@ function getConfig({target, env, dir, watch, cover}) {
          */
         {
           test: /\.jsx?$/,
+          exclude: [
+            // Blacklist mapbox-gl package because of issues with babel-loader and its AMD bundle
+            /node_modules\/mapbox-gl/,
+            // Blacklist react packages for performance
+            /node_modules\/react-dom/,
+            /node_modules\/react/,
+          ],
           use: [
             {
               loader: require.resolve('babel-loader'),
