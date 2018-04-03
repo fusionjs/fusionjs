@@ -1,9 +1,13 @@
 {
   "name": "fusion-plugin-react-helmet-async",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Allows adding content into head via a component driven api",
   "repository": "fusionjs/fusion-plugin-react-helmet-async",
-  "files": ["dist", "chunk-translation-map.js", "src"],
+  "files": [
+    "dist",
+    "chunk-translation-map.js",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -22,8 +26,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "yarn run build-test && yarn run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run transpile"
