@@ -55,7 +55,6 @@ if (__NODE__) {
       map() {},
       emit() {},
     });
-    app.register(getMockBodySetter());
     const simulator = setup(app);
     const ctx = await simulator.render('/');
     t.equal(ctx.status, 307);
@@ -80,7 +79,6 @@ test('events with trackingId', async t => {
     page: '/',
   });
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
@@ -103,7 +101,6 @@ test('events with no tracking id', async t => {
     page: '/',
   });
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
@@ -126,7 +123,6 @@ test('events with no tracking id and route prefix', async t => {
     page: '/',
   });
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
@@ -156,7 +152,6 @@ test('events with no tracking id and deep path', async t => {
   });
 
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
 
@@ -193,7 +188,6 @@ test('events with no tracking id and deep path and route prefix', async t => {
   });
 
   app.register(UniversalEventsToken, UniversalEvents);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
   t.ok(ctx.rendered.includes('href="/test/lol"'), 'sets links correctly');
@@ -214,7 +208,6 @@ test('without UniversalEventsToken', async t => {
     </div>
   );
   const app = getApp(element);
-  app.register(getMockBodySetter());
   const simulator = setup(app);
   const ctx = await simulator.render('/');
   if (__NODE__) {
@@ -306,17 +299,6 @@ function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
         }
       },
     }),
-  });
-}
-
-function getMockBodySetter() {
-  return createPlugin({
-    middleware: () => {
-      return (ctx, next) => {
-        ctx.body = 'mockbody';
-        return next();
-      };
-    },
   });
 }
 
