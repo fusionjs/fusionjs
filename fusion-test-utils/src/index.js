@@ -11,33 +11,19 @@ import assert from 'assert';
 import FusionApp from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 
-import {mockContext, renderContext} from './mock-context.js';
-import simulate from './simulate';
+import {render, request} from './simulate';
 
 declare var __BROWSER__: boolean;
 
-const request = (app: FusionApp) => (
-  url: string,
-  options: * = {}
-): Promise<*> => {
-  if (__BROWSER__) {
-    throw new Error(
-      '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
-    );
-  }
-  const ctx = mockContext(url, options);
-  return simulate(app, ctx);
+type ExtractFusionAppReturnType = <R>((FusionApp) => R) => R;
+export type Simulator = {
+  request: $Call<ExtractFusionAppReturnType, typeof request>,
+  render: $Call<ExtractFusionAppReturnType, typeof render>,
 };
-
-const render = (app: FusionApp) => (
-  url: string,
-  options: * = {}
-): Promise<*> => {
-  const ctx = renderContext(url, options);
-  return simulate(app, ctx);
-};
-
-export function getSimulator(app: FusionApp, testPlugin?: FusionPlugin<*, *>) {
+export function getSimulator(
+  app: FusionApp,
+  testPlugin?: FusionPlugin<*, *>
+): Simulator {
   if (testPlugin) {
     app.register(testPlugin);
   }
@@ -50,8 +36,25 @@ export function getSimulator(app: FusionApp, testPlugin?: FusionPlugin<*, *>) {
 }
 
 // Export test runner functions from jest
+type ExtractArgsReturnType<TArguments, TReturn> = <R>(
+  (implementation?: (...args: TArguments) => TReturn) => R
+) => R;
+type JestFnType = $PropertyType<JestObjectType, 'fn'>;
+// eslint-disable-next-line flowtype/generic-spacing
+type MockFunctionType<TArgs, TReturn> = () => $Call<
+  ExtractArgsReturnType<TArgs, TReturn>,
+  JestFnType
+>;
+type MatchSnapshotType = mixed => void;
+type CallableAssertType = (
+  assert: typeof assert & {matchSnapshot: MatchSnapshotType}
+) => void;
+type TestType = {
+  (name: JestTestName, assert: CallableAssertType): void,
+};
+
 // eslint-disable-next-line import/no-mutable-exports
-let mockFunction, test;
+let mockFunction: MockFunctionType<*, *>, test: typeof it;
 // $FlowFixMe
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
@@ -68,7 +71,12 @@ if (typeof it !== 'undefined') {
   const notSupported = () => {
     throw new Error('Can’t import test() when not using the test-app target.');
   };
+  // $FlowFixMe
   test = notSupported;
   mockFunction = notSupported;
 }
-export {mockFunction, test};
+
+const mockFunctionExport = ((mockFunction: any): MockFunctionType<*, *>);
+const testExport = ((test: any): TestType);
+
+export {mockFunctionExport as mockFunction, testExport as test};

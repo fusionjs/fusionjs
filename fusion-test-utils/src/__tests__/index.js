@@ -2,10 +2,13 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import test from 'tape-cup';
 import App, {createPlugin, createToken} from 'fusion-core';
+import type {Token, FusionPlugin} from 'fusion-core';
 
 import {getSimulator, test as exportedTest} from '../index.js';
 
@@ -57,7 +60,7 @@ test('simulate non-render request', async t => {
       t.end();
     }
   } else {
-    const ctx = testApp.request('/');
+    const ctx = await testApp.request('/');
     t.notok(ctx.element, 'does not set ctx.element');
     t.ok(!flags.render, 'did not trigger ssr');
     t.end();
@@ -66,7 +69,12 @@ test('simulate non-render request', async t => {
 
 test('use simulator with fixture and plugin dependencies', async t => {
   // Dependency-less plugin
-  const msgProviderPluginToken = createToken('MessageProviderPluginToken');
+  type MessageType = {
+    msg: string,
+  };
+  const msgProviderPluginToken: Token<MessageType> = createToken(
+    'MessageProviderPluginToken'
+  );
   const msgProviderPlugin = createPlugin({
     provides() {
       return {msg: 'it works!'};
@@ -81,29 +89,30 @@ test('use simulator with fixture and plugin dependencies', async t => {
   const app = getTestFixture();
 
   t.plan(3);
-  getSimulator(
-    app,
-    createPlugin({
-      deps: {msgProvider: msgProviderPluginToken},
-      provides(deps) {
-        t.ok(deps, 'some dependencies successfully resolved');
-        t.ok(deps.msgProvider, 'requested dependency successfully resolved');
-        const {msgProvider} = deps;
+  let testPlugin: FusionPlugin<*, *> = createPlugin({
+    deps: {msgProvider: msgProviderPluginToken},
+    provides(deps) {
+      t.ok(deps, 'some dependencies successfully resolved');
+      t.ok(deps.msgProvider, 'requested dependency successfully resolved');
+      const {msgProvider} = deps;
+      if (msgProviderPlugin.provides) {
         t.equal(
           msgProvider.msg,
           msgProviderPlugin.provides().msg,
           'dependency payload is correct'
         );
-        return 'yay!';
-      },
-    })
-  );
+      }
+      return 'yay!';
+    },
+  });
+  getSimulator(app, testPlugin);
 
   t.end();
 });
 
 test('test throws when not using test-app', async t => {
   try {
+    //$FlowFixMe
     exportedTest();
   } catch (e) {
     t.ok(
