@@ -28,11 +28,11 @@ declare module 'fusion-core' {
     optional: () => void | T,
   };
   declare export type Context = SSRContext | KoaContext;
-  declare export type FusionPlugin<Deps, Service> = {
+  declare export type FusionPlugin<Deps: {}, Service> = {
     deps?: Deps,
-    provides?: (Deps: $ObjMap<Deps, ExtractReturnType>) => Service,
+    provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
     middleware?: (
-      Deps: $ObjMap<Deps, ExtractReturnType>,
+      Deps: $ObjMap<Deps & {}, ExtractReturnType>,
       Service: Service
     ) => Middleware,
     cleanup?: (service: Service) => Promise<any>,
@@ -87,4 +87,6 @@ declare module 'fusion-core' {
   declare export var RenderToken: (Element: any) => string;
   declare export var ElementToken: any;
   declare export var SSRDeciderToken: any;
+
+  declare export function compose(middleware: Array<Middleware>): Middleware;
 }
