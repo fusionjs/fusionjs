@@ -8,6 +8,7 @@
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
+import browserPerfCollector from './helpers/enhancedBrowserMetrics';
 
 class BrowserPerformanceEmitter {
   constructor() {
@@ -87,6 +88,10 @@ export default __BROWSER__ &&
               resourceEntries,
               firstPaint,
               tags: browserPerformanceEmitter.tags,
+              // Piggy-back enhaned metrics, for perf dashboard etc on this emit.
+              // Eventually this will probably be the only data emitted but preserving
+              // legacy data shape for now
+              enhancedMetrics: browserPerfCollector(window),
             });
           }, 0);
         });
