@@ -9,12 +9,11 @@ import Provider from './provider';
 
 export default {
   create: (name, plugin, provider) => {
-    let originalMiddlewareGetter = plugin.middleware;
-    let originalMiddleware = null;
+    let originalMiddleware = plugin.middleware;
     const ProviderComponent = provider || Provider.create(name);
     plugin.middleware = (deps, provides) => {
-      if (originalMiddlewareGetter && originalMiddleware === null) {
-        originalMiddleware = originalMiddlewareGetter(deps, provides);
+      if (originalMiddleware) {
+        originalMiddleware = originalMiddleware(deps, provides);
       }
       return function(ctx, next) {
         if (ctx.element) {
