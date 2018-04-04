@@ -12,9 +12,8 @@ export default {
     let originalMiddleware = plugin.middleware;
     const ProviderComponent = provider || Provider.create(name);
     plugin.middleware = (deps, provides) => {
-      if (originalMiddleware) {
-        originalMiddleware = originalMiddleware(deps, provides);
-      }
+      let nextMiddleware =
+        originalMiddleware && originalMiddleware(deps, provides);
       return function(ctx, next) {
         if (ctx.element) {
           ctx.element = React.createElement(
@@ -23,8 +22,8 @@ export default {
             ctx.element
           );
         }
-        if (originalMiddleware) {
-          return originalMiddleware(ctx, next);
+        if (nextMiddleware) {
+          return nextMiddleware(ctx, next);
         }
         return next();
       };
