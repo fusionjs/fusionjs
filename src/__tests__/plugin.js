@@ -33,7 +33,7 @@ test('idempotency with wrapped middleware', async t => {
   const expectedDeps = [foo, bar];
   const expectedSelf = [bar, baz];
   const plugin = ReactPlugin.create('foo', {
-    middleware: (deps, self) => (ctx, next) => {
+    middleware: (deps, self) => () => {
       t.equal(deps, expectedDeps.shift());
       t.equal(self, expectedSelf.shift());
       called += 1;
