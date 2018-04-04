@@ -24,3 +24,27 @@ test('.create works', t => {
     t.end();
   });
 });
+
+test('idempotency with wrapped middleware', async t => {
+  let called = 0;
+  const foo = 'foo';
+  const bar = 'bar';
+  const baz = 'baz';
+  const expectedDeps = [foo, bar];
+  const expectedSelf = [bar, baz];
+  const plugin = ReactPlugin.create('foo', {
+    middleware: (deps, self) => () => {
+      t.equal(deps, expectedDeps.shift());
+      t.equal(self, expectedSelf.shift());
+      called += 1;
+    },
+  });
+  const middleware = plugin.middleware(foo, bar);
+  const middleware2 = plugin.middleware(bar, baz);
+  const element = React.createElement('div');
+  const ctx = {element};
+  middleware(ctx, () => Promise.resolve());
+  middleware2(ctx, () => Promise.resolve());
+  t.equals(called, 2, 'called two times');
+  t.end();
+});
