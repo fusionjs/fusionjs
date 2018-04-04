@@ -1,7 +1,10 @@
 /* eslint-env node */
 /**
  * Webpack plugin for being able to mark async chunks as being already preloaded
- * This is meant for the client
+ * This is meant for the client and ensures that webpack only requests for chunks
+ * once. This is necessary because we automatically inline scripts for async chunks
+ * that are used during the server side render. We use Object.defineProperty to make
+ * the values lazy so `new Promise` is not executed until the promise polyfill is loaded.
  */
 
 const Template = require('webpack/lib/Template');
@@ -20,11 +23,18 @@ class ChunkPreloadPlugin {
   if (window.__PRELOADED_CHUNKS__) {
     window.__PRELOADED_CHUNKS__.forEach(function(chunkId) {
       var result;
-      var promise = new Promise(function(resolve, reject) {
-        result = [resolve, reject];
+      Object.defineProperty(installedChunks, chunkId, {
+        get: function() {
+          if (result) {
+            return result;
+          }
+          var promise = new Promise(function(resolve, reject) {
+            result = [resolve, reject];
+          });
+          result[2] = promise;
+          return result;
+        }
       });
-      result[2] = promise;
-      installedChunks[chunkId] = result;
     });
   }
 
