@@ -62,9 +62,7 @@ module.exports.TestAppRuntime = function({
       // Remove existing coverage directories
       const folders = [`${rootDir}/coverage/`];
       return Promise.all(
-        folders.map(
-          folder => new Promise(resolve => rimraf(folder, () => resolve))
-        )
+        folders.map(folder => new Promise(resolve => rimraf(folder, resolve)))
       );
     };
 
@@ -107,8 +105,8 @@ module.exports.TestAppRuntime = function({
     };
 
     return setup()
-      .then(spawnProc())
-      .then(finish());
+      .then(spawnProc)
+      .then(finish);
   };
 
   this.stop = () => {
