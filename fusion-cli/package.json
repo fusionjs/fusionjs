@@ -109,9 +109,9 @@
     "globby": "8.0.1",
     "prettier": "1.11.1",
     "puppeteer": "^1.2.0",
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
-    "react-test-renderer": "16.2.0",
+    "react": "16.3.1",
+    "react-dom": "16.3.1",
+    "react-test-renderer": "16.3.1",
     "request-promise": "4.2.2",
     "strip-indent": "2.0.0",
     "tape": "4.9.0"
