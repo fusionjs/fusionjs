@@ -172,20 +172,42 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
 
 test('`fusion build` app with dynamic imports integration', async t => {
   const dir = path.resolve(__dirname, '../fixtures/dynamic-import-app');
-  await cmd(`build --dir=${dir} --production`);
+
+  var env = Object.create(process.env);
+  env.NODE_ENV = 'production';
+
+  await cmd(`build --dir=${dir} --production`, {env});
 
   // Run puppeteer test to ensure that page loads with dynamic content.
-  const {proc, port} = await start(`--dir=${dir}`);
+  const {proc, port} = await start(`--dir=${dir}`, {env});
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
-  await page.goto(`http://localhost:${port}/`);
-
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const content = await page.content();
   t.ok(
     content.includes('loaded-dynamic-import'),
     'app content contains loaded-dynamic-import'
+  );
+  t.equal(
+    await page.$$eval('script', els => els.length),
+    6,
+    'should be 6 scripts'
+  );
+  await page.click('#split-route-link');
+
+  t.equal(
+    await page.$$eval('script', els => els.length),
+    7,
+    'should be 7 scripts after dynamic loading'
+  );
+
+  t.ok(
+    await page.$$eval('script', els =>
+      els.every(el => el.crossOrigin === null)
+    ),
+    'all scripts do not have crossorigin attribute'
   );
 
   await browser.close();

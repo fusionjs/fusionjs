@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import Router, {Route, Switch} from 'fusion-plugin-react-router';
+import Router, {Route, Switch, Link} from 'fusion-plugin-react-router';
 import {split} from 'fusion-react-async';
 
 import routes from './routes';
@@ -17,6 +17,7 @@ const Page = split({
 export default function Root() {
   return (
     <div>
+      <Link id="split-route-link" to="/split-route">go to split route</Link>
       <Page />
       <Switch>
         {routes.map(({path, ...props}) => (
