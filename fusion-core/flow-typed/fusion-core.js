@@ -28,7 +28,7 @@ declare module 'fusion-core' {
     optional: () => void | T,
   };
   declare export type Context = SSRContext | KoaContext;
-  declare export type FusionPlugin<Deps: {}, Service> = {
+  declare export type FusionPlugin<Deps, Service> = {
     deps?: Deps,
     provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
     middleware?: (
@@ -73,7 +73,9 @@ declare module 'fusion-core' {
   declare export function createPlugin<Deps, Service>(
     options: FusionPlugin<Deps, Service>
   ): FusionPlugin<Deps, Service>;
-  declare export function createToken(name: string): Token<any>;
+  declare export function createToken<TResolvedType>(
+    name: string
+  ): Token<TResolvedType>;
   declare export type SanitizedHTMLWrapper = Object;
   declare export function html(
     strings: Array<string>,

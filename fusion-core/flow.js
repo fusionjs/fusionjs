@@ -30,9 +30,9 @@ declare type Context = SSRContext | ExtendedKoaContext;
 
 declare type FusionPlugin<Deps, Service> = {
   deps?: Deps,
-  provides?: (Deps: $ObjMap<Deps, ExtractReturnType>) => Service,
+  provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
   middleware?: (
-    Deps: $ObjMap<Deps, ExtractReturnType>,
+    Deps: $ObjMap<Deps & {}, ExtractReturnType>,
     Service: Service
   ) => Middleware,
   cleanup?: (service: Service) => Promise<any>,

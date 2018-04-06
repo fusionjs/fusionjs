@@ -21,7 +21,7 @@ export class TokenImpl {
   }
 }
 
-export function createToken(name: string): Token<any> {
+export function createToken<TResolvedType>(name: string): Token<TResolvedType> {
   // $FlowFixMe
   return new TokenImpl(name);
 }
