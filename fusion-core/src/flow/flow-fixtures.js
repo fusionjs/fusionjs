@@ -9,6 +9,7 @@ import {createPlugin, createToken} from '../../src/index.js';
  *  parts of the module Flow definitions.  See src/flow.js for more details.
  */
 
+/* Sanity Check: FusionPlugin<Deps, Service> */
 const someApp: FusionApp = (null: any);
 function optionallyRegistersAPlugin(
   app: FusionApp,
@@ -54,3 +55,57 @@ const singleDepPlugin = createPlugin({
 (singleDepPlugin: FusionPlugin<any, string>);
 (singleDepPlugin: FusionPlugin<{str: Token<string>}, string>);
 optionallyRegistersAPlugin(someApp, singleDepPlugin);
+
+type SimplePluginDepsType = {
+  str: Token<string>,
+};
+type SimplePluginServiceType = string;
+const simplePlugin = createPlugin({
+  deps: ({str: sampleStringToken}: SimplePluginDepsType),
+  provides: ({str}: {str: string}) => {
+    return str;
+  },
+  middleware: (deps: {str: string}, service: SimplePluginServiceType) => async (
+    ctx,
+    next
+  ) => {
+    return;
+  },
+});
+
+/* Sanity Check: Middleware */
+/*   - Case: Extract and invoke a dependency-less and service-less middleware */
+const simpleMiddleware: Middleware = async (
+  ctx: Context,
+  next: () => Promise<void>
+) => {};
+
+const noDepsWithSimpleMiddlewarePlugin = createPlugin({
+  middleware: () => simpleMiddleware,
+});
+const extractedEmptyMiddleware = noDepsWithSimpleMiddlewarePlugin.middleware;
+if (extractedEmptyMiddleware) {
+  /* refine to remove 'void' */
+  extractedEmptyMiddleware(); // no deps
+}
+
+/*   - Case: Extract and invoke a service-less middleware */
+const noServiceWithSimpleMiddlewarePlugin = createPlugin({
+  deps: ({str: sampleStringToken}: SimplePluginDepsType),
+  middleware: deps => simpleMiddleware,
+});
+const extractedServicelessMiddleware =
+  noServiceWithSimpleMiddlewarePlugin.middleware;
+if (extractedServicelessMiddleware) {
+  extractedServicelessMiddleware({str: 'hello'}); // no service
+  // $FlowFixMe
+  extractedServicelessMiddleware(); // should fail
+}
+
+/*   - Case: Extract and invoke a full middleware */
+const extractedFullMiddleware = simplePlugin.middleware;
+if (extractedFullMiddleware) {
+  extractedFullMiddleware({str: 'hello'}, 'service');
+  // $FlowFixMe
+  extractedFullMiddleware({str: 'hello'}); // should fail
+}
