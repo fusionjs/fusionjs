@@ -46,7 +46,7 @@ exports.builder = {
   },
   configPath: {
     type: 'string',
-    default: './node_modules/fusion-cli/build/jest-config.js',
+    default: './node_modules/fusion-cli/build/jest/jest-config.js',
     describe: 'Path to the jest configuration',
   },
 };

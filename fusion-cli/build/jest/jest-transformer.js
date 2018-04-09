@@ -1,8 +1,14 @@
 /* eslint-env node */
 
-const loadFusionRC = require('./load-fusionrc.js');
+// Clear require cache before each run to reset file exports between environment runs.
+// Currently the transformer seems like the most robust place to clear cache.
+Object.keys(require.cache).forEach(key => {
+  delete require.cache[key];
+});
 
-const babelConfig = require('./babel-preset.js')(null, {
+const loadFusionRC = require('../load-fusionrc.js');
+
+const babelConfig = require('../babel-preset.js')(null, {
   targets: {
     node: 'current',
   },
