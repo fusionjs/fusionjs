@@ -2,12 +2,15 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import test from 'tape-cup';
 import App from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
+
 import plugin from '../browser.js';
 import {UniversalEventsToken} from '../index';
 

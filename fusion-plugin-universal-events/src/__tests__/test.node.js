@@ -2,13 +2,17 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import test from 'tape-cup';
 import App, {createPlugin, compose} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
+
 import UniversalEventsPlugin, {GlobalEmitter} from '../server.js';
 import {UniversalEventsToken} from '../index';
+import type {IEmitter} from '../types.js';
 
 test('Instantiation', t => {
   const a = {
@@ -17,8 +21,10 @@ test('Instantiation', t => {
   const b = {
     memoized: new Map(),
   };
-  const Emitter = new GlobalEmitter();
+  const Emitter: IEmitter = new GlobalEmitter();
+  // $FlowFixMe
   t.notEqual(Emitter.from(a), Emitter.from(b));
+  // $FlowFixMe
   t.notEqual(Emitter.from(a), Emitter);
   t.end();
 });
@@ -59,6 +65,7 @@ test('Server EventEmitter - events from browser', async t => {
   });
   app.resolve();
   try {
+    // $FlowFixMe
     await compose(app.plugins)(mockCtx, () => Promise.resolve());
     t.ok(called, 'called');
     t.ok(globalCalled, 'called global handler');
@@ -82,6 +89,7 @@ test('Server EventEmitter - events with ctx', async t => {
           t.equals(ctx, mockCtx, 'ctx is correct');
           globalCalled = true;
         });
+        // $FlowFixMe
         events.emit('b', {x: 1}, mockCtx);
         t.ok(globalCalled, 'called global handler');
         t.end();
@@ -139,6 +147,7 @@ test('Server EventEmitter - mapping', async t => {
   });
   app.resolve();
   try {
+    // $FlowFixMe
     await compose(app.plugins)(mockCtx, () => Promise.resolve());
     t.ok(called, 'called');
     t.ok(globalCalled, 'called global handler');
@@ -166,6 +175,7 @@ test('Server EventEmitter batching', async t => {
       });
       emitter.emit('test-pre-await', {x: 1});
       t.notOk(flags.preawait, 'batches pre await next events');
+      // $FlowFixMe
       t.notOk(emitter.flushed, 'waits to flush');
       return next();
     };
@@ -187,6 +197,7 @@ test('Server EventEmitter batching', async t => {
           lol: true,
         };
       });
+      // $FlowFixMe
       t.notOk(emitter.flushed, 'waits to flush');
       t.notOk(flags.postawait, 'batches post await next events');
     };
@@ -201,6 +212,7 @@ test('Server EventEmitter batching', async t => {
         flags.postend = true;
       });
       ctx.timing.end.then(() => {
+        // $FlowFixMe
         t.notOk(emitter.flushed, 'waits to flush');
         emitter.emit('test-post-end', {x: 1});
         t.notOk(flags.postend, 'batches post-end events');
@@ -218,6 +230,7 @@ test('Server EventEmitter batching', async t => {
         flags.timeout = true;
       });
       setTimeout(() => {
+        // $FlowFixMe
         t.ok(emitter.flushed, 'has flushed events');
         emitter.emit('test-timeout', {x: 1});
         t.ok(flags.timeout, 'emits events immediately after flushing');

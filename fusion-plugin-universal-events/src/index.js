@@ -2,16 +2,25 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 import {createToken} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
+
 import ServerEvents from './server.js';
 import BrowserEvents from './browser.js';
+import type {
+  IEmitter,
+  UniversalEventsPluginDepsType as DepsType,
+} from './types.js';
 
-declare var __BROWSER__: Boolean;
-const UniversalEvents = __BROWSER__ ? BrowserEvents : ServerEvents;
+const UniversalEventsPlugin = __BROWSER__ ? BrowserEvents : ServerEvents;
 
-export default UniversalEvents;
+// eslint-disable-next-line prettier/prettier
+export default ((UniversalEventsPlugin: any): FusionPlugin<DepsType, IEmitter>);
 
-export const UniversalEventsToken = createToken('UniversalEventsToken');
+export const UniversalEventsToken: Token<IEmitter> = createToken(
+  'UniversalEventsToken'
+);

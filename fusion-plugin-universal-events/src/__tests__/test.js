@@ -2,14 +2,18 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import test from 'tape-cup';
+
 import EventEmitter from '../emitter.js';
+import type {IEmitter} from '../types.js';
 
 test('Base EventEmitter on/off', t => {
   t.ok(typeof EventEmitter === 'function', 'exported correctly');
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   let eventHandlerCount = 0;
   function handleEvent(event) {
     eventHandlerCount++;
@@ -26,7 +30,7 @@ test('Base EventEmitter on/off', t => {
 });
 
 test('Base EventEmitter mappers', t => {
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   let eventHandlerCount = 0;
   let mapCount = 0;
   events.on('test', event => {
@@ -46,7 +50,7 @@ test('Base EventEmitter mappers', t => {
 });
 
 test('Base EventEmitter * mappers', t => {
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   events.map('*', payload => {
     return {...payload, a: true};
   });
@@ -66,7 +70,7 @@ test('Base EventEmitter * mappers', t => {
 });
 
 test('Base EventEmitter implicit * mappers', t => {
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   events.map(payload => {
     return {...payload, a: true};
   });
@@ -86,7 +90,7 @@ test('Base EventEmitter implicit * mappers', t => {
 });
 
 test('Base EventEmitter * handlers', t => {
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
   events.on(payload => {
@@ -109,7 +113,7 @@ test('Base EventEmitter * handlers', t => {
 });
 
 test('Base EventEmitter implicit * handlers', t => {
-  const events = new EventEmitter();
+  const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
   events.on('*', payload => {

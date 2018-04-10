@@ -2,20 +2,31 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 import {memoize, createPlugin} from 'fusion-core';
-import Emitter from './emitter';
+import type {FusionPlugin, Context} from 'fusion-core';
+
+import Emitter from './emitter.js';
+import type {
+  IEmitter,
+  UniversalEventsPluginDepsType as DepsType,
+} from './types.js';
 
 export class GlobalEmitter extends Emitter {
+  from: any;
+  ctx: any;
+
   constructor() {
     super();
     this.from = memoize(ctx => {
       return new ScopedEmitter(ctx, this);
     });
   }
-  emit(type, payload, ctx) {
+  emit(type: mixed, payload: mixed, ctx?: Context): void {
     payload = super.mapEvent(type, payload, this.ctx);
     super.handleEvent(type, payload, ctx);
   }
@@ -25,6 +36,11 @@ export class GlobalEmitter extends Emitter {
 }
 
 class ScopedEmitter extends Emitter {
+  ctx: any;
+  parent: any;
+  batch: any;
+  flushed: any;
+
   constructor(ctx, parent) {
     super();
     this.ctx = ctx;
@@ -58,7 +74,8 @@ class ScopedEmitter extends Emitter {
   teardown() {}
 }
 
-export default __NODE__ &&
+const plugin =
+  __NODE__ &&
   createPlugin({
     provides: () => new GlobalEmitter(),
     middleware: (deps, globalEmitter) => {
@@ -68,6 +85,7 @@ export default __NODE__ &&
         const emitter = globalEmitter.from(ctx);
         if (ctx.method === 'POST' && ctx.path === '/_events') {
           await parseBody(ctx, async () => {});
+          // $FlowFixMe
           const {items} = ctx.request.body;
           if (items) {
             for (let index = 0; index < items.length; index++) {
@@ -88,3 +106,5 @@ export default __NODE__ &&
       };
     },
   });
+
+export default ((plugin: any): FusionPlugin<DepsType, IEmitter>);
