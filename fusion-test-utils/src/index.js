@@ -11,6 +11,13 @@ import assert from 'assert';
 import FusionApp from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 
+/* Note: as the Jest type definitions are declared globally and not as part of
+ * a module, we must import the relevant types directly from the libdef file here
+ * to avoid the invariant that all consumers must add the jest libdef to their
+ * .flowconfig libs.
+ */
+import type {JestTestName, JestObjectType} from './flow/jest_v22.x.x.js';
+
 import {render, request} from './simulate';
 
 declare var __BROWSER__: boolean;
@@ -54,7 +61,7 @@ type TestType = {
 };
 
 // eslint-disable-next-line import/no-mutable-exports
-let mockFunction: MockFunctionType<*, *>, test: typeof it;
+let mockFunction: MockFunctionType<*, *>, test: any;
 // $FlowFixMe
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
