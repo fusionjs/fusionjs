@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "fusion-plugin-universal-events": "^1.0.2",
-    "fusion-test-utils": "^1.0.1"
+    "fusion-test-utils": "^1.0.2"
   },
   "devDependencies": {
     "babel-eslint": "8.2.2",
@@ -37,10 +37,10 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.7.0",
     "flow-bin": "0.69.0",
-    "fusion-core": "^1.0.2",
-    "fusion-react": "^1.0.2",
-    "fusion-react-async": "^1.0.1",
-    "fusion-tokens": "^1.0.1",
+    "fusion-core": "^1.2.2",
+    "fusion-react": "^1.0.3",
+    "fusion-react-async": "^1.2.1",
+    "fusion-tokens": "^1.0.3",
     "nyc": "11.4.1",
     "prettier": "1.11.1",
     "react": "16.2.0",

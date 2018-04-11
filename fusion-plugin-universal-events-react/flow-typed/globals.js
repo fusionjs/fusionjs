@@ -6,7 +6,5 @@
  * @flow
  */
 
-import UniversalEvents from 'fusion-plugin-universal-events';
-import {ProviderPlugin} from 'fusion-react';
-
-export default ProviderPlugin.create('universalEvents', UniversalEvents);
+declare var __NODE__: boolean;
+declare var __BROWSER__: boolean;
