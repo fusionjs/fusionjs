@@ -12,11 +12,11 @@
  * As a result of this, any chunks loaded by webpack will fail in Safari
  * if they require cookies to be sent (because webpack uses crossorigin="anonymous").
  *
- * This plugin ensures that the crossorigin attribute is omitted
- * unless the script src begins with `https://`.
+ * This plugin ensures that the crossorigin attribute is omitted if the script
+ * src matches the page origin.
  *
- * Note: if for some reason an absolute path is used even for same-origin scripts,
- * cookies may be erronously not be sent in Safari.
+ * Note: `script.src` accesses the `src` property
+ * (as opposed to attribute) which yields an absolute URL per HTML5 spec
  */
 
 class CrossoriginAutoAttributePlugin {
@@ -29,7 +29,7 @@ class CrossoriginAutoAttributePlugin {
         source => {
           return source.replace(
             /script\.src = [^;]*;/,
-            '$& if (!script.src.match(/^https:\\/\\//)) {script.crossOrigin = void 0;}'
+            '$& if (!script.src.indexOf(window.location.origin)) {script.crossOrigin = void 0;}'
           );
         }
       );
