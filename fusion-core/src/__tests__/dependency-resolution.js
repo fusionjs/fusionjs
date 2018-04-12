@@ -474,6 +474,34 @@ tape('dependency registration with circular dependency', t => {
 });
 
 tape('dependency configuration with missing deps', t => {
+  const ParentToken: Token<string> = createToken('parent-token');
+  const StringToken: Token<string> = createToken('string-token');
+  const OtherStringToken: Token<string> = createToken('other-string-token');
+
+  const app = new App('el', el => el);
+  app.register(
+    ParentToken,
+    createPlugin({
+      deps: {
+        a: StringToken,
+        b: OtherStringToken,
+      },
+      provides: () => {
+        t.fail('should not get here');
+        return 'service';
+      },
+    })
+  );
+  app.register(StringToken, 'string-a');
+  t.throws(() => app.resolve(), 'throws if dependencies are not configured');
+  t.throws(
+    () => app.resolve(),
+    /required by plugins registered with tokens: "parent-token"/
+  );
+  t.end();
+});
+
+tape('error message when dependent plugin does not have token', t => {
   const StringToken: Token<string> = createToken('string-token');
   const OtherStringToken: Token<string> = createToken('other-string-token');
 
@@ -491,7 +519,10 @@ tape('dependency configuration with missing deps', t => {
     })
   );
   app.register(StringToken, 'string-a');
-  t.throws(() => app.resolve(), 'throws if dependencies are not configured');
+  t.throws(
+    () => app.resolve(),
+    /required by plugins registered with tokens: "UnnamedPlugin"/
+  );
   t.end();
 });
 

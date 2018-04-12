@@ -6,6 +6,7 @@ import {SSRDecider} from './plugins/ssr';
 class FusionApp {
   constructor(el, render) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
+    this.enhancerToToken = new Map(); // enhancer -> token
     this.plugins = []; // Token
     this.cleanups = [];
     el && this.register(ElementToken, el);
@@ -15,7 +16,7 @@ class FusionApp {
   register(token, value) {
     if (token && token.__plugin__) {
       value = token;
-      token = createToken(String(value));
+      token = createToken('UnnamedPlugin');
     }
     if (!(token instanceof TokenImpl) && value === undefined) {
       throw new Error(
@@ -39,7 +40,7 @@ class FusionApp {
       aliases: new Map(),
       enhancers: [],
     };
-    this.registered.set(getTokenRef(token), {value, aliases, enhancers});
+    this.registered.set(getTokenRef(token), {value, aliases, enhancers, token});
     function alias(sourceToken, destToken) {
       aliases.set(sourceToken, destToken);
       return {alias};
@@ -59,8 +60,9 @@ class FusionApp {
       aliases: new Map(),
       enhancers: [],
     };
+    this.enhancerToToken.set(enhancer, token);
     enhancers.push(enhancer);
-    this.registered.set(getTokenRef(token), {value, aliases, enhancers});
+    this.registered.set(getTokenRef(token), {value, aliases, enhancers, token});
   }
   cleanup() {
     return Promise.all(this.cleanups.map(fn => fn()));
@@ -77,6 +79,7 @@ class FusionApp {
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
     const allAliases = new Set(); // Token.ref || Token
+    const appliedEnhancers = [];
     const resolveToken = (token, tokenAliases) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(token)) {
@@ -101,11 +104,49 @@ class FusionApp {
         if (token.type === TokenType.Optional) {
           this.register(token, undefined);
         } else {
+          const dependents = Array.from(this.registered.entries());
+
+          /**
+           * Iterate over the entire list of dependencies and find all
+           * dependencies of a given token.
+           */
+          const findDependentTokens = () => {
+            return dependents
+              .filter(entry => {
+                if (!entry[1].value || !entry[1].value.deps) {
+                  return false;
+                }
+                return Object.values(entry[1].value.deps).includes(token);
+              })
+              .map(entry => entry[1].token.name);
+          };
+          const findDependentEnhancers = () => {
+            return appliedEnhancers
+              .filter(([, provides]) => {
+                if (!provides || !provides.deps) {
+                  return false;
+                }
+                return Object.values(provides.deps).includes(token);
+              })
+              .map(([enhancer]) => {
+                const enhancedToken = this.enhancerToToken.get(enhancer);
+                return `EnhancerOf<${enhancedToken.name}>`;
+              });
+          };
+          const dependentTokens = [
+            ...findDependentTokens(),
+            ...findDependentEnhancers(),
+          ];
+
           // otherwise, we cannot resolve this token
           throw new Error(
-            `Cannot resolve to a value for token: ${
+            `Could not resolve token: "${
               token.name
-            }.  Ensure this token has been registered`
+            }", which is required by plugins registered with tokens: ${dependentTokens
+              .map(token => `"${token}"`)
+              .join(', ')}. Did you forget to register a value for "${
+              token.name
+            }"?`
           );
         }
       }
@@ -144,6 +185,7 @@ class FusionApp {
       if (enhancers && enhancers.length) {
         enhancers.forEach(e => {
           let nextProvides = e(provides);
+          appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
             nextProvides = resolvePlugin(nextProvides);
           }
@@ -167,7 +209,7 @@ class FusionApp {
     for (const token of nonPluginTokens) {
       if (!dependedOn.has(getTokenRef(token))) {
         throw new Error(
-          `Registered token without depending on it: ${token.name}`
+          `Registered token without depending on it: "${token.name}"`
         );
       }
     }
