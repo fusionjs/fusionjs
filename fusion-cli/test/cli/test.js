@@ -233,6 +233,11 @@ test('`fusion test` cobertura coverage reports', async t => {
   t.ok(cobertunaReport.includes('<line number="1" hits="1"/>'));
   t.ok(!cobertunaReport.includes('<line number="1" hits="2"/>'));
 
+  t.ok(
+    cobertunaReport.includes('not-imported-in-tests.js'),
+    'report includes files not imported in tests'
+  );
+
   // Assert that there's two hits when combining coverage
   const cmd2 = `require('${runnerPath}').run('${args}')`;
   const response2 = await exec(`node -e "${cmd2}"`);
@@ -244,6 +249,11 @@ test('`fusion test` cobertura coverage reports', async t => {
 
   t.ok(combinedReport.includes('<line number="1" hits="2"/>'));
   t.ok(!combinedReport.includes('<line number="1" hits="1"/>'));
+
+  t.ok(
+    combinedReport.includes('not-imported-in-tests.js'),
+    'report includes files not imported in tests'
+  );
   t.end();
 });
 

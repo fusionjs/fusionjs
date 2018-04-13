@@ -1,10 +1,15 @@
 /* eslint-env node */
 
+const baseJestConfig = require('./base-jest-config.js');
+
 const projects = process.env.JEST_ENV.split(',');
 
 let config = {
   cache: false,
   coverageDirectory: `${process.cwd()}/coverage`,
+  // collectCoverageFrom doesn't work from project config,
+  // must be set at top-level
+  collectCoverageFrom: baseJestConfig.collectCoverageFrom,
 };
 
 // Use projects if we have more than one environment.

@@ -1,3 +1,5 @@
+import {foo} from './foo.js';
+
 export default function () {
-  return true;
+  return foo();
 }
