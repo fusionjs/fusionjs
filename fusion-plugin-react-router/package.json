@@ -51,8 +51,8 @@
     "fusion-tokens": "^1.0.3",
     "nyc": "11.6.0",
     "prettier": "1.11.1",
-    "react": "16.3.0",
-    "react-dom": "16.3.0",
+    "react": "16.3.1",
+    "react-dom": "16.3.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
