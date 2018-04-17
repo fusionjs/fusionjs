@@ -55,10 +55,8 @@ type MockFunctionType<TArgs, TReturn> = () => $Call<
 type MatchSnapshotType = mixed => void;
 type CallableAssertType = (
   assert: typeof assert & {matchSnapshot: MatchSnapshotType}
-) => void;
-type TestType = {
-  (name: JestTestName, assert: CallableAssertType): void,
-};
+) => void | Promise<void>;
+type TestType = (name: JestTestName, assert: CallableAssertType) => void;
 
 // eslint-disable-next-line import/no-mutable-exports
 let mockFunction: MockFunctionType<*, *>, test: any;
@@ -69,7 +67,6 @@ if (typeof it !== 'undefined') {
   assert.matchSnapshot = tree => expect(tree).toMatchSnapshot();
 
   /* eslint-env node, jest */
-  // $FlowFixMe
   test = (description, callback, ...rest) =>
     it(description, () => callback(assert), ...rest);
   // $FlowFixMe
