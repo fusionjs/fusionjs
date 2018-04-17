@@ -11,5 +11,9 @@ module.exports = {
   rules: {
     // We should be using flow rather than propTypes
     'react/prop-types': 'off',
+
+    // Enforces consistent spacing within generic type annotation parameters.
+    // https://github.com/gajus/eslint-plugin-flowtype/blob/master/.README/rules/generic-spacing.md
+    'flowtype/generic-spacing': 'off',
   },
 };
