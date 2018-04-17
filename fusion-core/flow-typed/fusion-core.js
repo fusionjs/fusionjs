@@ -51,16 +51,15 @@ declare module 'fusion-core' {
     renderer: any;
     cleanup(): Promise<any>;
     enhance<Token, Deps>(token: Token, enhancer: Function): void;
-    register: any;
-    // register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
-    // register<Token, Deps>(
-    //   token: Token,
-    //   Plugin: FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
-    // ): aliaser<*>;
-    // register<Token: Object>(
-    //   token: Token,
-    //   val: $Call<ExtractReturnType, Token>
-    // ): aliaser<*>;
+    register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
+    register<Token, Deps>(
+      token: Token,
+      Plugin: FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
+    ): aliaser<*>;
+    register<Token: Object>(
+      token: Token,
+      val: $Call<ExtractReturnType, Token>
+    ): aliaser<*>;
     middleware<Deps>(
       deps: Deps,
       middleware: (Deps: $ObjMap<Deps, ExtractReturnType>) => Middleware
