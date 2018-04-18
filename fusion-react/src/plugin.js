@@ -2,19 +2,28 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
+
+import type {FusionPlugin, Middleware} from 'fusion-core';
+
 import Provider from './provider';
 
 export default {
-  create: (name, plugin, provider) => {
+  create: (
+    name: string,
+    plugin: FusionPlugin<*, *>,
+    provider?: React.ComponentType<*>
+  ) => {
     let originalMiddleware = plugin.middleware;
     const ProviderComponent = provider || Provider.create(name);
-    plugin.middleware = (deps, provides) => {
+    plugin.middleware = (deps: *, provides: *) => {
       let nextMiddleware =
         originalMiddleware && originalMiddleware(deps, provides);
-      return function(ctx, next) {
+      const mw: Middleware = function(ctx, next) {
         if (ctx.element) {
           ctx.element = React.createElement(
             ProviderComponent,
@@ -27,6 +36,7 @@ export default {
         }
         return next();
       };
+      return mw;
     };
     return plugin;
   },

@@ -2,23 +2,30 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
+
 import PropTypes from 'prop-types';
 
+type ReactHOC = (React.ComponentType<*>) => React.ComponentType<*>;
 export default {
-  create: (name, mapProvidesToProps) => {
+  create: (name: string, mapProvidesToProps?: Object => Object): ReactHOC => {
     if (!mapProvidesToProps) {
       mapProvidesToProps = provides => ({[name]: provides});
     }
-    return Component => {
-      class HOC extends React.Component {
-        constructor(props, ctx) {
+    return (Component: React.ComponentType<*>) => {
+      class HOC extends React.Component<*> {
+        provides: any;
+
+        constructor(props: *, ctx: *) {
           super(props, ctx);
           this.provides = ctx[name];
         }
         render() {
+          // $FlowFixMe
           const props = {...this.props, ...mapProvidesToProps(this.provides)};
           return React.createElement(Component, props);
         }
