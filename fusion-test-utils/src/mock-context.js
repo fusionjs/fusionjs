@@ -18,6 +18,7 @@ export function mockContext(url: string, options: *): Context {
     const parsedUrl = {...parse(url)};
     const {path} = parsedUrl;
     parsedUrl.path = parsedUrl.pathname;
+    //$FlowFixMe
     parsedUrl.url = path;
     //$FlowFixMe
     return {parsedUrl};
