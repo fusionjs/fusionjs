@@ -2430,9 +2430,9 @@ fusion-react-async@^1.2.2:
     prop-types "^15.5.8"
     react-is "^16.3.1"
 
-fusion-test-utils@^1.0.4:
-  version "1.0.4"
-  resolved "https://unpm.uberinternal.com/fusion-test-utils/-/fusion-test-utils-1.0.4.tgz#5bbb9d06420a65a13590d485b1e8a40289823ca8"
+fusion-test-utils@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.5.tgz#6ac2d2af57e7201b4c6e3e13ac2524d423e8e4c7"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
