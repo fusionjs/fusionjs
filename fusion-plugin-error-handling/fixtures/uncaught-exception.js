@@ -1,5 +1,6 @@
 /* eslint-env node */
 const App = require('fusion-core').default;
+// eslint-disable-next-line import/no-unresolved
 const {default: Plugin, ErrorHandlerToken} = require('../dist/index.js');
 
 const onError = e => {
