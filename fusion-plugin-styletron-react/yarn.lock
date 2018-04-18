@@ -1479,6 +1479,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+create-react-context@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.2.tgz#9836542f9aaa22868cd7d4a6f82667df38019dca"
+  dependencies:
+    fbjs "^0.8.0"
+    gud "^1.0.0"
+
 create-universal-package@3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.1.tgz#3fe13f7688b06ad44380290ce8a4f28fc344f4d4"
@@ -2219,7 +2226,7 @@ fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
-fbjs@^0.8.16:
+fbjs@^0.8.0, fbjs@^0.8.16:
   version "0.8.16"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.16.tgz#5e67432f550dc41b572bf55847b8aca64e5337db"
   dependencies:
@@ -2504,6 +2511,10 @@ globby@^5.0.0:
 graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
+
+gud@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/gud/-/gud-1.0.0.tgz#a489581b17e6a70beca9abe3ae57de7a499852c0"
 
 handlebars@^4.0.3:
   version "4.0.11"
@@ -4549,30 +4560,31 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-styletron-engine-atomic@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.1.tgz#1f2047463fa50f78264ed8237ca5da1a7b72ee2b"
+styletron-engine-atomic@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.5.tgz#55c46745857d8f330878b2a4cffe38911aba3362"
   dependencies:
     inline-style-prefixer "^4.0.0"
-    styletron-standard "^1.0.0"
+    styletron-standard "^1.0.3"
 
-styletron-react-core@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/styletron-react-core/-/styletron-react-core-1.0.0.tgz#1c361dbd7061b2e3e51ef4af0a96d40cbab93ca6"
+styletron-react-core@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/styletron-react-core/-/styletron-react-core-1.1.0.tgz#b2921fc5e610d495e5662cf211b7f55c479aed32"
   dependencies:
+    create-react-context "^0.2.2"
     prop-types "^15.6.0"
 
-styletron-react@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/styletron-react/-/styletron-react-4.0.0.tgz#509a3ef920640b9871a025ac176b29793c9e300f"
+styletron-react@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/styletron-react/-/styletron-react-4.1.0.tgz#132f80bcc19e64452ad6c137306d27981377f6fe"
   dependencies:
     prop-types "^15.6.0"
-    styletron-react-core "^1.0.0"
-    styletron-standard "^1.0.0"
+    styletron-react-core "^1.1.0"
+    styletron-standard "^1.0.3"
 
-styletron-standard@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/styletron-standard/-/styletron-standard-1.0.0.tgz#9136a0e24d178bc9f7ef2448a7bb9999d103d76d"
+styletron-standard@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/styletron-standard/-/styletron-standard-1.0.3.tgz#7daa30f18f3b4ce1ccab3844353881afe2c9e1a2"
   dependencies:
     inline-style-prefixer "^4.0.0"
 
