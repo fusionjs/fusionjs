@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 
-import type {FusionPlugin} from 'fusion-core';
+import type {FusionPlugin, Middleware} from 'fusion-core';
 
 import Provider from './provider';
 
@@ -16,14 +16,14 @@ export default {
   create: (
     name: string,
     plugin: FusionPlugin<*, *>,
-    provider: React.ComponentType<*>
+    provider?: React.ComponentType<*>
   ) => {
     let originalMiddleware = plugin.middleware;
     const ProviderComponent = provider || Provider.create(name);
-    plugin.middleware = (deps, provides) => {
+    plugin.middleware = (deps: *, provides: *) => {
       let nextMiddleware =
         originalMiddleware && originalMiddleware(deps, provides);
-      return function(ctx, next) {
+      const mw: Middleware = function(ctx, next) {
         if (ctx.element) {
           ctx.element = React.createElement(
             ProviderComponent,
@@ -36,6 +36,7 @@ export default {
         }
         return next();
       };
+      return mw;
     };
     return plugin;
   },

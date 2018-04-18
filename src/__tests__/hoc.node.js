@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import tape from 'tape-cup';
@@ -13,7 +15,7 @@ import App from '../index';
 import hoc from '../hoc';
 import plugin from '../plugin';
 
-tape('hoc', async t => {
+tape.only('hoc', async t => {
   const withTest = hoc.create('test');
   const testProvides = {hello: 'world'};
   let didRender = false;
@@ -32,7 +34,7 @@ tape('hoc', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(ctx.body.includes('hello'));
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
   t.ok(didRender);
   t.end();
 });
@@ -59,7 +61,7 @@ tape('hoc with mapProvidesToProps', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(ctx.body.includes('hello'));
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
   t.ok(didRender);
   t.end();
 });
@@ -75,7 +77,7 @@ tape('hoc with custom provider', async t => {
     t.deepLooseEqual(props.test, testProvides);
     return React.createElement('div', null, 'hello');
   }
-  class CustomProvider extends React.Component {
+  class CustomProvider extends React.Component<*> {
     getChildContext() {
       return {test: this.props.provides};
     }
@@ -99,7 +101,7 @@ tape('hoc with custom provider', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(ctx.body.includes('hello'));
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
   t.ok(didRender);
   t.ok(didUseCustomProvider);
   t.end();

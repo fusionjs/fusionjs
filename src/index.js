@@ -9,7 +9,7 @@
 /* eslint-env browser */
 import * as React from 'react';
 
-import CoreApp, {createPlugin} from 'fusion-core';
+import FusionApp, {createPlugin} from 'fusion-core';
 import {prepare, middleware} from 'fusion-react-async';
 
 import serverRender from './server';
@@ -21,8 +21,8 @@ import Provider from './provider';
 
 declare var __NODE__: Boolean;
 
-export default class App extends CoreApp {
-  constructor(root: React.Element<*>, irender: ?(React.Element<*>) => any) {
+export default class App extends FusionApp {
+  constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
     const renderer = createPlugin({
       provides() {
         return (el: React.Element<*>) => {
