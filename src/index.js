@@ -2,12 +2,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 /* eslint-env browser */
-import CoreApp, {createPlugin} from 'fusion-core';
+import * as React from 'react';
+
+import FusionApp, {createPlugin} from 'fusion-core';
 import {prepare, middleware} from 'fusion-react-async';
+
 import serverRender from './server';
 import clientRender from './client';
 
@@ -17,11 +21,11 @@ import Provider from './provider';
 
 declare var __NODE__: Boolean;
 
-export default class App extends CoreApp {
-  constructor(root: any, render?: any => String) {
+export default class App extends FusionApp {
+  constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
     const renderer = createPlugin({
       provides() {
-        return el => {
+        return (el: React.Element<*>) => {
           return prepare(el).then(() => {
             if (render) {
               return render(el);

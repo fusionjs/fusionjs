@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
@@ -16,8 +18,10 @@ test('renders', t => {
   const root = setup();
 
   render(React.createElement('span', null, 'hello'));
-  t.equals(root.firstChild.nodeName, 'SPAN', 'has right tag');
-  t.equals(root.firstChild.textContent, 'hello', 'has right text');
+  t.ok(root.firstChild);
+  const firstChild = ((root.firstChild: any): Node);
+  t.equals(firstChild.nodeName, 'SPAN', 'has right tag');
+  t.equals(firstChild.textContent, 'hello', 'has right text');
 
   cleanup(root);
   t.end();
@@ -32,8 +36,10 @@ test('client side app', async t => {
     const ctx = await simulator.render('/');
     t.ok(ctx.rendered, 'sets rendered');
     t.ok(ctx.element, 'sets element');
-    t.equals(root.firstChild.nodeName, 'SPAN', 'has right tag');
-    t.equals(root.firstChild.textContent, 'hello', 'has right text');
+    t.ok(root.firstChild);
+    const firstChild = ((root.firstChild: any): Node);
+    t.equals(firstChild.nodeName, 'SPAN', 'has right tag');
+    t.equals(firstChild.textContent, 'hello', 'has right text');
   } catch (e) {
     t.ifError(e);
   } finally {
@@ -45,10 +51,10 @@ test('client side app', async t => {
 function setup() {
   const root = document.createElement('div');
   root.id = 'root';
-  document.body.appendChild(root);
+  document.body && document.body.appendChild(root);
   return root;
 }
 
 function cleanup(root) {
-  document.body.removeChild(root);
+  document.body && document.body.removeChild(root);
 }
