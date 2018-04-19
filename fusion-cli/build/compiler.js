@@ -234,6 +234,7 @@ function getConfig({target, env, dir, watch, cover}) {
             {
               loader: require.resolve('babel-loader'),
               options: {
+                cacheDirectory: `${dir}/node_modules/.fusion_babel_cache`,
                 plugins: [
                   // Note: plugins run first to last, so user-defined plugins go first
                   ...(fusionConfig.babel && fusionConfig.babel.plugins
