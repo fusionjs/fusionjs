@@ -323,7 +323,12 @@ function getConfig({target, env, dir, watch, cover}) {
             return callback();
           } else if (/^[@a-z\-0-9]+/.test(request)) {
             // do not bundle external packages and those not whitelisted
-            return callback(null, 'commonjs ' + resolveFrom(context, request));
+            const absolutePath = resolveFrom.silent(context, request);
+            if (absolutePath === null) {
+              // if module is missing, skip rewriting to absolute path
+              return callback(null, request);
+            }
+            return callback(null, 'commonjs ' + absolutePath);
           }
           // bundle everything else (local files, __*)
           return callback();
