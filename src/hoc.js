@@ -13,9 +13,9 @@ import PropTypes from 'prop-types';
 type ReactHOC = (React.ComponentType<*>) => React.ComponentType<*>;
 export default {
   create: (name: string, mapProvidesToProps?: Object => Object): ReactHOC => {
-    if (!mapProvidesToProps) {
-      mapProvidesToProps = provides => ({[name]: provides});
-    }
+    const mapProvides = mapProvidesToProps
+      ? mapProvidesToProps
+      : provides => ({[name]: provides});
     return (Component: React.ComponentType<*>) => {
       class HOC extends React.Component<*> {
         provides: any;
@@ -25,8 +25,7 @@ export default {
           this.provides = ctx[name];
         }
         render() {
-          // $FlowFixMe
-          const props = {...this.props, ...mapProvidesToProps(this.provides)};
+          const props = {...this.props, ...mapProvides(this.provides)};
           return React.createElement(Component, props);
         }
       }
