@@ -71,7 +71,8 @@ test('scaffolding example/', async t => {
     'utf8'
   );
   t.ok(
-    packageJsonContent === `{\n  "name": "foo"\n}\n`,
+    packageJsonContent ===
+      `{\n  "name": "foo",\n  "dependencies": {\n      "noop": "file:../fixtures/shared/noop"\n  }\n}\n`,
     '.njk files are compiled correctly'
   );
 
@@ -97,6 +98,9 @@ test('scaffolding example/', async t => {
     ctxJsContent === "module.exports = 'bar';\n",
     'handles additional context from index.js correctly'
   );
+
+  const nodeModulesStat = await stat(join(projectDir, 'node_modules'));
+  t.ok(nodeModulesStat.isDirectory(), 'installs node_modules correctly');
 
   await rimraf(projectDir);
   await t.end();

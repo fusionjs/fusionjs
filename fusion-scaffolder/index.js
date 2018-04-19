@@ -4,6 +4,7 @@ const {render} = require('nunjucks');
 const {join, relative, dirname, extname} = require('path');
 const {promisify} = require('util');
 const readdir = require('recursive-readdir');
+const {spawn} = require('child_process');
 
 const copyFile = promisify(fs.copyFile);
 const lstat = promisify(fs.lstat);
@@ -33,6 +34,11 @@ module.exports = async function scaffold(ctx = {}) {
   const templatePath = join(cwd, path);
   const contentPath = join(templatePath, 'content');
 
+  await compile(projectPath, templatePath, contentPath, ctx);
+  await install(projectPath);
+};
+
+async function compile(projectPath, templatePath, contentPath, ctx) {
   // Get context from index.js
   // eslint-disable-next-line import/no-dynamic-require
   const getContext = require(join(templatePath, 'index.js'));
@@ -66,4 +72,22 @@ module.exports = async function scaffold(ctx = {}) {
       return await copyFile(filePath, newFilePath);
     })
   );
-};
+}
+
+async function install(projectPath) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('yarn', ['install', '--cwd', projectPath], {
+      stdio: 'inherit',
+    });
+    child.on('close', code => {
+      if (code !== 0) {
+        reject(
+          new Error(
+            'Error running `yarn install`; however, the template has been successfully scaffolded.'
+          )
+        );
+      }
+      resolve();
+    });
+  });
+}
