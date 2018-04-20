@@ -2,11 +2,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 import {FetchToken} from 'fusion-tokens';
 import {createPlugin, unescape, createToken} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
+
+import type {I18nDepsType, I18nServiceType} from './flow.js';
 
 function loadTranslations() {
   const element = document.getElementById('__TRANSLATIONS__');
@@ -23,8 +28,16 @@ function loadTranslations() {
     );
   }
 }
-export const HydrationStateToken = createToken('HydrationStateToken');
-export default __BROWSER__ &&
+
+type HydrationStateType = {
+  chunks: Array<number>,
+  translations: Object,
+};
+export const HydrationStateToken: Token<HydrationStateType> = createToken(
+  'HydrationStateToken'
+);
+const plugin =
+  __BROWSER__ &&
   createPlugin({
     deps: {
       fetch: FetchToken.optional,
@@ -32,6 +45,9 @@ export default __BROWSER__ &&
     },
     provides: ({fetch = window.fetch, hydrationState} = {}) => {
       class I18n {
+        loadedChunks: any;
+        translationMap: any;
+
         constructor() {
           const {chunks, translations} = hydrationState || loadTranslations();
           this.loadedChunks = chunks || [];
@@ -65,3 +81,5 @@ export default __BROWSER__ &&
       return {from: () => i18n};
     },
   });
+
+export default ((plugin: any): FusionPlugin<I18nDepsType, I18nServiceType>);

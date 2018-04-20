@@ -17,7 +17,7 @@ declare module 'locale' {
   }
 
   declare class Locales {
-    constructor(str: string[], def?: string): Locales;
+    constructor(str: string[] | string, def?: string): Locales;
 
     length: number;
     _index: any;

@@ -2,21 +2,33 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 import querystring from 'querystring';
-import {createToken, createPlugin, memoize, html} from 'fusion-core';
-import createLoader from './loader';
 
-export const I18nLoaderToken = createToken('I18nLoaderToken');
-export default __NODE__ &&
+import {createToken, createPlugin, memoize, html} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
+
+import createLoader from './loader.js';
+import type {I18nLoaderType} from './loader.js';
+
+export const I18nLoaderToken: Token<I18nLoaderType> = createToken(
+  'I18nLoaderToken'
+);
+const plugin =
+  __NODE__ &&
   createPlugin({
     deps: {
       loader: I18nLoaderToken.optional,
     },
     provides: ({loader}) => {
       class I18n {
+        translations: Object;
+        locale: string;
+
         constructor(ctx) {
           if (!loader) {
             loader = createLoader();
@@ -58,6 +70,7 @@ export default __NODE__ &&
           });
           const serialized = JSON.stringify({chunks, translations});
           const script = html`<script type='application/json' id="__TRANSLATIONS__">${serialized}</script>`; // consumed by ./browser
+          // $FlowFixMe
           ctx.template.body.push(script);
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
@@ -78,3 +91,5 @@ export default __NODE__ &&
       };
     },
   });
+
+export default ((plugin: any): FusionPlugin<*, *>);

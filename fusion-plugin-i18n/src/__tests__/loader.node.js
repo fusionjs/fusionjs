@@ -2,14 +2,18 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
 import fs from 'fs';
 import test from 'tape-cup';
+
 import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
+
 import I18n from '../node';
 import createLoader from '../loader';
 import {I18nToken} from '../index.js';

@@ -2,14 +2,22 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import {Locale, Locales} from 'locale';
-import {memoize} from 'fusion-core';
 import fs from 'fs';
 import path from 'path';
 
-export default (__NODE__
+import {memoize} from 'fusion-core';
+import type {Context} from 'fusion-core';
+
+export type I18nLoaderType = {
+  from: (ctx: Context) => {locale: string, translations: Object},
+};
+
+const loader = __NODE__
   ? () => {
       const readDir = root => {
         try {
@@ -34,10 +42,12 @@ export default (__NODE__
       return {
         from: memoize(ctx => {
           const expectedLocales = new Locales(ctx.headers['accept-language']);
-          const locale = expectedLocales.best(supportedLocales);
-          const translations = data[locale.normalized];
+          const locale: Locale = expectedLocales.best(supportedLocales);
+          const translations: Object = data[locale.normalized];
           return {translations, locale};
         }),
       };
     }
-  : null);
+  : null;
+
+export default ((loader: any): () => I18nLoaderType);

@@ -2,13 +2,17 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
 import test from 'tape-cup';
+
 import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
+
 import I18n, {I18nLoaderToken} from '../node';
 import {I18nToken} from '../index';
 
@@ -38,8 +42,10 @@ test('translate', async t => {
 test('ssr', async t => {
   const data = {test: 'hello</div>', interpolated: 'hi ${value}'};
 
-  // eslint-disable-next-line import/no-unresolved
+  /* eslint-disable import/no-unresolved */
+  // $FlowFixMe
   const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
+  /* eslint-enable import/no-unresolved */
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
 
   const ctx = {
@@ -53,11 +59,23 @@ test('ssr', async t => {
   const deps = {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
+
+  t.plan(3);
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
   const i18n = I18n.provides(deps);
 
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.equals(ctx.template.body.length, 1, 'injects hydration code');
   t.equals(
+    // $FlowFixMe
     consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0],
     'hello'
   );
@@ -71,8 +89,10 @@ test('ssr', async t => {
 test('endpoint', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
 
-  // eslint-disable-next-line import/no-unresolved
+  /* eslint-disable import/no-unresolved */
+  // $FlowFixMe
   const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
+  /* eslint-enable import/no-unresolved */
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
 
   const ctx = {
@@ -82,12 +102,25 @@ test('endpoint', async t => {
     path: '/_translations',
     querystring: 'ids=0',
     memoized: new Map(),
+    body: '',
   };
 
   const deps = {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
+
+  t.plan(1);
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
   const i18n = I18n.provides(deps);
+
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.deepEquals(ctx.body, data, 'injects hydration code');
 
@@ -101,12 +134,25 @@ test('non matched route', async t => {
   const ctx = {
     path: '/_something',
     memoized: new Map(),
+    body: '',
   };
 
   const deps = {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
+
+  t.plan(1);
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
   const i18n = I18n.provides(deps);
+
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.notok(ctx.body, 'does not set ctx.body');
   t.end();
