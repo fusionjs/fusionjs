@@ -2155,9 +2155,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@0.66.0:
-  version "0.66.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.66.0.tgz#a96dde7015dc3343fd552a7b4963c02be705ca26"
+flow-bin@^0.70.0:
+  version "0.70.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.70.0.tgz#080ae83a997f2b4ddb3dc2649bf13336825292b5"
 
 for-each@~0.3.2:
   version "0.3.2"
@@ -2242,14 +2242,16 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.0.2.tgz#860af776a2dcab6cca4e68a4a44826ec509a58e2"
+fusion-core@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.2.3.tgz#2753353f983c65bab8ed7123abd055dcf7b6629f"
   dependencies:
     koa "^2.4.1"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
     toposort "^1.0.6"
+    ua-parser-js "^0.7.17"
+    uuid "^3.2.1"
 
 fusion-plugin-i18n@^1.0.2:
   version "1.0.2"
@@ -4477,7 +4479,7 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-ua-parser-js@^0.7.9:
+ua-parser-js@^0.7.17, ua-parser-js@^0.7.9:
   version "0.7.17"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.17.tgz#e9ec5f9498b9ec910e7ae3ac626a805c4d09ecac"
 
@@ -4562,7 +4564,7 @@ util@0.10.3, util@^0.10.3:
   dependencies:
     inherits "2.0.1"
 
-uuid@^3.0.0:
+uuid@^3.0.0, uuid@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
