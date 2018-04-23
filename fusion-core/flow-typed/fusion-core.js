@@ -19,8 +19,8 @@ declare module 'fusion-core' {
     template: {
       htmlAttrs: Object,
       title: string,
-      head: Array<string | SanitizedHTMLWrapper>,
-      body: Array<string>,
+      head: Array<SanitizedHTMLWrapper>,
+      body: Array<SanitizedHTMLWrapper>,
     },
   } & KoaContext;
   declare export type Token<T> = {
@@ -90,4 +90,15 @@ declare module 'fusion-core' {
   declare export var SSRDeciderToken: any;
 
   declare export function compose(middleware: Array<Middleware>): Middleware;
+
+  declare export type Env = {
+    rootDir: string,
+    env: string,
+    prefix: string,
+    assetPath: string,
+    baseAssetPath: string,
+    cdnUrl: string,
+    webpackPublicPath: string,
+  };
+  declare export function getEnv(): Env;
 }
