@@ -22,7 +22,7 @@ class BrowserPerformanceEmitter {
         !window.performance.getEntriesByType) &&
       (!timing && !resourceEntries)
     ) {
-      return;
+      return {};
     }
 
     timing = timing || window.performance.timing;

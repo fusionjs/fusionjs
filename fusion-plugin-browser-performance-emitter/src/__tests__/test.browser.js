@@ -127,3 +127,56 @@ test('Emits correct event', t => {
     t.end();
   });
 });
+
+test('Does not fail when window.performance is null', t => {
+  /* Window overrides */
+  const oldPerformance = window.performance;
+  const originalAddEventListener = window.addEventListener;
+  const originalSetTimeout = window.setTimeout;
+
+  window.addEventListener = function mockAddEventListener(event, fn) {
+    fn();
+  };
+  window.setTimeout = function mockSetTimeout(fn) {
+    fn();
+  };
+  window.performance = null;
+
+  /* App registration */
+  const eventsEmitted = [];
+  const mockEmitter = {
+    emit: (type, payload) => {
+      eventsEmitted.push({type, payload});
+    },
+  };
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
+
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitterPlugin);
+
+  /* Simulator */
+  getSimulator(app).render('/');
+
+  t.plan(6);
+  window.addEventListener('load', () => {
+    t.equal(eventsEmitted.length, 1, 'one event was emitted');
+    const event = eventsEmitted[0];
+    t.equal(
+      event.type,
+      'browser-performance-emitter:stats:browser-only',
+      'event was emitted with the correct type'
+    );
+    ['firstPaint', 'resourceEntries', 'tags', 'timing'].forEach(item => {
+      t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
+    });
+
+    /* Revert window overrides */
+    window.addEventListener = originalAddEventListener;
+    window.setTimeout = originalSetTimeout;
+    window.performance = oldPerformance;
+
+    t.end();
+  });
+});
