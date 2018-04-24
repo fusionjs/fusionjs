@@ -26,7 +26,7 @@ export type Context = SSRContext | ExtendedKoaContext;
 export type Middleware = (
   ctx: Context,
   next: () => Promise<void>
-) => Promise<*> | void;
+) => Promise<*>;
 
 export type MiddlewareWithDeps<Deps> = (
   // $FlowFixMe
