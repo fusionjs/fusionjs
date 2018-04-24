@@ -18,4 +18,5 @@ module.exports = {
   snapshotSerializers: [require.resolve('enzyme-to-json/serializer')],
   testMatch: [`**/${testFolder}/**/*.js`],
   collectCoverageFrom: ['**.js', '!**/__integration__/**'],
+  testResultsProcessor: require.resolve('./results-processor.js'),
 };

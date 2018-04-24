@@ -10,6 +10,7 @@ let config = {
   // collectCoverageFrom doesn't work from project config,
   // must be set at top-level
   collectCoverageFrom: baseJestConfig.collectCoverageFrom,
+  testResultsProcessor: baseJestConfig.testResultsProcessor,
 };
 
 // Use projects if we have more than one environment.

@@ -272,6 +272,22 @@ test('`fusion test` environment variables', async t => {
   t.end();
 });
 
+test('`fusion test` writes results to disk in CI', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=passes`;
+
+  const cmd = `require('${runnerPath}').run('${args}')`;
+  const response = await exec(`node -e "${cmd}"`, {
+    env: Object.assign({}, process.env, {
+      CI: true,
+    }),
+  });
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+  const results = require(path.resolve(dir, '.fusion/test-results.json'));
+  t.equal(results.numTotalTests, 2, 'two tests in results json');
+  t.end();
+});
+
 test('`fusion test` uses .fusionjs.js', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-babel');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js`;
