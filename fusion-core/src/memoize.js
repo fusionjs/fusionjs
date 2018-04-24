@@ -1,4 +1,7 @@
 /* @flow */
+
+import type {Context} from './types.js';
+
 type MemoizeFn<A> = (ctx: Context) => A;
 
 function Container() {}

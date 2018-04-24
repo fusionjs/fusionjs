@@ -1,3 +1,5 @@
+// @flow
+
 import {createToken} from './create-token';
 
 export const RenderToken = createToken('RenderToken');

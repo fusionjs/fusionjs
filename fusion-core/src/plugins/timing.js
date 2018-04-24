@@ -2,6 +2,7 @@
 import {createPlugin} from '../create-plugin';
 import {memoize} from '../memoize';
 import {createToken} from '../create-token';
+import type {Token} from '../types.js';
 
 type Deferred<T> = {
   promise: Promise<T>,

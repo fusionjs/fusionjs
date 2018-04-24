@@ -1,4 +1,7 @@
 /* @flow */
+
+import type {Middleware} from './types.js';
+
 // inline version of koa-compose to get around Rollup/CUP commonjs-related issue
 export function compose(middleware: Array<Middleware>): Middleware {
   if (!Array.isArray(middleware)) {

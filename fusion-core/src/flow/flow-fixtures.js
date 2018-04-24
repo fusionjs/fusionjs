@@ -1,18 +1,21 @@
 // @flow
 
 import {createPlugin, createToken} from '../../src/index.js';
+import BaseApp from '../../src/base-app';
+
+import type {Context, FusionPlugin, Middleware, Token} from '../types.js';
 
 /* eslint-disable no-unused-vars */
 
 /*
  *  This file contains basic sanity code that tests the on-side of different
- *  parts of the module Flow definitions.  See src/flow.js for more details.
+ *  parts of the module Flow definitions. Types are defined inline in source.
  */
 
 /* Sanity Check: FusionPlugin<Deps, Service> */
-const someApp: FusionApp = (null: any);
+const someApp: BaseApp = (null: any);
 function optionallyRegistersAPlugin(
-  app: FusionApp,
+  app: BaseApp,
   somePlugin?: FusionPlugin<any, any>
 ): void {
   if (somePlugin) {

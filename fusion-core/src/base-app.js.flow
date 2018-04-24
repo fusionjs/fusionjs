@@ -1,0 +1,38 @@
+// @flow
+
+import type {
+  aliaser,
+  cleanupFn,
+  ExtractReturnType,
+  FusionPlugin,
+  Middleware,
+  Token,
+} from './types.js';
+
+declare class FusionApp {
+  constructor<Element>(element: Element, render: *): FusionApp;
+  cleanups: Array<cleanupFn>;
+  registered: Map<any, any>;
+  plugins: Array<any>;
+  renderer: any;
+  cleanup(): Promise<any>;
+  enhance<Token, Deps>(token: Token, enhancer: Function): void;
+  register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
+  register<Token, Deps>(
+    token: Token,
+    Plugin: FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
+  ): aliaser<*>;
+  register<Token: Object>(
+    token: Token,
+    val: $Call<ExtractReturnType, Token>
+  ): aliaser<*>;
+  middleware<Deps>(
+    deps: Deps,
+    middleware: (Deps: $ObjMap<Deps, ExtractReturnType>) => Middleware
+  ): void;
+  middleware(middleware: Middleware): void;
+  callback(): () => Promise<void> | any;
+  resolve(): void;
+}
+
+declare export default typeof FusionApp;

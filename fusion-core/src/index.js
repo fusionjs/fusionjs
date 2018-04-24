@@ -1,8 +1,11 @@
 /* @flow */
+import type {Context, FusionPlugin, Middleware, Token} from './types.js';
+
+import BaseApp from './base-app';
 import serverApp from './server-app';
 import clientApp from './client-app';
 import getEnv from './get-env.js';
-// $FlowFixMe
+
 export default (__BROWSER__ ? clientApp() : serverApp());
 
 export {compose} from './compose.js';
@@ -29,3 +32,7 @@ export {RenderToken, ElementToken, SSRDeciderToken} from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
+
+type FusionApp = typeof BaseApp;
+declare export default typeof BaseApp;
+export type {Context, FusionApp, FusionPlugin, Middleware, Token};

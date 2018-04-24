@@ -6,7 +6,6 @@
 
 [libs]
 ./flow-typed/npm/koa_v2.x.x.js
-./flow.js
 
 [lints]
 

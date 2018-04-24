@@ -1,4 +1,6 @@
-export function assetUrl(url) {
+// @flow
+
+export function assetUrl(url: string): string {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -6,7 +8,7 @@ export function assetUrl(url) {
   return url;
 }
 
-export function chunkId(filename) {
+export function chunkId(filename: string): string {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -14,7 +16,7 @@ export function chunkId(filename) {
   return filename;
 }
 
-export function syncChunkIds(argument) {
+export function syncChunkIds(argument: any): any {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -22,7 +24,7 @@ export function syncChunkIds(argument) {
   return argument;
 }
 
-export function syncChunkPaths(argument) {
+export function syncChunkPaths(argument: any): any {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
