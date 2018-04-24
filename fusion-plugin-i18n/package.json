@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-i18n",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
   "repository": "fusionjs/fusion-plugin-i18n",
   "files": [
