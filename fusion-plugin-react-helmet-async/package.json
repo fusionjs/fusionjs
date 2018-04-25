@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-react-helmet-async",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Allows adding content into head via a component driven api",
   "repository": "fusionjs/fusion-plugin-react-helmet-async",
   "files": [
