@@ -2,16 +2,23 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-import App from 'fusion-core';
+/* eslint-env node */
 import test from 'tape-cup';
+
+import App from 'fusion-core';
+import type {Context} from 'fusion-core';
 import {SessionToken} from 'fusion-tokens';
+import type {Session} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
+
 import CsrfPlugin from '../server';
 import {CsrfExpireToken, CsrfIgnoreRoutesToken} from '../shared';
 
-function getSession() {
+function getSession(): Session {
   const state = {};
   const Session = {
     from() {
@@ -39,7 +46,7 @@ test('valid token', async t => {
   });
   const simulator = getSimulator(app);
 
-  const ctx = await simulator.request('/csrf-token', {method: 'POST'});
+  const ctx: Context = await simulator.request('/csrf-token', {method: 'POST'});
   t.ok(ctx.response.headers['x-csrf-token'], 'has token');
   t.equal(ctx.status, 200, 'has right status');
   t.equal(ctx.response.body, '', 'has empty body');
@@ -91,7 +98,7 @@ test('render request', async t => {
   app.register(CsrfPlugin);
   const simulator = getSimulator(app);
 
-  const ctx = await simulator.render('/');
+  const ctx: Context = await simulator.render('/');
   t.notok(
     ctx.response.headers['x-csrf-token'],
     'does not set x-csrf-token header'
@@ -99,7 +106,8 @@ test('render request', async t => {
   t.equals(ctx.status, 200, 'has right status');
   t.ok(Session.from(ctx).get('csrf-secret'), 'sets the session');
   t.ok(
-    ctx.response.body.includes('<script id="__CSRF_TOKEN__"'),
+    typeof ctx.response.body === 'string' &&
+      ctx.response.body.includes('<script id="__CSRF_TOKEN__"'),
     'serializes token'
   );
   t.end();

@@ -2,20 +2,24 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 /* eslint-env browser */
 import {unescape, createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import type {Fetch} from 'fusion-tokens';
+
 import {
   verifyMethod,
   verifyExpiry,
   CsrfExpireToken,
   FetchForCsrfToken,
 } from './shared';
+import type {CsrfDepsType, CsrfServiceType} from './flow.js';
 
-const BrowserCSRFPlugin =
-  // $FlowFixMe
+const plugin =
   __BROWSER__ &&
   createPlugin({
     deps: {
@@ -30,7 +34,9 @@ const BrowserCSRFPlugin =
         ? JSON.parse(unescape(tokenElement.textContent))
         : '';
 
-      function fetchWithCsrfToken(url, options = {}) {
+      let fetchWithCsrfToken: Fetch = (url, options) => {
+        if (!options) options = {};
+        // $FlowFixMe
         const isCsrfMethod = verifyMethod(options.method || 'GET');
         const isValid = verifyExpiry(token, expire);
         const isTokenRequired = !isValid || !token;
@@ -48,18 +54,19 @@ const BrowserCSRFPlugin =
         }
 
         function request() {
+          // $FlowFixMe
           return fetch(prefix + url, {
             ...options,
             credentials: 'same-origin',
             headers: {
-              ...(options.headers || {}),
+              ...((options && options.headers) || {}),
               'x-csrf-token': token,
             },
           });
         }
-      }
+      };
       return fetchWithCsrfToken;
     },
   });
 
-export default __BROWSER__ && BrowserCSRFPlugin;
+export default ((plugin: any): FusionPlugin<CsrfDepsType, CsrfServiceType>);

@@ -2,21 +2,24 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
+
+import crypto from 'crypto';
+import base64Url from 'base64-url';
 
 import {SessionToken} from 'fusion-tokens';
 import {html, createPlugin} from 'fusion-core';
-import crypto from 'crypto';
-import base64Url from 'base64-url';
+import type {FusionPlugin, Middleware} from 'fusion-core';
+
 import {
   verifyMethod,
   verifyExpiry,
   CsrfIgnoreRoutesToken,
   CsrfExpireToken,
 } from './shared';
-
-// @flow
-declare var __DEV__: Boolean;
+import type {CsrfDepsType, CsrfServiceType} from './flow.js';
 
 function generateSecret() {
   const random = crypto.randomBytes(32);
@@ -49,8 +52,7 @@ function loadOrGenerateSecret(session) {
   return secret;
 }
 
-const CsrfPlugin =
-  // $FlowFixMe
+const plugin =
   __NODE__ &&
   createPlugin({
     deps: {
@@ -61,16 +63,16 @@ const CsrfPlugin =
     provides: () => () =>
       Promise.reject(new Error('Cannot use fetch on the server')),
     middleware: deps => {
-      const {Session, expire = 86400, ignored = []} = deps;
+      const {Session = {}, expire = 86400, ignored = []} = deps;
       const ignoreSet = new Set(ignored);
-      function handleTokenPost(ctx, next) {
+      const handleTokenPost: Middleware = (ctx, next) => {
         const session = Session.from(ctx);
         const secret = loadOrGenerateSecret(session);
         ctx.set('x-csrf-token', generateToken(secret));
         ctx.status = 200;
         ctx.body = '';
         return next();
-      }
+      };
 
       async function checkCSRF(ctx, next) {
         const session = Session.from(ctx);
@@ -101,6 +103,7 @@ const CsrfPlugin =
           const secret = loadOrGenerateSecret(session);
           if (ctx.element) {
             const token = generateToken(secret);
+            // $FlowFixMe
             ctx.template.body.push(
               html`<script id="__CSRF_TOKEN__" type="application/json">${JSON.stringify(
                 token
@@ -113,4 +116,4 @@ const CsrfPlugin =
     },
   });
 
-export default CsrfPlugin;
+export default ((plugin: any): FusionPlugin<CsrfDepsType, CsrfServiceType>);

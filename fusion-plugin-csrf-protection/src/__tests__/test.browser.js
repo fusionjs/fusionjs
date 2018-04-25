@@ -2,12 +2,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 import test from 'tape-cup';
+
 import App, {createPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
+
 import CsrfPlugin from '../index';
 import {CsrfExpireToken, FetchForCsrfToken} from '../shared';
 
@@ -57,6 +61,7 @@ test('includes routePrefix if exists', async t => {
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
         t.equal(typeof fetch, 'function');
+        // $FlowFixMe
         const {url, args} = await fetch('/hello', {method: 'POST'});
         t.equals(called, 2, 'preflight works');
         t.equals(url, '/something/hello', 'ok url');
@@ -83,7 +88,7 @@ test('supports getting initial token from dom element', async t => {
       Date.now() / 1000
     )}-\u003C\u002Fscript\u003Etoken\u003Cscript\u003E`
   );
-  document.body.appendChild(el);
+  document.body && document.body.appendChild(el);
   let called = 0;
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
@@ -107,6 +112,7 @@ test('supports getting initial token from dom element', async t => {
     createPlugin({
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
+        // $FlowFixMe
         const {url, args} = await fetch('/hello', {method: 'POST'});
         t.equals(
           called,
@@ -120,7 +126,7 @@ test('supports getting initial token from dom element', async t => {
           '</script>token<script>',
           'unescapes the token correctly'
         );
-        document.body.removeChild(el);
+        document.body && document.body.removeChild(el);
         t.end();
       },
     })
@@ -152,6 +158,7 @@ test('defaults method to GET', async t => {
     createPlugin({
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
+        // $FlowFixMe
         const {url, args} = await fetch('/hello');
         t.equals(called, 1, 'does not preflight for GET requests');
         t.equals(url, '/hello', 'ok url');
@@ -187,6 +194,7 @@ test('fetch preflights if no token', t => {
     createPlugin({
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
+        // $FlowFixMe
         const {url, args} = await fetch('/test', {method: 'POST'});
         t.equals(called, 2, 'preflight works');
         t.equals(url, '/test', 'ok url');
@@ -227,6 +235,7 @@ test('fetch preflights if token is expired', t => {
     createPlugin({
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
+        // $FlowFixMe
         const {url, args} = await fetch('/test', {method: 'POST'});
         t.equals(called, 2, 'preflight works');
         t.equals(url, '/test', 'ok url');
