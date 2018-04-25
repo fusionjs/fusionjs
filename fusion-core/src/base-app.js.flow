@@ -15,7 +15,7 @@ declare class FusionApp {
   registered: Map<any, any>;
   plugins: Array<any>;
   renderer: any;
-  cleanup(): Promise<any>;
+  cleanup(): Promise<void>;
   enhance<Token, Deps>(token: Token, enhancer: Function): void;
   register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
   register<Token, Deps>(

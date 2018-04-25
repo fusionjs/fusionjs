@@ -112,3 +112,8 @@ if (extractedFullMiddleware) {
   // $FlowFixMe
   extractedFullMiddleware({str: 'hello'}); // should fail
 }
+
+/*   - Case: Cleanup should be covered */
+async function cleanup() {
+  await someApp.cleanup();
+}

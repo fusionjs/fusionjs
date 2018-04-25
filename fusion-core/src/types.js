@@ -45,11 +45,11 @@ export type FusionPlugin<Deps, Service> = {
     Deps: $ObjMap<Deps & {}, ExtractReturnType>,
     Service: Service
   ) => Middleware,
-  cleanup?: (service: Service) => Promise<any>,
+  cleanup?: (service: Service) => Promise<void>,
 };
 
 export type aliaser<Token> = {
   alias: (sourceToken: Token, destToken: Token) => aliaser<Token>,
 };
 
-export type cleanupFn = (thing: any) => Promise<any>;
+export type cleanupFn = (thing: any) => Promise<void>;
