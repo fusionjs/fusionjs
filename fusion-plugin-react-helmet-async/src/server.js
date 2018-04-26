@@ -17,13 +17,15 @@ export default __NODE__ &&
         );
         await next();
         const {helmet} = helmetContext;
-        ctx.template.title = helmet.title
-          .toString()
-          .replace('</title>', '')
-          .replace(/^<title.*>/, '');
-        keys.forEach(key => {
-          ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));
-        });
+        if (helmet) {
+          ctx.template.title = helmet.title
+            .toString()
+            .replace('</title>', '')
+            .replace(/^<title.*>/, '');
+          keys.forEach(key => {
+            ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));
+          });
+        }
       };
     },
   });

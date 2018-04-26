@@ -11,3 +11,14 @@ test('Non render request', async t => {
   t.equal(ctx.element, null, 'does not wrap ctx.element');
   t.end();
 });
+
+test('Render request with server side redirect', async t => {
+  const app = new App('test', el => el);
+  app.register(HelmetPlugin);
+  app.middleware(ctx => {
+    ctx.redirect('/test');
+  });
+  const sim = getSimulator(app);
+  await sim.render('/');
+  t.end();
+});

@@ -7,7 +7,7 @@ export default __BROWSER__ &&
     middleware: () => {
       return (ctx, next) => {
         ctx.element = (
-          <HelmetProvider content={{}}>{ctx.element}</HelmetProvider>
+          <HelmetProvider context={{}}>{ctx.element}</HelmetProvider>
         );
         return next();
       };
