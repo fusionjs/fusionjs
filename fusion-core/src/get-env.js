@@ -25,7 +25,7 @@ export function loadEnv() {
   assert(!cdnUrl.endsWith('/'), 'CDN_URL must not end with /');
 
   const assetPath = `${prefix}${baseAssetPath}`;
-  return function loadEnv() {
+  return function loadEnv(): Env {
     return {
       rootDir,
       env,
@@ -37,3 +37,15 @@ export function loadEnv() {
     };
   };
 }
+
+// Handle flow-types for export so browser export is ignored.
+type Env = {
+  rootDir: string,
+  env: string,
+  prefix: string,
+  assetPath: string,
+  baseAssetPath: string,
+  cdnUrl: string,
+  webpackPublicPath: string,
+};
+declare export default () => Env;

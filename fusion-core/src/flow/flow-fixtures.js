@@ -1,6 +1,6 @@
 // @flow
 
-import {createPlugin, createToken} from '../../src/index.js';
+import {createPlugin, createToken, getEnv} from '../../src/index.js';
 import BaseApp from '../../src/base-app';
 
 import type {Context, FusionPlugin, Middleware, Token} from '../types.js';
@@ -116,4 +116,26 @@ if (extractedFullMiddleware) {
 /*   - Case: Cleanup should be covered */
 async function cleanup() {
   await someApp.cleanup();
+}
+
+/*   - Case: getEnv typing */
+async function checkEnv() {
+  const {
+    rootDir,
+    env,
+    prefix,
+    assetPath,
+    baseAssetPath,
+    cdnUrl,
+    webpackPublicPath,
+  } = getEnv();
+  return {
+    rootDir,
+    env,
+    prefix,
+    assetPath,
+    baseAssetPath,
+    cdnUrl,
+    webpackPublicPath,
+  };
 }
