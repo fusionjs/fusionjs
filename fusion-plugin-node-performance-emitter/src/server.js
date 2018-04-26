@@ -2,18 +2,25 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
 /* Configuration Tokens */
+// $FlowFixMe flow should be aware of native timers module
 import nodeTimers from 'timers';
 import profiler from 'gc-profiler';
+// $FlowFixMe flow should be aware of http.globalAgent property
 import {globalAgent} from 'http';
 import assert from 'assert';
 
 import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import type {FusionPlugin} from 'fusion-core';
+import type {NodePerformanceDepsType as Deps} from './flow.js';
 
 import {
   TimersToken,
@@ -21,6 +28,7 @@ import {
   MemoryIntervalToken,
   SocketIntervalToken,
 } from './tokens';
+import type {Timers} from './tokens';
 
 const CONFIG_DEFAULTS = {
   eventLoopLagInterval: 1000 * 10,
@@ -29,7 +37,7 @@ const CONFIG_DEFAULTS = {
 };
 
 /* Helper Functions */
-function getCountFromGlobalAgent(data) {
+function getCountFromGlobalAgent(data: Object) {
   let numUnassigned = 0;
   const domains = Object.keys(data);
   for (let x = 0; x < domains.length; x++) {
@@ -41,7 +49,7 @@ function getCountFromGlobalAgent(data) {
   return numUnassigned;
 }
 
-function eventLoopLag(cb) {
+function eventLoopLag(cb: Function) {
   const time = process.hrtime();
   setImmediate(function nextLoop() {
     const diff = process.hrtime(time);
@@ -53,6 +61,16 @@ function noop() {}
 
 /* Service */
 class NodePerformanceEmitter {
+  eventLoopLagInterval: number;
+  memoryInterval: number;
+  socketInterval: number;
+  emit: (string, any) => void;
+  timers: Timers;
+  socketUsageIntervalRef: number;
+  eventLoopLagIntervalRef: number;
+  memoryIntervalRef: number;
+  isTrackingGarbageCollection: boolean;
+
   constructor(config, emit, timers) {
     assert.ok(config, 'config provided, as expected');
     assert.ok(emit, 'emit provided, as expected');
@@ -67,9 +85,9 @@ class NodePerformanceEmitter {
     this.timers = timers;
 
     // Track running timers
-    this.socketUsageIntervalRef = null;
-    this.eventLoopLagIntervalRef = null;
-    this.memoryIntervalRef = null;
+    this.socketUsageIntervalRef = 0;
+    this.eventLoopLagIntervalRef = 0;
+    this.memoryIntervalRef = 0;
     this.isTrackingGarbageCollection = false;
   }
 
@@ -104,12 +122,12 @@ class NodePerformanceEmitter {
 
   stopTrackingEventLoopLag() {
     this.timers.clearInterval(this.eventLoopLagIntervalRef);
-    this.eventLoopLagIntervalRef = null;
+    this.eventLoopLagIntervalRef = 0;
   }
 
-  emitEventLoopLag(done) {
+  emitEventLoopLag(done: Function) {
     done = done || noop;
-    eventLoopLag(lag => {
+    eventLoopLag((lag: number) => {
       this.emit('gauge:event_loop_lag', lag);
       return done();
     });
@@ -130,11 +148,12 @@ class NodePerformanceEmitter {
 
   stopTrackingMemoryUsage() {
     this.timers.clearInterval(this.memoryIntervalRef);
-    this.memoryIntervalRef = null;
+    this.memoryIntervalRef = 0;
   }
 
   emitMemoryUsage() {
     const memoryUsage = process.memoryUsage();
+    // $FlowFixMe .external should be present in typedef of process.memoryUsage()
     this.emit('gauge:externalMemory', memoryUsage.external);
     this.emit('gauge:rss', memoryUsage.rss);
     this.emit('gauge:heapTotal', memoryUsage.heapTotal);
@@ -177,7 +196,7 @@ class NodePerformanceEmitter {
 
   stopTrackingSocketUsage() {
     this.timers.clearInterval(this.socketUsageIntervalRef);
-    this.socketUsageIntervalRef = null;
+    this.socketUsageIntervalRef = 0;
   }
 
   emitSocketUsage() {
@@ -233,7 +252,7 @@ const plugin =
 
       return service;
     },
-    cleanup: service => service.stop(),
+    cleanup: async service => service.stop(),
   });
 
-export default plugin;
+export default ((plugin: any): FusionPlugin<Deps, NodePerformanceEmitter>);

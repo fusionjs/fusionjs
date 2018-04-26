@@ -3,7 +3,7 @@ dist/
 dist-tests/
 coverage/
 .nyc_output/
-
+flow-coverage
 .DS_Store
 npm-debug.log
 yarn-error.log

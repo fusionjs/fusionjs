@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
@@ -27,8 +29,9 @@ const mockConfig = {
 
 const mockEmitterFactory = () => {
   const mockEmitter = new MockEmitter();
+  // $FlowFixMe
   mockEmitter.from = () => mockEmitter;
-  return mockEmitter;
+  return (mockEmitter: any);
 };
 
 const mockTimersFactory = t => {
