@@ -2,14 +2,20 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import type {BrowserPerfDepsType} from './flow';
 
-export default __NODE__ &&
+const plugin: FusionPlugin<BrowserPerfDepsType, void> =
+  // $FlowFixMe
+  __NODE__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
     provides: deps => {
@@ -70,11 +76,13 @@ export default __NODE__ &&
               timing.domContentLoadedEventStart - timing.responseEnd,
           };
           if (firstPaint) {
+            // $FlowFixMe
             calculated.first_paint_time = firstPaint;
           }
         }
 
         if (!isEmpty(resourceEntries)) {
+          // $FlowFixMe
           calculated.resources_avg_load_time = {};
           // all of the values are on the prototype so we need to extract them
           const resourceLoadTimes = resourceEntries.reduce((memo, entry) => {
@@ -94,6 +102,7 @@ export default __NODE__ &&
                 mean(resourceLoadTimes[resourceType]),
                 10
               );
+              // $FlowFixMe
               calculated.resources_avg_load_time[resourceType] = avgTime;
             });
           }
@@ -143,3 +152,4 @@ export default __NODE__ &&
       }
     },
   });
+export default plugin;

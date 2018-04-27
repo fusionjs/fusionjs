@@ -2,15 +2,20 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
 import browserPerfCollector from './helpers/enhancedBrowserMetrics';
+import type {BrowserPerfDepsType} from './flow';
 
 class BrowserPerformanceEmitter {
+  tags: {route: string};
   constructor() {
     this.tags = {route: window.location.href};
   }
@@ -62,7 +67,9 @@ class BrowserPerformanceEmitter {
   }
 }
 
-export default __BROWSER__ &&
+const plugin: FusionPlugin<BrowserPerfDepsType, void> =
+  // $FlowFixMe
+  __BROWSER__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
     middleware: deps => {
@@ -100,3 +107,4 @@ export default __BROWSER__ &&
       };
     },
   });
+export default plugin;

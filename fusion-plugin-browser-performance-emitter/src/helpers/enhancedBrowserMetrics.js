@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 function hasPerf(window) {
   return Boolean(
     window.performance &&
@@ -72,7 +80,7 @@ function getDeviceDimensions(window) {
   return {height, width};
 }
 
-const browserPerfCollector = window => {
+const browserPerfCollector = (window: any) => {
   if (!hasPerf(window)) {
     return {};
   }
