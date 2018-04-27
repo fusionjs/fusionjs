@@ -5,13 +5,18 @@
  */
 
 // @flow
-import {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
+import {
+  BodyParserOptionsToken,
+  RPCToken,
+  RPCHandlersToken,
+} from 'fusion-plugin-rpc';
 import {createRPCReducer} from 'fusion-rpc-redux';
 import {withRPCRedux, withRPCReactor} from './hoc';
 import plugin, {mock} from './plugin';
 
 export default plugin;
 export {
+  BodyParserOptionsToken,
   createRPCReducer,
   mock,
   RPCToken,
