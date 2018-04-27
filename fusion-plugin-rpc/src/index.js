@@ -5,7 +5,6 @@
  */
 
 // @flow
-import {createToken} from 'fusion-core';
 import browserDataFetching from './browser';
 import serverDataFetching from './server';
 
@@ -15,5 +14,4 @@ declare var __BROWSER__: Boolean;
 const RPC = __BROWSER__ ? browserDataFetching : serverDataFetching;
 
 export default RPC;
-export const RPCToken = createToken('RPCToken');
-export {RPCHandlersToken} from './tokens';
+export {BodyParserOptionsToken, RPCToken, RPCHandlersToken} from './tokens';

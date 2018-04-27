@@ -41,6 +41,7 @@
     "fusion-plugin-universal-events": "^1.0.1",
     "fusion-test-utils": "^1.0.1",
     "fusion-tokens": "^1.0.1",
+    "mock-req": "^0.2.0",
     "nyc": "11.6.0",
     "prettier": "1.11.1",
     "tape-cup": "4.7.1",

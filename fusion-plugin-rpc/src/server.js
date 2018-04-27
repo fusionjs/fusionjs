@@ -13,7 +13,7 @@ import type {Context, FusionPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import bodyparser from 'koa-bodyparser';
 import MissingHandlerError from './missing-handler-error';
-import {RPCHandlersToken} from './tokens';
+import {BodyParserOptionsToken, RPCHandlersToken} from './tokens';
 
 const statKey = 'rpc:method';
 
@@ -85,6 +85,7 @@ const plugin: RPCPluginType =
     deps: {
       emitter: UniversalEventsToken,
       handlers: RPCHandlersToken,
+      bodyParserOptions: BodyParserOptionsToken.optional,
     },
 
     provides: deps => {
@@ -96,8 +97,8 @@ const plugin: RPCPluginType =
     },
 
     middleware: deps => {
-      const {emitter, handlers} = deps;
-      const parseBody = bodyparser();
+      const {emitter, handlers, bodyParserOptions} = deps;
+      const parseBody = bodyparser(bodyParserOptions);
 
       return async (ctx, next) => {
         const scopedEmitter = emitter.from(ctx);

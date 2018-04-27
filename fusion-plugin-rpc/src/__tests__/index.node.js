@@ -6,6 +6,7 @@
 
 import test from 'tape-cup';
 import MockEmitter from 'events';
+import MockReq from 'mock-req';
 
 import App, {createPlugin, createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
@@ -15,6 +16,8 @@ import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../server';
 
 const MockPluginToken = createToken('test-plugin-token');
+const MOCK_JSON_PARAMS = {test: 'test-args'};
+
 function createTestFixture() {
   const mockHandlers = {};
   const mockEmitter = new MockEmitter();
@@ -28,6 +31,20 @@ function createTestFixture() {
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
+}
+
+function mockRequest() {
+  const req = new MockReq({
+    method: 'POST',
+    url: '/api/test',
+    headers: {
+      Accept: 'text/plain',
+    },
+  });
+  req.write(MOCK_JSON_PARAMS);
+  req.end();
+
+  return req;
 }
 
 test('FusionApp - service resolved', t => {
@@ -410,4 +427,94 @@ test('throws when not passed ctx', async t => {
       },
     })
   ).request('/');
+});
+
+test('middleware - bodyparser options with very small jsonLimit', async t => {
+  const mockCtx = {
+    req: mockRequest(),
+    headers: {},
+    prefix: '/lol',
+    path: '/api/test',
+    method: 'POST',
+    request: {
+      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+    },
+  };
+
+  const mockHandlers = {
+    test(args, ctx) {
+      t.deepEqual(args, MOCK_JSON_PARAMS);
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+  const mockEmitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+    from() {
+      return this;
+    },
+  };
+  const mockBodyParserOptions = {jsonLimit: '1b'};
+
+  const middleware = RPCPlugin.middleware({
+    emitter: mockEmitter,
+    handlers: mockHandlers,
+    bodyParserOptions: mockBodyParserOptions,
+  });
+  try {
+    await middleware(mockCtx, () => Promise.resolve());
+  } catch (e) {
+    t.equal(e.type, 'entity.too.large');
+  }
+  t.end();
+});
+
+test('middleware - bodyparser options with default jsonLimit', async t => {
+  const mockCtx = {
+    req: mockRequest(),
+    headers: {},
+    prefix: '/lol',
+    path: '/api/test',
+    method: 'POST',
+    request: {
+      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+    },
+  };
+
+  const mockHandlers = {
+    test(args, ctx) {
+      t.deepEqual(args, MOCK_JSON_PARAMS);
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+  const mockEmitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+    from() {
+      return this;
+    },
+  };
+
+  const middleware = RPCPlugin.middleware({
+    emitter: mockEmitter,
+    handlers: mockHandlers,
+  });
+  try {
+    await middleware(mockCtx, () => Promise.resolve());
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
 });
