@@ -14,6 +14,8 @@ import App, {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {getSimulator} from 'fusion-test-utils';
 
+import type {FusionPlugin} from 'fusion-core';
+
 import BrowserPerformanceEmitterPlugin from '../server';
 
 /* Mock Results */
@@ -115,7 +117,7 @@ function createTestFixture() {
 /* Tests */
 test('Correct metrics are emitted', t => {
   const mockEmitter = new MockEmitter();
-  const mockEmitterPlugin = createPlugin({
+  const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
   });
 
@@ -200,7 +202,7 @@ test('Correct metrics are emitted', t => {
 
 test('Re-emitting events from browser to server correctly', t => {
   const mockEmitter = new MockEmitter();
-  const mockEmitterPlugin = createPlugin({
+  const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
   });
 

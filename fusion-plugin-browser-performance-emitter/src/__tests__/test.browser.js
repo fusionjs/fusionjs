@@ -13,6 +13,8 @@ import App, {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {getSimulator} from 'fusion-test-utils';
 
+import type {FusionPlugin} from 'fusion-core';
+
 import BrowserPerformanceEmitterPlugin from '../browser';
 
 /* Fixture */
@@ -42,7 +44,7 @@ test('Correct metrics are logged', t => {
       eventsEmitted.push({type, payload});
     },
   };
-  const mockEmitterPlugin = createPlugin({
+  const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
   });
 
@@ -99,7 +101,7 @@ test('Emits correct event', t => {
       eventsEmitted.push({type, payload});
     },
   };
-  const mockEmitterPlugin = createPlugin({
+  const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
   });
 
@@ -151,7 +153,7 @@ test('Does not fail when window.performance is null', t => {
       eventsEmitted.push({type, payload});
     },
   };
-  const mockEmitterPlugin = createPlugin({
+  const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
   });
 
