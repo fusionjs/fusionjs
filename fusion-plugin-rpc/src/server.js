@@ -101,6 +101,7 @@ const plugin: RPCPluginType =
       const parseBody = bodyparser(bodyParserOptions);
 
       return async (ctx, next) => {
+        await next();
         const scopedEmitter = emitter.from(ctx);
         if (ctx.method === 'POST' && ctx.path.startsWith('/api/')) {
           const startTime = ms();
@@ -159,7 +160,6 @@ const plugin: RPCPluginType =
             }
           }
         }
-        return next();
       };
     },
   });

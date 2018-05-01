@@ -282,8 +282,10 @@ test('middleware - valid endpoint', async t => {
       body: 'test-args',
     },
   };
+  let executedHandler = false;
   const mockHandlers = {
     test(args, ctx) {
+      executedHandler = true;
       t.equal(args, 'test-args');
       t.equal(ctx, mockCtx);
       return 1;
@@ -307,7 +309,11 @@ test('middleware - valid endpoint', async t => {
     handlers: mockHandlers,
   });
   try {
-    await middleware(mockCtx, () => Promise.resolve());
+    await middleware(mockCtx, () => {
+      t.equal(executedHandler, false, 'awaits next');
+      Promise.resolve();
+    });
+    t.equal(executedHandler, true);
     t.equal(mockCtx.body.data, 1);
     t.equal(mockCtx.body.status, 'success');
   } catch (e) {
