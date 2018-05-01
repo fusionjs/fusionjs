@@ -23,7 +23,7 @@
     "koa-bodyparser": "4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.2",
+    "babel-eslint": "8.2.3",
     "create-universal-package": "3.4.1",
     "eslint": "4.19.1",
     "eslint-config-fusion": "^1.0.0",
