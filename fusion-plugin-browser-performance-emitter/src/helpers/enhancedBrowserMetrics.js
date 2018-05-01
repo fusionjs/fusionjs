@@ -8,7 +8,8 @@
 
 function hasPerf(window) {
   return Boolean(
-    window.performance &&
+    window &&
+      window.performance &&
       window.performance.timing &&
       window.performance.getEntriesByType
   );
@@ -24,7 +25,7 @@ function getEntries(window) {
 
 function getServerTiming(window) {
   const navigationTiming = window.performance.getEntriesByType('navigation')[0];
-  return navigationTiming.serverTiming;
+  return navigationTiming && navigationTiming.serverTiming;
 }
 
 function getTiming(window) {
@@ -80,7 +81,7 @@ function getDeviceDimensions(window) {
   return {height, width};
 }
 
-const browserPerfCollector = (window: any) => {
+const browserPerfCollector: (window: any) => Object = (window: any) => {
   if (!hasPerf(window)) {
     return {};
   }
