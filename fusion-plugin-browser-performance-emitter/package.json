@@ -1,10 +1,13 @@
 {
   "name": "fusion-plugin-browser-performance-emitter",
   "decsription": "Emit performance stats from the browser",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-browser-performance-emitter",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -48,15 +51,19 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover-flow": "flow-coverage-report",
     "prepublish": "npm run transpile"
   },
   "flow-coverage-report": {
-    "includeGlob": ["src/**/*.js"],
-    "type": ["text", "html"]
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "text",
+      "html"
+    ]
   },
   "engines": {
     "node": ">= 8.9.0"
