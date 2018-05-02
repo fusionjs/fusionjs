@@ -14,6 +14,7 @@ import clientPlugin, {HydrationStateToken} from './browser';
 import createI18nLoader from './loader';
 import type {I18nDepsType, I18nServiceType} from './flow.js';
 
+export type {I18nServiceType} from './flow.js';
 const I18nToken: Token<I18nServiceType> = createToken('I18nToken');
 
 const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = __NODE__
