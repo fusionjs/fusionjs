@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
@@ -11,6 +13,7 @@ import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import React from 'react';
 import {getSimulator} from 'fusion-test-utils';
+
 import Plugin, {
   I18nToken,
   I18nLoaderToken,
@@ -65,6 +68,6 @@ test('plugin', async t => {
   });
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.ok(ctx.body.includes('hello'));
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
   t.end();
 });

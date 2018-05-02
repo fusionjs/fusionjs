@@ -2,14 +2,19 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
+
 import i18n from 'fusion-plugin-i18n';
 import {ProviderPlugin} from 'fusion-react';
 
-class BundleSplitConsumer extends React.Component {
+class BundleSplitConsumer extends React.Component<*, *> {
+  i18n: typeof i18n.provides;
+
   constructor(props, context) {
     super(props, context);
     // splitComponentLoaders comes from fusion-react-async/prepare-provider

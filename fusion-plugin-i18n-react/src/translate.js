@@ -2,12 +2,25 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Translate(props, context) {
+import i18n from 'fusion-plugin-i18n';
+
+type TranslatePropsType = {
+  id: string,
+  data?: Object,
+};
+
+type TranslateContextType = {
+  i18n?: typeof i18n.provides,
+};
+
+function Translate(props: TranslatePropsType, context: TranslateContextType) {
   return (
     <span>
       {(context.i18n && context.i18n.translate(props.id, props.data)) ||
