@@ -2492,9 +2492,9 @@ fusion-core@^1.2.2, fusion-core@^1.2.6:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-plugin-i18n@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.0.4.tgz#119f7a0567d735214bb66310392a4b60421d5b01"
+fusion-plugin-i18n@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.0.5.tgz#b194c288b754433fa484bd90a0399a1fb921a829"
   dependencies:
     locale "^0.1.0"
     rollup "^0.58.1"

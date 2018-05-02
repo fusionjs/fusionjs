@@ -31,7 +31,7 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "^1.0.4",
+    "fusion-plugin-i18n": "^1.0.5",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {
