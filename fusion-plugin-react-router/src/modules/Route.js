@@ -8,25 +8,35 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Route as ReactRouterRoute} from 'react-router-dom';
 
+const isEmptyChildren = children => React.Children.count(children) === 0;
+
 function Route(props, context) {
-  const {trackingId, component, children, ...remainingProps} = props;
-  if (remainingProps.render) {
-    throw new Error('Cannot pass render function to tracking route');
-  }
+  const {trackingId, component, render, children, ...remainingProps} = props;
+
   return (
     <ReactRouterRoute
       {...remainingProps}
-      render={renderProps => {
-        const {match} = renderProps;
-        if (match.isExact) {
+      // eslint-disable-next-line react/no-children-prop
+      children={routeProps => {
+        const {match} = routeProps;
+        if (match && match.isExact) {
           context.onRoute({
             page: match.path,
             title: trackingId || match.path,
           });
         }
-        return component
-          ? React.createElement(component, renderProps)
-          : React.Children.only(children);
+
+        if (component)
+          return match ? React.createElement(component, routeProps) : null;
+
+        if (render) return match ? render(routeProps) : null;
+
+        if (typeof children === 'function') return children(routeProps);
+
+        if (children && !isEmptyChildren(children))
+          return React.Children.only(children);
+
+        return null;
       }}
     />
   );
@@ -35,5 +45,7 @@ function Route(props, context) {
 Route.contextTypes = {
   onRoute: PropTypes.func.isRequired,
 };
+
+Route.displayName = 'FusionRoute';
 
 export {Route};
