@@ -20,6 +20,7 @@ export type I18nServiceType = {
   from: (
     ctx?: Context
   ) => {
+    locale?: string,
     load: (chunkIds: Array<number>) => Promise<*>,
     translate: (key: string, interpolations?: Object) => string,
   },
