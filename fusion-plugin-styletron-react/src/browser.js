@@ -14,6 +14,10 @@ import type {FusionPlugin} from 'fusion-core';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {Client as Styletron} from 'styletron-engine-atomic';
 
+import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
+
+const StyletronCompat = injectDeclarationCompatMixin(Styletron);
+
 let engine;
 
 const plugin =
@@ -22,7 +26,7 @@ const plugin =
     middleware: () => (ctx, next) => {
       if (ctx.element) {
         if (!engine) {
-          engine = new Styletron({
+          engine = new StyletronCompat({
             hydrate: document.getElementsByClassName('_styletron_hydrate_'),
           });
         }

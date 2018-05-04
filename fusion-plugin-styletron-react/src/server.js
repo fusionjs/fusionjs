@@ -14,12 +14,16 @@ import type {FusionPlugin} from 'fusion-core';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {Server as Styletron} from 'styletron-engine-atomic';
 
+import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
+
+const StyletronCompat = injectDeclarationCompatMixin(Styletron);
+
 const plugin =
   __NODE__ &&
   createPlugin({
     middleware: () => (ctx, next) => {
       if (ctx.element) {
-        const engine = new Styletron();
+        const engine = new StyletronCompat();
 
         ctx.element = (
           <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
