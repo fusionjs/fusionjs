@@ -2,19 +2,29 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 /* globals __REDUX_DEVTOOLS_EXTENSION__ */
 
 import React from 'react';
-import {createPlugin, unescape} from 'fusion-core';
 import {Provider} from 'react-redux';
 import {compose, createStore} from 'redux';
+
+import {createPlugin, unescape} from 'fusion-core';
+import type {Context, FusionPlugin} from 'fusion-core';
+
 import ctxEnhancer from './ctx-enhancer';
 import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
+import type {
+  StoreWithContextType,
+  ReactReduxDepsType,
+  ReactReduxServiceType,
+} from './types.js';
 
-export default () => {
+const getPlugin = () => {
   let storeCache = null;
   return createPlugin({
     deps: {
@@ -24,8 +34,11 @@ export default () => {
     },
     provides({reducer, preloadedState, enhancer}) {
       class Redux {
+        store: StoreWithContextType<*, *, *>;
+
         constructor(ctx) {
           if (storeCache) {
+            // $FlowFixMe
             this.store = storeCache;
           } else {
             // We only use initialState for client-side hydration
@@ -44,9 +57,11 @@ export default () => {
             const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
               Boolean
             );
+            // $FlowFixMe
             this.store = createStore(
               reducer,
               preloadedState,
+              // $FlowFixMe
               compose(...enhancers)
             );
             storeCache = this.store;
@@ -54,7 +69,7 @@ export default () => {
         }
       }
       return {
-        from: ctx => {
+        from: (ctx?: Context) => {
           return new Redux(ctx);
         },
       };
@@ -68,3 +83,8 @@ export default () => {
     },
   });
 };
+
+export default ((getPlugin: any): () => FusionPlugin<
+  ReactReduxDepsType,
+  ReactReduxServiceType
+>);

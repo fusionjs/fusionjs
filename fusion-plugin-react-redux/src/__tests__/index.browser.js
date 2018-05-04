@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
@@ -10,6 +12,9 @@ import Enzyme, {mount} from 'enzyme';
 import {connect} from 'react-redux';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
+
+import type {Context} from 'fusion-core';
+
 import GetReduxPlugin from '../browser.js';
 
 Enzyme.configure({adapter: new Adapter()});
@@ -22,7 +27,8 @@ tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux.provides({reducer}).from();
+  const provider = Redux.provides({reducer});
+  const {store} = provider && provider.from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2, 'state receives dispatch');
@@ -53,7 +59,7 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
   reduxState.setAttribute('type', 'application/json');
   reduxState.setAttribute('id', '__REDUX_STATE__');
   reduxState.textContent = JSON.stringify({hello: 'world'});
-  document.body.appendChild(reduxState);
+  document.body && document.body.appendChild(reduxState);
   const reducer = (state, action) => {
     return {
       ...state,
@@ -64,7 +70,7 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
-  document.body.removeChild(reduxState);
+  document.body && document.body.removeChild(reduxState);
   t.end();
 });
 
@@ -77,7 +83,7 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
     hello: 'unused',
     unused: 'not used',
   });
-  document.body.appendChild(reduxState);
+  document.body && document.body.appendChild(reduxState);
   const reducer = (state, action) => {
     return {
       ...state,
@@ -91,7 +97,7 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
-  document.body.removeChild(reduxState);
+  document.body && document.body.removeChild(reduxState);
   t.end();
 });
 
@@ -111,11 +117,17 @@ tape('browser with enhancer', t => {
     return (...args) => {
       t.equal(args[0], reducer);
       const store = createStore(...args);
+      // $FlowFixMe
       t.equal(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
       return store;
     };
   };
-  const {store} = Redux.provides({reducer, enhancer}).from(mockCtx);
+  const {store} = Redux.provides({reducer, enhancer}).from(
+    ((mockCtx: any): Context)
+  );
+  if (!store.ctx) {
+    return;
+  }
   t.equal(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
@@ -201,7 +213,8 @@ tape('browser middleware', async t => {
   const ctx = {element};
   const Plugin = Redux.provides({reducer});
   try {
-    await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
+    await (Redux.middleware &&
+      Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve()));
   } catch (e) {
     t.ifError(e);
   }
