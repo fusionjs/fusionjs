@@ -131,7 +131,7 @@ Provide the UniversalEventsToken when you would like to emit routing events for 
 
 #### Router
 
-Configures a router and acts as a React context provider for routing concerns. You don't need to use a Router component if you use `getRouter`
+Configures a router and acts as a React context provider for routing concerns. The plugin already provides `<Router>` in the middleware for your application.
 
 ```jsx
 import {Router} from 'fusion-plugin-react-router';
@@ -163,10 +163,7 @@ import {Router, Route} from 'fusion-plugin-react-router';
 </Router>
 ```
 
-* `exact: boolean` - Optional. Whether the route matches exact paths only.
-* `component: React.Component` - The component to render if the path matches the current URL.
-* `path: string` - Optional. The route to match. If not defined, and `exact` is not defined, acts as a catch-all route (e.g. for 404s)
-* `children: React.Children` - Optional. Pass-through children. Always render even if the route does not match.
+See the [react-router documentation for `<Route>`](https://reacttraining.com/react-router/web/api/Route)
 
 #### `Link`
 
@@ -180,7 +177,7 @@ import {Router, Link} from 'fusion-plugin-react-router';
 </Router>;
 ```
 
-See the [react-router documentation](https://reacttraining.com/react-router/web/api/Link).
+See the [react-router documentation for `<Link>`](https://reacttraining.com/react-router/web/api/Link).
 
 #### `Switch`
 
@@ -196,7 +193,7 @@ import {Router, Switch} from 'fusion-plugin-react-router';
 
 * `children: React.Children<Route>` - React children must be `Route` components.
 
-See the [react-router documentation](https://reacttraining.com/react-router/web/api/Switch).
+See the [react-router documentation for `<Switch>`](https://reacttraining.com/react-router/web/api/Switch).
 
 #### `Status`
 
@@ -251,7 +248,7 @@ A `<Router>` that uses the HTML5 history API to keep your UI in sync with the UR
 import {BrowserRouter} from 'fusion-plugin-react-router';
 ```
 
-See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md)
+See the [react-router-dom documentation for `<BrowserRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md).
 
 #### `HashRouter`
 
@@ -261,7 +258,7 @@ A `<Router>` that uses `window.location.hash` to keep your UI in sync with the U
 import {HashRouter} from 'fusion-plugin-react-router';
 ```
 
-See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md)
+See the [react-router-dom documentation for `<HashRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md).
 
 #### `MemoryRouter`
 
@@ -271,7 +268,7 @@ A `<Router>` that keeps the history of your "URL" in memory (does not read or wr
 import {MemoryRouter} from 'fusion-plugin-react-router';
 ```
 
-See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/MemoryRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/MemoryRouter.md)
+See the [react-router-dom documentation for `<MemoryRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/MemoryRouter.md).
 
 #### `withRouter`
 
@@ -281,7 +278,7 @@ Exposes `match`, `location` and `history` properties of the React Router history
 import {withRouter} from 'fusion-plugin-react-router';
 ```
 
-See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md)
+See the [react-router documentation for `withRouter()`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md).
 
 #### `matchPath`
 
@@ -291,4 +288,4 @@ Programmatic API to run React Router's route matching algorithm. This is a re-ex
 import {matchPath} from 'fusion-plugin-react-router';
 ```
 
-See [https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md)
+See the [react-router documentation for `matchPath()`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md).
