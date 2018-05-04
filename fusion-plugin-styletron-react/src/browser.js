@@ -31,7 +31,12 @@ const plugin =
           });
         }
         ctx.element = (
-          <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
+          <StyletronProvider
+            value={engine}
+            debugMode={__DEV__ ? 'ssr' : void 0}
+          >
+            {ctx.element}
+          </StyletronProvider>
         );
       }
 
