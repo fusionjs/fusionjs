@@ -17,11 +17,16 @@ import {ApolloProvider} from 'react-apollo';
 import {ProviderPlugin, ProvidedHOC, Provider} from 'fusion-react';
 
 import type {Element} from 'react';
+import type {Context, Token} from 'fusion-core';
 
 import serverRender from './server';
 import clientRender from './client';
 
-export const ApolloClientToken = createToken('ApolloClientToken');
+export type ApolloClient = (Context, *) => *;
+
+export const ApolloClientToken: Token<ApolloClient> = createToken(
+  'ApolloClientToken'
+);
 
 export default class App extends CoreApp {
   constructor(root: Element<*>) {
