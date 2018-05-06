@@ -15,7 +15,7 @@ import App from '../index';
 import hoc from '../hoc';
 import plugin from '../plugin';
 
-tape.only('hoc', async t => {
+tape('hoc', async t => {
   const withTest = hoc.create('test');
   const testProvides = {hello: 'world'};
   let didRender = false;
