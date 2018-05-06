@@ -23,26 +23,26 @@
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.40",
-    "apollo-client": "^2.2.5",
-    "babel-eslint": "8.2.2",
+    "apollo-client": "^2.3.1",
+    "babel-eslint": "8.2.3",
     "create-universal-package": "3.4.1",
-    "eslint": "4.18.1",
-    "eslint-config-fusion": "1.0.0",
+    "eslint": "4.19.1",
+    "eslint-config-fusion": "1.0.1",
     "eslint-plugin-cup": "1.0.0",
-    "eslint-plugin-flowtype": "2.46.1",
-    "eslint-plugin-import": "2.9.0",
+    "eslint-plugin-flowtype": "2.46.3",
+    "eslint-plugin-import": "2.11.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.7.0",
     "flow-bin": "0.71.0",
-    "fusion-core": "1.0.2",
-    "fusion-react-async": "1.0.2",
+    "fusion-core": "1.2.6",
+    "fusion-react-async": "1.2.2",
     "graphql": "^0.13.2",
-    "graphql-tag": "^2.7.3",
-    "prettier": "1.10.2",
-    "react": "16.2.0",
-    "react-apollo": "2.0.4",
-    "react-dom": "16.2.0",
-    "redux": "^3.7.2",
+    "graphql-tag": "^2.9.2",
+    "prettier": "1.12.1",
+    "react": "16.3.2",
+    "react-apollo": "2.1.4",
+    "react-dom": "16.3.2",
+    "redux": "^4.0.0",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
@@ -66,6 +66,6 @@
     "node": ">= 8.9.0"
   },
   "dependencies": {
-    "fusion-react": "^1.0.2"
+    "fusion-react": "^1.0.4"
   }
 }
