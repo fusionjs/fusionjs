@@ -7,10 +7,11 @@
  */
 
 /* eslint-env browser */
-import * as React from 'react';
 import ReactDOM from 'react-dom';
 
-export default (root: React.Element<*>) => {
+import type {Element} from 'react';
+
+export default (root: Element<*>) => {
   const domElement = document.getElementById('root');
 
   if (!domElement) {
