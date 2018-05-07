@@ -18,6 +18,8 @@ import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
 import Plugin from '../plugin';
 import {withRPCRedux, withRPCReactor} from '../hoc';
 
+const initActionPattern = /^@@redux\/INIT.*/;
+
 function setup() {
   const root = document.createElement('div');
   root.id = 'root';
@@ -53,15 +55,17 @@ test('browser plugin integration test withRPCRedux', async t => {
   };
 
   const expectedActions = [
-    {type: '@@redux/INIT'},
-    {type: 'TEST_START', payload: {hello: 'world'}},
-    {type: 'TEST_SUCCESS', payload: {a: 'b'}},
+    {type: initActionPattern},
+    {type: /TEST_START/, payload: {hello: 'world'}},
+    {type: /TEST_SUCCESS/, payload: {a: 'b'}},
   ];
   const store = createStore((state, action) => {
+    const fixture = expectedActions.shift();
+    t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
-      action,
-      expectedActions.shift(),
-      'dispatches expected action'
+      action.payload,
+      fixture.payload,
+      'dispatches expected action payload'
     );
     return action.payload;
   });
@@ -119,18 +123,20 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   };
 
   const expectedActions = [
-    {type: '@@redux/INIT'},
-    {type: 'TEST_START', payload: {hello: 'world'}},
+    {type: initActionPattern},
+    {type: /TEST_START/, payload: {hello: 'world'}},
     {
-      type: 'TEST_FAILURE',
+      type: /TEST_FAILURE/,
       payload: {message: 'message', code: 'code', meta: {hello: 'world'}},
     },
   ];
   const store = createStore((state, action) => {
+    const fixture = expectedActions.shift();
+    t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
-      action,
-      expectedActions.shift(),
-      'dispatches expected action'
+      action.payload,
+      fixture.payload,
+      'dispatches expected action payload'
     );
     return action.payload;
   });
@@ -176,15 +182,17 @@ test('browser mock integration test withRPCRedux', async t => {
     },
   };
   const expectedActions = [
-    {type: '@@redux/INIT'},
-    {type: 'TEST_START', payload: {hello: 'world'}},
-    {type: 'TEST_SUCCESS', payload: {a: 'b'}},
+    {type: initActionPattern},
+    {type: /TEST_START/, payload: {hello: 'world'}},
+    {type: /TEST_SUCCESS/, payload: {a: 'b'}},
   ];
   const store = createStore((state, action) => {
+    const fixture = expectedActions.shift();
+    t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
-      action,
-      expectedActions.shift(),
-      'dispatches expected actions'
+      action.payload,
+      fixture.payload,
+      'dispatches expected action payload'
     );
     return action.payload;
   });
@@ -232,18 +240,20 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     },
   };
   const expectedActions = [
-    {type: '@@redux/INIT'},
-    {type: 'TEST_START', payload: {hello: 'world'}},
+    {type: initActionPattern},
+    {type: /TEST_START/, payload: {hello: 'world'}},
     {
-      type: 'TEST_FAILURE',
+      type: /TEST_FAILURE/,
       payload: {message: 'message', code: 'code', meta: {hello: 'world'}},
     },
   ];
   const store = createStore((state, action) => {
+    const fixture = expectedActions.shift();
+    t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
-      action,
-      expectedActions.shift(),
-      'dispatches expected actions'
+      action.payload,
+      fixture.payload,
+      'dispatches expected action payload'
     );
     return action.payload;
   });
@@ -298,13 +308,12 @@ test('browser plugin integration test withRPCReactor', async t => {
     );
   };
 
-  const expectedActions = [{type: '@@redux/INIT'}];
+  const expectedActions = [{type: initActionPattern}];
   const store = createStore(
     (state, action) => {
-      t.deepLooseEqual(
-        action,
-        expectedActions.shift(),
-        'dispatches expected action'
+      t.ok(
+        expectedActions.shift().type.test(action.type),
+        'dispatches expected action type'
       );
       return action.payload;
     },
@@ -385,13 +394,12 @@ test('browser mock plugin integration test withRPCReactor', async t => {
     },
   };
 
-  const expectedActions = [{type: '@@redux/INIT'}];
+  const expectedActions = [{type: initActionPattern}];
   const store = createStore(
     (state, action) => {
-      t.deepLooseEqual(
-        action,
-        expectedActions.shift(),
-        'dispatches expected action'
+      t.ok(
+        expectedActions.shift().type.test(action.type),
+        'dispatches expected action type'
       );
       return {};
     },
@@ -475,13 +483,12 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
     },
   };
 
-  const expectedActions = [{type: '@@redux/INIT'}];
+  const expectedActions = [{type: initActionPattern}];
   const store = createStore(
     (state, action) => {
-      t.deepLooseEqual(
-        action,
-        expectedActions.shift(),
-        'dispatches expected action'
+      t.ok(
+        expectedActions.shift().type.test(action.type),
+        'dispatches expected action type'
       );
       return {};
     },
@@ -581,13 +588,12 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
     );
   };
 
-  const expectedActions = [{type: '@@redux/INIT'}];
+  const expectedActions = [{type: initActionPattern}];
   const store = createStore(
     (state, action) => {
-      t.deepLooseEqual(
-        action,
-        expectedActions.shift(),
-        'dispatches expected action'
+      t.ok(
+        expectedActions.shift().type.test(action.type),
+        'dispatches expected action type'
       );
       return action.payload;
     },
