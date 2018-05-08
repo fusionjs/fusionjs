@@ -2,27 +2,39 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import {createStore, compose} from 'redux';
 import test from 'tape-cup';
+
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {Context} from 'fusion-core';
+
 import actionEmitterPlugin from '../index.js';
+
+type ExtractReturnType = <V>(() => V) => V;
+type IEmitter = $Call<typeof UniversalEventsToken, ExtractReturnType>;
 
 /* Mocks & Mock Factories */
 const getMockEventEmitterFactory = function() {
   const handlers = {};
-  return {
+  const eventEmitterFactory = {
     from(ctx) {
       return {
         on(type, handler) {
+          // $FlowFixMe
           handlers[type] = handler;
         },
         emit(type, event) {
+          // $FlowFixMe
           handlers[type](event, ctx);
         },
       };
     },
   };
+  return ((eventEmitterFactory: any): IEmitter);
 };
 const sampleReducer = (state = [], action) => {
   switch (action.type) {
@@ -56,11 +68,13 @@ test('Emits actions', t => {
   const mockEventEmitter = getMockEventEmitterFactory();
   const enhancer = actionEmitterPlugin.provides({emitter: mockEventEmitter});
   const mockCtx = {mock: true};
+  const mockCtxTyped = ((mockCtx: any): Context);
   const store = createStore(
     sampleReducer,
     [],
     compose(enhancer, createStore => (...args) => {
       const store = createStore(...args);
+      // $FlowFixMe
       store.ctx = mockCtx;
       return store;
     })
@@ -68,7 +82,7 @@ test('Emits actions', t => {
 
   // Test Emits
   mockEventEmitter
-    .from(mockCtx)
+    .from(mockCtxTyped)
     .on('redux-action-emitter:action', (payload, ctx) => {
       t.equal(
         payload.type,
@@ -76,7 +90,7 @@ test('Emits actions', t => {
         'payload type is SAMPLE_SET, as expected'
       );
       t.equal(payload.value, true, 'payload value is true, as expected');
-      t.equal(ctx, mockCtx, 'ctx was provided');
+      t.equal(ctx, mockCtxTyped, 'ctx was provided');
     });
   store.dispatch({
     type: 'SAMPLE_SET',

@@ -1,10 +1,23 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import test from 'tape-cup';
+import type {StoreCreator, Reducer} from 'redux';
 
 import App, {createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import {EnhancerToken} from 'fusion-plugin-react-redux';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
 import ReduxActionEmitterEnhancer from '../index.js';
+
+type ExtractReturnType = <V>(() => V) => V;
+type IEmitter = $Call<typeof UniversalEventsToken, ExtractReturnType>;
 
 const eventsEmitted = [];
 const mockEmitter = {
@@ -15,9 +28,10 @@ const mockEmitter = {
     return this;
   },
 };
+const mockEmitterTyped = ((mockEmitter: any): IEmitter);
 
 const mockEmitterPlugin = createPlugin({
-  provides: () => mockEmitter,
+  provides: () => mockEmitterTyped,
 });
 
 function createTestFixture() {
@@ -38,12 +52,16 @@ test('plugin - service resolved as expected', t => {
       provides: deps => {
         const {enhancer} = deps;
         t.ok(enhancer);
-        const createStore = () => {
+        const createStore: StoreCreator<*, *, *> = () => {
           return {
             dispatch: () => {},
+            getState: () => {},
+            subscribe: () => () => {},
+            replaceReducer: () => {},
           };
         };
-        const enhanced = enhancer(createStore)({});
+        const mockReducer: Reducer<*, *> = s => s;
+        const enhanced = enhancer(createStore)(mockReducer);
         enhanced.dispatch();
         wasResolved = true;
       },
