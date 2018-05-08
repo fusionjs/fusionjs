@@ -9,15 +9,15 @@
 import type {Reducer, StoreEnhancer, Store} from 'redux';
 
 import {createToken} from 'fusion-core';
-import type {FusionPlugin, Token, Context} from 'fusion-core';
+import type {Token, Context} from 'fusion-core';
 
-import type {ReactReduxDepsType, ReactReduxServiceType} from './types.js';
+import type {ReactReduxServiceType} from './types.js';
 
 type InitialStateType<S, A, D> = (ctx?: Context) => Promise<Store<S, A, D>>;
 
-export const ReduxToken: Token<
-  FusionPlugin<ReactReduxDepsType, ReactReduxServiceType>
-> = createToken('ReduxToken');
+export const ReduxToken: Token<ReactReduxServiceType> = createToken(
+  'ReduxToken'
+);
 export const ReducerToken: Token<Reducer<*, *>> = createToken('ReducerToken');
 export const PreloadedStateToken: Token<Object> = createToken(
   'PreloadedStateToken'

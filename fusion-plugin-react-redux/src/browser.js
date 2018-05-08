@@ -54,7 +54,6 @@ const getPlugin = () => {
               window.__REDUX_DEVTOOLS_EXTENSION__ &&
               // $FlowFixMe
               __REDUX_DEVTOOLS_EXTENSION__();
-
             const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
               Boolean
             );

@@ -970,7 +970,7 @@ assert-plus@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-0.2.0.tgz#d74e1b87e7affc0db8aadb7021f3fe48101ab234"
 
-assert@^1.1.1:
+assert@^1.1.1, assert@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/assert/-/assert-1.4.1.tgz#99912d591836b5a6f5b345c0f07eefc08fc65d91"
   dependencies:
@@ -2601,6 +2601,14 @@ fusion-core@^1.2.6:
     toposort "^1.0.6"
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
+
+fusion-test-utils@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.5.tgz#6ac2d2af57e7201b4c6e3e13ac2524d423e8e4c7"
+  dependencies:
+    assert "^1.4.1"
+    koa "^2.4.1"
+    node-mocks-http "^1.6.6"
 
 fusion-tokens@^1.0.3:
   version "1.0.3"
