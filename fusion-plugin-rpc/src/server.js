@@ -123,13 +123,17 @@ const plugin: RPCPluginType =
                 });
               }
             } catch (e) {
+              const error = Object.getOwnPropertyNames(e).reduce(
+                (obj: any, key) => {
+                  obj[key] = e[key];
+                  return obj;
+                },
+                {}
+              );
+              delete (error: any).stack;
               ctx.body = {
                 status: 'failure',
-                data: {
-                  message: e.message,
-                  code: e.code,
-                  meta: e.meta,
-                },
+                data: error,
               };
               if (scopedEmitter) {
                 scopedEmitter.emit(statKey, {
