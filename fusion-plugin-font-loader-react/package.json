@@ -34,7 +34,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.6.1",
-    "flow-bin": "^0.69.0",
+    "flow-bin": "^0.72.0",
     "fusion-core": "^1.0.0",
     "fusion-test-utils": "^1.0.1",
     "fusion-tokens": "^1.0.1",
