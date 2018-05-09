@@ -96,6 +96,7 @@ test('createRPCHandler failure', t => {
       },
       failure: e => {
         t.deepLooseEqual(e, {
+          originalError: error,
           message: error.message,
           code: undefined,
           meta: undefined,
