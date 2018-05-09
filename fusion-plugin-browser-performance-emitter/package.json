@@ -37,7 +37,7 @@
     "fusion-plugin-universal-events": "^1.0.2",
     "fusion-test-utils": "^1.0.5",
     "fusion-tokens": "^1.0.3",
-    "nyc": "11.7.1",
+    "nyc": "11.7.2",
     "prettier": "1.12.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
