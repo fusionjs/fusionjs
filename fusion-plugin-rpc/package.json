@@ -1,12 +1,10 @@
 {
   "name": "fusion-plugin-rpc",
-  "description": "Fetch data on the server and client with an RPC style interface.",
-  "version": "1.1.0",
+  "description":
+    "Fetch data on the server and client with an RPC style interface.",
+  "version": "1.2.0",
   "repository": "fusionjs/fusion-plugin-rpc",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -57,7 +55,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "build": "cup build",
     "build-tests": "cup build-tests",
-    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-tests && npm run just-test",
     "cover": "npm run build-tests && nyc npm run just-test",
     "transpile": "npm run clean && npm run build",
