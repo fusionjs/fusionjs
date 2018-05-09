@@ -2,11 +2,16 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
+
 import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import type {UniversalLoggerPluginType} from './types.js';
 
 const supportedLevels = [
   'trace',
@@ -29,7 +34,8 @@ function normalizeErrors(value) {
   return value;
 }
 
-export default __BROWSER__ &&
+const plugin =
+  __BROWSER__ &&
   createPlugin({
     deps: {
       emitter: UniversalEventsToken,
@@ -38,6 +44,7 @@ export default __BROWSER__ &&
       class UniversalLogger {
         constructor() {
           supportedLevels.forEach(level => {
+            // $FlowFixMe
             this[level] = (...args) => {
               return this.log(level, ...args);
             };
@@ -50,6 +57,9 @@ export default __BROWSER__ &&
           });
         }
       }
+      // $FlowFixMe
       return new UniversalLogger();
     },
   });
+
+export default ((plugin: any): UniversalLoggerPluginType);

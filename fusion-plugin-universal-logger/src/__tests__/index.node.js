@@ -2,7 +2,11 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
+
+import test from 'tape-cup';
 
 import {getSimulator} from 'fusion-test-utils';
 import App from 'fusion-core';
@@ -10,22 +14,34 @@ import {LoggerToken} from 'fusion-tokens';
 import UniversalEvents, {
   UniversalEventsToken,
 } from 'fusion-plugin-universal-events';
-import test from 'tape-cup';
+
 import plugin from '../server.js';
 import {UniversalLoggerConfigToken} from '../tokens';
+
+type SupportedLevelsType =
+  | 'trace'
+  | 'debug'
+  | 'info'
+  | 'access'
+  | 'warn'
+  | 'error'
+  | 'fatal';
 
 test('Server logger', async t => {
   let called = false;
   class Transport {
+    name: string;
+
     constructor() {
       this.name = 'test-transport';
     }
-    log(level, message) {
+    log(level: SupportedLevelsType, message: string): void {
       t.equals(level, 'info', 'level is ok');
       t.equals(message, 'test', 'message is ok');
       called = true;
     }
   }
+
   const app = new App('element', el => el);
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
@@ -43,10 +59,12 @@ test('Server logger', async t => {
 test('Server logger listening on events', async t => {
   let called = false;
   class Transport {
+    name: string;
+
     constructor() {
       this.name = 'test-transport';
     }
-    log(level, message, meta) {
+    log(level: SupportedLevelsType, message: string, meta: mixed) {
       t.equals(level, 'info', 'level is ok');
       t.equals(message, 'test', 'message is ok');
       t.equals(message, 'test', 'message is ok');
