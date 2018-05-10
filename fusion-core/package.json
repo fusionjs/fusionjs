@@ -54,7 +54,7 @@
     "koa": "^2.4.1",
     "koa-compose": "^4.0.0",
     "node-mocks-http": "^1.6.6",
-    "toposort": "^1.0.6",
+    "toposort": "^2.0.1",
     "ua-parser-js": "^0.7.17",
     "uuid": "^3.2.1"
   },
