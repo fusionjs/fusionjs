@@ -22,7 +22,7 @@
   dependencies:
     "@babel/highlight" "7.0.0-beta.46"
 
-"@babel/core@^7.0.0-beta.38":
+"@babel/core@^7.0.0-beta.46":
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.46.tgz#dbe2189bcdef9a2c84becb1ec624878d31a95689"
   dependencies:
@@ -485,7 +485,7 @@
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
 
-"@babel/plugin-transform-flow-strip-types@^7.0.0-beta.38":
+"@babel/plugin-transform-flow-strip-types@^7.0.0-beta.46":
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.46.tgz#3c26def3c4027d5c0c3f98c3b6f161c715ab7fff"
   dependencies:
@@ -594,7 +594,7 @@
     "@babel/helper-regex" "7.0.0-beta.31"
     regexpu-core "^4.1.3"
 
-"@babel/preset-stage-3@^7.0.0-beta.38":
+"@babel/preset-stage-3@^7.0.0-beta.46":
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/preset-stage-3/-/preset-stage-3-7.0.0-beta.46.tgz#f64cb3950a00021e4ed9d88c190d30c4736c54a9"
   dependencies:
@@ -852,7 +852,7 @@ ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
 
-ansi-styles@^3.1.0, ansi-styles@^3.2.1:
+ansi-styles@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-3.2.1.tgz#41fbb20243e50b12be0f04b8dedbf07520ce841d"
   dependencies:
@@ -896,15 +896,14 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
-args@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/args/-/args-3.0.8.tgz#2f425ab639c69d74ff728f3d7c6e93b97b91af7c"
+args@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/args/-/args-4.0.0.tgz#5ca24cdba43d4b17111c56616f5f2e9d91933954"
   dependencies:
-    camelcase "4.1.0"
-    chalk "2.1.0"
+    camelcase "5.0.0"
+    chalk "2.3.2"
+    leven "2.1.0"
     mri "1.1.0"
-    pkginfo "0.4.1"
-    string-similarity "1.2.0"
 
 arr-diff@^2.0.0:
   version "2.0.0"
@@ -1039,7 +1038,7 @@ babel-messages@^6.23.0:
   dependencies:
     babel-runtime "^6.22.0"
 
-babel-plugin-istanbul@^4.1.5:
+babel-plugin-istanbul@^4.1.6:
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-istanbul/-/babel-plugin-istanbul-4.1.6.tgz#36c59b2192efce81c5b378321b74175add1c9a45"
   dependencies:
@@ -1056,9 +1055,9 @@ babel-plugin-syntax-object-rest-spread@^6.13.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-object-rest-spread/-/babel-plugin-syntax-object-rest-spread-6.13.0.tgz#fd6536f2bce13836ffa3a5458c4903a597bb3bf5"
 
-babel-plugin-transform-cup-globals@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-cup-globals/-/babel-plugin-transform-cup-globals-1.0.0.tgz#4d58c915f13365ff926a4dd9127e5c5d83d6e89e"
+babel-plugin-transform-cup-globals@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-cup-globals/-/babel-plugin-transform-cup-globals-1.0.1.tgz#d4edfd5d629932d0e5467a2b65987baa6da22a9b"
 
 babel-plugin-transform-flow-strip-types@6.22.0:
   version "6.22.0"
@@ -1316,13 +1315,17 @@ callsites@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-0.2.0.tgz#afab96262910a7f33c19a5775825c69f34e350ca"
 
-camelcase@4.1.0, camelcase@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
+camelcase@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.0.0.tgz#03295527d58bd3cd4aa75363f35b2e8d97be2f42"
 
 camelcase@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-1.2.1.tgz#9bb5304d2e0b56698b2c758b08a3eaa9daa58a39"
+
+camelcase@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
 
 caniuse-lite@^1.0.30000792:
   version "1.0.30000830"
@@ -1335,13 +1338,13 @@ center-align@^0.1.1:
     align-text "^0.1.3"
     lazy-cache "^1.0.3"
 
-chalk@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.1.0.tgz#ac5becf14fa21b99c6c92ca7a7d7cfd5b17e743e"
+chalk@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.3.2.tgz#250dc96b07491bfd601e648d66ddf5f60c7a5c65"
   dependencies:
-    ansi-styles "^3.1.0"
+    ansi-styles "^3.2.1"
     escape-string-regexp "^1.0.5"
-    supports-color "^4.0.0"
+    supports-color "^5.3.0"
 
 chalk@^1.1.3:
   version "1.1.3"
@@ -1353,7 +1356,7 @@ chalk@^1.1.3:
     strip-ansi "^3.0.0"
     supports-color "^2.0.0"
 
-chalk@^2.0.0, chalk@^2.1.0, chalk@^2.3.0:
+chalk@^2.0.0, chalk@^2.1.0, chalk@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.1.tgz#18c49ab16a037b6eb0152cc83e3471338215b66e"
   dependencies:
@@ -1605,22 +1608,22 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.1.tgz#3fe13f7688b06ad44380290ce8a4f28fc344f4d4"
+create-universal-package@3.4.4:
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.4.tgz#898dea06e8df9690da6a48c7cbb38272a561cfa3"
   dependencies:
-    "@babel/core" "^7.0.0-beta.38"
-    "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.38"
-    "@babel/preset-stage-3" "^7.0.0-beta.38"
+    "@babel/core" "^7.0.0-beta.46"
+    "@babel/plugin-transform-flow-strip-types" "^7.0.0-beta.46"
+    "@babel/preset-stage-3" "^7.0.0-beta.46"
     "@rtsao/babel-preset-env" "^7.0.0-beta.31"
-    args "^3.0.8"
-    babel-plugin-istanbul "^4.1.5"
-    babel-plugin-transform-cup-globals "^1.0.0"
-    chalk "^2.3.0"
+    args "^4.0.0"
+    babel-plugin-istanbul "^4.1.6"
+    babel-plugin-transform-cup-globals "^1.0.1"
+    chalk "^2.4.1"
     draftlog "^1.0.12"
-    fast-async "^6.3.0"
+    fast-async "^6.3.7"
     import-lazy "^3.1.0"
-    jest-worker "^22.1.0"
+    jest-worker "^22.4.3"
     loader-utils "^1.1.0"
     multi-entry-loader "^1.1.2"
     rimraf "^2.6.2"
@@ -2240,11 +2243,11 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-fast-async@^6.3.0:
-  version "6.3.6"
-  resolved "https://registry.yarnpkg.com/fast-async/-/fast-async-6.3.6.tgz#016f972bd77e3f2951b13a85e75f3cb75c835e72"
+fast-async@^6.3.7:
+  version "6.3.7"
+  resolved "https://registry.yarnpkg.com/fast-async/-/fast-async-6.3.7.tgz#b4a406f2c59890b8b1b4c8468a36bd7f1a57e47f"
   dependencies:
-    nodent-compiler "^3.2.2"
+    nodent-compiler "^3.2.4"
     nodent-runtime ">=3.2.1"
 
 fast-deep-equal@^1.0.0:
@@ -3095,7 +3098,7 @@ jest-docblock@^21.0.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
 
-jest-worker@^22.1.0:
+jest-worker@^22.4.3:
   version "22.4.3"
   resolved "https://registry.yarnpkg.com/jest-worker/-/jest-worker-22.4.3.tgz#5c421417cba1c0abf64bf56bd5fb7968d79dd40b"
   dependencies:
@@ -3243,6 +3246,10 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+leven@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/leven/-/leven-2.1.0.tgz#c2e7a9f772094dee9d34202ae8acce4687875580"
+
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/levn/-/levn-0.3.0.tgz#3b09924edf9f083c0490fdd4c0bc4421e04764ee"
@@ -3294,7 +3301,7 @@ locate-path@^2.0.0:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
 
-lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
+lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -3651,22 +3658,22 @@ node-pre-gyp@^0.9.0:
     semver "^5.3.0"
     tar "^4"
 
-nodent-compiler@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.2.2.tgz#515df515e5cb6970b37757b64093829d6af0f39a"
+nodent-compiler@^3.2.4:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/nodent-compiler/-/nodent-compiler-3.2.6.tgz#ce53314bce7b18f136601068886b0379b8d372a8"
   dependencies:
     acorn ">=2.5.2"
     acorn-es7-plugin "^1.1.7"
-    nodent-transform "^3.2.2"
+    nodent-transform "^3.2.6"
     source-map "^0.5.7"
 
 nodent-runtime@>=3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/nodent-runtime/-/nodent-runtime-3.2.1.tgz#9e2755d85e39f764288f0d4752ebcfe3e541e00e"
 
-nodent-transform@^3.2.2:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/nodent-transform/-/nodent-transform-3.2.3.tgz#094a0a6403688d5b2f8b5f1caf7dae26fe8565d8"
+nodent-transform@^3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/nodent-transform/-/nodent-transform-3.2.6.tgz#b782edc0e2aafa6d29df0333b36cd00af757c36d"
 
 nopt@^4.0.1:
   version "4.0.1"
@@ -3996,10 +4003,6 @@ pkg-dir@^1.0.0:
   resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-1.0.0.tgz#7a4b508a8d5bb2d629d447056ff4e9c9314cf3d4"
   dependencies:
     find-up "^1.0.0"
-
-pkginfo@0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/pkginfo/-/pkginfo-0.4.1.tgz#b5418ef0439de5425fc4995042dced14fb2a84ff"
 
 pluralize@^7.0.0:
   version "7.0.0"
@@ -4615,12 +4618,6 @@ stream-http@^2.7.2:
     to-arraybuffer "^1.0.0"
     xtend "^4.0.0"
 
-string-similarity@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/string-similarity/-/string-similarity-1.2.0.tgz#d75153cb383846318b7a39a8d9292bb4db4e9c30"
-  dependencies:
-    lodash "^4.13.1"
-
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-1.0.2.tgz#118bdf5b8cdc51a2a7e70d211e07e2b0b9b107d3"
@@ -4690,7 +4687,7 @@ supports-color@^3.1.2:
   dependencies:
     has-flag "^1.0.0"
 
-supports-color@^4.0.0, supports-color@^4.2.1:
+supports-color@^4.2.1:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.5.0.tgz#be7a0de484dec5c5cddf8b3d59125044912f635b"
   dependencies:
