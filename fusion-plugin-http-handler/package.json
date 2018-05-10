@@ -20,7 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "babel-eslint": "8.2.2",
+    "babel-eslint": "8.2.3",
     "create-universal-package": "3.4.4",
     "eslint": "4.18.0",
     "eslint-config-fusion": "^1.0.0",
