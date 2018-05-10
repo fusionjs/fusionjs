@@ -2,30 +2,36 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
-// @flow
 /* eslint-env browser */
-import {createPlugin} from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
-import {FetchToken} from 'fusion-tokens';
 
-// TODO(#54) Web Platform | 2018-01-19 - Import Flow declaration for 'fetch' from libdef
-type Fetch = (
-  input: string | Request,
-  init?: RequestOptions
-) => Promise<Response>;
+import {createPlugin} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
+import type {Fetch} from 'fusion-tokens';
+
+import type {RPCPluginType} from './types.js';
 
 class RPC {
-  fetch: *;
+  ctx: ?*;
+  emitter: ?*;
+  handlers: ?*;
+  fetch: ?Fetch;
 
   constructor(fetch: Fetch) {
     this.fetch = fetch;
   }
 
   request(rpcId: string, args: *): Promise<*> {
+    if (!this.fetch) {
+      throw new Error('fusion-plugin-rpc requires `fetch`');
+    }
+    const fetch = this.fetch;
+
     // TODO(#3) handle args instanceof FormData
-    return this.fetch(`/api/${rpcId}`, {
+    return fetch(`/api/${rpcId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,20 +50,15 @@ class RPC {
   }
 }
 
-type RPCServiceFactory = {from: () => RPC};
-type RPCPluginType = FusionPlugin<*, RPCServiceFactory>;
-const plugin: RPCPluginType =
-  // $FlowFixMe
-  __BROWSER__ &&
-  createPlugin({
-    deps: {
-      fetch: FetchToken,
-    },
-    provides: deps => {
-      const {fetch = window.fetch} = deps;
+const plugin: RPCPluginType = createPlugin({
+  deps: {
+    fetch: FetchToken,
+  },
+  provides: deps => {
+    const {fetch = window.fetch} = deps;
 
-      return {from: () => new RPC(fetch)};
-    },
-  });
+    return {from: () => new RPC(fetch)};
+  },
+});
 
-export default plugin;
+export default ((__BROWSER__ && plugin: any): RPCPluginType);

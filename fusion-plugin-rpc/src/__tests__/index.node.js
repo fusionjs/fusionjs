@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import test from 'tape-cup';
@@ -9,18 +11,24 @@ import MockEmitter from 'events';
 import MockReq from 'mock-req';
 
 import App, {createPlugin, createToken} from 'fusion-core';
+import type {Context, Token} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../server';
+import type {IEmitter, RPCServiceType} from '../types.js';
+import MockRPCPlugin from '../mock.js';
 
-const MockPluginToken = createToken('test-plugin-token');
+const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
+
+const mockService: RPCServiceType = MockRPCPlugin.provides({});
 
 function createTestFixture() {
   const mockHandlers = {};
-  const mockEmitter = new MockEmitter();
+  const mockEmitter: IEmitter = (new MockEmitter(): any);
+  // $FlowFixMe
   mockEmitter.from = () => mockEmitter;
   const mockEmitterPlugin = createPlugin({
     provides: () => mockEmitter,
@@ -75,6 +83,7 @@ test('service - requires ctx', t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: ({rpcFactory}) => {
+        // $FlowFixMe
         t.throws(() => rpcFactory());
         wasResolved = true;
       },
@@ -86,10 +95,10 @@ test('service - requires ctx', t => {
 });
 
 test('service - request api', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
-  };
+  }: any);
   const mockHandlers = {
     test(args, ctx) {
       t.equal(args, 'test-args');
@@ -127,10 +136,10 @@ test('service - request api', async t => {
 });
 
 test('service - request api with failing request', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
-  };
+  }: any);
   const e = new Error('fail');
   const mockHandlers = {
     test() {
@@ -169,10 +178,10 @@ test('service - request api with failing request', async t => {
 });
 
 test('service - request api with invalid endpoint', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
-  };
+  }: any);
   const mockHandlers = {};
   const mockEmitter = {
     emit(type, payload) {
@@ -208,23 +217,26 @@ test('FusionJS - middleware resolves', async t => {
   const app = createTestFixture();
 
   let wasResolved = false;
-  getSimulator(
-    app,
-    createPlugin({
-      deps: {rpcFactory: MockPluginToken},
-      middleware: ({rpcFactory}) => {
-        t.ok(rpcFactory);
-        wasResolved = true;
-      },
-    })
-  );
+
+  const testPlugin = createPlugin({
+    deps: {rpcFactory: MockPluginToken},
+    middleware: ({rpcFactory}) => {
+      t.ok(rpcFactory);
+      wasResolved = true;
+
+      return async () => {};
+    },
+  });
+  app.register(testPlugin);
+
+  getSimulator(app);
   t.true(wasResolved, 'middleware was resolved');
 
   t.end();
 });
 
 test('middleware - invalid endpoint', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     prefix: '',
     path: '/api/valueOf',
@@ -234,7 +246,7 @@ test('middleware - invalid endpoint', async t => {
       body: {},
     },
     memoized: new Map(),
-  };
+  }: any);
   const mockHandlers = {
     something: () => {},
     other: () => {},
@@ -255,14 +267,28 @@ test('middleware - invalid endpoint', async t => {
     },
   };
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
     await middleware(mockCtx, () => Promise.resolve());
+    // $FlowFixMe
     t.equal(mockCtx.body.data.message, 'Missing RPC handler for valueOf');
+    // $FlowFixMe
     t.equal(mockCtx.body.data.code, 'ERR_MISSING_HANDLER');
+    // $FlowFixMe
     t.equal(mockCtx.body.status, 'failure');
     t.equal(mockCtx.status, 404);
   } catch (e) {
@@ -272,7 +298,7 @@ test('middleware - invalid endpoint', async t => {
 });
 
 test('middleware - valid endpoint', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     prefix: '',
     path: '/api/test',
@@ -281,7 +307,7 @@ test('middleware - valid endpoint', async t => {
     request: {
       body: 'test-args',
     },
-  };
+  }: any);
   let executedHandler = false;
   const mockHandlers = {
     test(args, ctx) {
@@ -304,17 +330,30 @@ test('middleware - valid endpoint', async t => {
     },
   };
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
-    await middleware(mockCtx, () => {
+    await middleware(mockCtx, async () => {
       t.equal(executedHandler, false, 'awaits next');
       Promise.resolve();
     });
     t.equal(executedHandler, true);
+    // $FlowFixMe
     t.equal(mockCtx.body.data, 1);
+    // $FlowFixMe
     t.equal(mockCtx.body.status, 'success');
   } catch (e) {
     t.fail(e);
@@ -323,7 +362,7 @@ test('middleware - valid endpoint', async t => {
 });
 
 test('middleware - valid endpoint with route prefix', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     prefix: '/lol',
     path: '/api/test',
@@ -332,7 +371,7 @@ test('middleware - valid endpoint with route prefix', async t => {
     request: {
       body: 'test-args',
     },
-  };
+  }: any);
   const mockHandlers = {
     test(args, ctx) {
       t.equal(args, 'test-args');
@@ -353,13 +392,26 @@ test('middleware - valid endpoint with route prefix', async t => {
     },
   };
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
     await middleware(mockCtx, () => Promise.resolve());
+    // $FlowFixMe
     t.equal(mockCtx.body.data, 1);
+    // $FlowFixMe
     t.equal(mockCtx.body.status, 'success');
   } catch (e) {
     t.fail(e);
@@ -368,7 +420,7 @@ test('middleware - valid endpoint with route prefix', async t => {
 });
 
 test('middleware - valid endpoint failure', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     headers: {},
     prefix: '',
     path: '/api/test',
@@ -378,9 +430,11 @@ test('middleware - valid endpoint failure', async t => {
       body: 'test-args',
     },
     memoized: new Map(),
-  };
+  }: any);
   const e = new Error('Test Failure');
+  // $FlowFixMe
   e.code = 'ERR_CODE_TEST';
+  // $FlowFixMe
   e.meta = {hello: 'world'};
   const mockHandlers = {
     test() {
@@ -401,17 +455,34 @@ test('middleware - valid endpoint failure', async t => {
     },
   };
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
     await middleware(mockCtx, () => Promise.resolve());
+    // $FlowFixMe
     t.equal(mockCtx.body.data.message, e.message);
+    // $FlowFixMe
     t.equal(mockCtx.body.data.code, e.code);
+    // $FlowFixMe
     t.equal(mockCtx.body.data.meta, e.meta);
+    // $FlowFixMe
     t.equal(mockCtx.body.status, 'failure');
+    // $FlowFixMe
     t.equal(Object.keys(mockCtx.body).length, 2);
+    // $FlowFixMe
     t.equal(Object.keys(mockCtx.body.data).length, 3);
   } catch (e) {
     t.fail(e);
@@ -422,12 +493,13 @@ test('middleware - valid endpoint failure', async t => {
 test('throws when not passed ctx', async t => {
   const app = createTestFixture();
 
-  t.pass(1);
+  t.plan(1);
   getSimulator(
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      middleware: ({rpcFactory}) => () => {
+      middleware: ({rpcFactory}) => async () => {
+        // $FlowFixMe
         t.throws(() => rpcFactory.from(), 'missing context throws error');
         t.end();
       },
@@ -436,7 +508,7 @@ test('throws when not passed ctx', async t => {
 });
 
 test('middleware - bodyparser options with very small jsonLimit', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
     prefix: '/lol',
@@ -445,7 +517,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
     request: {
       is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
     },
-  };
+  }: any);
 
   const mockHandlers = {
     test(args, ctx) {
@@ -468,11 +540,22 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
   };
   const mockBodyParserOptions = {jsonLimit: '1b'};
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-    bodyParserOptions: mockBodyParserOptions,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+        bodyParserOptions: mockBodyParserOptions,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
     await middleware(mockCtx, () => Promise.resolve());
   } catch (e) {
@@ -482,7 +565,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
 });
 
 test('middleware - bodyparser options with default jsonLimit', async t => {
-  const mockCtx = {
+  const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
     prefix: '/lol',
@@ -491,7 +574,7 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
     request: {
       is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
     },
-  };
+  }: any);
 
   const mockHandlers = {
     test(args, ctx) {
@@ -513,10 +596,21 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
     },
   };
 
-  const middleware = RPCPlugin.middleware({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
   try {
     await middleware(mockCtx, () => Promise.resolve());
   } catch (e) {
