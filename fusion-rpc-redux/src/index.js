@@ -7,15 +7,20 @@
  */
 
 import {createReactor} from 'redux-reactors';
+import type {Reactor} from 'redux-reactors';
+import type {Reducer, Store} from 'redux';
 
-function camelUpper(key) {
+function camelUpper(key: string): string {
   return key.replace(/([A-Z])/g, '_$1').toUpperCase();
 }
 
-const noopReducer = state => state;
-const types = ['start', 'success', 'failure'];
+const noopReducer: Reducer<*, *> = state => state;
 
-function createActionNames(rpcId) {
+type ActionNamesType = {failure: string, start: string, success: string};
+type ActionTypesType = $Keys<ActionNamesType>;
+const types: Array<ActionTypesType> = ['start', 'success', 'failure'];
+
+function createActionNames(rpcId: string): ActionNamesType {
   const rpcActionName = camelUpper(rpcId);
   return types.reduce((names, type) => {
     names[type] = `${rpcActionName}_${type.toUpperCase()}`;
@@ -23,7 +28,15 @@ function createActionNames(rpcId) {
   }, {});
 }
 
-export function createRPCActions(rpcId: string) {
+type Action<TType, TPayload> =
+  | {
+      type: TType,
+      payload: TPayload,
+    }
+  | TType;
+type ConvertToAction = <T>(T) => (payload: any) => Action<T, *>;
+type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
+export function createRPCActions(rpcId: string): RPCActionsType {
   const actionNames = createActionNames(rpcId);
   return types.reduce((obj, type) => {
     obj[type] = (payload: any) => {
@@ -33,7 +46,12 @@ export function createRPCActions(rpcId: string) {
   }, {});
 }
 
-function getNormalizedReducers(reducers) {
+type RPCReducersType = {
+  start?: Reducer<*, *>,
+  success?: Reducer<*, *>,
+  failure?: Reducer<*, *>,
+};
+function getNormalizedReducers(reducers: RPCReducersType): RPCReducersType {
   return types.reduce((obj, type) => {
     obj[type] = reducers[type] || noopReducer;
     return obj;
@@ -42,36 +60,49 @@ function getNormalizedReducers(reducers) {
 
 export function createRPCReducer(
   rpcId: string,
-  reducers: any,
+  reducers: RPCReducersType,
   startValue: any = {}
-) {
+): Reducer<*, *> {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
 
   return function rpcReducer(state: * = startValue, action: any) {
     if (actionNames.start === action.type) {
-      return reducers.start(state, action);
+      return reducers.start && reducers.start(state, action);
     }
     if (actionNames.success === action.type) {
-      return reducers.success(state, action);
+      return reducers.success && reducers.success(state, action);
     }
     if (actionNames.failure === action.type) {
-      return reducers.failure(state, action);
+      return reducers.failure && reducers.failure(state, action);
     }
     return state;
   };
 }
 
-export function createRPCReactors(rpcId: string, reducers: any) {
+type RPCReactorsType = {
+  start?: Reactor<*, *>,
+  success?: Reactor<*, *>,
+  failure?: Reactor<*, *>,
+};
+export function createRPCReactors(
+  rpcId: string,
+  reducers: RPCReducersType
+): RPCReactorsType {
   const actionNames = createActionNames(rpcId);
   reducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
+    if (!reducers[type]) {
+      throw new Error(`Missing reducer for type ${type}`);
+    }
     obj[type] = createReactor(actionNames[type], reducers[type]);
     return obj;
   }, {});
   return reactors;
 }
 
+// TODO 2018-05-10 - Improve type definition for RPCHandlerType
+type RPCHandlerType = (args: any) => any;
 export function createRPCHandler({
   actions,
   store,
@@ -79,7 +110,14 @@ export function createRPCHandler({
   rpcId,
   mapStateToParams,
   transformParams,
-}: any) {
+}: {
+  actions?: RPCActionsType,
+  store: Store<*, *, *>,
+  rpc: any,
+  rpcId: string,
+  mapStateToParams?: any,
+  transformParams?: any,
+}): RPCHandlerType {
   if (!actions) {
     actions = createRPCActions(rpcId);
   }
@@ -90,11 +128,11 @@ export function createRPCHandler({
     if (transformParams) {
       args = transformParams(args);
     }
-    store.dispatch(actions.start(args));
+    store.dispatch(actions && actions.start(args));
     return rpc
       .request(rpcId, args)
       .then(result => {
-        store.dispatch(actions.success(result));
+        store.dispatch(actions && actions.success(result));
         return result;
       })
       .catch(e => {
@@ -103,7 +141,7 @@ export function createRPCHandler({
           return obj;
         }, {});
         delete error.stack;
-        store.dispatch(actions.failure(error));
+        store.dispatch(actions && actions.failure(error));
         return e;
       });
   };

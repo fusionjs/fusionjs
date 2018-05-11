@@ -3,7 +3,6 @@
 <PROJECT_ROOT>/dist/.*
 
 [include]
-./src/
 
 [libs]
 ./node_modules/fusion-core/flow-typed

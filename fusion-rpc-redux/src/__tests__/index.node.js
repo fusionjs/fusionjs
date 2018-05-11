@@ -48,6 +48,7 @@ test('createRPCHandler success', t => {
       },
       failure: () => {
         t.fail('should not call failure');
+        return 'failure';
       },
     },
     store: {
@@ -57,6 +58,8 @@ test('createRPCHandler success', t => {
       getState: () => {
         return 'test-state';
       },
+      subscribe: () => () => {},
+      replaceReducer: () => {},
     },
     rpc: {
       request: rpcId => {
@@ -93,6 +96,7 @@ test('createRPCHandler failure', t => {
       },
       success: () => {
         t.fail('should not call success');
+        return 'success';
       },
       failure: e => {
         t.equals(e.message, error.message);
@@ -106,6 +110,8 @@ test('createRPCHandler failure', t => {
       getState: () => {
         return 'test-state';
       },
+      subscribe: () => () => {},
+      replaceReducer: () => {},
     },
     rpc: {
       request: rpcId => {
@@ -136,8 +142,14 @@ test('createRPCHandler optional parameters', t => {
   const handler = createRPCHandler({
     store: {
       dispatch: action => {
-        t.equal(action.type, expectedActions.shift());
+        t.equal(
+          typeof action === 'object' && action.type,
+          expectedActions.shift()
+        );
       },
+      getState: () => {},
+      subscribe: () => () => {},
+      replaceReducer: () => {},
     },
     rpc: {
       request: rpcId => {
@@ -164,6 +176,11 @@ test('createRPCReactors', t => {
   t.equal(typeof reactors.start, 'function', 'exposes a start function');
   t.equal(typeof reactors.success, 'function', 'exposes a success function');
   t.equal(typeof reactors.failure, 'function', 'exposes a failure function');
+  if (!reactors.start) {
+    t.fail();
+    t.end();
+    return;
+  }
   const {type, payload} = reactors.start('test-payload');
   t.equal(type, 'GET_COUNT_START');
   t.equal(payload, 'test-payload');
@@ -175,6 +192,11 @@ test('createRPCReactors optional reducers', t => {
   t.equal(typeof reactors.start, 'function', 'exposes a start function');
   t.equal(typeof reactors.success, 'function', 'exposes a success function');
   t.equal(typeof reactors.failure, 'function', 'exposes a failure function');
+  if (!reactors.start) {
+    t.fail();
+    t.end();
+    return;
+  }
   const {type, payload} = reactors.start('test-payload');
   t.equal(type, 'GET_COUNT_START');
   t.equal(payload, 'test-payload');
@@ -195,18 +217,21 @@ test('createRPCReducer', t => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_START');
       t.equal(action.payload, 'test-action');
+      // $FlowFixMe
       return 'test-start';
     },
     success: (state, action) => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_SUCCESS');
       t.equal(action.payload, 'test-action');
+      // $FlowFixMe
       return 'test-success';
     },
     failure: (state, action) => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_FAILURE');
       t.equal(action.payload, 'test-action');
+      // $FlowFixMe
       return 'test-failure';
     },
   });
