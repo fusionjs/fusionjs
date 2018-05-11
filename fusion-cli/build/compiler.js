@@ -190,7 +190,9 @@ function getConfig({target, env, dir, watch, cover}) {
       chunkFilename:
         env === 'production' && target === 'web'
           ? '[id]-[chunkhash].js'
-          : evergreen ? 'evergreen-[id].js' : '[id].js',
+          : evergreen
+            ? 'evergreen-[id].js'
+            : '[id].js',
       // We will set __webpack_public_path__ at runtime, so this should be set to undefined
       publicPath: void 0,
       // TODO(#7): Do we really need this? See lite config
