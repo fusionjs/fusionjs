@@ -37,7 +37,7 @@
     "flow-bin": "0.72.0",
     "fusion-core": "^1.1.0",
     "fusion-tokens": "^1.0.2",
-    "node-fetch": "2.0.0",
+    "node-fetch": "2.1.2",
     "nyc": "11.4.1",
     "prettier": "1.11.1",
     "tape-cup": "4.7.1",
