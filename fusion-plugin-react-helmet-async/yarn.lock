@@ -2934,7 +2934,7 @@ interpret@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
 
-invariant@^2.2.0, invariant@^2.2.2:
+invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   dependencies:
@@ -4213,7 +4213,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.8, prop-types@^15.6.0:
+prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -4305,13 +4305,13 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react-helmet-async@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/react-helmet-async/-/react-helmet-async-0.0.5.tgz#c751aa6caba95b60d31eff9ff1283cb6fa284dba"
+react-helmet-async@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-helmet-async/-/react-helmet-async-0.1.0.tgz#d5fa350b74cf8b690c401dfe74d55ffd9fdd9119"
   dependencies:
     deep-equal "^1.0.1"
-    invariant "^2.2.2"
-    prop-types "^15.6.0"
+    invariant "^2.2.4"
+    prop-types "^15.6.1"
     shallowequal "^1.0.2"
 
 react@^16.2.0:
