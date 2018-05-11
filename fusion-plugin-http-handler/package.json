@@ -25,7 +25,7 @@
     "eslint": "4.19.1",
     "eslint-config-fusion": "^1.0.0",
     "eslint-config-uber-universal-stage-3": "1.0.0-rc.7",
-    "eslint-plugin-cup": "1.0.0",
+    "eslint-plugin-cup": "1.0.2",
     "eslint-plugin-flowtype": "2.44.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "2.6.0",
