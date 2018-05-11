@@ -9,7 +9,9 @@ import PropTypes from 'prop-types';
 
 export class Status extends React.Component {
   componentWillMount() {
-    const {router: {staticContext}} = this.context;
+    const {
+      router: {staticContext},
+    } = this.context;
     if (staticContext && staticContext.setCode) {
       staticContext.setCode(parseInt(this.props.code, 10));
     }
