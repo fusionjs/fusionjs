@@ -101,7 +101,7 @@ export function createRPCReactors(
   return reactors;
 }
 
-// TODO 2018-05-10 - Improve type definition for RPCHandlerType
+// FYI 2018-05-10 - Improve type definition for RPCHandlerType
 type RPCHandlerType = (args: any) => any;
 export function createRPCHandler({
   actions,
