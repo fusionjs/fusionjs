@@ -2,17 +2,23 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 
 import {createPlugin, createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-export const ErrorHandlingEmitterToken = createToken(
+import type {ErrorHandlerPluginType} from './types.js';
+
+export const ErrorHandlingEmitterToken: Token<any> = createToken(
   'ErrorHandlingEmitterToken'
 );
 
-export default __BROWSER__ &&
+const plugin =
+  __BROWSER__ &&
   createPlugin({
     deps: {emit: ErrorHandlingEmitterToken.optional},
     provides: ({emit}) => {
@@ -56,3 +62,5 @@ export default __BROWSER__ &&
       });
     },
   });
+
+export default ((plugin: any): ErrorHandlerPluginType);

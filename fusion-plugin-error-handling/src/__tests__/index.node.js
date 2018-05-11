@@ -2,13 +2,18 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
-import App, {consumeSanitizedHTML} from 'fusion-core';
+
 import test from 'tape-cup';
-import {getSimulator} from 'fusion-test-utils';
 import {fork} from 'child_process';
+
+import App, {consumeSanitizedHTML} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+
 import ErrorHandling, {ErrorHandlerToken} from '../server';
 
 test('request errors', async t => {
@@ -72,8 +77,7 @@ test('adds script', async t => {
   app.register(ErrorHandling);
   app.register(ErrorHandlerToken, () => {});
 
-  const ctx = await getSimulator(app).render('/');
-
+  const ctx = await await getSimulator(app).render('/');
   t.ok(
     consumeSanitizedHTML(ctx.template.head[0]).match(/<script/),
     'adds script to head'
@@ -83,6 +87,7 @@ test('adds script', async t => {
 });
 
 test('Uncaught exceptions', async t => {
+  // $FlowFixMe
   const forked = fork('./fixtures/uncaught-exception.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', data => {
@@ -97,6 +102,7 @@ test('Uncaught exceptions', async t => {
 });
 
 test('Unhandled rejections', async t => {
+  // $FlowFixMe
   const forked = fork('./fixtures/unhandled-rejection.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', data => {

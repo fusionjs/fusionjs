@@ -2,14 +2,18 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
 
-import App from 'fusion-core';
 import test from 'tape-cup';
+
+import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
-import ErrorHandling, {ErrorHandlingEmitterToken} from '../client';
+
+import ErrorHandlingPlugin, {ErrorHandlingEmitterToken} from '../client';
 
 test('Get exception stack frames', t => {
   t.plan(4);
@@ -35,7 +39,7 @@ test('Get exception stack frames', t => {
 
   window.__foo__ = Foo;
 
-  app.register(ErrorHandling);
+  app.register(ErrorHandlingPlugin);
   app.register(ErrorHandlingEmitterToken, mockEmit);
 
   getSimulator(app);

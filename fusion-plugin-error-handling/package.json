@@ -1,11 +1,13 @@
 {
   "name": "fusion-plugin-error-handling",
-  "description":
-    "Collects browser errors and server request errors, and emits them through an EventEmitter",
+  "description": "Collects browser errors and server request errors, and emits them through an EventEmitter",
   "version": "1.0.3",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-error-handling",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -23,22 +25,22 @@
     "koa-bodyparser": "4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.3",
+    "babel-eslint": "^8.2.3",
     "babel-plugin-transform-flow-strip-types": "6.22.0",
-    "create-universal-package": "3.4.4",
+    "create-universal-package": "^3.4.4",
     "eslint": "4.19.1",
-    "eslint-config-fusion": "^1.0.0",
-    "eslint-plugin-cup": "1.0.2",
-    "eslint-plugin-flowtype": "2.46.3",
-    "eslint-plugin-import": "^2.9.0",
+    "eslint-config-fusion": "^1.0.1",
+    "eslint-plugin-cup": "^1.0.2",
+    "eslint-plugin-flowtype": "^2.46.3",
+    "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.7.0",
-    "flow-bin": "0.72.0",
-    "fusion-core": "^1.2.0",
-    "fusion-test-utils": "^1.0.1",
-    "fusion-tokens": "^1.0.2",
-    "nyc": "11.7.3",
-    "prettier": "1.12.1",
+    "flow-bin": "^0.72.0",
+    "fusion-core": "^1.2.6",
+    "fusion-test-utils": "^1.0.5",
+    "fusion-tokens": "^1.0.3",
+    "nyc": "^11.7.3",
+    "prettier": "^1.12.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
@@ -51,8 +53,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && npm run transpile && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=text --reporter=html npm run just-test",
     "test": "npm run build-test && npm run just-test",

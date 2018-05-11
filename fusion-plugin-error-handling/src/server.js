@@ -2,13 +2,23 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
-import {createPlugin, html, createToken} from 'fusion-core';
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
+
+import {createPlugin, createToken, html} from 'fusion-core';
+import type {Token} from 'fusion-core';
+
+import type {ErrorHandlerPluginType, ErrorHandlerType} from './types.js';
+
+export const ErrorHandlerToken: Token<ErrorHandlerType> = createToken(
+  'ErrorHandlerToken'
+);
 
 const captureTypes = {
   browser: 'browser',
@@ -16,9 +26,8 @@ const captureTypes = {
   server: 'server',
 };
 
-export const ErrorHandlerToken = createToken('ErrorHandlerToken');
-
-export default __NODE__ &&
+const plugin =
+  __NODE__ &&
   createPlugin({
     deps: {onError: ErrorHandlerToken},
     provides({onError}) {
@@ -61,6 +70,7 @@ onerror = function(m,s,l,c,e) {
           ctx.template.head.unshift(script);
         } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
+          // $FlowFixMe
           await onError(ctx.request.body, captureTypes.browser);
           ctx.body = {ok: 1};
         }
@@ -75,3 +85,5 @@ onerror = function(m,s,l,c,e) {
       return middleware;
     },
   });
+
+export default ((plugin: any): ErrorHandlerPluginType);
