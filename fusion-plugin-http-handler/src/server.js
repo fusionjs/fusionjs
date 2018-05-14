@@ -29,13 +29,12 @@ const plugin =
             oldEnd(data, encoding, cb);
             return next().then(resolve);
           };
-          ctx.res.fusionRender = () => {
+          handler(ctx.req, ctx.res, () => {
             ctx.res.end = oldEnd;
             return next()
               .then(resolve)
               .catch(reject);
-          };
-          handler(ctx.req, ctx.res);
+          });
         });
       };
     },

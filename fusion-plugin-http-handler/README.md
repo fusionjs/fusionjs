@@ -33,10 +33,6 @@ if (__NODE__) {
   expressApp.get('/test', (req, res) => {
     res.end('OK');
   });
-  expressApp.all('/*', (req, res) => {
-    // continue the fusion middleware lifecycle
-    res.fusionRender();
-  });
 }
 
 export default function main() {
@@ -47,5 +43,4 @@ export default function main() {
   }
   return app;
 }
-
 ```

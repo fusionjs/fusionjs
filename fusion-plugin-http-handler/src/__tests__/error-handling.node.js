@@ -32,9 +32,9 @@ test('error after await next in middleware before http handler', async t => {
   let hitExpressMiddleware = false;
   let hitFallthrough = false;
   const expressApp = express();
-  expressApp.use((req, res) => {
+  expressApp.use((req, res, next) => {
     hitExpressMiddleware = true;
-    res.fusionRender();
+    return next();
   });
 
   app.register(HttpHandlerToken, expressApp);
@@ -70,9 +70,9 @@ test('error before await next in middleware after http handler', async t => {
   let hitExpressMiddleware = false;
   let hitFallthrough = false;
   const expressApp = express();
-  expressApp.use((req, res) => {
+  expressApp.use((req, res, next) => {
     hitExpressMiddleware = true;
-    res.fusionRender();
+    return next();
   });
 
   app.register(HttpHandlerToken, expressApp);

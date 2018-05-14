@@ -30,9 +30,6 @@ test('http handler with express', async t => {
     res.status(200);
     res.end('OK');
   });
-  expressApp.get('/fallthrough', (req, res) => {
-    res.fusionRender();
-  });
 
   app.register(HttpHandlerToken, expressApp);
 
