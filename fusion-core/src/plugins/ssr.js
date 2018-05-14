@@ -75,6 +75,7 @@ export default function createSSRPlugin({element, ssrDecider}) {
       '<!doctype html>',
       `<html${safeAttrs}>`,
       `<head>`,
+      `<meta charset="utf-8" />`,
       `<title>${safeTitle}</title>`,
       `${bundleSplittingBootstrap}${safeHead}`,
       `</head>`,
