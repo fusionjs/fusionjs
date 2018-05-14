@@ -22,8 +22,8 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "^1.1.0",
-    "fusion-rpc-redux": "^1.0.2"
+    "fusion-plugin-rpc": "^1.2.1",
+    "fusion-rpc-redux": "^1.1.2"
   },
   "peerDependencies": {
     "fusion-core": "^1.2.6",
@@ -35,14 +35,14 @@
   "devDependencies": {
     "babel-eslint": "^8.2.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "create-universal-package": "^3.4.1",
+    "create-universal-package": "^3.4.4",
     "eslint": "^4.19.1",
     "eslint-config-fusion": "^1.0.1",
-    "eslint-plugin-cup": "^1.0.0",
+    "eslint-plugin-cup": "^1.0.2",
     "eslint-plugin-flowtype": "^2.46.3",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-react": "^7.8.2",
     "flow-bin": "^0.72.0",
     "fusion-core": "^1.2.6",
     "fusion-plugin-universal-events": "^1.0.3",
@@ -50,7 +50,7 @@
     "fusion-react-async": "^1.2.2",
     "fusion-test-utils": "^1.0.5",
     "fusion-tokens": "^1.0.3",
-    "nyc": "^11.7.1",
+    "nyc": "^11.7.3",
     "prettier": "1.12.1",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",

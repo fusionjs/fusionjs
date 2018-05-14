@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env browser */
@@ -26,10 +28,13 @@ function setup() {
   const span = document.createElement('span');
   span.textContent = 'hello world';
   root.appendChild(span);
-  document.body.appendChild(root);
+  document.body && document.body.appendChild(root);
 }
 function teardown() {
-  document.getElementById('root').remove();
+  const root = document.getElementById('root');
+  if (root) {
+    root.remove();
+  }
 }
 
 test('browser plugin integration test withRPCRedux', async t => {
@@ -64,11 +69,12 @@ test('browser plugin integration test withRPCRedux', async t => {
     t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
       action.payload,
+      // $FlowFixMe
       fixture.payload,
       'dispatches expected action payload'
     );
     return action.payload;
-  });
+  }, null);
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
@@ -135,11 +141,12 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
     t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
       action.payload,
+      // $FlowFixMe
       fixture.payload,
       'dispatches expected action payload'
     );
     return action.payload;
-  });
+  }, null);
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
@@ -191,11 +198,12 @@ test('browser mock integration test withRPCRedux', async t => {
     t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
       action.payload,
+      // $FlowFixMe
       fixture.payload,
       'dispatches expected action payload'
     );
     return action.payload;
-  });
+  }, null);
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
@@ -227,7 +235,9 @@ test('browser mock integration test withRPCRedux', async t => {
 test('browser mock integration test withRPCRedux - failure', async t => {
   setup();
   const e = new Error('message');
+  // $FlowFixMe
   e.code = 'code';
+  // $FlowFixMe
   e.meta = {hello: 'world'};
   const handlers = {
     test(args) {
@@ -252,11 +262,12 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     t.ok(fixture.type.test(action.type), 'dispatches expected action type');
     t.deepLooseEqual(
       action.payload,
+      // $FlowFixMe
       fixture.payload,
       'dispatches expected action payload'
     );
     return action.payload;
-  });
+  }, null);
 
   const Component = props => {
     t.equal(typeof props.test, 'function', 'passes correct prop to component');
@@ -329,7 +340,7 @@ test('browser plugin integration test withRPCReactor', async t => {
   const flags = {start: false, success: false};
   const hoc = compose(
     withRPCReactor('test', {
-      start: (state, action) => {
+      start: (state, action): any => {
         t.equal(action.type, 'TEST_START', 'dispatches start action');
         t.deepLooseEqual(
           action.payload,
@@ -354,7 +365,7 @@ test('browser plugin integration test withRPCReactor', async t => {
           loading: false,
         };
       },
-      failure: () => {
+      failure: (): any => {
         t.fail('should not call failure');
         return {};
       },
@@ -415,7 +426,7 @@ test('browser mock plugin integration test withRPCReactor', async t => {
   const flags = {start: false, success: false};
   const hoc = compose(
     withRPCReactor('test', {
-      start: (state, action) => {
+      start: (state, action): any => {
         t.equal(action.type, 'TEST_START', 'dispatches start action');
         t.deepLooseEqual(
           action.payload,
@@ -440,7 +451,7 @@ test('browser mock plugin integration test withRPCReactor', async t => {
           loading: false,
         };
       },
-      failure: () => {
+      failure: (): any => {
         t.fail('should not call failure');
         return {};
       },
@@ -470,7 +481,9 @@ test('browser mock plugin integration test withRPCReactor', async t => {
 test('browser plugin integration test withRPCReactor - failure', async t => {
   setup();
   const e = new Error('Some failure');
+  // $FlowFixMe
   e.code = 'ERR_CODE';
+  // $FlowFixMe
   e.meta = {error: 'meta'};
   const handlers = {
     test(args) {
@@ -504,7 +517,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   const flags = {start: false, failure: false};
   const hoc = compose(
     withRPCReactor('test', {
-      start: (state, action) => {
+      start: (state, action): any => {
         t.equal(action.type, 'TEST_START', 'dispatches start action');
         t.deepLooseEqual(
           action.payload,
@@ -516,7 +529,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
           loading: true,
         };
       },
-      success: () => {
+      success: (): any => {
         t.fail('should not call success');
         return {};
       },
@@ -527,7 +540,9 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
           action.payload,
           {
             message: e.message,
+            // $FlowFixMe
             code: e.code,
+            // $FlowFixMe
             meta: e.meta,
           },
           'dispatches failure with correct payload'
@@ -564,7 +579,9 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
 test('browser plugin integration test withRPCReactor - failure 2', async t => {
   setup();
   const e = new Error('Some failure');
+  // $FlowFixMe
   e.code = 'ERR_CODE';
+  // $FlowFixMe
   e.meta = {error: 'meta'};
   const fetch = (url, options) => {
     t.equal(url, '/api/test', 'fetches to expected url');
@@ -580,7 +597,9 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
           status: 'failure',
           data: {
             message: e.message,
+            // $FlowFixMe
             code: e.code,
+            // $FlowFixMe
             meta: e.meta,
           },
         })
@@ -609,7 +628,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
   const flags = {start: false, failure: false};
   const hoc = compose(
     withRPCReactor('test', {
-      start: (state, action) => {
+      start: (state, action): any => {
         t.equal(action.type, 'TEST_START', 'dispatches start action');
         t.deepLooseEqual(
           action.payload,
@@ -621,7 +640,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
           loading: true,
         };
       },
-      success: () => {
+      success: (): any => {
         t.fail('should not call success');
         return {};
       },
@@ -632,7 +651,9 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
           action.payload,
           {
             message: e.message,
+            // $FlowFixMe
             code: e.code,
+            // $FlowFixMe
             meta: e.meta,
           },
           'dispatches failure with correct payload'
