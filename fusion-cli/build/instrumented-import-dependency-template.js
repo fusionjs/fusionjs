@@ -64,7 +64,7 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       ? // server-side, use values from client bundle
         Array.from(
           this.clientChunkMap.get(
-            dep.module.resource || dep.originModule.resource
+            (dep.module && dep.module.resource) || dep.originModule.resource
           )
         )
       : // client-side, use built-in values
