@@ -4,7 +4,6 @@
 .*/.fusion/
 
 [include]
-./src/
 
 [libs]
 
