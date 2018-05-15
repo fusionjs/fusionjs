@@ -1,4 +1,4 @@
-FROM uber/web-base-image:1.0.3@sha256:735b4972c0b7fe67813edd67eeba11cca79209140a81a9387b42ac8b4c570f88
+FROM uber/web-base-image:1.0.5@sha256:4e53fd9da9d710a9cee8e7c39c3d6edad110904ffc3cf7b1260b9adedd5ba518
 
 WORKDIR /fusion-plugin-react-helmet-async
 
