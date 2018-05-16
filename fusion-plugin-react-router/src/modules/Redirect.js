@@ -8,16 +8,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export class Redirect extends React.Component {
-  componentWillMount() {
-    if (this.isStatic()) this.perform();
+  constructor(props, context) {
+    super(props, context);
+    if (this.isStatic(context)) this.perform();
   }
 
   componentDidMount() {
     if (!this.isStatic()) this.perform();
   }
 
-  isStatic() {
-    return this.context.router && this.context.router.staticContext;
+  isStatic(context = this.context) {
+    return context.router && context.router.staticContext;
   }
 
   perform() {

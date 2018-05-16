@@ -8,10 +8,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export class Status extends React.Component {
-  componentWillMount() {
+  constructor(props, context) {
+    super(props, context);
     const {
       router: {staticContext},
-    } = this.context;
+    } = context;
     if (staticContext && staticContext.setCode) {
       staticContext.setCode(parseInt(this.props.code, 10));
     }
