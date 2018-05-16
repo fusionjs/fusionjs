@@ -10,10 +10,12 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'fusion-plugin-i18n';
+import type {I18nServiceType} from 'fusion-plugin-i18n';
 import {ProviderPlugin} from 'fusion-react';
 
+type ExtractReturnType = <V>(() => V) => V;
 class BundleSplitConsumer extends React.Component<*, *> {
-  i18n: typeof i18n.provides;
+  i18n: $Call<ExtractReturnType, $PropertyType<I18nServiceType, 'from'>>;
 
   constructor(props, context) {
     super(props, context);
