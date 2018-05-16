@@ -21,15 +21,27 @@ const SilverPanel = styled('div', {
   backgroundColor: 'silver',
 });
 
+const LegacyComponent = (props, ctx) => {
+  ctx.styletron.injectDeclaration({prop: 'color', val: 'red'});
+  return <div />;
+};
+
+LegacyComponent.contextTypes = {styletron: () => {}};
+
 tape('Server plugin', t => {
   const ctx: Context = ({
-    element: <SilverPanel />,
+    element: (
+      <div>
+        <SilverPanel />
+        <LegacyComponent />
+      </div>
+    ),
     template: {
       head: {
         push(h) {
           t.equal(
             consumeSanitizedHTML(h),
-            '<style class="_styletron_hydrate_">.ae{background-color:silver}</style>',
+            '<style class="_styletron_hydrate_">.ae{background-color:silver}.af{color:red}</style>',
             'Pushes generated styles to head'
           );
         },

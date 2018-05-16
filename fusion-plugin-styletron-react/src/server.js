@@ -14,6 +14,7 @@ import type {FusionPlugin} from 'fusion-core';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {Server as Styletron} from 'styletron-engine-atomic';
 
+import LegacyProvider from './legacy-provider.js';
 import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
 
 const StyletronCompat = injectDeclarationCompatMixin(Styletron);
@@ -26,7 +27,9 @@ const plugin =
         const engine = new StyletronCompat();
 
         ctx.element = (
-          <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
+          <StyletronProvider value={engine}>
+            <LegacyProvider value={engine}>{ctx.element}</LegacyProvider>
+          </StyletronProvider>
         );
 
         return next().then(() => {
