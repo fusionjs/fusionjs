@@ -33,6 +33,7 @@
     "babel-plugin-transform-cup-globals": "^1.0.1",
     "babel-preset-jest": "^23.0.0-alpha.0",
     "browser-unhandled-rejection": "^1.0.2",
+    "bundle-analyzer": "^0.0.6",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
     "compression-webpack-plugin": "^1.1.11",
