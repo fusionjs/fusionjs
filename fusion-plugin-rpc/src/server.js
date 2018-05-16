@@ -94,93 +94,95 @@ class RPC {
   }
 }
 
-const plugin: RPCPluginType = createPlugin({
-  deps: {
-    emitter: UniversalEventsToken,
-    handlers: RPCHandlersToken,
-    bodyParserOptions: BodyParserOptionsToken.optional,
-  },
+const plugin =
+  __NODE__ &&
+  createPlugin({
+    deps: {
+      emitter: UniversalEventsToken,
+      handlers: RPCHandlersToken,
+      bodyParserOptions: BodyParserOptionsToken.optional,
+    },
 
-  provides: deps => {
-    const {emitter, handlers} = deps;
+    provides: deps => {
+      const {emitter, handlers} = deps;
 
-    const service = {
-      from: memoize(ctx => new RPC(emitter, handlers, ctx)),
-    };
-    return service;
-  },
+      const service = {
+        from: memoize(ctx => new RPC(emitter, handlers, ctx)),
+      };
+      return service;
+    },
 
-  middleware: deps => {
-    const {emitter, handlers, bodyParserOptions} = deps;
-    const parseBody = bodyparser(bodyParserOptions);
+    middleware: deps => {
+      const {emitter, handlers, bodyParserOptions} = deps;
+      const parseBody = bodyparser(bodyParserOptions);
 
-    return async (ctx, next) => {
-      await next();
-      const scopedEmitter = emitter.from(ctx);
-      if (ctx.method === 'POST' && ctx.path.startsWith('/api/')) {
-        const startTime = ms();
-        const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
-        if (hasHandler(handlers, method)) {
-          await parseBody(ctx, () => Promise.resolve());
-          try {
-            const result = await handlers[method](ctx.request.body, ctx);
-            ctx.body = {
-              status: 'success',
-              data: result,
-            };
-            if (scopedEmitter) {
-              scopedEmitter.emit(statKey, {
-                method,
+      return async (ctx, next) => {
+        await next();
+        const scopedEmitter = emitter.from(ctx);
+        if (ctx.method === 'POST' && ctx.path.startsWith('/api/')) {
+          const startTime = ms();
+          const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
+          if (hasHandler(handlers, method)) {
+            await parseBody(ctx, () => Promise.resolve());
+            try {
+              const result = await handlers[method](ctx.request.body, ctx);
+              ctx.body = {
                 status: 'success',
-                origin: 'browser',
-                timing: ms() - startTime,
-              });
+                data: result,
+              };
+              if (scopedEmitter) {
+                scopedEmitter.emit(statKey, {
+                  method,
+                  status: 'success',
+                  origin: 'browser',
+                  timing: ms() - startTime,
+                });
+              }
+            } catch (e) {
+              const error = Object.getOwnPropertyNames(e).reduce(
+                (obj: any, key) => {
+                  obj[key] = e[key];
+                  return obj;
+                },
+                {}
+              );
+              delete (error: any).stack;
+              ctx.body = {
+                status: 'failure',
+                data: error,
+              };
+              if (scopedEmitter) {
+                scopedEmitter.emit(statKey, {
+                  method,
+                  error: e,
+                  status: 'failure',
+                  origin: 'browser',
+                  timing: ms() - startTime,
+                });
+              }
             }
-          } catch (e) {
-            const error = Object.getOwnPropertyNames(e).reduce(
-              (obj: any, key) => {
-                obj[key] = e[key];
-                return obj;
-              },
-              {}
-            );
-            delete (error: any).stack;
+          } else {
+            const e = new MissingHandlerError(method);
             ctx.body = {
               status: 'failure',
-              data: error,
+              data: {
+                message: e.message,
+                code: e.code,
+              },
             };
+            ctx.status = 404;
             if (scopedEmitter) {
-              scopedEmitter.emit(statKey, {
+              scopedEmitter.emit('rpc:error', {
+                origin: 'browser',
                 method,
                 error: e,
-                status: 'failure',
-                origin: 'browser',
-                timing: ms() - startTime,
               });
             }
           }
-        } else {
-          const e = new MissingHandlerError(method);
-          ctx.body = {
-            status: 'failure',
-            data: {
-              message: e.message,
-              code: e.code,
-            },
-          };
-          ctx.status = 404;
-          if (scopedEmitter) {
-            scopedEmitter.emit('rpc:error', {
-              origin: 'browser',
-              method,
-              error: e,
-            });
-          }
         }
-      }
-    };
-  },
-});
+      };
+    },
+  });
 
 /* Helper functions */
 function ms() {
@@ -188,4 +190,4 @@ function ms() {
   return Math.round(seconds * 1000 + ns / 1e6);
 }
 
-export default ((__NODE__ && plugin: any): RPCPluginType);
+export default ((plugin: any): RPCPluginType);
