@@ -8,8 +8,8 @@
 
 import assert from 'assert';
 
-import FusionApp from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
+import FusionApp, {createToken, createPlugin} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
 
 /* Note: as the Jest type definitions are declared globally and not as part of
  * a module, we must import the relevant types directly from the libdef file here
@@ -40,6 +40,32 @@ export function getSimulator(
     request: request(app),
     render: render(app),
   };
+}
+
+export function getService<TDeps, TService>(
+  appCreator: () => FusionApp,
+  plugin: FusionPlugin<TDeps, TService>
+): TService {
+  const app = appCreator();
+  const token: Token<TService> = createToken('service-helper');
+
+  let extractedService = null;
+  app.register(token, plugin);
+  app.register(
+    createPlugin({
+      deps: {service: token},
+      provides: ({service}) => {
+        extractedService = service;
+      },
+    })
+  );
+  app.resolve();
+
+  if (!extractedService) {
+    throw new Error('Provided plugin does not export a service');
+  }
+
+  return extractedService;
 }
 
 // Export test runner functions from jest

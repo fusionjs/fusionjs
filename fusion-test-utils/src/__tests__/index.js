@@ -10,7 +10,7 @@ import test from 'tape-cup';
 import App, {createPlugin, createToken} from 'fusion-core';
 import type {Token, FusionPlugin} from 'fusion-core';
 
-import {getSimulator, test as exportedTest} from '../index.js';
+import {getSimulator, getService, test as exportedTest} from '../index.js';
 
 test('simulate render request', async t => {
   const flags = {render: false};
@@ -121,4 +121,55 @@ test('test throws when not using test-app', async t => {
     );
     t.end();
   }
+});
+
+test('getService - returns service as expected, with no dependencies', async t => {
+  const simplePlugin = createPlugin({
+    provides() {
+      return {meaningOfLife: 42};
+    },
+  });
+
+  const service = getService(() => new App('hi', el => el), simplePlugin);
+  t.ok(service);
+  t.equal(service.meaningOfLife, 42);
+
+  t.end();
+});
+
+test('getService - returns service as expected, with dependencies', async t => {
+  const meaningOfLifeToken = createToken('meaning-of-life-token');
+  const meaningOfLifePlugin = createPlugin({
+    provides() {
+      return 42;
+    },
+  });
+  const simplePlugin = createPlugin({
+    deps: {meaning: meaningOfLifeToken},
+    provides: ({meaning}) => {
+      return {meaningOfLife: meaning};
+    },
+  });
+
+  const service = getService(() => {
+    const app = new App('hi', el => el);
+    app.register(meaningOfLifeToken, meaningOfLifePlugin);
+    return app;
+  }, simplePlugin);
+  t.ok(service);
+  t.equal(service.meaningOfLife, 42);
+
+  t.end();
+});
+
+test('getService - throws as expected due to missing dependency', async t => {
+  const meaningOfLifeToken = createToken('meaning-of-life-token');
+  const simplePlugin = createPlugin({
+    deps: {meaning: meaningOfLifeToken},
+    provides: ({meaning}) => {
+      return {meaningOfLife: meaning};
+    },
+  });
+  t.throws(() => getService(() => new App('hi', el => el), simplePlugin));
+  t.end();
 });
