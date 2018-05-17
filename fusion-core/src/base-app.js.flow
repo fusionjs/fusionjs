@@ -16,19 +16,18 @@ declare class FusionApp {
   plugins: Array<any>;
   renderer: any;
   cleanup(): Promise<void>;
-  enhance<Token, Deps>(token: Token, enhancer: Function): void;
-  register<Deps, Provides>(Plugin: FusionPlugin<Deps, Provides>): aliaser<*>;
-  register<Token, Deps>(
-    token: Token,
-    Plugin: FusionPlugin<Deps, $Call<ExtractReturnType, Token>>
-  ): aliaser<*>;
-  register<Token: Object>(
-    token: Token,
-    val: $Call<ExtractReturnType, Token>
-  ): aliaser<*>;
-  middleware<Deps>(
-    deps: Deps,
-    middleware: (Deps: $ObjMap<Deps, ExtractReturnType>) => Middleware
+  enhance<TVal>(token: Token<TVal>, enhancer: Function): void;
+  register<TDeps, TProvides>(
+    Plugin: FusionPlugin<TDeps, TProvides>
+  ): aliaser<Token<*>>;
+  register<TVal, TDeps>(
+    token: Token<TVal>,
+    Plugin: FusionPlugin<TDeps, TVal>
+  ): aliaser<Token<*>>;
+  register<TVal>(token: Token<TVal>, val: TVal): aliaser<Token<*>>;
+  middleware<TDeps>(
+    deps: TDeps,
+    middleware: (Deps: $ObjMap<TDeps, ExtractReturnType>) => Middleware
   ): void;
   middleware(middleware: Middleware): void;
   callback(): () => Promise<void> | any;

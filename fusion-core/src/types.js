@@ -29,27 +29,24 @@ export type Middleware = (
 ) => Promise<*>;
 
 export type MiddlewareWithDeps<Deps> = (
-  // $FlowFixMe
   Deps: $ObjMap<Deps, ExtractReturnType>
 ) => Middleware;
 
 export type ExtractReturnType = <V>(() => V) => V;
 
-export type FusionPlugin<Deps, Service> = {
-  __plugin__?: boolean,
+export type FusionPlugin<Deps, Service> = {|
+  __plugin__: boolean,
   deps?: Deps,
-  // $FlowFixMe
   provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
   middleware?: (
-    // $FlowFixMe
     Deps: $ObjMap<Deps & {}, ExtractReturnType>,
     Service: Service
   ) => Middleware,
   cleanup?: (service: Service) => Promise<void>,
-};
+|};
 
-export type aliaser<Token> = {
-  alias: (sourceToken: Token, destToken: Token) => aliaser<Token>,
+export type aliaser<TToken> = {
+  alias: (sourceToken: TToken, destToken: TToken) => aliaser<TToken>,
 };
 
 export type cleanupFn = (thing: any) => Promise<void>;

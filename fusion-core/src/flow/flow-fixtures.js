@@ -28,12 +28,12 @@ const middlewareOnlyPlugin = createPlugin({
     return next();
   },
 });
-(middlewareOnlyPlugin: FusionPlugin<void, void>);
+(middlewareOnlyPlugin: FusionPlugin<empty, empty>);
 optionallyRegistersAPlugin(someApp, middlewareOnlyPlugin);
 
 const emptyPlugin = createPlugin({});
 (emptyPlugin: FusionPlugin<*, *>);
-(emptyPlugin: FusionPlugin<void, void>);
+(emptyPlugin: FusionPlugin<empty, empty>);
 (emptyPlugin: FusionPlugin<any, any>);
 optionallyRegistersAPlugin(someApp, emptyPlugin);
 
@@ -42,7 +42,7 @@ const emptyDepsPlugin = createPlugin({
     return;
   },
 });
-(emptyDepsPlugin: FusionPlugin<void, void>);
+(emptyDepsPlugin: FusionPlugin<empty, void>);
 optionallyRegistersAPlugin(someApp, emptyDepsPlugin);
 
 const sampleStringToken: Token<string> = createToken('string-token');
