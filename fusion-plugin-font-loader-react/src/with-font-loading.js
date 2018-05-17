@@ -1,5 +1,14 @@
-import React, {Component} from 'react';
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import * as React from 'react';
 import PropTypes from 'prop-types';
+
 import loadFont from './font-loader';
 
 /*
@@ -17,10 +26,16 @@ withFontLoading('Lato-Bold')(styled('div', props => props.$fontStyles));
 All requested fonts should be defined in src/fonts/fontConfig.js
 */
 
-const withFontLoading = fontName => {
-  return OriginalComponent => {
-    class WithFontLoading extends Component {
-      constructor(props, context) {
+const withFontLoading = (fontName: string) => {
+  return (
+    OriginalComponent: React.ComponentType<*>
+  ): React.ComponentType<*> => {
+    class WithFontLoading extends React.Component<*> {
+      props: *;
+      context: *;
+      state: *;
+
+      constructor(props: any, context: any) {
         super(props, context);
         const {fallbackName, styles} = this.context.getFontDetails(fontName);
         if (fallbackName) {
@@ -35,6 +50,7 @@ const withFontLoading = fontName => {
       componentDidMount() {
         if (this.state.$fontStyles.fontFamily !== fontName) {
           loadFont(`${fontName}`).then(() => {
+            // $FlowFixMe
             this.setState({$fontStyles: {fontFamily: fontName}});
           });
         }

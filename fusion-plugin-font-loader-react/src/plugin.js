@@ -1,12 +1,23 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 import React from 'react';
 
 import {createPlugin, html, dangerouslySetHTML} from 'fusion-core';
+
 import FontProvider from './provider';
 import generateFallbackMap from './generate-fallback-map';
 import generatePreloadLinks from './generate-preload-links';
 import generateFontFaces from './generate-font-faces';
 import {FontLoaderReactConfigToken as ConfigToken} from './tokens';
+import type {PluginType} from './types.js';
 
 // keys are the actual fonts to preload (based on usage on the page), values are always true
 const fontsToPreload = {};
@@ -45,7 +56,7 @@ const plugin = createPlugin({
     };
   },
 });
-export default plugin;
+export default (plugin: PluginType);
 
 /* Helper functions */
 function getFontDetails(name) {
