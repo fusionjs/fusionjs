@@ -11,8 +11,8 @@ type FusionPluginNoHidden<TDeps, TService> = $Diff<
 export function createPlugin<TDeps, TService>(
   opts: $Exact<FusionPluginNoHidden<TDeps, TService>>
 ): FusionPlugin<TDeps, TService> {
-  // $FlowFixMe
-  opts.__plugin__ = true;
-  // $FlowFixMe
-  return opts;
+  return {
+    __plugin__: true,
+    ...opts,
+  };
 }
