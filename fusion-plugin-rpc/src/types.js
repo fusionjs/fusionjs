@@ -24,7 +24,7 @@ export type RPCScopedServiceType = {
 };
 
 export type RPCServiceType = {
-  from: (ctx: Context) => RPCScopedServiceType,
+  from: (ctx?: Context) => RPCScopedServiceType,
 };
 
 export type RPCPluginType = FusionPlugin<*, RPCServiceType>;

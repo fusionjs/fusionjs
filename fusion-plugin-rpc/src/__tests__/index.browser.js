@@ -20,6 +20,7 @@ function createTestFixture() {
     Promise.resolve({json: () => ({status: 'success', data: args})});
 
   const app = new App('content', el => el);
+  // $FlowFixMe
   app.register(FetchToken, mockFetch);
   app.register(MockPluginToken, RPCPlugin);
   return app;
@@ -67,6 +68,7 @@ test('failure status request', t => {
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
 
   const app = createTestFixture();
+  // $FlowFixMe
   app.register(FetchToken, mockFetchAsFailure);
 
   let wasResolved = false;

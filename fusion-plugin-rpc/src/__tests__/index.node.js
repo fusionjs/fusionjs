@@ -12,7 +12,7 @@ import MockReq from 'mock-req';
 
 import App, {createPlugin, createToken} from 'fusion-core';
 import type {Context, Token} from 'fusion-core';
-import {getSimulator} from 'fusion-test-utils';
+import {getSimulator, getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {RPCHandlersToken} from '../tokens';
@@ -23,8 +23,13 @@ import MockRPCPlugin from '../mock.js';
 const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
 
-const mockService: RPCServiceType = MockRPCPlugin.provides({});
+const mockService: RPCServiceType = getService(() => {
+  const app = new App('content', el => el);
+  app.register(RPCHandlersToken, {});
+  return app;
+}, MockRPCPlugin);
 
+/* Test fixtures */
 function createTestFixture() {
   const mockHandlers = {};
   const mockEmitter: IEmitter = (new MockEmitter(): any);
@@ -39,6 +44,25 @@ function createTestFixture() {
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
+}
+
+function createMockEmitter(props: mixed): IEmitter {
+  const emitter = {
+    from: () => {
+      return emitter;
+    },
+    emit: () => {},
+    setFrequency: () => {},
+    teardown: () => {},
+    map: () => {},
+    on: () => {},
+    off: () => {},
+    mapEvent: () => {},
+    handleEvent: () => {},
+    flush: () => {},
+    ...props,
+  };
+  return emitter;
 }
 
 function mockRequest() {
@@ -106,8 +130,8 @@ test('service - request api', async t => {
       return 1;
     },
   };
-  const mockEmitter = {
-    emit(type, payload) {
+  const mockEmitter = createMockEmitter({
+    emit: (type: mixed, payload: Object) => {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
       t.equal(payload.status, 'success');
@@ -116,12 +140,16 @@ test('service - request api', async t => {
     from() {
       return this;
     },
+  });
+
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(UniversalEventsToken, mockEmitter);
+    app.register(RPCHandlersToken, mockHandlers);
+    return app;
   };
 
-  const rpcFactory = RPCPlugin.provides({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const rpcFactory = getService(appCreator, RPCPlugin);
   const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
@@ -146,7 +174,7 @@ test('service - request api with failing request', async t => {
       return Promise.reject(e);
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -157,12 +185,16 @@ test('service - request api with failing request', async t => {
     from() {
       return this;
     },
+  });
+
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(UniversalEventsToken, mockEmitter);
+    app.register(RPCHandlersToken, mockHandlers);
+    return app;
   };
 
-  const rpcFactory = RPCPlugin.provides({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const rpcFactory = getService(appCreator, RPCPlugin);
   const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
@@ -183,7 +215,7 @@ test('service - request api with invalid endpoint', async t => {
     memoized: new Map(),
   }: any);
   const mockHandlers = {};
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:error');
       t.equal(payload.method, 'test');
@@ -193,12 +225,16 @@ test('service - request api with invalid endpoint', async t => {
     from() {
       return this;
     },
+  });
+
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(UniversalEventsToken, mockEmitter);
+    app.register(RPCHandlersToken, mockHandlers);
+    return app;
   };
 
-  const rpcFactory = RPCPlugin.provides({
-    emitter: mockEmitter,
-    handlers: mockHandlers,
-  });
+  const rpcFactory = getService(appCreator, RPCPlugin);
   const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
