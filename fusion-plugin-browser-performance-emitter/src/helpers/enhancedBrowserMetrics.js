@@ -33,11 +33,11 @@ function getTiming(window) {
 }
 
 function getNetwork(window) {
-  return window.navigator.connection;
+  return asDictionary(window.navigator.connection);
 }
 
 function getMemory(window) {
-  return window.performance.memory;
+  return asDictionary(window.performance.memory);
 }
 
 function getFirstPaint(window) {
@@ -97,7 +97,7 @@ const browserPerfCollector: (window: any) => Object = (window: any) => {
   };
 };
 
-function asDictionary(obj) {
+function asDictionary(obj = {}) {
   if (obj.toJSON && typeof obj.toJSON === 'function') {
     return obj.toJSON();
   }

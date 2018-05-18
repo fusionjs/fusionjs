@@ -17,7 +17,11 @@ function mockWindow({performance, ...otherOverrides} = {}) {
       getEntriesByType() {
         return [];
       },
+      memory: {},
       ...performance,
+    },
+    navigator: {
+      connection: {},
     },
     ...otherOverrides,
   };
@@ -43,7 +47,7 @@ test('enhancedBrowserMetrics', t => {
     {
       dimensions: {height: 600, width: 800},
       firstPaint: null,
-      memory: undefined,
+      memory: {},
       navigation: {},
       network: {},
       resources: [],
