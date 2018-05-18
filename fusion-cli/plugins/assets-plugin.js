@@ -18,6 +18,7 @@ module.exports = function(dir /*: string */) {
           defer: true,
           setHeaders: res => {
             res.setHeader('Cache-Control', 'public, max-age=31536000');
+            res.setHeader('Timing-Allow-Origin', '*');
           },
         })
       );
