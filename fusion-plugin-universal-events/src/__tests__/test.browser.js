@@ -7,27 +7,53 @@
  */
 
 import test from 'tape-cup';
+
 import App from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
+import type {Fetch} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
 import plugin from '../browser.js';
 import {UniversalEventsToken} from '../index';
 
-function getApp(fetch) {
+/* Test helpers */
+function getApp(fetch: Fetch) {
   const app = new App('el', el => el);
   app.register(FetchToken, fetch);
   app.register(UniversalEventsToken, plugin);
   return app;
 }
 
+function createMockFetch(responseParams: mixed): Response {
+  const mockResponse = new Response();
+  return {
+    ...mockResponse,
+    ...responseParams,
+  };
+}
+
 test('Browser EventEmitter', async t => {
   let fetched = false;
   let emitted = false;
-  const fetch = (url, {method, headers, body}) => {
+  const fetch: Fetch = (url, options) => {
+    if (
+      !options ||
+      !options.method ||
+      !options.headers ||
+      !options.body ||
+      typeof options.body !== 'string'
+    ) {
+      throw new Error(
+        `Expected method, headers, body from options are populated`
+      );
+    }
+
+    let {method, headers, body} = options;
+
     t.equals(url, '/_events', 'url is ok');
     t.equals(method, 'POST', 'method is ok');
     t.equals(
+      // $FlowFixMe
       headers['Content-Type'],
       'application/json',
       'content-type is okay'
@@ -36,8 +62,10 @@ test('Browser EventEmitter', async t => {
     t.equals(jsonBody.items.length, 1, 'data size is ok');
     t.equals(jsonBody.items[0].payload.x, 1, 'data is ok');
     fetched = true;
-    return Promise.resolve();
+
+    return Promise.resolve(createMockFetch());
   };
+
   const app = getApp(fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     return (ctx, next) => {
