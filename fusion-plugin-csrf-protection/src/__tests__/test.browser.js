@@ -11,15 +11,25 @@ import test from 'tape-cup';
 
 import App, {createPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
+import type {Fetch} from 'fusion-tokens';
 
 import CsrfPlugin from '../index';
 import {CsrfExpireToken, FetchForCsrfToken} from '../shared';
 
-function getApp(fetchFn) {
+/* Test helpers */
+function getApp(fetchFn: Fetch) {
   const app = new App('element', el => el);
   app.register(FetchForCsrfToken, fetchFn);
   app.register(FetchToken, CsrfPlugin);
   return app;
+}
+
+function createMockFetch(responseParams: mixed): Response {
+  const mockResponse = new Response();
+  return {
+    ...mockResponse,
+    ...responseParams,
+  };
 }
 
 test('exposes right methods', t => {
@@ -43,18 +53,21 @@ test('includes routePrefix if exists', async t => {
   const fetch = (url, args) => {
     called++;
     t.equal(url, expectedUrls.shift());
-    return Promise.resolve({
-      url,
-      args,
-      headers: {
-        get(key) {
-          if (key === 'x-csrf-token') {
-            return Math.round(Date.now() / 1000) + '-test';
-          }
+    return Promise.resolve(
+      createMockFetch({
+        url,
+        args,
+        headers: {
+          get(key) {
+            if (key === 'x-csrf-token') {
+              return Math.round(Date.now() / 1000) + '-test';
+            }
+          },
         },
-      },
-    });
+      })
+    );
   };
+
   const app = getApp(fetch);
   app.register(
     createPlugin({
@@ -94,17 +107,19 @@ test('supports getting initial token from dom element', async t => {
   const fetch = (url, args) => {
     called++;
     t.equal(url, expectedUrls.shift());
-    return Promise.resolve({
-      url,
-      args,
-      headers: {
-        get(key) {
-          if (key === 'x-csrf-token') {
-            return Math.round(Date.now() / 1000) + '-lol';
-          }
+    return Promise.resolve(
+      createMockFetch({
+        url,
+        args,
+        headers: {
+          get(key) {
+            if (key === 'x-csrf-token') {
+              return Math.round(Date.now() / 1000) + '-lol';
+            }
+          },
         },
-      },
-    });
+      })
+    );
   };
 
   const app = getApp(fetch);
@@ -140,17 +155,20 @@ test('defaults method to GET', async t => {
   const fetch = (url, args) => {
     called++;
     t.equal(url, expectedUrls.shift());
-    return Promise.resolve({
-      url,
-      args,
-      headers: {
-        get(key) {
-          if (key === 'x-csrf-token') {
-            return Math.round(Date.now() / 1000) + '-test';
-          }
+
+    return Promise.resolve(
+      createMockFetch({
+        url,
+        args,
+        headers: {
+          get(key) {
+            if (key === 'x-csrf-token') {
+              return Math.round(Date.now() / 1000) + '-test';
+            }
+          },
         },
-      },
-    });
+      })
+    );
   };
 
   const app = getApp(fetch);
@@ -177,18 +195,21 @@ test('fetch preflights if no token', t => {
   let called = 0;
   const fetch = (url, args) => {
     called++;
-    return Promise.resolve({
-      url,
-      args,
-      headers: {
-        get(key) {
-          if (key === 'x-csrf-token') {
-            return Math.round(Date.now() / 1000) + '-test';
-          }
+    return Promise.resolve(
+      createMockFetch({
+        url,
+        args,
+        headers: {
+          get(key) {
+            if (key === 'x-csrf-token') {
+              return Math.round(Date.now() / 1000) + '-test';
+            }
+          },
         },
-      },
-    });
+      })
+    );
   };
+
   const app = getApp(fetch);
   app.register(
     createPlugin({
@@ -217,18 +238,21 @@ test('fetch preflights if token is expired', t => {
   let called = 0;
   const fetch = (url, args) => {
     called++;
-    return Promise.resolve({
-      url,
-      args,
-      headers: {
-        get(key) {
-          if (key === 'x-csrf-token') {
-            return Math.round(Date.now() / 1000) + '-test';
-          }
+    return Promise.resolve(
+      createMockFetch({
+        url,
+        args,
+        headers: {
+          get(key) {
+            if (key === 'x-csrf-token') {
+              return Math.round(Date.now() / 1000) + '-test';
+            }
+          },
         },
-      },
-    });
+      })
+    );
   };
+
   const app = getApp(fetch);
   app.register(CsrfExpireToken, 1);
   app.register(
