@@ -9,8 +9,10 @@
 import {createStore, compose} from 'redux';
 import test from 'tape-cup';
 
+import App from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import type {Context} from 'fusion-core';
+import {getService} from 'fusion-test-utils';
 
 import actionEmitterPlugin from '../index.js';
 
@@ -50,14 +52,22 @@ const sampleReducer = (state = [], action) => {
   }
 };
 
+const appCreator = (emitter?: IEmitter) => {
+  const app = new App('test', el => el);
+  if (emitter) {
+    app.register(UniversalEventsToken, emitter);
+  }
+  return () => app;
+};
+
 test('Instantiation', t => {
+  const mockEventEmitter = getMockEventEmitterFactory();
   t.throws(
-    actionEmitterPlugin.provides,
+    () => getService(appCreator(), actionEmitterPlugin),
     'requires the EventEmitter dependency'
   );
-  const mockEventEmitter = getMockEventEmitterFactory();
   t.doesNotThrow(
-    () => actionEmitterPlugin.provides({emitter: mockEventEmitter}),
+    () => getService(appCreator(mockEventEmitter), actionEmitterPlugin),
     'provide the EventEmitter dependency'
   );
   t.end();
@@ -66,7 +76,10 @@ test('Instantiation', t => {
 test('Emits actions', t => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
-  const enhancer = actionEmitterPlugin.provides({emitter: mockEventEmitter});
+  const enhancer = getService(
+    appCreator(mockEventEmitter),
+    actionEmitterPlugin
+  );
   const mockCtx = {mock: true};
   const mockCtxTyped = ((mockCtx: any): Context);
   const store = createStore(
