@@ -13,11 +13,29 @@ import {connect} from 'react-redux';
 import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 
+import App from 'fusion-core';
 import type {Context} from 'fusion-core';
+import {getService} from 'fusion-test-utils';
 
 import GetReduxPlugin from '../browser.js';
+import {ReducerToken, PreloadedStateToken, EnhancerToken} from '../tokens.js';
 
 Enzyme.configure({adapter: new Adapter()});
+
+/* Test fixtures */
+const appCreator = (reducer, preloadedState, enhancer) => {
+  const app = new App('test', el => el);
+  if (reducer) {
+    app.register(ReducerToken, reducer);
+  }
+  if (preloadedState) {
+    app.register(PreloadedStateToken, preloadedState);
+  }
+  if (enhancer) {
+    app.register(EnhancerToken, enhancer);
+  }
+  return () => app;
+};
 
 tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
   const Redux = GetReduxPlugin();
@@ -27,7 +45,7 @@ tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const provider = Redux.provides({reducer});
+  const provider = getService(appCreator(reducer), Redux);
   const {store} = provider && provider.from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
@@ -43,10 +61,8 @@ tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux.provides({
-    reducer,
-    preloadedState: {hello: 'world'},
-  }).from();
+  const preloadedState = {hello: 'world'};
+  const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -66,7 +82,7 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux.provides({reducer}).from();
+  const {store} = getService(appCreator(reducer), Redux).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -90,10 +106,8 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
       test: action.payload || 1,
     };
   };
-  const {store} = Redux.provides({
-    reducer,
-    preloadedState: {hello: 'world'},
-  }).from();
+  const preloadedState = {hello: 'world'};
+  const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
   t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
@@ -122,7 +136,7 @@ tape('browser with enhancer', t => {
       return store;
     };
   };
-  const {store} = Redux.provides({reducer, enhancer}).from(
+  const {store} = getService(appCreator(reducer, null, enhancer), Redux).from(
     ((mockCtx: any): Context)
   );
   if (!store.ctx) {
@@ -153,7 +167,7 @@ tape('browser with devtools enhancer', t => {
       return createStore(...args);
     };
   };
-  const {store} = Redux.provides({reducer}).from();
+  const {store} = getService(appCreator(reducer), Redux).from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2);
@@ -188,7 +202,7 @@ tape('browser with devtools enhancer and normal enhancer', t => {
       return createStore(...args);
     };
   };
-  const {store} = Redux.provides({reducer, enhancer}).from();
+  const {store} = getService(appCreator(reducer, null, enhancer), Redux).from();
   t.deepLooseEqual(store.getState(), {test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
   t.equals(store.getState().test, 2);
@@ -211,9 +225,10 @@ tape('browser middleware', async t => {
   const Connected = connect(state => state)(Component);
   const element = React.createElement(Connected);
   const ctx = {element};
-  const Plugin = Redux.provides({reducer});
+  const Plugin = getService(appCreator(reducer), Redux);
   try {
     await (Redux.middleware &&
+      // $FlowFixMe
       Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve()));
   } catch (e) {
     t.ifError(e);

@@ -12,15 +12,39 @@ import type {Reducer, StoreEnhancer} from 'redux';
 
 import App, {consumeSanitizedHTML, createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
-import {getSimulator} from 'fusion-test-utils';
+import {getSimulator, getService} from 'fusion-test-utils';
 
 import Redux from '../index.js';
-import {EnhancerToken, ReducerToken, ReduxToken} from '../tokens.js';
+import {
+  EnhancerToken,
+  PreloadedStateToken,
+  ReducerToken,
+  GetInitialStateToken,
+  ReduxToken,
+} from '../tokens.js';
+
+/* Test fixtures */
+const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
+  const app = new App('test', el => el);
+  if (reducer) {
+    app.register(ReducerToken, reducer);
+  }
+  if (preloadedState) {
+    app.register(PreloadedStateToken, preloadedState);
+  }
+  if (getInitialState) {
+    app.register(GetInitialStateToken, getInitialState);
+  }
+  if (enhancer) {
+    app.register(EnhancerToken, enhancer);
+  }
+  return () => app;
+};
 
 tape('interface', async t => {
   const ctx = {memoized: new Map()};
   const reducer = (state, action) => ({test: action.payload || 1});
-  const redux = Redux && Redux.provides({reducer}).from((ctx: any));
+  const redux = getService(appCreator(reducer), Redux).from((ctx: any));
 
   t.plan(2);
   if (!redux.initStore) {
@@ -37,7 +61,7 @@ tape('interface', async t => {
 
 tape('non-ssr routes', async t => {
   const reducer = (state, action) => ({test: action.payload || 1});
-  const plugin = Redux.provides({reducer});
+  const plugin = getService(appCreator(reducer), Redux);
   let mockCtx = {
     body: null,
     memoized: new Map(),
@@ -49,6 +73,7 @@ tape('non-ssr routes', async t => {
     return;
   }
 
+  // $FlowFixMe
   await Redux.middleware(null, plugin)((mockCtx: any), () => Promise.resolve());
   t.notok(plugin.from((mockCtx: any)).store);
   t.end();
@@ -64,11 +89,11 @@ tape('getInitialState', async t => {
     t.equal(ctx, mockCtx);
     return {hello: 'world'};
   };
-  const redux = Redux.provides({
-    reducer,
-    preloadedState: {a: 'b'},
-    getInitialState,
-  }).from((mockCtx: any));
+  const preloadedState = {a: 'b'};
+  const redux = getService(
+    appCreator(reducer, preloadedState, getInitialState),
+    Redux
+  ).from((mockCtx: any));
 
   t.plan(6);
   if (!redux.initStore) {
@@ -99,9 +124,11 @@ tape('enhancers', async t => {
     t.equals(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
     return store;
   };
-  const redux = Redux.provides({reducer: s => s, enhancer: myEnhancer}).from(
-    mockCtx
-  );
+  const reducer = s => s;
+  const redux = getService(
+    appCreator(reducer, null, null, myEnhancer),
+    Redux
+  ).from(mockCtx);
 
   t.plan(2);
   if (!redux.initStore) {
@@ -184,7 +211,7 @@ tape('serialization', async t => {
   });
   const element = React.createElement('div');
   const ctx: any = {element, template: {body: []}, memoized: new Map()};
-  const Plugin = Redux.provides({reducer});
+  const Plugin = getService(appCreator(reducer), Redux);
 
   t.plan(5);
   if (!Redux.middleware) {
@@ -192,6 +219,7 @@ tape('serialization', async t => {
     return;
   }
 
+  // $FlowFixMe
   await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
 
   t.ok(Plugin.from(ctx).store);
