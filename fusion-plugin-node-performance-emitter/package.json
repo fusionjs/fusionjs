@@ -1,11 +1,13 @@
 {
   "name": "fusion-plugin-node-performance-emitter",
-  "description":
-    "A tool for collecting, aggregating, and emitting Node.js performance stats",
+  "description": "A tool for collecting, aggregating, and emitting Node.js performance stats",
   "version": "1.0.2",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-node-performance-emitter",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -31,15 +33,15 @@
     "eslint-config-fusion": "^1.0.0",
     "eslint-plugin-cup": "1.0.2",
     "eslint-plugin-flowtype": "2.46.3",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "2.6.0",
-    "eslint-plugin-react": "7.7.0",
+    "eslint-plugin-react": "^7.8.2",
     "flow-bin": "0.72.0",
-    "fusion-core": "^1.0.0",
-    "fusion-plugin-universal-events": "^1.0.1",
-    "fusion-test-utils": "^1.0.1",
+    "fusion-core": "^1.3.0",
+    "fusion-plugin-universal-events": "^1.0.3",
+    "fusion-test-utils": "^1.1.0",
     "fusion-tokens": "^1.0.1",
-    "nyc": "11.7.3",
+    "nyc": "^11.8.0",
     "prettier": "1.12.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
@@ -54,8 +56,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc npm run just-test",
@@ -63,8 +64,13 @@
     "prepublish": "npm run transpile"
   },
   "flow-coverage-report": {
-    "includeGlob": ["src/**/*.js"],
-    "type": ["text", "html"]
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "text",
+      "html"
+    ]
   },
   "engines": {
     "node": ">= 8.9.0"

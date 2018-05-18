@@ -11,10 +11,16 @@ import test from 'tape-cup';
 import MockEmitter from 'events';
 
 import App, {createPlugin} from 'fusion-core';
-import {getSimulator} from 'fusion-test-utils';
+import {getSimulator, getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import {NodePerformanceEmitterToken, TimersToken} from '../tokens';
+import {
+  NodePerformanceEmitterToken,
+  TimersToken,
+  EventLoopLagIntervalToken,
+  MemoryIntervalToken,
+  SocketIntervalToken,
+} from '../tokens';
 import NodePerformanceEmitterPlugin from '../server';
 
 /* Constants */
@@ -70,6 +76,12 @@ function createTestFixture() {
   return app;
 }
 
+function registerMockConfig(app) {
+  app.register(EventLoopLagIntervalToken, mockConfig.eventLoopLagInterval);
+  app.register(MemoryIntervalToken, mockConfig.memoryInterval);
+  app.register(SocketIntervalToken, mockConfig.socketInterval);
+}
+
 /* Tests */
 test('FusionApp - service resolved', t => {
   const app = createTestFixture();
@@ -91,10 +103,10 @@ test('FusionApp - service resolved', t => {
 });
 
 test('service - cannot track the same types more than once at a time', t => {
-  const perfService = NodePerformanceEmitterPlugin.provides({
-    emitter: mockEmitterFactory(),
-    timers: mockTimersFactory(),
-  });
+  const perfService = getService(
+    createTestFixture,
+    NodePerformanceEmitterPlugin
+  );
 
   t.throws(() => perfService.start(), 'already running trackers cannot start');
 
@@ -116,11 +128,14 @@ test('service - cannot track the same types more than once at a time', t => {
 
 test('service - tracking number of timer intervals set', t => {
   const mockTimers = mockTimersFactory(t);
-  const perfService = NodePerformanceEmitterPlugin.provides({
-    emitter: mockEmitterFactory(),
-    timers: mockTimers,
-    ...mockConfig,
-  });
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(TimersToken, mockTimers);
+    app.register(UniversalEventsToken, mockEmitterFactory());
+    registerMockConfig(app);
+    return app;
+  };
+  const perfService = getService(appCreator, NodePerformanceEmitterPlugin);
 
   t.assert(
     mockTimers._getNumSetInterval() === 3,
@@ -138,6 +153,13 @@ test('service - tracking number of timer intervals set', t => {
 test('service - tracking emit messages', t => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory();
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(TimersToken, mockTimers);
+    app.register(UniversalEventsToken, mockEmitter);
+    registerMockConfig(app);
+    return app;
+  };
 
   // Register to listen to emits
   let emitNumberTracker = 0;
@@ -180,11 +202,7 @@ test('service - tracking emit messages', t => {
     }
   );
 
-  const perfService = NodePerformanceEmitterPlugin.provides({
-    emitter: mockEmitter,
-    timers: mockTimers,
-    ...mockConfig,
-  });
+  const perfService = getService(appCreator, NodePerformanceEmitterPlugin);
 
   perfService.stop();
 
@@ -197,6 +215,13 @@ test('service - tracking emit messages', t => {
 test('service - testing garbage collection emits', t => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory();
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(TimersToken, mockTimers);
+    app.register(UniversalEventsToken, mockEmitter);
+    registerMockConfig(app);
+    return app;
+  };
 
   // Register to listen to emits
   let gcMessageReceived = false;
@@ -204,11 +229,7 @@ test('service - testing garbage collection emits', t => {
     gcMessageReceived = true;
   });
 
-  const perfService = NodePerformanceEmitterPlugin.provides({
-    emitter: mockEmitter,
-    timers: mockTimers,
-    ...mockConfig,
-  });
+  const perfService = getService(appCreator, NodePerformanceEmitterPlugin);
   perfService.startTrackingGCUsage();
 
   // Make some garbage!
