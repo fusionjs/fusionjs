@@ -10,17 +10,48 @@ import React from 'react';
 import test from 'tape-cup';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
+import App from 'fusion-core';
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import {getService} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
 import Plugin from '../plugin';
 import {mock} from '../index';
 import {withRPCRedux, withRPCReactor} from '../hoc';
 
+/* Test helpers */
+function createMockEmitter(props: mixed) {
+  const emitter = {
+    from: () => {
+      return emitter;
+    },
+    emit: () => {},
+    setFrequency: () => {},
+    teardown: () => {},
+    map: () => {},
+    on: () => {},
+    off: () => {},
+    mapEvent: () => {},
+    handleEvent: () => {},
+    flush: () => {},
+    ...props,
+  };
+  return emitter;
+}
+
 test('plugin', t => {
   t.equals(typeof Plugin.provides, 'function');
   const handlers = {test() {}};
-  const EventEmitter = {
-    from() {},
+  const EventEmitter = createMockEmitter();
+
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(RPCHandlersToken, handlers);
+    app.register(UniversalEventsToken, EventEmitter);
+    return app;
   };
-  const RPCRedux = Plugin.provides({handlers, EventEmitter});
+
+  const RPCRedux = getService(appCreator, Plugin);
   const mockCtx = {headers: {}, memoized: new Map()};
   t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();
@@ -29,10 +60,14 @@ test('plugin', t => {
 test('mock plugin', t => {
   t.equals(typeof mock.provides, 'function');
   const handlers = {test() {}};
-  const EventEmitter = {
-    from() {},
+
+  const appCreator = () => {
+    const app = new App('content', el => el);
+    app.register(RPCHandlersToken, handlers);
+    return app;
   };
-  const RPCRedux = mock.provides({handlers, EventEmitter});
+
+  const RPCRedux = getService(appCreator, mock);
   const mockCtx = {headers: {}, memoized: new Map()};
   t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();

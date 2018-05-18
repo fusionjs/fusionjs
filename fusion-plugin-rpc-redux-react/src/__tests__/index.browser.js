@@ -22,6 +22,7 @@ import {withRPCRedux, withRPCReactor} from '../hoc';
 
 const initActionPattern = /^@@redux\/INIT.*/;
 
+/* Test helpers */
 function setup() {
   const root = document.createElement('div');
   root.id = 'root';
@@ -30,6 +31,7 @@ function setup() {
   root.appendChild(span);
   document.body && document.body.appendChild(root);
 }
+
 function teardown() {
   const root = document.getElementById('root');
   if (root) {
@@ -40,12 +42,13 @@ function teardown() {
 test('browser plugin integration test withRPCRedux', async t => {
   setup();
   const fetch = (url, options) => {
+    if (!options || !options.body || typeof options.body !== 'string') {
+      throw new Error(`Expected a string from options.body`);
+    }
+    const body: string = options.body;
+
     t.equal(url, '/api/test', 'fetches to expected url');
-    t.deepLooseEqual(
-      JSON.parse(options.body),
-      {hello: 'world'},
-      'sends correct body'
-    );
+    t.deepLooseEqual(JSON.parse(body), {hello: 'world'}, 'sends correct body');
     t.equal(options.method, 'POST', 'makes POST request');
     return Promise.resolve(
       new Response(
@@ -107,12 +110,13 @@ test('browser plugin integration test withRPCRedux', async t => {
 test('browser plugin integration test withRPCRedux - failure', async t => {
   setup();
   const fetch = (url, options) => {
+    if (!options || !options.body || typeof options.body !== 'string') {
+      throw new Error(`Expected a string from options.body`);
+    }
+    const body: string = options.body;
+
     t.equal(url, '/api/test', 'fetches to expected url');
-    t.deepLooseEqual(
-      JSON.parse(options.body),
-      {hello: 'world'},
-      'sends correct body'
-    );
+    t.deepLooseEqual(JSON.parse(body), {hello: 'world'}, 'sends correct body');
     t.equal(options.method, 'POST', 'makes POST request');
     return Promise.resolve(
       new Response(
@@ -300,12 +304,13 @@ test('browser mock integration test withRPCRedux - failure', async t => {
 test('browser plugin integration test withRPCReactor', async t => {
   setup();
   const fetch = (url, options) => {
+    if (!options || !options.body || typeof options.body !== 'string') {
+      throw new Error(`Expected a string from options.body`);
+    }
+    const body: string = options.body;
+
     t.equal(url, '/api/test', 'fetches to expected url');
-    t.deepLooseEqual(
-      JSON.parse(options.body),
-      {hello: 'world'},
-      'sends correct body'
-    );
+    t.deepLooseEqual(JSON.parse(body), {hello: 'world'}, 'sends correct body');
     t.equal(options.method, 'POST', 'makes POST request');
     return Promise.resolve(
       new Response(
@@ -584,12 +589,13 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
   // $FlowFixMe
   e.meta = {error: 'meta'};
   const fetch = (url, options) => {
+    if (!options || !options.body || typeof options.body !== 'string') {
+      throw new Error(`Expected a string from options.body`);
+    }
+    const body: string = options.body;
+
     t.equal(url, '/api/test', 'fetches to expected url');
-    t.deepLooseEqual(
-      JSON.parse(options.body),
-      {hello: 'world'},
-      'sends correct body'
-    );
+    t.deepLooseEqual(JSON.parse(body), {hello: 'world'}, 'sends correct body');
     t.equal(options.method, 'POST', 'makes POST request');
     return Promise.resolve(
       new Response(
