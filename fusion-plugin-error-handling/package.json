@@ -1,13 +1,11 @@
 {
   "name": "fusion-plugin-error-handling",
-  "description": "Collects browser errors and server request errors, and emits them through an EventEmitter",
-  "version": "1.0.4",
+  "description":
+    "Collects browser errors and server request errors, and emits them through an EventEmitter",
+  "version": "1.0.5",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-error-handling",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -53,7 +51,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && npm run transpile && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=text --reporter=html npm run just-test",
     "test": "npm run build-test && npm run just-test",
