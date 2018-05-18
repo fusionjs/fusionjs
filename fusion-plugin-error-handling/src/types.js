@@ -18,4 +18,7 @@ type DepsType = {
 
 export type ErrorHandlerPluginType = FusionPlugin<DepsType, empty>;
 
-export type ErrorHandlerType = (e: Error, captureType: string) => Promise<*>;
+export type ErrorHandlerType = (
+  e: Error,
+  captureType: string
+) => Promise<*> | void;
