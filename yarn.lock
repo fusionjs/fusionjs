@@ -2597,9 +2597,9 @@ fusion-core@^1.2.2:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-core@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.3.0.tgz#9b2db6f686baec6fe4b01c92dda72817630a3fea"
+fusion-core@^1.3.1-1:
+  version "1.3.1-1"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.3.1-1.tgz#9411282d3afa65c11d888adb384b33eaceeb0ac1"
   dependencies:
     koa "^2.4.1"
     koa-compose "^4.0.0"
