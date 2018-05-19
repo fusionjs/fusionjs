@@ -50,7 +50,7 @@ declare module 'winston' {
     format?: $winstonFormat,
     level?: $Keys<T>,
     levels?: T,
-    transports?: Array<$winstonTransport>,
+    transports?: Array<$winstonTransport | any>,
   };
 
   declare type $winstonLogger<T: $winstonLevels> = {
