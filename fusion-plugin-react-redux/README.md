@@ -20,6 +20,7 @@ Note that this plugin extends the Redux state with a property called `ctx` that 
   * [Dependencies](#dependencies)
   * [Service API](#service-api)
 * [Redux devtools integration](#redux-devtools-integration)
+
 ---
 
 ### Installation
@@ -41,16 +42,21 @@ export default (state, action) => ({
 
 function countReducer(state, action) {
   switch (action.type) {
-    case 'INCREMENT': return state + 1;
-    case 'DECREMENT': return state - 1;
-    default: return state;
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
   }
 }
 
 function thingsReducer(state, action) {
   switch (action.type) {
-    case 'ADD_THING': return [...state, action.payload];
-    default: return state;
+    case 'ADD_THING':
+      return [...state, action.payload];
+    default:
+      return state;
   }
 }
 ```
@@ -60,7 +66,12 @@ function thingsReducer(state, action) {
 ```js
 // in your main.js file
 import React from 'react';
-import Redux, {ReduxToken, ReducerToken, EnhancerToken, GetInitialStateToken} from 'fusion-plugin-react-redux';
+import Redux, {
+  ReduxToken,
+  ReducerToken,
+  EnhancerToken,
+  GetInitialStateToken,
+} from 'fusion-plugin-react-redux';
 import ReduxActionEmitterEnhancer from 'fusion-plugin-redux-action-emitter-enhancer';
 import App from 'fusion-react';
 import reducer from './reducer';
@@ -70,7 +81,7 @@ export default function start() {
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
   app.register(EnhancerToken, enhancer);
-  __NODE__ && app.register(InitialStateToken, async ctx => ({}));
+  __NODE__ && app.register(GetInitialStateToken, async ctx => ({}));
 
   return app;
 }
@@ -129,10 +140,10 @@ type Enhancer = (next: StoreCreator) => StoreCreator
 type StoreCreator = (reducer: Reducer, preloadedState: State) => Store
 ```
 
-##### `InitialStateToken`
+##### `GetInitialStateToken`
 
 ```js
-import {ReducerToken} from 'fusion-plugin-react-redux';
+import {GetInitialStateToken} from 'fusion-plugin-react-redux';
 ```
 
 A function that gets initial state asynchronously without triggering actions. Optional. Useful for testing. When architecting application state, prefer using standard reducers to specify initial state.
@@ -140,7 +151,7 @@ A function that gets initial state asynchronously without triggering actions. Op
 ###### Types
 
 ```flow
-type InitialState = () => Promise<State>
+type InitialState = () => Promise<State> | State
 ```
 
 ---
@@ -148,11 +159,11 @@ type InitialState = () => Promise<State>
 #### Service API
 
 ```js
-const service: ReduxServiceInstance = Redux.from(ctx: Context)
+const service: ReduxServiceInstance = Redux.from((ctx: Context));
 ```
 
-- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
-- returns `service:ReduxServiceInstance`
+* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* returns `service:ReduxServiceInstance`
 
 ###### Types
 
@@ -164,9 +175,9 @@ type ReduxServiceInstance = {
 }
 ```
 
-- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
-- `store: Store` - A Redux store
-- `initStore: () => Promise<Store>` - calls the function provided by [`InitialStateToken`](#initialstatetoken)
+* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* `store: Store` - A Redux store
+* `initStore: () => Promise<Store>` - calls the function provided by [`GetInitialStateToken`](#getinitialstatetoken)
 
 ###### `store.ctx`
 
