@@ -6,14 +6,14 @@
  * @flow
  */
 
-import type {Reducer, StoreEnhancer, Store} from 'redux';
+import type {Reducer, StoreEnhancer} from 'redux';
 
 import {createToken} from 'fusion-core';
 import type {Token, Context} from 'fusion-core';
 
 import type {ReactReduxServiceType} from './types.js';
 
-type InitialStateType<S, A, D> = (ctx?: Context) => Promise<Store<S, A, D>>;
+type InitialStateType<TState> = (ctx?: Context) => Promise<TState> | TState;
 
 export const ReduxToken: Token<ReactReduxServiceType> = createToken(
   'ReduxToken'
@@ -25,6 +25,6 @@ export const PreloadedStateToken: Token<Object> = createToken(
 export const EnhancerToken: Token<StoreEnhancer<*, *, *>> = createToken(
   'EnhancerToken'
 );
-export const GetInitialStateToken: Token<
-  InitialStateType<*, *, *>
-> = createToken('GetInitialStateToken');
+export const GetInitialStateToken: Token<InitialStateType<mixed>> = createToken(
+  'GetInitialStateToken'
+);
