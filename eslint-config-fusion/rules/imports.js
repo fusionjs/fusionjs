@@ -1,3 +1,4 @@
+// @flow
 module.exports = {
   plugins: ['eslint-plugin-import'],
 
