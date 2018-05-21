@@ -11,6 +11,7 @@ import test from 'tape-cup';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
 import App from 'fusion-core';
+import type {Context} from 'fusion-core';
 import {RPCHandlersToken} from 'fusion-plugin-rpc';
 import {getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -52,7 +53,7 @@ test('plugin', t => {
   };
 
   const RPCRedux = getService(appCreator, Plugin);
-  const mockCtx = {headers: {}, memoized: new Map()};
+  const mockCtx: Context = ({headers: {}, memoized: new Map()}: any);
   t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();
 });
@@ -68,7 +69,7 @@ test('mock plugin', t => {
   };
 
   const RPCRedux = getService(appCreator, mock);
-  const mockCtx = {headers: {}, memoized: new Map()};
+  const mockCtx: Context = ({headers: {}, memoized: new Map()}: any);
   t.equal(typeof RPCRedux.from(mockCtx).request, 'function');
   t.end();
 });
