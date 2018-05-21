@@ -32,10 +32,7 @@ const plugin =
           });
         }
         ctx.element = (
-          <StyletronProvider
-            value={engine}
-            debugMode={__DEV__ ? 'ssr' : void 0}
-          >
+          <StyletronProvider value={engine}>
             <LegacyProvider value={engine}>{ctx.element}</LegacyProvider>
           </StyletronProvider>
         );
