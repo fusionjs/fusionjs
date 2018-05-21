@@ -1,10 +1,21 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import tape from 'tape-cup';
+import type {tape$TestCb} from 'tape-cup';
 import {compose} from '../compose';
+
+import type {Context} from '../types.js';
 
 const env = __BROWSER__ ? 'BROWSER' : 'NODE';
 
 function testHelper(tapeFn) {
-  return (name, testFn) => {
+  return (name: string, testFn: tape$TestCb) => {
     return tapeFn(`${env} - ${name}`, testFn);
   };
 }
@@ -26,7 +37,9 @@ function getContext() {
       };
 }
 
-export function run(app, ctx = {}) {
+// $FlowFixMe
+export function run(app: any, ctx: Context = {}) {
+  // $FlowFixMe
   ctx = Object.assign(getContext(), ctx);
   app.resolve();
   return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);

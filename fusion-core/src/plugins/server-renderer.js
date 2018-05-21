@@ -1,7 +1,23 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import {now} from './timing';
 
-export default function getRendererPlugin({render, timing}) {
-  return async function renderer(ctx, next) {
+import type {Context} from '../types.js';
+
+export default function getRendererPlugin({
+  render,
+  timing,
+}: {
+  render: any,
+  timing: any,
+}) {
+  return async function renderer(ctx: Context, next: () => Promise<void>) {
     const timer = timing.from(ctx);
     timer.downstream.resolve(now() - timer.start);
 

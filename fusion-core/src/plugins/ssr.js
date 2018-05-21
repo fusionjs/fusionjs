@@ -1,6 +1,15 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import path from 'path';
 import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML} from '../sanitization';
+import type {Context, SSRDecider as SSRDeciderService} from '../types.js';
 
 const SSRDecider = createPlugin({
   provides: () => {
@@ -19,8 +28,14 @@ const SSRDecider = createPlugin({
 });
 export {SSRDecider};
 
-export default function createSSRPlugin({element, ssrDecider}) {
-  return async function ssrPlugin(ctx, next) {
+export default function createSSRPlugin({
+  element,
+  ssrDecider,
+}: {
+  element: any,
+  ssrDecider: SSRDeciderService,
+}) {
+  return async function ssrPlugin(ctx: Context, next: () => Promise<void>) {
     if (!ssrDecider(ctx)) return next();
 
     const template = {
@@ -43,6 +58,7 @@ export default function createSSRPlugin({element, ssrDecider}) {
       return;
     }
 
+    // $FlowFixMe
     const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
     const safeAttrs = Object.keys(htmlAttrs)
       .map(attrKey => {
@@ -57,7 +73,9 @@ export default function createSSRPlugin({element, ssrDecider}) {
       .join('');
 
     const safeTitle = escape(title);
+    // $FlowFixMe
     const safeHead = head.map(consumeSanitizedHTML).join('');
+    // $FlowFixMe
     const safeBody = body.map(consumeSanitizedHTML).join('');
 
     const preloadHintLinks = getPreloadHintLinks(ctx);

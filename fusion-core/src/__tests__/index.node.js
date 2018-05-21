@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import test from 'tape-cup';
 import App, {html} from '../index';
 import {run} from './test-helper';
@@ -19,6 +27,7 @@ test('ssr with accept header', async t => {
     t.equals(typeof ctx.template, 'object', 'sets ctx.template');
     t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
     t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    // $FlowFixMe
     t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
     t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
     t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
@@ -39,6 +48,7 @@ test('ssr with accept header', async t => {
       'ctx.template.htmlAttrs keeps structure on upstream'
     );
     t.equals(
+      // $FlowFixMe
       typeof ctx.template.bodyAttrs,
       'object',
       'ctx.template.bodyAttrs keeps structure on upstream'
@@ -53,6 +63,7 @@ test('ssr with accept header', async t => {
     );
   });
   try {
+    // $FlowFixMe
     const ctx = await run(app);
     t.equals(typeof ctx.rendered, 'string', 'ctx.rendered');
     t.equals(typeof ctx.body, 'string', 'renders ctx.body to string');
@@ -75,6 +86,7 @@ test('ssr without valid accept header', async t => {
     headers: {accept: '*/*'},
   };
   try {
+    // $FlowFixMe
     const ctx = await run(app, initialCtx);
     t.notok(ctx.element, 'does not set ctx.element');
     t.notok(ctx.type, 'does not set ctx.type');
@@ -123,6 +135,7 @@ test('disable SSR by composing SSRDecider with a plugin', async t => {
     let initialCtx = {
       path: '/foo',
     };
+    // $FlowFixMe
     const ctx = await run(buildApp(), initialCtx);
 
     t.notok(ctx.element, 'non-ssr route does not set ctx.element');
@@ -133,6 +146,7 @@ test('disable SSR by composing SSRDecider with a plugin', async t => {
     let validSSRPathCtx = {
       path: '/some-path',
     };
+    // $FlowFixMe
     const renderCtx = await run(buildApp(), validSSRPathCtx);
     t.equals(renderCtx.element, element, 'ssr route sets ctx.element');
     t.equals(renderCtx.type, 'text/html', 'ssr route sets ctx.type');
@@ -167,6 +181,7 @@ test('disable SSR by composing SSRDecider with a function', async t => {
     let initialCtx = {
       path: '/foo',
     };
+    // $FlowFixMe
     const ctx = await run(buildApp(), initialCtx);
 
     t.notok(ctx.element, 'non-ssr route does not set ctx.element');
@@ -177,6 +192,7 @@ test('disable SSR by composing SSRDecider with a function', async t => {
     let validSSRPathCtx = {
       path: '/some-path',
     };
+    // $FlowFixMe
     const renderCtx = await run(buildApp(), validSSRPathCtx);
     t.equals(renderCtx.element, element, 'ssr route sets ctx.element');
     t.equals(renderCtx.type, 'text/html', 'ssr route sets ctx.type');
@@ -214,6 +230,7 @@ test('SSR extension handling', async t => {
       let initialCtx = {
         path: `/some-path.${i}`,
       };
+      // $FlowFixMe
       await run(buildApp(), initialCtx);
       const shouldSSR = extensionToSSRSupported[i];
       t.equals(
@@ -243,6 +260,7 @@ test('SSR with redirects downstream', async t => {
     t.equals(typeof ctx.template, 'object', 'sets ctx.template');
     t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
     t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    // $FlowFixMe
     t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
     t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
     t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
@@ -265,6 +283,7 @@ test('SSR with redirects downstream', async t => {
       'ctx.template.htmlAttrs keeps structure on upstream'
     );
     t.equals(
+      // $FlowFixMe
       typeof ctx.template.bodyAttrs,
       'object',
       'ctx.template.bodyAttrs keeps structure on upstream'
@@ -305,6 +324,7 @@ test('SSR with redirects upstream', async t => {
     t.equals(typeof ctx.template, 'object', 'sets ctx.template');
     t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
     t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    // $FlowFixMe
     t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
     t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
     t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
@@ -327,6 +347,7 @@ test('SSR with redirects upstream', async t => {
       'ctx.template.htmlAttrs keeps structure on upstream'
     );
     t.equals(
+      // $FlowFixMe
       typeof ctx.template.bodyAttrs,
       'object',
       'ctx.template.bodyAttrs keeps structure on upstream'
@@ -357,6 +378,7 @@ test('HTML escaping works', async t => {
   const render = el => el;
   const template = (ctx, next) => {
     ctx.template.htmlAttrs = {lang: '">'};
+    // $FlowFixMe
     ctx.template.bodyAttrs = {test: '">'};
     ctx.template.title = '</title>';
     return next();
@@ -365,6 +387,7 @@ test('HTML escaping works', async t => {
   app.middleware(template);
 
   try {
+    // $FlowFixMe
     const ctx = await run(app);
     t.ok(ctx.body.includes('<html lang="\\u0022\\u003E">'), 'lang works');
     t.ok(ctx.body.includes('<body test="\\u0022\\u003E">'), 'bodyAttrs work');
@@ -389,6 +412,7 @@ test('head and body must be sanitized', async t => {
   const app = new App(element, render);
   app.middleware(template);
   try {
+    // $FlowFixMe
     const ctx = await run(app);
     t.ok(ctx.body.includes('<meta charset="\\u0022\\u003E" />'), 'head works');
     t.ok(ctx.body.includes('<div>\\u0022\\u003E</div>'), 'body works');
@@ -402,6 +426,7 @@ test('throws if head is not sanitized', async t => {
   const element = 'hi';
   const render = el => el;
   const template = (ctx, next) => {
+    // $FlowFixMe
     ctx.template.head.push(`<meta charset="${'">'}" />`);
     return next();
   };
@@ -420,6 +445,7 @@ test('throws if body is not sanitized', async t => {
   const element = 'hi';
   const render = el => el;
   const template = (ctx, next) => {
+    // $FlowFixMe
     ctx.template.body.push(`<meta charset="${'">'}" />`);
     return next();
   };

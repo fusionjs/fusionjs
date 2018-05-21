@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import test from './test-helper';
 import {compose} from '../compose';
 
@@ -7,8 +15,11 @@ test('composed middleware are executed correctly', t => {
   }
   const middleware = compose([A]);
   const next = () => Promise.resolve();
+  // $FlowFixMe
   t.doesNotThrow(() => middleware({}, next), 'works with valid args');
+  // $FlowFixMe
   t.doesNotThrow(() => middleware(void 0, next), 'works with missing ctx');
+  // $FlowFixMe
   t.doesNotThrow(() => middleware(), 'works with missing next');
   t.end();
 });
@@ -36,5 +47,6 @@ test('downstream and upstream run in same order as koa', t => {
   const middleware = compose([a, b, c]);
   const ctx = {number: 0};
   const next = () => Promise.resolve();
+  // $FlowFixMe
   middleware(ctx, next).then(t.end);
 });

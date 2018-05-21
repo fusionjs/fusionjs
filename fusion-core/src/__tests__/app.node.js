@@ -1,6 +1,16 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import test from 'tape-cup';
 import App from '../index';
 import {compose} from '../compose.js';
+
+import type {Context} from '../types.js';
 
 test('context composition', async t => {
   const element = 'hello';
@@ -32,8 +42,11 @@ test('context composition', async t => {
   try {
     app.resolve();
     const middleware = compose(app.plugins);
+    // $FlowFixMe
     await middleware(context, () => Promise.resolve());
+    // $FlowFixMe
     t.equals(typeof context.rendered, 'string', 'renders');
+    // $FlowFixMe
     t.ok(context.rendered.includes('<h1>HELLO</h1>'), 'has expected html');
   } catch (e) {
     t.ifError(e, 'something went wrong');
@@ -44,7 +57,7 @@ test('context composition', async t => {
 test('context composition with a cdn', async t => {
   const element = 'hello';
   const render = el => `<h1>${el}</h1>`;
-  const wrap = () => (ctx, next) => {
+  const wrap = () => (ctx: Context, next: () => Promise<void>) => {
     ctx.element = ctx.element.toUpperCase();
     return next();
   };
@@ -67,11 +80,12 @@ test('context composition with a cdn', async t => {
   };
 
   const app = new App(element, render);
-  app.middleware(wrap);
+  app.middleware(wrap());
   app.resolve();
   const middleware = compose(app.plugins);
   try {
-    await middleware(context, () => Promise.resolve());
+    await middleware(((context: any): Context), () => Promise.resolve());
+    // $FlowFixMe
     t.ok(context.body.includes('https://something.com/lol/es5-file.js'));
   } catch (e) {
     t.ifError(e, 'something went wrong');

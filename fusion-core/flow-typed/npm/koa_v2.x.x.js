@@ -1,3 +1,4 @@
+// @flow
 // flow-typed signature: 1a33220ead1c6b6e3205a55b2a2ec3a0
 // flow-typed version: 18b7d8b101/koa_v2.x.x/flow_>=v0.47.x
 
@@ -5,7 +6,7 @@
  * Type def from from source code of koa.
  * this: https://github.com/koajs/koa/commit/08eb1a20c3975230aa1fe1c693b0cd1ac7a0752b
  * previous: https://github.com/koajs/koa/commit/fabf5864c6a5dca0782b867a263b1b0825a05bf9
- * 
+ *
  * Changelog
  * breaking: remove unused app.name
  * breaking: ctx.throw([status], [msg], [properties]) (caused by http-errors (#957) )
