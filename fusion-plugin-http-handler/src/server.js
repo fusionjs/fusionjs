@@ -2,12 +2,18 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 /* eslint-env node */
 
 import {createPlugin} from 'fusion-core';
 import {HttpHandlerToken} from './tokens.js';
+
+import type {FusionPlugin} from 'fusion-core';
+
+import type {DepsType, ServiceType} from './types.js';
 
 const plugin =
   __NODE__ &&
@@ -24,12 +30,14 @@ const plugin =
         }
         return new Promise((resolve, reject) => {
           const oldEnd = ctx.res.end.bind(ctx.res);
+          // $FlowFixMe
           ctx.res.end = (data, encoding, cb) => {
             ctx.respond = false;
             oldEnd(data, encoding, cb);
             return next().then(resolve);
           };
           handler(ctx.req, ctx.res, () => {
+            // $FlowFixMe
             ctx.res.end = oldEnd;
             return next()
               .then(resolve)
@@ -40,4 +48,4 @@ const plugin =
     },
   });
 
-export default plugin;
+export default ((plugin: any): FusionPlugin<DepsType, ServiceType>);

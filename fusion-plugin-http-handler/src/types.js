@@ -6,10 +6,10 @@
  * @flow
  */
 
-import browser from './browser';
-import server from './server';
+import {HttpHandlerToken} from './tokens.js';
 
-const plugin = __BROWSER__ ? browser : server;
+export type DepsType = {
+  handler: typeof HttpHandlerToken,
+};
 
-export default plugin;
-export {HttpHandlerToken} from './tokens.js';
+export type ServiceType = (mixed, mixed, () => Promise<void>) => void;
