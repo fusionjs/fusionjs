@@ -1,7 +1,7 @@
 {
   "name": "fusion-react",
   "description": "FusionJS entry point for React universal rendering",
-  "version": "1.0.5-0",
+  "version": "1.0.5",
   "license": "MIT",
   "repository": "fusionjs/fusion-react",
   "files": [
