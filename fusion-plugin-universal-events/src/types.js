@@ -7,7 +7,7 @@
  */
 
 import type {Context} from 'fusion-core';
-import type {Fetch} from 'fusion-tokens';
+import {FetchToken} from 'fusion-tokens';
 
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
 type HandlerFnType<TInput> = (payload: TInput, ctx?: Context) => void;
@@ -34,5 +34,5 @@ export interface IEmitter {
 }
 
 export type UniversalEventsPluginDepsType = {
-  fetch: Fetch,
+  fetch: typeof FetchToken,
 };
