@@ -1,13 +1,9 @@
 {
   "name": "fusion-plugin-i18n-react",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
   "repository": "fusionjs/fusion-plugin-i18n-react",
-  "files": [
-    "dist",
-    "singleton.js",
-    "src"
-  ],
+  "files": ["dist", "singleton.js", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
