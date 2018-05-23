@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
@@ -10,7 +12,7 @@ import {Route as ReactRouterRoute} from 'react-router-dom';
 
 const isEmptyChildren = children => React.Children.count(children) === 0;
 
-function Route(props, context) {
+function Route(props: any, context: any) {
   const {trackingId, component, render, children, ...remainingProps} = props;
 
   return (

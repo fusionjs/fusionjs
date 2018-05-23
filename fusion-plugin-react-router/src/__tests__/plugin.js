@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
@@ -36,8 +38,14 @@ function getPrefixApp(el) {
 
 function cleanup() {
   if (__BROWSER__) {
-    document.body.removeChild(document.getElementById('root'));
-    document.body.removeChild(document.getElementById('__ROUTER_DATA__'));
+    const root = document.getElementById('root');
+    if (root && document.body) {
+      document.body.removeChild(root);
+    }
+    const routerData = document.getElementById('__ROUTER_DATA__');
+    if (routerData && document.body) {
+      document.body.removeChild(routerData);
+    }
   }
 }
 
@@ -51,6 +59,7 @@ if (__NODE__) {
       </div>
     );
     const app = getApp(element);
+    // $FlowFixMe
     app.register(UniversalEventsToken, {
       map() {},
       emit() {},
@@ -78,6 +87,7 @@ test('events with trackingId', async t => {
     title: 'home',
     page: '/',
   });
+  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -100,6 +110,7 @@ test('events with no tracking id', async t => {
     title: '/',
     page: '/',
   });
+  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -122,6 +133,7 @@ test('events with no tracking id and route prefix', async t => {
     title: '/',
     page: '/',
   });
+  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -151,6 +163,7 @@ test('events with no tracking id and deep path', async t => {
     page: '/user/:uuid',
   });
 
+  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
@@ -187,6 +200,7 @@ test('events with no tracking id and deep path and route prefix', async t => {
     page: '/user/:uuid',
   });
 
+  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
@@ -274,6 +288,7 @@ if (__BROWSER__) {
       }),
     });
 
+    // $FlowFixMe
     app.register(UniversalEventsToken, UniversalEvents);
     const simulator = setup(app);
     await simulator.render('/');
@@ -309,10 +324,10 @@ function setup(app, pageData = {title: '/', page: '/'}) {
     el.setAttribute('id', '__ROUTER_DATA__');
     const textNode = document.createTextNode(JSON.stringify(pageData));
     el.appendChild(textNode);
-    document.body.appendChild(el);
+    document.body && document.body.appendChild(el);
     const rootEl = document.createElement('div');
     rootEl.setAttribute('id', 'root');
-    document.body.appendChild(rootEl);
+    document.body && document.body.appendChild(rootEl);
   }
   const simulator = getSimulator(app);
   return simulator;

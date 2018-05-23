@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
@@ -12,8 +14,11 @@ import createHistory from 'history/createBrowserHistory';
 export {Status, NotFound} from './Status';
 export {Redirect} from './Redirect';
 
-class BrowserRouter extends React.Component {
-  constructor(props = {}, context) {
+class BrowserRouter extends React.Component<any> {
+  history: any;
+  lastTitle: any;
+
+  constructor(props: any = {}, context: any) {
     super(props, context);
     this.history = createHistory(this.props);
     this.lastTitle = null;
@@ -22,7 +27,7 @@ class BrowserRouter extends React.Component {
   getChildContext() {
     const {__IS_PREPARE__} = this.context;
     return {
-      onRoute: routeData => {
+      onRoute: (routeData: any) => {
         if (routeData.title !== this.lastTitle && !__IS_PREPARE__) {
           this.lastTitle = routeData.title;
           this.props.onRoute(routeData);
@@ -55,6 +60,7 @@ BrowserRouter.childContextTypes = {
   onRoute: PropTypes.func.isRequired,
 };
 
+// $FlowFixMe
 BrowserRouter.defaultProps = {
   onRoute: () => {},
 };

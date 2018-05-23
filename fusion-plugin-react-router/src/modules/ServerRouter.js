@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
@@ -97,13 +99,13 @@ const noop = () => {};
  * location changes in a context object. Useful mainly in testing and
  * server-rendering scenarios.
  */
-export class ServerRouter extends React.Component {
+export class ServerRouter extends React.Component<any> {
   getChildContext() {
     return {
       router: {
         staticContext: this.props.context || {},
       },
-      onRoute: routeData => this.props.onRoute(routeData),
+      onRoute: (routeData: any) => this.props.onRoute(routeData),
     };
   }
 
@@ -111,14 +113,14 @@ export class ServerRouter extends React.Component {
    * @param {string|object} location
    * @returns {string}
    */
-  createHref(location) {
+  createHref(location: any) {
     return createPrefixedURL(location, this.props.basename);
   }
 
   /**
    * @param {string} path
    */
-  handlePush(path) {
+  handlePush(path: any) {
     const {basename, context} = this.props;
     context.action = 'PUSH';
     context.location = createLocation(path, basename);
@@ -128,7 +130,7 @@ export class ServerRouter extends React.Component {
   /**
    * @param {string} path
    */
-  handleReplace(path) {
+  handleReplace(path: any) {
     const {basename, context} = this.props;
     context.action = 'REPLACE';
     context.location = createLocation(path, basename);
@@ -159,6 +161,7 @@ export class ServerRouter extends React.Component {
   }
 }
 
+// $FlowFixMe
 ServerRouter.defaultProps = {
   basename: '',
   location: '/',

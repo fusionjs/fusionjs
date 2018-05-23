@@ -2,6 +2,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -16,7 +18,7 @@ export default createPlugin({
     emitter: UniversalEventsToken.optional,
   },
   middleware: ({emitter}) => {
-    return (ctx, next) => {
+    return async (ctx, next) => {
       const prefix = ctx.prefix || '';
       if (!ctx.element) {
         return next();

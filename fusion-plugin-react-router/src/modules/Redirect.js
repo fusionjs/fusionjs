@@ -2,13 +2,15 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export class Redirect extends React.Component {
-  constructor(props, context) {
+export class Redirect extends React.Component<any> {
+  constructor(props: any, context: any) {
     super(props, context);
     if (this.isStatic(context)) this.perform();
   }
@@ -17,7 +19,7 @@ export class Redirect extends React.Component {
     if (!this.isStatic()) this.perform();
   }
 
-  isStatic(context = this.context) {
+  isStatic(context: any = this.context) {
     return context.router && context.router.staticContext;
   }
 
@@ -43,6 +45,7 @@ export class Redirect extends React.Component {
   }
 }
 
+// $FlowFixMe
 Redirect.defaultProps = {
   push: false,
   code: 307,
