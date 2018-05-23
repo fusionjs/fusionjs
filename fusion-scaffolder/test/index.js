@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 const test = require('tape');
 const fs = require('fs');
 const {join} = require('path');
@@ -57,7 +65,7 @@ test('scaffolding example/', async t => {
   t.ok(fooJsStat.isFile(), 'generic files are copied');
   const fooJsContent = await readFile(join(projectDir, 'foo.js'), 'utf8');
   t.ok(
-    fooJsContent === 'module.exports = {};\n',
+    fooJsContent.includes('module.exports = {};\n'),
     'generic file content is correct'
   );
 

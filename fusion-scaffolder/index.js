@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 const fs = require('fs');
 const mkdirpCb = require('mkdirp');
 const {render} = require('nunjucks');
@@ -6,12 +14,20 @@ const {promisify} = require('util');
 const readdir = require('recursive-readdir');
 const {spawn} = require('child_process');
 
+// Fix coming in flow-bin 0.73
+// $FlowFixMe
 const copyFile = promisify(fs.copyFile);
 const lstat = promisify(fs.lstat);
 const mkdirp = promisify(mkdirpCb);
 const writeFile = promisify(fs.writeFile);
 
-module.exports = async function scaffold(ctx = {}) {
+type ScaffoldContext = {
+  cwd?: string,
+  path?: string,
+  project?: string,
+};
+
+module.exports = async function scaffold(ctx: ScaffoldContext = {}) {
   if (!ctx.cwd) {
     ctx.cwd = process.cwd();
   }
@@ -40,8 +56,10 @@ module.exports = async function scaffold(ctx = {}) {
 
 async function compile(projectPath, templatePath, contentPath, ctx) {
   // Get context from index.js
-  // eslint-disable-next-line import/no-dynamic-require
+  /* eslint-disable import/no-dynamic-require */
+  // $FlowFixMe
   const getContext = require(join(templatePath, 'index.js'));
+  /* eslint-enable import/no-dynamic-require */
   const newCtx = await getContext(ctx);
 
   // Get all template files
