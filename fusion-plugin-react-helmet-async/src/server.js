@@ -1,10 +1,21 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import React from 'react';
 import {createPlugin, dangerouslySetHTML} from 'fusion-core';
 import {HelmetProvider} from 'react-helmet-async';
 
+import type {FusionPlugin} from 'fusion-core';
+
 const keys = ['meta', 'link', 'style', 'base', 'noscript', 'script'];
 
-export default __NODE__ &&
+const plugin =
+  __NODE__ &&
   createPlugin({
     middleware: () => {
       return async (ctx, next) => {
@@ -29,3 +40,5 @@ export default __NODE__ &&
       };
     },
   });
+
+export default ((plugin: any): FusionPlugin<void, void>);

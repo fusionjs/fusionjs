@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 import App from 'fusion-react';
 import {render} from 'react-dom';
 import fs from 'fs';
@@ -61,7 +69,9 @@ test(`${name} side render`, async t => {
   if (__BROWSER__) {
     root = document.createElement('div');
     root.setAttribute('id', 'root');
-    document.body.appendChild(root);
+    if (document.body) {
+      document.body.appendChild(root);
+    }
     app = new App(Root, el => render(el, root));
   } else {
     app = new App(Root);
@@ -83,17 +93,19 @@ test(`${name} side render`, async t => {
     // need to wait until next tick for dom changes
     await new Promise(resolve => setTimeout(resolve, 10));
     t.equal(document.title, 'My Title');
-    t.equal(
-      document.querySelector('base').getAttribute('href'),
-      'http://mysite.com/'
-    );
-    t.equal(
-      document
-        .querySelector('meta[name="description"]')
-        .getAttribute('content'),
-      'Helmet application'
-    );
-    document.body.removeChild(root);
+    const baseEl = document.querySelector('base');
+    if (!baseEl) {
+      throw new Error('Could not find base element');
+    }
+    t.equal(baseEl.getAttribute('href'), 'http://mysite.com/');
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      throw new Error('Could not find meta description');
+    }
+    t.equal(metaDescription.getAttribute('content'), 'Helmet application');
+    if (document.body && root instanceof HTMLElement) {
+      document.body.removeChild(root);
+    }
   }
   t.end();
 });
