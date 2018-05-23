@@ -2,9 +2,12 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 import React, {Component} from 'react';
+import type {ComponentType} from 'react';
 import PropTypes from 'prop-types';
 
 /*
@@ -18,9 +21,11 @@ in the app.
 The translation map is then exposed by `fusion-plugin-i18n/chunk-translation-map.js`
 */
 export const withTranslations = (/*translationKeys*/) => {
-  return OriginalComponent => {
-    class WithTranslations extends Component {
-      constructor(props, context) {
+  return (OriginalComponent: ComponentType<any>) => {
+    class WithTranslations extends Component<any> {
+      translateProp: any;
+
+      constructor(props: any, context: any) {
         super(props, context);
         const {i18n} = context;
         this.translateProp = i18n
