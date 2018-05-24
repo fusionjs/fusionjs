@@ -17,7 +17,7 @@ export default async function start() {
       </Switch>
     )
   );
-  app.register(Router, {});
+  app.register(Router);
   app.register(UniversalEventsToken, UniversalEvents);
   __BROWSER__ && app.register(FetchToken, fetch);
   return app;

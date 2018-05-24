@@ -10,7 +10,7 @@ import Root from './root.js';
 
 export default async function start() {
   const app = new App(<Root />);
-  app.register(Router, {});
+  app.register(Router);
   app.register(UniversalEventsToken, UniversalEvents);
   __BROWSER__ && app.register(FetchToken, window.fetch);
   return app;

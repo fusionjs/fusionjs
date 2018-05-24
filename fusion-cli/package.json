@@ -103,7 +103,7 @@
     "flow-bin": "0.72.0",
     "fusion-core": "^1.3.1",
     "fusion-plugin-i18n-react": "^1.0.4",
-    "fusion-plugin-react-router": "^1.1.0",
+    "fusion-plugin-react-router": "^1.1.1",
     "fusion-react": "^1.0.5",
     "fusion-react-async": "^1.2.2",
     "fusion-test-utils": "^1.1.0",
