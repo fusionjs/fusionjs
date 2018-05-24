@@ -1,10 +1,20 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
-const binPath = require.resolve('../bin/cli.js');
+
 const {spawn} = require('child_process');
 const getPort = require('get-port');
 const request = require('request-promise');
 
-function run(args, options) {
+const binPath = require.resolve('../bin/cli.js');
+
+function run(args /*: any */, options /*: any */) {
   const opts = {
     stdio: 'inherit',
     ...options,
@@ -35,29 +45,32 @@ function run(args, options) {
       reject(e);
     });
   });
+  // $FlowFixMe
   promise.proc = child;
   return promise;
 }
 
-function cmd(args, options) {
+function cmd(args /*: any */, options /*: any */) {
   return run([binPath, args], options);
 }
 
-async function start(args, options) {
+async function start(args /*: any */, options /*: any */) {
   const port = await getPort();
+  // $FlowFixMe
   const {proc} = cmd(`start --port=${port} ${args}`, options);
   const res = await waitForServer(port);
   return {proc, res, port};
 }
 
-async function dev(args, options) {
+async function dev(args /*: any */, options /*: any */) {
   const port = await getPort();
+  // $FlowFixMe
   const {proc} = cmd(`dev --port=${port} --no-open ${args}`, options);
   const res = await waitForServer(port);
   return {proc, res, port};
 }
 
-async function waitForServer(port) {
+async function waitForServer(port /*: any */) /*: any */ {
   let started = false;
   let numTries = 0;
   let res;

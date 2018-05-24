@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const path = require('path');
 const test = require('tape');
 
@@ -37,6 +46,7 @@ function testDev(title, dir) {
     });
 
     t.assert(compilationError, 'Should produce compilation error');
+    // $FlowFixMe
     t.throws(() => require(entry), 'Should throw');
     t.end();
   });
@@ -62,6 +72,7 @@ function testProd(title, dir) {
 
     t.assert(compilationError, 'Should produce compilation error');
 
+    // $FlowFixMe
     t.throws(() => require(entry), 'Should throw');
     t.end();
   });
@@ -87,10 +98,12 @@ function testTest(title, dir) {
 
     t.assert(compilationError, 'Should produce compilation error');
 
+    // $FlowFixMe
     t.throws(() => require(entry), 'Server test should throw');
 
     const clientDir = `.fusion/dist/${envs[0]}/client`;
     const clientEntry = path.resolve(clientDir, 'client-main.js');
+    // $FlowFixMe
     t.throws(() => require(clientEntry), 'Client test should throw');
 
     t.end();

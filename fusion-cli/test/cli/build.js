@@ -1,11 +1,21 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
-const {cmd, run, start} = require('../run-command');
 const {promisify} = require('util');
 const request = require('request-promise');
 const puppeteer = require('puppeteer');
+
+const {cmd, run, start} = require('../run-command');
 
 const exists = promisify(fs.exists);
 const readdir = promisify(fs.readdir);
@@ -85,6 +95,7 @@ test('`fusion build` works in production with a CDN_URL', async t => {
   const {res, proc} = await start(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {CDN_URL: 'https://cdn.com/test'}),
   });
+
   t.ok(
     res.includes('src="https://cdn.com/test/client-main'),
     'includes a script reference to client-main'
@@ -370,6 +381,7 @@ test('`fusion build` with dynamic imports', async t => {
   // Execute node script to validate dynamic imports
   const entryPath = `.fusion/dist/development/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
+  // $FlowFixMe
   const {stdout} = await run(entry, {stdio: 'pipe'});
   const testContent = JSON.parse(stdout);
   t.ok(

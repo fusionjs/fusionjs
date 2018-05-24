@@ -1,8 +1,18 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const tape = require('tape');
 const http = require('http');
 const getPort = require('get-port');
 const request = require('request-promise');
+
 const stripRoutePrefix = require('../lib/strip-prefix.js');
 
 tape('route prefix stripping', async t => {

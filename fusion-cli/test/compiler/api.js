@@ -1,11 +1,21 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
-const {run} = require('../run-command');
 const getPort = require('get-port');
-const {Compiler} = require('../../build/compiler');
 const {promisify} = require('util');
+
+const {Compiler} = require('../../build/compiler');
+const {run} = require('../run-command');
 
 const exists = promisify(fs.exists);
 const readFile = promisify(fs.readFile);
@@ -86,14 +96,17 @@ test('development/production env globals', async t => {
           });
         });
       `;
+    // $FlowFixMe
     const {stdout} = await run(['-e', command], {stdio: 'pipe'});
     t.ok(
       stdout.includes('main __BROWSER__ is false'),
       'the global, __BROWSER__, is false'
     );
     t.ok(
-      stdout.includes(`main __DEV__ is ${envs[i] === 'development'}`),
-      `the global, __DEV__, is ${envs[i] === 'development'}`
+      stdout.includes(
+        `main __DEV__ is ${(envs[i] === 'development').toString()}`
+      ),
+      `the global, __DEV__, is ${(envs[i] === 'development').toString()}`
     );
     t.ok(
       stdout.includes('main __NODE__ is true'),
@@ -135,6 +148,7 @@ test('test env globals', async t => {
   const serverCommand = `
     require('${entry}');
     `;
+  // $FlowFixMe
   let {stdout} = await run(['-e', serverCommand], {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
@@ -215,6 +229,7 @@ test('generates error if missing default export', async t => {
 
   t.ok(await exists(entry), 'Entry file gets compiled');
 
+  // $FlowFixMe
   const app = require(entry);
   t.ok(typeof app.start === 'function', 'Entry has start function');
   app
@@ -446,6 +461,7 @@ test('test works', async t => {
   const serverCommand = `
     require('${entry}');
     `;
+  // $FlowFixMe
   const {stdout} = await run(['-e', serverCommand], {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'production',
