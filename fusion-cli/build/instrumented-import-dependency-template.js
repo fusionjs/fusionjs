@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
 
@@ -23,7 +32,9 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
  */
 
 class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
-  constructor(clientChunkMap) {
+  /*:: clientChunkMap: any; */
+
+  constructor(clientChunkMap /*: any */) {
     super();
     if (clientChunkMap) {
       this.clientChunkMap = clientChunkMap;
@@ -34,7 +45,7 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
    * For now, we'll just override this method entirely with a modified version
    * Based on https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/ImportDependency.js
    */
-  apply(dep, source, runtime) {
+  apply(dep /*: any */, source /*: any */, runtime /*: any */) {
     const depBlock = dep.block;
     const content = runtime.moduleNamespacePromise({
       block: dep.block,

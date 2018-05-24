@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -78,6 +87,7 @@ function getConfig({target, env, dir, watch, cover}) {
   const fusionConfig = loadFusionRC(dir);
 
   const configPath = path.join(dir, 'package.json');
+  // $FlowFixMe
   const configData = fs.existsSync(configPath) ? require(configPath) : {};
   const {pragma, clientHotLoaderEntry, node, alias} = configData;
 
@@ -355,6 +365,7 @@ function getConfig({target, env, dir, watch, cover}) {
       //   target !== 'node' && appModules,
       //   'node_modules',
       // ].filter(Boolean),
+      // $FlowFixMe
       alias: Object.assign(
         {
           // we replace need to set the path to user application at build-time
@@ -581,13 +592,24 @@ function getStatsLogger({dir, logger, envs}) {
   };
 }
 
-function Compiler({
-  dir = '.',
-  envs = [],
-  watch = false,
-  cover = false,
-  logger = console,
-}) {
+/*::
+type CompilerType = {
+  on: (type: any, callback: any) => any,
+  start: (callback: any) => any,
+  getMiddleware: () => any,
+  clean: () => any,
+};
+*/
+
+function Compiler(
+  {
+    dir = '.',
+    envs = [],
+    watch = false,
+    cover = false,
+    logger = console,
+  } /*: any */
+) /*: CompilerType */ {
   const profiles = envs.map(env => {
     return getProfile({env: env, dir: path.resolve(dir), watch, cover});
   });
@@ -649,6 +671,8 @@ function Compiler({
       rimraf(`${dir}/.fusion`, e => (e ? reject(e) : resolve()));
     });
   };
+
+  return this;
 }
 
 function getNodeConfig(target, env) {

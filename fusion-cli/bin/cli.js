@@ -1,5 +1,15 @@
 #!/usr/bin/env node
+
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 require('./cli-runner')
   .run(process.argv.slice(2).join(' '))
   .catch(e => {

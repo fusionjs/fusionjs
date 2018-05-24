@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /**
  * Adapted from: https://github.com/mithriljs/mithril.js/promise
  */
@@ -5,7 +13,7 @@
 /* eslint-env browser */
 /* global setImmediate, setTimeout */
 // eslint-disable-next-line import/no-mutable-exports
-var Promise = function(executor) {
+var Promise = function(executor /*: any */) {
   if (!(this instanceof Promise))
     throw new Error('Promise must be called with `new`');
   if (typeof executor !== 'function')
@@ -34,6 +42,7 @@ var Promise = function(executor) {
         ) {
           if (value === self)
             throw new TypeError("Promise can't be resolved w/ itself");
+          // $FlowFixMe
           executeOnce(then.bind(value));
         } else {
           callAsync(function() {
@@ -43,7 +52,9 @@ var Promise = function(executor) {
             for (var i = 0; i < list.length; i++) list[i](value);
             resolvers.length = 0;
             rejectors.length = 0;
+            // $FlowFixMe
             instance.state = shouldAbsorb;
+            // $FlowFixMe
             instance.retry = function() {
               execute(value);
             };
@@ -76,6 +87,7 @@ Promise.prototype.then = function(onFulfilled, onRejection) {
     instance = self._instance;
   function handle(callback, list, next, state) {
     list.push(function(value) {
+      // $FlowFixMe
       if (typeof callback !== 'function') next(value);
       else {
         try {
@@ -150,6 +162,7 @@ Promise.race = function(list) {
 // From: https://github.com/rtsao/browser-unhandled-rejection/
 
 function dispatchUnhandledRejectionEvent(promise, reason) {
+  // $FlowFixMe
   const event = document.createEvent('Event');
   /**
    * Note: these properties should not be enumerable, which is the default setting

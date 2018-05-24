@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 const mime = require('mime');
@@ -6,7 +14,7 @@ const Shared = require('./lib/Shared');
 const pathJoin = require('./lib/PathJoin');
 
 // constructor for the middleware
-module.exports = function(compiler, options) {
+module.exports = function(compiler /*: any */, options /*: any */) {
   options = options || {};
   options.filter = options.filter || (() => true);
   const context = {
@@ -17,9 +25,14 @@ module.exports = function(compiler, options) {
   const shared = Shared(context);
 
   // The middleware function
-  function webpackDevMiddleware(req, res, next) {
+  function webpackDevMiddleware(
+    req /*: any */,
+    res /*: any */,
+    next /*: any */
+  ) {
     function goNext() {
       if (!context.options.serverSideRender) return next();
+      // $FlowFixMe
       shared.waitUntilValid(function() {
         next();
       }, req);
@@ -36,10 +49,12 @@ module.exports = function(compiler, options) {
     );
     if (filename === false) return goNext();
 
+    // $FlowFixMe
     shared.handleRequest(filename, processRequest, req);
 
     function processRequest() {
       try {
+        // $FlowFixMe
         let stat = context.fs.statSync(filename);
         if (!stat.isFile()) {
           if (stat.isDirectory()) {
@@ -47,6 +62,7 @@ module.exports = function(compiler, options) {
               filename,
               context.options.index || 'index.html'
             );
+            // $FlowFixMe
             stat = context.fs.statSync(filename);
             if (!stat.isFile()) throw 'next';
           } else {
@@ -58,6 +74,7 @@ module.exports = function(compiler, options) {
       }
 
       // server content
+      // $FlowFixMe
       let content = context.fs.readFileSync(filename);
       content = shared.handleRangeHeaders(content, req, res);
       res.setHeader('Access-Control-Allow-Origin', '*'); // To support XHR, etc.
@@ -78,6 +95,7 @@ module.exports = function(compiler, options) {
     context.compiler.outputPath
   );
   webpackDevMiddleware.waitUntilValid = shared.waitUntilValid;
+  // $FlowFixMe
   webpackDevMiddleware.fileSystem = context.fs;
   return webpackDevMiddleware;
 };

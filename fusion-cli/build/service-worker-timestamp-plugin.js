@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const {ConcatSource} = require('webpack-sources');
 
 /**
@@ -9,7 +18,7 @@ const {ConcatSource} = require('webpack-sources');
  * NOTE: This plugin should only be run on the service worker build
  */
 class ServiceWorkerTimestampPlugin {
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.hooks.compilation.tap(
       'ServiceWorkerTimestampPlugin',
       compilation => {

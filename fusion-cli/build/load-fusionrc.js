@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 /* eslint-disable no-console */
 
@@ -7,10 +15,11 @@ const chalk = require('chalk');
 
 let loggedNotice = false;
 
-module.exports = function validateConfig(dir) {
+module.exports = function validateConfig(dir /*: any */) {
   const configPath = path.join(dir, '.fusionrc.js');
   let config;
   if (fs.existsSync(configPath)) {
+    // $FlowFixMe
     config = require(configPath);
     if (!isValid(config)) {
       throw new Error('.fusionrc.js is invalid');

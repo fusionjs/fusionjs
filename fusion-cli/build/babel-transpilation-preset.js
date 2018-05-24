@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 /**
@@ -5,7 +13,10 @@
  * This should be universally applied for all code, including node_modules.
  */
 
-module.exports = function buildPreset(context, {targets, modules = false}) {
+module.exports = function buildPreset(
+  context /*: any */,
+  {targets, modules = false} /*: any */
+) {
   const target = targets.hasOwnProperty('node') ? 'node' : 'browser';
 
   return {

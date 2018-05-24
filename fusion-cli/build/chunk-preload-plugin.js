@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 /**
  * Webpack plugin for being able to mark async chunks as being already preloaded
  * This is meant for the client and ensures that webpack only requests for chunks
@@ -10,7 +19,7 @@
 const Template = require('webpack/lib/Template');
 
 class ChunkPreloadPlugin {
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.hooks.compilation.tap('ChunkPreloadPlugin', function(compilation) {
       compilation.mainTemplate.hooks.localVars.tap(
         'ChunkPreloadPlugin',

@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 /**
@@ -7,10 +15,12 @@
  */
 
 class ChunkModuleManifestPlugin {
-  constructor(opts = {}) {
+  /*:: opts: any; */
+
+  constructor(opts /*: any */ = {}) {
     this.opts = opts;
   }
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.hooks.invalid.tap('ChunkModuleManifestPlugin', () => {
       this.opts.onInvalidate();
     });
@@ -37,7 +47,8 @@ class ChunkModuleManifestPlugin {
               if (!chunkIdsByFile.has(path)) {
                 chunkIdsByFile.set(path, new Set());
               }
-              chunkIdsByFile.get(path).add(chunkId);
+              const chunkIds = chunkIdsByFile.get(path);
+              chunkIds && chunkIds.add(chunkId);
             });
           });
           this.opts.onChunkIndex(chunkIdsByFile);

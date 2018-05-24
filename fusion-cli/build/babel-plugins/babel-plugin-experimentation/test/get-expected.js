@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const stripIndent = require('strip-indent');
 
 const sharedExpectedContent = stripIndent(
@@ -19,7 +28,10 @@ const sharedExpectedContent = stripIndent(
 `
 ).trim();
 
-module.exports = function getExpected(inputString, includeShared = true) {
+module.exports = function getExpected(
+  inputString /*: string */,
+  includeShared /*: boolean */ = true
+) {
   const sharedContent = includeShared ? '\n' + sharedExpectedContent : '';
   return (stripIndent(inputString).trim() + sharedContent).replace(/"/g, "'");
 };

@@ -1,8 +1,18 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const winston = require('winston');
+
 const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
-const {TestRuntime} = require('../build/test-runtime');
+const {TestAppRuntime} = require('../build/test-runtime');
 
 exports.command =
   'dev [--dir] [--debug] [--test] [--cover] [--port] [--no-open] [--no-hmr] [--log-level]';
@@ -48,16 +58,9 @@ exports.builder = {
   },
 };
 
-exports.run = async function({
-  dir = '.',
-  test,
-  debug,
-  port,
-  cover,
-  hmr,
-  open,
-  logLevel,
-}) {
+exports.run = async function(
+  {dir = '.', test, debug, port, cover, hmr, open, logLevel} /*: any */
+) {
   const logger = new winston.Logger({
     transports: [
       new winston.transports.Console({colorize: true, level: logLevel}),
@@ -73,6 +76,7 @@ exports.run = async function({
   });
 
   const devRuntime = new DevelopmentRuntime(
+    // $FlowFixMe
     Object.assign(
       {
         dir,
@@ -85,15 +89,17 @@ exports.run = async function({
   );
 
   const testRuntime = test
-    ? new TestRuntime({dir, overrideNodeEnv: true})
+    ? new TestAppRuntime({dir, overrideNodeEnv: true})
     : null;
 
+  // $FlowFixMe
   await Promise.all([devRuntime.start(), compiler.clean(dir)]);
 
   const runAll = async () => {
     try {
       await Promise.all([
         devRuntime.run(),
+        // $FlowFixMe
         testRuntime ? testRuntime.run() : Promise.resolve(),
       ]);
     } catch (e) {} // eslint-disable-line
@@ -116,6 +122,7 @@ exports.run = async function({
     stop() {
       watcher.close();
       devRuntime.stop();
+      // $FlowFixMe
       if (testRuntime) testRuntime.stop();
     },
   };

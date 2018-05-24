@@ -1,6 +1,17 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 import http from 'http';
+
 import {getEnv} from 'fusion-core';
+
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
@@ -23,13 +34,13 @@ We set this value at runtime because its value depends on the
 Webpack compiles the `__webpack_public_path__ = ...` assignment expression
 into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 */
-// eslint-disable-next-line
-__webpack_public_path__ = webpackPublicPath + '/';
+// $FlowFixMe
+__webpack_public_path__ = webpackPublicPath + '/'; // eslint-disable-line
 
 // The shared entry must be imported after setting __webpack_public_path__.
 // We use a require as imports are hoisted and would be run before setting __webpack_public_path__.
-// eslint-disable-next-line import/no-unresolved, import/no-extraneous-dependencies
-const main = require('__FRAMEWORK_SHARED_ENTRY__');
+// $FlowFixMe
+const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 
 const state = {serve: null};
 const initialize = main
@@ -38,14 +49,16 @@ const initialize = main
       throw new Error('App should export a function');
     };
 
-export async function start({port, dir = '.'}) {
+export async function start({port, dir = '.'} /*: any */) {
   AssetsPlugin = AssetsFactory(dir);
   await reload();
 
   // TODO(#21): support https.createServer(credentials, listener);
   const server = http.createServer((req, res) => {
     if (prefix) stripRoutePrefix(req, prefix);
+    // $FlowFixMe
     state.serve(req, res).catch(e => {
+      // $FlowFixMe
       state.app.onerror(e);
     });
   });
@@ -66,6 +79,7 @@ async function reload() {
     reverseRegister(app, ServerErrorPlugin);
   }
   state.serve = app.callback();
+  // $FlowFixMe
   state.app = app;
 }
 
@@ -74,8 +88,12 @@ function reverseRegister(app, token, plugin) {
   app.plugins.unshift(app.plugins.pop());
 }
 
+// $FlowFixMe
 if (module.hot) {
+  // $FlowFixMe
   module.hot.accept('__FRAMEWORK_SHARED_ENTRY__', reload);
+  // $FlowFixMe
   module.hot.accept('__SECRET_BUNDLE_MAP_LOADER__!');
+  // $FlowFixMe
   module.hot.accept('__SECRET_SYNC_CHUNK_IDS_LOADER__!');
 }

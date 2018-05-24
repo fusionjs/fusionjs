@@ -1,5 +1,15 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
+
 const InstrumentedImportDependencyTemplate = require('./instrumented-import-dependency-template');
 
 /**
@@ -8,11 +18,13 @@ const InstrumentedImportDependencyTemplate = require('./instrumented-import-depe
  */
 
 class InstrumentedImportDependencyTemplatePlugin {
-  constructor(opts) {
+  /*:: clientChunkModuleManifest: any; */
+
+  constructor(opts /*: any */) {
     this.clientChunkModuleManifest = opts.clientChunkModuleManifest;
   }
 
-  apply(compiler) {
+  apply(compiler /*: any */) {
     /**
      * The standard plugin is added on `compile`,
      * which sets the default value for `ImportDependency` in  the `dependencyTemplates` map.

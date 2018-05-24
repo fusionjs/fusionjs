@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 // Probably have to do this via a loader configuration webpack plugin
@@ -9,7 +17,7 @@ const syncChunkPaths = require('./sync-chunk-paths');
  * of the main app
  */
 class SyncChunkIdsPlugin {
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.hooks.invalid.tap('SyncChunkIdsPlugin', () => {
       syncChunkIds.invalidate();
       syncChunkPaths.invalidate();

@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 /**
  * This plugin is equivalent to https://github.com/soundcloud/chunk-manifest-webpack-plugin
  * This version has less cruft and is maintained by us.
@@ -13,11 +22,13 @@
  */
 
 class ChunkManifestPlugin {
-  constructor(options = {}) {
+  /*:: manifestVariable: any; */
+
+  constructor(options /*: any */ = {}) {
     this.manifestVariable = options.manifestVariable || '__MANIFEST__';
   }
 
-  apply(compiler) {
+  apply(compiler /*: any */) {
     const manifestVariable = this.manifestVariable;
     let oldChunkFilename;
 

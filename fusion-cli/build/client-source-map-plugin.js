@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 // Probably have to do this via a loader configuration webpack plugin
@@ -14,7 +22,7 @@ const clientSourceMap = require('./client-source-map');
  * NOTE: This plugin should only be run on the client build
  */
 class ClientSourceMapPlugin {
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.hooks.invalid.tap('ClientSourceMapPlugin', () => {
       clientSourceMap.invalidate();
     });

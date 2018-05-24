@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 module.exports = createNamedModuleVisitor;
 
 /*::
@@ -44,6 +53,7 @@ function createNamedModuleVisitor(
           // import {moduleName} from 'packageName';
           const specifierName = specifier.get('imported').node.name;
           if (compareToModuleName(specifierName)) {
+            // $FlowFixMe
             refsHandler(t, state, refPaths, specifierName);
           }
         } else if (t.isImportNamespaceSpecifier(specifier)) {

@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 
 // Jest writes coverage after the process exits
@@ -28,7 +37,7 @@ const waitForAllCoverage = dirs => {
   );
 };
 
-module.exports = function(rootDir) {
+module.exports = function(rootDir /*: string */) {
   return waitForAllCoverage([rootDir]).then(() => {
     const createReporter = require('istanbul-api').createReporter;
     const istanbulCoverage = require('istanbul-lib-coverage');
@@ -37,6 +46,7 @@ module.exports = function(rootDir) {
     const reporter = createReporter();
 
     [rootDir].forEach(dir => {
+      // $FlowFixMe
       const coverage = require(`${dir}/coverage/coverage-final.json`);
       Object.keys(coverage).forEach(filename =>
         map.addFileCoverage(coverage[filename])

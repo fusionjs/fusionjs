@@ -1,8 +1,17 @@
-// @flow
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 const test = require('tape');
 const {transformFileSync} = require('babel-core');
+
 const plugin = require('../');
 
 test('import syncChunkPaths', t => {

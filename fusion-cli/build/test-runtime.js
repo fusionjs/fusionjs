@@ -1,21 +1,32 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const path = require('path');
 const {spawn} = require('child_process');
 const rimraf = require('rimraf');
 
 const convertCoverage = require('./convert-coverage');
 
-module.exports.TestAppRuntime = function({
-  dir = '.',
-  watch = false,
-  debug = false,
-  match,
-  env,
-  testFolder,
-  updateSnapshot,
-  coverage,
-  configPath,
-}) {
+module.exports.TestAppRuntime = function(
+  {
+    dir = '.',
+    watch = false,
+    debug = false,
+    match,
+    env,
+    testFolder,
+    updateSnapshot,
+    coverage,
+    configPath,
+  } /*: any */
+) {
   const state = {procs: []};
   const rootDir = path.resolve(process.cwd(), dir);
 

@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
@@ -29,7 +38,7 @@ exports.builder = {
   },
 };
 
-exports.run = async function({dir = '.', environment, port, debug}) {
+exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
   if (debug && !process.env.__FUSION_DEBUGGING__) {
     const command = process.argv.shift();
     const args = process.argv;
@@ -54,6 +63,7 @@ exports.run = async function({dir = '.', environment, port, debug}) {
 
   if (env) {
     const entry = getEntry(env);
+    // $FlowFixMe
     const {start} = require(entry);
     return start({dir, port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
   } else {

@@ -1,4 +1,13 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
+
 const url = require('url');
 const path = require('path');
 const http = require('http');
@@ -8,6 +17,7 @@ const getPort = require('get-port');
 const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
+
 const renderError = require('./server-error').renderError;
 
 function getChildUrl(originalUrl, replacement) {
@@ -18,7 +28,7 @@ function getChildUrl(originalUrl, replacement) {
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
   const emitter = new EventEmitter();
-  const state = {started: false};
+  const state = {started: false, error: undefined};
   let listening = false;
   return {
     start: () => {
@@ -53,13 +63,23 @@ function Lifecycle() {
   };
 }
 
-module.exports.DevelopmentRuntime = function({
-  port,
-  dir = '.',
-  noOpen,
-  middleware = (req, res, next) => next(),
-  debug = false,
-}) {
+/*::
+type DevRuntimeType = {
+  run: () => any,
+  start: () => any,
+  stop: () => any,
+};
+*/
+
+module.exports.DevelopmentRuntime = function(
+  {
+    port,
+    dir = '.',
+    noOpen,
+    middleware = (req, res, next) => next(),
+    debug = false,
+  } /*: any */
+) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
   const state = {
     server: null,
@@ -121,12 +141,16 @@ module.exports.DevelopmentRuntime = function({
       }
       const args = ['-e', command];
       if (debug) args.push('--inspect-brk');
+      // $FlowFixMe
       state.proc = spawn('node', args, {
         cwd: path.resolve(process.cwd(), dir),
         stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
       });
+      // $FlowFixMe
       state.proc.on('error', handleChildServerCrash);
+      // $FlowFixMe
       state.proc.on('exit', handleChildServerCrash);
+      // $FlowFixMe
       state.proc.on('message', message => {
         if (message.event === 'started') {
           lifecycle.start();
@@ -151,6 +175,7 @@ module.exports.DevelopmentRuntime = function({
   }
 
   this.start = () => {
+    // $FlowFixMe
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
         const childPort = await state.childPortP;
@@ -189,4 +214,6 @@ module.exports.DevelopmentRuntime = function({
       state.server = null; // ensure we can call .run() again after stopping
     }
   };
+
+  return this;
 };

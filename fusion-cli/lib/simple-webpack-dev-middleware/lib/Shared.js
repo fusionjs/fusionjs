@@ -1,3 +1,11 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 const parseRange = require('range-parser');
@@ -7,10 +15,14 @@ const MemoryFileSystem = require('memory-fs');
 const HASH_REGEXP = /[0-9a-f]{10,}/;
 const EventEmitter = require('events');
 
-module.exports = function Shared(context) {
+module.exports = function Shared(context /*: any */) {
   const emitter = new EventEmitter();
   const share = {
-    handleRangeHeaders: function handleRangeHeaders(content, req, res) {
+    handleRangeHeaders: function handleRangeHeaders(
+      content /*: any */,
+      req /*: any */,
+      res /*: any */
+    ) {
       //assumes express API. For other servers, need to add logic to access alternative header APIs
       res.setHeader('Accept-Ranges', 'bytes');
       if (req.headers.range) {
@@ -37,7 +49,7 @@ module.exports = function Shared(context) {
       }
       return content;
     },
-    setFs: function(compiler) {
+    setFs: function(compiler /*: any */) {
       if (
         typeof compiler.outputPath === 'string' &&
         !pathIsAbsolute.posix(compiler.outputPath) &&
@@ -91,7 +103,10 @@ module.exports = function Shared(context) {
         callback();
       }
     },
-    handleRequest: function(filename, processRequest) {
+    handleRequest: function(
+      filename /*: string */,
+      processRequest /*: () => any */
+    ) {
       if (HASH_REGEXP.test(filename)) {
         try {
           if (context.fs.statSync(filename).isFile()) {
@@ -104,7 +119,7 @@ module.exports = function Shared(context) {
       }
       share.waitUntilValid(processRequest);
     },
-    waitUntilValid: function(callback) {
+    waitUntilValid: function(callback /*: () => any */) {
       if (context.state) {
         return callback();
       }

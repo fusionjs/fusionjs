@@ -1,14 +1,25 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
 /* eslint-env node */
 
 // Probably have to do this via a loader configuration webpack plugin
 const clientChunkBundleUrlMap = require('./client-chunk-bundle-url-map');
 
 class ClientChunkBundleUrlMapPlugin {
-  constructor(expectedGroupIds, groupId) {
+  /*:: expectedGroupIds: any; */
+  /*:: groupId: any; */
+
+  constructor(expectedGroupIds /*: any */, groupId /*: any */) {
     this.expectedGroupIds = expectedGroupIds;
     this.groupId = groupId;
   }
-  apply(compiler) {
+  apply(compiler /*: any */) {
     const {expectedGroupIds, groupId} = this;
 
     compiler.hooks.invalid.tap('ClientChunkBundleUrlMapPlugin', () => {
