@@ -2038,9 +2038,9 @@ eslint-config-cup@^1.0.0-rc.4:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-config-cup/-/eslint-config-cup-1.0.0.tgz#0fcdb787fe254fc9458ec5258143cb0d47052896"
 
-eslint-config-fusion@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-1.0.1.tgz#be926c3385f389cac22eaa5ccba945452188ef50"
+eslint-config-fusion@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-2.0.0.tgz#a3063e42622c21d8b18889160e627facc1cb23b5"
   dependencies:
     eslint-config-uber-universal-stage-3 "^1.0.0-rc.7"
 
@@ -2089,15 +2089,15 @@ eslint-plugin-cup@1.0.2:
   dependencies:
     globals "^11.5.0"
 
-eslint-plugin-flowtype@2.46.3:
-  version "2.46.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.46.3.tgz#7e84131d87ef18b496b1810448593374860b4e8e"
+eslint-plugin-flowtype@2.47.1:
+  version "2.47.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.47.1.tgz#1be0d6b855dbf8f253fcf49ea3d44bf6c23ff984"
   dependencies:
-    lodash "^4.15.0"
+    lodash "^4.17.10"
 
-eslint-plugin-import@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.11.0.tgz#15aeea37a67499d848e8e981806d4627b5503816"
+eslint-plugin-import@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.12.0.tgz#dad31781292d6664b25317fd049d2e2b2f02205d"
   dependencies:
     contains-path "^0.1.0"
     debug "^2.6.8"
@@ -2117,9 +2117,9 @@ eslint-plugin-prettier@2.6.0:
     fast-diff "^1.1.1"
     jest-docblock "^21.0.0"
 
-eslint-plugin-react@7.7.0:
-  version "7.7.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.7.0.tgz#f606c719dbd8a1a2b3d25c16299813878cca0160"
+eslint-plugin-react@7.8.2:
+  version "7.8.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.8.2.tgz#e95c9c47fece55d2303d1a67c9d01b930b88a51d"
   dependencies:
     doctrine "^2.0.2"
     has "^1.0.1"
@@ -2429,9 +2429,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@0.72.0:
-  version "0.72.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.72.0.tgz#12051180fb2db7ccb728fefe67c77e955e92a44d"
+flow-bin@0.73.0:
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.73.0.tgz#da1b90a02b0ef9c439f068c2fc14968db83be425"
 
 for-each@~0.3.2:
   version "0.3.2"
@@ -2522,26 +2522,26 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.2.6.tgz#f9d0059db928d4ba73fe847f2d7d014f44a85dca"
+fusion-core@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.3.1.tgz#592942b19121e82ef80099f8b90c4f5c704e5190"
   dependencies:
     koa "^2.4.1"
     koa-compose "^4.0.0"
     node-mocks-http "^1.6.6"
-    toposort "^1.0.6"
+    toposort "^2.0.1"
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-plugin-universal-events@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.0.2.tgz#6e99fe26550bd36910e903646d8ce70e11a1115a"
+fusion-plugin-universal-events@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.0.5.tgz#df0756b82e2d9b20e009ad35119715c045420083"
   dependencies:
     koa-bodyparser "4.2.0"
 
-fusion-test-utils@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.0.5.tgz#6ac2d2af57e7201b4c6e3e13ac2524d423e8e4c7"
+fusion-test-utils@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.1.0.tgz#1900a7d432733f935698ee139cef3a1e8f6ab973"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
@@ -3467,9 +3467,13 @@ locate-path@^2.0.0:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
 
-lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
+lodash@^4.14.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
+lodash@^4.17.10:
+  version "4.17.10"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -3854,9 +3858,9 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
-nyc@11.7.3:
-  version "11.7.3"
-  resolved "https://registry.yarnpkg.com/nyc/-/nyc-11.7.3.tgz#164f4cfad84dee6d8f353824231d9dd683aa14ea"
+nyc@11.8.0:
+  version "11.8.0"
+  resolved "https://registry.yarnpkg.com/nyc/-/nyc-11.8.0.tgz#1e8453b0644f8fea4d829b1a6636663157cd3b00"
   dependencies:
     archy "^1.0.0"
     arrify "^1.0.1"
@@ -5018,9 +5022,9 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-toposort@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/toposort/-/toposort-1.0.6.tgz#c31748e55d210effc00fdcdc7d6e68d7d7bb9cec"
+toposort@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-2.0.2.tgz#ae21768175d1559d48bef35420b2f4962f09c330"
 
 tough-cookie@~2.3.0:
   version "2.3.3"
