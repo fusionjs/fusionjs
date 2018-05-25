@@ -120,7 +120,7 @@ test('Emits correct event', t => {
       'browser-performance-emitter:stats:browser-only',
       'event was emitted with the correct type'
     );
-    ['firstPaint', 'resourceEntries', 'tags', 'timing'].forEach(item => {
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
       t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
     });
 
@@ -172,7 +172,7 @@ test('Does not fail when window.performance is null', t => {
       'browser-performance-emitter:stats:browser-only',
       'event was emitted with the correct type'
     );
-    ['firstPaint', 'resourceEntries', 'tags', 'timing'].forEach(item => {
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
       t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
     });
 

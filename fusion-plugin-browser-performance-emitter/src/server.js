@@ -26,12 +26,12 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
 
       /* Helper Functions */
       function mapPerfEvent(event) {
-        const {timing, resourceEntries, firstPaint} = event;
+        const {timing, resourceEntries, paintTimes} = event;
 
         const calculatedStats = getCalculatedStats(
           timing,
           resourceEntries,
-          firstPaint
+          paintTimes
         );
 
         return {
@@ -41,7 +41,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         };
       }
 
-      function getCalculatedStats(timing, resourceEntries, firstPaint) {
+      function getCalculatedStats(timing, resourceEntries, paintTimes) {
         let calculated = {};
         if (!isEmpty(timing)) {
           calculated = {
@@ -75,9 +75,12 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
             total_blocking_resource_load_time:
               timing.domContentLoadedEventStart - timing.responseEnd,
           };
-          if (firstPaint) {
+          if (paintTimes) {
             // $FlowFixMe
-            calculated.first_paint_time = firstPaint;
+            calculated.first_paint_time = paintTimes.firstPaint;
+            // $FlowFixMe
+            calculated.first_contentful_paint_time =
+              paintTimes.firstContentfulPaint;
           }
         }
 

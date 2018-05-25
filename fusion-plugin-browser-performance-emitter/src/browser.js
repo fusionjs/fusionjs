@@ -13,6 +13,7 @@ import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import browserPerfCollector from './helpers/enhancedBrowserMetrics';
 import type {BrowserPerfDepsType} from './flow';
+import {getTimeFromMarks} from './utils';
 
 class BrowserPerformanceEmitter {
   tags: {route: string};
@@ -40,30 +41,33 @@ class BrowserPerformanceEmitter {
         })
         .map(entry => entry.toJSON());
 
-    const firstPaint = this.getFirstPaint();
-
     return {
       timing,
       resourceEntries,
-      firstPaint,
+      paintTimes: this.getPaintTimes(),
     };
   }
 
   /* Helper methods */
-  getFirstPaint() {
-    if (!window.performance) return null;
-
-    if (window.chrome && window.chrome.loadTimes) {
-      // Chrome
-      const firstPaint = window.chrome.loadTimes().firstPaintTime * 1000;
-      return firstPaint - window.chrome.loadTimes().startLoadTime * 1000;
+  getPaintTimes() {
+    let firstPaint = null;
+    let firstContentfulPaint = null;
+    const paint = window.performance.getEntriesByType('paint');
+    if (paint) {
+      firstPaint = getTimeFromMarks(paint, 'first-paint');
+      firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
     } else if (typeof window.performance.timing.msFirstPaint === 'number') {
       // IE
-      const firstPaint = window.performance.timing.msFirstPaint;
-      return firstPaint - window.performance.timing.navigationStart;
+      firstPaint =
+        window.performance.timing.msFirstPaint -
+        window.performance.timing.navigationStart;
+    } else {
+      return null;
     }
-
-    return null;
+    return {
+      firstPaint,
+      firstContentfulPaint,
+    };
   }
 }
 
@@ -88,12 +92,12 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
             const {
               timing,
               resourceEntries,
-              firstPaint,
+              paintTimes,
             } = browserPerformanceEmitter.calculate();
             emit({
               timing,
               resourceEntries,
-              firstPaint,
+              paintTimes,
               tags: browserPerformanceEmitter.tags,
               // Piggy-back enhaned metrics, for perf dashboard etc on this emit.
               // Eventually this will probably be the only data emitted but preserving
