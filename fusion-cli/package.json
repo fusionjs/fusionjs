@@ -21,7 +21,7 @@
     "@babel/plugin-syntax-object-rest-spread": "7.0.0-beta.49",
     "@babel/plugin-transform-react-jsx": "7.0.0-beta.49",
     "@babel/preset-env": "7.0.0-beta.49",
-    "@babel/preset-flow": "7.0.0-beta.47",
+    "@babel/preset-flow": "7.0.0-beta.49",
     "@babel/preset-react": "7.0.0-beta.49",
     "@babel/template": "7.0.0-beta.49",
     "@nadiia/file-loader": "^2.0.0",
