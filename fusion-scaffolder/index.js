@@ -14,8 +14,6 @@ const {promisify} = require('util');
 const readdir = require('recursive-readdir');
 const {spawn} = require('child_process');
 
-// Fix coming in flow-bin 0.73
-// $FlowFixMe
 const copyFile = promisify(fs.copyFile);
 const lstat = promisify(fs.lstat);
 const mkdirp = promisify(mkdirpCb);
