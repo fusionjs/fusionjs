@@ -16,7 +16,7 @@ const plugin = require('../');
 module.exports = function doTransform(inputString /*: string */) {
   return (
     transform(inputString.trim(), {
-      filename: 'fake-file.js',
+      filename: '/fake-file.js',
       plugins: [
         [
           plugin,
