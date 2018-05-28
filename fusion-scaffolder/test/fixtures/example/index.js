@@ -6,7 +6,7 @@
  * @flow
  */
 
-module.exports = async function getContext(ctx: any) {
+module.exports = async function getContext(ctx /*: any */) {
   ctx.newData = 'bar';
   return ctx;
 };

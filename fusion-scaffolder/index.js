@@ -19,13 +19,15 @@ const lstat = promisify(fs.lstat);
 const mkdirp = promisify(mkdirpCb);
 const writeFile = promisify(fs.writeFile);
 
+/*::
 type ScaffoldContext = {
   cwd?: string,
   path?: string,
   project?: string,
 };
+*/
 
-module.exports = async function scaffold(ctx: ScaffoldContext = {}) {
+module.exports = async function scaffold(ctx /*: ScaffoldContext */ = {}) {
   if (!ctx.cwd) {
     ctx.cwd = process.cwd();
   }
