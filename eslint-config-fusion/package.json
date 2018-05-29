@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-fusion",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description":
     "eslint-config-fusion is an eslint config recommended for use with FusionJS.",
   "license": "MIT",
