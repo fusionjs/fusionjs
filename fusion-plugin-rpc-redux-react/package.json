@@ -6,6 +6,7 @@
   "repository": "fusionjs/fusion-plugin-rpc-redux-react",
   "files": [
     "dist",
+    "flow-typed",
     "src"
   ],
   "main": "./dist/index.js",
