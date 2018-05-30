@@ -4,7 +4,7 @@
   "version": "1.0.6",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-redux",
-  "files": ["dist", "src"],
+  "files": ["dist", "flow-typed", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
