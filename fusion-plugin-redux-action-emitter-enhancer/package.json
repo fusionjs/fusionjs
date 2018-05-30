@@ -6,6 +6,7 @@
   "repository": "fusionjs/fusion-plugin-redux-action-emitter-enhancer",
   "files": [
     "dist",
+    "flow-typed",
     "src"
   ],
   "main": "./dist/index.js",
