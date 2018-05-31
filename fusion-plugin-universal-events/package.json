@@ -23,7 +23,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "koa-bodyparser": "4.2.0"
+    "koa-bodyparser": "4.2.1"
   },
   "devDependencies": {
     "babel-eslint": "8.2.3",
