@@ -11,9 +11,12 @@ import {GetInitialStateToken} from '../tokens.js';
 
 const app = new App();
 
-app.register(GetInitialStateToken, async (): Object => {
-  return {};
-});
+app.register(
+  GetInitialStateToken,
+  async (): Object => {
+    return {};
+  }
+);
 
 app.register(GetInitialStateToken, () => {
   return {};
