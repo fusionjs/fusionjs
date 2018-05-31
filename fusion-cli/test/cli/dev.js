@@ -148,8 +148,14 @@ test('`fusion dev` works with assets with cdnUrl', async t => {
 
 test('`fusion dev` top-level error', async t => {
   const dir = path.resolve(__dirname, '../fixtures/server-startup-error');
-  const {res, proc} = await dev(`--dir=${dir}`);
-  t.ok(res.includes('server-startup-error'));
+  const {res, proc} = await dev(`--dir=${dir}`, {
+    stdio: ['inherit', 'inherit', 'pipe'],
+  });
+  t.ok(
+    res.includes('server-startup-error'),
+    'should respond with server startup error'
+  );
+  proc.stderr.destroy();
   proc.kill();
   t.end();
 });
