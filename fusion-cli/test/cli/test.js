@@ -106,9 +106,9 @@ test('`fusion test` snapshotting', async t => {
     __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
 
   // Copy fixture to snapshot
-  fs
-    .createReadStream(snapshotFile)
-    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
+  fs.createReadStream(snapshotFile).pipe(
+    fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
+  );
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
@@ -142,9 +142,9 @@ test('`fusion test` snapshotting with -u option', async t => {
     __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
 
   // Copy fixture to snapshot
-  fs
-    .createReadStream(snapshotFile)
-    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
+  fs.createReadStream(snapshotFile).pipe(
+    fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
+  );
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {
@@ -178,9 +178,9 @@ test('`fusion test` snapshotting - enzyme serializer', async t => {
     __dirname + '/../fixtures/snapshots/snapshot-enzyme-no-match.js.fixture';
 
   // Copy fixture to snapshot
-  fs
-    .createReadStream(snapshotFile)
-    .pipe(fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap')));
+  fs.createReadStream(snapshotFile).pipe(
+    fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
+  );
 
   const cmd = `require('${runnerPath}').run('${args}')`;
   try {

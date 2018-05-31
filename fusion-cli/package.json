@@ -109,7 +109,7 @@
     "fusion-test-utils": "^1.1.0",
     "fusion-tokens": "^1.0.3",
     "globby": "8.0.1",
-    "prettier": "1.12.1",
+    "prettier": "1.13.3",
     "puppeteer": "^1.4.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
