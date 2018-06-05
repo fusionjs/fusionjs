@@ -79,7 +79,6 @@
     "source-map-support": "^0.5.6",
     "unitest": "^2.1.1",
     "webpack": "^4.9.0",
-    "webpack-chunk-hash": "^0.6.0",
     "webpack-dev-middleware": "^3.1.3",
     "webpack-dev-server": "^3.1.4",
     "webpack-hot-middleware": "^2.22.2",

@@ -13,9 +13,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const WebpackChunkHash = require('webpack-chunk-hash');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
-const ChunkManifestPlugin = require('./external-chunk-manifest-plugin.js');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const {
   //zopfliWebpackPlugin,
@@ -436,22 +434,9 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'development' &&
         watch &&
         new webpack.HotModuleReplacementPlugin(),
-      // The next two plugins are required for deterministic file hashes
-      // See https://github.com/webpack/webpack/issues/1315 and
-      // https://webpack.js.org/guides/caching/#generating-unique-hashes-for-each-file
-      // Use deterministic, internal webpack identifiers based on hashed contents
       env === 'production' &&
         target === 'web' &&
         new webpack.HashedModuleIdsPlugin(),
-      // Adds md5 hashing of webpack chunks
-      env === 'production' && target === 'web' && new WebpackChunkHash(),
-      // This is necessary to tell webpack not to inline code referencing
-      // assets. See https://github.com/webpack/webpack/issues/1315
-      env === 'production' &&
-        target === 'web' &&
-        new ChunkManifestPlugin({
-          manifestVariable: '__MANIFEST__',
-        }),
       target === 'web' && env !== 'test' && new ChunkPreloadPlugin(),
       // TODO(#11): What do we do for client-side error reporting in the service worker?
       // Do we add in reporting code to the sw? Should we map stack traces on the server?
