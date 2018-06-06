@@ -1,0 +1,7 @@
+version: '2'
+services:
+  fusion-plugin-service:
+    build: .
+    volumes:
+      - '.:/fusion-plugin-service'
+      - /fusion-plugin-service/node_modules/
