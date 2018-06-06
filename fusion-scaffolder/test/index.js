@@ -113,3 +113,20 @@ test('scaffolding example/', async t => {
   await rimraf(projectDir);
   await t.end();
 });
+
+test('scaffolding with absolute projectPath', async t => {
+  await scaffold({
+    cwd: __dirname,
+    path: './fixtures/example',
+    projectPath: __dirname + '/foo',
+    project: 'foo',
+  });
+
+  const projectDir = join(__dirname, 'foo');
+
+  const folderStat = await stat(projectDir);
+  t.ok(folderStat.isDirectory(), 'project folder is created correctly');
+
+  await rimraf(projectDir);
+  await t.end();
+});

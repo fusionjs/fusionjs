@@ -9,6 +9,12 @@
     "fusion-scaffold": "bin/cli.js"
   },
   "dependencies": {
+    "@babel/cli": "^7.0.0-beta.49",
+    "@babel/core": "^7.0.0-beta.49",
+    "@babel/node": "^7.0.0-beta.49",
+    "@babel/preset-env": "^7.0.0-beta.49",
+    "@babel/preset-flow": "^7.0.0-beta.49",
+    "babel-eslint": "^8.2.3",
     "colors": "^1.3.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
@@ -16,20 +22,16 @@
     "recursive-readdir": "^2.2.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "8.2.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-flow": "^6.23.0",
     "eslint": "4.19.1",
     "eslint-config-fusion": "2.0.1",
     "eslint-plugin-cup": "1.0.2",
-    "eslint-plugin-flowtype": "2.48.0",
+    "eslint-plugin-flowtype": "2.49.3",
     "eslint-plugin-import": "2.12.0",
     "eslint-plugin-prettier": "2.6.0",
-    "eslint-plugin-react": "7.8.2",
+    "eslint-plugin-react": "7.9.1",
     "flow-bin": "^0.73.0",
-    "nyc": "^11.8.0",
-    "prettier": "^1.12.1",
+    "nyc": "^12.0.2",
+    "prettier": "^1.13.4",
     "rimraf": "^2.6.2",
     "tape": "^4.9.0"
   },

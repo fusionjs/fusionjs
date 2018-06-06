@@ -24,6 +24,10 @@ type ScaffoldContext = {
   cwd?: string,
   path?: string,
   project?: string,
+  projectPath?: string,
+  packageJsonFields?: {
+    [string]: any
+  },
 };
 */
 
@@ -32,7 +36,7 @@ module.exports = async function scaffold(ctx /*: ScaffoldContext */ = {}) {
     ctx.cwd = process.cwd();
   }
 
-  const {cwd, path, project} = ctx;
+  const {cwd, path, project, projectPath, packageJsonFields} = ctx;
 
   if (!path) {
     throw new Error(
@@ -46,13 +50,28 @@ module.exports = async function scaffold(ctx /*: ScaffoldContext */ = {}) {
     );
   }
 
-  const projectPath = join(cwd, project);
+  const computedProjectPath = projectPath || join(cwd, project);
   const templatePath = join(cwd, path);
   const contentPath = join(templatePath, 'content');
 
-  await compile(projectPath, templatePath, contentPath, ctx);
-  await install(projectPath);
+  await compile(computedProjectPath, templatePath, contentPath, ctx);
+  await updatePackageJsonFields(computedProjectPath, packageJsonFields);
+  await install(computedProjectPath);
 };
+
+async function updatePackageJsonFields(projectPath, packageJsonFields = null) {
+  if (!packageJsonFields) {
+    return;
+  }
+
+  // Setup package.json files, as we can't have these in the source code because publishing will fail.
+  const packageJsonPath = `${projectPath}/package.json`;
+  // $FlowFixMe
+  let packageContent = require(packageJsonPath); // eslint-disable-line import/no-dynamic-require
+  packageContent = {...packageContent, ...packageJsonFields};
+  packageContent.files = ['dist', 'src'];
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageContent, null, '  '));
+}
 
 async function compile(projectPath, templatePath, contentPath, ctx) {
   // Get context from index.js
