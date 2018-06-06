@@ -5,7 +5,7 @@ Creates a Fusion.js plugin using the command line.
 ## Usage
 
 ```
-yarn create fusion-plugin <appName>
+yarn create fusion-plugin <plugin name>
 ```
 
 ## Documentation
