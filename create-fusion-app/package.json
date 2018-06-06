@@ -1,0 +1,13 @@
+{
+  "name": "create-fusion-app",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "create-fusion-app": "bin/cli.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "fusion-scaffolder": "^0.0.1"
+  }
+}
