@@ -13,5 +13,32 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "fusion-scaffolder": "^0.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "^23.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-fusion": "^2.0.1",
+    "eslint-plugin-cup": "^1.0.2",
+    "eslint-plugin-flowtype": "^2.49.3",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.9.1",
+    "flow-bin": "^0.73.0",
+    "jest-cli": "^23.1.0",
+    "prettier": "^1.13.4"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "jest": {
+    "cache": false,
+    "modulePathIgnorePatterns": [
+      "templates/.*"
+    ],
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   }
 }

@@ -10,6 +10,7 @@ const plugin =
   createPlugin({
     provides() {
       class PluginLogic {
+        ctx: ?Context;
         value: ?string;
         constructor(ctx) {
           let value;
