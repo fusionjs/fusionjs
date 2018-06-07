@@ -1,0 +1,18 @@
+version: '2'
+services:
+  create-fusion-app:
+    build: .
+    volumes:
+      - .:/create-fusion-app
+      - /create-fusion-app/node_modules/
+      - /create-fusion-app/templates/basic/content/node_modules/
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_BRANCH
+      - BUILDKITE_BUILD_NUMBER
+      - BUILDKITE_JOB_ID
+      - BUILDKITE_BUILD_URL
+      - BUILDKITE_PROJECT_SLUG
+      - BUILDKITE_COMMIT

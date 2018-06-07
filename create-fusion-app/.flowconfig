@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/.*[^(package)]\.json$
+
+[include]
+./bin/
+./templates/
+./tests/
+
+[libs]
+./templates/basic/content/flow-typed/globals.js
+
+[lints]
+
+[options]
+
+[strict]

@@ -1,4 +1,4 @@
-import React from 'react';
+// @flow
 import App from 'fusion-react';
 import Router from 'fusion-plugin-react-router';
 import UniversalEvents, {

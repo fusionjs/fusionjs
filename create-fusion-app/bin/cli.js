@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// @flow
+/* eslint-env node */
+/* eslint-disable no-console */
 
 const path = require('path');
 const chalk = require('chalk');
