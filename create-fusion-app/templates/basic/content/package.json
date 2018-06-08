@@ -1,6 +1,6 @@
 {
   "name": "example-fusion-app",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "index.js",
   "dependencies": {
     "fusion-cli": "^1.6.0",
