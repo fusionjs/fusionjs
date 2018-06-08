@@ -1,5 +1,5 @@
 {
-  "name": "fusion-plugin-yourplugin",
+  "name": "example-fusion-plugin",
   "description": "A Fusion.js plugin",
   "version": "0.0.0",
   "license": "MIT",
