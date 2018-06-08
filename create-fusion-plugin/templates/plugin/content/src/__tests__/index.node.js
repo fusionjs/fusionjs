@@ -18,7 +18,7 @@ tape('serialization', async t => {
   const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const service = getService(appCreator(), Plugin);
 
-  t.plan(5);
+  t.plan(3);
   if (!Plugin.middleware) {
     t.end();
     return;
@@ -29,7 +29,10 @@ tape('serialization', async t => {
 
   t.equals(ctx.template.body.length, 1, 'pushes serialization to body');
   // $FlowFixMe
-  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('test')[0], 'test');
+  t.equals(
+    consumeSanitizedHTML(ctx.template.body[0]).match('__plugin__value__')[0],
+    '__plugin__value__'
+  );
   t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
   t.end();
 });
