@@ -28,8 +28,8 @@ tape('serialization', async t => {
   await Plugin.middleware(null, service)(ctx, () => Promise.resolve());
 
   t.equals(ctx.template.body.length, 1, 'pushes serialization to body');
-  // $FlowFixMe
   t.equals(
+    // $FlowFixMe
     consumeSanitizedHTML(ctx.template.body[0]).match('__plugin__value__')[0],
     '__plugin__value__'
   );
