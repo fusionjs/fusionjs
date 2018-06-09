@@ -58,3 +58,14 @@ test('status is set if ctx.status is updated in render', async t => {
   t.equals(ctx.status, 500, 'status is set');
   t.end();
 });
+
+test('body contains some message', async t => {
+  const app = new App('el', () => 'hello');
+  const ctx = await getSimulator(app).request('/_errors', {
+    body: {message: 'test'},
+  });
+  t.equals(ctx.status, 404, 'status is set');
+  // $FlowFixMe
+  t.equals(ctx.req.body.message, 'test', 'body is set');
+  t.end();
+});

@@ -13,7 +13,10 @@ import type {Context} from 'fusion-core';
 
 declare var __BROWSER__: boolean;
 
-export function mockContext(url: string, options: *): Context {
+export function mockContext(
+  url: string,
+  options: {body?: {[key: string]: any}}
+): Context {
   if (__BROWSER__) {
     const parsedUrl = {...parse(url)};
     const {path} = parsedUrl;
@@ -46,7 +49,9 @@ export function mockContext(url: string, options: *): Context {
   res.getHeader = k => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);
   res.removeHeader = k => delete res._headers[k.toLowerCase()];
-
+  if (options.body) {
+    req.body = options.body;
+  }
   //$FlowFixMe
   return new Koa().createContext(req, res);
 }
