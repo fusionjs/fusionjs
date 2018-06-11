@@ -18,6 +18,18 @@ const appCreator = () => {
   return () => app;
 };
 
+tape('browser provider', async t => {
+  const reduxState = document.createElement('script');
+  reduxState.setAttribute('type', 'application/json');
+  reduxState.setAttribute('id', '__PLUGIN_VALUE__');
+  reduxState.textContent = JSON.stringify({value: 'create-fusion-plugin'});
+  document.body && document.body.appendChild(reduxState);
+  const provider = getService(appCreator(), Plugin);
+  const {value} = provider && provider.from();
+  t.equal(value, 'create-fusion-plugin');
+  t.end();
+});
+
 tape('browser middleware', async t => {
   const element = React.createElement('div');
   const ctx: any = {element, template: {body: []}, memoized: new Map()};

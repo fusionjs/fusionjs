@@ -19,7 +19,7 @@ const plugin =
             value = JSON.parse(unescape(valueElement.textContent));
           }
           this.ctx = ctx;
-          this.value = value;
+          this.value = value && value.value;
         }
       }
       return {
