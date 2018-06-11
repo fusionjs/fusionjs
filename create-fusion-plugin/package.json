@@ -29,8 +29,9 @@
     "prettier": "^1.13.5"
   },
   "scripts": {
+    "clean": "rm -rf test-artifacts",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "yarn clean && jest"
   },
   "jest": {
     "cache": false,
