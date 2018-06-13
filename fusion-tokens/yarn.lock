@@ -192,6 +192,10 @@
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.46.tgz#f630adbd9d645d0ba2e43f4955b4ad61f44ccdf4"
 
+"@babel/helper-plugin-utils@7.0.0-beta.51":
+  version "7.0.0-beta.51"
+  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.51.tgz#0f6a5f2b6d1c6444413f8fab60940d79b63c2031"
+
 "@babel/helper-regex@7.0.0-beta.31":
   version "7.0.0-beta.31"
   resolved "https://registry.yarnpkg.com/@babel/helper-regex/-/helper-regex-7.0.0-beta.31.tgz#dc56f1e5bc6dff5d496dc2ac6c4cd435ee704769"
@@ -400,6 +404,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.46"
 
+"@babel/plugin-syntax-flow@7.0.0-beta.51":
+  version "7.0.0-beta.51"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0-beta.51.tgz#de0883134406f90f958b64073e9749880229de56"
+  dependencies:
+    "@babel/helper-plugin-utils" "7.0.0-beta.51"
+
 "@babel/plugin-syntax-import-meta@7.0.0-beta.46":
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-import-meta/-/plugin-syntax-import-meta-7.0.0-beta.46.tgz#b86f3ceb94b1744555b3c9271be51ca31b1aedf3"
@@ -485,7 +495,14 @@
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
 
-"@babel/plugin-transform-flow-strip-types@7.0.0-beta.46", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.46":
+"@babel/plugin-transform-flow-strip-types@7.0.0-beta.51":
+  version "7.0.0-beta.51"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.51.tgz#67d434459f7a7b26a9f2a6855bc12e67894e47a6"
+  dependencies:
+    "@babel/helper-plugin-utils" "7.0.0-beta.51"
+    "@babel/plugin-syntax-flow" "7.0.0-beta.51"
+
+"@babel/plugin-transform-flow-strip-types@^7.0.0-beta.46":
   version "7.0.0-beta.46"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-beta.46.tgz#3c26def3c4027d5c0c3f98c3b6f161c715ab7fff"
   dependencies:
