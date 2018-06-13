@@ -24,7 +24,7 @@
     "base64-url": "^2.2.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.49",
+    "@babel/preset-react": "7.0.0-beta.51",
     "babel-eslint": "^8.2.3",
     "body-parser": "^1.18.3",
     "create-universal-package": "^3.4.4",
