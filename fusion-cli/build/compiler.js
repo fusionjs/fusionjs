@@ -678,6 +678,7 @@ function getNodeConfig(target, env) {
     // This is required until we have better tree shaking. See https://github.com/fusionjs/fusion-cli/issues/254
     child_process: emptyForWeb,
     cluster: emptyForWeb,
+    crypto: emptyForWeb,
     dgram: emptyForWeb,
     dns: emptyForWeb,
     fs: emptyForWeb,

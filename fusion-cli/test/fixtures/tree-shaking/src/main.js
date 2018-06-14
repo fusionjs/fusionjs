@@ -1,6 +1,7 @@
 import App from 'fusion-core';
 import child_process from 'child_process';
 import cluster from 'cluster';
+import crypto from 'crypto';
 import dgram from 'dgram';
 import dns from 'dns';
 import fs from 'fs';
