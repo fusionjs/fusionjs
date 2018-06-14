@@ -75,6 +75,8 @@ import MyComponent from '../my-component';
 test('MyComponent snapshot', assert => {
   const wrapper = shallow(<MyComponent />);
   assert.matchSnapshot(wrapper);
+  // And optionally, you can pass your own snapshot name as the second argument
+  assert.matchSnapshot(wrapper, 'my snapshot description');
 });
 
 test('async functions', async assert => {
