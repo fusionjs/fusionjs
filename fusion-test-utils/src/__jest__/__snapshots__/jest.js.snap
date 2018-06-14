@@ -5,3 +5,9 @@ Object {
   "foo": "bar",
 }
 `;
+
+exports[`matchSnapshot with name: my snapshot name 1`] = `
+Object {
+  "foo": "bar",
+}
+`;
