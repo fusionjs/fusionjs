@@ -18,4 +18,6 @@ export {
   SocketIntervalToken,
 } from './tokens';
 
-export default (__BROWSER__ ? browser : server);
+const plugin = __BROWSER__ ? browser : server;
+// Cast to typeof server for now to avoid requiring consumers to use refinements
+export default ((plugin: any): typeof server);
