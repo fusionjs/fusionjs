@@ -165,7 +165,7 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
     rebuiltDistFiles.clientVendorFile,
     'vendor file hash should not change'
   );
-  // TODO(#385) Add this back https://github.com/fusionjs/fusion-cli/pull/385
+  // TODO(#393) Add this back https://github.com/fusionjs/fusion-cli/pull/385
   // t.equal(
   //   distFiles.clientMainFile,
   //   rebuiltDistFiles.clientMainFile,
@@ -418,6 +418,26 @@ test('`fusion build` with dynamic imports and group chunks', async t => {
   t.deepLooseEqual(JSON.parse(resA), [0, 2]);
   t.deepLooseEqual(JSON.parse(resB), [0, 1]);
   proc.kill();
+  t.end();
+});
+
+test('`fusion build` tree shaking unused imports in dev w/ assumeNoImportSideEffects: true', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/tree-shaking-unused');
+  await cmd(`build --dir=${dir}`);
+
+  const distFolder = path.resolve(dir, '.fusion/dist/development/client');
+  const clientFiles = await readdir(distFolder);
+
+  clientFiles
+    .filter(file => path.extname(file) === '.js')
+    .map(file => path.join(distFolder, file))
+    .forEach(file => {
+      t.ok(
+        !fs.readFileSync(file, 'utf-8').includes('__fixture_pkg_unused__'),
+        'should not include unused export in browser'
+      );
+    });
+
   t.end();
 });
 

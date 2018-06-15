@@ -3,7 +3,7 @@ import {assetUrl} from 'fusion-core';
 
 const hoistedUrl = assetUrl('./static/test.css');
 
-export default async function() {
+export default (async function() {
   const app = new App('element', el => el);
   __NODE__ &&
     app.middleware((ctx, next) => {
@@ -18,10 +18,10 @@ export default async function() {
       } else if (ctx.url === '/hoisted') {
         ctx.body = hoistedUrl;
       }
-
-      __BROWSER__ && console.log('Dirname is', __dirname);
-      __BROWSER__ && console.log('Filename is', __filename);
       return next();
     });
+
+  __BROWSER__ && console.log('Dirname is', __dirname);
+  __BROWSER__ && console.log('Filename is', __filename);
   return app;
-}
+});

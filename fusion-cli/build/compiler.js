@@ -308,6 +308,8 @@ function getConfig({target, env, dir, watch, cover}) {
                         require.resolve('./babel-fusion-preset.js'),
                         {
                           targets,
+                          assumeNoImportSideEffects:
+                            fusionConfig.assumeNoImportSideEffects,
                         },
                       ],
                     ],
@@ -319,7 +321,11 @@ function getConfig({target, env, dir, watch, cover}) {
             },
           ],
         },
-      ],
+        fusionConfig.assumeNoImportSideEffects && {
+          sideEffects: false,
+          test: () => true,
+        },
+      ].filter(Boolean),
     },
     externals: [
       // These externals are required to work with enzyme

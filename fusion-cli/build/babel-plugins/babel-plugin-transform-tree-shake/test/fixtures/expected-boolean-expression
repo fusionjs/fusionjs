@@ -1,0 +1,6 @@
+import { baz } from "bar";
+false && something && other && foo;
+false && something && other && bar;
+false && something && other && foo;
+false && something && other && bar;
+true && baz;

@@ -1,0 +1,20 @@
+import node from "node";
+import {universal, nodeOnly, unused, browserOnly} from "other";
+import browser from "browser";
+if (false) {
+  if(false){
+    node;
+    node;
+    universal;
+  }
+  nodeOnly;
+}
+export const foo = false && node && node && node;
+export default (false ? node : browser);
+export const blah = false ? node : blah ? false ? node : blah : blah;
+universal;
+if (true) {
+  browser;
+  browser;
+  browserOnly;
+}

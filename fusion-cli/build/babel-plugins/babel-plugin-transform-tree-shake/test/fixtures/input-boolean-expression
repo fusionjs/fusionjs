@@ -1,0 +1,7 @@
+import foo from "foo";
+import {bar, baz} from "bar";
+false && something && other && foo;
+false && something && other && bar;
+__NODE__ && something && other && foo;
+__NODE__ && something && other && bar;
+true && baz;
