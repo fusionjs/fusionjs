@@ -65,7 +65,6 @@ test('body contains some message', async t => {
     body: {message: 'test'},
   });
   t.equals(ctx.status, 404, 'status is set');
-  // $FlowFixMe
-  t.equals(ctx.req.body.message, 'test', 'body is set');
+  t.deepEquals(ctx.request.body, {message: 'test'}, 'body is set');
   t.end();
 });

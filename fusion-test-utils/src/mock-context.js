@@ -49,11 +49,15 @@ export function mockContext(
   res.getHeader = k => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);
   res.removeHeader = k => delete res._headers[k.toLowerCase()];
+
+  // createContext is missing in Koa typings
+  const ctx = (new Koa(): any).createContext(req, res);
+
   if (options.body) {
-    req.body = options.body;
+    ctx.request.body = options.body;
   }
-  //$FlowFixMe
-  return new Koa().createContext(req, res);
+
+  return ctx;
 }
 
 export function renderContext(url: string, options: any): Context {
