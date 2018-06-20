@@ -153,6 +153,16 @@ app.enhance(SSRDeciderToken, SSRDeciderEnhancer);
 
 Ths SSRDeciderToken can be enhanced to control server rendering logic.
 
+##### HttpServerToken
+
+```js
+import App, {HttpServerToken} from 'fusion-core';
+app.register(HttpServerToken, server);
+```
+
+The HttpServerToken is used to register the current server as a dependency that can be utilized from plugins that require
+access to it. This is normally not required but is available for specific usage cases.
+
 ---
 
 #### Plugin
@@ -353,10 +363,10 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
     * `acceptsLanguages: (...languages: ...string) => boolean` - check if langs are acceptable
     * `get: (name: String) => string` - returns a header field
   </details>
-  
+
   * `response: Response` - [Koa's `response` object](https://koajs.com/#response): <details><summary>View Koa response details</summary>
     * `header: Object` - alias of `request.headers`
-    * `headers: Object` - map of parsed HTTP headers  
+    * `headers: Object` - map of parsed HTTP headers
     * `socket: Socket` - response socket
     * `status: String` - response status. By default, `response.status` is set to `404` unlike node's `res.statusCode` which defaults to `200`.
     * `message: String` - response status message. By default, `response.message` is associated with `response.status`.
@@ -369,7 +379,7 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
     * `remove: (field: String) => undefined` - remove header `field`
     * `type: String` - response `Content-Type`
     * `is: (...types: ...string) => boolean` - response type check `is('json', 'urlencoded')`
-    * `redirect: (url: String, alt: ?String) => undefined`- perform a 302 redirect to `url`  
+    * `redirect: (url: String, alt: ?String) => undefined`- perform a 302 redirect to `url`
     * `attachment (filename: ?String) => undefined` - set `Content-Disposition` to "attachment" to signal the client to prompt for download. Optionally specify the `filename` of the download.
     * `headerSent: boolean` - check if a response header has already been sent
     * `lastModified: Date` - `Last-Modified` header as a `Date`
@@ -395,7 +405,7 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
         * `httpOnly: boolean` - server-accessible cookie, true by default
         * `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
   </details>
-  
+
   * `state: Object` - recommended namespace for passing information through middleware and to your frontend views `ctx.state.user = await User.find(id)`
   * `throw: (status: ?number, message: ?string, properties: ?Object) => void` - throws an error
     * `status: number` - HTTP status code
@@ -408,7 +418,7 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
     * `properties: Object` - is merged to the error object
   * `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
   * `app: Object` - a reference to the Koa instance
-  
+
 #### Sanitization
 
 **html**
