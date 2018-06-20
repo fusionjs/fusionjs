@@ -14,3 +14,4 @@ export const ElementToken = createToken('ElementToken');
 export const SSRDeciderToken: Token<SSRDecider> = createToken(
   'SSRDeciderToken'
 );
+export const HttpServerToken = createToken('HttpServerToken');

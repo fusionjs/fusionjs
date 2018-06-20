@@ -34,7 +34,12 @@ export {
   syncChunkPaths,
 } from './virtual/index.js';
 
-export {RenderToken, ElementToken, SSRDeciderToken} from './tokens';
+export {
+  RenderToken,
+  ElementToken,
+  SSRDeciderToken,
+  HttpServerToken,
+} from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
