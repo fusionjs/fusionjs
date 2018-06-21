@@ -17,6 +17,8 @@ export default (async function() {
         ctx.body = __filename;
       } else if (ctx.url === '/hoisted') {
         ctx.body = hoistedUrl;
+      } else if (ctx.url === '/json') {
+        ctx.body = assetUrl('./static/test.json');
       }
       return next();
     });

@@ -321,6 +321,12 @@ function getConfig({target, env, dir, watch, cover}) {
             },
           ],
         },
+        // As of webpack 4 we need to set a type of 'javascript/auto' for JSON files,
+        // otherwise webpack will automatically parse JSON, breaking our file-loader logic.
+        {
+          type: 'javascript/auto',
+          test: /\.(json)/,
+        },
         fusionConfig.assumeNoImportSideEffects && {
           sideEffects: false,
           test: () => true,
