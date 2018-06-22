@@ -1,5 +1,6 @@
 import App from 'fusion-core';
 import {assetUrl} from 'fusion-core';
+import * as jsonData from './static/test.json';
 
 const hoistedUrl = assetUrl('./static/test.css');
 
@@ -19,6 +20,8 @@ export default (async function() {
         ctx.body = hoistedUrl;
       } else if (ctx.url === '/json') {
         ctx.body = assetUrl('./static/test.json');
+      } else if (ctx.url === '/json-import') {
+        ctx.body = JSON.stringify(jsonData);
       }
       return next();
     });

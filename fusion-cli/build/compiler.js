@@ -326,6 +326,7 @@ function getConfig({target, env, dir, watch, cover}) {
         {
           type: 'javascript/auto',
           test: /\.(json)/,
+          loader: 'json-loader',
         },
         fusionConfig.assumeNoImportSideEffects && {
           sideEffects: false,

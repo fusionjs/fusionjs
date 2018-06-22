@@ -62,7 +62,11 @@ test('`fusion dev` works with assets', async t => {
     t.equal(await request(`http://localhost:${port}/filename`), 'src/main.js');
     t.equal(
       await request(`http://localhost:${port}/json`),
-      '/_static/20355efabaae9ed4d51fbc5a68eb4ce3.json'
+      '/_static/7526e1bdce8d3d115d6b4d6b79096e1c.json'
+    );
+    t.equal(
+      await request(`http://localhost:${port}/json-import`),
+      '{"key":"value"}'
     );
     t.equal(
       await request(`http://localhost:${port}/hoisted`),
