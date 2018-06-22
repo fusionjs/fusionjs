@@ -110,15 +110,16 @@ when font is loaded:
 }
 ```
 
-If `preloadDepth` were 0 then every font would be preloaded, and there would be no fallback fonts
+##### preloadDepth
 
-If `preloadDepth` were 2 then the only fallback font would be Helvetica, and since Helvetica is a system font, no custom fonts would be preloaded.
+`preloadDepth = 0`: Every font is preloaded, there are no fallback fonts. There is no FOFT or FOUT but there may be some FOIT
+Use this when jank-free font loading is more important than page load performance.
 
-The `preloadDepth: 1` configuration above is usually good for most applications, but there may be reasons to tune it differently. If, for example, we were working on an landing page that heavily used `Lato-Bold` above the fold, the FOFT might be more jarring than preloading `Lato-Bold`. In that case, we could change `preloadDepth` to `0` to force `Lato-Bold` to be preloaded via inline CSS.
+`preloadDepth = 1`: Preload roman (non-stylized, e.g. `Lato`) fonts. Stylized fonts (e.g. `Lato-Bold`) will be lazily loaded and will fallback to preloaded font. During fallback period  the browser will apply the appropriate style to the roman font which will display a good approximation of the stylized font (FOFT) which is less jarring than falling back to a system font.
+Use this when you want to balance performance with font-loading smoothness
 
-On the other hand, if there's a major concern about overall performance of a web application, it might be an acceptable trade-off to preload no fonts. In that case, changing `preloadDepth` to `2` would force both `Lato-Regular` and `Lato-Bold` to be loaded asynchronously. This would mean that the page would render immediately using `Helvetica` and later would switch to `Lato-Regular` and `Lato-Bold` as these fonts finished downloading (causing a FOUT).
-
----
+`preloadDepth = 2`: Don't preload any fonts. Lazily load all fonts. Lazily loading fonts will immediately fallback to the system font (FOUT).
+Use this when page load performance is more important than font-load smoothness
 
 ### Setup
 
