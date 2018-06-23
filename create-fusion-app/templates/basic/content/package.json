@@ -11,6 +11,7 @@
     "fusion-react": "^1.0.5",
     "fusion-react-async": "^1.2.2",
     "fusion-tokens": "^1.0.3",
+    "prop-types": "^15.6.2",
     "react": "^16.4.0",
     "react-dom": "^16.4.0"
   },
@@ -19,5 +20,8 @@
     "test": "fusion test",
     "build": "fusion build",
     "start": "fusion start"
+  },
+  "devDependencies": {
+    "enzyme": "^3.3.0"
   }
 }
