@@ -44,7 +44,7 @@
     "fusion-test-utils": "^1.1.0",
     "fusion-tokens": "^1.0.1",
     "nyc": "^11.8.0",
-    "prettier": "1.12.1",
+    "prettier": "1.13.6",
     "react": "^16.4.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
