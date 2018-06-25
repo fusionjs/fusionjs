@@ -22,9 +22,10 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
+    "css-to-js-sourcemap-worker": "^2.0.1",
     "prop-types": "^15.6.1",
     "styletron-engine-atomic": "^1.0.5",
-    "styletron-react": "^4.2.2"
+    "styletron-react": "^4.3.0"
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.51",
