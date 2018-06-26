@@ -10,6 +10,7 @@ import browserDataFetching from './browser';
 import serverDataFetching from './server';
 
 export {default as mock} from './mock';
+export {default as ResponseError} from './response-error';
 
 export default (__BROWSER__ ? browserDataFetching : serverDataFetching);
 

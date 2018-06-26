@@ -7,7 +7,7 @@
  */
 
 export default class MissingHandlerError extends Error {
-  code: string;
+  code: ?string;
 
   constructor(method: string) {
     super(`Missing RPC handler for ${method}`);

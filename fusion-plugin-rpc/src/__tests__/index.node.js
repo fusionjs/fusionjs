@@ -19,6 +19,7 @@ import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../server';
 import type {IEmitter, RPCServiceType} from '../types.js';
 import MockRPCPlugin from '../mock.js';
+import ResponseError from '../response-error.js';
 
 const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
@@ -455,7 +456,7 @@ test('middleware - valid endpoint with route prefix', async t => {
   t.end();
 });
 
-test('middleware - valid endpoint failure', async t => {
+test('middleware - valid endpoint failure with ResponseError', async t => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -467,7 +468,7 @@ test('middleware - valid endpoint failure', async t => {
     },
     memoized: new Map(),
   }: any);
-  const e = new Error('Test Failure');
+  const e = new ResponseError('Test Failure');
   // $FlowFixMe
   e.code = 'ERR_CODE_TEST';
   // $FlowFixMe
@@ -514,6 +515,80 @@ test('middleware - valid endpoint failure', async t => {
     t.equal(mockCtx.body.data.code, e.code);
     // $FlowFixMe
     t.equal(mockCtx.body.data.meta, e.meta);
+    // $FlowFixMe
+    t.equal(mockCtx.body.status, 'failure');
+    // $FlowFixMe
+    t.equal(Object.keys(mockCtx.body).length, 2);
+    // $FlowFixMe
+    t.equal(Object.keys(mockCtx.body.data).length, 3);
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
+});
+
+test('middleware - valid endpoint failure with standard error', async t => {
+  const mockCtx: Context = ({
+    headers: {},
+    prefix: '',
+    path: '/api/test',
+    method: 'POST',
+    body: {},
+    request: {
+      body: 'test-args',
+    },
+    memoized: new Map(),
+  }: any);
+  const e = new Error('Test Failure');
+  // $FlowFixMe
+  e.code = 'ERR_CODE_TEST';
+  // $FlowFixMe
+  e.meta = {hello: 'world'};
+  const mockHandlers = {
+    test() {
+      return Promise.reject(e);
+    },
+  };
+  const mockEmitter = {
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'failure');
+      t.equal(typeof payload.timing, 'number');
+      t.notEqual(payload.error, e);
+    },
+    from() {
+      return this;
+    },
+  };
+
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
+  try {
+    await middleware(mockCtx, () => Promise.resolve());
+    t.equal(
+      // $FlowFixMe
+      mockCtx.body.data.message,
+      'UnknownError - Use ResponseError for more detailed error messages'
+    );
+    // $FlowFixMe
+    t.equal(mockCtx.body.data.code, undefined);
+    // $FlowFixMe
+    t.equal(mockCtx.body.data.meta, undefined);
     // $FlowFixMe
     t.equal(mockCtx.body.status, 'failure');
     // $FlowFixMe

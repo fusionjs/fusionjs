@@ -15,6 +15,7 @@ import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import MissingHandlerError from './missing-handler-error';
+import ResponseError from './response-error';
 import {BodyParserOptionsToken, RPCHandlersToken} from './tokens.js';
 import type {HandlerType} from './tokens.js';
 import type {RPCPluginType, IEmitter} from './types.js';
@@ -139,22 +140,26 @@ const plugin =
                 });
               }
             } catch (e) {
-              const error = Object.getOwnPropertyNames(e).reduce(
-                (obj: any, key) => {
-                  obj[key] = e[key];
-                  return obj;
-                },
-                {}
-              );
-              delete (error: any).stack;
+              const error =
+                e instanceof ResponseError
+                  ? e
+                  : new Error(
+                      'UnknownError - Use ResponseError for more detailed error messages'
+                    );
               ctx.body = {
                 status: 'failure',
-                data: error,
+                data: {
+                  message: error.message,
+                  // $FlowFixMe
+                  code: error.code,
+                  // $FlowFixMe
+                  meta: error.meta,
+                },
               };
               if (scopedEmitter) {
                 scopedEmitter.emit(statKey, {
                   method,
-                  error: e,
+                  error,
                   status: 'failure',
                   origin: 'browser',
                   timing: ms() - startTime,
