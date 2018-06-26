@@ -28,7 +28,7 @@
     "create-universal-package": "^3.4.0",
     "eslint": "^5.0.0",
     "eslint-config-fusion": "^2.0.0",
-    "eslint-plugin-cup": "^1.0.0",
+    "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^2.42.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.6.0",

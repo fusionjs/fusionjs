@@ -2072,11 +2072,11 @@ eslint-module-utils@^2.1.1:
     debug "^2.6.8"
     pkg-dir "^1.0.0"
 
-eslint-plugin-cup@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-cup/-/eslint-plugin-cup-1.0.0.tgz#6ceced9a06d29e6e7bdc76ca9e398c9bf53072be"
+eslint-plugin-cup@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-cup/-/eslint-plugin-cup-2.0.0.tgz#ff38dd34a1aa103eee90dcb14560bb0cf2ab6232"
   dependencies:
-    globals "^10.0.0"
+    globals "^11.5.0"
 
 eslint-plugin-flowtype@^2.42.0:
   version "2.43.0"
