@@ -10,7 +10,7 @@
 
 import http from 'http';
 
-import {getEnv} from 'fusion-core';
+import {createPlugin, getEnv, HttpServerToken} from 'fusion-core';
 
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
@@ -42,6 +42,7 @@ __webpack_public_path__ = webpackPublicPath + '/'; // eslint-disable-line
 // $FlowFixMe
 const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 
+let server = null;
 const state = {serve: null};
 const initialize = main
   ? main.default || main
@@ -51,10 +52,12 @@ const initialize = main
 
 export async function start({port, dir = '.'} /*: any */) {
   AssetsPlugin = AssetsFactory(dir);
+  // TODO(#21): support https.createServer(credentials, listener);
+  server = http.createServer();
+
   await reload();
 
-  // TODO(#21): support https.createServer(credentials, listener);
-  const server = http.createServer((req, res) => {
+  server.on('request', (req, res) => {
     if (prefix) stripRoutePrefix(req, prefix);
     // $FlowFixMe
     state.serve(req, res).catch(e => {
@@ -64,10 +67,10 @@ export async function start({port, dir = '.'} /*: any */) {
   });
 
   return new Promise(resolve => {
-    server.listen(port, () => {
-      // eslint-disable-next-line no-console
-      resolve(server);
-    });
+    server &&
+      server.listen(port, () => {
+        resolve(server);
+      });
   });
 }
 
@@ -75,6 +78,9 @@ async function reload() {
   const app = await initialize();
   reverseRegister(app, AssetsPlugin);
   reverseRegister(app, ContextPlugin);
+  if (server) {
+    app.register(HttpServerToken, createPlugin({provides: () => server}));
+  }
   if (__DEV__) {
     reverseRegister(app, ServerErrorPlugin);
   }

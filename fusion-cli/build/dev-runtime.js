@@ -8,22 +8,16 @@
 
 /* eslint-env node */
 
-const url = require('url');
 const path = require('path');
 const http = require('http');
-const request = require('request');
 const EventEmitter = require('events');
 const getPort = require('get-port');
 const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
+const httpProxy = require('http-proxy');
 
 const renderError = require('./server-error').renderError;
-
-function getChildUrl(originalUrl, replacement) {
-  const parsedUrl = Object.assign(url.parse(originalUrl), replacement);
-  return url.format(parsedUrl);
-}
 
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
@@ -84,6 +78,7 @@ module.exports.DevelopmentRuntime = function(
   const state = {
     server: null,
     proc: null,
+    proxy: null,
     childPortP: getPort(),
   };
 
@@ -174,24 +169,24 @@ module.exports.DevelopmentRuntime = function(
     }
   }
 
-  this.start = () => {
+  this.start = async function start() {
+    const childPort = await state.childPortP;
+
+    state.proxy = httpProxy.createProxyServer({
+      target: {
+        host: 'localhost',
+        port: childPort,
+      },
+      ws: true,
+    });
+
     // $FlowFixMe
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
-        const childPort = await state.childPortP;
         lifecycle.wait().then(
-          function retry() {
-            const newUrl = getChildUrl(req.url, {
-              protocol: 'http',
-              hostname: 'localhost',
-              port: childPort,
-            });
-            const proxyReq = request(newUrl, {
-              // let the browser follow the redirect
-              followRedirect: false,
-            });
-            proxyReq.on('error', retry);
-            req.pipe(proxyReq).pipe(res);
+          () => {
+            // $FlowFixMe
+            state.proxy.web(req, res);
           },
           error => {
             res.write(renderError(error));
@@ -200,6 +195,22 @@ module.exports.DevelopmentRuntime = function(
         );
       });
     });
+
+    // $FlowFixMe
+    state.server.on('upgrade', (req, socket, head) => {
+      lifecycle.wait().then(
+        () => {
+          // $FlowFixMe
+          state.proxy.ws(req, socket, head);
+        },
+        () => {
+          // Destroy the socket to terminate the websocket request if the child process has issues
+          socket.destroy();
+        }
+      );
+    });
+
+    // $FlowFixMe
     const listen = promisify(state.server.listen.bind(state.server));
     return listen(port).then(() => {
       const url = `http://localhost:${port}`;
@@ -212,6 +223,10 @@ module.exports.DevelopmentRuntime = function(
     if (state.server) {
       state.server.close();
       state.server = null; // ensure we can call .run() again after stopping
+    }
+    if (state.proxy) {
+      state.proxy.close();
+      state.proxy = null;
     }
   };
 
