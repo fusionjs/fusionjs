@@ -28,6 +28,10 @@ export const ApolloClientToken: Token<ApolloClient> = createToken(
   'ApolloClientToken'
 );
 
+export const GraphQLSchemaToken: Token<string> = createToken(
+  'GraphQlSchemaToken'
+);
+
 export default class App extends CoreApp {
   constructor(root: Element<*>) {
     const renderer = createPlugin({
