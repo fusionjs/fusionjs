@@ -9,6 +9,8 @@
 import App from 'fusion-core';
 import {GetInitialStateToken} from '../tokens.js';
 
+import type {Context} from 'fusion-core';
+
 const app = new App();
 
 app.register(
@@ -20,6 +22,12 @@ app.register(
 
 app.register(GetInitialStateToken, () => {
   return {};
+});
+
+app.register(GetInitialStateToken, (ctx: Context) => {
+  return {
+    something: ctx.state.something,
+  };
 });
 
 // Failing case for when we can test flow failures
