@@ -151,7 +151,7 @@ A function that gets initial state asynchronously without triggering actions. Op
 ###### Types
 
 ```flow
-type InitialState = () => Promise<State> | State
+type InitialState = (ctx: Context) => Promise<State> | State
 ```
 
 ---
