@@ -21,7 +21,7 @@ const app = new App();
 const simulator = getSimulator(app /*, (optional) test plugin with assertions on dependencies */);
 
 // test renders of your application
-const ctx = await simulator.render(app, '/test-url', {
+const ctx = await simulator.render('/test-url', {
   headers: {
     'x-header': 'value',
   }
@@ -29,7 +29,7 @@ const ctx = await simulator.render(app, '/test-url', {
 // do assertions on ctx
 
 // test requests to your application
-const ctx = await simulator.request(app, '/test-url', {
+const ctx = await simulator.request('/test-url', {
   headers: {
     'x-header': 'value',
   }
