@@ -35,7 +35,6 @@
     "chalk": "^2.4.1",
     "compression-webpack-plugin": "^1.1.11",
     "core-js": "^2.5.7",
-    "enzyme-adapter-react-15": "^1.0.5",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-to-json": "^3.3.4",
     "fast-async": "^6.3.7",
