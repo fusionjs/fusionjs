@@ -8,5 +8,6 @@
 
 /* eslint-env node */
 
-// This babel plugin only produces side effects
-// Instead, this plugin is integration tested
+const manifest /*: Map<string, Set<string>> */ = new Map();
+
+module.exports = manifest;

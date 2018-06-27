@@ -8,5 +8,6 @@
 
 /* eslint-env node */
 
-// This babel plugin only produces side effects
-// Instead, this plugin is integration tested
+const WebpackState = require('./webpack-state');
+
+module.exports = new WebpackState();

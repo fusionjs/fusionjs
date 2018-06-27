@@ -14,6 +14,7 @@ const test = require('tape');
 const {promisify} = require('util');
 const request = require('request-promise');
 const requestCb = require('request');
+const puppeteer = require('puppeteer');
 
 const {dev} = require('../run-command');
 
@@ -267,4 +268,83 @@ test('`fusion dev` with server side redirects', async t => {
       t.end();
     }
   );
+});
+
+test('`fusion dev` app with split translations integration', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/split-translations');
+
+  const split2Path = path.join(dir, 'src/split2.js');
+  const original = fs.readFileSync(split2Path, 'utf8');
+
+  t.ok(original.includes('<Translate id="split2"/>'), 'has original src');
+  const replaced = original.replace(
+    '<Translate id="split2"/>',
+    '<Translate id="hot"/>'
+  );
+
+  const {proc, port} = await dev(`--dir=${dir}`, {cwd: dir});
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+  const content = await page.content();
+  t.ok(
+    content.includes('<span>__MAIN_TRANSLATED__</span>'),
+    'app content contains translated main chunk'
+  );
+  t.ok(
+    !content.includes('__SPLIT1_TRANSLATED__'),
+    'split translation not inlined'
+  );
+  t.ok(
+    !content.includes('__SPLIT2_TRANSLATED__'),
+    'split translation not inlined'
+  );
+  t.ok(
+    !content.includes('__UNUSED_TRANSLATED__'),
+    'unused translation not inlined'
+  );
+
+  await Promise.all([
+    page.click('#split1-link'),
+    page.waitForSelector('#split1-translation'),
+  ]);
+  const content2 = await page.content();
+  t.ok(
+    content2.includes('__SPLIT1_TRANSLATED__'),
+    'renders first  split translation'
+  );
+
+  const reloaded = page.evaluate(() => {
+    return new Promise(resolve => {
+      // eslint-disable-next-line
+      window.__addHotStatusHandler(status => {
+        if (status === 'idle') {
+          resolve();
+        }
+      });
+    });
+  });
+
+  fs.writeFileSync(split2Path, replaced);
+
+  await reloaded;
+
+  await Promise.all([
+    page.click('#split2-link'),
+    page.waitForSelector('#split2-translation'),
+  ]);
+  const content3 = await page.content();
+  t.ok(
+    content3.includes('__HOT_TRANSLATED__'),
+    'renders second, hot split translation'
+  );
+
+  await browser.close();
+  proc.kill();
+
+  fs.writeFileSync(split2Path, original);
+
+  t.end();
 });

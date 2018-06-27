@@ -17,6 +17,9 @@ import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
 
+// $FlowFixMe
+import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-line
+
 const {prefix, webpackPublicPath} = getEnv();
 
 let AssetsPlugin;

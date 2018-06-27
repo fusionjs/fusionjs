@@ -33,6 +33,7 @@ const ChunkPreloadPlugin = require('./chunk-preload-plugin');
 const ChunkModuleManifestPlugin = require('./chunk-module-manifest-plugin');
 const chunkModuleManifest = require('./chunk-module-manifest');
 const InstrumentedImportDependencyTemplatePlugin = require('./instrumented-import-dependency-template-plugin');
+const I18nDiscoveryPlugin = require('./i18n-discovery-plugin.js');
 const ClientChunkBundleUrlMapPlugin = require('./client-chunk-bundle-url-map-plugin');
 const SyncChunkIdsPlugin = require('./sync-chunk-ids-plugin');
 const browserSupport = require('./browser-support');
@@ -297,12 +298,8 @@ function getConfig({target, env, dir, watch, cover}) {
                         {pragma},
                       ],
                       cover && require.resolve('babel-plugin-istanbul'),
-                      target === 'node' &&
+                      target === 'web' &&
                         require.resolve('./babel-plugins/babel-plugin-i18n'),
-                      target === 'node' &&
-                        require.resolve(
-                          './babel-plugins/babel-plugin-experimentation'
-                        ),
                     ].filter(Boolean),
                     presets: [
                       [
@@ -412,6 +409,9 @@ function getConfig({target, env, dir, watch, cover}) {
           './client-source-map-loader'
         ),
         __SECRET_MULTI_ENTRY_LOADER__: require.resolve('multi-entry-loader'),
+        __SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__: require.resolve(
+          './i18n-manifest-instrumentation-loader.js'
+        ),
       },
     },
     plugins: [
@@ -474,6 +474,7 @@ function getConfig({target, env, dir, watch, cover}) {
             chunkModuleManifest.set(chunkMap);
           },
         }),
+      target === 'web' && new I18nDiscoveryPlugin(),
       // case-insensitive paths can cause problems
       new CaseSensitivePathsPlugin(),
       target === 'web' && new AssetsManifestPlugin(),
