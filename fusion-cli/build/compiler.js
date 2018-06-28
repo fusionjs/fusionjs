@@ -27,7 +27,6 @@ const resolveFrom = require('resolve-from');
 
 const AssetsManifestPlugin = require('@nadiia/file-loader')
   .assetsManifestPlugin;
-const CrossoriginAutoAttributePlugin = require('./crossorigin-auto-attribute-plugin.js');
 const ClientSourceMapPlugin = require('./client-source-map-plugin');
 const ChunkPreloadPlugin = require('./chunk-preload-plugin');
 const ChunkModuleManifestPlugin = require('./chunk-module-manifest-plugin');
@@ -478,7 +477,6 @@ function getConfig({target, env, dir, watch, cover}) {
       // case-insensitive paths can cause problems
       new CaseSensitivePathsPlugin(),
       target === 'web' && new AssetsManifestPlugin(),
-      target === 'web' && new CrossoriginAutoAttributePlugin(),
       target === 'node' &&
         new webpack.BannerPlugin({
           raw: true,
