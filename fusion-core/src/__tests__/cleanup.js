@@ -54,3 +54,18 @@ test('app.cleanup with async cleanup plugins', async t => {
   t.ok(nextCleanupCalled, 'calls all cleanups');
   t.end();
 });
+
+test('app.cleanup does not cleanup if cleanup was not given a function', async t => {
+  const app = new App('el', el => el);
+  app.register(
+    createPlugin({
+      provides: () => 'hello world',
+      // $FlowFixMe - Ignore this to test branch
+      cleanup: 'notafunc',
+      middleware: () => (ctx, next) => next(),
+    })
+  );
+  app.resolve();
+  await app.cleanup();
+  t.end();
+});

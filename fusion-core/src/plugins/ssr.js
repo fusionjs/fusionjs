@@ -58,7 +58,6 @@ export default function createSSRPlugin({
       return;
     }
 
-    // $FlowFixMe
     const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
     const safeAttrs = Object.keys(htmlAttrs)
       .map(attrKey => {

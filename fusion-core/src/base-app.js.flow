@@ -36,7 +36,7 @@ declare class FusionApp {
     middleware: (Deps: $ObjMap<TDeps, ExtractReturnType>) => Middleware
   ): void;
   middleware(middleware: Middleware): void;
-  callback(): () => Promise<void> | any;
+  callback(): (...Array<*>) => Promise<void> | any;
   resolve(): void;
 }
 

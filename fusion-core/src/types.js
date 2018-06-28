@@ -24,6 +24,7 @@ export type SSRContext = {
     title: string,
     head: Array<SanitizedHTMLWrapper>,
     body: Array<SanitizedHTMLWrapper>,
+    bodyAttrs: {[string]: string},
   },
 } & ExtendedKoaContext;
 

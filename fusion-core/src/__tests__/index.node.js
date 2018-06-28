@@ -11,6 +11,7 @@ import App, {html} from '../index';
 import {run} from './test-helper';
 import {SSRDeciderToken} from '../tokens';
 import {createPlugin} from '../create-plugin';
+import BaseApp from '../base-app';
 
 test('ssr with accept header', async t => {
   const flags = {render: false};
@@ -473,6 +474,18 @@ test('rendering error handling', async t => {
     await run(app);
   } catch (e) {
     t.equal(e.message, 'Test error');
+    t.end();
+  }
+});
+
+test('app handles no render token', async t => {
+  const app = new BaseApp('el', el => el);
+  app.renderer = null;
+  try {
+    await app.resolve();
+    t.end();
+  } catch (e) {
+    t.equal(e.message, 'Missing registration for RenderToken');
     t.end();
   }
 });
