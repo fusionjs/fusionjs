@@ -5,6 +5,7 @@
  *
  * @flow
  */
+/* globals global */
 
 import FusionApp, {compose} from 'fusion-core';
 import type {Context} from 'fusion-core';
@@ -28,6 +29,14 @@ export const render = (app: FusionApp) => (
   url: string,
   options: * = {}
 ): Promise<*> => {
+  if (global.jsdom) {
+    if (!url.startsWith('/')) {
+      url = `/${url}`;
+    }
+    global.jsdom.reconfigure({
+      url: `http://localhost${url}`,
+    });
+  }
   const ctx = renderContext(url, options);
   return simulate(app, ctx);
 };
