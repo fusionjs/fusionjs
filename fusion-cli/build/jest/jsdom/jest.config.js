@@ -14,6 +14,7 @@ module.exports = {
   ...baseJestConfig,
   displayName: 'browser',
   browser: true,
-  testEnvironment: 'jsdom',
+  // Exposes global.jsdom so we can reconfigure the url on each simulator.render call
+  testEnvironment: 'jest-environment-jsdom-global',
   testPathIgnorePatterns: ['.*\\.node\\.js'],
 };
