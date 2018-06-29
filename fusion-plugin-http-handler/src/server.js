@@ -33,8 +33,11 @@ const plugin =
           // $FlowFixMe
           ctx.res.end = (data, encoding, cb) => {
             ctx.respond = false;
-            oldEnd(data, encoding, cb);
-            return next().then(resolve);
+            return next()
+              .then(resolve)
+              .then(() => {
+                oldEnd(data, encoding, cb);
+              });
           };
           handler(ctx.req, ctx.res, () => {
             // $FlowFixMe
