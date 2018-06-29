@@ -8,7 +8,7 @@
 
 /* eslint-env node */
 
-import {Logger} from 'winston';
+import {createLogger} from 'winston';
 
 import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -24,7 +24,8 @@ const plugin =
       config: UniversalLoggerConfigToken.optional,
     },
     provides: ({emitter, config}) => {
-      const logger = new Logger(config);
+      config = config || {};
+      const logger = createLogger(config);
       emitter.on('universal-log', ({level, args}) => {
         logger[level](...args);
       });

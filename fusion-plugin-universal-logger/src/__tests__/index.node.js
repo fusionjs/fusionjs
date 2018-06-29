@@ -14,28 +14,29 @@ import {LoggerToken} from 'fusion-tokens';
 import UniversalEvents, {
   UniversalEventsToken,
 } from 'fusion-plugin-universal-events';
+import TransportStream from 'winston-transport';
 
 import plugin from '../server.js';
 import {UniversalLoggerConfigToken} from '../tokens';
 
 type SupportedLevelsType =
-  | 'trace'
-  | 'debug'
-  | 'info'
-  | 'access'
-  | 'warn'
   | 'error'
-  | 'fatal';
+  | 'warn'
+  | 'info'
+  | 'verbose'
+  | 'debug'
+  | 'silly';
 
 test('Server logger', async t => {
   let called = false;
-  class Transport {
+  class Transport extends TransportStream {
     name: string;
 
     constructor() {
+      super();
       this.name = 'test-transport';
     }
-    log(level: SupportedLevelsType, message: string): void {
+    log({level, message}: {level: SupportedLevelsType, message: string}): void {
       t.equals(level, 'info', 'level is ok');
       t.equals(message, 'test', 'message is ok');
       called = true;
@@ -58,17 +59,26 @@ test('Server logger', async t => {
 
 test('Server logger listening on events', async t => {
   let called = false;
-  class Transport {
+  class Transport extends TransportStream {
     name: string;
 
     constructor() {
+      super();
       this.name = 'test-transport';
     }
-    log(level: SupportedLevelsType, message: string, meta: mixed) {
+    log({
+      level,
+      message,
+      hello,
+    }: {
+      level: SupportedLevelsType,
+      message: string,
+      hello: string,
+    }) {
       t.equals(level, 'info', 'level is ok');
       t.equals(message, 'test', 'message is ok');
       t.equals(message, 'test', 'message is ok');
-      t.deepLooseEqual(meta, {hello: 'world'}, 'meta is ok');
+      t.equals(hello, 'world', 'meta is ok');
       called = true;
     }
   }

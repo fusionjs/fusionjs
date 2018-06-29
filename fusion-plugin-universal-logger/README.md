@@ -40,33 +40,33 @@ app.middleware({logger: LoggerToken}, ({logger}) => {
     if (__NODE__) logger.info(`Received request at ${ctx.url}`);
     else logger.info(`Pageload at ${ctx.url}`);
     return next();
-  }
+  };
 });
 ```
 
-### Setup 
+### Setup
 
 ```js
 import App from 'fusion-core';
 import winston from 'winston';
 import UniversalEvents from 'fusion-plugin-universal-events';
-import UniversalLogger, {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
+import UniversalLogger, {
+  UniversalLoggerConfigToken,
+} from 'fusion-plugin-universal-logger';
 
 export default () => {
   const app = new App(<div>Hello</div>);
-  app.register(UniversalEventsToken, UniversalEvents)
+  app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, UniversalLogger);
-  if (__NODE__) { 
+  if (__NODE__) {
     // optional winston configuration
     const config = {
-      transports: [
-        new winston.transports.File({filename: 'logs.log'}),
-      ],
+      transports: [new winston.transports.File({filename: 'logs.log'})],
     };
     app.register(UniversalLoggerConfigToken, config);
   }
   return app;
-}
+};
 ```
 
 ---
@@ -99,9 +99,10 @@ import {LoggerToken} from 'fusion-tokens';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 ```
 
-An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events). Required. 
+An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events). Required.
 
 ##### `UniversalLoggerConfigToken`
+
 ```js
 import {UniversalLoggerConfigToken} from 'fusion-plugin-universal-logger';
 ```
@@ -111,50 +112,44 @@ A [Winston](https://github.com/winstonjs/winston) configuration object. Optional
 #### Service API
 
 ```js
-logger.log(level, ...args)
+logger.log(level, ...args);
 ```
 
-* `level: string` - Valid levels: `'trace'`, `'debug'`, `'info'`, `'access'`, `'warn'`, `'error'`, `'fatal'`
+* `level: string` - Valid levels: `'error'`,`'warn'`,`'info'`,`'verbose'`,`'debug'`,`'silly'`
 * `args: [string]`
 
 ```js
-logger.trace(...args)
-```
-
-* `args: [string]`
-
-```js
-logger.debug(...args)
+logger.error(...args);
 ```
 
 * `args: [string]`
 
 ```js
-logger.info(...args)
+logger.warn(...args);
 ```
 
 * `args: [string]`
 
 ```js
-logger.access(...args)
+logger.info(...args);
 ```
 
 * `args: [string]`
 
 ```js
-logger.warn(...args)
+logger.verbose(...args);
 ```
 
 * `args: [string]`
 
 ```js
-logger.error(...args)
+logger.debug(...args);
 ```
 
 * `args: [string]`
 
 ```js
-logger.fatal(...args)
+logger.silly(...args);
 ```
 
 * `args: [string]`
