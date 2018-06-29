@@ -281,3 +281,20 @@ test('app.middleware with no dependencies', async t => {
   t.ok(called, 'calls middleware');
   t.end();
 });
+
+__NODE__ &&
+  test('ctx.respond as false', async t => {
+    const element = 'hi';
+    const renderFn = el => {
+      t.fail('should not render if ctx.respond is false');
+      return el;
+    };
+    const app = new App(element, renderFn);
+    app.middleware((ctx, next) => {
+      ctx.respond = false;
+      return next();
+    });
+    const ctx = await run(app);
+    t.notOk(ctx.rendered, 'should not render');
+    t.end();
+  });

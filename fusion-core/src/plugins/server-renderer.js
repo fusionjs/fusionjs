@@ -22,7 +22,7 @@ export default function getRendererPlugin({
     timer.downstream.resolve(now() - timer.start);
 
     let renderTime = null;
-    if (ctx.element && !ctx.body) {
+    if (ctx.element && !ctx.body && ctx.respond !== false) {
       const renderStart = now();
       ctx.rendered = await render(ctx.element);
       renderTime = now() - renderStart;

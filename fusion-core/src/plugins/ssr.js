@@ -54,7 +54,7 @@ export default function createSSRPlugin({
 
     // Allow someone to override the ssr by setting ctx.body
     // This is especially useful for things like ctx.redirect
-    if (ctx.body) {
+    if (ctx.body && ctx.respond !== false) {
       return;
     }
 
