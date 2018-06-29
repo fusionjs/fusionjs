@@ -20,13 +20,40 @@ export type Session = {
 };
 export const SessionToken: Token<Session> = createToken('SessionToken');
 
+type LogCallback = (
+  error?: any,
+  level?: string,
+  message?: string,
+  meta?: any
+) => void;
+
+type LogEntry = {
+  level: string,
+  message: string,
+  [optionName: string]: any,
+};
+
+type LogMethod = {
+  (level: string, message: string, callback: LogCallback): Logger,
+  (level: string, message: string, meta: any, callback: LogCallback): Logger,
+  (level: string, message: string, ...meta: any[]): Logger,
+  (entry: LogEntry): Logger,
+};
+
+type LeveledLogMethod = {
+  (message: string, callback: LogCallback): Logger,
+  (message: string, meta: any, callback: LogCallback): Logger,
+  (message: string, ...meta: any[]): Logger,
+  (infoObject: Object): Logger,
+};
+
 export type Logger = {
-  log(level: string, arg: any): void,
-  error(arg: any): void,
-  warn(arg: any): void,
-  info(arg: any): void,
-  verbose(arg: any): void,
-  debug(arg: any): void,
-  silly(arg: any): void,
+  log: LogMethod,
+  error: LeveledLogMethod,
+  warn: LeveledLogMethod,
+  info: LeveledLogMethod,
+  verbose: LeveledLogMethod,
+  debug: LeveledLogMethod,
+  silly: LeveledLogMethod,
 };
 export const LoggerToken: Token<Logger> = createToken('LoggerToken');
