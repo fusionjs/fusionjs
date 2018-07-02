@@ -58,11 +58,13 @@ exports.run = async function(
     logLevel: string,
   }*/
 ) {
-  const logger = new winston.Logger({
-    transports: [
-      new winston.transports.Console({colorize: true, level: logLevel}),
-    ],
+  const logger = winston.createLogger({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    ),
   });
+  logger.add(new winston.transports.Console({level: logLevel}));
 
   const envs = [];
   if (production) envs.push('production');

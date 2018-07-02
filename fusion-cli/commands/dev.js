@@ -61,11 +61,13 @@ exports.builder = {
 exports.run = async function(
   {dir = '.', test, debug, port, cover, hmr, open, logLevel} /*: any */
 ) {
-  const logger = new winston.Logger({
-    transports: [
-      new winston.transports.Console({colorize: true, level: logLevel}),
-    ],
+  const logger = winston.createLogger({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    ),
   });
+  logger.add(new winston.transports.Console({level: logLevel}));
 
   const compiler = new Compiler({
     envs: test ? ['development', 'test'] : ['development'],
