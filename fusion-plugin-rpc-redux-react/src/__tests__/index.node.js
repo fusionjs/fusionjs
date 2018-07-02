@@ -17,7 +17,7 @@ import {getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import Plugin from '../plugin';
-import {mock} from '../index';
+import {mock, ResponseError} from '../index';
 import {withRPCRedux, withRPCReactor} from '../hoc';
 
 /* Test helpers */
@@ -143,5 +143,11 @@ test('withRPCReactor hoc', t => {
     'passes the handler through to props'
   );
   rendered.props.test('test-args');
+  t.end();
+});
+
+test('ResponseError', t => {
+  const e = new ResponseError('test');
+  t.ok(e instanceof Error);
   t.end();
 });

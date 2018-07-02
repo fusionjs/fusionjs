@@ -2,7 +2,8 @@
 
 [![Build status](https://badge.buildkite.com/c16ece6ba0a81b30d11d69cb90b8f4d77a0967860144d12f44.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc-redux-react)
 
-Provides a higher order component that connects RPC methods to Redux as well as React component props
+Provides a higher order component that connects RPC methods to Redux as well as
+React component props
 
 RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. Unlike [RESTful architectures](https://en.wikipedia.org/wiki/Representational_state_transfer), RPC-based architectures are not required to conform to statelessness constraints and are free to return session-scoped data. Additionally, the semantics of RPC calls are not constrained by the availability of suitably-descriptive HTTP methods and RPC calls can express complex state change requests more naturally as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g. `PATCH /api/orders/:id`).
 
@@ -18,6 +19,7 @@ RPC is a natural way of expressing that a server-side function should be run in 
   * [Dependencies](#dependencies)
   * [`withRPCRedux`](#withrpcredux)
   * [`withRPCReactor`](#withrpcreactor)
+  * [`ResponseError`](#responseerror)
   * [`mock`](#mock)
 * [Other examples](#other-examples)
 
@@ -117,7 +119,8 @@ export default () => {
 import RPC from 'fusion-plugin-rpc-redux-react';
 ```
 
-The plugin. Typically it should be registered to [`RPCToken`](#rpctoken). Installs an RPC provider at the root of the React tree.
+The plugin. Typically it should be registered to [`RPCToken`](#rpctoken).
+Installs an RPC provider at the root of the React tree.
 
 ###### `RPCToken`
 
@@ -125,13 +128,15 @@ The plugin. Typically it should be registered to [`RPCToken`](#rpctoken). Instal
 import {RPCToken} from 'fusion-plugin-rpc-redux-react';
 ```
 
-The canonical token for the RPC plugin. Typically, it should be registered with the [RPC](#rpc) plugin.
+The canonical token for the RPC plugin. Typically, it should be registered with
+the [RPC](#rpc) plugin.
 
 #### Dependencies
 
 ##### `UniversalEventsToken`
 
-Required. See [https://github.com/fusionjs/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusion-plugin-universal-events#api)
+Required. See
+[https://github.com/fusionjs/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusion-plugin-universal-events#api)
 
 ##### `RPCHandlersToken`
 
@@ -147,19 +152,23 @@ Configures what RPC handlers exist. Required. Server-only.
 type RPCHandlers = {[string]: (rpcArgs: Object, ctx: Context) => Promise<Object>}
 ```
 
-You can register a value of type `RPCHandlers` or a Plugin that provides a value of type `RPCHandlers`.
+You can register a value of type `RPCHandlers` or a Plugin that provides a value
+of type `RPCHandlers`.
 
 ##### `FetchToken`
 
-Required. Browser-only. See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+Required. Browser-only. See
+[https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
 
 ##### `ReduxToken`
 
-Required. See [https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+Required. See
+[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
 
 ##### `ReducerToken`
 
-Required. See [https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+Required. See
+[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
 
 ---
 
@@ -169,7 +178,9 @@ Required. See [https://github.com/fusionjs/fusion-plugin-react-redux](https://gi
 import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
 ```
 
-Creates a higher order component with a prop mapped to the given RPC method. It can additionally configure the mapped method with parameters from state or from a transformation function.
+Creates a higher order component with a prop mapped to the given RPC method. It
+can additionally configure the mapped method with parameters from state or from
+a transformation function.
 
 ```js
 const hoc:HOC = withRPCRedux(rpcId: string, {
@@ -180,9 +191,12 @@ const hoc:HOC = withRPCRedux(rpcId: string, {
 
 ```
 
-* `rpcId: string` - The name of the RPC method to expose in the component's props
-* `propName: ?string` - Optional. The name of the prop. Defaults to the same as `rpcId`
-* `mapStateToParams: ?(state: any) => any` - populate the RPC request with parameters from Redux state
+* `rpcId: string` - The name of the RPC method to expose in the component's
+  props
+* `propName: ?string` - Optional. The name of the prop. Defaults to the same as
+  `rpcId`
+* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
+  parameters from Redux state
 * `transformParams: ?(params: any) => any` - transforms the params
 * returns `hoc: Component => Component`
 
@@ -206,14 +220,42 @@ const hoc:HOC = withRPCReactor(rpcId: string, {
 });
 ```
 
-* `rpcId: string` - The name of the RPC method to expose in the component's props
-* `start: ?(state: any, action: Object) => any` - A reducer to run when the RPC call is made
-* `success: ?(state: any, action: Object) => any` - A reducer to run when the RPC call succeeds
-* `failure: ?(state: any, action: Object) => any` - A reducer to run when the RPC call fails
-* `propName: ?string` - Optional. The name of the prop. Defaults to the same as `rpcId`
-* `mapStateToParams: ?(state: any) => any` - populate the RPC request with parameters from Redux state
+* `rpcId: string` - The name of the RPC method to expose in the component's
+  props
+* `start: ?(state: any, action: Object) => any` - A reducer to run when the RPC
+  call is made
+* `success: ?(state: any, action: Object) => any` - A reducer to run when the
+  RPC call succeeds
+* `failure: ?(state: any, action: Object) => any` - A reducer to run when the
+  RPC call fails
+* `propName: ?string` - Optional. The name of the prop. Defaults to the same as
+  `rpcId`
+* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
+  parameters from Redux state
 * `transformParams: ?(params: any) => any` - transforms the params
 * returns `hoc: Component => Component`
+
+#### ResponseError
+
+Use the `ResponseError` error subclass for sending error responses. If this
+error class is not used, a generic message will be sent to the client.
+
+```js
+import {ResponseError} from 'fusion-plugin-rpc';
+
+function testHandler() {
+  try {
+    doThing();
+  } catch (e) {
+    const error = new ResponseError('Failed to do thing');
+    error.code = 'DOTHING';
+    error.meta = {
+      custom: 'metadata',
+    };
+    throw error;
+  }
+}
+```
 
 #### mock
 
@@ -221,7 +263,8 @@ const hoc:HOC = withRPCReactor(rpcId: string, {
 import {mock as MockRPC} from 'fusion-plugin-rpc-redux-react';
 ```
 
-The package also exports a mock RPC plugin which can be useful for testing. For example:
+The package also exports a mock RPC plugin which can be useful for testing. For
+example:
 
 ```js
 app.register(RPCToken, mock);
@@ -233,11 +276,14 @@ app.register(RPCToken, mock);
 
 ### Usage with Reactors
 
-[`redux-reactors`](https://github.com/ganemone/redux-reactors) is a library that allows you to colocate Redux actions and reducers
+[`redux-reactors`](https://github.com/ganemone/redux-reactors) is a library that
+allows you to colocate Redux actions and reducers
 
-The `fusion-plugin-rpc-redux-react` package provides a `withRPCReactor` HOC which facilitates implementing a Redux store using reactors.
+The `fusion-plugin-rpc-redux-react` package provides a `withRPCReactor` HOC
+which facilitates implementing a Redux store using reactors.
 
-To use it, register the `fusion-plugin-react-redux` plugin with `reactorEnhancer` from `redux-reactors`:
+To use it, register the `fusion-plugin-react-redux` plugin with
+`reactorEnhancer` from `redux-reactors`:
 
 ```js
 // src/main.js
@@ -276,7 +322,9 @@ export default {
 }
 ```
 
-Because `redux-reactors` is implemented as a Redux enhancer, it doesn't require building reducers in the traditional Redux way. Thus, the root reducer can simply be the identity function:
+Because `redux-reactors` is implemented as a Redux enhancer, it doesn't require
+building reducers in the traditional Redux way. Thus, the root reducer can
+simply be the identity function:
 
 ```js
 // src/redux.js
@@ -296,15 +344,24 @@ export const incrementReactor = withRPCReactor('increment', {
 });
 ```
 
-`incrementReactor: Component => Component` is a React HOC. It defines three actions: `start`, `success` and `failure`, which correspond to the respective statuses of a HTTP request.
+`incrementReactor: Component => Component` is a React HOC. It defines three
+actions: `start`, `success` and `failure`, which correspond to the respective
+statuses of a HTTP request.
 
-In the example above, when `increment` is called, the `start` action is dispatched, which runs a reducer that sets `state.loading` to true, `state.error` to false and keeps `state.count` intact. If the request completes successfully, `state.loading` is set to false, and `state.count` is updated with a new value. Similarly, if the request fails, `state.error` is set.
+In the example above, when `increment` is called, the `start` action is
+dispatched, which runs a reducer that sets `state.loading` to true,
+`state.error` to false and keeps `state.count` intact. If the request completes
+successfully, `state.loading` is set to false, and `state.count` is updated with
+a new value. Similarly, if the request fails, `state.error` is set.
 
-In addition to defining action/reducer pairs, the `incrementReactor` HOC also maps RPC methods to React props.
+In addition to defining action/reducer pairs, the `incrementReactor` HOC also
+maps RPC methods to React props.
 
-Reactors typically need to be used in conjunction with `connect` from `react-redux`, in order to map state to React.
+Reactors typically need to be used in conjunction with `connect` from
+`react-redux`, in order to map state to React.
 
-Below is an example of consuming the state and RPC methods that are made available from the Redux store and the RPC plugin.
+Below is an example of consuming the state and RPC methods that are made
+available from the Redux store and the RPC plugin.
 
 ```js
 // src/components/example.js
@@ -335,10 +392,28 @@ export default hoc(Example);
 
 ### Differences between reactors and vanilla Redux
 
-Redux colocates all valid actions in a respective "slot" in the state tree, and colocates the structuring of the state tree via helpers such as `combineReducers`. This means that a reducer can be unit tested by simply calling the reducer with one of the valid actions, without having any effect on any other state that might exist in the app. The downside is that if an action needs to modify multiple "slots" in the state tree, it can be tedious to find all transformations pertaining to any given action.
+Redux colocates all valid actions in a respective "slot" in the state tree, and
+colocates the structuring of the state tree via helpers such as
+`combineReducers`. This means that a reducer can be unit tested by simply
+calling the reducer with one of the valid actions, without having any effect on
+any other state that might exist in the app. The downside is that if an action
+needs to modify multiple "slots" in the state tree, it can be tedious to find
+all transformations pertaining to any given action.
 
-Another point worth mentioning is that with traditional reducers, it's possible to refactor the state tree in such a way that doesn't make any changes to reducers or components (albeit it does require changing the reducer composition chain as well as all relevant `mapStateToProps` functions).
+Another point worth mentioning is that with traditional reducers, it's possible
+to refactor the state tree in such a way that doesn't make any changes to
+reducers or components (albeit it does require changing the reducer composition
+chain as well as all relevant `mapStateToProps` functions).
 
-Reactors, on the other hand, colocate a single reducer to a single action, so all state transformations pertaining to any given action are handled by a single function. This comes at the cost of flexibility: it's no longer possible to refactor the shape of the state tree without changing every affectd reducer, and it's also possible to affect unrelated parts of the state tree, for example missing properties due to an overly conservative object assignment.
+Reactors, on the other hand, colocate a single reducer to a single action, so
+all state transformations pertaining to any given action are handled by a single
+function. This comes at the cost of flexibility: it's no longer possible to
+refactor the shape of the state tree without changing every affectd reducer, and
+it's also possible to affect unrelated parts of the state tree, for example
+missing properties due to an overly conservative object assignment.
 
-However doing large refactors to the shape of the state tree isn't necessarily all that common and it's often more intuitive to see all possible state transformations for a given action in a single place. In addition to creating less boilerplate, this pattern leads to similarly intuitive tests that are also colocated by action.
+However doing large refactors to the shape of the state tree isn't necessarily
+all that common and it's often more intuitive to see all possible state
+transformations for a given action in a single place. In addition to creating
+less boilerplate, this pattern leads to similarly intuitive tests that are also
+colocated by action.
