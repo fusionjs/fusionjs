@@ -15,6 +15,13 @@ test('function mocks', assert => {
   assert.equal(myMock.mock.calls.length, 1);
 });
 
+test('function mocks with an argument', assert => {
+  const myMock = mockFunction(() => null);
+  assert.equal(myMock.mock.calls.length, 0);
+  myMock();
+  assert.equal(myMock.mock.calls.length, 1);
+});
+
 test('matchSnapshot', assert => {
   const myObj = {foo: 'bar'};
   assert.matchSnapshot(myObj);

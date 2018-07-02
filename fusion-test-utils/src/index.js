@@ -74,10 +74,9 @@ type ExtractArgsReturnType<TArguments, TReturn> = <R>(
 ) => R;
 type JestFnType = $PropertyType<JestObjectType, 'fn'>;
 // eslint-disable-next-line flowtype/generic-spacing
-type MockFunctionType<TArgs, TReturn> = () => $Call<
-  ExtractArgsReturnType<TArgs, TReturn>,
-  JestFnType
->;
+type MockFunctionType<TArgs, TReturn> = (
+  ...args: TArgs
+) => $Call<ExtractArgsReturnType<TArgs, TReturn>, JestFnType>;
 type MatchSnapshotType = (tree: mixed, snapshotName: ?string) => void;
 type CallableAssertType = (
   assert: typeof assert & {matchSnapshot: MatchSnapshotType}
@@ -103,7 +102,6 @@ if (typeof it !== 'undefined') {
   const notSupported = () => {
     throw new Error('Can’t import test() when not using the test-app target.');
   };
-  // $FlowFixMe
   test = notSupported;
   mockFunction = notSupported;
 }
