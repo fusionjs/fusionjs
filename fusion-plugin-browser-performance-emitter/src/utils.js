@@ -6,9 +6,14 @@
  * @flow
  */
 
-type paintTimesType = Array<{[string]: string}>;
+type PaintTime = {
+  entryType: string,
+  name: string,
+  startTime: number,
+  duration: number,
+};
 
-export function buildPaintTimesObject(paintTimes: paintTimesType) {
+export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
   return {
     firstPaint: getTimeFromMarks(paintTimes, 'first-paint'),
     firstContentfulPaint: getTimeFromMarks(
@@ -18,7 +23,7 @@ export function buildPaintTimesObject(paintTimes: paintTimesType) {
   };
 }
 
-export function getTimeFromMarks(marks: paintTimesType, name: string) {
-  const thisMark = marks.find(mark => mark.name === name);
-  return thisMark && thisMark.startTime;
+export function getTimeFromMarks(marks: Array<PaintTime>, name: string) {
+  const matchingMarks = marks.filter(mark => mark.name === name);
+  return matchingMarks.length ? matchingMarks[0].startTime : null;
 }

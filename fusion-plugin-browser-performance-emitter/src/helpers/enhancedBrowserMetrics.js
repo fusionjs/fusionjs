@@ -6,6 +6,8 @@
  * @flow
  */
 
+import {getTimeFromMarks} from '../utils';
+
 function hasPerf(window) {
   return Boolean(
     window &&
@@ -40,17 +42,32 @@ function getMemory(window) {
   return asDictionary(window.performance.memory);
 }
 
-function getFirstPaint(window) {
-  if (window.chrome && window.chrome.loadTimes) {
-    // Chrome
-    const firstPaint = window.chrome.loadTimes().firstPaintTime * 1000;
-    return firstPaint - window.chrome.loadTimes().startLoadTime * 1000;
+function getPaintTimes(window) {
+  let firstPaint = null;
+  let firstContentfulPaint = null;
+  const paint = window.performance.getEntriesByType('paint');
+  if (paint) {
+    firstPaint = getTimeFromMarks(paint, 'first-paint');
+    firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
   } else if (typeof window.performance.timing.msFirstPaint === 'number') {
     // IE
-    const firstPaint = window.performance.timing.msFirstPaint;
-    return firstPaint - window.performance.timing.navigationStart;
+    firstPaint =
+      window.performance.timing.msFirstPaint -
+      window.performance.timing.navigationStart;
+  } else {
+    return null;
   }
-  return null;
+  return {
+    firstPaint,
+    firstContentfulPaint,
+  };
+}
+
+function getRenderTimes(window) {
+  const marks = window.performance.getEntriesByType('mark');
+  const firstRenderStart = getTimeFromMarks(marks, 'firstRenderStart');
+  const clientRenderStart = getTimeFromMarks(marks, 'clientRenderStart');
+  return {firstRenderStart, clientRenderStart};
 }
 
 function getWidth(window) {
@@ -90,7 +107,8 @@ const browserPerfCollector: (window: any) => Object = (window: any) => {
     navigation: getTiming(window),
     resources: getEntries(window),
     server: getServerTiming(window),
-    firstPaint: getFirstPaint(window),
+    paintTimes: getPaintTimes(window),
+    renderTimes: getRenderTimes(window),
     memory: getMemory(window),
     network: getNetwork(window),
     dimensions: getDeviceDimensions(window),

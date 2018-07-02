@@ -46,10 +46,11 @@ test('enhancedBrowserMetrics', t => {
     browserPerfCollector(mockWindow()),
     {
       dimensions: {height: 600, width: 800},
-      firstPaint: null,
       memory: {},
       navigation: {},
       network: {},
+      paintTimes: {firstContentfulPaint: null, firstPaint: null},
+      renderTimes: {clientRenderStart: null, firstRenderStart: null},
       resources: [],
       server: undefined,
     },
