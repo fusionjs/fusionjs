@@ -38,6 +38,7 @@ test('`fusion dev` works with assets', async t => {
     dir,
     '.fusion/dist/development/server/server-main.js'
   );
+  let browser;
   const {proc, port} = await dev(`--dir=${dir}`);
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
@@ -73,9 +74,25 @@ test('`fusion dev` works with assets', async t => {
       await request(`http://localhost:${port}/hoisted`),
       expectedAssetPath
     );
+
+    // Spin up puppeteer to make runtime assertions on assetURLs
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+    const browserAssetUrl = await page.evaluate(() => {
+      return typeof window !== undefined && window.__hoistedUrl__; //eslint-disable-line
+    });
+    t.equal(
+      browserAssetUrl,
+      expectedAssetPath,
+      'hoisted assetURL works in the browser'
+    );
   } catch (e) {
     t.iferror(e);
   }
+  await (browser && browser.close());
   proc.kill();
   t.end();
 });

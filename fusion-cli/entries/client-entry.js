@@ -12,9 +12,6 @@
 import 'core-js/es6';
 import 'core-js/es7';
 
-// $FlowFixMe
-import initialize from '__FRAMEWORK_SHARED_ENTRY__'; // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
-
 /*
 Webpack has a configuration option called `publicPath`, which determines the
 base path for all assets within an application
@@ -34,10 +31,15 @@ Webpack compiles the `__webpack_public_path__ = ...` assignment expression
 into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 */
 
+/* eslint-disable */
 // $FlowFixMe
-__webpack_public_path__ = window.__WEBPACK_PUBLIC_PATH__ + '/'; /* eslint-disable-line */
+__webpack_public_path__ = window.__WEBPACK_PUBLIC_PATH__ + '/';
+/* eslint-enable */
 
 function reload() {
+  // $FlowFixMe
+  const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line
+  const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
     app.callback().call();
   });

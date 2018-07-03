@@ -1,8 +1,12 @@
+// @flow
 import App from 'fusion-core';
 import {assetUrl} from 'fusion-core';
 import * as jsonData from './static/test.json';
 
 const hoistedUrl = assetUrl('./static/test.css');
+if (typeof window !== 'undefined') {
+  window.__hoistedUrl__ = hoistedUrl;
+}
 
 export default (async function() {
   const app = new App('element', el => el);
