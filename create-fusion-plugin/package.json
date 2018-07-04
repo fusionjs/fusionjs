@@ -18,7 +18,7 @@
     "babel-eslint": "^8.2.3",
     "babel-jest": "^23.0.1",
     "eslint": "^5.0.0",
-    "eslint-config-fusion": "^2.0.1",
+    "eslint-config-fusion": "^3.0.0",
     "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^2.49.3",
     "eslint-plugin-import": "^2.12.0",
