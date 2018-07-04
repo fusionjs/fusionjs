@@ -1,11 +1,13 @@
 {
   "name": "eslint-config-fusion",
-  "version": "3.0.0-0",
-  "description":
-    "eslint-config-fusion is an eslint config recommended for use with FusionJS.",
+  "version": "3.0.0",
+  "description": "eslint-config-fusion is an eslint config recommended for use with FusionJS.",
   "license": "MIT",
   "repository": "fusionjs/eslint-config-fusion",
-  "files": ["rules", "index.js"],
+  "files": [
+    "rules",
+    "index.js"
+  ],
   "main": "index.js",
   "dependencies": {
     "eslint-config-uber-universal-stage-3": "^2.0.0"
