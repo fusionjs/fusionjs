@@ -33,8 +33,9 @@ if (!babelConfig.plugins) {
 babelConfig.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
 
 if (fusionConfig.babel && fusionConfig.babel.plugins) {
-  babelConfig.plugins = babelConfig.plugins.concat(
-    ...fusionConfig.babel.plugins
+  // Run user-defined plugins first
+  babelConfig.plugins = fusionConfig.babel.plugins.concat(
+    ...babelConfig.plugins
   );
 }
 
