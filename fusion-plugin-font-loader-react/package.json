@@ -27,7 +27,7 @@
     "create-universal-package": "^3.4.4",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "eslint": "^4.19.1",
+    "eslint": "^5.0.0",
     "eslint-config-fusion": "^2.0.0",
     "eslint-plugin-cup": "^1.0.2",
     "eslint-plugin-flowtype": "^2.47.1",
