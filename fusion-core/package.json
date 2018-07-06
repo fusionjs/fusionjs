@@ -27,7 +27,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "create-universal-package": "^3.4.0",
     "eslint": "^5.0.0",
-    "eslint-config-fusion": "^2.0.0",
+    "eslint-config-fusion": "^3.0.0",
     "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^2.42.0",
     "eslint-plugin-import": "^2.8.0",
