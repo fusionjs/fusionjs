@@ -118,6 +118,9 @@ exports.run = async function(
 
   // Rerun for each recompile
   compiler.on('done', runAll);
+  compiler.on('invalid', () => {
+    devRuntime.run();
+  });
 
   return {
     compiler,

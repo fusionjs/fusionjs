@@ -222,9 +222,14 @@ test('`fusion dev` recovering from errors', async t => {
     res.includes('server-startup-error'),
     'should respond with server startup error'
   );
+  const output = [];
   function next() {
     numErrors++;
     if (numErrors === 2) {
+      t.ok(
+        output.join('').includes('server-startup-error'),
+        'should log server startup error'
+      );
       proc.stderr.destroy();
       proc.kill();
       t.end();
@@ -233,10 +238,7 @@ test('`fusion dev` recovering from errors', async t => {
     }
   }
   proc.stderr.on('data', stderr => {
-    t.ok(
-      stderr.toString().includes('server-startup-error'),
-      'should log server startup error'
-    );
+    output.push(stderr.toString());
     next();
   });
   // Need a wait here before saving otherwise the watcher won't pick up the edited file.

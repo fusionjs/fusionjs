@@ -177,7 +177,6 @@ module.exports.DevelopmentRuntime = function(
         host: 'localhost',
         port: childPort,
       },
-      ws: true,
     });
 
     // $FlowFixMe
@@ -186,7 +185,10 @@ module.exports.DevelopmentRuntime = function(
         lifecycle.wait().then(
           () => {
             // $FlowFixMe
-            state.proxy.web(req, res);
+            state.proxy.web(req, res, e => {
+              res.write(renderError(e));
+              res.end();
+            });
           },
           error => {
             res.write(renderError(error));
@@ -201,7 +203,9 @@ module.exports.DevelopmentRuntime = function(
       lifecycle.wait().then(
         () => {
           // $FlowFixMe
-          state.proxy.ws(req, socket, head);
+          state.proxy.ws(req, socket, head, (/*e*/) => {
+            socket.destroy();
+          });
         },
         () => {
           // Destroy the socket to terminate the websocket request if the child process has issues
