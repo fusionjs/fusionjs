@@ -1,4 +1,4 @@
-FROM uber/web-base-image:1.0.6@sha256:574510637e5f45b16fb1f487aaa5f2b8a10e3d90c1a78c80df7bb0a20d76eb89
+FROM uber/web-base-image:1.0.7@sha256:68237a26e7d19669786e4aedfec44903ba0ec75ea0ed3d323405d0fa5c6b9323
 
 WORKDIR /fusion-plugin-font-loader-react
 
