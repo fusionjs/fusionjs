@@ -23,7 +23,7 @@
     "apollo-client": "^2.3.5",
     "babel-eslint": "8.2.5",
     "create-universal-package": "3.4.4",
-    "eslint": "5.0.1",
+    "eslint": "5.1.0",
     "eslint-config-fusion": "3.0.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "2.49.3",
