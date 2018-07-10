@@ -37,7 +37,7 @@
     "react": "14.x - 16.x"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.51",
+    "@babel/preset-react": "7.0.0-beta.52",
     "babel-eslint": "^8.2.3",
     "create-universal-package": "3.4.4",
     "eslint": "^4.19.1",
