@@ -34,7 +34,7 @@ const plugin =
           throw e;
         };
       }
-      for (const key in window) {
+      const addListener = key => {
         if (
           key.match(/webkit/) == null && // stop deprecation warnings
           window[key] &&
@@ -54,6 +54,13 @@ const plugin =
             };
             return old.call(this, type, cb, ...rest);
           };
+        }
+      };
+      for (const key in window) {
+        try {
+          addListener(key);
+        } catch (e) {
+          // Ignore. Don't have access to the prop, possibly cross-origin restriction.
         }
       }
       window.addEventListener('unhandledrejection', e => {
