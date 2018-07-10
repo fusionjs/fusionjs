@@ -26,7 +26,7 @@
     "styletron-react": "^4.3.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.51",
+    "@babel/preset-react": "7.0.0-beta.52",
     "babel-eslint": "8.2.5",
     "create-universal-package": "3.4.4",
     "enzyme": "3.3.0",
