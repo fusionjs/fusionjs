@@ -28,6 +28,10 @@ export const ApolloClientToken: Token<ApolloClient> = createToken(
   'ApolloClientToken'
 );
 
+export const ApolloContextToken: Token<() => mixed | mixed> = createToken(
+  'ApolloContextToken'
+);
+
 export const GraphQLSchemaToken: Token<string> = createToken(
   'GraphQlSchemaToken'
 );
