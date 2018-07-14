@@ -28,7 +28,9 @@ export const ApolloClientToken: Token<ApolloClient> = createToken(
   'ApolloClientToken'
 );
 
-export const ApolloContextToken: Token<() => mixed | mixed> = createToken(
+export type ApolloContext<T> = (Context => T) | T;
+
+export const ApolloContextToken: Token<ApolloContext<mixed>> = createToken(
   'ApolloContextToken'
 );
 
