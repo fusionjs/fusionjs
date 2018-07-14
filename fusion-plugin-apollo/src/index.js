@@ -22,9 +22,14 @@ import type {Context, Token} from 'fusion-core';
 import serverRender from './server';
 import clientRender from './client';
 
-export type ApolloClient = (Context, *) => *;
+type ApolloClientType = mixed;
 
-export const ApolloClientToken: Token<ApolloClient> = createToken(
+export type ApolloClient<TInitialState> = (
+  ctx: Context,
+  initialState: TInitialState
+) => ApolloClientType;
+
+export const ApolloClientToken: Token<ApolloClient<mixed>> = createToken(
   'ApolloClientToken'
 );
 
@@ -75,6 +80,7 @@ export default class App extends CoreApp {
 
           if (__NODE__) {
             return middleware(ctx, next).then(() => {
+              // $FlowFixMe
               const initialState = client.cache.extract();
               const serialized = JSON.stringify(initialState);
               const script = html`<script type="application/json" id="__APOLLO_STATE__">${serialized}</script>`;
