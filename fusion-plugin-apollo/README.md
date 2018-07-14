@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/2ac76cfb209dae257969b7464a2c90834ed82705cfd5bfcc52.svg?branch=master)](https://buildkite.com/uberopensource/fusion-apollo)
 
-Fusion.js entry point for React universal rendering /w Apollo
+Fusion.js entry point for React universal rendering w/ Apollo
 
 Provides a Fusion.js application class that is pre-configured with React and Apollo universal rendering for applications leveraging GraphQL.
 
@@ -57,7 +57,7 @@ export default function() {
 import {ApolloClientToken} from 'fusion-apollo';
 ```
 
-A plugin, which provides an instance of [Apollo Client](https://www.apollographql.com/docs/react/reference/index.html), to be registered and used as within the Apollo Provider. You can use [fusion-apollo-universal-client](https://github.com/fusionjs/fusion-apollo-universal-client) as a barbones Apollo Client token.
+A plugin, which provides an instance of [Apollo Client](https://www.apollographql.com/docs/react/api/apollo-client.html), to be registered and used as within the Apollo Provider. You can use [fusion-apollo-universal-client](https://github.com/fusionjs/fusion-apollo-universal-client) as a barebones Apollo Client token.
 
 ##### GraphQLSchemaToken
 
@@ -73,7 +73,7 @@ Define the `GraphQLSchemaToken` when using a locally hosted GraphQL endpoint fro
 import App from 'fusion-apollo';
 ```
 
-A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusion-core#plugin).
+A class that represents an application. An application is responsible for rendering (both virtual DOM and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusion-core#plugin).
 
 **Constructor**
 
