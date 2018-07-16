@@ -33,6 +33,7 @@
     "bundle-analyzer": "^0.0.6",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
+    "clear-module": "^3.0.0",
     "compression-webpack-plugin": "^1.1.11",
     "core-js": "^2.5.7",
     "enzyme-adapter-react-16": "^1.1.1",

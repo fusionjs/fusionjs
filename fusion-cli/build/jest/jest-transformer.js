@@ -10,9 +10,9 @@
 
 // Clear require cache before each run to reset file exports between environment runs.
 // Currently the transformer seems like the most robust place to clear cache.
-Object.keys(require.cache).forEach(key => {
-  delete require.cache[key];
-});
+const clearModule = require('clear-module');
+
+clearModule.all();
 
 const loadFusionRC = require('../load-fusionrc.js');
 
