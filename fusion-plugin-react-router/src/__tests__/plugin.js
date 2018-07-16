@@ -63,6 +63,12 @@ if (__NODE__) {
     app.register(UniversalEventsToken, {
       map() {},
       emit() {},
+      from() {
+        return {
+          map() {},
+          emit() {},
+        };
+      },
     });
     const simulator = setup(app);
     const ctx = await simulator.render('/');
@@ -312,6 +318,12 @@ function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
           t.equal(status, 200, 'emits status code');
           t.equal(typeof timing, 'number', 'emits with the correct value');
         }
+      },
+      from() {
+        return {
+          map() {},
+          emit() {},
+        };
       },
     }),
   });

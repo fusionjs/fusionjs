@@ -64,7 +64,7 @@ export default createPlugin({
                 timing,
               });
             };
-            emitter.map(payload => {
+            emitter.from(ctx).map(payload => {
               if (payload && typeof payload === 'object') {
                 payload.__url__ = pageData.title;
               }
