@@ -15,6 +15,7 @@ The package also offers components to control HTTP status server-side.
 * [Setup](#setup)
 * [API](#api)
   * [Registration API](#registration-api)
+  * [Routing Events and Timing Metrics](#routing-events-and-timing-metrics)
   * [`Router`](#router)
   * [`Route`](#route)
   * [`Link`](#link)
@@ -129,6 +130,29 @@ Provide the UniversalEventsToken when you would like to emit routing events for 
 
 ---
 
+#### Routing Events and Timing Metrics
+
+Router will emit the following events/metrics via the [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin if provided:
+
+##### Server-side routing metrics via events
+* `'pageview:server'`
+  - `page: string` - (1)The path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (2)`ctx.path`.
+  - `title: string` - (1)`props.trackingId` provided by [`<Route>`](#route), or (2)the path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (3)`ctx.path`.
+  - `status: number` - HTTP status of the response
+  - `timing: number` - Milliseconds. The time since the request received till routed by this plugin.
+* `'render:server'`
+  - `page: string` - (1)The path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (2)`ctx.path`.
+  - `title: string` - (1)`props.trackingId` provided by [`<Route>`](#route), or (2)the path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (3)`ctx.path`.
+  - `status: number` - HTTP status of the response
+  - `timing: number` - Milliseconds. The execution time of [renderer](https://github.com/fusionjs/fusion-core#app).
+
+##### Browser routing events
+* `'pageview:browser'`
+  - `page: string` - (1)The path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (2)`ctx.path`.
+  - `title: string` - (1)`props.trackingId` provided by [`<Route>`](#route), or (2)the path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (3)`ctx.path`.
+
+---
+
 #### Router
 
 Configures a router and acts as a React context provider for routing concerns. The plugin already provides `<Router>` in the middleware for your application.
@@ -159,11 +183,13 @@ Defines what gets rendered for a given route. Multiple routes can be rendered at
 import {Router, Route} from 'fusion-plugin-react-router';
 
 <Router>
-  <Route exact component={component} path={...}>{children}</Route>
+  <Route exact component={component} path={...} trackingId={...}>{children}</Route>
 </Router>
 ```
 
 See the [react-router documentation for `<Route>`](https://reacttraining.com/react-router/web/api/Route)
+
+* `trackingId: string` - Optional. To set an analytical name for the route, and make it the first candidate to determine `payload.title` when emitting [routing events](#routing-events-and-timing-metrics).
 
 #### `Link`
 
