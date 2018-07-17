@@ -131,11 +131,12 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
   const dir = path.resolve(__dirname, '../fixtures/dynamic-import-app');
   await cmd(`build --dir=${dir} --production`);
 
+  const splitChunkId = 0;
   const distFiles = await getDistFiles(dir);
   const dynamicFileBundlePath = path.resolve(
     dir,
     '.fusion/dist/production/client',
-    distFiles.splitClientChunks[2]
+    distFiles.splitClientChunks[splitChunkId]
   );
 
   // Ensure that we have a dynamic chunk with content
@@ -172,8 +173,8 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
   //   'main file hash should not change'
   // );
   t.notEqual(
-    distFiles.splitClientChunks[2],
-    rebuiltDistFiles.splitClientChunks[2],
+    distFiles.splitClientChunks[splitChunkId],
+    rebuiltDistFiles.splitClientChunks[splitChunkId],
     'split client file hash should change'
   );
 
@@ -471,9 +472,9 @@ test('`fusion build` with dynamic imports and group chunks', async t => {
   const resA = await request(`http://localhost:${port}/test-a`);
   const resB = await request(`http://localhost:${port}/test-b`);
   const res = await request(`http://localhost:${port}/test`);
-  t.deepLooseEqual(JSON.parse(res), [0]);
-  t.deepLooseEqual(JSON.parse(resA), [0, 2]);
-  t.deepLooseEqual(JSON.parse(resB), [0, 1]);
+  t.deepLooseEqual(JSON.parse(res), [3]);
+  t.deepLooseEqual(JSON.parse(resA), [1, 3]);
+  t.deepLooseEqual(JSON.parse(resB), [2, 3]);
   proc.kill();
   t.end();
 });
