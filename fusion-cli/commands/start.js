@@ -12,32 +12,6 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 
-exports.command = 'start [--dir] [--environment]';
-exports.desc = 'Run your app';
-exports.builder = {
-  // TODO(#20) ensure --debug works with start and test commands
-  debug: {
-    type: 'boolean',
-    default: false,
-    describe: 'Debug application',
-  },
-  port: {
-    type: 'number',
-    describe:
-      'Port to start the server on. Defaults to process.env.PORT_HTTP || 3000',
-  },
-  dir: {
-    type: 'string',
-    default: '.',
-    describe: 'Root path for the application relative to CLI CWD',
-  },
-  environment: {
-    type: 'string',
-    describe:
-      'Which environment/assets to run - defaults to first available assets among ["development", "production"]',
-  },
-};
-
 exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
   if (debug && !process.env.__FUSION_DEBUGGING__) {
     const command = process.argv.shift();

@@ -14,50 +14,6 @@ const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
 const {TestAppRuntime} = require('../build/test-runtime');
 
-exports.command =
-  'dev [--dir] [--debug] [--test] [--cover] [--port] [--no-open] [--no-hmr] [--log-level]';
-exports.describe = 'Run your app in development';
-exports.builder = {
-  dir: {
-    type: 'string',
-    default: '.',
-    describe: 'Root path for the application relative to CLI CWD',
-  },
-  debug: {
-    type: 'boolean',
-    default: false,
-    describe: 'Debug application',
-  },
-  // TODO(#19): support dev with production assets
-  // production: {
-  //   type: 'boolean',
-  //   default: false,
-  //   describe: 'Run with production assets and NODE_ENV',
-  // },
-  port: {
-    type: 'number',
-    default: 3000,
-    describe: 'The port at which the app runs',
-  },
-  open: {
-    // yargs generates no-open option
-    type: 'boolean',
-    default: true,
-    describe: 'Run without opening the url in your browser',
-  },
-  hmr: {
-    // yargs generates no-hmr option
-    type: 'boolean',
-    default: true,
-    describe: 'Run without hot module replacement',
-  },
-  'log-level': {
-    type: 'string',
-    default: 'info',
-    describe: 'Log level to show',
-  },
-};
-
 exports.run = async function(
   {dir = '.', test, debug, port, cover, hmr, open, logLevel} /*: any */
 ) {

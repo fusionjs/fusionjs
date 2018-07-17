@@ -14,13 +14,22 @@ const request = require('request-promise');
 
 const binPath = require.resolve('../bin/cli.js');
 
+function makeCommand(args) /*: Array<string> */ {
+  if (Array.isArray(args)) {
+    if (args[0] !== '-e') {
+      return args.map(x => x.split(' ')).reduce((x, y) => x.concat(y));
+    }
+    return args;
+  }
+  return [args];
+}
+
 function run(args /*: any */, options /*: any */) {
   const opts = {
     stdio: 'inherit',
     ...options,
   };
-  const command = Array.isArray(args) ? args : [args];
-  const child = spawn('node', command, opts);
+  const child = spawn('node', makeCommand(args), opts);
   const stdoutLines = [];
   const stderrLines = [];
   const promise = new Promise((resolve, reject) => {

@@ -11,25 +11,6 @@
 const {Compiler} = require('../build/compiler');
 const analyzer = require('bundle-analyzer');
 
-exports.command = 'profile [--dir] [--environment] [--port]';
-exports.desc = 'Profile your application';
-exports.builder = {
-  dir: {
-    type: 'string',
-    default: '.',
-    describe: 'Root path for the application relative to CLI CWD',
-  },
-  environment: {
-    type: 'string',
-    default: 'production',
-    describe: 'Either `production` or `development`',
-  },
-  port: {
-    type: 'number',
-    default: '4000',
-    describe: 'Port for the bundle analyzer server',
-  },
-};
 exports.run = async function profileHandler(
   {dir = '.', port, environment} /*: any */
 ) {

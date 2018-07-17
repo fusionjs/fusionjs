@@ -10,9 +10,6 @@
 
 const testTarget = require('./test');
 
-exports.desc = testTarget.desc;
-exports.builder = testTarget.builder;
-
 exports.run = (...args /*: any */) => {
   // eslint-disable-next-line no-console
   console.warn(

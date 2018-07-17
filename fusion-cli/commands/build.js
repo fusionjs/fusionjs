@@ -12,37 +12,6 @@ const winston = require('winston');
 
 const {Compiler} = require('../build/compiler.js');
 
-exports.command =
-  'build [--dir] [--test] [--cover] [--production] [--log-level]';
-exports.desc = 'Build your app';
-exports.builder = {
-  dir: {
-    type: 'string',
-    default: '.',
-    describe: 'Root path for the application relative to CLI CWD',
-  },
-  test: {
-    type: 'boolean',
-    default: false,
-    describe: 'Build test assets as well as development assets',
-  },
-  cover: {
-    type: 'boolean',
-    default: false,
-    describe: 'Build tests (with coverage) as well as development assets',
-  },
-  production: {
-    type: 'boolean',
-    default: false,
-    describe: 'Build production assets',
-  },
-  'log-level': {
-    type: 'string',
-    default: 'info',
-    describe: 'Log level to show',
-  },
-};
-
 exports.run = async function(
   {
     dir = '.',

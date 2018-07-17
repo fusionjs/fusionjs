@@ -12,32 +12,27 @@ process.on('unhandledRejection', e => {
   throw e;
 });
 
-const fs = require('fs');
-const path = require('path');
-const yargs = require('yargs');
+const sade = require('sade');
 
 module.exports.run = (args /*: any*/) => {
-  const cmdsDir = path.resolve(__dirname, '../commands');
-  const instance = yargs(args)
-    .commandDir(cmdsDir)
-    .demandCommand(1)
-    .version()
-    .help();
-  const cmdPath = path.resolve(cmdsDir, `${instance.argv._}.js`);
-  if (!fs.existsSync(cmdPath)) {
-    const error = new Error(`'${instance.argv._}' is an invalid command\n`);
-    // TODO(#3) ideally, the string from yargs.showHelp() should be part of the error message above
-    // We don't want to call it here either because we want to avoid polluting stdout for tests
-    // Unfortunately, yargs doesn't expose an API to get the string,
-    // so we have to expose yargs as a property of the error and then call e.yargs.showHelp() manually from cli.js
-    // $FlowFixMe
-    Object.defineProperty(error, 'yargs', {
-      enumerable: false,
-      value: instance,
-    });
-    return Promise.reject(error);
-  } else {
-    // $FlowFixMe
-    return require(cmdPath).run(instance.argv);
+  const data = require('../commands/index.js');
+  const instance = sade('fusion').version(require('../package.json').version);
+  for (const [command, metadata] of Object.entries(data)) {
+    if (metadata instanceof Object) {
+      instance.command(command).describe(metadata.descr);
+      // Add subcommands
+      if (metadata.options) {
+        for (const [opt, optmeta] of Object.entries(metadata.options)) {
+          if (optmeta instanceof Object) {
+            instance.option('--' + opt, optmeta.describe, optmeta.default);
+          }
+        }
+      }
+    }
+    instance.action((...args) =>
+      // $FlowFixMe
+      require(`../commands/${command}.js`).run(...args)
+    );
   }
+  return instance.parse(typeof args === 'string' ? args.split(' ') : args);
 };

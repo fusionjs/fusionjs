@@ -27,7 +27,7 @@ test('`fusion test` passes', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=passes`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
   t.end();
@@ -37,7 +37,7 @@ test('`fusion test` failure', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=fails`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
     await exec(`node -e "${cmd}"`);
     t.fail('should not succeed');
@@ -52,7 +52,7 @@ test('`fusion test` all passing tests', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=pass`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 4, 'ran 4 tests');
   t.end();
@@ -62,7 +62,7 @@ test('`fusion test` expected test passes in browser/node', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=pass-`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
@@ -73,7 +73,7 @@ test('`fusion test` expected tests fail when run in browser/node', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=fail-`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
     await exec(`node -e "${cmd}"`);
     t.fail('should not succeed');
@@ -88,7 +88,7 @@ test('`fusion test --testFolder=integration` runs correct tests', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testFolder=__integration__`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
 
@@ -110,7 +110,7 @@ test('`fusion test` snapshotting', async t => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
     await exec(`node -e "${cmd}"`);
     t.fail('should not succeed');
@@ -119,7 +119,7 @@ test('`fusion test` snapshotting', async t => {
     t.equal(countTests(e.message), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('${args} --updateSnapshot')`;
+  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} --updateSnapshot')`;
   await exec(`node -e "${updateSnapshot}"`);
 
   const newSnapshotCode = await readFile(snapshotFile);
@@ -146,7 +146,7 @@ test('`fusion test` snapshotting with -u option', async t => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
     await exec(`node -e "${cmd}"`);
     t.fail('should not succeed');
@@ -155,7 +155,7 @@ test('`fusion test` snapshotting with -u option', async t => {
     t.equal(countTests(e.message), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('${args} -u')`;
+  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} -u')`;
   await exec(`node -e "${updateSnapshot}"`);
 
   const newSnapshotCode = await readFile(snapshotFile);
@@ -182,7 +182,7 @@ test('`fusion test` snapshotting - enzyme serializer', async t => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
     await exec(`node -e "${cmd}"`);
     t.fail('should not succeed');
@@ -191,7 +191,7 @@ test('`fusion test` snapshotting - enzyme serializer', async t => {
     t.equal(countTests(e.message), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('${args} --updateSnapshot')`;
+  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} --updateSnapshot')`;
   await exec(`node -e "${updateSnapshot}"`);
 
   const newSnapshotCode = await readFile(snapshotFile);
@@ -207,7 +207,7 @@ test('`fusion test` dynamic imports', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=dynamic-imports`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
   t.end();
@@ -217,7 +217,7 @@ test('`fusion test` coverage', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage --match=passes`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
@@ -230,7 +230,7 @@ test('`fusion test` cobertura coverage reports', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage --match=passes`;
 
-  const cmd = `require('${runnerPath}').run('${args} --env=jsdom')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args} --env=jsdom')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 1, 'ran 1 tests');
 
@@ -247,7 +247,7 @@ test('`fusion test` cobertura coverage reports', async t => {
   );
 
   // Assert that there's two hits when combining coverage
-  const cmd2 = `require('${runnerPath}').run('${args}')`;
+  const cmd2 = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response2 = await exec(`node -e "${cmd2}"`);
   t.equal(countTests(response2.stderr), 2, 'ran 2 tests');
 
@@ -269,7 +269,7 @@ test('`fusion test` environment variables', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=environment-variables`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`, {
     env: Object.assign({}, process.env, {
       NODE_ENV: 'development',
@@ -286,7 +286,7 @@ test('`fusion test` writes results to disk based on env var', async t => {
 
   const testMetadataPath = path.join(dir, 'test-results.json');
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`, {
     env: Object.assign({}, process.env, {
       FUSION_TEST_METADATA_PATH: testMetadataPath,
@@ -303,7 +303,7 @@ test('`fusion test` uses .fusionjs.js', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-babel');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
@@ -327,7 +327,7 @@ test('`fusion test --debug --env=jsdom,node`', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --debug --env=jsdom,node  --match=passes`;
 
-  const cmd = `require('${runnerPath}').run('${args}')`;
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const stderrLines = [];
   const child = spawn('node', ['-e', cmd]);
 
