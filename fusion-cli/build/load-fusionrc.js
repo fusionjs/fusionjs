@@ -26,7 +26,7 @@ module.exports = function validateConfig(
     if (!isValid(config)) {
       throw new Error('.fusionrc.js is invalid');
     }
-    if (!loggedNotice) {
+    if (!loggedNotice && config.babel) {
       console.log(chalk.dim('Using custom Babel config from .fusionrc.js'));
       console.warn(
         chalk.yellow(
