@@ -367,3 +367,39 @@ test('`fusion dev` app with split translations integration', async t => {
 
   t.end();
 });
+
+test('`fusion dev` app with split translations integration (cached)', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/split-translations');
+
+  // Startup first time
+  let {proc, port} = await dev(`--dir=${dir}`, {cwd: dir});
+  proc.kill();
+
+  // Restart
+  ({proc, port} = await dev(`--dir=${dir}`, {cwd: dir}));
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+  const content = await page.content();
+  t.ok(
+    content.includes('<span>__MAIN_TRANSLATED__</span>'),
+    'app content contains translated main chunk'
+  );
+
+  await Promise.all([
+    page.click('#split1-link'),
+    page.waitForSelector('#split1-translation'),
+  ]);
+  const content2 = await page.content();
+  t.ok(
+    content2.includes('__SPLIT1_TRANSLATED__'),
+    'renders first  split translation'
+  );
+
+  await browser.close();
+  proc.kill();
+
+  t.end();
+});

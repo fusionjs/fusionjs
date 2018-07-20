@@ -473,7 +473,13 @@ function getConfig({target, env, dir, watch, cover}) {
             chunkModuleManifest.set(chunkMap);
           },
         }),
-      target === 'web' && new I18nDiscoveryPlugin(),
+      target === 'web' &&
+        new I18nDiscoveryPlugin({
+          cachePath: path.join(
+            dir,
+            'node_modules/.fusion_babel_cache/i18n-manifest.json'
+          ),
+        }),
       // case-insensitive paths can cause problems
       new CaseSensitivePathsPlugin(),
       target === 'web' && new AssetsManifestPlugin(),
