@@ -186,11 +186,15 @@ module.exports.DevelopmentRuntime = function(
           () => {
             // $FlowFixMe
             state.proxy.web(req, res, e => {
+              if (res.finished) return;
+
               res.write(renderError(e));
               res.end();
             });
           },
           error => {
+            if (res.finished) return;
+
             res.write(renderError(error));
             res.end();
           }
