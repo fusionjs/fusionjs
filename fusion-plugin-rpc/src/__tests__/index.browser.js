@@ -63,6 +63,48 @@ test('success status request', t => {
   t.end();
 });
 
+test('success status request w/args and header', t => {
+  const app = createTestFixture();
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        rpc
+          .request('test', {args: 1}, {'test-header': 'header value'})
+          .then(([url, options]) => {
+            t.equals(url, '/api/test', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              'application/json',
+              'has right content-type'
+            );
+            t.equals(
+              options.headers['test-header'],
+              'header value',
+              'header is passed'
+            );
+            t.equals(options.body, '{"args":1}', 'has right body');
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
+});
+
 test('failure status request', t => {
   const mockFetchAsFailure = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});

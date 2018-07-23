@@ -24,7 +24,7 @@ class RPC {
     this.fetch = fetch;
   }
 
-  request(rpcId: string, args: *): Promise<*> {
+  request(rpcId: string, args: *, headers: ?{[string]: string}): Promise<*> {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');
     }
@@ -35,6 +35,7 @@ class RPC {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(headers || {}),
       },
       body: JSON.stringify(args || {}),
     })
