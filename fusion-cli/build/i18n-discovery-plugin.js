@@ -62,7 +62,7 @@ function serialize() {
 
 function hydrate(parsed) {
   Object.keys(parsed).forEach(file => {
-    const translations = new Set([parsed[file]]);
+    const translations = new Set(parsed[file]);
     manifest.set(file, translations);
   });
 }
