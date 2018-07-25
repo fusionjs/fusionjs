@@ -28,3 +28,7 @@ require('../build/babel-plugins/babel-plugin-sync-chunk-ids/test');
 require('../build/babel-plugins/babel-plugin-sync-chunk-paths/test');
 require('../build/babel-plugins/babel-plugin-utils/test');
 require('../build/babel-plugins/babel-plugin-transform-tree-shake/test');
+
+process.on('unhandledRejection', e => {
+  throw e;
+});

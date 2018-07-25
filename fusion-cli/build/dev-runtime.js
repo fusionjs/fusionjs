@@ -62,6 +62,7 @@ type DevRuntimeType = {
   run: () => any,
   start: () => any,
   stop: () => any,
+  invalidate: () => void 
 };
 */
 
@@ -159,6 +160,8 @@ module.exports.DevelopmentRuntime = function(
       });
     });
   };
+
+  this.invalidate = () => lifecycle.stop();
 
   function killProc() {
     if (state.proc) {
