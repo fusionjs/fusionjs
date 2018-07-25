@@ -57,7 +57,6 @@
     "memory-fs": "^0.4.1",
     "mime": "^2.3.1",
     "multi-entry-loader": "^1.1.2",
-    "node-zopfli": "^2.0.2",
     "path-is-absolute": "^1.0.1",
     "progress-bar-webpack-plugin": "^1.11.0",
     "range-parser": "^1.2.0",

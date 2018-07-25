@@ -17,7 +17,6 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const {
-  //zopfliWebpackPlugin,
   brotliWebpackPlugin,
   //pngquantWebpackPlugin,
   //guetzliWebpackPlugin,
@@ -419,7 +418,6 @@ function getConfig({target, env, dir, watch, cover}) {
       // optimize by importing all chunk names to sw and then remove timestamp in non-dev.
       target === 'webworker' && new ServiceWorkerTimestampPlugin(),
       // generate compressed files
-      //target === 'web' && env === 'production' && zopfliWebpackPlugin, // gzip
       target === 'web' && env === 'production' && brotliWebpackPlugin, // brotli
       // target === 'web' && env === 'production' && pngquantWebpackPlugin, // png TODO(#10): production server requires libpng-dev installed to use this
       // target === 'web' && env === 'production' && guetzliWebpackPlugin, // jpg TODO(#10): guetzli also depends on libpng-dev for some reason
