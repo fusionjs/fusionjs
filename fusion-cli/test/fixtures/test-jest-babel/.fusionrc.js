@@ -1,5 +1,5 @@
 module.exports = {
   babel: {
-    plugins: [require.resolve('./plugin.js')]
-  }
+    plugins: [require.resolve('./src/plugin.js')],
+  },
 };

@@ -19,7 +19,7 @@ const spawn = require('child_process').spawn;
 
 const readFile = promisify(fs.readFile);
 
-const countTests = require('../fixtures/test-jest-app/count-tests');
+const countTests = require('../fixtures/test-jest-app/src/count-tests');
 
 const runnerPath = require.resolve('../../bin/cli-runner');
 
@@ -101,7 +101,7 @@ test('`fusion test` snapshotting', async t => {
 
   const snapshotFile =
     __dirname +
-    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-no-match.js.fixture';
+    '/../fixtures/test-jest-app/src/__tests__/__snapshots__/snapshot-no-match.js.fixture';
   const backupSnapshot =
     __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
 
@@ -137,7 +137,7 @@ test('`fusion test` snapshotting with -u option', async t => {
 
   const snapshotFile =
     __dirname +
-    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-no-match.js.fixture';
+    '/../fixtures/test-jest-app/src/__tests__/__snapshots__/snapshot-no-match.js.fixture';
   const backupSnapshot =
     __dirname + '/../fixtures/snapshots/snapshot-no-match.js.fixture';
 
@@ -173,7 +173,7 @@ test('`fusion test` snapshotting - enzyme serializer', async t => {
 
   const snapshotFile =
     __dirname +
-    '/../fixtures/test-jest-app/__tests__/__snapshots__/snapshot-enzyme-no-match.js.fixture';
+    '/../fixtures/test-jest-app/src/__tests__/__snapshots__/snapshot-enzyme-no-match.js.fixture';
   const backupSnapshot =
     __dirname + '/../fixtures/snapshots/snapshot-enzyme-no-match.js.fixture';
 
@@ -223,6 +223,8 @@ test('`fusion test` coverage', async t => {
 
   // Look for something like coverage
   t.ok(response.stdout.includes('Uncovered Line #s'));
+
+  t.ok(!response.stdout.includes('should-not-count-for-coverage.js'));
   t.end();
 });
 

@@ -39,7 +39,7 @@ module.exports = {
   snapshotSerializers: [require.resolve('enzyme-to-json/serializer')],
   testMatch: [`**/${testFolder}/**/*.js`],
   collectCoverageFrom: [
-    '**/*.js',
+    'src/**/*.js',
     '!**/__integration__/**',
     '!**/node_modules/**',
   ],
