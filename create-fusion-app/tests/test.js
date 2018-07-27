@@ -24,7 +24,7 @@ test(
     // Spin up server and validate SSR response
     const {initialResponse, proc} = await startServer();
 
-    expect(initialResponse).toContain('Hello world');
+    expect(initialResponse).toContain('Fusion.js');
 
     proc.kill();
   },
