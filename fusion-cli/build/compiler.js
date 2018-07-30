@@ -24,8 +24,7 @@ const {
 } = require('../lib/compression');
 const resolveFrom = require('resolve-from');
 
-const AssetsManifestPlugin = require('@nadiia/file-loader')
-  .assetsManifestPlugin;
+const AssetsManifestPlugin = require('./file-loader-asset-manifest-plugin');
 const ClientSourceMapPlugin = require('./client-source-map-plugin');
 const ChunkPreloadPlugin = require('./chunk-preload-plugin');
 const ChunkModuleManifestPlugin = require('./chunk-module-manifest-plugin');
@@ -392,7 +391,7 @@ function getConfig({target, env, dir, watch, cover}) {
     },
     resolveLoader: {
       alias: {
-        __SECRET_FILE_LOADER__: require.resolve('@nadiia/file-loader'),
+        __SECRET_FILE_LOADER__: require.resolve('./file-loader'),
         __SECRET_CHUNK_ID_LOADER__: require.resolve('./chunk-id-loader'),
         __SECRET_SYNC_CHUNK_IDS_LOADER__: require.resolve(
           './sync-chunk-ids-loader'

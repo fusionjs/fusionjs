@@ -684,12 +684,6 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nadiia/file-loader@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@nadiia/file-loader/-/file-loader-2.0.0.tgz#2c4b02a661185663f69680cc1ecf87856402dd3b"
-  dependencies:
-    loader-utils "^1.0.2"
-
 "@nodelib/fs.stat@^1.0.1":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.0.tgz#50c1e2260ac0ed9439a181de3725a0168d59c48a"
