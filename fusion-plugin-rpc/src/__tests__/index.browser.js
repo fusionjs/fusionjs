@@ -11,10 +11,11 @@ import test from 'tape-cup';
 import App, {createPlugin, createToken} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
+import type {Token} from 'fusion-core';
 
 import RPCPlugin from '../browser';
 
-const MockPluginToken = createToken('test-plugin-token');
+const MockPluginToken: Token<any> = createToken('test-plugin-token');
 function createTestFixture() {
   const mockFetch = (...args) =>
     Promise.resolve({json: () => ({status: 'success', data: args})});
