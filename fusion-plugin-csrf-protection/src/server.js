@@ -84,8 +84,7 @@ const plugin =
         if (!isMatchingToken || !isValidToken) {
           const message = __DEV__
             ? 'CSRF Token configuration error: ' +
-              'add the option {fetch: CsrfToken.fetch} to ' +
-              'the 2nd argument of app.plugin(yourPlugin)'
+              'Ensure you are using `fetch` from `fusion-plugin-csrf-protection-[react].'
             : 'Invalid CSRF Token';
           ctx.throw(403, message);
         } else {
