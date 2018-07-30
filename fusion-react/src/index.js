@@ -10,7 +10,7 @@
 import * as React from 'react';
 
 import FusionApp, {createPlugin} from 'fusion-core';
-import {prepare, middleware} from 'fusion-react-async';
+import {prepare, middleware} from './async/index.js';
 
 import serverRender from './server';
 import clientRender from './client';
@@ -43,3 +43,5 @@ export default class App extends FusionApp {
 }
 
 export {ProviderPlugin, ProvidedHOC, Provider};
+
+export * from './async/index.js';
