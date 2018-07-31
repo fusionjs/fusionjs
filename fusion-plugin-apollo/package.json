@@ -6,7 +6,10 @@
   "repository": "fusionjs/fusion-apollo",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "browser": {
     "./dist/index.js": "./dist/browser.es5.js",
     "./dist/index.es.js": "./dist/browser.es5.es.js"
@@ -20,22 +23,22 @@
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.55",
-    "apollo-client": "^2.3.5",
-    "babel-eslint": "8.2.5",
-    "create-universal-package": "3.4.4",
-    "eslint": "5.1.0",
-    "eslint-config-fusion": "3.0.0",
+    "apollo-client": "^2.3.7",
+    "babel-eslint": "8.2.6",
+    "create-universal-package": "3.4.5",
+    "eslint": "5.2.0",
+    "eslint-config-fusion": "4.0.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "2.50.0",
     "eslint-plugin-import": "2.13.0",
+    "eslint-plugin-jest": "^21.18.0",
     "eslint-plugin-prettier": "2.6.2",
     "eslint-plugin-react": "7.10.0",
-    "flow-bin": "0.76.0",
+    "flow-bin": "0.77.0",
     "fusion-core": "1.4.1",
-    "fusion-react-async": "1.2.3",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
-    "prettier": "1.13.7",
+    "prettier": "1.14.0",
     "react": "16.4.1",
     "react-apollo": "2.1.9",
     "react-dom": "16.4.1",
@@ -48,14 +51,12 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "prepublish": "npm run transpile"
   },
   "peerDependencies": {
     "fusion-core": "^1.0.0",
-    "fusion-react-async": "^1.0.0",
     "react": "16.x",
     "react-apollo": "^2.0.4",
     "react-dom": "16.x"
@@ -64,6 +65,6 @@
     "node": ">= 8.9.0"
   },
   "dependencies": {
-    "fusion-react": "^1.0.5"
+    "fusion-react": "^1.1.0"
   }
 }

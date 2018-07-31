@@ -10,11 +10,16 @@
 import React from 'react';
 
 import CoreApp, {createPlugin, createToken, html, unescape} from 'fusion-core';
-import {prepare, middleware} from 'fusion-react-async';
 
 import {ApolloProvider} from 'react-apollo';
 
-import {ProviderPlugin, ProvidedHOC, Provider} from 'fusion-react';
+import {
+  ProviderPlugin,
+  ProvidedHOC,
+  Provider,
+  prepare,
+  middleware,
+} from 'fusion-react';
 
 import type {Element} from 'react';
 import type {Context, Token} from 'fusion-core';
