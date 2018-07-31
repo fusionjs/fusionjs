@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "locale": "^0.1.0",
-    "rollup": "^0.59.2"
+    "rollup": "^0.63.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
