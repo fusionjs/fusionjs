@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.5",
-    "eslint": "5.0.1",
+    "eslint": "5.2.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "2.49.3",
     "eslint-plugin-import": "2.13.0",
