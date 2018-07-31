@@ -2409,9 +2409,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@^0.76.0:
-  version "0.76.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.76.0.tgz#eb00036991c3abc106743fcbc7ee321f02aa4faa"
+flow-bin@^0.77.0:
+  version "0.77.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.77.0.tgz#4e5c93929f289a0c28e08fb361a9734944a11297"
 
 for-each@~0.3.2:
   version "0.3.2"
@@ -2490,9 +2490,9 @@ fusion-core@^1.3.1:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-test-utils@^1.2.2-0:
-  version "1.2.2-0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.2-0.tgz#5336ba94c491311694281da258c3a859693a3b23"
+fusion-test-utils@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.2.tgz#f1c72156012d4e0731875cd9b52d4ad426994a9b"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
