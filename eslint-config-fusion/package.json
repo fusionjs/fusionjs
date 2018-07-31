@@ -19,7 +19,7 @@
     "eslint-plugin-jest": "^21.18.0"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.5",
+    "babel-eslint": "8.2.6",
     "eslint": "5.2.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "2.49.3",
