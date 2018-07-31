@@ -8,7 +8,7 @@ declare module 'redux-reactors' {
   declare type Reactor<TType, TPayload> = (payload: TPayload) => ({
     type: TType,
     payload: TPayload,
-    __REACTOR__: boolean
+    __REACTOR__: any
   });
-  declare function createReactor<TType>(type: TType, reducer: Reducer<*, *>): Reactor<TType, *>;
+  declare function createReactor<TType, S>(type: TType, reducer: Reducer<TType, S>): Reactor<TType, *>;
 }

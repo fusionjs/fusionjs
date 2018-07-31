@@ -7,12 +7,27 @@
  */
 
 import test from 'tape-cup';
+import execa from 'execa';
 import {
   createRPCHandler,
   createRPCReactors,
   createRPCActions,
   createRPCReducer,
 } from '../index';
+
+test('Flow tests', async t => {
+  const failurePath = 'src/fixtures/failure';
+  const successPath = 'src/fixtures/success';
+  try {
+    await execa.shell(`flow check ${failurePath}`);
+    t.fail('Should fail flow check');
+  } catch (e) {
+    const {stdout} = e;
+    t.ok(stdout.includes('Found 5 errors'));
+  }
+  await execa.shell(`flow check ${successPath}`);
+  t.end();
+});
 
 test('api', t => {
   t.equal(typeof createRPCHandler, 'function', 'exposes a getHandler function');
@@ -257,24 +272,42 @@ test('createRPCReducer', t => {
     }),
     'test-failure'
   );
-  t.equal(reducer('abcd', {type: 'abcd'}), 'abcd');
+  t.equal(reducer('abcd', {type: 'abcd', payload: {}}), 'abcd');
   t.end();
 });
 
 test('createRPCReducer default reducers', t => {
   const reducer = createRPCReducer('getCount', {});
   const initialState = {a: 'b'};
-  t.equal(reducer(initialState, {type: 'GET_COUNT_START'}), initialState);
-  t.equal(reducer(initialState, {type: 'GET_COUNT_SUCCESS'}), initialState);
-  t.equal(reducer(initialState, {type: 'GET_COUNT_FAILURE'}), initialState);
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_START', payload: {}}),
+    initialState
+  );
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_SUCCESS', payload: {}}),
+    initialState
+  );
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_FAILURE', payload: {}}),
+    initialState
+  );
   t.end();
 });
 
 test('createRPCReducer custom default state', t => {
   const initialState = 123;
   const reducer = createRPCReducer('getCount', {}, initialState);
-  t.equal(reducer(initialState, {type: 'GET_COUNT_START'}), initialState);
-  t.equal(reducer(initialState, {type: 'GET_COUNT_SUCCESS'}), initialState);
-  t.equal(reducer(initialState, {type: 'GET_COUNT_FAILURE'}), initialState);
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_START', payload: {}}),
+    initialState
+  );
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_SUCCESS', payload: {}}),
+    initialState
+  );
+  t.equal(
+    reducer(initialState, {type: 'GET_COUNT_FAILURE', payload: {}}),
+    initialState
+  );
   t.end();
 });

@@ -10,6 +10,29 @@ import {createReactor} from 'redux-reactors';
 import type {Reactor} from 'redux-reactors';
 import type {Reducer, Store} from 'redux';
 
+type ActionType = {
+  type: string,
+  payload: *,
+};
+
+type RPCReactorsType<TType, TPayload> = {
+  start: Reactor<TType, TPayload>,
+  success: Reactor<TType, TPayload>,
+  failure: Reactor<TType, TPayload>,
+};
+
+type RPCReducersType<S, A: ActionType> = {
+  start?: Reducer<S, A>,
+  success?: Reducer<S, A>,
+  failure?: Reducer<S, A>,
+};
+
+type NormalizedRPCReducersType<S, A: ActionType> = {
+  start: Reducer<S, A>,
+  success: Reducer<S, A>,
+  failure: Reducer<S, A>,
+};
+
 function camelUpper(key: string): string {
   return key.replace(/([A-Z])/g, '_$1').toUpperCase();
 }
@@ -46,56 +69,55 @@ export function createRPCActions(rpcId: string): RPCActionsType {
   }, {});
 }
 
-type RPCReducersType = {
-  start?: Reducer<*, *>,
-  success?: Reducer<*, *>,
-  failure?: Reducer<*, *>,
-};
-function getNormalizedReducers(reducers: RPCReducersType): RPCReducersType {
+function getNormalizedReducers<S, A: ActionType>(
+  reducers: RPCReducersType<S, A>
+): NormalizedRPCReducersType<S, A> {
   return types.reduce((obj, type) => {
+    // $FlowFixMe
     obj[type] = reducers[type] || noopReducer;
     return obj;
   }, {});
 }
 
-export function createRPCReducer(
+export function createRPCReducer<S, A: ActionType>(
   rpcId: string,
-  reducers: RPCReducersType,
-  startValue: any = {}
-): Reducer<*, *> {
+  reducers: RPCReducersType<S, A>,
+  startValue: S
+): Reducer<S, A> {
   const actionNames = createActionNames(rpcId);
-  reducers = getNormalizedReducers(reducers);
+  const normalizedReducers = getNormalizedReducers(reducers);
 
-  return function rpcReducer(state: * = startValue, action: any) {
+  return function rpcReducer(state: S = startValue, action: A) {
     if (actionNames.start === action.type) {
-      return reducers.start && reducers.start(state, action);
+      return normalizedReducers.start(state, action);
     }
     if (actionNames.success === action.type) {
-      return reducers.success && reducers.success(state, action);
+      return normalizedReducers.success(state, action);
     }
     if (actionNames.failure === action.type) {
-      return reducers.failure && reducers.failure(state, action);
+      return normalizedReducers.failure(state, action);
     }
     return state;
   };
 }
 
-type RPCReactorsType = {
-  start?: Reactor<*, *>,
-  success?: Reactor<*, *>,
-  failure?: Reactor<*, *>,
-};
-export function createRPCReactors(
+// TODO(#107): Improve flow types with reactors
+export function createRPCReactors<S, A: ActionType>(
   rpcId: string,
-  reducers: RPCReducersType
-): RPCReactorsType {
+  reducers: RPCReducersType<S, A>
+): RPCReactorsType<*, *> {
   const actionNames = createActionNames(rpcId);
-  reducers = getNormalizedReducers(reducers);
+  const normalizedReducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
-    if (!reducers[type]) {
+    if (!normalizedReducers[type]) {
       throw new Error(`Missing reducer for type ${type}`);
     }
-    obj[type] = createReactor(actionNames[type], reducers[type]);
+    const reactor: Reactor<*, *> = createReactor(
+      // $FlowFixMe
+      actionNames[type],
+      normalizedReducers[type]
+    );
+    obj[type] = reactor;
     return obj;
   }, {});
   return reactors;
