@@ -22,7 +22,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.5",
+    "babel-eslint": "8.2.6",
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "create-universal-package": "3.4.4",
     "eslint": "4.19.1",
