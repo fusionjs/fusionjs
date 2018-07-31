@@ -1,5 +1,5 @@
 import React from 'react';
-import {split} from 'fusion-react-async';
+import {split} from 'fusion-react';
 
 const LoadingComponent = () => <div />;
 const ErrorComponent = () => <div />;
