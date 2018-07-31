@@ -28,7 +28,7 @@
     "eslint-plugin-flowtype": "2.50.0",
     "eslint-plugin-import": "2.13.0",
     "eslint-plugin-prettier": "2.6.2",
-    "eslint-plugin-react": "7.9.1",
+    "eslint-plugin-react": "7.10.0",
     "flow-bin": "^0.74.0",
     "nyc": "^12.0.2",
     "prettier": "^1.13.4",
