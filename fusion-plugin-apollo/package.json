@@ -19,7 +19,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-beta.52",
+    "@babel/preset-react": "7.0.0-beta.55",
     "apollo-client": "^2.3.5",
     "babel-eslint": "8.2.5",
     "create-universal-package": "3.4.4",
