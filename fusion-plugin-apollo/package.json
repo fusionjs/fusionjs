@@ -25,7 +25,7 @@
     "@babel/preset-react": "7.0.0-beta.55",
     "apollo-client": "^2.3.7",
     "babel-eslint": "8.2.6",
-    "create-universal-package": "3.4.5",
+    "create-universal-package": "3.4.6",
     "eslint": "5.2.0",
     "eslint-config-fusion": "4.0.0",
     "eslint-plugin-cup": "2.0.0",
