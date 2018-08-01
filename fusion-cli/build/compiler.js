@@ -26,7 +26,6 @@ const resolveFrom = require('resolve-from');
 
 const AssetsManifestPlugin = require('./file-loader-asset-manifest-plugin');
 const ClientSourceMapPlugin = require('./client-source-map-plugin');
-const ChunkPreloadPlugin = require('./chunk-preload-plugin');
 const ChunkModuleManifestPlugin = require('./chunk-module-manifest-plugin');
 const chunkModuleManifest = require('./chunk-module-manifest');
 const InstrumentedImportDependencyTemplatePlugin = require('./instrumented-import-dependency-template-plugin');
@@ -447,9 +446,6 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'production' &&
         target === 'web' &&
         new webpack.HashedModuleIdsPlugin(),
-      target === 'web' && env !== 'test' && new ChunkPreloadPlugin(),
-      // TODO(#11): What do we do for client-side error reporting in the service worker?
-      // Do we add in reporting code to the sw? Should we map stack traces on the server?
       target === 'web' && new ClientSourceMapPlugin(),
       target === 'web' && new SyncChunkIdsPlugin(),
       target === 'web' &&
