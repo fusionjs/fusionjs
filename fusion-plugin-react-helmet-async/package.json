@@ -52,7 +52,7 @@
     "fusion-test-utils": "^1.2.0",
     "fusion-tokens": "^1.0.3",
     "nyc": "12.0.2",
-    "prettier": "1.13.7",
+    "prettier": "1.14.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "regenerator-runtime": "^0.12.0",
