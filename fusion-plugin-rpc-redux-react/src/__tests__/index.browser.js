@@ -9,10 +9,9 @@
 /* eslint-env browser */
 import test from 'tape-cup';
 import React from 'react';
-import {prepared} from 'fusion-react-async';
+import App, {prepared} from 'fusion-react';
 import {compose, createStore} from 'redux';
 import {Provider, connect} from 'react-redux';
-import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import {reactorEnhancer} from 'redux-reactors';
 import {FetchToken} from 'fusion-tokens';
