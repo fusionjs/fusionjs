@@ -21,7 +21,8 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "base64-url": "^2.2.0"
+    "base64-url": "^2.2.0",
+    "eslint-plugin-jest": "^21.18.0"
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0-beta.55",
@@ -29,7 +30,7 @@
     "body-parser": "^1.18.3",
     "create-universal-package": "^3.4.4",
     "eslint": "^5.0.0",
-    "eslint-config-fusion": "^2.0.0",
+    "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "^1.0.2",
     "eslint-plugin-flowtype": "^2.46.3",
     "eslint-plugin-import": "^2.12.0",
