@@ -152,11 +152,11 @@ function getChunkScripts(ctx) {
   const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
     return `<script defer${crossOrigin} src="${url}" data-webpack-preload="${id}"></script>`;
   });
-  return [...sync, ...preloaded].join('');
+  return [...preloaded, ...sync].join('');
 }
 
 function getPreloadHintLinks(ctx) {
-  const chunks = [...ctx.syncChunks, ...ctx.preloadChunks];
+  const chunks = [...ctx.preloadChunks, ...ctx.syncChunks];
   const hints = getUrls(ctx, chunks).map(({url}) => {
     return `<link rel="preload" href="${url}" as="script" />`;
   });
