@@ -4,7 +4,11 @@
   "version": "1.0.8",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-redux",
-  "files": ["dist", "flow-typed", "src"],
+  "files": [
+    "dist",
+    "flow-typed",
+    "src"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -25,7 +29,7 @@
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "eslint": "^5.0.0",
-    "eslint-config-fusion": "^2.0.1",
+    "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "1.0.2",
     "eslint-plugin-flowtype": "^2.48.0",
     "eslint-plugin-import": "^2.12.0",
@@ -56,8 +60,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test":
-      "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "view-cover": "npm run cover && open coverage/index.html",
@@ -65,5 +68,8 @@
   },
   "engines": {
     "node": ">= 8.9.0"
+  },
+  "dependencies": {
+    "eslint-plugin-jest": "^21.18.0"
   }
 }
