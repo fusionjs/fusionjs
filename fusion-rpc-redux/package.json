@@ -30,7 +30,7 @@
     "create-universal-package": "^3.4.4",
     "eslint": "5.2.0",
     "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "^1.0.2",
+    "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^2.46.3",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jest": "^21.18.0",
