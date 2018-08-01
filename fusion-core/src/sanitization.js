@@ -46,7 +46,7 @@ if (__NODE__) {
     if (str && str[key]) return consumeSanitizedHTML(str);
     return String(str).replace(/[<>"/\u2028\u2029]/g, replaceForbidden);
   };
-  consumeSanitizedHTML = (h: string): string => {
+  consumeSanitizedHTML = (h: SanitizedHTMLWrapper): string => {
     if (typeof h === 'string') {
       throw new Error(`Unsanitized html. Use html\`${h}\``);
     }
@@ -61,6 +61,7 @@ const unescape = (str: string): string => {
   );
 };
 
+// These types are necessary due to not having an assignment in the __BROWSER__ environment
 const flowHtml = ((html: any): (
   strings: Array<string>,
   ...expressions: Array<string>
@@ -71,7 +72,7 @@ const flowDangerouslySetHTML = ((dangerouslySetHTML: any): (
 ) => Object);
 
 const flowConsumeSanitizedHTML = ((consumeSanitizedHTML: any): (
-  str: string
+  str: SanitizedHTMLWrapper
 ) => string);
 
 const flowEscape = ((escape: any): (str: string) => string);

@@ -7,6 +7,7 @@
  */
 
 import {createPlugin, createToken, getEnv} from '../../src/index.js';
+import {html, consumeSanitizedHTML} from '../../src/sanitization';
 import BaseApp from '../../src/base-app';
 
 import type {Context, FusionPlugin, Middleware, Token} from '../types.js';
@@ -145,3 +146,7 @@ async function checkEnv() {
     webpackPublicPath,
   };
 }
+
+/*   - Case: sanitization typing */
+const sanitizedString = html`mystring`;
+consumeSanitizedHTML(sanitizedString);
