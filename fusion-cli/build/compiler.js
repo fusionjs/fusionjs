@@ -508,7 +508,14 @@ function getConfig({target, env, dir, watch, cover}) {
                 parallel: true, // default from webpack
                 uglifyOptions: {
                   compress: {
-                    inline: 1, // inline=2 can cause const reassignment (https://github.com/mishoo/UglifyJS2/issues/2842)
+                    // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
+                    // This mangles mapbox-gl creating an error when used alongside with window global mangling:
+                    // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
+                    typeofs: false,
+
+                    // inline=2 can cause const reassignment
+                    // https://github.com/mishoo/UglifyJS2/issues/2842
+                    inline: 1,
                   },
                 },
               }),
