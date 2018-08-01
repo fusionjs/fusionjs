@@ -27,7 +27,7 @@
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "create-universal-package": "3.4.6",
     "eslint": "5.2.0",
-    "eslint-config-fusion": "^2.0.1",
+    "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "1.0.2",
     "eslint-plugin-flowtype": "^2.48.0",
     "eslint-plugin-import": "^2.12.0",
@@ -62,5 +62,8 @@
   "peerDependencies": {
     "fusion-core": "^1.0.0",
     "fusion-plugin-universal-events": "^1.0.1"
+  },
+  "dependencies": {
+    "eslint-plugin-jest": "^21.18.0"
   }
 }
