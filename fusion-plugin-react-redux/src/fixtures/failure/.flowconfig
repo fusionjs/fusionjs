@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/.*[^(package)]\.json$
+
+[include]
+../../.*.js
+../../../node_modules/
+
+[libs]
+../../../node_modules/fusion-core/flow-typed
+
+[lints]
+
+[options]
+
+[strict]
