@@ -3,17 +3,18 @@
   "version": "0.0.0",
   "main": "index.js",
   "dependencies": {
-    "fusion-cli": "^1.8.4",
+    "fusion-cli": "^1.8.5",
     "fusion-core": "^1.4.1",
     "fusion-plugin-react-helmet-async": "^1.0.0",
     "fusion-plugin-react-router": "^1.1.3",
-    "fusion-plugin-styletron-react": "^2.5.0",
-    "fusion-react": "^1.0.5",
-    "fusion-react-async": "^1.2.3",
+    "fusion-plugin-styletron-react": "^2.5.1",
+    "fusion-react": "^1.1.0",
+    "fusion-react-async": "^1.2.4",
     "fusion-tokens": "^1.0.4",
     "prop-types": "^15.6.2",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "styletron-react": "^4.3.5"
   },
   "scripts": {
     "dev": "fusion dev",
