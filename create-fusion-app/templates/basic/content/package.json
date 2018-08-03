@@ -9,7 +9,6 @@
     "fusion-plugin-react-router": "^1.1.3",
     "fusion-plugin-styletron-react": "^2.5.1",
     "fusion-react": "^1.1.0",
-    "fusion-react-async": "^1.2.4",
     "fusion-tokens": "^1.0.4",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
