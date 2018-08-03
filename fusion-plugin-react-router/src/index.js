@@ -6,7 +6,7 @@
  * @flow
  */
 
-import plugin from './plugin';
+import plugin, {RouterProviderToken, RouterToken} from './plugin';
 import * as server from './server';
 import * as browser from './browser';
 
@@ -45,4 +45,6 @@ export {
   Status,
   Switch,
   withRouter,
+  RouterProviderToken,
+  RouterToken,
 };

@@ -118,6 +118,24 @@ import Router from 'fusion-plugin-react-router';
 
 The plugin.
 
+##### `RouterToken`
+
+```jsx
+import {RouterToken} from 'fusion-plugin-react-router';
+```
+
+A token for registering the router plugin on. You only need to register the plugin on this token if another
+plugin depends on receiving the history object.
+
+##### `RouterProviderToken`
+
+```jsx
+import {RouterProviderToken} from 'fusion-plugin-react-router';
+```
+
+An optional dependency of this plugin, used to replace the routing provider. Defaults to `import {Router} from react-router-dom`.
+This is necessary for integrating with `connected-react-router`.
+
 ##### `UniversalEventsToken`
 
 ```jsx
@@ -127,6 +145,7 @@ import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 The [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin. Optional.
 
 Provide the UniversalEventsToken when you would like to emit routing events for data collection.
+
 
 ---
 
@@ -152,6 +171,27 @@ Router will emit the following events/metrics via the [universal events](https:/
   - `title: string` - (1)`props.trackingId` provided by [`<Route>`](#route), or (2)the path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (3)`ctx.path`.
 
 ---
+
+#### Accessing History
+
+This plugin provides an API to access the history object.
+
+```js
+import {createPlugin} from 'fusion-core';
+import RouterPlugin, {RouterToken} from 'fusion-plugin-react-router';
+
+app.register(RouterToken, RouterPlugin);
+app.register(createPlugin({
+  deps: {
+    router: RouterToken,
+  },
+  middleware: ({router}) => (ctx, next) => {
+    const {history} = router.from(ctx);
+    // ...
+    return next();
+  }
+}));
+```
 
 #### Router
 

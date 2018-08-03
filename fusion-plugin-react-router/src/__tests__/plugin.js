@@ -15,7 +15,7 @@ import {withRouter, Link} from 'react-router-dom';
 import test from 'tape-cup';
 import {Route} from '../modules/Route';
 import {Redirect} from '../modules/Redirect.js';
-import RouterPlugin from '../plugin';
+import RouterPlugin, {RouterProviderToken, RouterToken} from '../plugin';
 
 const addRoutePrefix = (ctx, next) => {
   // hack until we have better route prefix support in fusion-test-utils
@@ -25,7 +25,7 @@ const addRoutePrefix = (ctx, next) => {
 
 function getApp(el) {
   const app = new App(el);
-  app.register(RouterPlugin);
+  app.register(RouterToken, RouterPlugin);
   return app;
 }
 
@@ -118,6 +118,80 @@ test('events with no tracking id', async t => {
   });
   // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
+  const simulator = setup(app);
+  await simulator.render('/');
+  cleanup();
+  t.end();
+});
+
+test('Custom Provider', async t => {
+  const Hello = () => <div>Hello</div>;
+  const element = (
+    <div>
+      <Route path="/" component={Hello} />
+      <Route path="/lol" component={Hello} />
+    </div>
+  );
+
+  const app = getApp(element);
+  const UniversalEvents = getMockEvents({
+    t,
+    title: '/',
+    page: '/',
+  });
+  // $FlowFixMe
+  app.register(UniversalEventsToken, UniversalEvents);
+  app.register(RouterProviderToken, () => {
+    return <div id="custom-node">CUSTOM PROVIDER RESULT</div>;
+  });
+  const simulator = setup(app);
+  const {rendered} = await simulator.render('/');
+  const result = __BROWSER__
+    ? // $FlowFixMe
+      document.getElementById('custom-node').textContent
+    : rendered;
+  t.ok(result.includes('CUSTOM PROVIDER RESULT'), 'uses custom provider');
+  cleanup();
+  t.end();
+});
+
+test('Router Providing History', async t => {
+  const Hello = () => <div>Hello</div>;
+  const element = (
+    <div>
+      <Route path="/" component={Hello} />
+      <Route path="/lol" component={Hello} />
+    </div>
+  );
+
+  const app = getApp(element);
+  const UniversalEvents = getMockEvents({
+    t,
+    title: '/',
+    page: '/',
+  });
+  // $FlowFixMe
+  app.register(UniversalEventsToken, UniversalEvents);
+  app.middleware(
+    {
+      router: RouterToken,
+    },
+    ({router}) => (ctx, next) => {
+      const {history} = router.from(ctx);
+      t.ok(history, 'provides a history object');
+      t.equal(
+        typeof history.push,
+        'function',
+        'provides correct history object'
+      );
+      t.equal(
+        typeof history.replace,
+        'function',
+        'provides correct history object'
+      );
+      return next();
+    }
+  );
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();

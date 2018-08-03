@@ -9,18 +9,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Router as BaseRouter} from 'react-router-dom';
-import createHistory from 'history/createBrowserHistory';
 
 export {Status, NotFound} from './Status';
 export {Redirect} from './Redirect';
 
 class BrowserRouter extends React.Component<any> {
-  history: any;
   lastTitle: any;
 
   constructor(props: any = {}, context: any) {
     super(props, context);
-    this.history = createHistory(this.props);
     this.lastTitle = null;
   }
 
@@ -37,19 +34,21 @@ class BrowserRouter extends React.Component<any> {
   }
 
   render() {
+    const {Provider, history, basename} = this.props;
     return (
-      <BaseRouter history={this.history}>{this.props.children}</BaseRouter>
+      <Provider basename={basename} history={history}>
+        {this.props.children}
+      </Provider>
     );
   }
 }
 
 BrowserRouter.propTypes = {
-  basename: PropTypes.string,
-  forceRefresh: PropTypes.bool,
-  getUserConfirmation: PropTypes.func,
-  keyLength: PropTypes.number,
   children: PropTypes.node,
   onRoute: PropTypes.func,
+  history: PropTypes.object,
+  Provider: PropTypes.any,
+  basename: PropTypes.string,
 };
 
 BrowserRouter.contextTypes = {
@@ -63,6 +62,7 @@ BrowserRouter.childContextTypes = {
 // $FlowFixMe
 BrowserRouter.defaultProps = {
   onRoute: () => {},
+  Provider: BaseRouter,
 };
 
 export {BrowserRouter as Router};

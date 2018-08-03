@@ -11,13 +11,14 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Switch, Route} from '../browser';
+import createBrowserHistory from 'history/createBrowserHistory';
 
 test('matches as expected', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Switch>
         <Route path="/" component={Hello} />
         <Route path="/" component={Hi} />

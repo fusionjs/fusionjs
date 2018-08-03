@@ -6,29 +6,58 @@
  * @flow
  */
 
+import * as React from 'react';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import React from 'react';
-import {createPlugin, html, unescape} from 'fusion-core';
+import {createPlugin, createToken, html, unescape, memoize} from 'fusion-core';
 import {Router as ServerRouter} from './server';
 import {Router as BrowserRouter} from './browser';
+import {Router as DefaultProvider} from 'react-router-dom';
+import createBrowserHistory from 'history/createBrowserHistory';
+import {createServerHistory} from './modules/ServerHistory';
+import type {HistoryType} from './types';
+import type {Token, Context} from 'fusion-core';
+
+type ProviderPropsType = {
+  history: HistoryType,
+  basename: string,
+};
+type HistoryWrapperType = {
+  from: (
+    ctx: Context
+  ) => {
+    history: HistoryType,
+  },
+};
+
+export const RouterProviderToken: Token<
+  React.ComponentType<ProviderPropsType>
+> = createToken('RouterProvider');
+
+export const RouterToken: Token<HistoryWrapperType> = createToken('Router');
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
+
 export default createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
+    Provider: RouterProviderToken.optional,
   },
-  middleware: ({emitter}) => {
+  middleware: ({emitter, Provider = DefaultProvider}, self) => {
     return async (ctx, next) => {
       const prefix = ctx.prefix || '';
       if (!ctx.element) {
         return next();
       }
+      const myAPI = self.from(ctx);
       if (__NODE__) {
         let pageData = {
           title: ctx.path,
           page: ctx.path,
         };
         const context = {
+          action: null,
+          location: null,
+          url: null,
           setCode: code => {
             ctx.status = code;
           },
@@ -36,13 +65,17 @@ export default createPlugin({
             ctx.redirect(url);
           },
         };
+        // Expose the history object
+        const history = createServerHistory(prefix, context, prefix + ctx.url);
+        myAPI.history = history;
         ctx.element = (
           <Router
+            history={history}
+            Provider={Provider}
             onRoute={d => {
               pageData = d;
             }}
             basename={prefix}
-            location={prefix + ctx.url}
             context={context}
           >
             {ctx.element}
@@ -90,8 +123,13 @@ export default createPlugin({
             }
             return payload;
           });
+        // Expose the history object
+        const history = createBrowserHistory({basename: ctx.prefix});
+        myAPI.history = history;
         ctx.element = (
           <Router
+            history={history}
+            Provider={Provider}
             basename={ctx.prefix}
             onRoute={payload => {
               pageData = payload;
@@ -103,6 +141,16 @@ export default createPlugin({
         );
         return next();
       }
+    };
+  },
+  provides() {
+    return {
+      from: memoize(() => {
+        const api: {history: HistoryType} = ({
+          history: null,
+        }: any);
+        return api;
+      }),
     };
   },
 });

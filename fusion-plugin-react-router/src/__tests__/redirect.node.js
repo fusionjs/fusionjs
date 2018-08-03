@@ -10,6 +10,7 @@ import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route, Redirect} from '../server';
+import {createServerHistory} from '../modules/ServerHistory';
 
 test('redirects to a new URL', t => {
   const Hello = () => <div>Hello</div>;
@@ -17,6 +18,9 @@ test('redirects to a new URL', t => {
   let setCode = false;
   let didRedirect = false;
   const state = {
+    action: null,
+    location: null,
+    url: null,
     setCode: code => {
       t.equal(code, 307);
       setCode = true;
@@ -27,8 +31,9 @@ test('redirects to a new URL', t => {
     },
   };
   const ctx = state;
+  const history = createServerHistory('/', ctx, '/');
   const el = (
-    <Router location="/" context={ctx}>
+    <Router history={history} context={ctx}>
       <div>
         <Route path="/" component={Moved} />
         <Route path="/hello" component={Hello} />

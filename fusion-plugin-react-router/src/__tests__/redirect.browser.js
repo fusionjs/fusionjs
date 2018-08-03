@@ -11,13 +11,14 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Redirect} from '../browser';
+import createBrowserHistory from 'history/createBrowserHistory';
 
 test('test Redirect', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello">Hi</Redirect>;
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <div>
         <Route path="/" component={Moved} />
         <Route path="/hello" component={Hello} />
@@ -30,7 +31,7 @@ test('test Redirect', t => {
 
   // reset the url back to "/"
   ReactDOM.render(
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Redirect to="/" />
     </Router>,
     document.createElement('div')

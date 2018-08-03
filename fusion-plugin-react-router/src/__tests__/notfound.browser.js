@@ -11,6 +11,7 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, NotFound} from '../browser';
+import createBrowserHistory from 'history/createBrowserHistory';
 
 test('noops', t => {
   const root = document.createElement('div');
@@ -21,7 +22,7 @@ test('noops', t => {
     </NotFound>
   );
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Route component={Hello} />
     </Router>
   );

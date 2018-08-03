@@ -10,6 +10,7 @@ import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route, NotFound} from '../server';
+import {createServerHistory} from '../modules/ServerHistory';
 
 test('sets code', t => {
   const Hello = () => (
@@ -19,12 +20,16 @@ test('sets code', t => {
   );
   const state = {code: 0};
   const ctx = {
+    action: null,
+    location: null,
+    url: null,
     setCode(code) {
       state.code = code;
     },
   };
+  const history = createServerHistory('/', ctx, '/');
   const el = (
-    <Router location="/" context={ctx}>
+    <Router history={history} context={ctx}>
       <Route component={Hello} />
     </Router>
   );

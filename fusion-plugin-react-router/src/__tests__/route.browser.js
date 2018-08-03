@@ -11,12 +11,13 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from '../browser';
+import createBrowserHistory from 'history/createBrowserHistory';
 
 test('matches as expected', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Route path="/" component={Hello} />
     </Router>
   );
@@ -28,7 +29,7 @@ test('misses as expected', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Route exact path="/bar" component={Hello} />
     </Router>
   );
@@ -40,7 +41,7 @@ test('support props.render', t => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Route path="/" render={() => <Hello />} />
     </Router>
   );
@@ -55,7 +56,7 @@ test('support props.children as render prop', t => {
   const Hello = () => <div>Hello</div>;
   /* eslint-disable react/no-children-prop */
   const el = (
-    <Router>
+    <Router history={createBrowserHistory()}>
       <Route path="/" children={() => <Hello />} />
     </Router>
   );

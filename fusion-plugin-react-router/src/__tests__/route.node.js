@@ -10,11 +10,18 @@ import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route} from '../server';
+import {createServerHistory} from '../modules/ServerHistory';
 
 test('matches as expected', t => {
   const Hello = () => <div>Hello</div>;
+  const ctx = {
+    action: null,
+    location: null,
+    url: null,
+  };
+  const history = createServerHistory('/', ctx, '/');
   const el = (
-    <Router location="/">
+    <Router history={history}>
       <Route path="/" component={Hello} />
     </Router>
   );
@@ -23,8 +30,14 @@ test('matches as expected', t => {
 });
 test('misses as expected', t => {
   const Hello = () => <div>Hello</div>;
+  const ctx = {
+    action: null,
+    location: null,
+    url: null,
+  };
+  const history = createServerHistory('/', ctx, '/foo');
   const el = (
-    <Router location="/foo">
+    <Router history={history}>
       <Route path="/bar" component={Hello} />
     </Router>
   );
@@ -32,9 +45,15 @@ test('misses as expected', t => {
   t.end();
 });
 test('support props.render', t => {
+  const ctx = {
+    action: null,
+    location: null,
+    url: null,
+  };
+  const history = createServerHistory('/', ctx, '/');
   const Hello = () => <div>Hello</div>;
   const el = (
-    <Router location="/">
+    <Router history={history}>
       <Route path="/" render={() => <Hello />} />
     </Router>
   );
@@ -46,10 +65,16 @@ test('support props.render', t => {
   t.end();
 });
 test('support props.children as render prop', t => {
+  const ctx = {
+    action: null,
+    location: null,
+    url: null,
+  };
+  const history = createServerHistory('/', ctx, '/');
   const Hello = () => <div>Hello</div>;
   /* eslint-disable react/no-children-prop */
   const el = (
-    <Router location="/">
+    <Router history={history}>
       <Route path="/" children={() => <Hello />} />
     </Router>
   );
