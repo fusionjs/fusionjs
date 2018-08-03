@@ -196,7 +196,7 @@ Consider using [`fusion-react`](https://github.com/fusionjs/fusion-react) instea
 #### split
 
 ```js
-import {split} from "fusion-react";
+import {split} from "fusion-react-async";
 
 const Component = split({load, LoadingComponent, ErrorComponent});
 ```
