@@ -2050,9 +2050,9 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-scaffolder@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/fusion-scaffolder/-/fusion-scaffolder-0.0.1.tgz#b63ed7c7dbc4611f25469d4f81f35ac2c1f5cf69"
+fusion-scaffolder@^0.0.2-0:
+  version "0.0.2-0"
+  resolved "https://registry.yarnpkg.com/fusion-scaffolder/-/fusion-scaffolder-0.0.2-0.tgz#36c5461682a773c2d2098210bb415d8a70c4341d"
   dependencies:
     "@babel/cli" "^7.0.0-beta.49"
     "@babel/core" "^7.0.0-beta.49"
