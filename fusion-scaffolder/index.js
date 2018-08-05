@@ -113,9 +113,22 @@ async function compile(projectPath, templatePath, contentPath, ctx) {
 
 async function install(projectPath) {
   return new Promise((resolve, reject) => {
-    const child = spawn('yarn', ['install', '--cwd', projectPath], {
-      stdio: 'inherit',
-    });
+    let child;
+    if (!/^win/.test(process.platform)) {
+      // linux
+      child = spawn('yarn', ['install', '--cwd', projectPath], {
+        stdio: 'inherit',
+      });
+    } else {
+      // windows
+      child = spawn(
+        'cmd',
+        ['/s', '/c', 'yarn', 'install', '--cwd', projectPath],
+        {
+          stdio: 'inherit',
+        }
+      );
+    }
     child.on('close', code => {
       if (code !== 0) {
         reject(
