@@ -23,7 +23,7 @@ Example:
 
 console.log(`
 Creating a new Fusion.js app in: ${chalk.green(
-  `${process.cwd()}/${projectName}`
+  `${process.cwd()}${path.sep}${projectName}`
 )}
 `);
 
