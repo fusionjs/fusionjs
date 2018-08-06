@@ -2570,7 +2570,7 @@ fusion-plugin-react-redux@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/fusion-plugin-react-redux/-/fusion-plugin-react-redux-1.0.8.tgz#46e97148dc5d2586dd7e2775b2716c0b23264107"
 
-fusion-plugin-react-router@^1.2.0-0:
+fusion-plugin-react-router@1.2.0-0:
   version "1.2.0-0"
   resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-1.2.0-0.tgz#e77e553c8e34e33961022f12aba7d92db9c91b9a"
   dependencies:
