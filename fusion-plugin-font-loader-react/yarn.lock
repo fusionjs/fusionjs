@@ -2667,17 +2667,13 @@ fusion-core@^1.3.1:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-test-utils@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.1.0.tgz#1900a7d432733f935698ee139cef3a1e8f6ab973"
+fusion-test-utils@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.2.tgz#f1c72156012d4e0731875cd9b52d4ad426994a9b"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
-
-fusion-tokens@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.3.tgz#e247a076ef145337287e103ecbc42486594e96c5"
 
 gauge@~2.7.3:
   version "2.7.4"
