@@ -62,6 +62,9 @@ function prepareElement(element, context) {
   const instance = new CompositeComponent(props, context);
   instance.props = props;
   instance.context = context;
+  if (instance.componentWillUnmount && __BROWSER__) {
+    context.__UNMOUNTS__.push(() => instance.componentWillUnmount());
+  }
   return prepareComponentInstance(instance).then(prepareConfig => {
     // Stop traversing if the component is defer or boundary
     if (prepareConfig.defer || prepareConfig.boundary) {
@@ -83,8 +86,12 @@ function _prepare(element, context) {
 
 function prepare(element: any, context: any = {}) {
   context.__IS_PREPARE__ = true;
+  context.__UNMOUNTS__ = [];
   return _prepare(element, context).then(() => {
     context.__IS_PREPARE__ = false;
+    context.__UNMOUNTS__.forEach(fn => {
+      return fn();
+    });
   });
 }
 
