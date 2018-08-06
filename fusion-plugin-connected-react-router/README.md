@@ -1,5 +1,7 @@
 # fusion-plugin-connected-react-router
 
+[![Build status](https://badge.buildkite.com/d34fd7f072f20da4e71a6ea59dd8d20efbce3c4ebec0c057dd.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-connected-react-router)
+
 The `fusion-plugin-connected-react-router` package provides integration points with [connected-react-router](https://github.com/supasate/connected-react-router). It is designed
 to be used along side of `fusion-plugin-react-router`.
 
@@ -25,7 +27,7 @@ yarn add fusion-plugin-connected-react-router connected-react-router
 
 ### Usage
 
-This plugin provides a ReduxEnhancer plugin for integrating connected-react-router into your app. 
+This plugin provides a ReduxEnhancer plugin for integrating connected-react-router into your app.
 See [connected-react-router](https://github.com/supasate/connected-react-router) docs for usage.
 
 ---
