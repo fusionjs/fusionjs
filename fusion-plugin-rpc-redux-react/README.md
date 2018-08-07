@@ -100,7 +100,7 @@ export default () => {
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
   __NODE__
-    ? app.register(RPCHandlersToken, handlers);
+    ? app.register(RPCHandlersToken, handlers)
     : app.register(FetchToken, fetch);
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
