@@ -449,9 +449,64 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   });
 });
 
+tape('Preparing React.forwardRef', t => {
+  // $FlowFixMe
+  const Forwarded = React.forwardRef((props, ref) => (
+    <div ref={ref}>{props.children}</div>
+  ));
+
+  const app = (
+    <Forwarded>
+      <span>1</span>
+      <span>2</span>
+    </Forwarded>
+  );
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    const wrapper = shallow(<div>{app}</div>);
+    t.equal(wrapper.find('span').length, 2, 'has two children');
+    t.end();
+  });
+});
+
+tape('Preparing React.forwardRef with async children', t => {
+  // $FlowFixMe
+  const Forwarded = React.forwardRef((props, ref) => (
+    <div ref={ref}>{props.children}</div>
+  ));
+  let numChildRenders = 0;
+  let numPrepares = 0;
+  function SimplePresentational() {
+    numChildRenders++;
+    return <div>Hello World</div>;
+  }
+  const AsyncChild = prepared(props => {
+    numPrepares++;
+    t.equal(
+      props.data,
+      'test',
+      'passes props through to prepared component correctly'
+    );
+    return Promise.resolve();
+  })(SimplePresentational);
+  const app = (
+    <Forwarded>
+      <AsyncChild data="test" />
+      <AsyncChild data="test" />
+    </Forwarded>
+  );
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    t.equal(numPrepares, 2, 'runs prepare function twice');
+    t.equal(numChildRenders, 2, 'renders SimplePresentational twice');
+    t.end();
+  });
+});
+
 tape('Preparing a Fragment', t => {
   const app = (
-    // $FlowFixMe
     <React.Fragment>
       <span>1</span>
       <span>2</span>
