@@ -7,7 +7,12 @@
  */
 
 import React from 'react';
-import {isFragment, isContextConsumer, isContextProvider} from 'react-is';
+import {
+  isFragment,
+  isContextConsumer,
+  isContextProvider,
+  isForwardRef,
+} from 'react-is';
 
 import isReactCompositeComponent from './utils/isReactCompositeComponent';
 import {isPrepared, getPrepare} from './prepared';
@@ -52,7 +57,11 @@ function prepareElement(element, context) {
     type._context._currentValue = props.value;
     return Promise.resolve([props.children, context]);
   }
-  if (typeof type === 'string' || isFragment(element)) {
+  if (
+    typeof type === 'string' ||
+    isFragment(element) ||
+    isForwardRef(element)
+  ) {
     return Promise.resolve([props.children, context]);
   }
   if (!isReactCompositeComponent(type)) {
