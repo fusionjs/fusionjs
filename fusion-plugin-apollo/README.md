@@ -87,7 +87,7 @@ type ApolloContext<T> = (ctx: Context => T) | T;
 import {GraphQLSchemaToken} from 'fusion-apollo';
 ```
 
-Define the `GraphQLSchemaToken` when using a locally hosted GraphQL endpoint from within a Fusion.js application. Connect your schema to a Fusion.js server with [fusion-plugin-apollo-server](https://github.com/fusionjs/fusion-plugin-apollo-server). You can find an example schema in the [graphql-tooks repo](https://github.com/apollographql/graphql-tools#example).
+Define the `GraphQLSchemaToken` when using a locally hosted GraphQL endpoint from within a Fusion.js application. Connect your schema to a Fusion.js server with [fusion-plugin-apollo-server](https://github.com/fusionjs/fusion-plugin-apollo-server). You can find an example schema in the [graphql-tools repo](https://github.com/apollographql/graphql-tools#example).
 
 ###### Types
 
