@@ -17,6 +17,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const {
+  zopfliWebpackPlugin,
   brotliWebpackPlugin,
   //pngquantWebpackPlugin,
   //guetzliWebpackPlugin,
@@ -414,6 +415,7 @@ function getConfig({target, env, dir, watch, cover}) {
       new ProgressBarPlugin(),
       // TODO(#9): relying only on timestamp will invalidate service worker after every build
       // optimize by importing all chunk names to sw and then remove timestamp in non-dev.
+      target === 'web' && env === 'production' && zopfliWebpackPlugin, // gzip
       target === 'webworker' && new ServiceWorkerTimestampPlugin(),
       // generate compressed files
       target === 'web' && env === 'production' && brotliWebpackPlugin, // brotli

@@ -433,6 +433,28 @@ test('`fusion build` with assets', async t => {
   t.end();
 });
 
+test('`fusion build` compresses assets for production', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/compress-assets');
+  await cmd(`build --dir=${dir} --production`);
+
+  const fusion_folder = '.fusion/dist/production/client/';
+  fs.readdir(path.resolve(dir, fusion_folder), (err, files) => {
+    if (err) throw err;
+    t.ok(files.some(file => path.extname(file) === '.gz'), 'gzip works');
+    t.ok(files.some(file => path.extname(file) === '.br'), 'brotli works');
+    t.ok(
+      files.some(
+        file =>
+          path.extname(file) === '.svg' &&
+          fs.statSync(path.resolve(dir, fusion_folder, file)).size <
+            fs.statSync(path.resolve(dir, 'src/assets/SVG_logo.svg')).size
+      ),
+      'svg works'
+    );
+  });
+  t.end();
+});
+
 test('`fusion build` with dynamic imports', async t => {
   const dir = path.resolve(__dirname, '../fixtures/dynamic-import');
   await cmd(`build --dir=${dir}`);
