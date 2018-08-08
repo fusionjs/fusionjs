@@ -91,7 +91,7 @@ app.middleware((middleware: Middleware));
 ```
 
 * `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](#token)
-* `middleware: Middleare` - a [middleware](#middleware)
+* `middleware: Middleware` - a [middleware](#middleware)
 * returns `undefined`
 
 This method is a shortcut for registering middleware plugins. Typically, you should write middlewares as plugins so you can organize different middlewares into different files.
