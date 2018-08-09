@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-
 import {NotFound} from 'fusion-plugin-react-router';
 
 const PageNotFound = () => (
@@ -8,4 +7,5 @@ const PageNotFound = () => (
     <div>404</div>
   </NotFound>
 );
+
 export default PageNotFound;

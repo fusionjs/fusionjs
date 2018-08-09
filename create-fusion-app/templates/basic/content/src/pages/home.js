@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-
 import {styled} from 'fusion-plugin-styletron-react';
 
 const Center = styled('div', {
@@ -10,16 +9,19 @@ const Center = styled('div', {
   justifyContent: 'center',
   height: '100%',
 });
+
 const FusionStyle = styled('div', {
   fontSize: '80px',
   color: 'rgba(0,0,0,.8)',
   paddingRight: '30px',
   display: 'flex',
 });
+
 const FullHeightDiv = styled('div', {
   height: '100%',
   backgroundColor: '#FFFFFF',
 });
+
 const Circle = styled('div', {
   height: '180px',
   width: '180px',

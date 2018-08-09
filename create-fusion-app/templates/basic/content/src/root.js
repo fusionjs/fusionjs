@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-
 import {Route, Switch} from 'fusion-plugin-react-router';
 
 import Home from './pages/home.js';
@@ -12,4 +11,5 @@ const root = (
     <Route component={PageNotFound} />
   </Switch>
 );
+
 export default root;
