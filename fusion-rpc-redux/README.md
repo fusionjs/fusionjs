@@ -51,7 +51,7 @@ type Action<T> = {
 };
 ```
 
-For example, if `rpcId` is `doSomething`, `createRPCActions` generates the actions `DO_SOMETHING_START`, `DO_SOMETHING_SUCCESS` and `DO_SOMETHING_FAILURE`;
+For example, if `rpcId` is `doSomething`, `createRPCActions` generates the actions `DO_SOMETHING_START`, `DO_SOMETHING_SUCCESS`, and `DO_SOMETHING_FAILURE`.
 
 #### `createRPCReducer`
 
