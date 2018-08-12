@@ -23,14 +23,14 @@ instead of this package.
 
 ### Table of contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [Setup](#setup)
-* [API](#api)
-  * [Registration API](#registration-api)
-  * [Dependencies](#dependencies)
-  * [Service API](#service-api)
-  * [`mock`](#mock)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Setup](#setup)
+- [API](#api)
+  - [Registration API](#registration-api)
+  - [Dependencies](#dependencies)
+  - [Service API](#service-api)
+  - [`mock`](#mock)
 
 ---
 
@@ -62,8 +62,14 @@ export default createPlugin({
 // src/main.js
 import React from 'react';
 import App, {createPlugin} from 'fusion-core';
-import RPC, {RPCToken, RPCHandlersToken, ResponseError} from 'fusion-plugin-rpc';
-import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import RPC, {
+  RPCToken,
+  RPCHandlersToken,
+  ResponseError,
+} from 'fusion-plugin-rpc';
+import UniversalEvents, {
+  UniversalEventsToken,
+} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
@@ -76,28 +82,28 @@ const handlers = __NODE__ && {
     // Error Handling Example
     try {
       doThing();
-    } catch(e) {
+    } catch (e) {
       const error = new ResponseError('Failed to do thing');
       error.code = 'DOTHING';
       error.meta = {
-        custom: 'metadata'
+        custom: 'metadata',
       };
       throw error;
     }
-  }
+  },
 };
 
 export default () => {
-  const app = new App(<div></div>);
+  const app = new App(<div />);
 
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
   __NODE__
-    ? app.register(RPCHandlersToken, handlers);
+    ? app.register(RPCHandlersToken, handlers)
     : app.register(FetchToken, fetch);
 
   return app;
-}
+};
 ```
 
 ---
@@ -170,11 +176,11 @@ Required. See
 const rpc: RPC = Rpc.from((ctx: Context));
 ```
 
-* `ctx: Context` - Required. A
+- `ctx: Context` - Required. A
   [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
-* returns `rpc: {request: (method: string, args: any) => Promise<any>}`
+- returns `rpc: {request: (method: string, args: any) => Promise<any>}`
 
-  * `request: (method: string, args: any) => Promise<any>` - Makes an RPC call
+  - `request: (method: string, args: any) => Promise<any>` - Makes an RPC call
     via an HTTP request. If on the server, this will directly call the `method`
     handler with `(args, ctx)`.
 
@@ -183,8 +189,8 @@ const rpc: RPC = Rpc.from((ctx: Context));
     args and call the rpc handler. The response will be serialized and send back
     to the browser.
 
-    * `method: string` - Required. The RPC method name
-    * `args: any` - Optional. Arguments to pass to the server-side RPC handler.
+    - `method: string` - Required. The RPC method name
+    - `args: any` - Optional. Arguments to pass to the server-side RPC handler.
       Must be JSON-serializable.
 
 ### mock
