@@ -59,8 +59,8 @@ export default createPlugin({
 import React from 'react';
 import App from 'fusion-react';
 import JWTSession, {
-  SessionSecretToken
-  SessionCookieNameToken
+  SessionSecretToken,
+  SessionCookieNameToken,
   SessionCookieExpiresToken
 } from 'fusion-plugin-jwt';
 import {SessionToken} from 'fusion-tokens';
