@@ -45,7 +45,7 @@
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-prettier": "2.6.2",
     "eslint-plugin-react": "7.11.0",
-    "flow-bin": "0.77.0",
+    "flow-bin": "0.78.0",
     "fusion-core": "1.4.1",
     "fusion-react": "^1.0.5",
     "fusion-react-async": "^1.2.2",
