@@ -31,7 +31,7 @@
     "eslint-plugin-flowtype": "2.50.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "2.6.2",
-    "eslint-plugin-react": "7.10.0",
+    "eslint-plugin-react": "7.11.0",
     "flow-bin": "0.77.0",
     "fusion-core": "^1.3.1",
     "fusion-plugin-universal-events": "^1.0.5",
