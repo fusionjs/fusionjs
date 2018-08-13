@@ -50,7 +50,7 @@
     "fusion-react": "^1.1.0",
     "fusion-test-utils": "^1.1.0",
     "fusion-tokens": "^1.0.3",
-    "nyc": "^11.8.0",
+    "nyc": "^12.0.0",
     "prettier": "1.14.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
