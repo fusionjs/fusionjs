@@ -39,9 +39,9 @@
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "prettier": "1.14.0",
-    "react": "16.4.1",
+    "react": "16.4.2",
     "react-apollo": "2.1.9",
-    "react-dom": "16.4.1",
+    "react-dom": "16.4.2",
     "redux": "^4.0.0",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"

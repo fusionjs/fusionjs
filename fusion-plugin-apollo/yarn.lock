@@ -3872,9 +3872,9 @@ react-apollo@2.1.9:
     lodash "^4.17.10"
     prop-types "^15.6.0"
 
-react-dom@16.4.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.4.1.tgz#7f8b0223b3a5fbe205116c56deb85de32685dad6"
+react-dom@16.4.2:
+  version "16.4.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.4.2.tgz#4afed569689f2c561d2b8da0b819669c38a0bda4"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
@@ -3885,9 +3885,9 @@ react-is@^16.4.1:
   version "16.4.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.1.tgz#d624c4650d2c65dbd52c72622bbf389435d9776e"
 
-react@16.4.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.4.1.tgz#de51ba5764b5dbcd1f9079037b862bd26b82fe32"
+react@16.4.2:
+  version "16.4.2"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.4.2.tgz#2cd90154e3a9d9dd8da2991149fdca3c260e129f"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
