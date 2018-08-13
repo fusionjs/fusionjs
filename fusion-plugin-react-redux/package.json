@@ -30,7 +30,7 @@
     "enzyme-adapter-react-16": "1.1.1",
     "eslint": "^5.0.0",
     "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "1.0.2",
+    "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "^2.48.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "2.6.2",
