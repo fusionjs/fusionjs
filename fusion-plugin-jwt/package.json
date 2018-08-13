@@ -39,7 +39,7 @@
     "fusion-tokens": "^1.0.2",
     "node-fetch": "2.2.0",
     "nyc": "11.7.3",
-    "prettier": "1.13.7",
+    "prettier": "1.14.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
