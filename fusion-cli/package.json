@@ -79,7 +79,7 @@
     "babel-eslint": "8.2.6",
     "chrome-remote-interface": "^0.26.0",
     "enzyme": "3.4.1",
-    "eslint": "5.2.0",
+    "eslint": "5.3.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "^2.50.0",
