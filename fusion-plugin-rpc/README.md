@@ -112,7 +112,7 @@ export default () => {
 
 #### Registration API
 
-##### RPC
+##### `RPC`
 
 ```js
 import RPC from 'fusion-plugin-rpc';
@@ -120,7 +120,7 @@ import RPC from 'fusion-plugin-rpc';
 
 The RPC plugin. Provides the RPC [service API](#service-api).
 
-###### `RPCToken`
+##### `RPCToken`
 
 ```js
 import {RPCToken} from 'fusion-plugin-rpc-redux-react';
