@@ -38,13 +38,13 @@ export default class UniversalEmitter implements IEmitter {
     const globalMappers = this.mappers[globalEventType] || [];
     const mappers = (this.mappers[type] || []).concat(globalMappers);
     return mappers.reduce((payload, mapper) => {
-      return mapper(payload, ctx);
+      return mapper(payload, ctx, type);
     }, payload);
   }
   handleEvent(type: mixed, payload: mixed, ctx?: Context): void {
     const globalHandlers = this.handlers[globalEventType] || [];
     const handlers = (this.handlers[type] || []).concat(globalHandlers);
-    handlers.forEach(handler => handler(payload, ctx));
+    handlers.forEach(handler => handler(payload, ctx, type));
   }
 
   /* eslint-disable-next-line  no-unused-vars */

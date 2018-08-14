@@ -117,7 +117,7 @@ __BROWSER__ && app.register(FetchToken, window.fetch);
 Registers a callback to be called when an event of a type is emitted. Note that the callback will not be called if the event is emitted before the callback is registered.
 
 ```js
-events.on(type: string, callback: (payload: Object, ctx: ?Context) => void)
+events.on(type: string, callback: (payload: Object, ctx: ?Context, type: string) => void)
 ```
 
 - `type: string` - Required. The type of event to listen on. The type `*` denotes all events.
@@ -137,7 +137,7 @@ events.emit(type:string, payload: Object)
 Mutates the payload. Useful if you need to modify the payload to include metrics or other meta data.
 
 ```js
-events.map(type: string, callback: (payload: Object, ctx: ?Context) => Object)
+events.map(type: string, callback: (payload: Object, ctx: ?Context, type: string) => Object)
 ```
 
 - `type: string` - Required. The type of event to listen on. The type `*` denotes all events.

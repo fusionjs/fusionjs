@@ -93,10 +93,11 @@ test('Base EventEmitter * handlers', t => {
   const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
-  events.on(payload => {
+  events.on((payload, ctx, type) => {
     t.deepLooseEqual(payload, {
       c: true,
     });
+    t.equal(type, 'test', 'correct type passed to handler');
     calledGlobal = true;
   });
 
@@ -116,10 +117,11 @@ test('Base EventEmitter implicit * handlers', t => {
   const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
-  events.on('*', payload => {
+  events.on('*', (payload, ctx, type) => {
     t.deepLooseEqual(payload, {
       c: true,
     });
+    t.equal(type, 'test', 'correct type passed to handler');
     calledGlobal = true;
   });
 
