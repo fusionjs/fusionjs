@@ -48,7 +48,7 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
     }
 
     // $FlowFixMe
-    componentWillReceiveProps(nextProps, nextContext) {
+    UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
       if (opts.componentWillReceiveProps) {
         sideEffect(nextProps, nextContext);
       }
