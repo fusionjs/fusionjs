@@ -25,6 +25,8 @@ function renderCompositeElementInstance(instance) {
   );
   if (instance.componentWillMount) {
     instance.componentWillMount();
+  } else if (instance.UNSAFE_componentWillMount) {
+    instance.UNSAFE_componentWillMount();
   }
   const children = instance.render();
   return [children, childContext];
