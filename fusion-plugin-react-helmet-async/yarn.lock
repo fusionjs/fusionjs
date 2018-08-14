@@ -90,11 +90,11 @@
     "@babel/helper-explode-assignable-expression" "7.0.0-beta.31"
     "@babel/types" "7.0.0-beta.31"
 
-"@babel/helper-builder-react-jsx@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.51.tgz#86c72d6683bd2597c938a12153a6e480bf140128"
+"@babel/helper-builder-react-jsx@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-rc.1.tgz#d6fdf43cf671e50b3667431007732136cb059a5f"
   dependencies:
-    "@babel/types" "7.0.0-beta.51"
+    "@babel/types" "7.0.0-rc.1"
     esutils "^2.0.0"
 
 "@babel/helper-call-delegate@7.0.0-beta.31":
@@ -218,13 +218,13 @@
   dependencies:
     "@babel/types" "7.0.0-beta.55"
 
-"@babel/helper-plugin-utils@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.51.tgz#0f6a5f2b6d1c6444413f8fab60940d79b63c2031"
-
 "@babel/helper-plugin-utils@7.0.0-beta.55":
   version "7.0.0-beta.55"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.55.tgz#31f40777efd6b961da8496a923c22d2b062b3f73"
+
+"@babel/helper-plugin-utils@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-rc.1.tgz#3e277eae59818e7d4caf4174f58a7a00d441336e"
 
 "@babel/helper-regex@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -423,11 +423,11 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.55"
 
-"@babel/plugin-syntax-jsx@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-beta.51.tgz#f672a3371c6ba3fe53bffd2e8ab5dc40495382cf"
+"@babel/plugin-syntax-jsx@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-rc.1.tgz#f7d19fa482f6bf42225c4b3d8f14e825e3fa325a"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
 
 "@babel/plugin-syntax-object-rest-spread@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -571,33 +571,33 @@
     "@babel/traverse" "7.0.0-beta.31"
     "@babel/types" "7.0.0-beta.31"
 
-"@babel/plugin-transform-react-display-name@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.51.tgz#1b48bd34dfa9087252c8707d29bd1df2e8821cbe"
+"@babel/plugin-transform-react-display-name@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-rc.1.tgz#ffc71260d7920e49be54b7ad301a8af40f780c15"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
 
-"@babel/plugin-transform-react-jsx-self@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-beta.51.tgz#a4f098597fe70985544366f893ac47389864d894"
+"@babel/plugin-transform-react-jsx-self@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-rc.1.tgz#45557ef5662e4f59aedb0910b2bdfbe45769a4a7"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.51"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-syntax-jsx" "7.0.0-rc.1"
 
-"@babel/plugin-transform-react-jsx-source@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-beta.51.tgz#6999dc491c8b4602efb4d0bd1bafc936ad696ecf"
+"@babel/plugin-transform-react-jsx-source@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-rc.1.tgz#48cc2e0a09f1db49c8d9a960ce2dc3a988ae7013"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.51"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-syntax-jsx" "7.0.0-rc.1"
 
-"@babel/plugin-transform-react-jsx@7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-beta.51.tgz#7af8498518b83906405438370198808ca6e63b10"
+"@babel/plugin-transform-react-jsx@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-rc.1.tgz#d2eb176ca2b7fa212b56f8fd4052a404fddc2a99"
   dependencies:
-    "@babel/helper-builder-react-jsx" "7.0.0-beta.51"
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.51"
+    "@babel/helper-builder-react-jsx" "7.0.0-rc.1"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-syntax-jsx" "7.0.0-rc.1"
 
 "@babel/plugin-transform-regenerator@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -639,15 +639,15 @@
     "@babel/helper-regex" "7.0.0-beta.31"
     regexpu-core "^4.1.3"
 
-"@babel/preset-react@^7.0.0-beta.51":
-  version "7.0.0-beta.51"
-  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.51.tgz#957d812a86d96c89214928b79800748f51935e49"
+"@babel/preset-react@^7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-rc.1.tgz#8d51eb0861627fd913ac645dbdd5dc424fcc7445"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-beta.51"
-    "@babel/plugin-transform-react-display-name" "7.0.0-beta.51"
-    "@babel/plugin-transform-react-jsx" "7.0.0-beta.51"
-    "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.51"
-    "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.51"
+    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/plugin-transform-react-display-name" "7.0.0-rc.1"
+    "@babel/plugin-transform-react-jsx" "7.0.0-rc.1"
+    "@babel/plugin-transform-react-jsx-self" "7.0.0-rc.1"
+    "@babel/plugin-transform-react-jsx-source" "7.0.0-rc.1"
 
 "@babel/template@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -769,6 +769,14 @@
 "@babel/types@7.0.0-beta.55":
   version "7.0.0-beta.55"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.55.tgz#7755c9d2e58315a64f05d8cf3322379be16d9199"
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.17.10"
+    to-fast-properties "^2.0.0"
+
+"@babel/types@7.0.0-rc.1":
+  version "7.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-rc.1.tgz#6abf6d14ddd9fc022617e5b62e6b32f4fa6526ad"
   dependencies:
     esutils "^2.0.2"
     lodash "^4.17.10"
@@ -1906,15 +1914,15 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-cup@^1.0.0-rc.4:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-cup/-/eslint-config-cup-1.0.2.tgz#b155337b2a4788e403e367408b3d72cc2a4283e9"
-
-eslint-config-fusion@^2.0.1:
+eslint-config-cup@^2.0.0:
   version "2.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-2.0.1.tgz#5dad369a88705ca4c94590b9b0f1d3d4f6520e92"
+  resolved "https://registry.yarnpkg.com/eslint-config-cup/-/eslint-config-cup-2.0.1.tgz#20f5af07c66594a3bbcce718ccc30639e894ff81"
+
+eslint-config-fusion@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-fusion/-/eslint-config-fusion-4.0.0.tgz#31b40bc4a880983af5ad3a9821b613e2cae79e21"
   dependencies:
-    eslint-config-uber-universal-stage-3 "^1.0.0-rc.7"
+    eslint-config-uber-universal-stage-3 "^2.0.0"
 
 eslint-config-prettier@^2.0.0:
   version "2.9.0"
@@ -1922,24 +1930,24 @@ eslint-config-prettier@^2.0.0:
   dependencies:
     get-stdin "^5.0.1"
 
-eslint-config-uber-base-stage-3@^1.0.0-rc.7:
-  version "1.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-base-stage-3/-/eslint-config-uber-base-stage-3-1.0.0-rc.7.tgz#beacf56c4db943776fce256f86f9e316cfc616a2"
+eslint-config-uber-base-stage-3@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-uber-base-stage-3/-/eslint-config-uber-base-stage-3-2.1.0.tgz#97aa40c3b254f6bdc40411eb3c7fa366b1777efe"
   dependencies:
-    eslint-config-uber-base "^1.0.0-rc.7"
+    eslint-config-uber-base "^2.1.0"
 
-eslint-config-uber-base@^1.0.0-rc.7:
-  version "1.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-base/-/eslint-config-uber-base-1.0.0-rc.7.tgz#8f272dbe49e18d2097318ba87614bdf32641c262"
+eslint-config-uber-base@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-uber-base/-/eslint-config-uber-base-2.1.0.tgz#588d200eec45243728f2eeb66fab6fd296cf02cd"
   dependencies:
     eslint-config-prettier "^2.0.0"
 
-eslint-config-uber-universal-stage-3@^1.0.0-rc.7:
-  version "1.0.0-rc.7"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-universal-stage-3/-/eslint-config-uber-universal-stage-3-1.0.0-rc.7.tgz#bd4de38543d3c27cf48d82925bfccb5efb5b541f"
+eslint-config-uber-universal-stage-3@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-uber-universal-stage-3/-/eslint-config-uber-universal-stage-3-2.1.0.tgz#a4e799377473065899e2232069d46fdea1c45b87"
   dependencies:
-    eslint-config-cup "^1.0.0-rc.4"
-    eslint-config-uber-base-stage-3 "^1.0.0-rc.7"
+    eslint-config-cup "^2.0.0"
+    eslint-config-uber-base-stage-3 "^2.1.0"
 
 eslint-import-resolver-node@^0.3.1:
   version "0.3.2"
@@ -1967,9 +1975,9 @@ eslint-plugin-flowtype@2.50.0:
   dependencies:
     lodash "^4.17.10"
 
-eslint-plugin-import@^2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.13.0.tgz#df24f241175e312d91662dc91ca84064caec14ed"
+eslint-plugin-import@^2.14.0:
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.14.0.tgz#6b17626d2e3e6ad52cfce8807a845d15e22111a8"
   dependencies:
     contains-path "^0.1.0"
     debug "^2.6.8"
@@ -1981,6 +1989,10 @@ eslint-plugin-import@^2.13.0:
     minimatch "^3.0.3"
     read-pkg-up "^2.0.0"
     resolve "^1.6.0"
+
+eslint-plugin-jest@^21.21.0:
+  version "21.21.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-21.21.0.tgz#f0afd138c4acb5f0cd7698318fb49c7d49f3bf45"
 
 eslint-plugin-prettier@2.6.2:
   version "2.6.2"
@@ -2377,7 +2389,7 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@1.4.1, fusion-core@^1.2.2:
+fusion-core@1.4.1, fusion-core@^1.3.0:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.4.1.tgz#22daeddeefa3125b056cdcccd9c6dd486d7f032e"
   dependencies:
@@ -2388,29 +2400,32 @@ fusion-core@1.4.1, fusion-core@^1.2.2:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-react-async@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.2.2.tgz#ba2e9cbc014bf0a7dcce9dba99b08fe5d6cccd58"
+fusion-react-async@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/fusion-react-async/-/fusion-react-async-1.2.4.tgz#7b6daa74b8b35be4a12c9b4bf28e1f9b3d4706cf"
   dependencies:
-    fusion-core "^1.2.2"
-    prop-types "^15.5.8"
-    react-is "^16.3.1"
+    fusion-core "^1.3.0"
+    prop-types "^15.6.1"
+    react-is "^16.3.2"
 
-fusion-react@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.0.5.tgz#478e5db3d49379d10ec9a072822a0e7b6092e036"
+fusion-react@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.1.0.tgz#05a52ca23ee85a0c812979b9dd897000ec3f3555"
+  dependencies:
+    prop-types "^15.6.2"
+    react-is "^16.4.1"
 
-fusion-test-utils@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.0.tgz#b4fc730508e666213b79abae1cf13d9057867e51"
+fusion-test-utils@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.2.tgz#f1c72156012d4e0731875cd9b52d4ad426994a9b"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
     node-mocks-http "^1.6.6"
 
-fusion-tokens@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.3.tgz#e247a076ef145337287e103ecbc42486594e96c5"
+fusion-tokens@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/fusion-tokens/-/fusion-tokens-1.0.4.tgz#26068aed8ab66a2719e97f24e4c0c3a7f372defc"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -4022,9 +4037,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.0.tgz#847c235522035fd988100f1f43cf20a7d24f9372"
+prettier@1.14.2:
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.2.tgz#0ac1c6e1a90baa22a62925f41963c841983282f9"
 
 private@^0.1.6:
   version "0.1.8"
@@ -4048,7 +4063,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -4127,9 +4142,9 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@^16.4.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.4.1.tgz#7f8b0223b3a5fbe205116c56deb85de32685dad6"
+react-dom@^16.4.2:
+  version "16.4.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.4.2.tgz#4afed569689f2c561d2b8da0b819669c38a0bda4"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
@@ -4145,13 +4160,13 @@ react-helmet-async@^0.1.0:
     prop-types "^15.6.1"
     shallowequal "^1.0.2"
 
-react-is@^16.3.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.1.tgz#d624c4650d2c65dbd52c72622bbf389435d9776e"
+react-is@^16.3.2, react-is@^16.4.1:
+  version "16.4.2"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
 
-react@^16.4.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.4.1.tgz#de51ba5764b5dbcd1f9079037b862bd26b82fe32"
+react@^16.4.2:
+  version "16.4.2"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.4.2.tgz#2cd90154e3a9d9dd8da2991149fdca3c260e129f"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
@@ -4234,9 +4249,9 @@ regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
 
-regenerator-runtime@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.12.0.tgz#8052ac952d85b10f3425192cd0c53f45cf65c6cb"
+regenerator-runtime@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz#fa1a71544764c036f8c49b13a08b2594c9f8a0de"
 
 regenerator-transform@^0.11.0:
   version "0.11.1"
