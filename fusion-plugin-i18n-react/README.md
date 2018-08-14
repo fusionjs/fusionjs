@@ -87,7 +87,7 @@ The default loader expects translation files to live in `./translations/{locale}
 
 ```json
 {
-  "HomeHeader": "Benvindo!",
+  "HomeHeader": "Bem-vindo!",
   "Greeting": "Olá, ${name}"
 }
 ```
