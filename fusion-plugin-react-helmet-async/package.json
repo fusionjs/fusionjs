@@ -49,7 +49,6 @@
     "flow-bin": "0.78.0",
     "fusion-core": "1.4.1",
     "fusion-react": "^1.1.0",
-    "fusion-react-async": "^1.2.4",
     "fusion-test-utils": "^1.2.2",
     "fusion-tokens": "^1.0.4",
     "nyc": "12.0.2",
