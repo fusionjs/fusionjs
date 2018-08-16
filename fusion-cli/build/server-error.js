@@ -8,15 +8,7 @@
 
 /* eslint-env node */
 
-const React = require('react');
-const RedBox = require('redbox-react').RedBoxError;
-const ReactDOMServer = require('react-dom/server');
-
 function renderError(error /*: any */ = {}) {
-  const content = [
-    '<!DOCTYPE html><html><head><title>Server error</title></head><body>',
-  ];
-
   let displayError;
   if (error instanceof Error) {
     displayError = error;
@@ -27,13 +19,18 @@ function renderError(error /*: any */ = {}) {
     displayError.stack = error.stack;
     displayError.name = error.name;
   }
-  const errorComponent = ReactDOMServer.renderToString(
-    React.createElement(RedBox, {error: displayError})
-  );
-  content.push(errorComponent);
-
-  content.push('</body></html>');
-  return content.join('');
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Server error</title>
+        <style>html {background:red;color:white;line-height:2;}</style>
+      </head>
+      <body>
+        <pre>${displayError.stack.replace(/\[\d\dm/gm, '')}</pre>
+      </body>
+    </html>
+  `;
 }
 
 module.exports.renderError = renderError;

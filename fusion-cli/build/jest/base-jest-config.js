@@ -11,17 +11,26 @@
 const testFolder = process.env.TEST_FOLDER || '__tests__';
 
 function getReactVersion() {
+  // $FlowFixMe
+  const meta = require(process.cwd() + '/package.json');
+  const react =
+    (meta.dependencies && meta.dependencies.react) ||
+    (meta.devDependencies && meta.devDependencies.react) ||
+    (meta.peerDependencies && meta.peerDependencies.react);
+  return react
+    .split('.')
+    .shift()
+    .match(/\d+/);
+}
+function getReactSetup() {
   try {
-    // $FlowFixMe
-    const meta = require(process.cwd() + '/package.json');
-    return meta.dependencies.react
-      .split('.')
-      .shift()
-      .match(/\d+/);
+    return [require.resolve(`./jest-framework-setup-${getReactVersion()}.js`)];
   } catch (e) {
-    return '16';
+    return [];
   }
 }
+
+const reactSetup = getReactSetup();
 
 module.exports = {
   cache: false,
@@ -32,11 +41,9 @@ module.exports = {
     '^.+\\.js$': require.resolve('./jest-transformer.js'),
   },
   transformIgnorePatterns: ['/node_modules/(?!(fusion-cli.*build))'],
-  setupFiles: [
-    require.resolve('./jest-framework-shims.js'),
-    require.resolve(`./jest-framework-setup-${getReactVersion()}.js`),
-  ],
-  snapshotSerializers: [require.resolve('enzyme-to-json/serializer')],
+  setupFiles: [require.resolve('./jest-framework-shims.js'), ...reactSetup],
+  snapshotSerializers:
+    reactSetup.length > 0 ? [require.resolve('enzyme-to-json/serializer')] : [],
   testMatch: [`**/${testFolder}/**/*.js`],
   testURL: 'http://localhost:3000/',
   collectCoverageFrom: [
