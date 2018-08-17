@@ -29,7 +29,7 @@ export default function(font: string) {
   }
 }
 
-function loadFontPolyfill(font) {
+function loadFontPolyfill(font): Promise<void> {
   const testDivs = createTestDivs();
   // $FlowFixMe
   testDivs.forEach(div => (div.style.fontFamily = `${font}, ${div.testFont}`));
