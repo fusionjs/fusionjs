@@ -9,8 +9,10 @@
 /* eslint-env browser */
 /* global module */
 
-import 'core-js/es6';
-import 'core-js/es7';
+// Require is used to opt out of webpack tree-shaking of ununsed imports
+// See: https://github.com/webpack/webpack/issues/6571
+require('core-js/es6'); // eslint-disable-line
+require('core-js/es7'); // eslint-disable-line
 
 /*
 Webpack has a configuration option called `publicPath`, which determines the
