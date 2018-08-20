@@ -1,7 +1,6 @@
-// flow-typed signature: cca4916b0213065533df8335c3285a4a
-// flow-typed version: cab04034e7/redux_v3.x.x/flow_>=v0.55.x
-
-/* eslint-disable  */
+// @flow
+// flow-typed signature: df80bdd535bfed9cf3223e077f3b4543
+// flow-typed version: c4c8963c9c/redux_v4.x.x/flow_>=v0.55.x
 
 declare module 'redux' {
   /*
