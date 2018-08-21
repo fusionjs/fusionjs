@@ -23,10 +23,11 @@ export default createPlugin({
   deps: {
     router: RouterToken,
   },
-  provides: ({router}) => {
+  provides: ({router}): StoreEnhancer<*, *, *> => {
     const enhancer = createStore => {
       return function _createStore(reducer, initialState) {
         const store = createStore(reducer, initialState);
+        // $FlowFixMe - We enhance the store to add ctx onto it, which doesn't exist in the redux libdef
         const {history} = router.from(store.ctx);
         store.replaceReducer(connectRouter(history)(reducer));
         const oldDispatch = store.dispatch;
