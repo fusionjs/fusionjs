@@ -24,7 +24,7 @@ class WebpackState {
     }
   }
 
-  get() {
+  get() /*: Promise<any> */ {
     return new Promise(resolve => {
       if (typeof this.value !== 'undefined') {
         return resolve(this.value);

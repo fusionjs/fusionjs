@@ -24,7 +24,7 @@ function makeCommand(args) /*: Array<string> */ {
   return [args];
 }
 
-function run(args /*: any */, options /*: any */) {
+function run(args /*: any */, options /*: any */) /*: Promise<{}> */ {
   const opts = {
     stdio: 'inherit',
     ...options,

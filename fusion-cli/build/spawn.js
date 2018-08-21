@@ -10,7 +10,9 @@
 
 const cp = require('child_process');
 
-module.exports = function spawn(commandString /*: string */) {
+module.exports = function spawn(
+  commandString /*: string */
+) /*: Promise<void> */ {
   const [command, ...args] = commandString.split(' ');
   const child = cp.spawn(command, args, {stdio: 'inherit'});
   return new Promise((resolve, reject) => {
