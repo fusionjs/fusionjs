@@ -31,7 +31,7 @@ This package provides:
 ### Installation
 
 ```
-yarn add fusion-plugin-font-loading
+yarn add fusion-plugin-font-loader-react
 ```
 
 ---
