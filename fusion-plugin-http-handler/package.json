@@ -24,7 +24,7 @@
   "devDependencies": {
     "babel-eslint": "8.2.6",
     "create-universal-package": "3.4.6",
-    "eslint": "4.19.1",
+    "eslint": "5.4.0",
     "eslint-config-fusion": "^2.0.0",
     "eslint-config-uber-universal-stage-3": "1.0.0-rc.7",
     "eslint-plugin-cup": "1.0.2",
