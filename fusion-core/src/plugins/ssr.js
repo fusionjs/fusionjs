@@ -147,10 +147,14 @@ function getChunkScripts(ctx) {
     ? ' crossorigin="anonymous"'
     : '';
   const sync = getUrls(ctx, ctx.syncChunks).map(({url}) => {
-    return `<script defer${crossOrigin} src="${url}"></script>`;
+    return `<script nonce="${
+      ctx.nonce
+    }" defer${crossOrigin} src="${url}"></script>`;
   });
   const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
-    return `<script defer${crossOrigin} src="${url}" data-webpack-preload="${id}"></script>`;
+    return `<script nonce="${
+      ctx.nonce
+    }" defer${crossOrigin} src="${url}" data-webpack-preload="${id}"></script>`;
   });
   return [...preloaded, ...sync].join('');
 }
