@@ -33,7 +33,7 @@
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-jest": "^21.18.0",
     "eslint-plugin-prettier": "2.6.2",
-    "eslint-plugin-react": "7.10.0",
+    "eslint-plugin-react": "7.11.1",
     "flow-bin": "0.77.0",
     "fusion-core": "1.4.1",
     "graphql": "^0.13.2",
