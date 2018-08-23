@@ -1,0 +1,72 @@
+{
+  "name": "fusion-plugin-service-worker",
+  "description": "A Fusion.js plugin",
+  "version": "0.0.0",
+  "license": "MIT",
+  "repository": "fusionjs/fusion-plugin-service-worker",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "7.0.0-beta.49",
+    "@types/redux": "3.6.31",
+    "babel-eslint": "^8.2.3",
+    "create-universal-package": "3.4.4",
+    "enzyme": "3.3.0",
+    "enzyme-adapter-react-16": "1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-fusion": "^1.0.2",
+    "eslint-plugin-cup": "1.0.2",
+    "eslint-plugin-flowtype": "^2.47.1",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-react": "7.8.2",
+    "flow-bin": "^0.72.0",
+    "fusion-core": "^1.4.1",
+    "fusion-test-utils": "^1.1.0",
+    "fusion-tokens": "^1.0.3",
+    "nyc": "^11.8.0",
+    "prettier": "^1.12.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "5.0.7",
+    "redux": "^4.0.0",
+    "tape-cup": "4.7.1",
+    "unitest": "2.1.1"
+  },
+  "peerDependencies": {
+    "fusion-core": "^1.0.0",
+    "fusion-tokens": "^1.0.1",
+    "react": "14.x - 16.x",
+    "react-redux": ">=5.0.6",
+    "redux": ">=3.7.2"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test",
+    "view-cover": "npm run cover && open coverage/index.html",
+    "prepublish": "npm run transpile"
+  },
+  "engines": {
+    "node": ">= 8.11.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
