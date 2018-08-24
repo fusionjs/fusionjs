@@ -21,19 +21,19 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
 
 # Table of contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [API](#api)
-  * [App](#app)
-  * [Provider](#provider)
-  * [ProviderPlugin](#providerplugin)
-  * [ProvidedHOC](#providedhoc)
-  * [middleware](#middleware)
-  * [split](#split)
-  * [prepare](#prepare)
-  * [prepared](#prepared)
-  * [exclude](#exclude)
-* [Examples](#examples)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+  - [App](#app)
+  - [Provider](#provider)
+  - [ProviderPlugin](#providerplugin)
+  - [ProvidedHOC](#providedhoc)
+  - [middleware](#middleware)
+  - [split](#split)
+  - [prepare](#prepare)
+  - [prepared](#prepared)
+  - [exclude](#exclude)
+- [Examples](#examples)
 
 ---
 
@@ -49,8 +49,8 @@ yarn add fusion-react
 
 ```js
 // ./src/main.js
-import React from "react";
-import App from "fusion-react";
+import React from 'react';
+import App from 'fusion-react';
 
 const Hello = () => <div>Hello</div>;
 
@@ -66,7 +66,7 @@ export default function() {
 #### App
 
 ```js
-import App from "fusion-react";
+import App from 'fusion-react';
 ```
 
 A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusion-core#plugin).
@@ -74,29 +74,32 @@ A class that represents an application. An application is responsible for render
 **Constructor**
 
 ```js
-const app: App = new App(el: ReactElement, render: ?(el: ReactElement) => any);
+const app: App = new App(
+  (el: ReactElement),
+  (render: ?(el: ReactElement) => any)
+);
 ```
 
-* `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
-* `render: ?Plugin<Render>|Render` - Optional. Defines how rendering should occur. A Plugin should provide a value of type `Render`
-  * `type Render = (el:any) => any`
+- `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
+- `render: ?Plugin<Render>|Render` - Optional. Defines how rendering should occur. A Plugin should provide a value of type `Render`
+  - `type Render = (el:any) => any`
 
 **app.register**
 
 ```js
-app.register(plugin: Plugin);
-app.register(token: Token, plugin: Plugin);
-app.register(token: Token, value: any);
+app.register((plugin: Plugin));
+app.register((token: Token), (plugin: Plugin));
+app.register((token: Token), (value: any));
 ```
 
 Call this method to register a plugin or configuration value into a Fusion.js application.
 
 You can optionally pass a token as the first argument to associate the plugin/value to the token, so that they can be referenced by other plugins within Fusion.js' dependency injection system.
 
-* `plugin: Plugin` - a [Plugin](https://github.com/fusionjs/fusion-core#plugin) created via [`createPlugin`](https://github.com/fusionjs/fusion-core#createplugin)
-* `token: Token` - a [Token](https://github.com/fusionjs/fusion-core#token) created via [`createToken`](https://github.com/fusionjs/fusion-core#createtoken)
-* `value: any` - a configuration value
-* returns `undefined`
+- `plugin: Plugin` - a [Plugin](https://github.com/fusionjs/fusion-core#plugin) created via [`createPlugin`](https://github.com/fusionjs/fusion-core#createplugin)
+- `token: Token` - a [Token](https://github.com/fusionjs/fusion-core#token) created via [`createToken`](https://github.com/fusionjs/fusion-core#createtoken)
+- `value: any` - a configuration value
+- returns `undefined`
 
 **app.middleware**
 
@@ -105,16 +108,16 @@ app.middleware((deps: Object<string, Token>), (deps: Object) => Middleware);
 app.middleware((middleware: Middleware));
 ```
 
-* `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](https://github.com/fusionjs/fusion-core#token)
-* `middleware: Middleare` - a [middleware](https://github.com/fusionjs/fusion-core#middleware)
-* returns `undefined`
+- `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](https://github.com/fusionjs/fusion-core#token)
+- `middleware: Middleare` - a [middleware](https://github.com/fusionjs/fusion-core#middleware)
+- returns `undefined`
 
 This method is a shortcut for registering middleware plugins. Typically, you should write middlewares as plugins so you can organize different middlewares into different files.
 
 **app.enhance**
 
 ```js
-app.enhance(token: Token, value: any => Plugin | Value);
+app.enhance((token: Token), (value: any => Plugin | Value));
 ```
 
 This method is useful for composing / enhancing functionality of existing tokens in the DI system.
@@ -127,7 +130,7 @@ await app.cleanup();
 
 Calls all plugin cleanup methods. Useful for testing.
 
-* returns `Promise`
+- returns `Promise`
 
 ---
 
@@ -136,20 +139,20 @@ Calls all plugin cleanup methods. Useful for testing.
 **Provider.create**
 
 ```js
-import {Provider} from "fusion-react";
+import {Provider} from 'fusion-react';
 ```
 
 ```js
-const ProviderComponent:React.Component = Provider.create(name: string);
+const ProviderComponent: React.Component = Provider.create((name: string));
 ```
 
-* `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-* returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
 
 #### ProviderPlugin
 
 ```js
-import {ProviderPlugin} from "fusion-react";
+import {ProviderPlugin} from 'fusion-react';
 ```
 
 Creates a plugin that wraps the React tree with a context provider component.
@@ -157,18 +160,22 @@ Creates a plugin that wraps the React tree with a context provider component.
 **ProviderPlugin.create**
 
 ```js
-const plugin:Plugin = ProviderPlugin.create(name: string, plugin: Plugin, ProviderComponent: React.Component);
+const plugin: Plugin = ProviderPlugin.create(
+  (name: string),
+  (plugin: Plugin),
+  (ProviderComponent: React.Component)
+);
 ```
 
-* `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-* `plugin: Plugin` - Required. Creates a provider for this plugin.
-* `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
-* `Plugin: Plugin` - A plugin that registers its provider onto the React tree
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- `plugin: Plugin` - Required. Creates a provider for this plugin.
+- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
+- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
 
 #### ProvidedHOC
 
 ```js
-import {ProvidedHOC} from "fusion-react";
+import {ProvidedHOC} from 'fusion-react';
 ```
 
 Creates a HOC that exposes a value from React context to the component's props.
@@ -176,17 +183,20 @@ Creates a HOC that exposes a value from React context to the component's props.
 **ProvidedHOC.create**
 
 ```js
-const hoc:HOC = ProvidedHOC.create(name: string, mapProvidesToProps: Object => Object);
+const hoc: HOC = ProvidedHOC.create(
+  (name: string),
+  (mapProvidesToProps: Object => Object)
+);
 ```
 
-* `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
-* `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
-* returns `hoc: Component => Component`
+- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
+- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
+- returns `hoc: Component => Component`
 
 #### middleware
 
 ```js
-import {middleware} from "fusion-react";
+import {middleware} from 'fusion-react';
 ```
 
 A middleware that adds a `PrepareProvider` to the React tree.
@@ -196,27 +206,27 @@ Consider using [`fusion-react`](https://github.com/fusionjs/fusion-react) instea
 #### split
 
 ```js
-import {split} from "fusion-react";
+import {split} from 'fusion-react';
 
 const Component = split({load, LoadingComponent, ErrorComponent});
 ```
 
-* `load: () => Promise` - Required. Load a component asynchronously. Typically, this should make a dynamic `import()` call.
+- `load: () => Promise` - Required. Load a component asynchronously. Typically, this should make a dynamic `import()` call.
   The Fusion compiler takes care of bundling the appropriate code and de-duplicating dependencies. The argument to `import` should be a string literal (not a variable). See [webpack docs](https://webpack.js.org/api/module-methods/#import-) for more information.
-* `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
-* `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
-* `Component` - A placeholder component that can be used in your view which will show the asynchronous component
+- `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
+- `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
+- `Component` - A placeholder component that can be used in your view which will show the asynchronous component
 
 #### prepare
 
 ```js
-import {prepare} from "fusion-react";
+import {prepare} from 'fusion-react';
 
 const Component = prepare(element);
 ```
 
-* `Element: React.Element` - Required. A React element created via `React.createElement`
-* `Component: React.Component` - A React component
+- `Element: React.Element` - Required. A React element created via `React.createElement`
+- `Component: React.Component` - A React component
 
 Consider using [`fusion-react`](https://github.com/fusionjs/fusion-react) instead of setting up React manually and calling `prepare` directly, since that package does all of that for you.
 
@@ -227,33 +237,33 @@ It should be used (and `await`-ed) _before_ calling `renderToString` on the serv
 #### prepared
 
 ```js
-import {prepared} from "fusion-react";
+import {prepared} from 'fusion-react';
 
 const hoc = prepared(sideEffect, opts);
 ```
 
-* `sideEffect: (props: Object, context: Object) => Promise` - Required. When `prepare` is called, `sideEffect` is called (and awaited) before continuing the rendering traversal.
-* `opts: {defer, boundary, componentDidMount, componentWillReceiveProps, componentDidUpdate, forceUpdate, contextTypes}` - Optional
-  * `defer: boolean` - Optional. Defaults to `false`. If the component is deferred, skip the prepare step.
-  * `boundary: boolean` - Optional. Defaults to `false`. Stop traversing if the component is defer or boundary.
-  * `componentDidMount: boolean` - Optional. Defaults to `true`. On the browser, `sideEffect` is called when the component is mounted.
-  * [TO BE DEPRECATED] `componentWillReceiveProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again whenever the component receive props.
-  * `componentDidUpdate: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again right after updating occurs.
-  * `forceUpdate: boolean` - Optional. Defaults to `false`.
-  * `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
-* `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
-  * `Component: React.Component` - Required.
+- `sideEffect: (props: Object, context: Object) => Promise` - Required. When `prepare` is called, `sideEffect` is called (and awaited) before continuing the rendering traversal.
+- `opts: {defer, boundary, componentDidMount, componentWillReceiveProps, componentDidUpdate, forceUpdate, contextTypes}` - Optional
+  - `defer: boolean` - Optional. Defaults to `false`. If the component is deferred, skip the prepare step.
+  - `boundary: boolean` - Optional. Defaults to `false`. Stop traversing if the component is defer or boundary.
+  - `componentDidMount: boolean` - Optional. Defaults to `true`. On the browser, `sideEffect` is called when the component is mounted.
+  - [TO BE DEPRECATED] `componentWillReceiveProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again whenever the component receive props.
+  - `componentDidUpdate: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again right after updating occurs.
+  - `forceUpdate: boolean` - Optional. Defaults to `false`.
+  - `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
+- `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
+  - `Component: React.Component` - Required.
 
 #### exclude
 
 ```js
-import {exclude} from "fusion-react";
+import {exclude} from 'fusion-react';
 
 const NewComponent = exclude(Component);
 ```
 
-* `Component: React.Component` - Required. A component that should not be traversed via `prepare`.
-* `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
+- `Component: React.Component` - Required. A component that should not be traversed via `prepare`.
+- `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
 
 Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
 
@@ -267,12 +277,12 @@ Sometimes it is desirable to avoid server-side rendering. To do that, override t
 
 ```js
 // src/main.js
-import App from "fusion-react";
-import ReactDOM from "react-dom";
+import App from 'fusion-react';
+import ReactDOM from 'react-dom';
 
 const render = __NODE__
   ? () => '<div id="root"></div>'
-  : el => ReactDOM.render(el, document.getElementById("root"));
+  : el => ReactDOM.render(el, document.getElementById('root'));
 const app = new App(root, render);
 ```
 
@@ -280,24 +290,24 @@ const app = new App(root, render);
 
 ```js
 // in src/plugins/my-plugin.js
-import {createPlugin} from "fusion-core";
+import {createPlugin} from 'fusion-core';
 
 const plugin = createPlugin({
   provides() {
     return console;
-  }
+  },
 });
 
-export const Plugin = ProviderPlugin.create("console", plugin);
-export const HOC = ProvidedHOC.create("console");
+export const Plugin = ProviderPlugin.create('console', plugin);
+export const HOC = ProvidedHOC.create('console');
 
 // in src/main.js
-import {Plugin} from "./plugins/my-plugin.js";
+import {Plugin} from './plugins/my-plugin.js';
 app.register(Plugin);
 
 // in components/some-component.js
 const component = ({console}) => {
-  return <button onClick={() => console.log("hello")}>Click me</button>;
+  return <button onClick={() => console.log('hello')}>Click me</button>;
 };
 export default HOC(component);
 ```
