@@ -24,8 +24,8 @@ function renderCompositeElementInstance(instance) {
     instance.getChildContext ? instance.getChildContext() : {}
   );
 
-  if (instance.getDerivedStateFromProps) {
-    instance.state = instance.getDerivedStateFromProps(
+  if (instance.constructor && instance.constructor.getDerivedStateFromProps) {
+    instance.state = instance.constructor.getDerivedStateFromProps(
       instance.props,
       instance.state
     );

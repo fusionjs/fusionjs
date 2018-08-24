@@ -19,7 +19,6 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
       componentDidMount: true,
       componentWillReceiveProps: false,
       componentDidUpdate: false,
-      getDerivedStateFromProps: false,
       contextTypes: {},
       forceUpdate: false,
     },
@@ -57,12 +56,6 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
 
     componentDidUpdate() {
       if (opts.componentDidUpdate) {
-        sideEffect(this.props, this.context);
-      }
-    }
-
-    getDerivedStateFromProps() {
-      if (opts.getDerivedStateFromProps) {
         sideEffect(this.props, this.context);
       }
     }

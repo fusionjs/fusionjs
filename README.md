@@ -249,7 +249,6 @@ const hoc = prepared(sideEffect, opts);
   - `componentDidMount: boolean` - Optional. Defaults to `true`. On the browser, `sideEffect` is called when the component is mounted.
   - [TO BE DEPRECATED] `componentWillReceiveProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again whenever the component receive props.
   - `componentDidUpdate: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again right after updating occurs.
-  - `getDerivedStateFromProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called when getDerivedStateFromProps is triggered.
   - `forceUpdate: boolean` - Optional. Defaults to `false`.
   - `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
 - `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.

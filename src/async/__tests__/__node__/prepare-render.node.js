@@ -739,7 +739,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
       };
     }
 
-    getDerivedStateFromProps(props, {firstRender}) {
+    static getDerivedStateFromProps(props, {firstRender}) {
       numDerivedStateFromProps++;
       return {
         firstRender: false,
@@ -776,14 +776,13 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
     {
       componentDidMount: false,
       componentDidUpdate: false,
-      getDerivedStateFromProps: true,
     }
   )(SimpleComponent);
   const app = <AsyncParent data="test" />;
   const p = prepare(app);
   t.ok(p instanceof Promise, 'prepare returns a promise');
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs the prepare function twice');
+    t.equal(numPrepares, 1, 'runs the prepare function once');
     t.equal(numConstructors, 1, 'constructs SimpleComponent once');
     t.equal(numRenders, 1, 'renders SimpleComponent once');
     t.equal(numChildRenders, 1, 'renders SimplePresentational once');
