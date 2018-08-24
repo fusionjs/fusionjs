@@ -718,3 +718,83 @@ tape('Preparing React.createContext() using the default provider value', t => {
     t.end();
   });
 });
+
+tape('Preparing a component using getDerivedStateFromProps', t => {
+  let numConstructors = 0;
+  let numRenders = 0;
+  let numChildRenders = 0;
+  let numPrepares = 0;
+  let numDerivedStateFromProps = 0;
+  class SimpleComponent extends Component<any, any> {
+    constructor(props, context) {
+      super(props, context);
+      t.equal(
+        context.__IS_PREPARE__,
+        true,
+        'sets __IS_PREPARE__ to true in context'
+      );
+      numConstructors++;
+      this.state = {
+        firstRender: true,
+      };
+    }
+
+    static getDerivedStateFromProps(props, {firstRender}) {
+      numDerivedStateFromProps++;
+      return {
+        firstRender: false,
+        someNewKey: [1, 2, 3],
+      };
+    }
+
+    render() {
+      numRenders++;
+      return (
+        <div>
+          {this.state.someNewKey.map((item, key) => (
+            <div key={key} />
+          ))}
+          <SimplePresentational />
+        </div>
+      );
+    }
+  }
+  function SimplePresentational() {
+    numChildRenders++;
+    return <div>Hello World</div>;
+  }
+  const AsyncParent = prepared(
+    props => {
+      numPrepares++;
+      t.equal(
+        props.data,
+        'test',
+        'passes props through to prepared component correctly'
+      );
+      return Promise.resolve();
+    },
+    {
+      componentDidMount: false,
+      componentDidUpdate: false,
+    }
+  )(SimpleComponent);
+  const app = <AsyncParent data="test" />;
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    t.equal(numPrepares, 1, 'runs the prepare function once');
+    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
+    t.equal(numRenders, 1, 'renders SimpleComponent once');
+    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
+    const wrapper = shallow(app);
+    // triggers getDerivedStateFromProps
+    // Enzyme does not yet support calling getDerivedStateFromProps after setProps
+    wrapper.setProps({test: true});
+    t.equal(
+      numDerivedStateFromProps,
+      1,
+      'runs prepare on getDerivedStateFromProps'
+    );
+    t.end();
+  });
+});

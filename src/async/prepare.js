@@ -23,6 +23,14 @@ function renderCompositeElementInstance(instance) {
     instance.context,
     instance.getChildContext ? instance.getChildContext() : {}
   );
+
+  if (instance.constructor && instance.constructor.getDerivedStateFromProps) {
+    instance.state = instance.constructor.getDerivedStateFromProps(
+      instance.props,
+      instance.state
+    );
+  }
+
   if (instance.componentWillMount) {
     instance.componentWillMount();
   } else if (instance.UNSAFE_componentWillMount) {
