@@ -384,19 +384,25 @@ function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
       map(mapper) {
         t.equal(typeof mapper, 'function');
       },
-      emit(type, {title, page, status, timing}) {
+      emit(type, {title, page}) {
+        if (__NODE__) {
+          throw new Error('fail');
+        }
         t.equal(type, expected.shift(), 'emits with the correct type');
         t.equal(title, expectedTitle, 'correct title');
         t.equal(page, expectedPage, 'correct page');
-        if (__NODE__) {
-          t.equal(status, 200, 'emits status code');
-          t.equal(typeof timing, 'number', 'emits with the correct value');
-        }
       },
-      from() {
+      from(ctx) {
+        t.ok(ctx, 'emits from scoped emitter');
         return {
           map() {},
-          emit() {},
+          emit(type, {title, page, status, timing}) {
+            t.equal(type, expected.shift(), 'emits with the correct type');
+            t.equal(title, expectedTitle, 'correct title');
+            t.equal(page, expectedPage, 'correct page');
+            t.equal(status, 200, 'emits status code');
+            t.equal(typeof timing, 'number', 'emits with the correct value');
+          },
         };
       },
     }),

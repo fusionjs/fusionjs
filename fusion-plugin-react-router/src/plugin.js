@@ -89,15 +89,16 @@ export default createPlugin({
           );
 
           if (emitter) {
+            const scopedEmitter = emitter.from(ctx);
             const emitTiming = type => timing => {
-              emitter.emit(type, {
+              scopedEmitter.emit(type, {
                 title: pageData.title,
                 page: pageData.page,
                 status: ctx.status,
                 timing,
               });
             };
-            emitter.from(ctx).map(payload => {
+            scopedEmitter.map(payload => {
               if (payload && typeof payload === 'object') {
                 payload.__url__ = pageData.title;
               }
