@@ -14,7 +14,6 @@ const baseJestConfig = require('./base-jest-config.js');
 const projects = process.env.JEST_ENV.split(',');
 
 let config = {
-  cache: false,
   coverageDirectory: `${process.cwd()}/coverage`,
   // collectCoverageFrom doesn't work from project config,
   // must be set at top-level
@@ -25,7 +24,12 @@ let config = {
 // Use projects if we have more than one environment.
 if (projects.length > 1) {
   // $FlowFixMe
-  config.projects = projects.map(project => `<rootDir>/${project}`);
+  config.projects = projects.map(project => {
+    return {
+      // $FlowFixMe
+      ...require(`./${project === 'jsdom' ? 'jsdom' : 'node'}/jest.config.js`),
+    };
+  });
 } else {
   config = {
     // $FlowFixMe

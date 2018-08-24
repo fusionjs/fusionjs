@@ -33,7 +33,6 @@ function getReactSetup() {
 const reactSetup = getReactSetup();
 
 module.exports = {
-  cache: false,
   coverageDirectory: `${process.cwd()}/coverage`,
   coverageReporters: ['json'],
   rootDir: process.cwd(),
