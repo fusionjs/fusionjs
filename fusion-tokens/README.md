@@ -16,6 +16,7 @@ This package provides utilities to create named tokens, as well as common tokens
   * [FetchToken](#fetchtoken)
   * [LoggerToken](#loggertoken)
   * [SessionToken](#sessiontoken)
+  * [CacheToken](#cachetoken)
 
 ---
 
@@ -89,3 +90,23 @@ type Session = {
 ```
 
 Typically, the service provided by [`fusion-plugin-jwt`](https://github.com/fusionjs/fusion-plugin-jwt) or a custom wrapper around similar key-value store APIs (such as [Redis](https://redis.io/)).
+
+#### `CacheToken`
+
+```js
+import {CacheToken} from 'fusion-tokens';
+```
+
+A token for a caching implementation.
+
+##### Types
+
+```flow
+type Cache = {
+  get(key: string): Promise<mixed>,
+  set(key: string, val: any): Promise<mixed>,
+  del(key: string): Promise<mixed>,
+}
+```
+
+Standard API for caching.
