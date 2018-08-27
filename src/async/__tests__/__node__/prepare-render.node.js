@@ -798,3 +798,41 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
     t.end();
   });
 });
+
+tape('getDerivedStateFromProps null state', t => {
+  class SimpleComponent extends Component<any, any> {
+    constructor(props, context) {
+      super(props, context);
+      this.state = {
+        someKey: true,
+      };
+    }
+
+    static getDerivedStateFromProps(props) {
+      return null;
+    }
+
+    render() {
+      return <div>Hello World</div>;
+    }
+  }
+  const AsyncParent = prepared(props => Promise.resolve(), {
+    componentDidMount: false,
+    componentDidUpdate: false,
+  })(SimpleComponent);
+  const app = <AsyncParent data="test" />;
+  const p = prepare(app);
+  p.then(() => {
+    const wrapper = shallow(app);
+    wrapper.setProps({test: true});
+    t.equal(
+      wrapper
+        .find(SimpleComponent)
+        .dive()
+        .state('someKey'),
+      true,
+      'maintains state if getDerivedStateFromProps returns null'
+    );
+    t.end();
+  });
+});
