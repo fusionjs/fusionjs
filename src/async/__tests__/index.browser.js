@@ -9,7 +9,7 @@
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
 import React, {Component} from 'react';
-import Enzyme from 'enzyme';
+import Enzyme, {shallow} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import {prepare} from '../../index.js';
 
@@ -49,6 +49,35 @@ tape('Preparing in the browser with componentWillUnmount', t => {
     t.equal(numRenders, 1, 'renders SimpleComponent once');
     t.equal(numChildRenders, 1, 'renders SimplePresentational once');
     t.equal(numUnmount, 1, 'calls componentWillUnmount in browser');
+    t.end();
+  });
+});
+
+tape('Preparing in the browser with getDerivedStateFromProps null state', t => {
+  class SimpleComponent extends Component<any, any> {
+    constructor(props, context) {
+      super(props, context);
+      this.state = {
+        someKey: true,
+      };
+    }
+    static getDerivedStateFromProps() {
+      return null;
+    }
+    render() {
+      return <div>Hello World</div>;
+    }
+  }
+  const app = <SimpleComponent />;
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    const wrapper = shallow(app);
+    t.equal(
+      wrapper.state('someKey'),
+      true,
+      'maintains state if getDerivedStateFromProps returns null'
+    );
     t.end();
   });
 });
