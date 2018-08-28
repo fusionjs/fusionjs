@@ -6,7 +6,6 @@
  * @flow
  */
 
-import path from 'path';
 import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML} from '../sanitization';
 import type {Context, SSRDecider as SSRDeciderService} from '../types.js';
@@ -86,8 +85,6 @@ export default function createSSRPlugin({
       chunkScripts,
     ].join('');
 
-    const chunkPreloaderScript = getChunkPreloaderScript(ctx);
-
     ctx.body = [
       '<!doctype html>',
       `<html${safeAttrs}>`,
@@ -96,34 +93,20 @@ export default function createSSRPlugin({
       `<title>${safeTitle}</title>`,
       `${bundleSplittingBootstrap}${safeHead}`,
       `</head>`,
-      `<body${safeBodyAttrs}>${
-        ctx.rendered
-      }${safeBody}${chunkPreloaderScript}</body>`,
+      `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
       '</html>',
     ].join('');
   };
 }
 
 function getCoreGlobals(ctx) {
-  const {chunkUrlMap, webpackPublicPath, nonce} = ctx;
-
-  const chunkManifest = {};
-  Array.from(chunkUrlMap.entries()).forEach(([id, variant]) => {
-    if (variant) {
-      const filepath = /*variant.get(ctx.esVersion) || */ variant.get('es5');
-      chunkManifest[id] = path.basename(filepath);
-    }
-  }, {});
-  const serializedManifest = JSON.stringify(chunkManifest);
-  const hasManifest = Object.keys(chunkManifest).length > 0;
-  const manifest = hasManifest ? `__MANIFEST__ = ${serializedManifest};` : ''; // consumed by webpack
+  const {webpackPublicPath, nonce} = ctx;
 
   return [
     `<script nonce="${nonce}">`,
     `window.performance && window.performance.mark && window.performance.mark('firstRenderStart');`,
     `__ROUTE_PREFIX__ = ${JSON.stringify(ctx.prefix)};`, // consumed by ./client
     `__WEBPACK_PUBLIC_PATH__ = ${JSON.stringify(webpackPublicPath)};`, // consumed by fusion-clientries/client-entry
-    manifest,
     `</script>`,
   ].join('');
 }
@@ -154,7 +137,7 @@ function getChunkScripts(ctx) {
   const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
     return `<script nonce="${
       ctx.nonce
-    }" defer${crossOrigin} src="${url}" data-webpack-preload="${id}"></script>`;
+    }" defer${crossOrigin} src="${url}"></script>`;
   });
   return [...preloaded, ...sync].join('');
 }
@@ -165,33 +148,4 @@ function getPreloadHintLinks(ctx) {
     return `<link rel="preload" href="${url}" as="script" />`;
   });
   return hints.join('');
-}
-
-function getChunkPreloaderScript({nonce = '', preloadChunks}) {
-  // NOTE: the event listeners below are not needed if inline onerror event handlers are allowed by CSP.
-  // However, this is disallowed currently.
-  return trim(`
-  <script nonce="${nonce}">
-  (function(){
-    __PRELOADED_CHUNKS__ = ${JSON.stringify(preloadChunks)};
-    function onError(e) {
-      var el = e.target;
-      if (el.nodeName !== "SCRIPT") return;
-      var val = el.getAttribute("data-webpack-preload");
-      if (val === null) return;
-      var id = parseInt(val, 10);
-      if (__HANDLE_ERROR) return __HANDLE_ERROR(id);
-      if (!__UNHANDLED_ERRORS__) __UNHANDLED_ERRORS__ = [];
-      __UNHANDLED_ERRORS__.push(id);
-    }
-    addEventListener("error", onError, true);
-    addEventListener("load", function() {
-        removeEventListener("error", onError);
-    });
-  })();
-  </script>`);
-}
-
-function trim(str) {
-  return str.replace(/^\s+/gm, '');
 }
