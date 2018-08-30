@@ -14,6 +14,7 @@ module.exports = {
   ...baseJestConfig,
   displayName: 'node',
   browser: false,
+  name: 'node',
   testEnvironment: 'node',
   testPathIgnorePatterns: ['.*\\.browser\\.js'],
 };
