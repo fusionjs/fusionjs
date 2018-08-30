@@ -9,10 +9,8 @@
 /* eslint-env node */
 
 import {createPlugin} from 'fusion-core';
-import {HttpHandlerToken} from './tokens.js';
-
 import type {FusionPlugin} from 'fusion-core';
-
+import {HttpHandlerToken} from './tokens.js';
 import type {DepsType, ServiceType} from './types.js';
 
 const plugin =
@@ -29,23 +27,38 @@ const plugin =
           return next();
         }
         return new Promise((resolve, reject) => {
-          const oldEnd = ctx.res.end.bind(ctx.res);
-          // $FlowFixMe
-          ctx.res.end = (data, encoding, cb) => {
+          const {req, res} = ctx;
+          // Default http response object behavior defaults res.statusCode to 200. Koa sets it to 404.
+          // This allows for http servers to use `end()` or express to use `send()` without specifying a 200 status code
+          const prevStatusCode = ctx.res.statusCode;
+          ctx.res.statusCode = 200;
+          const listener = () => {
             ctx.respond = false;
-            return next()
-              .then(resolve)
-              .then(() => {
-                oldEnd(data, encoding, cb);
-              });
+            return done();
           };
-          handler(ctx.req, ctx.res, () => {
+          res.on('end', listener);
+          res.on('finish', listener);
+
+          handler(req, res, () => {
+            ctx.res.statusCode = prevStatusCode;
+            return done();
+          });
+
+          function done() {
+            // Express mutates the req object to make this property non-writable.
+            // We need to make it writable because other plugins (like koa-helmet) will set it
             // $FlowFixMe
-            ctx.res.end = oldEnd;
+            Object.defineProperty(req, 'secure', {
+              // $FlowFixMe
+              value: req.secure,
+              writable: true,
+            });
+            res.removeListener('end', listener);
+            res.removeListener('finish', listener);
             return next()
               .then(resolve)
               .catch(reject);
-          });
+          }
         });
       };
     },
