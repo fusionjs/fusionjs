@@ -87,7 +87,7 @@
     "eslint-plugin-prettier": "2.6.2",
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "0.79.1",
-    "fusion-core": "^1.5.0",
+    "fusion-core": "1.5.1-1",
     "fusion-plugin-i18n-react": "^1.0.4",
     "fusion-plugin-react-router": "^1.2.0",
     "fusion-react": "^1.2.1",

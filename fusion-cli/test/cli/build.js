@@ -205,15 +205,15 @@ test('`fusion build` app with dynamic imports integration', async t => {
   );
   t.equal(
     await page.$$eval('script', els => els.length),
-    6,
-    'should be 6 scripts'
+    5,
+    'should be 5 scripts'
   );
   await page.click('#split-route-link');
 
   t.equal(
     await page.$$eval('script', els => els.length),
-    7,
-    'should be 7 scripts after dynamic loading'
+    6,
+    'should be 6 scripts after dynamic loading'
   );
 
   t.ok(
