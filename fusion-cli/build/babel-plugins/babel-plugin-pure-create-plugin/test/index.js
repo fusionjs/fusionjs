@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const test = require('tape');
-const {transformFileSync} = require('babel-core');
+const {transformFileSync} = require('@babel/core');
 
 const plugin = require('../');
 

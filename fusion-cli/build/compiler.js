@@ -25,60 +25,44 @@ const {
 } = require('../lib/compression');
 const resolveFrom = require('resolve-from');
 
-const AssetsManifestPlugin = require('./file-loader-asset-manifest-plugin');
-const ClientSourceMapPlugin = require('./client-source-map-plugin');
-const ChunkModuleManifestPlugin = require('./chunk-module-manifest-plugin');
-const chunkModuleManifest = require('./chunk-module-manifest');
-const InstrumentedImportDependencyTemplatePlugin = require('./instrumented-import-dependency-template-plugin');
-const I18nDiscoveryPlugin = require('./i18n-discovery-plugin.js');
-const ClientChunkBundleUrlMapPlugin = require('./client-chunk-bundle-url-map-plugin');
-const SyncChunkIdsPlugin = require('./sync-chunk-ids-plugin');
-const browserSupport = require('./browser-support');
-const ServiceWorkerTimestampPlugin = require('./service-worker-timestamp-plugin.js');
+const getBabelConfig = require('./get-babel-config.js');
+const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
+const {
+  chunkIdsLoader,
+  fileLoader,
+  babelLoader,
+  i18nManifestLoader,
+  chunkUrlMapLoader,
+  syncChunkIdsLoader,
+  syncChunkPathsLoader,
+} = require('./loaders/index.js');
+const {DeferredState} = require('./shared-state-containers.js');
+const {
+  translationsManifestContextKey,
+  clientChunkMetadataContextKey,
+} = require('./loaders/loader-context.js');
+const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
+const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
+const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
 const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const globby = require('globby');
 const loadFusionRC = require('./load-fusionrc.js');
 const rimraf = require('rimraf');
 const {getEnv} = require('fusion-core');
 
 const {assetPath} = getEnv();
 
-function getConfig({target, env, dir, watch, cover}) {
+function getConfig({target, env, dir, watch, state}) {
   const main = 'src/main.js';
 
-  if (target !== 'node' && target !== 'web' && target !== 'webworker') {
-    throw new Error('Invalid target: must be `node`, `web`, or `webworker`');
+  if (target !== 'node' && target !== 'web') {
+    throw new Error('Invalid target: must be `node` or `web`');
   }
-  if (env !== 'production' && env !== 'development' && env !== 'test') {
-    throw new Error('Invalid name: must be `production`, `dev`, or `test`');
+  if (env !== 'production' && env !== 'development') {
+    throw new Error('Invalid name: must be `production` or `dev`');
   }
   if (!fs.existsSync(path.resolve(dir, main))) {
     throw new Error(`Project directory must contain a ${main} file`);
-  }
-
-  const serverOnlyTestGlob = `${dir}/src/**/__tests__/*.node.js`;
-  const browserOnlyTestGlob = `${dir}/src/**/__tests__/*.browser.js`;
-  const universalTestGlob = `${dir}/src/**/__tests__/*.js`;
-
-  const serverTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},include[]=${dir}/${main},exclude[]=${browserOnlyTestGlob}!`;
-  const browserTestEntry = `__SECRET_MULTI_ENTRY_LOADER__?include[]=${universalTestGlob},include[]=${dir}/${main},exclude[]=${serverOnlyTestGlob}!`;
-
-  if (
-    env === 'test' &&
-    !globby.sync([universalTestGlob, `!${browserOnlyTestGlob}`]).length
-  ) {
-    throw new Error(
-      `Testing requires server tests in __tests__ with *.js or *.node.js extension`
-    );
-  }
-  if (
-    env === 'test' &&
-    !globby.sync([universalTestGlob, `!${serverOnlyTestGlob}`]).length
-  ) {
-    throw new Error(
-      `Testing requires browser tests in __tests__ with *.js or *.browser.js extension`
-    );
   }
 
   const fusionConfig = loadFusionRC(dir);
@@ -88,36 +72,25 @@ function getConfig({target, env, dir, watch, cover}) {
   const configData = fs.existsSync(configPath) ? require(configPath) : {};
   const {pragma, clientHotLoaderEntry, node, alias} = configData;
 
-  const name = {node: 'server', web: 'client', webworker: 'sw'}[target];
+  const name = {node: 'server', web: 'client'}[target];
   const appBase = path.resolve(dir);
   const appSrcDir = path.resolve(dir, 'src');
   const side = target === 'node' ? 'server' : 'client';
   const destination = path.resolve(dir, `.fusion/dist/${env}/${side}`);
-  const evergreen = false;
-  const possibleESVersions = ['es5'];
-  const serverEntry =
-    env === 'test'
-      ? serverTestEntry
-      : path.join(__dirname, `../entries/server-entry.js`);
-  const clientEntry =
-    env === 'test'
-      ? browserTestEntry
-      : path.join(__dirname, `../entries/client-entry.js`);
+  const serverEntry = path.join(__dirname, `../entries/server-entry.js`);
+  const clientEntry = path.join(__dirname, `../entries/client-entry.js`);
   const entry = {
     node: serverEntry,
     web: clientEntry,
-    webworker: path.join(dir, 'src/sw.js'),
   }[target];
 
   const whitelist = ['fusion-cli/entries'];
 
-  if (target === 'webworker' && !fs.existsSync(entry)) return null;
-
   // NODE_ENV should be built as 'production' for everything except 'development'
-  // 'test' and 'production' entries should both map to NODE_ENV='production'
+  // and 'production' entries should both map to NODE_ENV='production'
   const nodeEnv = env === 'development' ? 'development' : 'production';
 
-  // Allow overrides with a warning for `dev` and `test` commands. In production builds, throw if NODE_ENV is not `production`.
+  // Allow overrides with a warning for `dev` command. In production builds, throw if NODE_ENV is not `production`.
   const nodeEnvBanner =
     `if(process.env.NODE_ENV && process.env.NODE_ENV !== '${nodeEnv}') {` +
     `if ('${env}' === 'production') {` +
@@ -129,17 +102,6 @@ function getConfig({target, env, dir, watch, cover}) {
     `} else {` +
     `process.env.NODE_ENV = '${nodeEnv}';` +
     `}`;
-
-  const targets =
-    target === 'node'
-      ? {
-          node: 'current',
-        }
-      : {
-          browsers: evergreen
-            ? browserSupport.evergreen
-            : browserSupport.conservative,
-        };
 
   return {
     name,
@@ -197,12 +159,9 @@ function getConfig({target, env, dir, watch, cover}) {
       chunkFilename:
         env === 'production' && target === 'web'
           ? '[id]-[chunkhash].js'
-          : evergreen
-            ? 'evergreen-[id].js'
-            : '[id].js',
+          : '[id].js',
       // We will set __webpack_public_path__ at runtime, so this should be set to undefined
       publicPath: void 0,
-      // TODO(#7): Do we really need this? See lite config
       crossOriginLoading: 'anonymous',
       devtoolModuleFilenameTemplate: info => {
         // always return absolute paths in order to get sensible source map explorer visualization
@@ -242,28 +201,21 @@ function getConfig({target, env, dir, watch, cover}) {
           ],
           use: [
             {
-              loader: require.resolve('babel-loader'),
+              loader: babelLoader.path,
               options: {
-                cacheDirectory: `${dir}/node_modules/.fusion_babel_cache`,
-                plugins: [
-                  // Note: plugins run first to last, so user-defined plugins go first
-                  ...(fusionConfig.babel && fusionConfig.babel.plugins
-                    ? fusionConfig.babel.plugins
-                    : []),
-                ],
-                presets: [
-                  // Note: presets run last to first, so user-defined presets go last
-                  [
-                    require.resolve('./babel-transpilation-preset.js'),
-                    {
-                      targets,
-                    },
-                  ],
-                  ...(fusionConfig.babel && fusionConfig.babel.presets
-                    ? fusionConfig.babel.presets
-                    : []),
-                ],
-
+                ...getBabelConfig({
+                  runtime:
+                    target === 'node' ? 'node-bundled' : 'browser-legacy',
+                  specOnly: true,
+                  plugins:
+                    fusionConfig.babel && fusionConfig.babel.plugins
+                      ? fusionConfig.babel.plugins
+                      : [],
+                  presets:
+                    fusionConfig.babel && fusionConfig.babel.presets
+                      ? fusionConfig.babel.presets
+                      : [],
+                }),
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */
@@ -276,43 +228,18 @@ function getConfig({target, env, dir, watch, cover}) {
                       entry,
                       /fusion-cli\/entries/,
                     ],
-                    plugins: [
-                      //cup-globals works with webpack.EnvironmentPlugin(['NODE_ENV']) to implement static conditionals
-                      require.resolve('./babel-plugins/babel-plugin-asseturl'),
-                      require.resolve(
-                        './babel-plugins/babel-plugin-pure-create-plugin'
-                      ),
-                      require.resolve(
-                        './babel-plugins/babel-plugin-sync-chunk-ids'
-                      ),
-                      require.resolve(
-                        './babel-plugins/babel-plugin-sync-chunk-paths'
-                      ),
-                      require.resolve('./babel-plugins/babel-plugin-chunkid'),
-                      // TODO(#8): sw implementation is totally busted.
-                      // require.resolve('./babel-plugins/babel-plugin-sw'),
-                      pragma && [
-                        require.resolve('@babel/plugin-transform-react-jsx'),
-                        {pragma},
-                      ],
-                      cover && require.resolve('babel-plugin-istanbul'),
-                      target === 'web' &&
-                        require.resolve('./babel-plugins/babel-plugin-i18n'),
-                    ].filter(Boolean),
-                    presets: [
-                      [
-                        require.resolve('./babel-fusion-preset.js'),
-                        {
-                          targets,
-                          assumeNoImportSideEffects:
-                            fusionConfig.assumeNoImportSideEffects,
-                        },
-                      ],
-                    ],
+                    ...getBabelConfig({
+                      dev: env === 'development',
+                      jsx: {pragma},
+                      fusionTransforms: true,
+                      assumeNoImportSideEffects:
+                        fusionConfig.assumeNoImportSideEffects,
+                      runtime:
+                        target === 'node' ? 'node-bundled' : 'browser-legacy',
+                      specOnly: false,
+                    }),
                   },
                 ],
-
-                babelrc: false,
               },
             },
           ],
@@ -322,7 +249,7 @@ function getConfig({target, env, dir, watch, cover}) {
         {
           type: 'javascript/auto',
           test: /\.(json)/,
-          loader: 'json-loader',
+          loader: require.resolve('json-loader'),
         },
         fusionConfig.assumeNoImportSideEffects && {
           sideEffects: false,
@@ -331,11 +258,6 @@ function getConfig({target, env, dir, watch, cover}) {
       ].filter(Boolean),
     },
     externals: [
-      // These externals are required to work with enzyme
-      // See: https://github.com/airbnb/enzyme/blob/master/docs/guides/webpack.md
-      env === 'test' && 'react/addons',
-      env === 'test' && 'react/lib/ReactContext',
-      env === 'test' && 'react/lib/ExecutionEnvironment',
       target === 'node' &&
         ((context, request, callback) => {
           // bundle whitelisted packages
@@ -355,74 +277,46 @@ function getConfig({target, env, dir, watch, cover}) {
         }),
     ].filter(Boolean),
     resolve: {
-      aliasFields: [
-        (target === 'web' || target === 'webworker') && 'browser',
-        evergreen && 'es2015',
-      ].filter(Boolean),
-      // This is removed because it was causing a dependency issue when using
-      // recent versions of superfine. Specifically, if a project uses
-      // superfine-react and react-footer, two versions of superbase would be
-      // included. Version 6.x and 11.x. react-footer expects the 6.x and when
-      // rendered on the server would use the proper version, but in the browser
-      // it would require 11.x which breaks react-footer (and other dependencies
-      // that rely on react-superbase). Commenting out this section resolves
-      // this problem.
-      // modules: [
-      //   for the client, we need to tell webpack to resolve host node_modules so we can bundle them
-      //   target !== 'node' && appModules,
-      //   'node_modules',
-      // ].filter(Boolean),
-      // $FlowFixMe
+      aliasFields: [target === 'web' && 'browser'].filter(Boolean),
       alias: Object.assign(
         {
           // we replace need to set the path to user application at build-time
           __FRAMEWORK_SHARED_ENTRY__: path.resolve(dir, main),
           __ENV__: env,
         },
-        target === 'node' &&
-          env === 'test' && {
-            __NODE_TEST_ENTRY__: serverTestEntry,
-          },
-        target === 'web' &&
-          env === 'test' && {
-            __BROWSER_TEST_ENTRY__: browserTestEntry,
-          },
         alias
       ),
     },
     resolveLoader: {
       alias: {
-        __SECRET_FILE_LOADER__: require.resolve('./file-loader'),
-        __SECRET_CHUNK_ID_LOADER__: require.resolve('./chunk-id-loader'),
-        __SECRET_SYNC_CHUNK_IDS_LOADER__: require.resolve(
-          './sync-chunk-ids-loader'
-        ),
-        __SECRET_SYNC_CHUNK_PATHS_LOADER__: require.resolve(
-          './sync-chunk-paths-loader'
-        ),
-        __SECRET_BUNDLE_MAP_LOADER__: require.resolve(
-          './client-chunk-bundle-url-map-loader'
-        ),
-        __SECRET_CLIENT_SOURCE_MAP_LOADER__: require.resolve(
-          './client-source-map-loader'
-        ),
-        __SECRET_MULTI_ENTRY_LOADER__: require.resolve('multi-entry-loader'),
-        __SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__: require.resolve(
-          './i18n-manifest-instrumentation-loader.js'
-        ),
+        [fileLoader.alias]: fileLoader.path,
+        [chunkIdsLoader.alias]: chunkIdsLoader.path,
+        [syncChunkIdsLoader.alias]: syncChunkIdsLoader.path,
+        [syncChunkPathsLoader.alias]: syncChunkPathsLoader.path,
+        [chunkUrlMapLoader.alias]: chunkUrlMapLoader.path,
+        [i18nManifestLoader.alias]: i18nManifestLoader.path,
       },
     },
     plugins: [
       new ProgressBarPlugin(),
-      // TODO(#9): relying only on timestamp will invalidate service worker after every build
-      // optimize by importing all chunk names to sw and then remove timestamp in non-dev.
-      target === 'web' && env === 'production' && zopfliWebpackPlugin, // gzip
-      target === 'webworker' && new ServiceWorkerTimestampPlugin(),
+      target === 'web'
+        ? new ClientChunkMetadataStateHydratorPlugin(state.clientChunkMetadata)
+        : new LoaderContextProviderPlugin(
+            clientChunkMetadataContextKey,
+            state.clientChunkMetadata
+          ),
+      target === 'web'
+        ? new I18nDiscoveryPlugin(state.i18nManifest)
+        : new LoaderContextProviderPlugin(
+            translationsManifestContextKey,
+            state.i18nManifest
+          ),
+      env === 'production' && zopfliWebpackPlugin, // gzip
       // generate compressed files
-      target === 'web' && env === 'production' && brotliWebpackPlugin, // brotli
+      env === 'production' && brotliWebpackPlugin, // brotli
       // target === 'web' && env === 'production' && pngquantWebpackPlugin, // png TODO(#10): production server requires libpng-dev installed to use this
       // target === 'web' && env === 'production' && guetzliWebpackPlugin, // jpg TODO(#10): guetzli also depends on libpng-dev for some reason
-      target === 'web' && env === 'production' && svgoWebpackPlugin, // svg
+      env === 'production' && svgoWebpackPlugin, // svg
       // In development, skip the emitting phase on errors to ensure there are
       // no assets emitted that include errors. This fixes an issue with hot reloading
       // server side code and recovering from errors correctly. We only want to do this
@@ -432,16 +326,13 @@ function getConfig({target, env, dir, watch, cover}) {
       new InstrumentedImportDependencyTemplatePlugin(
         target !== 'web'
           ? // Client
-            {
-              clientChunkModuleManifest: chunkModuleManifest,
-            }
-          : // Server or SW
-            {
-              /**
-               * Don't wait for the client manifest on the client.
-               * The underlying plugin handles client instrumentation on its own.
-               */
-            }
+            state.clientChunkMetadata
+          : /**
+             * Server
+             * Don't wait for the client manifest on the client.
+             * The underlying plugin handles client instrumentation on its own.
+             */
+            void 0
       ),
       env === 'development' &&
         watch &&
@@ -449,36 +340,9 @@ function getConfig({target, env, dir, watch, cover}) {
       env === 'production' &&
         target === 'web' &&
         new webpack.HashedModuleIdsPlugin(),
-      target === 'web' && new ClientSourceMapPlugin(),
-      target === 'web' && new SyncChunkIdsPlugin(),
       target === 'web' &&
-        new ClientChunkBundleUrlMapPlugin(
-          possibleESVersions || ['es5'],
-          evergreen ? 'es6' : 'es5'
-        ),
-      target === 'web' &&
-        new ChunkModuleManifestPlugin({
-          appSrcDir,
-          clientUserlandEntry: path.resolve(dir, 'src/main.js'),
-          onInvalidate: () => {
-            // translations are invalid
-            chunkModuleManifest.invalidate();
-          },
-          onChunkIndex: chunkMap => {
-            // We now have all translations
-            chunkModuleManifest.set(chunkMap);
-          },
-        }),
-      target === 'web' &&
-        new I18nDiscoveryPlugin({
-          cachePath: path.join(
-            dir,
-            'node_modules/.fusion_babel_cache/i18n-manifest.json'
-          ),
-        }),
-      // case-insensitive paths can cause problems
-      new CaseSensitivePathsPlugin(),
-      target === 'web' && new AssetsManifestPlugin(),
+        // case-insensitive paths can cause problems
+        new CaseSensitivePathsPlugin(),
       target === 'node' &&
         new webpack.BannerPlugin({
           raw: true,
@@ -553,17 +417,6 @@ function getConfig({target, env, dir, watch, cover}) {
   };
 }
 
-function getProfile({dir, env, watch, cover}) {
-  return [
-    // browser
-    getConfig({target: 'web', env, dir, watch, cover}),
-    // server
-    getConfig({target: 'node', env, dir, watch, cover}),
-    // sw
-    getConfig({target: 'webworker', env, dir, watch, cover}),
-  ].filter(Boolean);
-}
-
 function getStatsLogger({dir, logger, envs}) {
   return (err, stats) => {
     // syntax errors are logged 4 times (once by webpack, once by babel, once on server and once on client)
@@ -624,16 +477,20 @@ type CompilerType = {
 */
 
 function Compiler(
-  {
-    dir = '.',
-    envs = [],
-    watch = false,
-    cover = false,
-    logger = console,
-  } /*: any */
+  {dir = '.', envs = [], watch = false, logger = console} /*: any */
 ) /*: CompilerType */ {
+  const state = {
+    clientChunkMetadata: new DeferredState(),
+    i18nManifest: new DeferredState(),
+  };
+
+  const root = path.resolve(dir);
+
   const profiles = envs.map(env => {
-    return getProfile({env: env, dir: path.resolve(dir), watch, cover});
+    return [
+      getConfig({target: 'web', env, dir: root, watch, state}),
+      getConfig({target: 'node', env, dir: root, watch, state}),
+    ];
   });
   const flattened = [].concat(...profiles);
   const compiler = webpack(flattened);
@@ -668,7 +525,7 @@ function Compiler(
 
   this.getMiddleware = () => {
     const dev = webpackDevMiddleware(compiler, {
-      filter: c => c.name === 'client' || c.name === 'client-evergreen',
+      filter: c => c.name === 'client',
       noInfo: true,
       quiet: true,
       lazy: false,
@@ -698,14 +555,12 @@ function Compiler(
 }
 
 function getNodeConfig(target, env) {
-  const tapeConfig = env === 'test' && target === 'web' ? 'mock' : false;
   const emptyForWeb = target === 'web' ? 'empty' : false;
   return {
     // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
-    // Tape requires process to be defined
-    process: tapeConfig,
+    process: false,
     // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
-    Buffer: tapeConfig,
+    Buffer: false,
     // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
     setImmediate: false,
     // We want these to resolve to the original file source location, not the compiled location

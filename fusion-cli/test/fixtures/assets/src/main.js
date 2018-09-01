@@ -8,6 +8,8 @@ if (typeof window !== 'undefined') {
   window.__hoistedUrl__ = hoistedUrl;
 }
 
+import {serverAsset} from "./server-asset.js";
+
 export default (async function() {
   const app = new App('element', el => el);
   __NODE__ &&
@@ -26,6 +28,8 @@ export default (async function() {
         ctx.body = assetUrl('./static/test.json');
       } else if (ctx.url === '/json-import') {
         ctx.body = JSON.stringify(jsonData);
+      } else if (ctx.url === '/server-asset') {
+        ctx.body = assetUrl("./static/test-server-asset.txt");
       }
       return next();
     });

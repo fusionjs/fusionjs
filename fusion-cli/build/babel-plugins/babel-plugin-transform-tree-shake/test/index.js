@@ -4,21 +4,14 @@ const fs = require('fs');
 const test = require('tape');
 const {transformFileSync} = require('@babel/core');
 const plugin = require('../');
-const {globalsPreset} = require('../../../babel-fusion-preset.js');
 
 test('boolean expression transformed', t => {
   const output = transformFileSync(
     __dirname + '/fixtures/input-boolean-expression',
     {
-      presets: [
-        [
-          globalsPreset,
-          {
-            target: 'browser',
-            transformGlobals: true,
-            assumeNoImportSideEffects: true,
-          },
-        ],
+      plugins: [
+        [require('babel-plugin-transform-cup-globals'), {target: 'browser'}],
+        [plugin, {target: 'browser'}],
       ],
     }
   );

@@ -16,14 +16,10 @@ exports.run = async function(
   {
     dir = '.',
     production,
-    test,
-    cover,
     logLevel,
   } /*: {
     dir: string,
     production: boolean,
-    test: boolean,
-    cover: boolean,
     logLevel: string,
   }*/
 ) {
@@ -38,8 +34,7 @@ exports.run = async function(
   const envs = [];
   if (production) envs.push('production');
   if (envs.length === 0) envs.push('development');
-  if (test) envs.push('test');
-  const compiler = new Compiler({envs, dir, cover, logger});
+  const compiler = new Compiler({envs, dir, logger});
 
   await compiler.clean();
 

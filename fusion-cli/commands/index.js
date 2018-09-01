@@ -9,16 +9,6 @@ module.exports = {
         default: '.',
         describe: 'Root path for the application relative to CLI CWD',
       },
-      test: {
-        type: 'boolean',
-        default: false,
-        describe: 'Build test assets as well as development assets',
-      },
-      cover: {
-        type: 'boolean',
-        default: false,
-        describe: 'Build tests (with coverage) as well as development assets',
-      },
       production: {
         type: 'boolean',
         default: false,

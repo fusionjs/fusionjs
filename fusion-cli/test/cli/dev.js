@@ -60,6 +60,15 @@ test('`fusion dev` works with assets', async t => {
       fs.readFileSync(path.resolve(dir, 'src/static/test.css')).toString(),
       'serves css file from memory correctly'
     );
+    t.equal(
+      await request(
+        `http://localhost:${port}/_static/b78cb0eaf8604dad0108350cb5149457.txt`
+      ),
+      fs
+        .readFileSync(path.resolve(dir, 'src/static/test-server-asset.txt'))
+        .toString(),
+      'serves server asset from memory correctly'
+    );
     t.equal(await request(`http://localhost:${port}/dirname`), 'src');
     t.equal(await request(`http://localhost:${port}/filename`), 'src/main.js');
     t.equal(
