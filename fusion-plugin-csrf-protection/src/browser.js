@@ -38,7 +38,7 @@ const plugin =
         if (!options) options = {};
         // $FlowFixMe
         const isCsrfMethod = verifyMethod(options.method || 'GET');
-        const isValid = verifyExpiry(token, expire);
+        const isValid = verifyExpiry(String(token), expire);
         const isTokenRequired = !isValid || !token;
         if (isCsrfMethod && isTokenRequired) {
           // TODO(#3) don't append prefix if injected fetch also injects prefix
