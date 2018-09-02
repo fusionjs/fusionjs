@@ -27,7 +27,9 @@ import type {Context, Token} from 'fusion-core';
 import serverRender from './server';
 import clientRender from './client';
 
-type ApolloClientType = mixed;
+type ApolloClientType = {
+  cache: mixed,
+};
 
 export type ApolloClient<TInitialState> = (
   ctx: Context,
@@ -47,6 +49,8 @@ export const ApolloContextToken: Token<ApolloContext<mixed>> = createToken(
 export const GraphQLSchemaToken: Token<string> = createToken(
   'GraphQlSchemaToken'
 );
+
+export const ApolloCacheContext = React.createContext();
 
 export default class App extends CoreApp {
   constructor(root: Element<*>) {
@@ -80,7 +84,9 @@ export default class App extends CoreApp {
           // Create the client and apollo provider
           const client = getApolloClient(ctx, initialState);
           ctx.element = (
-            <ApolloProvider client={client}>{ctx.element}</ApolloProvider>
+            <ApolloCacheContext.Provider value={client.cache}>
+              <ApolloProvider client={client}>{ctx.element}</ApolloProvider>
+            </ApolloCacheContext.Provider>
           );
 
           if (__NODE__) {
