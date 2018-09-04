@@ -181,6 +181,35 @@ test('`fusion dev` works with assets with cdnUrl', async t => {
   t.end();
 });
 
+test('`fusion dev` cacheable paths with cdn', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/assets');
+  const {proc, port} = await dev(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {CDN_URL: 'https://cdn.com'}),
+  });
+  let cacheablePaths = JSON.parse(
+    await request(`http://localhost:${port}/cacheable-paths`)
+  );
+  t.ok(
+    cacheablePaths.includes(
+      'https://cdn.com/b78cb0eaf8604dad0108350cb5149457.txt'
+    )
+  );
+  t.ok(
+    cacheablePaths.includes(
+      'https://cdn.com/c300a7df05c8142598558365dbdaa451.css'
+    )
+  );
+  t.ok(
+    cacheablePaths.includes(
+      'https://cdn.com/7526e1bdce8d3d115d6b4d6b79096e1c.json'
+    )
+  );
+  t.ok(cacheablePaths.includes('https://cdn.com/client-main.js'));
+  t.ok(cacheablePaths.includes('https://cdn.com/client-vendor.js'));
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` top-level error', async t => {
   const dir = path.resolve(__dirname, '../fixtures/server-startup-error');
   const {res, proc} = await dev(`--dir=${dir}`, {

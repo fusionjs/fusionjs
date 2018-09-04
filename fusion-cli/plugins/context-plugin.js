@@ -22,7 +22,10 @@ module.exports = createPlugin({
       // webpack-related things
       ctx.syncChunks = compilationMetaData.syncChunks;
       ctx.chunkUrlMap = compilationMetaData.chunkUrlMap;
-
+      ctx.cacheablePaths = compilationMetaData.cacheablePaths.map(
+        // $FlowFixMe
+        path => __webpack_public_path__ + path // eslint-disable-line
+      );
       return next();
     };
   },

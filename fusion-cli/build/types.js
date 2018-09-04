@@ -19,4 +19,8 @@ export type ClientChunkMetadataState = DeferredState<ClientChunkMetadata>;
 
 export type TranslationsManifest = Map<string, Set<string>>;
 export type TranslationsManifestState = DeferredState<TranslationsManifest>;
+
+export type CacheablePaths = Array<string>;
+export type CacheablePathsState = DeferredState<CacheablePaths>;
+
 */

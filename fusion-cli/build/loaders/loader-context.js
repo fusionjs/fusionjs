@@ -12,8 +12,16 @@ import type {
   ClientChunkMetadataState,
   TranslationsManifest,
   TranslationsManifestState,
+  CacheablePathsState,
 } from "../types.js";
 */
+
+/*::
+export type CacheablePathsContext = CacheablePathsState;
+*/
+exports.cacheablePathsContextKey = Symbol(
+  'loader context key for cacheable paths'
+);
 
 /*::
 export type ClientChunkMetadataContext = ClientChunkMetadataState;

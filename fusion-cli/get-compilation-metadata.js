@@ -17,10 +17,13 @@ This is where webpack-related things should be defined
 const chunkUrlMap = require('__SECRET_BUNDLE_MAP_LOADER__!'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 // $FlowFixMe
 const syncChunks = require('__SECRET_SYNC_CHUNK_IDS_LOADER__!'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
+// $FlowFixMe
+const cacheablePaths = require('__SECRET_CACHEABLE_PATHS_LOADER__!'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 
 module.exports = () => {
   return {
     syncChunks,
     chunkUrlMap,
+    cacheablePaths,
   };
 };
