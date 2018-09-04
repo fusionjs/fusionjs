@@ -1,5 +1,18 @@
 // @flow
 /* eslint-env node */
+
+const {allowedJestOptions} = require('../build/jest/cli-options');
+
+const jestOptionsDescriptions = {};
+allowedJestOptions.forEach(arg => {
+  jestOptionsDescriptions[arg] = {
+    type: 'boolean',
+    describe:
+      'Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#' +
+      arg.toLowerCase(),
+  };
+});
+
 module.exports = {
   build: {
     descr: 'Build your app',
@@ -108,17 +121,12 @@ module.exports = {
       dir: {
         type: 'string',
         default: '.',
-        describe: 'Root path for the application relative to CLI CWD',
+        describe: 'Root path for the application relative to CLI CWD.',
       },
       debug: {
         type: 'boolean',
         default: false,
-        describe: 'Debug tests',
-      },
-      watch: {
-        type: 'boolean',
-        default: false,
-        describe: 'Automatically re-run tests on file changes',
+        describe: 'Debug tests using --inspect-brk and --runInBand.',
       },
       match: {
         type: 'string',
@@ -136,21 +144,12 @@ module.exports = {
         default: '__tests__',
         describe: 'Which folder to look for tests in.',
       },
-      updateSnapshot: {
-        type: 'boolean',
-        default: false,
-        describe: 'Updates snapshots',
-      },
-      coverage: {
-        type: 'boolean',
-        default: false,
-        describe: 'Runs test coverage',
-      },
       configPath: {
         type: 'string',
         default: './node_modules/fusion-cli/build/jest/jest-config.js',
-        describe: 'Path to the jest configuration',
+        describe: 'Path to the jest configuration, used for testing.',
       },
+      ...jestOptionsDescriptions,
     },
   },
 };

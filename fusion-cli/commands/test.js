@@ -8,35 +8,43 @@
 
 /* eslint-env node */
 
+const {allowedJestOptions} = require('../build/jest/cli-options');
 const {TestAppRuntime} = require('../build/test-runtime');
 
 exports.run = async function(
   {
     dir = '.',
-    watch,
     debug,
     match,
     env,
     testFolder,
-    updateSnapshot,
-    coverage,
     configPath,
     // Allow snapshots to be updated using `-u` as well as --updateSnapshot.
     // We don't document this argument, but since jest output automatically
     // suggests this as a valid argument, we support it in case it's used.
     u,
+    updateSnapshot,
+    // Arguments which are passed through into jest
+    ...rest
   } /*: any */
 ) {
+  const jestArgs /*: any */ = {
+    updateSnapshot: updateSnapshot || u || false,
+  };
+  allowedJestOptions.forEach(arg => {
+    if (rest[arg]) {
+      jestArgs[arg] = rest[arg];
+    }
+  });
+
   const testRuntime = new TestAppRuntime({
     dir,
-    watch,
     debug,
     match,
     env,
     testFolder,
-    updateSnapshot: updateSnapshot || u,
-    coverage,
     configPath,
+    jestArgs,
   });
 
   // $FlowFixMe

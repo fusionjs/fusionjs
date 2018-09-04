@@ -17,14 +17,13 @@ const convertCoverage = require('./convert-coverage');
 module.exports.TestAppRuntime = function(
   {
     dir = '.',
-    watch = false,
     debug = false,
     match,
     env,
     testFolder,
     updateSnapshot,
-    coverage,
     configPath,
+    jestArgs = {},
   } /*: any */
 ) {
   const state = {procs: []};
@@ -45,30 +44,23 @@ module.exports.TestAppRuntime = function(
       }
 
       args = args.concat(['--config', configPath]);
-
-      if (watch) {
-        args.push('--watch');
-      }
-
-      if (coverage) {
-        args.push('--coverage');
-      }
+      Object.keys(jestArgs).forEach(arg => {
+        const value = jestArgs[arg];
+        if (value && typeof value === 'boolean') {
+          args.push(`--${arg}`);
+        }
+      });
 
       if (match && match.length > 0) {
         args.push(match);
       }
 
-      if (updateSnapshot) {
-        args.push('--updateSnapshot');
-      }
-
       args.push('--verbose');
-
       return args;
     };
 
     const setup = () => {
-      if (!coverage) {
+      if (!jestArgs.coverage) {
         return Promise.resolve();
       }
 
@@ -111,7 +103,7 @@ module.exports.TestAppRuntime = function(
     };
 
     const finish = () => {
-      if (!coverage) {
+      if (!jestArgs.coverage) {
         return Promise.resolve();
       }
       return convertCoverage(rootDir);
