@@ -39,6 +39,8 @@ module.exports.TestAppRuntime = function(
           '--inspect-brk',
           require.resolve('jest/bin/jest.js'),
           '--runInBand',
+          // --no-cache is required to allow debugging from vscode
+          '--no-cache',
         ];
       }
 
