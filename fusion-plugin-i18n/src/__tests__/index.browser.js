@@ -102,12 +102,19 @@ test('load', t => {
   let called = false;
   const hydrationState = {
     chunks: [],
+    localeCode: 'es-MX',
     translations: {},
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   const fetch = (url, options) => {
     t.equals(url, '/_translations?ids=0', 'url is ok');
     t.equals(options && options.method, 'POST', 'method is ok');
+    t.equals(
+      // $FlowFixMe
+      options && options.headers && options.headers['X-Fusion-Locale-Code'],
+      'es-MX',
+      'locale code header is ok'
+    );
     called = true;
     return Promise.resolve({json: () => data});
   };

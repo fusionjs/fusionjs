@@ -31,6 +31,7 @@ function loadTranslations() {
 
 type HydrationStateType = {
   chunks: Array<number>,
+  localeCode?: string,
   translations: Object,
 };
 export const HydrationStateToken: Token<HydrationStateType> = createToken(
@@ -46,21 +47,30 @@ const plugin =
     provides: ({fetch = window.fetch, hydrationState} = {}) => {
       class I18n {
         loadedChunks: any;
+        localeCode: ?string;
         translationMap: any;
 
         constructor() {
-          const {chunks, translations} = hydrationState || loadTranslations();
+          const {chunks, localeCode, translations} =
+            hydrationState || loadTranslations();
           this.loadedChunks = chunks || [];
+          this.localeCode = localeCode;
           this.translationMap = translations || {};
         }
         load(chunkIds) {
           const unloaded = chunkIds.filter(id => {
             return this.loadedChunks.indexOf(id) < 0;
           });
+          const fetchOpts = {
+            method: 'POST',
+            ...(this.localeCode
+              ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
+              : {}),
+          };
           if (unloaded.length > 0) {
             const ids = unloaded.join(',');
             // TODO(#3) don't append prefix if injected fetch also injects prefix
-            return fetch(`/_translations?ids=${ids}`, {method: 'POST'})
+            return fetch(`/_translations?ids=${ids}`, fetchOpts)
               .then(r => r.json())
               .then(data => {
                 for (const key in data) this.translationMap[key] = data[key];

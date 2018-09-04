@@ -68,7 +68,10 @@ const plugin =
               translations[key] = i18n.translations[key];
             });
           });
-          const serialized = JSON.stringify({chunks, translations});
+          // i18n.locale is actually a locale.Locale instance
+          // $FlowFixMe
+          const localeCode = i18n.locale.code;
+          const serialized = JSON.stringify({chunks, localeCode, translations});
           const script = html`<script type='application/json' id="__TRANSLATIONS__">${serialized}</script>`; // consumed by ./browser
           // $FlowFixMe
           ctx.template.body.push(script);
