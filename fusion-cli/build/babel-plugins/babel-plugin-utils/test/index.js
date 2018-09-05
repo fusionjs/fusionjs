@@ -40,7 +40,9 @@ test('with flow types', t => {
     import type {footype} from 'bar';
     let baz: string = foo();
   `,
-    {plugins: [plugin], presets: [require('@babel/preset-flow')]}
+    {
+      plugins: [require('@babel/plugin-transform-flow-strip-types'), plugin],
+    }
   );
 });
 

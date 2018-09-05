@@ -63,7 +63,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
         development: dev,
       },
     ]);
-    config.presets.push(require('@babel/preset-flow'));
+    config.plugins.unshift(require('@babel/plugin-transform-flow-strip-types'));
     if (fusionTransforms) {
       config.presets.push([fusionPreset, {runtime, assumeNoImportSideEffects}]);
     }
