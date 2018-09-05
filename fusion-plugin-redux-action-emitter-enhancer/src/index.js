@@ -9,18 +9,35 @@
 /* eslint-env browser,node */
 
 import type {StoreEnhancer, StoreCreator, Store} from 'redux';
+import type {Token} from 'fusion-core';
 
-import {createPlugin} from 'fusion-core';
+import {createPlugin, createToken} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 type ExtractReturnType = <V>(() => V) => V;
 type IEmitter = $Call<typeof UniversalEventsToken, ExtractReturnType>;
 
+export const ActionEmitterTransformerToken: Token<Function> = createToken(
+  'ActionEmitterTransformerToken'
+);
+
+const defaultTransformer = action => {
+  const {type, _trackingMeta} = action;
+  return {type, _trackingMeta};
+};
+
 const plugin = createPlugin({
   deps: {
     emitter: UniversalEventsToken,
+    transformer: ActionEmitterTransformerToken.optional,
   },
-  provides({emitter}: {emitter: IEmitter}) {
+  provides({
+    emitter,
+    transformer,
+  }: {
+    emitter: IEmitter,
+    transformer?: Function,
+  }) {
     if (__DEV__ && !emitter) {
       throw new Error(`emitter is required, but was: ${emitter}`);
     }
@@ -31,9 +48,17 @@ const plugin = createPlugin({
       const store: Store<*, *, *> = createStore(...args);
       return {
         ...store,
-        dispatch: action => {
-          // $FlowFixMe
-          emitter.from(store.ctx).emit('redux-action-emitter:action', action);
+        dispatch: (action: Object) => {
+          let payload: Object = !transformer
+            ? defaultTransformer(action)
+            : transformer(action);
+
+          if (payload) {
+            emitter // $FlowFixMe
+              .from(store.ctx)
+              .emit('redux-action-emitter:action', payload);
+          }
+
           return store.dispatch(action);
         },
       };

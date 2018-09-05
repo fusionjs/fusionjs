@@ -14,12 +14,14 @@ This is useful for when you want to collect data about redux actions, potentiall
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Capturing action emits](#capturing-action-emits)
+  - [Capturing action emits](#capturing-action-emits)
+  - [Transforming action payloads on emission](#transforming-action-payloads-on-emission)
 - [Setup](#setup)
 - [API](#api)
   - [Registration API](#registration-api)
     - [`ReduxActionEmitterEnhancer`](#reduxactionemitterenhancer)
     - [`EnhancerToken`](#enhancertoken)
+    - [`ActionEmitterTransformerToken`](#actionemittertransformertoken)
   - [Dependencies](#dependencies)
   - [Service API](#service-api)
   - [Emit API](#emit-api)
@@ -36,7 +38,7 @@ yarn add fusion-redux-action-emitter-enhancer
 
 ### Usage
 
-### Capturing action emits
+#### Capturing action emits
 
 We can register a simple callback to listen for the events emitted by this enhancer - in this case, `redux-action-emitter:action`.  Normally we might want to log these to a backend service, but for simplicity, we'll log them to console.
 
@@ -50,6 +52,45 @@ export default createPlugin({
     });
   }
 });
+```
+
+#### Transforming action payloads on emission
+
+This plugin depends on [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events) to emit the action payloads, which means the payloads are sent over-the-wire to the server-side, which **can consume much of the network bandwidth**, or even cause 413 Payload Too Large HTTP errors. The dependence is the reason why by default the plugin will only emit [certain properties](#default-transformer) from the raw action payload.
+
+By default, `_trackingMeta` is an opinionated property to be picked and emitted from the raw payload for tracking(analytics) purposes. **For customizations, you should provide a transformer function to mainly filter/pick properties for emission.**
+
+```js
+// src/app.js
+import {ActionEmitterTransformerToken} from 'fusion-redux-action-emitter-enhancer';
+
+app.register(ActionEmitterTransformerToken, action => {
+  const base = {type: action.type};
+  switch (action.type) {
+    case 'ADD_TO_SHOPPING_CART':
+    case 'REMOVE_FROM_SHOPPING_CART':
+      return {
+        ...base,
+        items: action.payload.items,
+      };
+    case 'ADD_COUPON': {
+      return {
+        ...base,
+        couponId: action.payload.couponId,
+      };
+    }
+    case 'SUPER_BIG_PAYLOAD':
+      return null; // !!Omit the action type from emission entirely!!
+    default:
+      return base;
+  }
+});
+```
+
+Or, if you are certain about emitting everything from the raw payload, maybe when bandwidth is actually not a concern for your application:
+
+```js
+app.register(ActionEmitterTransformerToken, action => action);
 ```
 
 ---
@@ -105,6 +146,17 @@ import {EnhancerToken} from 'fusion-plugin-react-redux';
 ```
 
 If you are using [`fusion-plugin-react-redux`](https://github.com/fusionjs/fusion-plugin-react-redux), we recommend registering this plugin to the `EnhancerToken`.
+
+##### `ActionEmitterTransformerToken`
+
+```js
+import {ActionEmitterTransformerToken} from 'fusion-redux-action-emitter-enhancer';
+```
+###### Default transformer
+`action => ({type: action.type, _trackingMeta: action._trackingMeta})`
+
+Providing a transform function for the raw action payloads. See ["Transforming action payloads on emission"](#transforming-action-payloads-on-emission) for more information.
+
 
 #### Dependencies
 

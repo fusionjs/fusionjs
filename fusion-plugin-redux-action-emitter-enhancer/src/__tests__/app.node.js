@@ -62,7 +62,7 @@ test('plugin - service resolved as expected', t => {
         };
         const mockReducer: Reducer<*, *> = s => s;
         const enhanced = enhancer(createStore)(mockReducer);
-        enhanced.dispatch();
+        enhanced.dispatch({});
         wasResolved = true;
       },
     })
