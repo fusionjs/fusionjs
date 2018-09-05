@@ -1,7 +1,7 @@
 {
   "name": "fusion-apollo",
   "description": "FusionJS entry point for React universal rendering /w Apollo",
-  "version": "1.3.0-0",
+  "version": "1.3.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-apollo",
   "main": "./dist/index.js",
