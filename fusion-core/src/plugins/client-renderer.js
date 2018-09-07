@@ -10,7 +10,7 @@ import type {Context} from '../types.js';
 
 export default function createClientRenderer({render}: {render: any}) {
   return function renderer(ctx: Context, next: () => Promise<void>) {
-    const rendered = render(ctx.element);
+    const rendered = render(ctx.element, ctx);
     if (rendered instanceof Promise) {
       return rendered.then(r => {
         ctx.rendered = r;
