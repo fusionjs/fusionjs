@@ -30,6 +30,5 @@ export class TokenImpl<TResolved> {
 }
 
 export function createToken<TResolvedType>(name: string): Token<TResolvedType> {
-  // $FlowFixMe
-  return new TokenImpl(name);
+  return ((new TokenImpl(name): any): Token<TResolvedType>);
 }
