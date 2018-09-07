@@ -9,7 +9,13 @@
 declare module 'locale' {
   declare class Locale {
     constructor(str: string): Locale;
+
+    code: string;
+    language: string;
+    country: string;
     normalized: string;
+    score: number;
+    defaulted: boolean;
 
     serialize: Function;
     toString: Function;
@@ -23,7 +29,7 @@ declare module 'locale' {
     _index: any;
     index: Function;
 
-    best: Function;
+    best: (locales: Locales) => Locale;
 
     sort: Function;
     push: Function;

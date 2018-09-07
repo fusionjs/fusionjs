@@ -7,7 +7,10 @@
  */
 
 /* eslint-env browser */
+
 import test from 'tape-cup';
+
+import type {Context} from 'fusion-core';
 
 import I18n from '../browser';
 
@@ -22,7 +25,8 @@ test('hydration', t => {
     return;
   }
 
-  const i18n = I18n.provides({hydrationState}).from();
+  const mockContext: Context = ({}: any);
+  const i18n = I18n.provides({hydrationState}).from(mockContext);
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   t.end();
@@ -44,7 +48,9 @@ test('hydration from element', t => {
     t.end();
     return;
   }
-  const i18n = I18n.provides({hydrationState}).from();
+
+  const mockContext: Context = ({}: any);
+  const i18n = I18n.provides({hydrationState}).from(mockContext);
   t.equals(i18n.translate('test'), 'hello');
   t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
   document.body && document.body.removeChild(translations);
@@ -65,8 +71,9 @@ test('hydration parse error', t => {
   }
 
   try {
+    const mockContext: Context = ({}: any);
     const plugin = I18n.provides({});
-    plugin.from();
+    plugin.from(mockContext);
   } catch (e) {
     t.equal(
       e.message,
@@ -86,8 +93,9 @@ test('hydration missing element error', t => {
   }
 
   try {
+    const mockContext: Context = ({}: any);
     const plugin = I18n.provides({});
-    plugin.from();
+    plugin.from(mockContext);
   } catch (e) {
     t.equal(
       e.message,
@@ -106,11 +114,10 @@ test('load', t => {
     translations: {},
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
-  const fetch = (url, options) => {
+  const fetch: any = (url, options) => {
     t.equals(url, '/_translations?ids=0', 'url is ok');
     t.equals(options && options.method, 'POST', 'method is ok');
     t.equals(
-      // $FlowFixMe
       options && options.headers && options.headers['X-Fusion-Locale-Code'],
       'es-MX',
       'locale code header is ok'
@@ -118,15 +125,19 @@ test('load', t => {
     called = true;
     return Promise.resolve({json: () => data});
   };
-  // $FlowFixMe
-  const plugin = I18n.provides({fetch, hydrationState});
-  const i18n = plugin.from();
-  i18n.load([0]).then(() => {
-    t.ok(called, 'fetch called');
-    t.equals(i18n.translate('test'), 'hello');
-    t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
-    // $FlowFixMe
-    t.same(i18n.loadedChunks, [0]);
-    t.end();
-  });
+  const plugin = I18n.provides && I18n.provides({fetch, hydrationState});
+  const mockContext: Context = ({}: any);
+  if (plugin) {
+    const i18n = plugin.from(mockContext);
+    i18n.load([0]).then(() => {
+      t.ok(called, 'fetch called');
+      t.equals(i18n.translate('test'), 'hello');
+      t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
+      // $FlowFixMe
+      t.same(i18n.loadedChunks, [0]); // private
+      t.end();
+    });
+  } else {
+    t.fail();
+  }
 });

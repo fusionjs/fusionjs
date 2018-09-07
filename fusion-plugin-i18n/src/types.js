@@ -6,22 +6,32 @@
  * @flow
  */
 
+import {Locale} from 'locale';
+
 import {FetchToken} from 'fusion-tokens';
 import type {Context} from 'fusion-core';
 
 import {HydrationStateToken} from './browser';
+import {I18nLoaderToken} from './tokens.js';
+
+export type TranslationsObjectType = {[string]: string};
 
 export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
+  loader?: I18nLoaderToken.optional,
 };
 
 export type I18nServiceType = {
   from: (
-    ctx?: Context
+    ctx: Context
   ) => {
-    locale?: string,
-    load: (chunkIds: Array<number>) => Promise<*>,
-    translate: (key: string, interpolations?: Object) => string,
+    +locale?: string | Locale,
+    +translations?: TranslationsObjectType,
+    +load: (chunkIds: Array<number | string>) => Promise<void>,
+    +translate: (
+      key: string,
+      interpolations?: TranslationsObjectType
+    ) => string,
   },
 };

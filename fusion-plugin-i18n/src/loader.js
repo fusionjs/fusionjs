@@ -13,41 +13,43 @@ import path from 'path';
 import {memoize} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
+import type {TranslationsObjectType} from './types.js';
+
 export type I18nLoaderType = {
-  from: (ctx: Context) => {locale: string, translations: Object},
+  from: (
+    ctx: Context
+  ) => {locale: string | Locale, translations: TranslationsObjectType},
 };
 
-const loader = __NODE__
-  ? () => {
-      const readDir = root => {
-        try {
-          return fs.readdirSync(root);
-        } catch (e) {
-          return [];
-        }
-      };
-      const root = './translations';
-      const locales = readDir(root)
-        .filter(p => p.match(/json$/))
-        .map(p => p.replace(/\.json$/, ''));
-      const data = locales.reduce((memo, locale) => {
-        const parsedLocale = new Locale(locale);
-        memo[parsedLocale.normalized] = JSON.parse(
-          fs.readFileSync(path.join(root, locale + '.json'), 'utf8')
-        );
-        return memo;
-      }, {});
-      const supportedLocales = new Locales(locales);
-
-      return {
-        from: memoize(ctx => {
-          const expectedLocales = new Locales(ctx.headers['accept-language']);
-          const locale: Locale = expectedLocales.best(supportedLocales);
-          const translations: Object = data[locale.normalized];
-          return {translations, locale};
-        }),
-      };
+const loader: () => I18nLoaderType = () => {
+  const readDir = root => {
+    try {
+      return fs.readdirSync(root);
+    } catch (e) {
+      return [];
     }
-  : null;
+  };
+  const root = './translations';
+  const locales = readDir(root)
+    .filter(p => p.match(/json$/))
+    .map(p => p.replace(/\.json$/, ''));
+  const data = locales.reduce((memo, locale) => {
+    const parsedLocale = new Locale(locale);
+    memo[parsedLocale.normalized] = JSON.parse(
+      fs.readFileSync(path.join(root, locale + '.json'), 'utf8')
+    );
+    return memo;
+  }, {});
+  const supportedLocales = new Locales(locales);
 
-export default ((loader: any): () => I18nLoaderType);
+  return {
+    from: memoize(ctx => {
+      const expectedLocales = new Locales(ctx.headers['accept-language']);
+      const locale = expectedLocales.best(supportedLocales);
+      const translations: TranslationsObjectType = data[locale.normalized];
+      return {translations, locale};
+    }),
+  };
+};
+
+export default ((__NODE__ && loader: any): typeof loader);

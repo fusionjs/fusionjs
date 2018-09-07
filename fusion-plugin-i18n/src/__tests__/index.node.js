@@ -12,8 +12,10 @@ import test from 'tape-cup';
 
 import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
+import type {Context} from 'fusion-core';
 
-import I18n, {I18nLoaderToken} from '../node';
+import I18n from '../node';
+import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
 test('translate', async t => {
@@ -48,7 +50,7 @@ test('ssr', async t => {
   /* eslint-enable import/no-unresolved */
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
 
-  const ctx = {
+  const ctx: Context = {
     syncChunks: [0],
     preloadChunks: [],
     headers: {'accept-language': 'en-US'},
@@ -71,7 +73,6 @@ test('ssr', async t => {
     t.end();
     return;
   }
-  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.equals(ctx.template.body.length, 1, 'injects hydration code');
   t.equals(
@@ -79,6 +80,7 @@ test('ssr', async t => {
     consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0],
     'hello'
   );
+  // $FlowFixMe
   t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
@@ -120,7 +122,6 @@ test('endpoint', async t => {
     t.end();
     return;
   }
-  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.deepEquals(ctx.body, data, 'injects hydration code');
 
@@ -152,7 +153,6 @@ test('non matched route', async t => {
     t.end();
     return;
   }
-  // $FlowFixMe
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.notok(ctx.body, 'does not set ctx.body');
   t.end();

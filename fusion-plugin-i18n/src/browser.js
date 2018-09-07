@@ -11,9 +11,18 @@ import {FetchToken} from 'fusion-tokens';
 import {createPlugin, unescape, createToken} from 'fusion-core';
 import type {FusionPlugin, Token} from 'fusion-core';
 
-import type {I18nDepsType, I18nServiceType} from './flow.js';
+import type {
+  I18nDepsType,
+  I18nServiceType,
+  TranslationsObjectType,
+} from './types.js';
 
-function loadTranslations() {
+type LoadedTranslationsType = {
+  chunks?: Array<number | string>,
+  localeCode?: string,
+  translations?: TranslationsObjectType,
+};
+function loadTranslations(): LoadedTranslationsType {
   const element = document.getElementById('__TRANSLATIONS__');
   if (!element) {
     throw new Error(
@@ -30,77 +39,75 @@ function loadTranslations() {
 }
 
 type HydrationStateType = {
-  chunks: Array<number>,
+  chunks: Array<number | string>,
   localeCode?: string,
-  translations: Object,
+  translations: TranslationsObjectType,
 };
 export const HydrationStateToken: Token<HydrationStateType> = createToken(
   'HydrationStateToken'
 );
-const plugin =
-  __BROWSER__ &&
-  createPlugin({
-    deps: {
-      fetch: FetchToken.optional,
-      hydrationState: HydrationStateToken.optional,
-    },
-    provides: ({fetch = window.fetch, hydrationState} = {}) => {
-      class I18n {
-        loadedChunks: any;
-        localeCode: ?string;
-        translationMap: any;
+const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = createPlugin({
+  deps: {
+    fetch: FetchToken.optional,
+    hydrationState: HydrationStateToken.optional,
+  },
+  provides: ({fetch = window.fetch, hydrationState} = {}) => {
+    class I18n {
+      loadedChunks: Array<number | string>;
+      localeCode: ?string;
+      translationMap: TranslationsObjectType;
 
-        constructor() {
-          const {chunks, localeCode, translations} =
-            hydrationState || loadTranslations();
-          this.loadedChunks = chunks || [];
-          this.localeCode = localeCode;
-          this.translationMap = translations || {};
-        }
-        load(chunkIds) {
-          const unloaded = chunkIds.filter(id => {
-            return this.loadedChunks.indexOf(id) < 0;
-          });
-          const fetchOpts = {
-            method: 'POST',
-            ...(this.localeCode
-              ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
-              : {}),
-          };
-          if (unloaded.length > 0) {
-            // Don't try to load translations again if a request is already in
-            // flight. This means that we need to add unloaded chunks to
-            // loadedChunks optimistically and remove them if some error happens
-            this.loadedChunks = [...this.loadedChunks, ...unloaded];
+      constructor() {
+        const {chunks, localeCode, translations} =
+          hydrationState || loadTranslations();
+        this.loadedChunks = (chunks: Array<number | string> | void) || [];
+        this.localeCode = localeCode;
+        this.translationMap = translations || {};
+      }
+      async load(chunkIds: Array<number | string>): Promise<void> {
+        const unloaded = chunkIds.filter(id => {
+          return this.loadedChunks.indexOf(id) < 0;
+        });
+        const fetchOpts = {
+          method: 'POST',
+          ...(this.localeCode
+            ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
+            : {}),
+        };
+        if (unloaded.length > 0) {
+          // Don't try to load translations again if a request is already in
+          // flight. This means that we need to add unloaded chunks to
+          // loadedChunks optimistically and remove them if some error happens
+          this.loadedChunks = [...this.loadedChunks, ...unloaded];
 
-            const ids = unloaded.join(',');
-            // TODO(#3) don't append prefix if injected fetch also injects prefix
-            return fetch(`/_translations?ids=${ids}`, fetchOpts)
-              .then(r => r.json())
-              .then(data => {
-                for (const key in data) this.translationMap[key] = data[key];
-              })
-              .catch(err => {
-                // An error occurred, so remove the chunks we were trying to load
-                // from loadedChunks. This allows us to try to load those chunk
-                // translations again
-                this.loadedChunks = this.loadedChunks.filter(
-                  chunk => unloaded.indexOf(chunk) === -1
-                );
-                throw err;
-              });
-          }
-        }
-        translate(key, interpolations = {}) {
-          const template = this.translationMap[key];
-          return template
-            ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
-            : key;
+          const ids = unloaded.join(',');
+          // TODO(#3) don't append prefix if injected fetch also injects prefix
+          return fetch(`/_translations?ids=${ids}`, fetchOpts)
+            .then(r => r.json())
+            .then((data: {[string]: string}) => {
+              for (const key in data) this.translationMap[key] = data[key];
+            })
+            .catch((err: Error) => {
+              // An error occurred, so remove the chunks we were trying to load
+              // from loadedChunks. This allows us to try to load those chunk
+              // translations again
+              this.loadedChunks = this.loadedChunks.filter(
+                chunk => unloaded.indexOf(chunk) === -1
+              );
+              throw err;
+            });
         }
       }
-      const i18n = new I18n();
-      return {from: () => i18n};
-    },
-  });
+      translate(key: string, interpolations: TranslationsObjectType = {}) {
+        const template = this.translationMap[key];
+        return template
+          ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
+          : key;
+      }
+    }
+    const i18n = new I18n();
+    return {from: () => i18n};
+  },
+});
 
-export default ((plugin: any): FusionPlugin<I18nDepsType, I18nServiceType>);
+export default ((__BROWSER__ && plugin: any): typeof plugin);

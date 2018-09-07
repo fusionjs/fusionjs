@@ -147,14 +147,14 @@ A function that provides translations. Optional. Server-side only.
 
 ```js
 type I18nLoader = {
-  from: (ctx: Context) => {locale: string, translations: Object},
+  from: (ctx: Context) => {locale: string | Locale, translations: {[string]: string},
 };
 ```
 
 * `loader.from: (ctx) => ({locale, translations})` -
   * `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
   * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
-  * `translations: Object` - A object that maps translation keys to translated values for the given locale
+  * `translations: {[string]: string}` - A object that maps translation keys to translated values for the given locale
 
 ###### Default value
 
@@ -172,8 +172,8 @@ Sets the hydrated state in the client, and can be useful for testing purposes. O
 
 ```js
 type HydrationState = {
-  chunks: Array,
-  translations: Object,
+  chunks: Array<string | number>,
+  translations: {[string]: string},
 };
 ```
 
@@ -206,9 +206,9 @@ If no fetch implementation is provided, [`window.fetch`](https://developer.mozil
 #### Service API
 
 ```js
-const translations: string = i18n.translate(
+const translation: string = i18n.translate(
   key: string,
-  interpolations: Object
+  interpolations: {[string]: string}
 );
 ```
 
