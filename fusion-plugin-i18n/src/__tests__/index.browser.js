@@ -125,6 +125,8 @@ test('load', t => {
     t.ok(called, 'fetch called');
     t.equals(i18n.translate('test'), 'hello');
     t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
+    // $FlowFixMe
+    t.same(i18n.loadedChunks, [0]);
     t.end();
   });
 });

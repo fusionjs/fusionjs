@@ -68,15 +68,26 @@ const plugin =
               : {}),
           };
           if (unloaded.length > 0) {
+            // Don't try to load translations again if a request is already in
+            // flight. This means that we need to add unloaded chunks to
+            // loadedChunks optimistically and remove them if some error happens
+            this.loadedChunks = [...this.loadedChunks, ...unloaded];
+
             const ids = unloaded.join(',');
             // TODO(#3) don't append prefix if injected fetch also injects prefix
             return fetch(`/_translations?ids=${ids}`, fetchOpts)
               .then(r => r.json())
               .then(data => {
                 for (const key in data) this.translationMap[key] = data[key];
-                unloaded.forEach(id => {
-                  this.loadedChunks[id] = true;
-                });
+              })
+              .catch(err => {
+                // An error occurred, so remove the chunks we were trying to load
+                // from loadedChunks. This allows us to try to load those chunk
+                // translations again
+                this.loadedChunks = this.loadedChunks.filter(
+                  chunk => unloaded.indexOf(chunk) === -1
+                );
+                throw err;
               });
           }
         }
