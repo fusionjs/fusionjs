@@ -1,10 +1,10 @@
-# fusion-redux-action-emitter-enhancer
+# fusion-plugin-redux-action-emitter-enhancer
 
-[![Build status](https://badge.buildkite.com/1864b671ca8edc1b7a6f8470ae320c6163268c23c4085ee82a.svg?branch=master)](https://buildkite.com/uberopensource/fusion-redux-action-emitter-enhancer)
+[![Build status](https://badge.buildkite.com/1864b671ca8edc1b7a6f8470ae320c6163268c23c4085ee82a.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-redux-action-emitter-enhancer)
 
 Redux store enhancer that emits actions via an injected event emitter.
 
-The `fusion-redux-action-emitter-enhancer` provides a Redux compatible [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer).  This plugin composes a new, enhanced store creator, which captures and emits all dispatched actions.
+The `fusion-plugin-redux-action-emitter-enhancer` provides a Redux compatible [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer).  This plugin composes a new, enhanced store creator, which captures and emits all dispatched actions.
 
 This is useful for when you want to collect data about redux actions, potentially to recreate user journeys or statefulness.
 
@@ -31,7 +31,7 @@ This is useful for when you want to collect data about redux actions, potentiall
 ### Installation
 
 ```js
-yarn add fusion-redux-action-emitter-enhancer
+yarn add fusion-plugin-redux-action-emitter-enhancer
 ```
 
 ---
@@ -62,7 +62,7 @@ By default, `_trackingMeta` is an opinionated property to be picked and emitted 
 
 ```js
 // src/app.js
-import {ActionEmitterTransformerToken} from 'fusion-redux-action-emitter-enhancer';
+import {ActionEmitterTransformerToken} from 'fusion-plugin-redux-action-emitter-enhancer';
 
 app.register(ActionEmitterTransformerToken, action => {
   const base = {type: action.type};
@@ -134,7 +134,7 @@ export default (state, action) => {
 ##### `ReduxActionEmitterEnhancer`
 
 ```js
-import ReduxActionEmitterEnhancer from 'fusion-redux-action-emitter-enhancer';
+import ReduxActionEmitterEnhancer from 'fusion-plugin-redux-action-emitter-enhancer';
 ```
 
 This plugin.  It can be registered as a dependency to any plugin that expects a Redux Store Enhancer.  Typically, it should be registered with [`EnhancerToken`](#enhancertoken).
@@ -150,7 +150,7 @@ If you are using [`fusion-plugin-react-redux`](https://github.com/fusionjs/fusio
 ##### `ActionEmitterTransformerToken`
 
 ```js
-import {ActionEmitterTransformerToken} from 'fusion-redux-action-emitter-enhancer';
+import {ActionEmitterTransformerToken} from 'fusion-plugin-redux-action-emitter-enhancer';
 ```
 ###### Default transformer
 `action => ({type: action.type, _trackingMeta: action._trackingMeta})`
