@@ -112,7 +112,7 @@ function getCoreGlobals(ctx) {
 }
 
 function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
-  return chunks.map(id => {
+  return [...new Set(chunks)].map(id => {
     let url = chunkUrlMap.get(id).get('es5');
     if (webpackPublicPath.endsWith('/')) {
       url = webpackPublicPath + url;
@@ -134,7 +134,10 @@ function getChunkScripts(ctx) {
       ctx.nonce
     }" defer${crossOrigin} src="${url}"></script>`;
   });
-  const preloaded = getUrls(ctx, ctx.preloadChunks).map(({id, url}) => {
+  const preloaded = getUrls(
+    ctx,
+    ctx.preloadChunks.filter(item => !ctx.syncChunks.includes(item))
+  ).map(({id, url}) => {
     return `<script nonce="${
       ctx.nonce
     }" defer${crossOrigin} src="${url}"></script>`;
