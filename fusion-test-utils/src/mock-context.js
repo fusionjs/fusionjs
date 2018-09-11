@@ -60,7 +60,9 @@ export function mockContext(
   return ctx;
 }
 
-export function renderContext(url: string, options: any): Context {
-  options = Object.assign(options, {headers: {accept: 'text/html'}});
+export function renderContext(url: string, options: any = {}): Context {
+  options = Object.assign(options, {
+    headers: Object.assign({accept: 'text/html'}, options.headers),
+  });
   return mockContext(url, options);
 }

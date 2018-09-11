@@ -105,6 +105,20 @@ test('status is set if ctx.status is updated in render', async t => {
   t.end();
 });
 
+test('simulator accepts extra headers', async t => {
+  const app = new App('hi', () => {});
+  const simulator = getSimulator(app);
+
+  const ctx = await simulator.render('/', {
+    headers: {
+      'x-header': 'value',
+    },
+  });
+
+  t.equal(ctx.request.headers['x-header'], 'value');
+  t.end();
+});
+
 test('body contains some message', async t => {
   const app = new App('el', () => 'hello');
   const ctx = await getSimulator(app).request('/_errors', {
