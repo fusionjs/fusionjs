@@ -17,7 +17,7 @@ export function verifyMethod(
 ): $Values<typeof methods> {
   return methods[method];
 }
-export function verifyExpiry(token: string, expire: number): boolean {
+export function verifyExpiry(token: ?string, expire: number): boolean {
   if (!token) return false;
   const [timestamp] = token.split('-');
   const elapsed = Math.round(Date.now() / 1000) - Number(timestamp);
