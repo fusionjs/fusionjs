@@ -55,6 +55,7 @@ test('ssr', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en-US'},
     element: 'test',
+    // $FlowFixMe - Invalid context
     template: {body: []},
     memoized: new Map(),
   };
@@ -96,8 +97,8 @@ test('endpoint', async t => {
   const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
   /* eslint-enable import/no-unresolved */
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
-
-  const ctx = {
+  // $FlowFixMe - Invalid context
+  const ctx: Context = {
     syncChunks: [],
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
@@ -132,7 +133,8 @@ test('endpoint', async t => {
 
 test('non matched route', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
-  const ctx = {
+  // $FlowFixMe - Invalid context
+  const ctx: Context = {
     path: '/_something',
     memoized: new Map(),
     body: '',
