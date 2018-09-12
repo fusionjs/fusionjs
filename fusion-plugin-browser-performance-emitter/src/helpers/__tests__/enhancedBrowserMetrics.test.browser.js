@@ -42,12 +42,30 @@ test('enhancedBrowserMetrics', t => {
     }
   );
 
+  const data = browserPerfCollector(mockWindow());
+  // test variable data first
+  t.ok(
+    typeof data.navigationMeta.time === 'number' && data.navigationMeta.time > 0
+  );
+  t.ok(
+    typeof data.navigationMeta.url === 'string' &&
+      data.navigationMeta.url.startsWith(`http://localhost:`)
+  );
+  // test the rest
   t.deepEqual(
-    browserPerfCollector(mockWindow()),
+    data,
     {
       dimensions: {height: 600, width: 800},
       memory: {},
       navigation: {},
+      navigationMeta: {
+        hostname: 'localhost',
+        page: '/',
+        pathname: '/',
+        referrer: '',
+        time: data.navigationMeta.time,
+        url: data.navigationMeta.url,
+      },
       network: {},
       paintTimes: {firstContentfulPaint: null, firstPaint: null},
       renderTimes: {clientRenderStart: null, firstRenderStart: null},

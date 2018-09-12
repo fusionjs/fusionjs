@@ -98,6 +98,24 @@ function getDeviceDimensions(window) {
   return {height, width};
 }
 
+function getNavigationMeta(window) {
+  return {
+    ...getPageData(window),
+    time: Date.now(),
+  };
+}
+
+function getPageData(window) {
+  const location = window.location || {};
+  return {
+    hostname: location.hostname,
+    pathname: location.pathname,
+    referrer: window.document.referrer,
+    url: location.href,
+    page: location.pathname,
+  };
+}
+
 const browserPerfCollector: (window: any) => Object = (window: any) => {
   if (!hasPerf(window)) {
     return {};
@@ -110,6 +128,7 @@ const browserPerfCollector: (window: any) => Object = (window: any) => {
     paintTimes: getPaintTimes(window),
     renderTimes: getRenderTimes(window),
     memory: getMemory(window),
+    navigationMeta: getNavigationMeta(window),
     network: getNetwork(window),
     dimensions: getDeviceDimensions(window),
   };
