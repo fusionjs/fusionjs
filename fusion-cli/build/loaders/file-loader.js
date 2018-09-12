@@ -39,3 +39,5 @@ module.exports = function fileLoader(content /*: string */) {
 
   return done(content);
 };
+
+module.exports.raw = true;
