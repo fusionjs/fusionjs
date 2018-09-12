@@ -14,7 +14,7 @@ type Dependencies = {[string]: any};
 type Services = {[string]: any};
 
 const InjectorContext = React.createContext(
-  (tokens: Dependencies): Services => ({})
+  (deps: Dependencies): Services => ({})
 );
 
 function getServices(app: FusionApp, deps: Dependencies): Services {
