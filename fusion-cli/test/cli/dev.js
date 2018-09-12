@@ -73,7 +73,7 @@ test('`fusion dev` works with assets', async t => {
     t.equal(await request(`http://localhost:${port}/filename`), 'src/main.js');
     t.equal(
       await request(`http://localhost:${port}/json`),
-      '/_static/7526e1bdce8d3d115d6b4d6b79096e1c.json'
+      '/_static/20355efabaae9ed4d51fbc5a68eb4ce3.json'
     );
     t.equal(
       await request(`http://localhost:${port}/json-import`),
@@ -97,6 +97,37 @@ test('`fusion dev` works with assets', async t => {
       browserAssetUrl,
       expectedAssetPath,
       'hoisted assetURL works in the browser'
+    );
+  } catch (e) {
+    t.iferror(e);
+  }
+  await (browser && browser.close());
+  proc.kill();
+  t.end();
+});
+
+test('`fusion dev` works with assetUrl and JSON assets', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/json-static-assets');
+  let browser;
+  const {proc, port} = await dev(`--dir=${dir}`);
+
+  // Spin up puppeteer to make runtime assertions on assetURLs
+  try {
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`, {waitUntil: 'networkidle2'});
+
+    const jsonDynamicContent = await page.evaluate(
+      // $FlowFixMe
+      () => document.querySelector('#content').textContent // eslint-disable-line
+    );
+
+    t.equal(
+      jsonDynamicContent,
+      'success|success',
+      'both assetURL and imported JSON works'
     );
   } catch (e) {
     t.iferror(e);
@@ -201,7 +232,7 @@ test('`fusion dev` cacheable paths with cdn', async t => {
   );
   t.ok(
     cacheablePaths.includes(
-      'https://cdn.com/7526e1bdce8d3d115d6b4d6b79096e1c.json'
+      'https://cdn.com/20355efabaae9ed4d51fbc5a68eb4ce3.json'
     )
   );
   t.ok(cacheablePaths.includes('https://cdn.com/client-main.js'));
