@@ -8,33 +8,33 @@
 
 import * as React from 'react';
 
-import {createPlugin} from 'fusion-core';
-import type FusionApp from 'fusion-core';
+import FusionApp, {createPlugin} from 'fusion-core';
 
-type Services = {
-  [string]: any,
-};
+type Dependencies = {[string]: any};
+type Services = {[string]: any};
 
 const InjectorContext = React.createContext(
-  (services: Services): Services => ({})
+  (tokens: Dependencies): Services => ({})
 );
 
-export function resolve(app: FusionApp, services: Services) {
-  const resolvedServices = {};
+function getServices(app: FusionApp, deps: Dependencies): Services {
+  const serviceMap = {};
 
-  Object.entries(services).forEach(([name, token]) => {
-    resolvedServices[name] = app.services.get(token);
+  Object.entries(deps).forEach(([name, token]) => {
+    const ref = (token && token.ref) || token;
+
+    serviceMap[name] = app.services.get(ref);
   });
 
-  return resolvedServices;
+  return serviceMap;
 }
 
-export function prepareInjector(app: FusionApp) {
-  function inject(services) {
-    return resolve(app, services);
+export function registerInjector(app: FusionApp) {
+  function inject(deps: Dependencies): Services {
+    return getServices(app, deps);
   }
 
-  return createPlugin({
+  const injectorPlugin = createPlugin({
     middleware: () => (ctx, next) => {
       ctx.element = (
         <InjectorContext.Provider value={inject}>
@@ -45,16 +45,18 @@ export function prepareInjector(app: FusionApp) {
       return next();
     },
   });
+
+  app.register(injectorPlugin);
 }
 
 export function withServices(
   Component: React.ComponentType<*>,
-  services: Services
+  deps: Dependencies
 ) {
   function WithServices(props: *) {
     return (
       <InjectorContext.Consumer>
-        {inject => <Component {...inject(services)} {...props} />}
+        {inject => <Component {...inject(deps)} {...props} />}
       </InjectorContext.Consumer>
     );
   }

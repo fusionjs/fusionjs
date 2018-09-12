@@ -11,7 +11,7 @@ import * as React from 'react';
 
 import FusionApp, {createPlugin} from 'fusion-core';
 import {prepare, middleware} from './async/index.js';
-import {prepareInjector, withServices} from './injector.js';
+import {registerInjector, withServices} from './injector.js';
 
 import serverRender from './server';
 import clientRender from './client';
@@ -39,10 +39,8 @@ export default class App extends FusionApp {
         return middleware;
       },
     });
-
     super(root, renderer);
-
-    prepareInjector(this);
+    registerInjector(this);
   }
 }
 
