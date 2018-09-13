@@ -30,8 +30,6 @@ export default (async function() {
         ctx.body = JSON.stringify(jsonData);
       } else if (ctx.url === '/server-asset') {
         ctx.body = assetUrl("./static/test-server-asset.txt");
-      } else if (ctx.url === '/cacheable-paths') {
-        ctx.body = JSON.stringify(ctx.cacheablePaths);
       }
       return next();
     });

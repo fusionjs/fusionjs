@@ -35,10 +35,6 @@ const loaderIndex = {
     alias: '__SECRET_SYNC_CHUNK_IDS_LOADER__',
     path: require.resolve('./sync-chunk-ids-loader.js'),
   },
-  cacheablePathsLoader: {
-    alias: '__SECRET_CACHEABLE_PATHS_LOADER__',
-    path: require.resolve('./cacheable-paths-loader.js'),
-  },
 };
 
 module.exports = loaderIndex;

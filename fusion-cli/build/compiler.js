@@ -35,18 +35,15 @@ const {
   chunkUrlMapLoader,
   syncChunkIdsLoader,
   syncChunkPathsLoader,
-  cacheablePathsLoader,
 } = require('./loaders/index.js');
 const {DeferredState} = require('./shared-state-containers.js');
 const {
   translationsManifestContextKey,
   clientChunkMetadataContextKey,
-  cacheablePathsContextKey,
 } = require('./loaders/loader-context.js');
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
-const CacheablePathsStateHydratorPlugin = require('./plugins/cacheable-paths-state-hydrator-plugin.js');
 const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const loadFusionRC = require('./load-fusionrc.js');
@@ -296,7 +293,6 @@ function getConfig({target, env, dir, watch, state}) {
         [syncChunkPathsLoader.alias]: syncChunkPathsLoader.path,
         [chunkUrlMapLoader.alias]: chunkUrlMapLoader.path,
         [i18nManifestLoader.alias]: i18nManifestLoader.path,
-        [cacheablePathsLoader.alias]: cacheablePathsLoader.path,
       },
     },
     plugins: [
@@ -312,12 +308,6 @@ function getConfig({target, env, dir, watch, state}) {
         : new LoaderContextProviderPlugin(
             translationsManifestContextKey,
             state.i18nManifest
-          ),
-      target === 'web'
-        ? new CacheablePathsStateHydratorPlugin(state.cachablePaths)
-        : new LoaderContextProviderPlugin(
-            cacheablePathsContextKey,
-            state.cachablePaths
           ),
       env === 'production' && zopfliWebpackPlugin, // gzip
       // generate compressed files
@@ -490,7 +480,6 @@ function Compiler(
   const state = {
     clientChunkMetadata: new DeferredState(),
     i18nManifest: new DeferredState(),
-    cachablePaths: new DeferredState(),
   };
 
   const root = path.resolve(dir);
