@@ -12,7 +12,7 @@ import {createPlugin, createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import App, {withServices} from '../index';
 
-tape('inject services', async t => {
+tape.only('inject services', async t => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({
     provides() {

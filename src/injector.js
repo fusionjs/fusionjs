@@ -8,62 +8,117 @@
 
 import * as React from 'react';
 
+import PropTypes from 'prop-types';
+
 import FusionApp, {createPlugin} from 'fusion-core';
 
 type Dependencies = {[string]: any};
 type Services = {[string]: any};
+type Injector = Dependencies => Services;
 
-const InjectorContext = React.createContext(
-  (deps: Dependencies): Services => ({})
-);
+let _registerInjector;
+let _withServices;
 
 function getServices(app: FusionApp, deps: Dependencies): Services {
-  const serviceMap = {};
+  const services = {};
 
   Object.entries(deps).forEach(([name, token]) => {
     const ref = (token && token.ref) || token;
 
-    serviceMap[name] = app.services.get(ref);
+    services[name] = app.services.get(ref);
   });
 
-  return serviceMap;
+  return services;
 }
 
-export function registerInjector(app: FusionApp) {
-  function inject(deps: Dependencies): Services {
-    return getServices(app, deps);
-  }
+if (React.createContext) {
+  /* React 16 Context API */
 
-  const injectorPlugin = createPlugin({
-    middleware: () => (ctx, next) => {
-      ctx.element = (
-        <InjectorContext.Provider value={inject}>
-          {ctx.element}
-        </InjectorContext.Provider>
+  const InjectorContext = React.createContext(
+    (deps: Dependencies): Services => ({})
+  );
+
+  _registerInjector = (app: FusionApp) => {
+    function inject(deps: Dependencies): Services {
+      return getServices(app, deps);
+    }
+
+    const injectorPlugin = createPlugin({
+      middleware: () => (ctx, next) => {
+        ctx.element = ctx.element && (
+          <InjectorContext.Provider value={inject}>
+            {ctx.element}
+          </InjectorContext.Provider>
+        );
+
+        return next();
+      },
+    });
+
+    app.register(injectorPlugin);
+  };
+
+  _withServices = (Component: React.ComponentType<*>, deps: Dependencies) => {
+    return function WithServices(props: *) {
+      return (
+        <InjectorContext.Consumer>
+          {inject => <Component {...inject(deps)} {...props} />}
+        </InjectorContext.Consumer>
       );
+    };
+  };
+} else {
+  /* Legacy Context API */
 
-      return next();
-    },
-  });
+  const injectProp = `$fusion-inject-${Math.random()}$`;
 
-  app.register(injectorPlugin);
+  _registerInjector = (app: FusionApp) => {
+    function inject(deps: Dependencies): Services {
+      return getServices(app, deps);
+    }
+
+    class Provider extends React.Component<*> {
+      getChildContext() {
+        return {[injectProp]: inject};
+      }
+
+      render() {
+        return React.Children.only(this.props.children);
+      }
+    }
+
+    Provider.childContextTypes = {
+      [injectProp]: PropTypes.func.isRequired,
+    };
+
+    const injectorPlugin = createPlugin({
+      middleware: () => (ctx, next) => {
+        ctx.element = ctx.element && <Provider>{ctx.element}</Provider>;
+
+        return next();
+      },
+    });
+
+    app.register(injectorPlugin);
+  };
+
+  _withServices = (Component: React.ComponentType<*>, deps: Dependencies) => {
+    function WithServices(props: *, context: {[string]: Injector}) {
+      return <Component {...context[injectProp](deps)} {...props} />;
+    }
+
+    WithServices.contextTypes = {
+      [injectProp]: PropTypes.func.isRequired,
+    };
+
+    return WithServices;
+  };
 }
 
-export function withServices(
-  Component: React.ComponentType<*>,
-  deps: Dependencies
-) {
-  function WithServices(props: *) {
-    return (
-      <InjectorContext.Consumer>
-        {inject => <Component {...inject(deps)} {...props} />}
-      </InjectorContext.Consumer>
-    );
-  }
+export function registerInjector(...args: *) {
+  return _registerInjector(...args);
+}
 
-  const displayName = Component.displayName || Component.name;
-
-  WithServices.displayName = `WithServices(${displayName})`;
-
-  return WithServices;
+export function withServices(...args: *) {
+  return _withServices(...args);
 }
