@@ -52,4 +52,4 @@ const loader: () => I18nLoaderType = () => {
   };
 };
 
-export default ((__NODE__ && loader: any): typeof loader);
+export default (((__NODE__ ? loader : null): any): typeof loader);
