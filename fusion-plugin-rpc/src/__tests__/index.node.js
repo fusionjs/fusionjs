@@ -47,7 +47,7 @@ function createTestFixture() {
   return app;
 }
 
-function createMockEmitter(props: mixed): IEmitter {
+function createMockEmitter<TProps>(props: TProps): IEmitter {
   const emitter = {
     from: () => {
       return emitter;
@@ -60,7 +60,7 @@ function createMockEmitter(props: mixed): IEmitter {
     off: () => {},
     mapEvent: () => {},
     handleEvent: () => {},
-    flush: () => {},
+    flush: () => undefined,
     ...props,
   };
   return emitter;
@@ -288,7 +288,7 @@ test('middleware - invalid endpoint', async t => {
     something: () => {},
     other: () => {},
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:error');
       t.equal(payload.method, 'valueOf');
@@ -299,10 +299,7 @@ test('middleware - invalid endpoint', async t => {
         'emits error in payload'
       );
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&
@@ -354,7 +351,7 @@ test('middleware - valid endpoint', async t => {
       return 1;
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -362,10 +359,7 @@ test('middleware - valid endpoint', async t => {
       t.equal(payload.status, 'success');
       t.equal(typeof payload.timing, 'number');
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&
@@ -416,7 +410,7 @@ test('middleware - valid endpoint with route prefix', async t => {
       return 1;
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -424,10 +418,7 @@ test('middleware - valid endpoint with route prefix', async t => {
       t.equal(payload.status, 'success');
       t.equal(typeof payload.timing, 'number');
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&
@@ -478,7 +469,7 @@ test('middleware - valid endpoint failure with ResponseError', async t => {
       return Promise.reject(e);
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -487,10 +478,7 @@ test('middleware - valid endpoint failure with ResponseError', async t => {
       t.equal(typeof payload.timing, 'number');
       t.equal(payload.error, e);
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&
@@ -549,7 +537,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
       return Promise.reject(e);
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -558,10 +546,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
       t.equal(typeof payload.timing, 'number');
       t.notEqual(payload.error, e);
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&
@@ -637,7 +622,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
       return 1;
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -645,10 +630,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
       t.equal(payload.status, 'success');
       t.equal(typeof payload.timing, 'number');
     },
-    from() {
-      return this;
-    },
-  };
+  });
   const mockBodyParserOptions = {jsonLimit: '1b'};
 
   const middleware =
@@ -694,7 +676,7 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
       return 1;
     },
   };
-  const mockEmitter = {
+  const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
@@ -702,10 +684,7 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
       t.equal(payload.status, 'success');
       t.equal(typeof payload.timing, 'number');
     },
-    from() {
-      return this;
-    },
-  };
+  });
 
   const middleware =
     RPCPlugin.middleware &&

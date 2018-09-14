@@ -13,6 +13,7 @@ import bodyparser from 'koa-bodyparser';
 import {createPlugin, memoize} from 'fusion-core';
 import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {Fetch} from 'fusion-tokens';
 
 import MissingHandlerError from './missing-handler-error';
 import ResponseError from './response-error';
@@ -31,7 +32,7 @@ class RPC {
   ctx: ?Context;
   emitter: ?IEmitter;
   handlers: ?HandlerType;
-  fetch: ?*;
+  fetch: ?Fetch;
 
   constructor(emitter: any, handlers: any, ctx: Context): RPC {
     if (!ctx || !ctx.headers) {
@@ -44,7 +45,7 @@ class RPC {
     return this;
   }
 
-  async request(method: string, args: mixed) {
+  async request<TArgs, TResult>(method: string, args: TArgs): Promise<TResult> {
     const startTime = ms();
 
     if (!this.ctx) {
@@ -95,8 +96,7 @@ class RPC {
   }
 }
 
-const plugin =
-  __NODE__ &&
+const pluginFactory: () => RPCPluginType = () =>
   createPlugin({
     deps: {
       emitter: UniversalEventsToken,
@@ -115,6 +115,10 @@ const plugin =
 
     middleware: deps => {
       const {emitter, handlers, bodyParserOptions} = deps;
+      if (!handlers)
+        throw new Error('Missing handlers registered to RPCHandlersToken');
+      if (!emitter)
+        throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
       return async (ctx, next) => {
@@ -195,4 +199,4 @@ function ms() {
   return Math.round(seconds * 1000 + ns / 1e6);
 }
 
-export default ((plugin: any): RPCPluginType);
+export default ((__NODE__ && pluginFactory(): any): RPCPluginType);

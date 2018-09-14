@@ -8,6 +8,7 @@
 
 import {createPlugin} from 'fusion-core';
 import type {Context} from 'fusion-core';
+import type {Fetch} from 'fusion-tokens';
 
 import MissingHandlerError from './missing-handler-error';
 import {RPCHandlersToken} from './tokens';
@@ -18,13 +19,13 @@ class RPC {
   ctx: ?Context;
   emitter: ?IEmitter;
   handlers: ?HandlerType;
-  fetch: ?*;
+  fetch: ?Fetch;
 
   constructor(handlers: any) {
     this.handlers = handlers;
   }
 
-  async request(method: string, args: mixed) {
+  async request<TArgs, TResult>(method: string, args: TArgs): Promise<TResult> {
     if (!this.handlers) {
       throw new Error('fusion-plugin-rpc requires `handlers`');
     }

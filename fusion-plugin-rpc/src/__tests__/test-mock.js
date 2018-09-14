@@ -8,12 +8,20 @@
 
 import test from 'tape-cup';
 
-import App, {createPlugin, createToken} from 'fusion-core';
+import App, {
+  createPlugin,
+  createToken,
+  type Token,
+  type Context,
+} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
+
 import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../mock';
+import type {RPCServiceType} from '../types.js';
 
-const MockPluginToken = createToken('test-plugin-token');
+const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
+const mockCtx = (({}: any): Context);
 function createTestFixture() {
   const mockHandlers = {};
 
@@ -32,7 +40,7 @@ test('mock with missing handler', async t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: async deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from(mockCtx);
         try {
           await rpc.request('test');
         } catch (e) {
@@ -62,7 +70,7 @@ test('mock with handler', async t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: async deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from(mockCtx);
 
         try {
           const result = await rpc.request('test', {test: 'args'});
