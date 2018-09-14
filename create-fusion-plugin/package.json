@@ -25,7 +25,7 @@
     "eslint-plugin-jest": "^21.22.0",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.80.0",
+    "flow-bin": "^0.81.0",
     "jest-cli": "^23.5.0",
     "prettier": "^1.14.2"
   },
