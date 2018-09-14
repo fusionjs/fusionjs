@@ -35,7 +35,7 @@ class I18nDiscoveryPlugin {
     });
     compiler.hooks.invalid.tap(name, filename => {
       this.manifest.reset();
-      this.discoveryState = new Map();
+      this.discoveryState.delete(filename);
     });
   }
 }

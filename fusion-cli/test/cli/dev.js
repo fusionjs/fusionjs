@@ -400,6 +400,18 @@ test('`fusion dev` app with split translations integration', async t => {
     'renders second, hot split translation'
   );
 
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  await Promise.all([
+    page.click('#split1-link'),
+    page.waitForSelector('#split1-translation'),
+  ]);
+  const content4 = await page.content();
+  t.ok(
+    content4.includes('__SPLIT1_TRANSLATED__'),
+    'renders translation from unmodified file after rebuild'
+  );
+
   await browser.close();
   proc.kill();
 
