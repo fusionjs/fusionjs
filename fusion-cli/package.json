@@ -1,6 +1,6 @@
 {
   "name": "fusion-cli",
-  "version": "1.10.4-1",
+  "version": "1.10.4-2",
   "description": "CLI",
   "repository": "fusionjs/fusion-cli",
   "bin": {
