@@ -46,68 +46,71 @@ type HydrationStateType = {
 export const HydrationStateToken: Token<HydrationStateType> = createToken(
   'HydrationStateToken'
 );
-const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = createPlugin({
-  deps: {
-    fetch: FetchToken.optional,
-    hydrationState: HydrationStateToken.optional,
-  },
-  provides: ({fetch = window.fetch, hydrationState} = {}) => {
-    class I18n {
-      loadedChunks: Array<number | string>;
-      localeCode: ?string;
-      translationMap: TranslationsObjectType;
 
-      constructor() {
-        const {chunks, localeCode, translations} =
-          hydrationState || loadTranslations();
-        this.loadedChunks = (chunks: Array<number | string> | void) || [];
-        this.localeCode = localeCode;
-        this.translationMap = translations || {};
-      }
-      async load(chunkIds: Array<number | string>): Promise<void> {
-        const unloaded = chunkIds.filter(id => {
-          return this.loadedChunks.indexOf(id) < 0;
-        });
-        const fetchOpts = {
-          method: 'POST',
-          ...(this.localeCode
-            ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
-            : {}),
-        };
-        if (unloaded.length > 0) {
-          // Don't try to load translations again if a request is already in
-          // flight. This means that we need to add unloaded chunks to
-          // loadedChunks optimistically and remove them if some error happens
-          this.loadedChunks = [...this.loadedChunks, ...unloaded];
+type PluginType = FusionPlugin<I18nDepsType, I18nServiceType>;
+const pluginFactory: () => PluginType = () =>
+  createPlugin({
+    deps: {
+      fetch: FetchToken.optional,
+      hydrationState: HydrationStateToken.optional,
+    },
+    provides: ({fetch = window.fetch, hydrationState} = {}) => {
+      class I18n {
+        loadedChunks: Array<number | string>;
+        localeCode: ?string;
+        translationMap: TranslationsObjectType;
 
-          const ids = unloaded.join(',');
-          // TODO(#3) don't append prefix if injected fetch also injects prefix
-          return fetch(`/_translations?ids=${ids}`, fetchOpts)
-            .then(r => r.json())
-            .then((data: {[string]: string}) => {
-              for (const key in data) this.translationMap[key] = data[key];
-            })
-            .catch((err: Error) => {
-              // An error occurred, so remove the chunks we were trying to load
-              // from loadedChunks. This allows us to try to load those chunk
-              // translations again
-              this.loadedChunks = this.loadedChunks.filter(
-                chunk => unloaded.indexOf(chunk) === -1
-              );
-              throw err;
-            });
+        constructor() {
+          const {chunks, localeCode, translations} =
+            hydrationState || loadTranslations();
+          this.loadedChunks = (chunks: Array<number | string> | void) || [];
+          this.localeCode = localeCode;
+          this.translationMap = translations || {};
+        }
+        async load(chunkIds: Array<number | string>): Promise<void> {
+          const unloaded = chunkIds.filter(id => {
+            return this.loadedChunks.indexOf(id) < 0;
+          });
+          const fetchOpts = {
+            method: 'POST',
+            ...(this.localeCode
+              ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
+              : {}),
+          };
+          if (unloaded.length > 0) {
+            // Don't try to load translations again if a request is already in
+            // flight. This means that we need to add unloaded chunks to
+            // loadedChunks optimistically and remove them if some error happens
+            this.loadedChunks = [...this.loadedChunks, ...unloaded];
+
+            const ids = unloaded.join(',');
+            // TODO(#3) don't append prefix if injected fetch also injects prefix
+            return fetch(`/_translations?ids=${ids}`, fetchOpts)
+              .then(r => r.json())
+              .then((data: {[string]: string}) => {
+                for (const key in data) this.translationMap[key] = data[key];
+              })
+              .catch((err: Error) => {
+                // An error occurred, so remove the chunks we were trying to load
+                // from loadedChunks. This allows us to try to load those chunk
+                // translations again
+                this.loadedChunks = this.loadedChunks.filter(
+                  chunk => unloaded.indexOf(chunk) === -1
+                );
+                throw err;
+              });
+          }
+        }
+        translate(key: string, interpolations: TranslationsObjectType = {}) {
+          const template = this.translationMap[key];
+          return template
+            ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
+            : key;
         }
       }
-      translate(key: string, interpolations: TranslationsObjectType = {}) {
-        const template = this.translationMap[key];
-        return template
-          ? template.replace(/\${(.*?)}/g, (_, k) => interpolations[k])
-          : key;
-      }
-    }
-    const i18n = new I18n();
-    return {from: () => i18n};
-  },
-});
+      const i18n = new I18n();
+      return {from: () => i18n};
+    },
+  });
 
-export default ((__BROWSER__ && plugin: any): typeof plugin);
+export default ((__BROWSER__ && pluginFactory(): any): PluginType);
