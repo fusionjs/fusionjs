@@ -44,7 +44,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   let config = {
     plugins: [
       require('@babel/plugin-syntax-dynamic-import'),
-      [require('@babel/plugin-proposal-class-properties'), {loose: false}],
+      [require('@rtsao/plugin-proposal-class-properties'), {loose: false}],
     ],
     presets: [[require('@babel/preset-env'), envPresetOpts]],
     babelrc: false,
