@@ -8,8 +8,13 @@
 
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
-import {ElementToken, RenderToken, SSRDeciderToken} from './tokens';
-import {SSRDecider} from './plugins/ssr';
+import {
+  ElementToken,
+  RenderToken,
+  SSRDeciderToken,
+  SSRBodyTemplateToken,
+} from './tokens';
+import {SSRDecider, SSRBodyTemplate} from './plugins/ssr';
 
 import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
@@ -22,6 +27,7 @@ class FusionApp {
     el && this.register(ElementToken, el);
     render && this.register(RenderToken, render);
     this.register(SSRDeciderToken, SSRDecider);
+    this.register(SSRBodyTemplateToken, SSRBodyTemplate);
   }
 
   // eslint-disable-next-line

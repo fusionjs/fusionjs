@@ -59,3 +59,5 @@ export type aliaser<TToken> = {
 };
 
 export type cleanupFn = (thing: any) => Promise<void>;
+
+export type SSRBodyTemplate = Context => $PropertyType<Context, 'body'>;

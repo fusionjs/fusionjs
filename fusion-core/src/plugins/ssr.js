@@ -8,7 +8,11 @@
 
 import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML} from '../sanitization';
-import type {Context, SSRDecider as SSRDeciderService} from '../types.js';
+import type {
+  Context,
+  SSRDecider as SSRDeciderService,
+  SSRBodyTemplate as SSRBodyTemplateService,
+} from '../types.js';
 
 const SSRDecider = createPlugin({
   provides: () => {
@@ -27,12 +31,62 @@ const SSRDecider = createPlugin({
 });
 export {SSRDecider};
 
+const SSRBodyTemplate = createPlugin({
+  provides: () => {
+    return ctx => {
+      const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
+      const safeAttrs = Object.keys(htmlAttrs)
+        .map(attrKey => {
+          return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
+        })
+        .join('');
+
+      const safeBodyAttrs = Object.keys(bodyAttrs)
+        .map(attrKey => {
+          return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
+        })
+        .join('');
+
+      const safeTitle = escape(title);
+      // $FlowFixMe
+      const safeHead = head.map(consumeSanitizedHTML).join('');
+      // $FlowFixMe
+      const safeBody = body.map(consumeSanitizedHTML).join('');
+
+      const preloadHintLinks = getPreloadHintLinks(ctx);
+      const coreGlobals = getCoreGlobals(ctx);
+      const chunkScripts = getChunkScripts(ctx);
+      const bundleSplittingBootstrap = [
+        preloadHintLinks,
+        coreGlobals,
+        chunkScripts,
+      ].join('');
+
+      return [
+        '<!doctype html>',
+        `<html${safeAttrs}>`,
+        `<head>`,
+        `<meta charset="utf-8" />`,
+        `<title>${safeTitle}</title>`,
+        `${bundleSplittingBootstrap}${safeHead}`,
+        `</head>`,
+        `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
+        '</html>',
+      ].join('');
+    };
+  },
+});
+
+export {SSRBodyTemplate};
+
 export default function createSSRPlugin({
   element,
   ssrDecider,
+  ssrBodyTemplate,
 }: {
   element: any,
   ssrDecider: SSRDeciderService,
+  ssrBodyTemplate: SSRBodyTemplateService,
 }) {
   return async function ssrPlugin(ctx: Context, next: () => Promise<void>) {
     if (!ssrDecider(ctx)) return next();
@@ -57,45 +111,7 @@ export default function createSSRPlugin({
       return;
     }
 
-    const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
-    const safeAttrs = Object.keys(htmlAttrs)
-      .map(attrKey => {
-        return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
-      })
-      .join('');
-
-    const safeBodyAttrs = Object.keys(bodyAttrs)
-      .map(attrKey => {
-        return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
-      })
-      .join('');
-
-    const safeTitle = escape(title);
-    // $FlowFixMe
-    const safeHead = head.map(consumeSanitizedHTML).join('');
-    // $FlowFixMe
-    const safeBody = body.map(consumeSanitizedHTML).join('');
-
-    const preloadHintLinks = getPreloadHintLinks(ctx);
-    const coreGlobals = getCoreGlobals(ctx);
-    const chunkScripts = getChunkScripts(ctx);
-    const bundleSplittingBootstrap = [
-      preloadHintLinks,
-      coreGlobals,
-      chunkScripts,
-    ].join('');
-
-    ctx.body = [
-      '<!doctype html>',
-      `<html${safeAttrs}>`,
-      `<head>`,
-      `<meta charset="utf-8" />`,
-      `<title>${safeTitle}</title>`,
-      `${bundleSplittingBootstrap}${safeHead}`,
-      `</head>`,
-      `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
-      '</html>',
-    ].join('');
+    ctx.body = ssrBodyTemplate(ctx);
   };
 }
 
