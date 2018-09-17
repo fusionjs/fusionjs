@@ -316,7 +316,7 @@ if (__BROWSER__) {
     const Home = withRouter(({location, history}) => {
       if (location.pathname === '/') {
         setTimeout(() => {
-          history.push('/user/');
+          history.push('/user/1234');
         }, 50);
       }
       // add some nested routes
@@ -331,7 +331,7 @@ if (__BROWSER__) {
       return (
         <div>
           <Route path="/" component={Hello} />
-          <Route path="/abcd" component={Hello} />
+          <Route path="/user/:uuid" component={Hello} />
         </div>
       );
     };
@@ -346,8 +346,8 @@ if (__BROWSER__) {
     );
     const app = getApp(element);
     const expectedPayloads = [
-      {page: '/', title: '/'},
-      {page: '/user', title: '/user'},
+      {page: '/', params: {}, title: '/'},
+      {page: '/user/:uuid', params: {uuid: '1234'}, title: '/user/:uuid'},
     ];
     let mapper;
     const UniversalEvents = createPlugin({

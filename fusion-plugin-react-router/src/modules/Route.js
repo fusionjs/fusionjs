@@ -25,6 +25,7 @@ function Route(props: any, context: any) {
           context.onRoute({
             page: match.path,
             title: trackingId || match.path,
+            params: match.params,
           });
         }
 
