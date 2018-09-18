@@ -24,3 +24,5 @@ export default ((UniversalEventsPlugin: any): FusionPlugin<DepsType, IEmitter>);
 export const UniversalEventsToken: Token<IEmitter> = createToken(
   'UniversalEventsToken'
 );
+
+export * from './storage/index.js';

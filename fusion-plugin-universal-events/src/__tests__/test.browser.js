@@ -15,11 +15,17 @@ import {getSimulator} from 'fusion-test-utils';
 
 import plugin from '../browser.js';
 import {UniversalEventsToken} from '../index';
+import {
+  UniversalEventsBatchStorageToken,
+  inMemoryBatchStorage as store,
+} from '../storage/index.js';
 
 /* Test helpers */
 function getApp(fetch: Fetch) {
   const app = new App('el', el => el);
   app.register(FetchToken, fetch);
+  store.getAndClear();
+  app.register(UniversalEventsBatchStorageToken, store);
   app.register(UniversalEventsToken, plugin);
   return app;
 }
@@ -63,7 +69,7 @@ test('Browser EventEmitter', async t => {
     t.equals(jsonBody.items[0].payload.x, 1, 'data is ok');
     fetched = true;
 
-    return Promise.resolve(createMockFetch());
+    return Promise.resolve(createMockFetch({ok: true}));
   };
 
   const app = getApp(fetch);
@@ -88,5 +94,52 @@ test('Browser EventEmitter', async t => {
 
   t.equals(emitted, true, 'emitted');
   t.equals(fetched, true, 'fetched');
+  t.equal(store.data.length, 0, 'queue empty');
+  t.end();
+});
+
+test('Browser EventEmitter adds events back to queue if they fail to send', async t => {
+  const fetch: Fetch = () => Promise.resolve(createMockFetch());
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      t.equal(emitter, events);
+      emitter.emit('a', {x: 1});
+      emitter.flush();
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  t.equal(store.data.length, 1, 'event stored when fetch fails');
+  t.end();
+});
+
+test('Browser EventEmitter adds events back to queue if they fail to send 2', async t => {
+  const fetch: Fetch = () => Promise.reject();
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      t.equal(emitter, events);
+      emitter.emit('a', {x: 1});
+      emitter.flush();
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  t.equal(store.data.length, 1, 'event stored when fetch fails');
   t.end();
 });

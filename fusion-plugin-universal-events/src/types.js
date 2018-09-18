@@ -33,6 +33,17 @@ export interface IEmitter {
   flush(): void;
 }
 
+export type BatchType = {|
+  type: mixed,
+  payload: mixed,
+|};
+
+export interface BatchStorage {
+  add(toBeAdded: BatchType): void;
+  addToStart(toBeAdded: BatchType): void;
+  getAndClear(): BatchType[];
+}
+
 export type UniversalEventsPluginDepsType = {
   fetch: typeof FetchToken,
 };

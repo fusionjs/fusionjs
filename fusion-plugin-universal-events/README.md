@@ -108,6 +108,19 @@ __BROWSER__ && app.register(FetchToken, window.fetch);
 
 **Required. Browser-only.** See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
 
+##### `UniversalEventsBatchStorageToken`
+
+```js
+import {UniversalEventsBatchStorageToken, localBatchStorage} from 'fusion-plugin-universal-events';
+// ...
+__BROWSER__ && app.register(UniversalEventsBatchStorageToken, inMemoryBatchStorage);
+```
+
+**Optional. Browser-only.** 
+
+By default events will be stored in browser local storage before they are sent to the server.
+If you wish to override this behavior you can supply your own batch storage providing it complies with the `BatchStorage` interface type.
+
 ---
 
 #### Service API
