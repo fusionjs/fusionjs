@@ -39,6 +39,7 @@ export {
   ElementToken,
   SSRDeciderToken,
   HttpServerToken,
+  SSRBodyTemplateToken,
 } from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
