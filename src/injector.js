@@ -21,7 +21,7 @@ function createContext(value) {
     return React.createContext(value);
   }
 
-  const key = `_fusionInject${Math.random()}`;
+  const key = `_fusionContextPonyfill${Math.random()}`;
 
   class Provider extends React.Component<*> {
     getChildContext() {
