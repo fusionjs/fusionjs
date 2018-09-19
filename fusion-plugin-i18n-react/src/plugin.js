@@ -13,7 +13,7 @@ import i18n from 'fusion-plugin-i18n';
 import type {I18nServiceType} from 'fusion-plugin-i18n';
 import {ProviderPlugin} from 'fusion-react';
 
-type ExtractReturnType = <V>(() => V) => V;
+type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
 class BundleSplitConsumer extends React.Component<*, *> {
   i18n: $Call<ExtractReturnType, $PropertyType<I18nServiceType, 'from'>>;
 
