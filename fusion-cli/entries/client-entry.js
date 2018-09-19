@@ -9,10 +9,9 @@
 /* eslint-env browser */
 /* global module */
 
-// Require is used to opt out of webpack tree-shaking of ununsed imports
+// Require is used and assigned to an identifier to opt out of webpack tree-shaking of ununsed imports
 // See: https://github.com/webpack/webpack/issues/6571
-require("core-js"); // eslint-disable-line
-
+let some_identifier = require('core-js'); // eslint-disable-line
 /*
 Webpack has a configuration option called `publicPath`, which determines the
 base path for all assets within an application
@@ -34,12 +33,12 @@ into `__webpack_require__.p = ...` and uses it for HMR manifest requests
 
 /* eslint-disable */
 // $FlowFixMe
-__webpack_public_path__ = window.__WEBPACK_PUBLIC_PATH__ + "/";
+__webpack_public_path__ = window.__WEBPACK_PUBLIC_PATH__ + '/';
 /* eslint-enable */
 
 function reload() {
   // $FlowFixMe
-  const main = require("__FRAMEWORK_SHARED_ENTRY__"); // eslint-disable-line
+  const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line
   const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
     app.callback().call();

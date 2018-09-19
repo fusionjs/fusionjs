@@ -539,6 +539,29 @@ test('`fusion build` tree shaking unused imports in dev w/ assumeNoImportSideEff
   t.end();
 });
 
+test('`fusion build` polyfills with assumeNoImportSideEffects: true', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/tree-shaking-unused');
+
+  var env = Object.create(process.env);
+  env.NODE_ENV = 'production';
+
+  await cmd(`build --dir=${dir} --production`, {env});
+
+  const distFolder = path.resolve(dir, '.fusion/dist/production/client');
+  const clientFiles = await readdir(distFolder);
+
+  const hasCoreJS = clientFiles
+    .filter(file => path.extname(file) === '.js')
+    .map(file => path.join(distFolder, file))
+    .some(file => {
+      return fs.readFileSync(file, 'utf-8').includes('__core-js_shared__');
+    });
+
+  t.ok(hasCoreJS, 'some client bundle JS includes core-js');
+
+  t.end();
+});
+
 test('`fusion build` tree shaking', async t => {
   const dir = path.resolve(__dirname, '../fixtures/tree-shaking');
   await cmd(`build --dir=${dir} --production=true`);
