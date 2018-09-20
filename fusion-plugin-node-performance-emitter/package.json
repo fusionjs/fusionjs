@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "assert": "^1.4.1",
-    "gc-profiler": "^1.4.0"
+    "gc-stats": "^1.2.0"
   },
   "devDependencies": {
     "babel-eslint": "8.2.6",

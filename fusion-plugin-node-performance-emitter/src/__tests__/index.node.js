@@ -225,7 +225,9 @@ test('service - testing garbage collection emits', t => {
 
   // Register to listen to emits
   let gcMessageReceived = false;
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:timing:gc`, () => {
+  let totalDuration = 0;
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:timing:gc`, args => {
+    totalDuration += args.duration;
     gcMessageReceived = true;
   });
 
@@ -242,6 +244,7 @@ test('service - testing garbage collection emits', t => {
   setTimeout(() => {
     perfService.stopTrackingGCUsage();
     t.assert(gcMessageReceived, 'gc: message was received');
+    t.assert(totalDuration > 0, 'gc: total duration is greater than 0');
     t.end();
   }, 100);
 });
