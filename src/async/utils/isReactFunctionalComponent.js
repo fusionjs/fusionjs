@@ -6,13 +6,7 @@
  * @flow
  */
 
-export default function isReactCompositeComponent(type: mixed) {
-  if (
-    type != null &&
-    typeof type === 'function' &&
-    typeof type.prototype.render === 'function'
-  ) {
-    return true;
-  }
+export default function isReactFunctionalComponent(type: mixed) {
+  if (typeof type === 'function' && !type.prototype.render) return true;
   return false;
 }
