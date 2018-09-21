@@ -59,10 +59,9 @@ function eventLoopLag(cb: Function) {
 
 function noop() {}
 
-const gc = gcStats();
-
 /* Service */
 class NodePerformanceEmitter {
+  gc: any;
   eventLoopLagInterval: number;
   memoryInterval: number;
   socketInterval: number;
@@ -77,6 +76,8 @@ class NodePerformanceEmitter {
     assert.ok(config, 'config provided, as expected');
     assert.ok(emit, 'emit provided, as expected');
     assert.ok(timers, 'timers provided, as expected');
+
+    this.gc = gcStats();
 
     this.eventLoopLagInterval = config.eventLoopLagInterval;
     this.memoryInterval = config.memoryInterval;
@@ -169,7 +170,7 @@ class NodePerformanceEmitter {
         'Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
-    gc.on('stats', stats => {
+    this.gc.on('stats', stats => {
       this.emit('timing:gc', {
         duration: stats.pauseMS,
         type: stats.gctype,
@@ -178,7 +179,7 @@ class NodePerformanceEmitter {
   }
 
   stopTrackingGCUsage() {
-    gc.removeAllListeners('stats');
+    this.gc.removeAllListeners('stats');
     this.isTrackingGarbageCollection = false;
   }
 
