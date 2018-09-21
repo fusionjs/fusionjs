@@ -43,10 +43,13 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   // Shared base configuration
   let config = {
     plugins: [
-      require('@babel/plugin-syntax-dynamic-import'),
-      [require('@rtsao/plugin-proposal-class-properties'), {loose: false}],
+      require.resolve('@babel/plugin-syntax-dynamic-import'),
+      [
+        require.resolve('@rtsao/plugin-proposal-class-properties'),
+        {loose: false},
+      ],
     ],
-    presets: [[require('@babel/preset-env'), envPresetOpts]],
+    presets: [[require.resolve('@babel/preset-env'), envPresetOpts]],
     babelrc: false,
   };
 
@@ -56,14 +59,16 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       jsx = {};
     }
     config.presets.push([
-      require('@babel/preset-react'),
+      require.resolve('@babel/preset-react'),
       {
         pragma: jsx.pragma,
         pragmaFrag: jsx.pragmaFrag,
         development: dev,
       },
     ]);
-    config.plugins.unshift(require('@babel/plugin-transform-flow-strip-types'));
+    config.plugins.unshift(
+      require.resolve('@babel/plugin-transform-flow-strip-types')
+    );
     if (fusionTransforms) {
       config.presets.push([fusionPreset, {runtime, assumeNoImportSideEffects}]);
     }
@@ -74,7 +79,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     envPresetOpts.targets = {
       node: 'current',
     };
-    config.plugins.push(require('babel-plugin-dynamic-import-node'));
+    config.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
   } else if (runtime === 'node-bundled') {
     envPresetOpts.modules = false;
     envPresetOpts.targets = {
@@ -94,7 +99,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       'transform-regenerator',
       'transform-async-to-generator',
     ];
-    config.plugins.push([require('fast-async'), {spec: true}]);
+    config.plugins.push([require.resolve('fast-async'), {spec: true}]);
   }
 
   if (plugins) {
@@ -135,14 +140,14 @@ function fusionPreset(
 
   return {
     plugins: [
-      require('./babel-plugins/babel-plugin-asseturl'),
-      require('./babel-plugins/babel-plugin-pure-create-plugin'),
-      require('./babel-plugins/babel-plugin-sync-chunk-ids'),
-      require('./babel-plugins/babel-plugin-sync-chunk-paths'),
-      require('./babel-plugins/babel-plugin-chunkid'),
-      [require('babel-plugin-transform-cup-globals'), {target}],
+      require.resolve('./babel-plugins/babel-plugin-asseturl'),
+      require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
+      require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
+      require.resolve('./babel-plugins/babel-plugin-sync-chunk-paths'),
+      require.resolve('./babel-plugins/babel-plugin-chunkid'),
+      [require.resolve('babel-plugin-transform-cup-globals'), {target}],
       assumeNoImportSideEffects && [
-        require('./babel-plugins/babel-plugin-transform-tree-shake'),
+        require.resolve('./babel-plugins/babel-plugin-transform-tree-shake'),
         {target},
       ],
     ].filter(Boolean),
