@@ -57,9 +57,7 @@ function getServices(app: FusionApp, deps: Dependencies): Services {
   const services = {};
 
   Object.entries(deps).forEach(([name, token]) => {
-    const ref = (token && token.ref) || token;
-
-    services[name] = app.services.get(ref);
+    services[name] = app.getService(token);
   });
 
   return services;
