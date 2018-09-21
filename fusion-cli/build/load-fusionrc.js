@@ -17,7 +17,7 @@ let loggedNotice = false;
 
 module.exports = function validateConfig(
   dir /*: any */
-) /*: {babel?: {plugins?: Array<any>, presets?: Array<any>}, assumeNoImportSideEffects?: boolean} */ {
+) /*: {babel?: {plugins?: Array<any>, presets?: Array<any>}, assumeNoImportSideEffects?: boolean, experimentalCompile?: boolean} */ {
   const configPath = path.join(dir, '.fusionrc.js');
   let config;
   if (fs.existsSync(configPath)) {
@@ -50,7 +50,9 @@ function isValid(config) {
 
   if (
     !Object.keys(config).every(key =>
-      ['babel', 'assumeNoImportSideEffects'].includes(key)
+      ['babel', 'assumeNoImportSideEffects', 'experimentalCompile'].includes(
+        key
+      )
     )
   ) {
     throw new Error(`Invalid property in .fusionrc.js`);

@@ -84,6 +84,47 @@ function getConfig({target, env, dir, watch, state}) {
     web: clientEntry,
   }[target];
 
+  const babelConfig = fusionConfig.experimentalCompile
+    ? getBabelConfig({
+        dev: env === 'development',
+        jsx: {pragma},
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        runtime: target === 'node' ? 'node-bundled' : 'browser-legacy',
+        specOnly: false,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      })
+    : getBabelConfig({
+        runtime: target === 'node' ? 'node-bundled' : 'browser-legacy',
+        specOnly: true,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      });
+
+  const babelOverrides = fusionConfig.experimentalCompile
+    ? {}
+    : getBabelConfig({
+        dev: env === 'development',
+        jsx: {pragma},
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        runtime: target === 'node' ? 'node-bundled' : 'browser-legacy',
+        specOnly: false,
+      });
+
   const whitelist = ['fusion-cli/entries'];
 
   // NODE_ENV should be built as 'production' for everything except 'development'
@@ -203,19 +244,7 @@ function getConfig({target, env, dir, watch, state}) {
             {
               loader: babelLoader.path,
               options: {
-                ...getBabelConfig({
-                  runtime:
-                    target === 'node' ? 'node-bundled' : 'browser-legacy',
-                  specOnly: true,
-                  plugins:
-                    fusionConfig.babel && fusionConfig.babel.plugins
-                      ? fusionConfig.babel.plugins
-                      : [],
-                  presets:
-                    fusionConfig.babel && fusionConfig.babel.presets
-                      ? fusionConfig.babel.presets
-                      : [],
-                }),
+                ...babelConfig,
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */
@@ -228,16 +257,7 @@ function getConfig({target, env, dir, watch, state}) {
                       entry,
                       /fusion-cli\/entries/,
                     ],
-                    ...getBabelConfig({
-                      dev: env === 'development',
-                      jsx: {pragma},
-                      fusionTransforms: true,
-                      assumeNoImportSideEffects:
-                        fusionConfig.assumeNoImportSideEffects,
-                      runtime:
-                        target === 'node' ? 'node-bundled' : 'browser-legacy',
-                      specOnly: false,
-                    }),
+                    ...babelOverrides,
                   },
                 ],
               },

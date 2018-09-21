@@ -243,6 +243,36 @@ test('compiles with babel plugin', async t => {
   t.end();
 });
 
+test('experimentalCompile option', async t => {
+  const envs = ['development'];
+  const dir = './test/fixtures/custom-babel';
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/server/server-main.js`
+  );
+  const clientEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/client/client-main.js`
+  );
+
+  const compiler = new Compiler({envs, dir});
+  await compiler.clean();
+
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
+
+      return resolve(watcher);
+    });
+  });
+  watcher.close();
+  t.ok(await exists(clientEntryPath), 'Client file gets compiled');
+  t.ok(await exists(serverEntryPath), 'Server file gets compiled');
+  t.end();
+});
+
 test('transpiles node_modules', async t => {
   const envs = ['development'];
   const dir = './test/fixtures/transpile-node-modules';
