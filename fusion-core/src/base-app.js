@@ -22,6 +22,7 @@ class FusionApp {
   constructor(el: Element | string, render: *) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
+    this._dependedOn = new Set();
     this.plugins = []; // Token
     this.cleanups = [];
     el && this.register(ElementToken, el);
@@ -45,6 +46,7 @@ class FusionApp {
   cleanups: Array<cleanupFn>;
   renderer: any;
   _getService: any => any;
+  _dependedOn: Set<any>;
 
   register(token: *, value: *): aliaser<*> {
     // $FlowFixMe
@@ -80,18 +82,26 @@ class FusionApp {
       aliases: new Map(),
       enhancers: [],
     };
+    if (value && value.__plugin__) {
+      if (value.deps) {
+        Object.values(value.deps).forEach(token =>
+          this._dependedOn.add(getTokenRef(token))
+        );
+      }
+    }
     this.registered.set(getTokenRef(token), {
       value,
       aliases,
       enhancers,
       token,
     });
-    function alias(sourceToken: *, destToken: *) {
+    const alias = (sourceToken: *, destToken: *) => {
+      this._dependedOn.add(getTokenRef(destToken));
       if (aliases) {
         aliases.set(sourceToken, destToken);
       }
       return {alias};
-    }
+    };
     return {alias};
   }
   middleware(deps: *, middleware: *) {
@@ -129,18 +139,15 @@ class FusionApp {
     }
     this._register(RenderToken, this.renderer);
     const resolved = new Map(); // Token.ref || Token => Service
-    const dependedOn = new Set(); // Token.ref || Token
     const nonPluginTokens = new Set(); // Token
     const resolving = new Set(); // Token.ref || Token
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
-    const allAliases = new Set(); // Token.ref || Token
     const appliedEnhancers = [];
     const resolveToken = (token: Token<TResolved>, tokenAliases) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(token)) {
         const newToken = tokenAliases.get(token);
-        allAliases.add([getTokenRef(token), getTokenRef(newToken)]);
         if (newToken) {
           token = newToken;
         }
@@ -219,7 +226,6 @@ class FusionApp {
         const resolvedDeps = {};
         for (const key in registeredDeps) {
           const registeredToken = registeredDeps[key];
-          dependedOn.add(getTokenRef(registeredToken));
           resolvedDeps[key] = resolveToken(registeredToken, aliases);
         }
         // `provides` should be undefined if the plugin does not have a `provides` function
@@ -250,6 +256,11 @@ class FusionApp {
           let nextProvides = e(provides);
           appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
+            if (nextProvides.deps) {
+              Object.values(nextProvides.deps).forEach(token =>
+                this._dependedOn.add(getTokenRef(token))
+              );
+            }
             nextProvides = resolvePlugin(nextProvides);
           }
           provides = nextProvides;
@@ -263,14 +274,12 @@ class FusionApp {
     for (let i = 0; i < this.plugins.length; i++) {
       resolveToken(this.plugins[i]);
     }
-    for (const aliasPair of allAliases) {
-      const [sourceTokenRef, destTokenRef] = aliasPair;
-      if (dependedOn.has(sourceTokenRef)) {
-        dependedOn.add(destTokenRef);
-      }
-    }
     for (const token of nonPluginTokens) {
-      if (!dependedOn.has(getTokenRef(token))) {
+      if (
+        token !== ElementToken &&
+        token !== RenderToken &&
+        !this._dependedOn.has(getTokenRef(token))
+      ) {
         throw new Error(
           `Registered token without depending on it: "${token.name}"`
         );

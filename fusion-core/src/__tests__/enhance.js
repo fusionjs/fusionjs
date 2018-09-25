@@ -68,6 +68,7 @@ tape('enhancement with a plugin with deps', t => {
 
   const DepAToken: Token<string> = createToken('DepA');
   const DepBToken: Token<string> = createToken('DepB');
+  const DepCToken: Token<string> = createToken('DepC');
 
   const DepA = 'test-dep-a';
   const DepB: FusionPlugin<{a: Token<string>}, string> = createPlugin({
@@ -89,15 +90,20 @@ tape('enhancement with a plugin with deps', t => {
   });
   const BaseFnEnhancer = (
     fn: FnType
-  ): FusionPlugin<{a: Token<string>, b: Token<string>}, FnType> => {
+  ): FusionPlugin<
+    {a: Token<string>, b: Token<string>, c: Token<string>},
+    FnType
+  > => {
     return createPlugin({
       deps: {
         a: DepAToken,
         b: DepBToken,
+        c: DepCToken,
       },
-      provides: ({a, b}) => {
+      provides: ({a, b, c}) => {
         t.equal(a, 'test-dep-a');
         t.equal(b, 'test-dep-b');
+        t.equal(c, 'test-dep-c');
         return arg => {
           return fn(arg) + ' enhanced';
         };
@@ -106,6 +112,7 @@ tape('enhancement with a plugin with deps', t => {
   };
   app.register(DepAToken, DepA);
   app.register(DepBToken, DepB);
+  app.register(DepCToken, 'test-dep-c');
   app.register(FnToken, BaseFn);
   app.enhance(FnToken, BaseFnEnhancer);
   app.middleware({fn: FnToken}, ({fn}) => {
