@@ -16,6 +16,11 @@ const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
 };
 
+if (__NODE__) {
+  // $FlowFixMe
+  contextTypes.markAsCritical = PropTypes.func;
+}
+
 // $FlowFixMe
 export default function withAsyncComponent({
   defer,
@@ -39,7 +44,7 @@ export default function withAsyncComponent({
   return prepared(
     (props, context) => {
       if (AsyncComponent) {
-        if (__NODE__) {
+        if (__NODE__ && context.markAsCritical) {
           chunkIds.forEach(chunkId => {
             context.markAsCritical(chunkId);
           });
@@ -56,7 +61,7 @@ export default function withAsyncComponent({
       // $FlowFixMe
       chunkIds = componentPromise[CHUNKS_KEY] || [];
 
-      if (__NODE__) {
+      if (__NODE__ && context.markAsCritical) {
         chunkIds.forEach(chunkId => {
           context.markAsCritical(chunkId);
         });

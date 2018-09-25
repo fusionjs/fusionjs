@@ -44,7 +44,7 @@ export default class App extends FusionApp {
             return next();
           }
 
-          let markAsCritical = __NODE__
+          const markAsCritical = __NODE__
             ? chunkId => {
                 // Push to legacy context for backwards compat w/ legacy SSR template
                 ctx.preloadChunks.push(chunkId);
