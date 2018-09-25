@@ -544,3 +544,39 @@ tape('Missing token errors reasonably', t => {
   t.throws(() => app.register(BrowserPlugin), /Cannot register null/);
   t.end();
 });
+
+tape('retrieve dependency', t => {
+  const app = new App('el', el => el);
+  const TokenA = createToken('a');
+  const PluginA = createPlugin({
+    provides: () => {
+      return {
+        a: 'Hello',
+      };
+    },
+  });
+
+  app.register(TokenA, PluginA);
+  app.resolve();
+  t.equal(app.getService(TokenA).a, 'Hello');
+  t.end();
+});
+
+tape('retrieve unresolved dependency', t => {
+  const app = new App('el', el => el);
+  const TokenA = createToken('a');
+  const PluginA = createPlugin({
+    provides: () => {
+      return {
+        a: 'Hello',
+      };
+    },
+  });
+
+  app.register(TokenA, PluginA);
+  t.throws(
+    () => app.getService(TokenA),
+    /Cannot get service from unresolved app/
+  );
+  t.end();
+});

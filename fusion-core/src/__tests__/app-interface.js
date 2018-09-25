@@ -16,6 +16,7 @@ test('interface', t => {
   const app = new App(element, render);
   t.ok(app.plugins instanceof Array, 'sets plugins');
   t.equal(typeof app.register, 'function', 'has a register function');
+  t.equal(typeof app.getService, 'function', 'has a getService function');
   t.ok(typeof app.callback === 'function', 'callback is function');
   t.ok(typeof app.callback() === 'function', 'callback returns server handler');
   t.end();

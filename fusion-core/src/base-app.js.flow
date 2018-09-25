@@ -38,6 +38,7 @@ declare class FusionApp {
   middleware(middleware: Middleware): void;
   callback(): (...Array<*>) => Promise<void> | any;
   resolve(): void;
+  getService<TVal>(token: Token<TVal>): any;
 }
 
 declare export default typeof FusionApp;

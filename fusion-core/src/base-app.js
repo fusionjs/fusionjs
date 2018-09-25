@@ -44,6 +44,7 @@ class FusionApp {
   plugins: Array<any>;
   cleanups: Array<cleanupFn>;
   renderer: any;
+  _getService: any => any;
 
   register(token: *, value: *): aliaser<*> {
     // $FlowFixMe
@@ -79,7 +80,12 @@ class FusionApp {
       aliases: new Map(),
       enhancers: [],
     };
-    this.registered.set(getTokenRef(token), {value, aliases, enhancers, token});
+    this.registered.set(getTokenRef(token), {
+      value,
+      aliases,
+      enhancers,
+      token,
+    });
     function alias(sourceToken: *, destToken: *) {
       if (aliases) {
         aliases.set(sourceToken, destToken);
@@ -107,7 +113,12 @@ class FusionApp {
     if (enhancers && Array.isArray(enhancers)) {
       enhancers.push(enhancer);
     }
-    this.registered.set(getTokenRef(token), {value, aliases, enhancers, token});
+    this.registered.set(getTokenRef(token), {
+      value,
+      aliases,
+      enhancers,
+      token,
+    });
   }
   cleanup() {
     return Promise.all(this.cleanups.map(fn => fn()));
@@ -265,7 +276,15 @@ class FusionApp {
         );
       }
     }
+
     this.plugins = resolvedPlugins;
+    this._getService = token => resolved.get(getTokenRef(token));
+  }
+  getService<TResolved>(token: Token<TResolved>): any {
+    if (!this._getService) {
+      throw new Error('Cannot get service from unresolved app');
+    }
+    return this._getService(token);
   }
 }
 
