@@ -13,16 +13,16 @@ class PrepareProvider extends React.Component<*, *> {
   constructor(props: any, context: any) {
     super(props, context);
     this.splitComponentLoaders = [];
-    this.preloadChunks = props.preloadChunks;
+    this.markAsCritical = props.markAsCritical;
   }
 
-  preloadChunks: any;
   splitComponentLoaders: Array<any>;
+  markAsCritical: number => void;
 
   getChildContext() {
     return {
       splitComponentLoaders: this.splitComponentLoaders,
-      preloadChunks: this.preloadChunks,
+      markAsCritical: this.markAsCritical,
     };
   }
   render() {
@@ -32,7 +32,7 @@ class PrepareProvider extends React.Component<*, *> {
 
 PrepareProvider.childContextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
-  preloadChunks: PropTypes.array.isRequired,
+  markAsCritical: PropTypes.func,
 };
 
 export default PrepareProvider;
