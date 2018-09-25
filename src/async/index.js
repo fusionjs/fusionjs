@@ -13,7 +13,6 @@ import prepare from './prepare';
 import prepared from './prepared';
 import split from './split';
 import exclude from './traverse-exclude';
-import middleware from './middleware'; //typed
 
 const prepareTyped: (
   element: React.Element<any>
@@ -51,5 +50,4 @@ export {
   preparedTyped as prepared,
   splitTyped as split,
   excludeTyped as exclude,
-  middleware,
 };

@@ -50,7 +50,7 @@ tape('Handling context', async t => {
   };
 
   const app = (
-    <Provider preloadChunks={[]}>
+    <Provider>
       <ToTest />
     </Provider>
   );
