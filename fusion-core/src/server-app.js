@@ -33,7 +33,7 @@ export default function(): typeof BaseApp {
         {
           element: ElementToken,
           ssrDecider: SSRDeciderToken,
-          ssrBodyTemplate: SSRBodyTemplateToken,
+          ssrBodyTemplate: SSRBodyTemplateToken.optional,
         },
         ssrPlugin
       );
