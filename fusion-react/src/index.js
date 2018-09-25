@@ -9,8 +9,9 @@
 /* eslint-env browser */
 import * as React from 'react';
 
-import FusionApp, {createPlugin} from 'fusion-core';
-import {prepare, middleware} from './async/index.js';
+import FusionApp, {createPlugin, CriticalChunkIdsToken} from 'fusion-core';
+import {prepare} from './async/index.js';
+import PrepareProvider from './async/prepare-provider';
 
 import serverRender from './server';
 import clientRender from './client';
@@ -24,6 +25,9 @@ declare var __NODE__: Boolean;
 export default class App extends FusionApp {
   constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
     const renderer = createPlugin({
+      deps: {
+        criticalChunkIds: CriticalChunkIdsToken.optional,
+      },
       provides() {
         return (el: React.Element<*>) => {
           return prepare(el).then(() => {
@@ -34,8 +38,31 @@ export default class App extends FusionApp {
           });
         };
       },
-      middleware() {
-        return middleware;
+      middleware({criticalChunkIds}) {
+        return (ctx, next) => {
+          if (__NODE__ && !ctx.element) {
+            return next();
+          }
+
+          const markAsCritical = __NODE__
+            ? chunkId => {
+                // Push to legacy context for backwards compat w/ legacy SSR template
+                ctx.preloadChunks.push(chunkId);
+
+                // Also use new service if registered
+                if (criticalChunkIds) {
+                  let chunkIds = criticalChunkIds.from(ctx);
+                  chunkIds.add(chunkId);
+                }
+              }
+            : noop;
+          ctx.element = (
+            <PrepareProvider markAsCritical={markAsCritical}>
+              {ctx.element}
+            </PrepareProvider>
+          );
+          return next();
+        };
       },
     });
     super(root, renderer);
@@ -43,5 +70,7 @@ export default class App extends FusionApp {
 }
 
 export {ProviderPlugin, ProvidedHOC, Provider};
+
+function noop() {}
 
 export * from './async/index.js';
