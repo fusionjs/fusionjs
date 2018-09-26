@@ -9,7 +9,7 @@ The Fusion plugin for [Styletron](https://github.com/rtsao/styletron), a compone
 ## Installation
 
 ```sh
-yarn add fusion-plugin-styletron-react
+yarn add fusion-plugin-styletron-react styletron-react
 ```
 
 ## Usage
