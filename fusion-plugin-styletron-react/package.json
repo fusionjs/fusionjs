@@ -22,7 +22,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "css-to-js-sourcemap-worker": "^2.0.1",
+    "css-to-js-sourcemap-worker": "^2.0.2",
     "styletron-engine-atomic": "^1.0.5"
   },
   "devDependencies": {

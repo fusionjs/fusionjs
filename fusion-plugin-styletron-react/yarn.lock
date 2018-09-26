@@ -1833,9 +1833,9 @@ css-select@~1.2.0:
     domutils "1.5.1"
     nth-check "~1.0.1"
 
-css-to-js-sourcemap-worker@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/css-to-js-sourcemap-worker/-/css-to-js-sourcemap-worker-2.0.1.tgz#ecba2392dcd0ef9ea23d3bc27d742e775f53df15"
+css-to-js-sourcemap-worker@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/css-to-js-sourcemap-worker/-/css-to-js-sourcemap-worker-2.0.2.tgz#98ee88ecade4f4abc215a597fb9d05c00e381154"
 
 css-what@2.1:
   version "2.1.0"
