@@ -215,9 +215,9 @@
   version "7.0.0-beta.55"
   resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-beta.55.tgz#31f40777efd6b961da8496a923c22d2b062b3f73"
 
-"@babel/helper-plugin-utils@7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0-rc.1.tgz#3e277eae59818e7d4caf4174f58a7a00d441336e"
+"@babel/helper-plugin-utils@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@babel/helper-plugin-utils/-/helper-plugin-utils-7.0.0.tgz#bbb3fbee98661c569034237cc03967ba99b4f250"
 
 "@babel/helper-regex@7.0.0-beta.31":
   version "7.0.0-beta.31"
@@ -404,11 +404,11 @@
   dependencies:
     "@babel/helper-plugin-utils" "7.0.0-beta.55"
 
-"@babel/plugin-syntax-flow@7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0-rc.1.tgz#1c0165eb2fa7c5769eaf27f2bfb46e7df5d3f034"
+"@babel/plugin-syntax-flow@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.0.0.tgz#70638aeaad9ee426bc532e51523cff8ff02f6f17"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-rc.1"
+    "@babel/helper-plugin-utils" "^7.0.0"
 
 "@babel/plugin-syntax-import-meta@7.0.0-beta.55":
   version "7.0.0-beta.55"
@@ -495,12 +495,12 @@
   dependencies:
     "@babel/helper-builder-binary-assignment-operator-visitor" "7.0.0-beta.31"
 
-"@babel/plugin-transform-flow-strip-types@7.0.0-rc.1":
-  version "7.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0-rc.1.tgz#dd69161fd75bc0c68803c0c6051730d559cc2d85"
+"@babel/plugin-transform-flow-strip-types@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.0.0.tgz#c40ced34c2783985d90d9f9ac77a13e6fb396a01"
   dependencies:
-    "@babel/helper-plugin-utils" "7.0.0-rc.1"
-    "@babel/plugin-syntax-flow" "7.0.0-rc.1"
+    "@babel/helper-plugin-utils" "^7.0.0"
+    "@babel/plugin-syntax-flow" "^7.0.0"
 
 "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.55":
   version "7.0.0-beta.55"
