@@ -23,7 +23,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.0.0-rc.1",
+    "@babel/preset-react": "7.0.0",
     "babel-eslint": "^8.2.3",
     "create-universal-package": "3.4.6",
     "enzyme": "3.4.1",
