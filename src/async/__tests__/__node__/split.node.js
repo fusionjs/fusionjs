@@ -32,7 +32,7 @@ tape('Preparing an app with an async component', async t => {
   });
 
   const app = (
-    <Provider preloadChunks={[]}>
+    <Provider>
       <ToTest />
     </Provider>
   );
@@ -66,7 +66,7 @@ tape('Preparing an app with an errored async component', async t => {
   });
 
   const app = (
-    <Provider preloadChunks={[]}>
+    <Provider>
       <ToTest />
     </Provider>
   );

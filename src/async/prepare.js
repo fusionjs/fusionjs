@@ -15,6 +15,7 @@ import {
 } from 'react-is';
 
 import isReactCompositeComponent from './utils/isReactCompositeComponent';
+import isReactFunctionalComponent from './utils/isReactFunctionalComponent';
 import {isPrepared, getPrepare} from './prepared';
 
 function renderCompositeElementInstance(instance) {
@@ -73,21 +74,29 @@ function prepareElement(element, context) {
     isForwardRef(element)
   ) {
     return Promise.resolve([props.children, context]);
-  }
-  if (!isReactCompositeComponent(type)) {
+  } else if (isReactFunctionalComponent(type)) {
     return Promise.resolve([type(props, context), context]);
+  } else if (isReactCompositeComponent(type)) {
+    const CompositeComponent = type;
+    const instance = new CompositeComponent(props, context);
+    instance.props = props;
+    instance.context = context;
+    return prepareComponentInstance(instance).then(prepareConfig => {
+      // Stop traversing if the component is defer or boundary
+      if (prepareConfig.defer || prepareConfig.boundary) {
+        return Promise.resolve([null, context]);
+      }
+      return renderCompositeElementInstance(instance);
+    });
+  } else {
+    throw new TypeError(
+      `Invalid React element type. Must be a string, a function or a subclass of React.Component. ` +
+        `This error happens if you write a React Component <Foo> where Foo is undefined. ` +
+        `This can happen when mistakenly using a default import instead of a named import or vice-versa, ` +
+        `or if you are missing a peerDependency in your package.json and your package manager hoists an older version from an unrelated dependency \n\n` +
+        JSON.stringify(element, null, 2)
+    );
   }
-  const CompositeComponent = type;
-  const instance = new CompositeComponent(props, context);
-  instance.props = props;
-  instance.context = context;
-  return prepareComponentInstance(instance).then(prepareConfig => {
-    // Stop traversing if the component is defer or boundary
-    if (prepareConfig.defer || prepareConfig.boundary) {
-      return Promise.resolve([null, context]);
-    }
-    return renderCompositeElementInstance(instance);
-  });
 }
 
 function _prepare(element, context) {
