@@ -144,7 +144,7 @@ app.register(RenderToken, render);
 The render token is used to register the render function with the fusion app. This is a function that knows how to
 render your application on the server/browser, and allows `fusion-core` to remain agnostic of the virtualdom library.
 
-##### SSRDeciderEnhancer
+##### SSRDeciderToken
 
 ```js
 import App, {SSRDeciderToken} from 'fusion-core';
