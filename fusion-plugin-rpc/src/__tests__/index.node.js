@@ -544,7 +544,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
       t.equal(payload.origin, 'browser');
       t.equal(payload.status, 'failure');
       t.equal(typeof payload.timing, 'number');
-      t.notEqual(payload.error, e);
+      t.equal(payload.error, e);
     },
   });
 

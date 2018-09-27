@@ -163,7 +163,7 @@ const pluginFactory: () => RPCPluginType = () =>
               if (scopedEmitter) {
                 scopedEmitter.emit(statKey, {
                   method,
-                  error,
+                  error: e,
                   status: 'failure',
                   origin: 'browser',
                   timing: ms() - startTime,
