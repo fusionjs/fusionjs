@@ -60,7 +60,7 @@
     "flow-bin": "^0.81.0",
     "node-fetch": "^2.0.0",
     "nyc": "^12.0.0",
-    "prettier": "1.14.2",
+    "prettier": "1.14.3",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
   },
