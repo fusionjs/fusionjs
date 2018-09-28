@@ -57,6 +57,8 @@ function getServices(app: FusionApp, deps: Dependencies): Services {
   const services = {};
 
   Object.entries(deps).forEach(([name, token]) => {
+    // To be addressed in a future Flow-focued PR.
+    // $FlowFixMe
     services[name] = app.getService(token);
   });
 
