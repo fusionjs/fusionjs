@@ -22,7 +22,6 @@ module.exports = createPlugin({
       // webpack-related things
       ctx.syncChunks = compilationMetaData.syncChunks;
       ctx.chunkUrlMap = compilationMetaData.chunkUrlMap;
-
       return next();
     };
   },

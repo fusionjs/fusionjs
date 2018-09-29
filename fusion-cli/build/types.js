@@ -14,6 +14,9 @@ export type ClientChunkMetadata = {
   urlMap: Map<number, Map<string, string>>,
   criticalPaths: Array<string>,
   criticalIds: Array<number>,
+  chunks: Map<number | string, string>,
+  runtimeChunkId: number | string,
+  initialChunkIds: Set<number | string>,
 };
 export type ClientChunkMetadataState = DeferredState<ClientChunkMetadata>;
 

@@ -8,40 +8,29 @@
 
 /* eslint-env node */
 
-import http from 'http';
-
-import {createPlugin, getEnv, HttpServerToken} from 'fusion-core';
-
-import AssetsFactory from '../plugins/assets-plugin';
-import ContextPlugin from '../plugins/context-plugin';
-import ServerErrorPlugin from '../plugins/server-error-plugin';
-import stripRoutePrefix from '../lib/strip-prefix.js';
-
 // $FlowFixMe
 import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-line
 
-const {prefix, webpackPublicPath} = getEnv();
+import http from 'http';
 
+import {
+  createPlugin,
+  HttpServerToken,
+  RoutePrefixToken,
+  SSRBodyTemplateToken,
+  CriticalChunkIdsToken,
+} from 'fusion-core';
+
+import CriticalChunkIdsPlugin from '../plugins/critical-chunk-ids-plugin.js';
+import AssetsFactory from '../plugins/assets-plugin';
+import ContextPlugin from '../plugins/context-plugin';
+import ServerErrorPlugin from '../plugins/server-error-plugin';
+import {SSRBodyTemplate} from '../plugins/ssr-plugin';
+import stripRoutePrefix from '../lib/strip-prefix.js';
+
+let prefix = process.env.ROUTE_PREFIX;
 let AssetsPlugin;
 
-/*
-Webpack has a configuration option called `publicPath`, which determines the
-base path for all assets within an application
-
-The property can be set at runtime by assigning to a magic
-global variable called `__webpack_public_path__`.
-
-We set this value at runtime because its value depends on the
-`ROUTE_PREFIX` and `CDN_URL` environment variables.
-
-Webpack compiles the `__webpack_public_path__ = ...` assignment expression
-into `__webpack_require__.p = ...` and uses it for HMR manifest requests
-*/
-// $FlowFixMe
-__webpack_public_path__ = webpackPublicPath + '/'; // eslint-disable-line
-
-// The shared entry must be imported after setting __webpack_public_path__.
-// We use a require as imports are hoisted and would be run before setting __webpack_public_path__.
 // $FlowFixMe
 const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 
@@ -81,6 +70,11 @@ async function reload() {
   const app = await initialize();
   reverseRegister(app, AssetsPlugin);
   reverseRegister(app, ContextPlugin);
+  reverseRegister(app, SSRBodyTemplateToken, SSRBodyTemplate);
+  app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
+  if (prefix) {
+    app.register(RoutePrefixToken, prefix);
+  }
   if (server) {
     app.register(HttpServerToken, createPlugin({provides: () => server}));
   }

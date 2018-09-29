@@ -11,6 +11,8 @@
 import type {ClientChunkMetadataState, ClientChunkMetadata} from "../types.js";
 */
 
+const assert = require('assert');
+
 class ClientChunkMetadataStateHydrator {
   /*::
   state: ClientChunkMetadataState;
@@ -34,7 +36,13 @@ class ClientChunkMetadataStateHydrator {
           chunks
         );
 
-        this.state.resolve({fileManifest, urlMap, criticalIds, criticalPaths});
+        this.state.resolve({
+          fileManifest,
+          urlMap,
+          criticalIds,
+          criticalPaths,
+          ...getChunkInfo(compilation, chunks),
+        });
       });
     });
   }
@@ -44,20 +52,20 @@ module.exports = ClientChunkMetadataStateHydrator;
 
 function chunkIndexFromWebpackChunks(chunks) {
   const chunkIdsByFile = new Map();
-  chunks.forEach(c => {
+
+  for (const c of chunks) {
     const chunkId = c.id;
-    const files = Array.from(c.modulesIterable, m => {
+
+    const files = [];
+    for (const m of c.modulesIterable) {
       if (m.resource) {
-        return m.resource;
+        files.push(m.resource);
+      } else if (m.modules) {
+        files.push(...m.modules.map(module => module.resource));
       }
-      if (m.modules) {
-        return m.modules.map(module => module.resource);
-      }
-      return [];
-    }).reduce((list, next) => {
-      return list.concat(next);
-    }, []);
-    files.forEach(path => {
+    }
+
+    for (const path of files) {
       if (!chunkIdsByFile.has(path)) {
         chunkIdsByFile.set(path, new Set());
       }
@@ -65,8 +73,9 @@ function chunkIndexFromWebpackChunks(chunks) {
       if (chunkIds) {
         chunkIds.add(chunkId);
       }
-    });
-  });
+    }
+  }
+
   return chunkIdsByFile;
 }
 
@@ -79,6 +88,43 @@ function chunkMapFromWebpackChunks(chunks) {
     chunkMap.set(chunk.id, inner);
   });
   return chunkMap;
+}
+
+function getChunkInfo(compilation, chunks) {
+  assert(
+    compilation.entrypoints.size === 1,
+    `fusion-cli expects there to be a single entrypoint, but there was ${
+      compilation.entrypoints.size
+    }. This is a bug in fusion-cli.`
+  );
+  const allChunks = new Map();
+  const runtimeChunkIds = new Set();
+  const initialChunkIds = new Set();
+
+  for (const chunk of chunks) {
+    allChunks.set(chunk.id, chunk.files[0]);
+    if (chunk.hasRuntime()) {
+      runtimeChunkIds.add(chunk.id);
+    } else if (chunk.canBeInitial()) {
+      initialChunkIds.add(chunk.id);
+    }
+  }
+
+  assert(
+    runtimeChunkIds.size === 1,
+    `fusion-cli expects there to be a single runtime chunk, but there was ${
+      runtimeChunkIds.size
+    }. This is a bug in fusion-cli.`
+  );
+
+  // $FlowFixMe
+  const [runtimeChunkId] /*: [number] */ = runtimeChunkIds;
+
+  return {
+    chunks: allChunks,
+    runtimeChunkId,
+    initialChunkIds,
+  };
 }
 
 function criticalChunkInfo(compilation, chunks) {

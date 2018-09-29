@@ -59,6 +59,7 @@
     "uglifyjs-webpack-plugin": "^1.3.0",
     "webpack": "4.18.1",
     "webpack-hot-middleware": "^2.24.0",
+    "webpack-plugin-hash-output": "^3.1.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {
@@ -74,10 +75,10 @@
     "eslint-plugin-prettier": "2.6.2",
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "0.80.0",
-    "fusion-core": "1.5.2",
+    "fusion-core": "1.7.0-1",
     "fusion-plugin-i18n-react": "^1.0.4",
     "fusion-plugin-react-router": "^1.3.0",
-    "fusion-react": "^1.2.2",
+    "fusion-react": "1.3.0-0",
     "fusion-test-utils": "^1.2.2",
     "fusion-tokens": "^1.1.0",
     "prettier": "1.14.2",
@@ -89,7 +90,7 @@
     "tape": "4.9.1"
   },
   "peerDependencies": {
-    "fusion-core": "^1.5.0",
+    "fusion-core": "^1.7.0-1",
     "fusion-tokens": "^1.1.0"
   },
   "engines": {

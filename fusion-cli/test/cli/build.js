@@ -166,12 +166,11 @@ test('`fusion build` app with dynamic imports chunk hashing', async t => {
     rebuiltDistFiles.clientVendorFile,
     'vendor file hash should not change'
   );
-  // TODO(#393) Add this back https://github.com/fusionjs/fusion-cli/pull/385
-  // t.equal(
-  //   distFiles.clientMainFile,
-  //   rebuiltDistFiles.clientMainFile,
-  //   'main file hash should not change'
-  // );
+  t.equal(
+    distFiles.clientMainFile,
+    rebuiltDistFiles.clientMainFile,
+    'main file hash should not change'
+  );
   t.notEqual(
     distFiles.splitClientChunks[splitChunkId],
     rebuiltDistFiles.splitClientChunks[splitChunkId],
@@ -205,15 +204,15 @@ test('`fusion build` app with dynamic imports integration', async t => {
   );
   t.equal(
     await page.$$eval('script', els => els.length),
-    5,
-    'should be 5 scripts'
+    6,
+    'should be 6 scripts'
   );
   await page.click('#split-route-link');
 
   t.equal(
     await page.$$eval('script', els => els.length),
-    6,
-    'should be 6 scripts after dynamic loading'
+    7,
+    'should be 7 scripts after dynamic loading'
   );
 
   t.ok(
@@ -221,6 +220,15 @@ test('`fusion build` app with dynamic imports integration', async t => {
       els.every(el => el.crossOrigin === null)
     ),
     'all scripts do not have crossorigin attribute'
+  );
+
+  page.setJavaScriptEnabled(false);
+
+  await page.goto(`http://localhost:${port}/split-route`, {waitUntil: 'load'});
+  t.equal(
+    await page.$$eval('script', els => els.length),
+    7,
+    'all critical scripts should be preloaded'
   );
 
   await browser.close();
@@ -490,12 +498,10 @@ test('`fusion build` with dynamic imports', async t => {
   t.deepEqual(testContent.chunkIds, [[1], [0]], 'Chunk IDs are populated');
 
   t.ok(
-    await exists(path.resolve(dir, `.fusion/dist/development/client/0.js`)),
+    await exists(
+      path.resolve(dir, `.fusion/dist/development/client/client-0.js`)
+    ),
     'client dynamic import bundle exists'
-  );
-  t.ok(
-    await exists(path.resolve(dir, `.fusion/dist/development/server/0.js`)),
-    'server dynamic import bundle exists'
   );
   t.end();
 });
