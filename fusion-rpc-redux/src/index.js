@@ -146,7 +146,7 @@ export function createRPCHandler({
   }
   return (args: any) => {
     if (mapStateToParams) {
-      args = mapStateToParams(store.getState());
+      args = mapStateToParams(store.getState(), args);
     }
     if (transformParams) {
       args = transformParams(args);

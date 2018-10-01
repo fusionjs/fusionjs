@@ -54,7 +54,8 @@ test('createRPCHandler success', t => {
   const handler = createRPCHandler({
     actions: {
       start: args => {
-        t.equal(args, 'transformed-args');
+        t.equal(args.transformed, 'transformed-args');
+        t.equal(args.mapped, 'mapped-params');
         return 'start';
       },
       success: result => {
@@ -83,13 +84,20 @@ test('createRPCHandler success', t => {
       },
     },
     rpcId: 'test',
-    mapStateToParams: state => {
+    mapStateToParams: (state, args) => {
+      t.equal(args, 'args');
       t.equal(state, 'test-state');
-      return 'mapped-params';
+      return {
+        args: args,
+        mapped: 'mapped-params',
+      };
     },
     transformParams: params => {
-      t.equal(params, 'mapped-params');
-      return 'transformed-args';
+      t.equal(params.mapped, 'mapped-params');
+      return {
+        mapped: params.mapped,
+        transformed: 'transformed-args',
+      };
     },
   });
   const result = handler('args');
