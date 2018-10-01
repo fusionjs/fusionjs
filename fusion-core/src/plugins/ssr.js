@@ -162,7 +162,9 @@ function getChunkScripts(ctx) {
 function getPreloadHintLinks(ctx) {
   const chunks = [...ctx.preloadChunks, ...ctx.syncChunks];
   const hints = getUrls(ctx, chunks).map(({url}) => {
-    return `<link rel="preload" href="${url}" as="script" />`;
+    return `<link rel="preload" href="${url}" nonce="${
+      ctx.nonce
+    }" as="script" />`;
   });
   return hints.join('');
 }
