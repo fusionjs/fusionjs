@@ -126,6 +126,9 @@ function getCoreGlobals(ctx) {
 }
 
 function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
+  // cross origin is needed to get meaningful errors in window.onerror
+  const isCrossOrigin = webpackPublicPath.startsWith('http');
+  const crossOriginAttribute = isCrossOrigin ? ' crossorigin="anonymous"' : '';
   return [...new Set(chunks)].map(id => {
     let url = chunkUrlMap.get(id).get('es5');
     if (webpackPublicPath.endsWith('/')) {
@@ -133,36 +136,33 @@ function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
     } else {
       url = webpackPublicPath + '/' + url;
     }
-    return {id, url};
+    return {url, crossOriginAttribute};
   });
 }
 
 function getChunkScripts(ctx) {
-  const webpackPublicPath = ctx.webpackPublicPath || '';
-  // cross origin is needed to get meaningful errors in window.onerror
-  const crossOrigin = webpackPublicPath.startsWith('https://')
-    ? ' crossorigin="anonymous"'
-    : '';
-  const sync = getUrls(ctx, ctx.syncChunks).map(({url}) => {
-    return `<script nonce="${
-      ctx.nonce
-    }" defer${crossOrigin} src="${url}"></script>`;
-  });
+  const sync = getUrls(ctx, ctx.syncChunks).map(
+    ({url, crossOriginAttribute}) => {
+      return `<script nonce="${
+        ctx.nonce
+      }" defer${crossOriginAttribute} src="${url}"></script>`;
+    }
+  );
   const preloaded = getUrls(
     ctx,
     ctx.preloadChunks.filter(item => !ctx.syncChunks.includes(item))
-  ).map(({id, url}) => {
+  ).map(({url, crossOriginAttribute}) => {
     return `<script nonce="${
       ctx.nonce
-    }" defer${crossOrigin} src="${url}"></script>`;
+    }" defer${crossOriginAttribute} src="${url}"></script>`;
   });
   return [...preloaded, ...sync].join('');
 }
 
 function getPreloadHintLinks(ctx) {
   const chunks = [...ctx.preloadChunks, ...ctx.syncChunks];
-  const hints = getUrls(ctx, chunks).map(({url}) => {
-    return `<link rel="preload" href="${url}" nonce="${
+  const hints = getUrls(ctx, chunks).map(({url, crossOriginAttribute}) => {
+    return `<link rel="preload"${crossOriginAttribute} href="${url}" nonce="${
       ctx.nonce
     }" as="script" />`;
   });
