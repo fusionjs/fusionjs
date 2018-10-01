@@ -13,15 +13,12 @@ import React from 'react';
 import {createPlugin, html, dangerouslySetHTML} from 'fusion-core';
 
 import FontProvider from './provider';
+import PreloadSession from './preload-session';
 import generateFallbackMap from './generate-fallback-map';
 import generatePreloadLinks from './generate-preload-links';
 import generateFontFaces from './generate-font-faces';
 import {FontLoaderReactConfigToken as ConfigToken} from './tokens';
 import type {PluginType} from './types.js';
-
-// keys are the actual fonts to preload (based on usage on the page), values are always true
-const fontsToPreload = {};
-let fallbackLookup;
 
 const plugin = createPlugin({
   deps: {
@@ -29,12 +26,13 @@ const plugin = createPlugin({
   },
   middleware: ({config}) => {
     const {fonts, preloadDepth} = config;
-    fallbackLookup = generateFallbackMap(fonts, preloadDepth);
+    const fallbackLookup = generateFallbackMap(fonts, preloadDepth);
+    const preloadSession = new PreloadSession(fallbackLookup);
 
     return (ctx, next) => {
       if (ctx.element) {
         ctx.element = (
-          <FontProvider getFontDetails={getFontDetails}>
+          <FontProvider getFontDetails={preloadSession.getFontDetails}>
             {ctx.element}
           </FontProvider>
         );
@@ -46,7 +44,9 @@ const plugin = createPlugin({
             );
             ctx.template.head.push(html`</style>`);
             ctx.template.head.push(
-              dangerouslySetHTML(generatePreloadLinks(fontsToPreload, fonts))
+              dangerouslySetHTML(
+                generatePreloadLinks(preloadSession.fontsToPreload, fonts)
+              )
             );
           }
         });
@@ -57,18 +57,3 @@ const plugin = createPlugin({
   },
 });
 export default (plugin: PluginType);
-
-/* Helper functions */
-function getFontDetails(name) {
-  const {name: fallbackName, styles = {}} = fallbackLookup[name] || {};
-  const result = {
-    name,
-    fallbackName,
-    styles,
-  };
-  if (__NODE__) {
-    // preload fallback, or if font has no fallback preload font itself
-    fontsToPreload[fallbackName || name] = true;
-  }
-  return result;
-}
