@@ -15,7 +15,7 @@ const imagemin = require('imagemin');
 const svgo = require('imagemin-svgo');
 
 module.exports = new CompressionPlugin({
-  asset: '[path]',
+  filename: '[path]',
   algorithm: function(buf, options, callback) {
     imagemin
       .buffer(buf, {

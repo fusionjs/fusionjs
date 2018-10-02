@@ -14,7 +14,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const brotliCompress = require('iltorb').compress;
 
 module.exports = new CompressionPlugin({
-  asset: '[path].br',
+  filename: '[path].br',
   algorithm: function(buf, options, callback) {
     brotliCompress(
       buf,

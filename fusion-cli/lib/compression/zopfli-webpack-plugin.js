@@ -14,7 +14,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const gzip = require('@gfx/zopfli').gzip;
 
 module.exports = new CompressionPlugin({
-  asset: '[path].gz',
+  filename: '[path].gz',
   algorithm: (buf, _, callback) =>
     gzip(
       buf,
