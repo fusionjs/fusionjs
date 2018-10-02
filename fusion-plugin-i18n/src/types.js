@@ -19,7 +19,7 @@ export type TranslationsObjectType = {[string]: string};
 export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
-  loader?: I18nLoaderToken.optional,
+  loader?: typeof I18nLoaderToken.optional,
 };
 
 export type I18nServiceType = {

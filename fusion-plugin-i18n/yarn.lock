@@ -999,9 +999,9 @@ atob@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
 
-babel-eslint@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-9.0.0.tgz#7d9445f81ed9f60aff38115f838970df9f2b6220"
+babel-eslint@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-10.0.1.tgz#919681dc099614cd7d31d45c8908695092a1faed"
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@babel/parser" "^7.0.0"
@@ -1575,6 +1575,12 @@ debug@^3.0.1, debug@^3.1.0:
   dependencies:
     ms "^2.1.1"
 
+debug@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.0.1.tgz#f9bb36d439b8d1f0dd52d8fb6b46e4ebb8c1cd5b"
+  dependencies:
+    ms "^2.1.1"
+
 debug@~3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
@@ -1896,9 +1902,9 @@ eslint-plugin-cup@2.0.0:
   dependencies:
     globals "^11.5.0"
 
-eslint-plugin-flowtype@^2.50.0:
-  version "2.50.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.50.0.tgz#953e262fa9b5d0fa76e178604892cf60dfb916da"
+eslint-plugin-flowtype@^2.50.3:
+  version "2.50.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.50.3.tgz#61379d6dce1d010370acd6681740fd913d68175f"
   dependencies:
     lodash "^4.17.10"
 
@@ -1917,16 +1923,15 @@ eslint-plugin-import@^2.14.0:
     read-pkg-up "^2.0.0"
     resolve "^1.6.0"
 
-eslint-plugin-jest@^21.22.0:
-  version "21.22.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-21.22.0.tgz#1b9e49b3e5ce9a3d0a51af4579991d517f33726e"
+eslint-plugin-jest@^21.24.1:
+  version "21.24.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-21.24.1.tgz#aaf3c34e816f07add83d1e9c20696fdc31fac8dc"
 
-eslint-plugin-prettier@2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.2.tgz#71998c60aedfa2141f7bfcbf9d1c459bf98b4fad"
+eslint-plugin-prettier@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.0.0.tgz#f6b823e065f8c36529918cdb766d7a0e975ec30c"
   dependencies:
-    fast-diff "^1.1.1"
-    jest-docblock "^21.0.0"
+    prettier-linter-helpers "^1.0.0"
 
 eslint-plugin-react@7.11.1:
   version "7.11.1"
@@ -1960,15 +1965,15 @@ eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
-eslint@5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.6.0.tgz#b6f7806041af01f71b3f1895cbb20971ea4b6223"
+eslint@5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.6.1.tgz#348134e32ccc09abb2df1bf282b3f6eed8c7b480"
   dependencies:
     "@babel/code-frame" "^7.0.0"
     ajv "^6.5.3"
     chalk "^2.1.0"
     cross-spawn "^6.0.5"
-    debug "^3.1.0"
+    debug "^4.0.1"
     doctrine "^2.1.0"
     eslint-scope "^4.0.0"
     eslint-utils "^1.3.1"
@@ -2149,7 +2154,7 @@ fast-deep-equal@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-2.0.1.tgz#7b05218ddf9667bf7f370bf7fdb2cb15fdd0aa49"
 
-fast-diff@^1.1.1:
+fast-diff@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.1.2.tgz#4b62c42b8e03de3f848460b639079920695d0154"
 
@@ -2233,9 +2238,9 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@^0.81.0:
-  version "0.81.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.81.0.tgz#7f0a733dce1dad3cb1447c692639292dc3d60bf5"
+flow-bin@^0.82.0:
+  version "0.82.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.82.0.tgz#fbec84c0d6cab7877565eca8214d655f3aefb8db"
 
 for-each@~0.3.3:
   version "0.3.3"
@@ -2299,9 +2304,9 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
 
-fusion-core@^1.5.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.5.2.tgz#025c0be54993993ed256168fa670ccd5d75811e3"
+fusion-core@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.7.0.tgz#69e206a8fd8cb798a36d447d0f230d1a6e65f85c"
   dependencies:
     koa "^2.4.1"
     koa-compose "^4.0.0"
@@ -2310,9 +2315,9 @@ fusion-core@^1.5.2:
     ua-parser-js "^0.7.17"
     uuid "^3.2.1"
 
-fusion-test-utils@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.2.tgz#f1c72156012d4e0731875cd9b52d4ad426994a9b"
+fusion-test-utils@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/fusion-test-utils/-/fusion-test-utils-1.2.3.tgz#b48fe0adc7896163bf9d05c6bf51d3e6cfd4e8aa"
   dependencies:
     assert "^1.4.1"
     koa "^2.4.1"
@@ -2911,10 +2916,6 @@ istanbul-reports@^2.0.0:
   resolved "https://registry.yarnpkg.com/istanbul-reports/-/istanbul-reports-2.0.0.tgz#eb12eddf55724ebc557b32cd77c34d11ed7980c1"
   dependencies:
     handlebars "^4.0.11"
-
-jest-docblock@^21.0.0:
-  version "21.2.0"
-  resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
 
 jest-worker@^22.4.3:
   version "22.4.3"
@@ -3906,9 +3907,15 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@^1.14.2:
-  version "1.14.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.2.tgz#0ac1c6e1a90baa22a62925f41963c841983282f9"
+prettier-linter-helpers@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/prettier-linter-helpers/-/prettier-linter-helpers-1.0.0.tgz#d23d41fe1375646de2d0104d3454a3008802cf7b"
+  dependencies:
+    fast-diff "^1.1.2"
+
+prettier@^1.14.3:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.3.tgz#90238dd4c0684b7edce5f83b0fb7328e48bd0895"
 
 private@^0.1.6:
   version "0.1.8"
@@ -4228,9 +4235,9 @@ rollup@^0.55.1:
   version "0.55.5"
   resolved "http://registry.npmjs.org/rollup/-/rollup-0.55.5.tgz#2f88c300f7cf24b5ec2dca8a6aba73b04e087e93"
 
-rollup@^0.65.2:
-  version "0.65.2"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.65.2.tgz#e1532e3c1a2e102c89d99289a184fcbbc7cd4b4a"
+rollup@^0.66.2:
+  version "0.66.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.66.2.tgz#77acdb9f4093f5f035ce75480577c40a81ea7999"
   dependencies:
     "@types/estree" "0.0.39"
     "@types/node" "*"
