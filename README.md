@@ -193,16 +193,6 @@ const hoc: HOC = ProvidedHOC.create(
 - `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
 - returns `hoc: Component => Component`
 
-#### middleware
-
-```js
-import {middleware} from 'fusion-react';
-```
-
-A middleware that adds a `PrepareProvider` to the React tree.
-
-Consider using [`fusion-react`](https://github.com/fusionjs/fusion-react) instead of setting up React and registering this middleware manually, since that package does all of that for you.
-
 #### split
 
 ```js
