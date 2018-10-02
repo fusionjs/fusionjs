@@ -12,6 +12,8 @@ import {createPlugin, createToken} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import App, {withServices} from '../index';
 
+import type {Context} from 'fusion-core';
+
 async function injectServices(t) {
   const HelloToken = createToken('hola');
   const HelloPlugin = createPlugin({
@@ -50,9 +52,9 @@ async function injectServices(t) {
   app.register(GoodbyeToken, GoodbyePlugin);
 
   const sim = getSimulator(app);
-  const {body} = await sim.render('/');
+  const {body}: Context = await sim.render('/');
 
-  t.ok(body && body.match(/\bworld\b.*\bmoon\b/));
+  t.ok(body && typeof body === 'string' && body.match(/\bworld\b.*\bmoon\b/));
 }
 
 tape('inject services', async t => {
