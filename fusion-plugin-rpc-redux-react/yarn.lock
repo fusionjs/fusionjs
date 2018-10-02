@@ -2478,9 +2478,9 @@ fusion-react@^1.1.0:
     prop-types "^15.6.2"
     react-is "^16.4.1"
 
-fusion-rpc-redux@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-1.1.2.tgz#cec4641096f8ceeb750a14ef93eebfc84a116ff3"
+fusion-rpc-redux@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fusion-rpc-redux/-/fusion-rpc-redux-1.2.0.tgz#beb515deff7b3e288d0c691bad9f6b361da4084f"
   dependencies:
     redux-reactors "^1.0.3"
 
