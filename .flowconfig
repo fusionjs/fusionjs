@@ -6,6 +6,7 @@
 ./src/
 
 [libs]
+./node_modules/fusion-core/flow-typed
 
 [lints]
 
