@@ -59,7 +59,6 @@
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "4.20.2",
     "webpack-hot-middleware": "^2.24.2",
-    "webpack-plugin-hash-output": "^3.1.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {

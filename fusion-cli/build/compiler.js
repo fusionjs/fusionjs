@@ -14,7 +14,6 @@ const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const HashOutputPlugin = require('webpack-plugin-hash-output');
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const {
@@ -383,8 +382,6 @@ function getConfig({target, env, dir, watch, state}) {
           banner: nodeEnvBanner,
         }),
       new webpack.EnvironmentPlugin({NODE_ENV: nodeEnv}),
-      // webpack chunkhash doesn't take into account uglify. This uses exact md5 hashing
-      target === 'web' && env === 'production' && new HashOutputPlugin(),
     ].filter(Boolean),
     optimization: {
       minimizer:

@@ -394,6 +394,16 @@ test('`fusion build` works in production', async t => {
     res.includes('src="/_static/client-vendor'),
     'includes a script reference to client-vendor'
   );
+
+  clientFiles.forEach(file => {
+    if (file.endsWith('.map')) {
+      t.ok(
+        clientFiles.includes(path.basename(file, '.map')),
+        'source map filename has same base as regular file'
+      );
+    }
+  });
+
   proc.kill();
   t.end();
 });
