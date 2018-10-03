@@ -28,7 +28,7 @@
     "eslint": "5.6.0",
     "eslint-config-fusion": "^2.0.0",
     "eslint-plugin-cup": "1.0.2",
-    "eslint-plugin-flowtype": "2.50.0",
+    "eslint-plugin-flowtype": "2.50.3",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "2.6.2",
     "eslint-plugin-react": "7.11.0",
