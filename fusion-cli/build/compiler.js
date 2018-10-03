@@ -218,10 +218,6 @@ function getConfig({target, env, dir, watch, state}) {
           : path.resolve(appBase, info.absoluteResourcePath);
       },
     },
-    devServer: {
-      contentBase: '.',
-      hot: true,
-    },
     performance: {
       hints: false,
     },
