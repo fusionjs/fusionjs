@@ -191,8 +191,7 @@ test('`fusion test` snapshotting - enzyme serializer', async t => {
     t.equal(countTests(e.message), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} --updateSnapshot')`;
-  await exec(`node -e "${updateSnapshot}"`);
+  await exec(`node ${runnerPath} ${args} --updateSnapshot`);
 
   const newSnapshotCode = await readFile(snapshotFile);
   const originalSnapshotCode = await readFile(backupSnapshot);
