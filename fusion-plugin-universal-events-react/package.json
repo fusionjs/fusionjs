@@ -27,7 +27,7 @@
     "fusion-test-utils": "^1.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
+    "babel-eslint": "^10.0.0",
     "create-universal-package": "^3.4.4",
     "eslint": "^5.0.0",
     "eslint-config-fusion": "^4.0.0",
