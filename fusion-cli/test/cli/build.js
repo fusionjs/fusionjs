@@ -384,6 +384,37 @@ test('`fusion build/start with ROUTE_PREFIX and custom routes`', async t => {
   t.end();
 });
 
+test('`fusion start` does not throw error on client when using route prefix', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/noop');
+  await cmd(`build --dir=${dir} --production`);
+  const {proc, port} = await start(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
+  });
+
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+
+  page.on('error', err => {
+    t.fail(`Client-side error: ${err}`);
+  });
+
+  page.on('pageerror', err => {
+    t.fail(`Client-side error: ${err}`);
+  });
+
+  await page.goto(`http://localhost:${port}/test-prefix/`, {
+    waitUntil: 'networkidle0',
+  });
+
+  await browser.close();
+
+  proc.kill();
+  t.pass('did not error');
+  t.end();
+});
+
 test('`fusion build` works in production', async t => {
   const dir = path.resolve(__dirname, '../fixtures/noop');
   const serverEntryPath = path.resolve(
