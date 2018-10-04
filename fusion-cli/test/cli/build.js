@@ -354,6 +354,32 @@ test('`fusion build/start with ROUTE_PREFIX and custom routes`', async t => {
     'TEST REQUEST',
     'strips route prefix correctly for deep path requests'
   );
+
+  const tokenRes = await request(
+    `http://localhost:${port}/test-prefix/server-token`
+  );
+  t.equal(tokenRes, '/test-prefix', 'server-side RoutePrefixToken is set');
+
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/test-prefix/ssr`, {
+    waitUntil: 'load',
+  });
+
+  const clientRoutePrefixTokenValue = await page.evaluate(() => {
+    // eslint-disable-next-line
+    return window.__client_route_prefix_token_value__;
+  });
+  t.equal(
+    clientRoutePrefixTokenValue,
+    '/test-prefix',
+    'RoutePrefixToken hydrated on client'
+  );
+
+  await browser.close();
+
   proc.kill();
   t.end();
 });

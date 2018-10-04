@@ -1,4 +1,4 @@
-import App from 'fusion-core';
+import App, {createPlugin, RoutePrefixToken} from 'fusion-core';
 
 export default async function() {
   const app = new App('element', el => el);
@@ -10,5 +10,22 @@ export default async function() {
     }
     return next();
   });
+  app.register(createPlugin({
+    deps: {
+      routePrefix: RoutePrefixToken
+    },
+    middleware({routePrefix}) {
+      return (ctx, next) => {
+        if (ctx.url === "/server-token") {
+          ctx.body = routePrefix;
+          return next();
+        }
+        if (__BROWSER__) {
+          window.__client_route_prefix_token_value__ = routePrefix;
+        }
+        return next();
+      }
+    }
+  }));
   return app;
 }

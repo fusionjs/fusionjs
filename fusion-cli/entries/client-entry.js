@@ -17,7 +17,7 @@ function reload() {
   const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
     if (window.__ROUTE_PREFIX__) {
-      app.register(RoutePrefixToken);
+      app.register(RoutePrefixToken, window.__ROUTE_PREFIX__);
     }
     app.callback().call();
   });
