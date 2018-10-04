@@ -137,6 +137,32 @@ test('`fusion dev` works with assetUrl and JSON assets', async t => {
   t.end();
 });
 
+test('`fusion dev` works custom SSRBodyTemplateToken', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/custom-body-template');
+  let browser;
+  const {proc, port} = await dev(`--dir=${dir}`);
+
+  try {
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    page.setJavaScriptEnabled(false);
+    await page.goto(`http://localhost:${port}/`);
+    const contents = await page.content();
+
+    t.ok(
+      contents.includes('<div>custom template</div>'),
+      'custom SSRBodyTemplate used'
+    );
+  } catch (e) {
+    t.iferror(e);
+  }
+  await (browser && browser.close());
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` assets work with route prefix', async t => {
   const dir = path.resolve(__dirname, '../fixtures/assets');
   const entryPath = path.resolve(

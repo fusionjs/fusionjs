@@ -70,7 +70,7 @@ async function reload() {
   const app = await initialize();
   reverseRegister(app, AssetsPlugin);
   reverseRegister(app, ContextPlugin);
-  reverseRegister(app, SSRBodyTemplateToken, SSRBodyTemplate);
+  app.register(SSRBodyTemplateToken, SSRBodyTemplate);
   app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
   if (prefix) {
     app.register(RoutePrefixToken, prefix);
