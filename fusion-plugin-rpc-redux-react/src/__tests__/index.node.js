@@ -75,7 +75,9 @@ test('mock plugin', t => {
 });
 
 test('withRPCRedux hoc', t => {
-  function Test() {}
+  function Test() {
+    return null;
+  }
   t.equals(typeof withRPCRedux, 'function');
   const Connected = withRPCRedux('test')(Test);
   t.equals(Connected.displayName, 'WithRPCRedux(Test)');
@@ -109,7 +111,9 @@ test('withRPCRedux hoc', t => {
 });
 
 test('withRPCReactor hoc', t => {
-  function Test() {}
+  function Test() {
+    return null;
+  }
   t.equals(typeof withRPCReactor, 'function');
   const Connected = withRPCReactor('test', {
     start() {},
