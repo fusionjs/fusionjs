@@ -121,6 +121,7 @@ export default createPlugin({
           emitter.map(payload => {
             if (payload && typeof payload === 'object') {
               payload.__url__ = pageData.title;
+              payload.__urlParams__ = pageData.params;
             }
             return payload;
           });

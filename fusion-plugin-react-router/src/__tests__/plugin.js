@@ -360,6 +360,7 @@ if (__BROWSER__) {
           t.deepLooseEqual(payload, expected);
           const mapped = mapper({});
           t.equal(mapped.__url__, expected.title);
+          t.deepEqual(mapped.__urlParams__, expected.params);
           if (expectedPayloads.length === 0) {
             cleanup();
             t.end();
