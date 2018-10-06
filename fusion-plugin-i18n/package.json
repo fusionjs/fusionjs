@@ -34,7 +34,7 @@
   "dependencies": {
     "eslint-plugin-jest": "^21.24.1",
     "locale": "^0.1.0",
-    "rollup": "^0.66.2"
+    "rollup": "^0.66.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
