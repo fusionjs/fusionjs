@@ -13,6 +13,7 @@ const path = require('path');
 const test = require('tape');
 const getPort = require('get-port');
 const {promisify} = require('util');
+const babel = require('@babel/core');
 
 const {Compiler} = require('../../build/compiler');
 const {run} = require('../run-command');
@@ -299,10 +300,33 @@ test('transpiles node_modules', async t => {
 
   const clientVendor = await readFile(clientVendorPath, 'utf8');
 
-  t.ok(
-    clientVendor.includes(`$return('fixturepkg_string')`),
-    'async/await is transpiled in fixture node_module'
-  );
+  babel.transform(clientVendor, {
+    plugins: [
+      () => {
+        return {
+          visitor: {
+            FunctionDeclaration: path => {
+              if (path.node.async) {
+                t.fail(`bundle has untranspiled async function`);
+              }
+            },
+            ArrowFunctionExpression: path => {
+              if (path.node.async) {
+                t.fail('bundle has untranspiled async function');
+              }
+            },
+            FunctionExpression: path => {
+              if (path.node.async) {
+                t.fail('bundle has untranspiled async function');
+              }
+            },
+          },
+        };
+      },
+    ],
+  });
+
+  t.ok(clientVendor.includes(`'fixturepkg_string'`));
 
   t.end();
 });

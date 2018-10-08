@@ -95,11 +95,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     envPresetOpts.targets = {
       ie: 9,
     };
-    envPresetOpts.exclude = [
-      'transform-regenerator',
-      'transform-async-to-generator',
-    ];
-    config.plugins.push([require.resolve('fast-async'), {spec: true}]);
   }
 
   if (plugins) {

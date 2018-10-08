@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const test = require('tape');
 const {promisify} = require('util');
+const babel = require('@babel/core');
 const request = require('request-promise');
 const puppeteer = require('puppeteer');
 
@@ -62,6 +63,64 @@ test('`fusion build` works', async t => {
     await exists(clientMainVendorMap),
     'Client vendor file sourcemap gets compiled'
   );
+  t.end();
+});
+
+test('`fusion build` transpiles async middleware', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/transpile-async-plugin');
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js`
+  );
+  const serverMapPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js.map`
+  );
+  await cmd(`build --dir=${dir} --production`);
+  const distPath = path.resolve(dir, '.fusion/dist/production/client');
+  const clientFiles = await readdir(distPath);
+  t.ok(
+    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
+    'includes a versioned client-main.js file'
+  );
+  t.ok(
+    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
+    'includes a versioned client-vendor.js file'
+  );
+  t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
+  t.ok(
+    await exists(serverMapPath),
+    'Server Entry file sourcemap gets compiled'
+  );
+
+  clientFiles.filter(file => path.extname(file) === '.js').forEach(file => {
+    babel.transformFileSync(path.join(distPath, file), {
+      plugins: [
+        () => {
+          return {
+            visitor: {
+              FunctionDeclaration: path => {
+                if (path.node.async) {
+                  t.fail(`bundle has untranspiled async function`);
+                }
+              },
+              ArrowFunctionExpression: path => {
+                if (path.node.async) {
+                  t.fail('bundle has untranspiled async function');
+                }
+              },
+              FunctionExpression: path => {
+                if (path.node.async) {
+                  t.fail('bundle has untranspiled async function');
+                }
+              },
+            },
+          };
+        },
+      ],
+    });
+  });
+
   t.end();
 });
 
