@@ -27,6 +27,7 @@ function Lifecycle() {
   return {
     start: () => {
       state.started = true;
+      state.error = undefined;
       emitter.emit('started');
     },
     stop: () => {
@@ -62,7 +63,7 @@ type DevRuntimeType = {
   run: () => any,
   start: () => any,
   stop: () => any,
-  invalidate: () => void 
+  invalidate: () => void
 };
 */
 
