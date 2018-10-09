@@ -16,6 +16,10 @@ const loaderIndex = {
     alias: '__SECRET_FILE_LOADER__',
     path: require.resolve('./file-loader.js'),
   },
+  gqlLoader: {
+    alias: '__SECRET_GQL_LOADER__',
+    path: require.resolve('./gql-loader.js'),
+  },
   babelLoader: {
     path: require.resolve('./babel-loader.js'),
   },

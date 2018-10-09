@@ -1,0 +1,5 @@
+import { gql as frameworkgql } from 'fusion-apollo';
+import gql from 'gql';
+gql('./path');
+
+require("__SECRET_GQL_LOADER__!./path");

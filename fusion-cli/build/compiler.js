@@ -29,6 +29,7 @@ const getBabelConfig = require('./get-babel-config.js');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const {
   chunkIdsLoader,
+  gqlLoader,
   fileLoader,
   babelLoader,
   i18nManifestLoader,
@@ -315,6 +316,7 @@ function getConfig({target, env, dir, watch, state}) {
     },
     resolveLoader: {
       alias: {
+        [gqlLoader.alias]: gqlLoader.path,
         [fileLoader.alias]: fileLoader.path,
         [chunkIdsLoader.alias]: chunkIdsLoader.path,
         [syncChunkIdsLoader.alias]: syncChunkIdsLoader.path,

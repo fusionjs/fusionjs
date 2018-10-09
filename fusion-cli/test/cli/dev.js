@@ -32,6 +32,36 @@ test('`fusion dev` works', async t => {
   t.end();
 });
 
+test('`fusion dev` works with gql', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/gql');
+  let browser;
+  const {proc, port} = await dev(`--dir=${dir}`);
+  try {
+    const expectedSchema = fs
+      .readFileSync(path.resolve(dir, 'src/schema.gql'))
+      .toString();
+    t.equal(
+      await request(`http://localhost:${port}/schema`),
+      expectedSchema,
+      'loads schema on server'
+    );
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+    const browserSchema = await page.evaluate(() => {
+      return typeof window !== undefined && window.schema; //eslint-disable-line
+    });
+    t.equal(browserSchema, expectedSchema, 'loads schema in the browser');
+  } catch (e) {
+    t.iferror(e);
+  }
+  await (browser && browser.close());
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` works with assets', async t => {
   const dir = path.resolve(__dirname, '../fixtures/assets');
   const entryPath = path.resolve(

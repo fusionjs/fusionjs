@@ -135,6 +135,7 @@ function fusionPreset(
 
   return {
     plugins: [
+      require.resolve('./babel-plugins/babel-plugin-gql'),
       require.resolve('./babel-plugins/babel-plugin-asseturl'),
       require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),

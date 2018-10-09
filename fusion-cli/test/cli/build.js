@@ -395,6 +395,39 @@ test('`fusion build` works in production with default asset path and supplied RO
   t.end();
 });
 
+test('`fusion build --production` works with gql', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/gql');
+  let browser;
+  await await cmd(`build --dir=${dir} --production`);
+  const {proc, port} = await start(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {NODE_ENV: 'production'}),
+  });
+  try {
+    const expectedSchema = fs
+      .readFileSync(path.resolve(dir, 'src/schema.gql'))
+      .toString();
+    t.equal(
+      await request(`http://localhost:${port}/schema`),
+      expectedSchema,
+      'loads schema on server'
+    );
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+    const browserSchema = await page.evaluate(() => {
+      return typeof window !== undefined && window.schema; //eslint-disable-line
+    });
+    t.equal(browserSchema, expectedSchema, 'loads schema in the browser');
+  } catch (e) {
+    t.iferror(e);
+  }
+  await (browser && browser.close());
+  proc.kill();
+  t.end();
+});
+
 test('`fusion build/start with ROUTE_PREFIX and custom routes`', async t => {
   const dir = path.resolve(__dirname, '../fixtures/prefix');
   await cmd(`build --dir=${dir} --production`);
