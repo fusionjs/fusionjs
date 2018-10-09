@@ -15,9 +15,16 @@ const chalk = require('chalk');
 
 let loggedNotice = false;
 
-module.exports = function validateConfig(
-  dir /*: any */
-) /*: {babel?: {plugins?: Array<any>, presets?: Array<any>}, assumeNoImportSideEffects?: boolean, experimentalCompile?: boolean} */ {
+/*::
+type FusionRC = {
+  babel?: {plugins?: Array<any>, presets?: Array<any>},
+  assumeNoImportSideEffects?: boolean,
+  experimentalCompile?: boolean,
+  nodeBuiltins?: {[string]: any},
+};
+*/
+
+module.exports = function validateConfig(dir /*: string */) /*: FusionRC */ {
   const configPath = path.join(dir, '.fusionrc.js');
   let config;
   if (fs.existsSync(configPath)) {
@@ -50,9 +57,12 @@ function isValid(config) {
 
   if (
     !Object.keys(config).every(key =>
-      ['babel', 'assumeNoImportSideEffects', 'experimentalCompile'].includes(
-        key
-      )
+      [
+        'babel',
+        'assumeNoImportSideEffects',
+        'experimentalCompile',
+        'nodeBuiltins',
+      ].includes(key)
     )
   ) {
     throw new Error(`Invalid property in .fusionrc.js`);

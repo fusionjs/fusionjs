@@ -10,7 +10,7 @@ This configuration object supports the following fields:
 
 For example, to add your own Babel plugins/preset:
 
-```
+```js
 module.exports = {
   babel: {
     presets: ["some-babel-preset"],
@@ -28,7 +28,7 @@ By default this is `false`.
 
 Setting this to `true` enables the assumption that modules in your code do not have any import side effects. This assumption allows for more powerful tree shaking and pruning of unused imports.
 
-This option may be useful if you import modules that use Node.js built-ins. This option makes it easier to avoid uninintionally including server-specific code in the browser bundle.
+This option may be useful if you import modules that use Node.js built-ins. This option makes it easier to avoid unintentionally including server-specific code in the browser bundle.
 
 For specifics regarding implementation details, see:
  - https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free
@@ -36,3 +36,15 @@ For specifics regarding implementation details, see:
  - https://stackoverflow.com/questions/49160752/what-does-webpack-4-expect-from-a-package-with-sideeffects-false/49203452#49203452
 
 In the future, it is possible that some form of this behavior may be turned on by default (with ways to opt-out instead).
+
+## `nodeBuiltins`
+
+This is an optional property that can be used to override the Fusion.js defaults for https://webpack.js.org/configuration/node/ in the browser bundle.
+
+```js
+module.exports = {
+  nodeBuiltins: {
+    Buffer: true
+  }
+};
+```

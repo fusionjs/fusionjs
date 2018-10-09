@@ -137,6 +137,38 @@ test('`fusion dev` works with assetUrl and JSON assets', async t => {
   t.end();
 });
 
+test('`fusion dev` works with fusionRC', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/fusionrc');
+  let browser;
+  const {proc, port} = await dev(`--dir=${dir}`);
+
+  try {
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`, {
+      waitUntil: 'load',
+    });
+
+    const browserBufferContents = await page.evaluate(
+      // $FlowFixMe
+      () => window.__browser_buffer_test__ // eslint-disable-line
+    );
+
+    t.equal(
+      browserBufferContents,
+      'buffer',
+      'Buffer shim override in browser works'
+    );
+  } catch (e) {
+    t.iferror(e);
+  }
+  await (browser && browser.close());
+  proc.kill();
+  t.end();
+});
+
 test('`fusion dev` works custom SSRBodyTemplateToken', async t => {
   const dir = path.resolve(__dirname, '../fixtures/custom-body-template');
   let browser;
