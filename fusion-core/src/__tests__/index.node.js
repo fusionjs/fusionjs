@@ -76,6 +76,77 @@ test('ssr with accept header', async t => {
   t.end();
 });
 
+test('ssr with bot user agent', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+    return 'lol';
+  };
+  const app = new App(element, render);
+
+  app.middleware(async (ctx, next) => {
+    t.equals(ctx.element, element, 'sets ctx.element');
+    t.equals(ctx.type, 'text/html', 'sets ctx.type');
+    t.equals(typeof ctx.template, 'object', 'sets ctx.template');
+    t.equals(typeof ctx.template.title, 'string', 'sets ctx.template.title');
+    t.equals(typeof ctx.template.htmlAttrs, 'object', 'ctx.template.htmlAttrs');
+    // $FlowFixMe
+    t.equals(typeof ctx.template.bodyAttrs, 'object', 'ctx.template.bodyAttrs');
+    t.ok(ctx.template.head instanceof Array, 'ctx.template.head');
+    t.ok(ctx.template.body instanceof Array, 'ctx.template.body');
+    await next();
+    t.equals(
+      typeof ctx.template,
+      'object',
+      'ctx.template keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.title,
+      'string',
+      'ctx.template.title keeps structure on upstream'
+    );
+    t.equals(
+      typeof ctx.template.htmlAttrs,
+      'object',
+      'ctx.template.htmlAttrs keeps structure on upstream'
+    );
+    t.equals(
+      // $FlowFixMe
+      typeof ctx.template.bodyAttrs,
+      'object',
+      'ctx.template.bodyAttrs keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.head instanceof Array,
+      'ctx.template.head keeps structure on upstream'
+    );
+    t.ok(
+      ctx.template.body instanceof Array,
+      'ctx.template.body keeps structure on upstream'
+    );
+  });
+  try {
+    // $FlowFixMe
+
+    let initialCtx = {
+      headers: {
+        accept: '*/*',
+        'user-agent': 'AdsBot-Google',
+      },
+    };
+    // $FlowFixMe
+    const ctx = await run(app, initialCtx);
+    t.equals(typeof ctx.rendered, 'string', 'ctx.rendered');
+    t.equals(typeof ctx.body, 'string', 'renders ctx.body to string');
+    t.ok(!ctx.body.includes(element), 'does not renders element into ctx.body');
+    t.ok(flags.render, 'calls render');
+  } catch (e) {
+    t.ifError(e, 'should not error');
+  }
+  t.end();
+});
+
 test('ssr without valid accept header', async t => {
   const flags = {render: false};
   const element = 'hi';
@@ -85,6 +156,33 @@ test('ssr without valid accept header', async t => {
   const app = new App(element, render);
   let initialCtx = {
     headers: {accept: '*/*'},
+  };
+  try {
+    // $FlowFixMe
+    const ctx = await run(app, initialCtx);
+    t.notok(ctx.element, 'does not set ctx.element');
+    t.notok(ctx.type, 'does not set ctx.type');
+    t.notok(ctx.body, 'does not set ctx.body');
+    t.ok(!flags.render, 'does not call render');
+    t.notok(ctx.body, 'does not render ctx.body to string');
+  } catch (e) {
+    t.ifError(e, 'does not error');
+  }
+  t.end();
+});
+
+test('ssr without valid bot user agent', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+  };
+  const app = new App(element, render);
+  let initialCtx = {
+    headers: {
+      accept: '*/*',
+      'user-agent': 'test',
+    },
   };
   try {
     // $FlowFixMe
