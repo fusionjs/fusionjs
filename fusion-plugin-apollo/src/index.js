@@ -108,3 +108,7 @@ export default class App extends CoreApp {
 }
 
 export {ProviderPlugin, ProvidedHOC, Provider};
+
+export function gql(path: string): string {
+  throw new Error('fusion-apollo/gql should be replaced at build time');
+}

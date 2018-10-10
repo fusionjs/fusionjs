@@ -47,6 +47,19 @@ export default function() {
 }
 ```
 
+### Loading GraphQL Queries/Schemas
+
+fusion-apollo ships with a compiler plugin that lets you load graphql queries and schemas with the `gql` macro. 
+This macro takes a relative path argument and returns the query/schema as a string. 
+
+NOTE: Because this is a build time feature, the path argument must be a string literal. Dynamic paths are not supported.
+
+```js
+import {gql} from 'fusion-apollo';
+const query = gql('./some-query.graphql');
+const schema = gql('./some-schema.graphql');
+```
+
 ---
 
 ### API
@@ -114,6 +127,22 @@ const app: App = new App(el: ReactElement);
 **app.(register|middleware|enhance|cleanup)**
 
 See the [fusion-core app methods](https://github.com/fusionjs/fusion-core#app) for further information on provided methods. Fusion-apollo does not add additional app methods besides the inherited fusion-core methods.
+
+#### gql
+
+```js
+import {gql} from 'fusion-apollo';
+```
+
+A macro for loading graphql queries and schemas. Takes a relative path string and returns the contents of the graphql schema/query as a string.
+
+##### Types
+
+```flow
+type gql = (path: string): string
+```
+
+- `path: string` - Relative path to the graphql schema/query file. NOTE: This must be a string literal, dynamic paths are not supported.
 
 ---
 
