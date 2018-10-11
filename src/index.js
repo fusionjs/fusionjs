@@ -27,7 +27,7 @@ export default class App extends FusionApp {
   constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
     if (!React.isValidElement(root))
       throw new Error(
-        'Invalid React element. Ensure your root element is a React.Element and not a React.Component'
+        'Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)'
       );
     const renderer = createPlugin({
       deps: {
