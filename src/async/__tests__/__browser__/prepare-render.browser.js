@@ -19,7 +19,7 @@ Enzyme.configure({adapter: new Adapter()});
 
 tape('Preparing w/ Portal', t => {
   const portal = document.createElement('div');
-  document.body.appendChild(portal);
+  if (document.body) document.body.appendChild(portal);
 
   let numConstructors = 0;
   let numRenders = 0;
@@ -56,7 +56,7 @@ tape('Preparing w/ Portal', t => {
     t.equal(numRenders, 1, 'renders SimpleComponent once');
     t.equal(numChildRenders, 1, 'renders SimplePresentational once');
 
-    document.body.removeChild(portal);
+    if (document.body) document.body.removeChild(portal);
 
     t.end();
   });
