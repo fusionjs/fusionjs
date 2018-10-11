@@ -25,6 +25,7 @@ declare var __NODE__: Boolean;
 
 export default class App extends FusionApp {
   constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
+    if (!React.isValidElement(root)) throw new Error('Invalid React element');
     const renderer = createPlugin({
       deps: {
         criticalChunkIds: CriticalChunkIdsToken.optional,

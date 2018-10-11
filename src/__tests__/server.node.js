@@ -33,3 +33,14 @@ test('app api', async t => {
     t.end();
   }
 });
+
+test('throw on non-element root', async t => {
+  t.throws(
+    () =>
+      new App(function() {
+        return null;
+      }),
+    'Passing a component instead of an element throws'
+  );
+  t.end();
+});
