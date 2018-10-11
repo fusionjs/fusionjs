@@ -748,6 +748,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
         someNewKey: [1, 2, 3],
       };
     }
+    // eslint-disable-next-line react/no-deprecated
     componentWillMount() {
       throw new Error('Should not be called when gDSFP is defined');
     }
