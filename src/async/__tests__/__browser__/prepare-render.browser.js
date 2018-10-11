@@ -6,13 +6,14 @@
  * @flow
  */
 
+/* eslint-env browser */
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
 import React, {Component} from 'react';
 import {createPortal} from 'react-dom';
-import Enzyme, {shallow} from 'enzyme';
+import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import {prepare, prepared} from '../../index.js';
+import {prepare} from '../../index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
