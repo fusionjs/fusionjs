@@ -8,7 +8,3 @@
 
 /* eslint-env node */
 import './__browser__/prepare-render.browser.js';
-
-process.on('unhandledRejection', e => {
-  throw e;
-});
