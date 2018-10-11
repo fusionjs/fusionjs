@@ -26,16 +26,20 @@ function renderCompositeElementInstance(instance) {
   );
 
   if (instance.constructor && instance.constructor.getDerivedStateFromProps) {
-    instance.state = instance.constructor.getDerivedStateFromProps(
-      instance.props,
-      instance.state
-    );
-  }
-
-  if (instance.componentWillMount) {
-    instance.componentWillMount();
-  } else if (instance.UNSAFE_componentWillMount) {
-    instance.UNSAFE_componentWillMount();
+    instance.state = {
+      ...instance.state,
+      ...instance.constructor.getDerivedStateFromProps(
+        instance.props,
+        instance.state
+      ),
+    };
+  } else {
+    // see https://github.com/reactjs/react-lifecycles-compat/blob/0a02b805fcf119128d1a9244e71ea7077e2cdcc0/index.js#L114
+    if (instance.componentWillMount) {
+      instance.componentWillMount();
+    } else if (instance.UNSAFE_componentWillMount) {
+      instance.UNSAFE_componentWillMount();
+    }
   }
   const children = instance.render();
   return [children, childContext];

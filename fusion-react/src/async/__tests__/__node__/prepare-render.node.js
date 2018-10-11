@@ -725,6 +725,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   let numChildRenders = 0;
   let numPrepares = 0;
   let numDerivedStateFromProps = 0;
+  let retainedState = false;
   class SimpleComponent extends Component<any, any> {
     constructor(props, context) {
       super(props, context);
@@ -736,6 +737,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
       numConstructors++;
       this.state = {
         firstRender: true,
+        originalState: 'should remain',
       };
     }
 
@@ -746,9 +748,14 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
         someNewKey: [1, 2, 3],
       };
     }
+    // eslint-disable-next-line react/no-deprecated
+    componentWillMount() {
+      throw new Error('Should not be called when gDSFP is defined');
+    }
 
     render() {
       numRenders++;
+      retainedState = this.state.originalState === 'should remain';
       return (
         <div>
           {this.state.someNewKey.map((item, key) => (
@@ -782,6 +789,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   const p = prepare(app);
   t.ok(p instanceof Promise, 'prepare returns a promise');
   p.then(() => {
+    t.equal(retainedState, true, 'gDSFP does not overwrite state');
     t.equal(numPrepares, 1, 'runs the prepare function once');
     t.equal(numConstructors, 1, 'constructs SimpleComponent once');
     t.equal(numRenders, 1, 'renders SimpleComponent once');
