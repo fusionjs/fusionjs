@@ -12,6 +12,7 @@ import {
   isContextConsumer,
   isContextProvider,
   isForwardRef,
+  isPortal,
 } from 'react-is';
 
 import isReactCompositeComponent from './utils/isReactCompositeComponent';
@@ -92,6 +93,8 @@ function prepareElement(element, context) {
       }
       return renderCompositeElementInstance(instance);
     });
+  } else if (isPortal(element)) {
+    return Promise.resolve([element.children, context]);
   } else {
     throw new TypeError(
       `Invalid React element type. Must be a string, a function or a subclass of React.Component. ` +
