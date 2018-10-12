@@ -82,7 +82,7 @@ const SSRBodyTemplate = createPlugin({
       ]);
 
       const criticalChunkScripts = Array.from(allCriticalChunkIds)
-        .map(id => chunkScript(chunks.get(id)))
+        .map(id => chunkScript(ctx, chunks.get(id)))
         .join('');
 
       return [
@@ -102,11 +102,13 @@ const SSRBodyTemplate = createPlugin({
 
 export {SSRBodyTemplate};
 
-function chunkScript(url) {
+function chunkScript(ctx, url) {
   // cross origin is needed to get meaningful errors in window.onerror
   const crossOrigin = url.startsWith('https://')
     ? ' crossorigin="anonymous"'
     : '';
 
-  return `<script defer src="${url}"${crossOrigin}></script>`;
+  return `<script defer src="${url}" nonce="${
+    ctx.nonce
+  }"${crossOrigin}></script>`;
 }
