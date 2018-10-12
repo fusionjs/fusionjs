@@ -107,7 +107,6 @@ module.exports.DevelopmentRuntime = function(
       }
 
       const entry = path.resolve(
-        ${JSON.stringify(dir)},
         '.fusion/dist/development/server/server-main.js'
       );
 

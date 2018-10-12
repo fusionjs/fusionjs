@@ -73,10 +73,11 @@ async function start(args /*: any */, options /*: any */) {
 
 async function dev(args /*: any */, options /*: any */) {
   const port = await getPort();
+  const promise = cmd(`dev --port=${port} --no-open ${args}`, options);
   // $FlowFixMe
-  const {proc} = cmd(`dev --port=${port} --no-open ${args}`, options);
+  const {proc} = promise;
   const res = await waitForServer(port);
-  return {proc, res, port};
+  return {proc, res, port, promise};
 }
 
 async function waitForServer(port /*: any */) /*: any */ {
