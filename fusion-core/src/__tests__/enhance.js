@@ -164,7 +164,7 @@ tape('enhancement with a plugin with missing deps', t => {
   });
   t.throws(
     () => app.resolve(),
-    /Could not resolve token: "DepA", which is required by plugins registered with tokens: "EnhancerOf<FnType>"./
+    /This token is required by plugins registered with tokens: "EnhancerOf<FnType>"/
   );
   t.end();
 });

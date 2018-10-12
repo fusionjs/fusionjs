@@ -199,15 +199,27 @@ class FusionApp {
             ...findDependentEnhancers(),
           ];
 
-          // otherwise, we cannot resolve this token
+          const base =
+            'A plugin depends on a token, but the token was not registered';
+          const downstreams =
+            'This token is required by plugins registered with tokens: ' +
+            dependentTokens.map(token => `"${token}"`).join(', ');
+          const meta = `Required token: ${
+            token ? token.name : ''
+          }\n${downstreams}\n${token.stack}`;
+          const clue = 'Different tokens with the same name were detected:\n\n';
+          const suggestions = token
+            ? this.plugins
+                .filter(p => p.name === token.name)
+                .map(c => `${c.name}\n${c.stack}\n\n`)
+                .join('\n\n')
+            : '';
+          const help =
+            'You may have multiple versions of the same plugin installed.\n' +
+            'Ensure that `yarn list [the-plugin]` results in one version, ' +
+            'and use a yarn resolution or merge package version in your lock file to consolidate versions.\n\n';
           throw new Error(
-            `Could not resolve token: "${
-              token ? token.name : '(unknown)'
-            }", which is required by plugins registered with tokens: ${dependentTokens
-              .map(token => `"${token}"`)
-              .join(', ')}. Did you forget to register a value for "${
-              token ? token.name : '(unknown)'
-            }"?`
+            `${base}\n\n${meta}\n\n${suggestions && clue + suggestions + help}`
           );
         }
       }
