@@ -37,7 +37,7 @@
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "7.11.1",
     "execa": "^1.0.0",
-    "flow-bin": "^0.82.0",
+    "flow-bin": "^0.83.0",
     "nyc": "^13.0.1",
     "prettier": "^1.14.3",
     "redux": "^4.0.0",
