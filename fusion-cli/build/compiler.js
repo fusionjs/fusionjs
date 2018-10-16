@@ -246,11 +246,11 @@ function getConfig({target, env, dir, watch, state}) {
           test: /\.jsx?$/,
           exclude: [
             // Blacklist mapbox-gl package because of issues with babel-loader and its AMD bundle
-            /node_modules\/mapbox-gl/,
+            /node_modules\/mapbox-gl\//,
             // Blacklist known ES5 packages for build performance
-            /node_modules\/react-dom/,
-            /node_modules\/react/,
-            /node_modules\/core-js/,
+            /node_modules\/react-dom\//,
+            /node_modules\/react\//,
+            /node_modules\/core-js\//,
           ],
           use: [
             {

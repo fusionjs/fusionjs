@@ -211,6 +211,10 @@ test('compiles with babel plugin', async t => {
     dir,
     `.fusion/dist/${envs[0]}/client/client-main.js`
   );
+  const clientVendorPath = path.resolve(
+    dir,
+    `.fusion/dist/${envs[0]}/client/client-vendor.js`
+  );
 
   const compiler = new Compiler({envs, dir});
   await compiler.clean();
@@ -227,18 +231,27 @@ test('compiles with babel plugin', async t => {
   watcher.close();
 
   t.ok(await exists(clientEntryPath), 'Client file gets compiled');
+  t.ok(await exists(clientVendorPath), 'Client vendor file gets compiled');
   t.ok(await exists(serverEntryPath), 'Server file gets compiled');
 
   const clientEntry = await readFile(clientEntryPath, 'utf8');
+  const clientVendorEntry = await readFile(clientVendorPath, 'utf8');
   const serverEntry = await readFile(serverEntryPath, 'utf8');
-
   t.ok(
-    clientEntry.includes('transformed_helloworld_custom_babel'),
+    clientEntry.includes('transformed_custom_babel'),
     'custom plugin applied in client'
   );
   t.ok(
-    serverEntry.includes('transformed_helloworld_custom_babel'),
+    serverEntry.includes('transformed_custom_babel'),
     'custom plugin applied in server'
+  );
+  t.ok(
+    clientVendorEntry.includes('transformed_custom_babel'),
+    'babel plugin runs against node_modules'
+  );
+  t.ok(
+    clientVendorEntry.includes('helloworld'),
+    'babel plugin does not run against blacklist'
   );
 
   t.end();
