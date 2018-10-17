@@ -8,10 +8,10 @@
 
 import type {Token} from './types.js';
 
-export const TokenType = {
+export const TokenType = Object.freeze({
   Required: 0,
   Optional: 1,
-};
+});
 function Ref() {}
 export class TokenImpl<TResolved> {
   name: string;
