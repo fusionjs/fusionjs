@@ -62,6 +62,7 @@ const SSRBodyTemplate = createPlugin({
         `window.performance && window.performance.mark && window.performance.mark('firstRenderStart');`,
         routePrefix && `__ROUTE_PREFIX__ = ${JSON.stringify(routePrefix)};`,
         `__FUSION_ASSET_PATH__ = ${JSON.stringify(__webpack_public_path__)};`, // consumed in src/entries/client-public-path.js
+        `__NONCE__ = ${JSON.stringify(ctx.nonce)}`, // consumed in src/entries/client-public-path.js
         `</script>`,
       ]
         .filter(Boolean)
@@ -136,6 +137,7 @@ function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
   )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
     var script = document.createElement('script');
     script.src = src;
+    script.nonce = ${JSON.stringify(ctx.nonce)};
     if (!window.__NOMODULE__) {
       script.type = "module";
     } else {

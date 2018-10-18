@@ -287,6 +287,14 @@ test('`fusion build` app with dynamic imports integration', async t => {
     'all scripts do not have crossorigin attribute'
   );
 
+  t.ok(
+    await page.$$eval('script:not([type="application/json"])', els =>
+      // eslint-disable-next-line
+      els.every(el => el.nonce === window.__NONCE__)
+    ),
+    'all scripts have nonce'
+  );
+
   page.setJavaScriptEnabled(false);
 
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
