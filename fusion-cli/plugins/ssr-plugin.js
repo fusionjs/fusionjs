@@ -137,7 +137,7 @@ function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
   )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
     var script = document.createElement('script');
     script.src = src;
-    script.nonce = ${JSON.stringify(ctx.nonce)};
+    script.setAttribute("nonce", ${JSON.stringify(ctx.nonce)});
     if (!window.__NOMODULE__) {
       script.type = "module";
     } else {

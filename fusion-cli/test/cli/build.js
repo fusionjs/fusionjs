@@ -290,9 +290,9 @@ test('`fusion build` app with dynamic imports integration', async t => {
   t.ok(
     await page.$$eval('script:not([type="application/json"])', els =>
       // eslint-disable-next-line
-      els.every(el => el.nonce === window.__NONCE__)
+      els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),
-    'all scripts have nonce'
+    'all scripts have nonce attribute'
   );
 
   page.setJavaScriptEnabled(false);
