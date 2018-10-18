@@ -62,6 +62,11 @@ module.exports = {
         default: true,
         describe: 'Run without hot module replacement',
       },
+      forceLegacyBuild: {
+        type: 'boolean',
+        default: false,
+        describe: 'Force enable legacy build. By default not compiled in dev.',
+      },
       'log-level': {
         type: 'string',
         default: 'info',

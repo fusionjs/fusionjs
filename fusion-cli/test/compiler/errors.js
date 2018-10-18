@@ -27,11 +27,11 @@ function testEnvs(title, dir) {
 
 function testDev(title, dir) {
   test(title, async t => {
-    const envs = ['development'];
-    const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+    const env = 'development';
+    const entryPath = `.fusion/dist/${env}/server/server-main.js`;
     const entry = path.resolve(dir, entryPath);
 
-    const compiler = new Compiler({envs, dir});
+    const compiler = new Compiler({env, dir});
     await compiler.clean();
 
     const compilationError = await new Promise(resolve => {
@@ -52,11 +52,11 @@ function testDev(title, dir) {
 }
 function testProd(title, dir) {
   test(title, async t => {
-    const envs = ['production'];
-    const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+    const env = 'production';
+    const entryPath = `.fusion/dist/${env}/server/server-main.js`;
     const entry = path.resolve(dir, entryPath);
 
-    const compiler = new Compiler({envs, dir});
+    const compiler = new Compiler({env, dir});
     await compiler.clean();
 
     const compilationError = await new Promise(resolve => {

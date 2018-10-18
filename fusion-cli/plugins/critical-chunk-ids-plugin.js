@@ -21,7 +21,7 @@ export default createPlugin({
         for (const chunkId of initialChunkIds) {
           chunkIds.add(chunkId);
         }
-        return new Set();
+        return chunkIds;
       }),
     };
   },

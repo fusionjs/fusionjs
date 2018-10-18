@@ -13,7 +13,7 @@ import {createPlugin, RoutePrefixToken} from 'fusion-core';
 
 function reload() {
   // $FlowFixMe
-  const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line
+  const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line
   const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
     if (window.__ROUTE_PREFIX__) {
@@ -33,5 +33,5 @@ reload();
 
 // $FlowFixMe
 if (module.hot) {
-  module.hot.accept('__FRAMEWORK_SHARED_ENTRY__', reload);
+  module.hot.accept('__FUSION_ENTRY_PATH__', reload);
 }

@@ -31,10 +31,9 @@ exports.run = async function(
   });
   logger.add(new winston.transports.Console({level: logLevel}));
 
-  const envs = [];
-  if (production) envs.push('production');
-  if (envs.length === 0) envs.push('development');
-  const compiler = new Compiler({envs, dir, logger});
+  const env = production ? 'production' : 'development';
+
+  const compiler = new Compiler({env, dir, logger});
 
   await compiler.clean();
 

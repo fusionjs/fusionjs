@@ -7,7 +7,7 @@ module.exports = () => {
       StringLiteral(path /* : any */) {
         if (path.node.value === 'TRIGGER-BABEL-DELAY') {
           console.log('Triggered babel delay');
-          execSync('sleep 3');
+          execSync('sleep 5');
         }
       },
     },

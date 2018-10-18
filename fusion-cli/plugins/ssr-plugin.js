@@ -27,7 +27,7 @@ import {
 
 import {
   chunks,
-  runtimeChunkId,
+  runtimeChunkIds,
   initialChunkIds, // $FlowFixMe
 } from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
 
@@ -67,22 +67,37 @@ const SSRBodyTemplate = createPlugin({
         .filter(Boolean)
         .join('');
 
-      const legacyCriticalChunkIds = ctx.preloadChunks;
-      const modernCriticalChunkIds = criticalChunkIds
+      const tokenCriticalChunkIds = criticalChunkIds
         ? criticalChunkIds.from(ctx)
         : new Set();
 
       const allCriticalChunkIds = new Set([
         ...initialChunkIds,
-        // For now, take union of both legacy and modern
-        ...legacyCriticalChunkIds,
-        ...modernCriticalChunkIds,
+        // For now, take union of both ctx and token
+        ...ctx.preloadChunks,
+        ...tokenCriticalChunkIds,
         // runtime chunk must be last script
-        runtimeChunkId,
+        ...runtimeChunkIds,
       ]);
 
-      const criticalChunkScripts = Array.from(allCriticalChunkIds)
-        .map(id => chunkScript(ctx, chunks.get(id)))
+      const legacyUrls = [];
+      const modernUrls = [];
+      for (let chunkId of allCriticalChunkIds) {
+        const url = chunks.get(chunkId);
+        if (url.includes('client-legacy')) {
+          legacyUrls.push(url);
+        } else {
+          modernUrls.push(url);
+        }
+      }
+
+      const criticalChunkScripts = getLoaderScript(ctx, {
+        legacyUrls,
+        modernUrls,
+      });
+
+      const modulePreloadHints = modernUrls
+        .map(url => modulePreloadHint(url))
         .join('');
 
       return [
@@ -91,6 +106,7 @@ const SSRBodyTemplate = createPlugin({
         `<head>`,
         `<meta charset="utf-8" />`,
         `<title>${safeTitle}</title>`,
+        modulePreloadHints,
         `${coreGlobals}${criticalChunkScripts}${safeHead}`,
         `</head>`,
         `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
@@ -102,13 +118,33 @@ const SSRBodyTemplate = createPlugin({
 
 export {SSRBodyTemplate};
 
-function chunkScript(ctx, url) {
-  // cross origin is needed to get meaningful errors in window.onerror
+function modulePreloadHint(url) {
   const crossOrigin = url.startsWith('https://')
     ? ' crossorigin="anonymous"'
     : '';
+  return `<link rel="modulepreload"${crossOrigin} href="${url}" />`;
+}
 
-  return `<script defer src="${url}" nonce="${
-    ctx.nonce
-  }"${crossOrigin}></script>`;
+/**
+Safari 10.1 supports modules but not `nomodule` attribute.
+*/
+function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
+  return `
+  <script nomodule nonce="${ctx.nonce}">window.__NOMODULE__ = true;</script>
+  <script nonce="${ctx.nonce}">(window.__NOMODULE__ ? ${JSON.stringify(
+    legacyUrls
+  )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
+    var script = document.createElement('script');
+    script.src = src;
+    if (!window.__NOMODULE__) {
+      script.type = "module";
+    } else {
+      script.defer = true;
+    }
+    if (script.src.indexOf(window.location.origin + '/') !== 0) {
+      script.crossorigin = "anonymous";
+    }
+    document.head.appendChild(script);
+  });</script>
+  `;
 }

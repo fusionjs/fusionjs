@@ -23,7 +23,7 @@ module.exports = function chunkManifestLoader() {
   });
 };
 
-function generateSource({chunks, runtimeChunkId, initialChunkIds}) {
+function generateSource({chunks, runtimeChunkIds, initialChunkIds}) {
   return [
     `export const chunks = new Map([${Array.from(chunks)
       .map(
@@ -31,7 +31,9 @@ function generateSource({chunks, runtimeChunkId, initialChunkIds}) {
           `[${JSON.stringify(id)}, __webpack_public_path__ + "${filename}"]`
       )
       .join(', ')}]);`,
-    `export const runtimeChunkId = ${JSON.stringify(runtimeChunkId)};`,
+    `export const runtimeChunkIds = new Set(${JSON.stringify(
+      Array.from(runtimeChunkIds)
+    )});`,
     `export const initialChunkIds = new Set(${JSON.stringify(
       Array.from(initialChunkIds)
     )});`,

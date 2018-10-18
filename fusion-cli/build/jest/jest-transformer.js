@@ -22,7 +22,7 @@ if (fusionConfig.babel) {
 }
 
 const babelConfig = getBabelConfig({
-  runtime: 'node-native',
+  target: 'node-native',
   specOnly: false,
   plugins: customPlugins,
   presets: customPresets,

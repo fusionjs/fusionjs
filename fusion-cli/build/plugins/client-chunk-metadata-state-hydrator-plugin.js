@@ -22,12 +22,11 @@ class ClientChunkMetadataStateHydrator {
   }
   apply(compiler /*: Object*/) {
     const name = this.constructor.name;
-
     compiler.hooks.invalid.tap(name, () => {
       this.state.reset();
     });
 
-    compiler.hooks.compilation.tap(name, compilation => {
+    compiler.hooks.thisCompilation.tap(name, compilation => {
       compilation.hooks.afterOptimizeChunkAssets.tap(name, chunks => {
         const fileManifest = chunkIndexFromWebpackChunks(chunks);
         const urlMap = chunkMapFromWebpackChunks(chunks);
@@ -117,12 +116,9 @@ function getChunkInfo(compilation, chunks) {
     }. This is a bug in fusion-cli.`
   );
 
-  // $FlowFixMe
-  const [runtimeChunkId] /*: [number] */ = runtimeChunkIds;
-
   return {
     chunks: allChunks,
-    runtimeChunkId,
+    runtimeChunkIds,
     initialChunkIds,
   };
 }

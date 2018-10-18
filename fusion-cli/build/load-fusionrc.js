@@ -16,7 +16,7 @@ const chalk = require('chalk');
 let loggedNotice = false;
 
 /*::
-type FusionRC = {
+export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
   experimentalCompile?: boolean,

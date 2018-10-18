@@ -31,7 +31,34 @@ class SyncState /*::<T>*/ {
   }
 }
 
+class MergedDeferredState /*::<T, U>*/ {
+  /*::
+  states: Array<{
+    deferred: DeferredState<T>,
+    enabled: SyncState<boolean>,
+  }>;
+  mergeResultsFn: Array<T> => U;
+  result: Promise<U>;
+  */
+  constructor(states /*: any */, mergeResultsFn /*: Array<T> => U */) {
+    this.states = states;
+    this.mergeResultsFn = mergeResultsFn;
+    this.reset();
+  }
+  reset() {
+    this.result = Promise.all(
+      this.states.filter(state => state.enabled.value).map(state => {
+        return state.deferred.result;
+      })
+    ).then(resolved => {
+      const result = this.mergeResultsFn(resolved);
+      return result;
+    });
+  }
+}
+
 module.exports = {
   DeferredState,
   SyncState,
+  MergedDeferredState,
 };

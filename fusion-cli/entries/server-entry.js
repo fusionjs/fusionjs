@@ -32,7 +32,7 @@ let prefix = process.env.ROUTE_PREFIX;
 let AssetsPlugin;
 
 // $FlowFixMe
-const main = require('__FRAMEWORK_SHARED_ENTRY__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
+const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
 
 let server = null;
 const state = {serve: null};
@@ -94,7 +94,7 @@ function reverseRegister(app, token, plugin) {
 // $FlowFixMe
 if (module.hot) {
   // $FlowFixMe
-  module.hot.accept('__FRAMEWORK_SHARED_ENTRY__', reload);
+  module.hot.accept('__FUSION_ENTRY_PATH__', reload);
   // $FlowFixMe
   module.hot.accept('__SECRET_BUNDLE_MAP_LOADER__!');
   // $FlowFixMe

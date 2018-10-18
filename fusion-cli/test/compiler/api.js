@@ -23,107 +23,187 @@ const readFile = promisify(fs.readFile);
 const readdir = promisify(fs.readdir);
 
 test('throws if missing src/main.js', t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/__non_existent__';
   t.throws(() => {
-    new Compiler({envs: envs, dir});
+    new Compiler({env, dir});
   });
   t.end();
 });
 
-test('development/production env globals', async t => {
-  const envs = ['development', 'production'];
+test('development env globals', async t => {
+  const env = 'development';
   const dir = './test/fixtures/noop-test';
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
 
-  for (let i = 0; i < envs.length; i++) {
-    const entryPath = `.fusion/dist/${envs[i]}/server/server-main.js`;
-    const entry = path.resolve(dir, entryPath);
+  const entryPath = `.fusion/dist/${env}/server/server-main.js`;
+  const entry = path.resolve(dir, entryPath);
 
-    const watcher = await new Promise((resolve, reject) => {
-      const watcher = compiler.start((err, stats) => {
-        if (err || stats.hasErrors()) {
-          return reject(err || new Error('Compiler stats included errors.'));
-        }
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
 
-        return resolve(watcher);
-      });
+      return resolve(watcher);
     });
-    watcher.close();
+  });
+  watcher.close();
 
-    // Validate browser globals by file content
-    const clientDir = path.resolve(dir, `.fusion/dist/${envs[i]}/client`);
-    const assets = await readdir(clientDir);
-    const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
-    const clientEntryPath = path.resolve(
-      dir,
-      `.fusion/dist/${envs[i]}/client/${clientEntry}`
-    );
-    const clientContent = await readFile(clientEntryPath, 'utf8');
+  // Validate browser globals by file content
+  const clientDir = path.resolve(dir, `.fusion/dist/${env}/client`);
+  const assets = await readdir(clientDir);
+  const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
+  const clientEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${env}/client/${clientEntry}`
+  );
+  const clientContent = await readFile(clientEntryPath, 'utf8');
 
-    const expectedClientBrowser = {
-      development: `main __BROWSER__ is ".concat(true)`,
-      production: 'main __BROWSER__ is ".concat(!0)',
-    };
-    t.ok(
-      clientContent.includes(expectedClientBrowser[envs[i]]),
-      `__BROWSER__ is transpiled to be true in ${envs[i]}`
-    );
+  const expectedClientBrowser = {
+    development: '`main __BROWSER__ is ${true}`',
+    production: '"main __BROWSER__ is true"',
+  };
+  t.ok(
+    clientContent.includes(expectedClientBrowser[env]),
+    `__BROWSER__ is transpiled to be true in ${env}`
+  );
 
-    const expectedClientNode = {
-      development: `main __NODE__ is ".concat(false)`,
-      production: 'main __NODE__ is ".concat(!1)',
-    };
-    t.ok(
-      clientContent.includes(expectedClientNode[envs[i]]),
-      '__NODE__ is transpiled to be false'
-    );
+  const expectedClientNode = {
+    development: '`main __NODE__ is ${false}`',
+    production: '"main __NODE__ is false"',
+  };
+  t.ok(
+    clientContent.includes(expectedClientNode[env]),
+    '__NODE__ is transpiled to be false'
+  );
 
-    // Validate node globals by execution
-    const command = `
-      const assert = require('assert');
-      const app = require('${entry}');
-      assert.equal(typeof app.start, 'function', 'Entry has start function');
-      app
-        .start({port: ${await getPort()}})
-        .then(server => {
-          server.close();
-        })
-        .catch(e => {
-          setImmediate(() => {
-            throw e;
-          });
+  // Validate node globals by execution
+  const command = `
+    const assert = require('assert');
+    const app = require('${entry}');
+    assert.equal(typeof app.start, 'function', 'Entry has start function');
+    app
+      .start({port: ${await getPort()}})
+      .then(server => {
+        server.close();
+      })
+      .catch(e => {
+        setImmediate(() => {
+          throw e;
         });
-      `;
-    // $FlowFixMe
-    const {stdout} = await run(['-e', command], {stdio: 'pipe'});
-    t.ok(
-      stdout.includes('main __BROWSER__ is false'),
-      'the global, __BROWSER__, is false'
-    );
-    t.ok(
-      stdout.includes(
-        `main __DEV__ is ${(envs[i] === 'development').toString()}`
-      ),
-      `the global, __DEV__, is ${(envs[i] === 'development').toString()}`
-    );
-    t.ok(
-      stdout.includes('main __NODE__ is true'),
-      'the global, __NODE__, is true'
-    );
-  }
+      });
+    `;
+  // $FlowFixMe
+  const {stdout} = await run(['-e', command], {stdio: 'pipe'});
+  t.ok(
+    stdout.includes('main __BROWSER__ is false'),
+    'the global, __BROWSER__, is false'
+  );
+  t.ok(
+    stdout.includes(`main __DEV__ is ${(env === 'development').toString()}`),
+    `the global, __DEV__, is ${(env === 'development').toString()}`
+  );
+  t.ok(
+    stdout.includes('main __NODE__ is true'),
+    'the global, __NODE__, is true'
+  );
+
+  t.end();
+});
+
+test('production env globals', async t => {
+  const env = 'development';
+  const dir = './test/fixtures/noop-test';
+
+  const compiler = new Compiler({env, dir});
+  await compiler.clean();
+
+  const entryPath = `.fusion/dist/${env}/server/server-main.js`;
+  const entry = path.resolve(dir, entryPath);
+
+  const watcher = await new Promise((resolve, reject) => {
+    const watcher = compiler.start((err, stats) => {
+      if (err || stats.hasErrors()) {
+        return reject(err || new Error('Compiler stats included errors.'));
+      }
+
+      return resolve(watcher);
+    });
+  });
+  watcher.close();
+
+  // Validate browser globals by file content
+  const clientDir = path.resolve(dir, `.fusion/dist/${env}/client`);
+  const assets = await readdir(clientDir);
+  const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
+  const clientEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/${env}/client/${clientEntry}`
+  );
+  const clientContent = await readFile(clientEntryPath, 'utf8');
+
+  const expectedClientBrowser = {
+    development: '`main __BROWSER__ is ${true}`',
+    production: '"main __BROWSER__ is true"',
+  };
+  t.ok(
+    clientContent.includes(expectedClientBrowser[env]),
+    `__BROWSER__ is transpiled to be true in ${env}`
+  );
+
+  const expectedClientNode = {
+    development: '`main __NODE__ is ${false}`',
+    production: '"main __NODE__ is false"',
+  };
+  t.ok(
+    clientContent.includes(expectedClientNode[env]),
+    '__NODE__ is transpiled to be false'
+  );
+
+  // Validate node globals by execution
+  const command = `
+    const assert = require('assert');
+    const app = require('${entry}');
+    assert.equal(typeof app.start, 'function', 'Entry has start function');
+    app
+      .start({port: ${await getPort()}})
+      .then(server => {
+        server.close();
+      })
+      .catch(e => {
+        setImmediate(() => {
+          throw e;
+        });
+      });
+    `;
+  // $FlowFixMe
+  const {stdout} = await run(['-e', command], {stdio: 'pipe'});
+  t.ok(
+    stdout.includes('main __BROWSER__ is false'),
+    'the global, __BROWSER__, is false'
+  );
+  t.ok(
+    stdout.includes(`main __DEV__ is ${(env === 'development').toString()}`),
+    `the global, __DEV__, is ${(env === 'development').toString()}`
+  );
+  t.ok(
+    stdout.includes('main __NODE__ is true'),
+    'the global, __NODE__, is true'
+  );
+
   t.end();
 });
 
 test('generates error if missing default export', async t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/empty';
-  const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+  const entryPath = `.fusion/dist/${env}/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
   t.notok(await exists(entry), 'Cleans');
 
@@ -154,12 +234,12 @@ test('generates error if missing default export', async t => {
 });
 
 test('dev works', async t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/noop';
-  const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+  const entryPath = `.fusion/dist/${env}/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
 
   t.notok(await exists(entry), 'Cleans');
@@ -201,22 +281,22 @@ test('dev works', async t => {
 });
 
 test('compiles with babel plugin', async t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/custom-babel';
   const serverEntryPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/server/server-main.js`
+    `.fusion/dist/${env}/server/server-main.js`
   );
   const clientEntryPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/client/client-main.js`
+    `.fusion/dist/${env}/client/client-main.js`
   );
   const clientVendorPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/client/client-vendor.js`
+    `.fusion/dist/${env}/client/client-vendor.js`
   );
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
 
   const watcher = await new Promise((resolve, reject) => {
@@ -258,18 +338,18 @@ test('compiles with babel plugin', async t => {
 });
 
 test('experimentalCompile option', async t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/custom-babel';
   const serverEntryPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/server/server-main.js`
+    `.fusion/dist/${env}/server/server-main.js`
   );
   const clientEntryPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/client/client-main.js`
+    `.fusion/dist/${env}/client/client-main.js`
   );
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
 
   const watcher = await new Promise((resolve, reject) => {
@@ -288,14 +368,14 @@ test('experimentalCompile option', async t => {
 });
 
 test('transpiles node_modules', async t => {
-  const envs = ['development'];
+  const env = 'development';
   const dir = './test/fixtures/transpile-node-modules';
   const clientVendorPath = path.resolve(
     dir,
-    `.fusion/dist/${envs[0]}/client/client-vendor.js`
+    `.fusion/dist/${env}/client/client-legacy-vendor.js`
   );
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir, forceLegacyBuild: true});
   await compiler.clean();
 
   const watcher = await new Promise((resolve, reject) => {
@@ -345,12 +425,12 @@ test('transpiles node_modules', async t => {
 });
 
 test('production works', async t => {
-  const envs = ['production'];
+  const env = 'production';
   const dir = './test/fixtures/noop';
-  const entryPath = `.fusion/dist/${envs[0]}/server/server-main.js`;
+  const entryPath = `.fusion/dist/${env}/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
 
-  const compiler = new Compiler({envs, dir});
+  const compiler = new Compiler({env, dir});
   await compiler.clean();
 
   t.notok(await exists(entry), 'Cleans');
@@ -369,7 +449,7 @@ test('production works', async t => {
   t.ok(await exists(entry), 'Entry file gets compiled');
   t.ok(await exists(entry + '.map'), 'Source map gets compiled');
 
-  const clientDir = path.resolve(dir, `.fusion/dist/${envs[0]}/client`);
+  const clientDir = path.resolve(dir, `.fusion/dist/${env}/client`);
   const assets = await readdir(clientDir);
   t.ok(assets.find(a => a.match(/^client-main.+\.js$/)), 'main .js');
   t.ok(assets.find(a => a.match(/^client-main.+\.js.map$/)), 'main .map');

@@ -55,7 +55,7 @@
     "rimraf": "^2.6.2",
     "sade": "^1.4.1",
     "source-map-support": "^0.5.9",
-    "uglifyjs-webpack-plugin": "^2.0.1",
+    "terser-webpack-plugin": "^1.1.0",
     "webpack": "4.20.2",
     "webpack-hot-middleware": "^2.24.2",
     "winston": "^3.1.0"

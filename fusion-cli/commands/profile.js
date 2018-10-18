@@ -14,7 +14,7 @@ const analyzer = require('bundle-analyzer');
 exports.run = async function profileHandler(
   {dir = '.', port, environment} /*: any */
 ) {
-  const compiler = new Compiler({envs: [environment], dir, watch: true});
+  const compiler = new Compiler({env: environment, dir, watch: true});
   const server = analyzer.start({
     dir: `${dir}/.fusion/dist/${environment}/client`,
     port,

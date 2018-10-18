@@ -80,12 +80,12 @@ test('`fusion build` transpiles async middleware', async t => {
   const distPath = path.resolve(dir, '.fusion/dist/production/client');
   const clientFiles = await readdir(distPath);
   t.ok(
-    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
-    'includes a versioned client-main.js file'
+    clientFiles.some(f => /client-legacy-main-(.*?).js$/.test(f)),
+    'includes a versioned client-legacy-main.js file'
   );
   t.ok(
-    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
-    'includes a versioned client-vendor.js file'
+    clientFiles.some(f => /client-legacy-vendor-(.*?).js$/.test(f)),
+    'includes a versioned client-legacy-vendor.js file'
   );
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
   t.ok(
@@ -93,7 +93,8 @@ test('`fusion build` transpiles async middleware', async t => {
     'Server Entry file sourcemap gets compiled'
   );
 
-  clientFiles.filter(file => path.extname(file) === '.js').forEach(file => {
+  const legacyFiles = clientFiles.filter(f => /client-legacy/.test(f));
+  legacyFiles.filter(file => path.extname(file) === '.js').forEach(file => {
     babel.transformFileSync(path.join(distPath, file), {
       plugins: [
         () => {
@@ -156,12 +157,12 @@ test('`fusion build` works in production with a CDN_URL', async t => {
   });
 
   t.ok(
-    res.includes('src="https://cdn.com/test/client-main'),
-    'includes a script reference to client-main'
+    res.includes('https://cdn.com/test/client-main'),
+    'includes a reference to client-main'
   );
   t.ok(
-    res.includes('src="https://cdn.com/test/client-vendor'),
-    'includes a script reference to client-vendor'
+    res.includes('https://cdn.com/test/client-vendor'),
+    'includes a reference to client-vendor'
   );
   proc.kill();
   t.end();
@@ -261,17 +262,22 @@ test('`fusion build` app with dynamic imports integration', async t => {
     content.includes('loaded-dynamic-import'),
     'app content contains loaded-dynamic-import'
   );
-  t.equal(
-    await page.$$eval('script', els => els.length),
-    6,
-    'should be 6 scripts'
-  );
-  await page.click('#split-route-link');
+  const NON_CHUNK_SCRIPT_COUNT = 4;
+  const SYNC_CHUNK_COUNT = 3; // runtime + main + vendor
+  const ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT = 1;
 
+  const BASE_COUNT =
+    NON_CHUNK_SCRIPT_COUNT +
+    SYNC_CHUNK_COUNT +
+    ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
+
+  t.equal(await page.$$eval('script', els => els.length), BASE_COUNT);
+
+  await page.click('#split-route-link');
   t.equal(
     await page.$$eval('script', els => els.length),
-    7,
-    'should be 7 scripts after dynamic loading'
+    BASE_COUNT + 1,
+    'one extra script after loading new route'
   );
 
   t.ok(
@@ -283,10 +289,25 @@ test('`fusion build` app with dynamic imports integration', async t => {
 
   page.setJavaScriptEnabled(false);
 
-  await page.goto(`http://localhost:${port}/split-route`, {waitUntil: 'load'});
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
   t.equal(
     await page.$$eval('script', els => els.length),
-    7,
+    NON_CHUNK_SCRIPT_COUNT,
+    'only non-chunk scripts'
+  );
+
+  t.equal(
+    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT,
+    'all critical scripts should be preloaded'
+  );
+
+  await page.goto(`http://localhost:${port}/split-route`, {waitUntil: 'load'});
+
+  t.equal(
+    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT + 1,
     'all critical scripts should be preloaded'
   );
 
@@ -384,12 +405,12 @@ test('`fusion build` works in production with default asset path and supplied RO
     env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
   });
   t.ok(
-    res.includes('src="/test-prefix/_static/client-main'),
-    'includes a script reference to client-main'
+    res.includes('/test-prefix/_static/client-main'),
+    'includes a reference to client-main'
   );
   t.ok(
-    res.includes('src="/test-prefix/_static/client-vendor'),
-    'includes a script reference to client-vendor'
+    res.includes('/test-prefix/_static/client-vendor'),
+    'includes a reference to client-vendor'
   );
   proc.kill();
   t.end();
@@ -536,12 +557,12 @@ test('`fusion build` works in production', async t => {
   );
   const {res, proc} = await start(`--dir=${dir}`);
   t.ok(
-    res.includes('src="/_static/client-main'),
-    'includes a script reference to client-main'
+    res.includes('/_static/client-main'),
+    'includes a reference to client-main'
   );
   t.ok(
-    res.includes('src="/_static/client-vendor'),
-    'includes a script reference to client-vendor'
+    res.includes('/_static/client-vendor'),
+    'includes a reference to client-vendor'
   );
 
   clientFiles.forEach(file => {

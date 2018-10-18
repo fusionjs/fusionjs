@@ -8,7 +8,7 @@
 /* eslint-env node */
 
 /*::
-type Runtime = "node-native" | "node-bundled" | "browser-modern" | "browser-legacy";
+type Target = "node-native" | "node-bundled" | "browser-modern" | "browser-legacy";
 type JSXTransformOpts = {
   pragma?: string,
   pragmaFrag?: string,
@@ -16,14 +16,14 @@ type JSXTransformOpts = {
 type BabelConfigOpts =
 | {|
     specOnly: true,
-    runtime: Runtime,
+    target: Target,
     plugins?: Array<any>,
     presets?: Array<any>,
   |}
 | {|
     specOnly: false,
     dev: boolean,
-    runtime: Runtime,
+    target: Target,
     plugins?: Array<any>,
     presets?: Array<any>,
     jsx?: JSXTransformOpts,
@@ -33,7 +33,7 @@ type BabelConfigOpts =
 */
 
 module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
-  const {runtime, plugins, presets} = opts;
+  const {target, plugins, presets} = opts;
 
   // Shared base env preset options
   let envPresetOpts /*: Object*/ = {
@@ -70,27 +70,28 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       require.resolve('@babel/plugin-transform-flow-strip-types')
     );
     if (fusionTransforms) {
-      config.presets.push([fusionPreset, {runtime, assumeNoImportSideEffects}]);
+      config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
     }
   }
 
-  if (runtime === 'node-native') {
+  if (target === 'node-native') {
     envPresetOpts.modules = 'commonjs';
     envPresetOpts.targets = {
       node: 'current',
     };
     config.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
-  } else if (runtime === 'node-bundled') {
+  } else if (target === 'node-bundled') {
     envPresetOpts.modules = false;
     envPresetOpts.targets = {
       node: 'current',
     };
-  } else if (runtime === 'browser-modern') {
+  } else if (target === 'browser-modern') {
     envPresetOpts.modules = false;
     envPresetOpts.targets = {
       esmodules: true,
     };
-  } else if (runtime === 'browser-legacy') {
+    envPresetOpts.useBuiltIns = 'entry';
+  } else if (target === 'browser-legacy') {
     envPresetOpts.modules = false;
     envPresetOpts.targets = {
       ie: 9,
@@ -112,7 +113,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
 
 /*::
 type FusionPresetOpts = {
-  runtime: Runtime,
+  target: Target,
   assumeNoImportSideEffects: boolean,
 };
 */
@@ -126,12 +127,10 @@ type FusionPresetOpts = {
  */
 function fusionPreset(
   context /*: any */,
-  {runtime, assumeNoImportSideEffects} /*: FusionPresetOpts */
+  {target, assumeNoImportSideEffects} /*: FusionPresetOpts */
 ) {
-  const target =
-    runtime === 'node-native' || runtime === 'node-bundled'
-      ? 'node'
-      : 'browser';
+  const targetEnv =
+    target === 'node-native' || target === 'node-bundled' ? 'node' : 'browser';
 
   return {
     plugins: [
@@ -141,10 +140,13 @@ function fusionPreset(
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-paths'),
       require.resolve('./babel-plugins/babel-plugin-chunkid'),
-      [require.resolve('babel-plugin-transform-cup-globals'), {target}],
+      [
+        require.resolve('babel-plugin-transform-cup-globals'),
+        {target: targetEnv},
+      ],
       assumeNoImportSideEffects && [
         require.resolve('./babel-plugins/babel-plugin-transform-tree-shake'),
-        {target},
+        {target: targetEnv},
       ],
     ].filter(Boolean),
   };

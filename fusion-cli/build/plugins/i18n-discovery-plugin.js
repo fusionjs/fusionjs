@@ -25,7 +25,8 @@ class I18nDiscoveryPlugin {
   }
   apply(compiler /*: any */) {
     const name = this.constructor.name;
-    compiler.hooks.compilation.tap(name, compilation => {
+    // "thisCompilation" is not run in child compilations
+    compiler.hooks.thisCompilation.tap(name, compilation => {
       compilation.hooks.normalModuleLoader.tap(name, (context, module) => {
         context[translationsDiscoveryKey] = this.discoveryState;
       });
