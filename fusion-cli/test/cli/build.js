@@ -295,28 +295,35 @@ test('`fusion build` app with dynamic imports integration', async t => {
     'all scripts have nonce attribute'
   );
 
-  page.setJavaScriptEnabled(false);
+  await page.setRequestInterception(true);
 
-  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+  let jsRequests = [];
+
+  page.on('request', req => {
+    if (req.url().endsWith('.js')) {
+      jsRequests.push(req);
+      // Prevent chunk exectution by blocking requests
+    } else {
+      req.continue();
+    }
+  });
+
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'domcontentloaded'});
 
   t.equal(
-    await page.$$eval('script', els => els.length),
-    NON_CHUNK_SCRIPT_COUNT,
-    'only non-chunk scripts'
+    jsRequests.length,
+    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT
   );
 
-  t.equal(
-    await page.$$eval('link[rel="modulepreload"]', els => els.length),
-    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT,
-    'all critical scripts should be preloaded'
-  );
+  jsRequests = [];
 
-  await page.goto(`http://localhost:${port}/split-route`, {waitUntil: 'load'});
+  await page.goto(`http://localhost:${port}/split-route`, {
+    waitUntil: 'domcontentloaded',
+  });
 
   t.equal(
-    await page.$$eval('link[rel="modulepreload"]', els => els.length),
-    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT + 1,
-    'all critical scripts should be preloaded'
+    jsRequests.length,
+    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT + 1
   );
 
   await browser.close();

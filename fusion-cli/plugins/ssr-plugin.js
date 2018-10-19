@@ -97,17 +97,12 @@ const SSRBodyTemplate = createPlugin({
         modernUrls,
       });
 
-      const modulePreloadHints = modernUrls
-        .map(url => modulePreloadHint(url))
-        .join('');
-
       return [
         '<!doctype html>',
         `<html${safeAttrs}>`,
         `<head>`,
         `<meta charset="utf-8" />`,
         `<title>${safeTitle}</title>`,
-        modulePreloadHints,
         `${coreGlobals}${criticalChunkScripts}${safeHead}`,
         `</head>`,
         `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
@@ -118,13 +113,6 @@ const SSRBodyTemplate = createPlugin({
 });
 
 export {SSRBodyTemplate};
-
-function modulePreloadHint(url) {
-  const crossOrigin = url.startsWith('https://')
-    ? ' crossorigin="anonymous"'
-    : '';
-  return `<link rel="modulepreload"${crossOrigin} href="${url}" />`;
-}
 
 /**
 Safari 10.1 supports modules but not `nomodule` attribute.
@@ -138,11 +126,7 @@ function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
     var script = document.createElement('script');
     script.src = src;
     script.setAttribute("nonce", ${JSON.stringify(ctx.nonce)});
-    if (!window.__NOMODULE__) {
-      script.type = "module";
-    } else {
-      script.defer = true;
-    }
+    script.defer = true;
     if (script.src.indexOf(window.location.origin + '/') !== 0) {
       script.crossorigin = "anonymous";
     }
