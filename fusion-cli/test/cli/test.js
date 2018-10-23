@@ -33,6 +33,16 @@ test('`fusion test` passes', async t => {
   t.end();
 });
 
+test('`fusion test` with gql macro', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/gql');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+  t.end();
+});
+
 test('`fusion test` failure', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=fails`;

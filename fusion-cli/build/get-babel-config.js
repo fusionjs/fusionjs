@@ -71,6 +71,11 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     );
     if (fusionTransforms) {
       config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
+    } else {
+      config.plugins.push([
+        require.resolve('./babel-plugins/babel-plugin-gql'),
+        {inline: true},
+      ]);
     }
   }
 
@@ -134,7 +139,7 @@ function fusionPreset(
 
   return {
     plugins: [
-      require.resolve('./babel-plugins/babel-plugin-gql'),
+      [require.resolve('./babel-plugins/babel-plugin-gql'), {inline: false}],
       require.resolve('./babel-plugins/babel-plugin-asseturl'),
       require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
