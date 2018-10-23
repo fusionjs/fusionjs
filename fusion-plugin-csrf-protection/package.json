@@ -34,7 +34,7 @@
     "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^3.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-prettier": "2.6.2",
+    "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "express": "^4.16.3",
     "flow-bin": "^0.83.0",
