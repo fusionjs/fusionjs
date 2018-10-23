@@ -3,3 +3,4 @@ node_modules/
 .fusion/
 .nyc_output/
 yarn-error.log
+coverage/

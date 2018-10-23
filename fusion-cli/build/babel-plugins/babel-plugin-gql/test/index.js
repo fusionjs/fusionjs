@@ -31,23 +31,6 @@ test('import gql', t => {
   t.end();
 });
 
-test('import gql inline', t => {
-  const output = transformFileSync(
-    __dirname + '/fixtures/input-import-destructuring',
-    {
-      plugins: [[plugin, {inline: true}]],
-    }
-  );
-  const expected = fs
-    .readFileSync(
-      __dirname + '/fixtures/expected-inline-import-destructuring',
-      'utf-8'
-    )
-    .trim();
-  t.equal(output.code, expected, 'replaced correctly');
-  t.end();
-});
-
 test('import gql as', t => {
   const output = transformFileSync(
     __dirname + '/fixtures/input-import-destructuring-as',

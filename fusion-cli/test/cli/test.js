@@ -237,6 +237,16 @@ test('`fusion test` coverage', async t => {
   t.end();
 });
 
+test('`fusion test` coverage with gql', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/gql');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
+  t.end();
+});
+
 test('`fusion test` class properties', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
   const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --match=class-props`;

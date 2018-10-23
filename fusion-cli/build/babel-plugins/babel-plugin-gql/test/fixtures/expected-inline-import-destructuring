@@ -1,9 +1,0 @@
-import { gql } from 'fusion-apollo';
-import { gql as gqlOther } from 'gql';
-const path = './test';
-
-require("graphql-tag")("type Test {\n  test: String\n}");
-
-gqlOther(path);
-
-require("graphql-tag")("type Test {\n  test: String\n}");
