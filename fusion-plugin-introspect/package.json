@@ -1,0 +1,69 @@
+{
+  "name": "fusion-plugin-introspect",
+  "description": "Collect runtime Fusion.js data for debugging",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": "yourorg/fusion-plugin-yourplugin",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/browser.es5.js",
+    "./dist/index.es.js": "./dist/browser.es5.es.js"
+  },
+  "es2015": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
+  },
+  "es2017": {
+    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
+    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "7.0.0",
+    "@types/redux": "3.6.31",
+    "babel-eslint": "^10.0.1",
+    "create-universal-package": "3.4.6",
+    "enzyme": "3.7.0",
+    "enzyme-adapter-react-16": "1.6.0",
+    "eslint": "^5.7.0",
+    "eslint-config-fusion": "^4.0.0",
+    "eslint-plugin-cup": "2.0.0",
+    "eslint-plugin-flowtype": "^3.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^21.25.1",
+    "eslint-plugin-prettier": "3.0.0",
+    "eslint-plugin-react": "7.11.1",
+    "flow-bin": "^0.83.0",
+    "fusion-core": "^1.8.0",
+    "fusion-test-utils": "^1.2.3",
+    "fusion-tokens": "^1.1.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.14.3",
+    "tape-cup": "4.7.1",
+    "unitest": "2.1.1"
+  },
+  "peerDependencies": {
+    "fusion-core": "^1.8.0",
+    "fusion-tokens": "^1.1.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "build-test": "rm -rf dist-tests && cup build-tests",
+    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "test": "npm run build-test && npm run just-test",
+    "cover": "npm run build-test && nyc npm run just-test && nyc report --reporter=html",
+    "view-cover": "npm run cover && open coverage/index.html",
+    "prepublish": "npm run transpile"
+  },
+  "engines": {
+    "node": ">= 8.11.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "koa-bodyparser": "^4.2.1"
+  }
+}
