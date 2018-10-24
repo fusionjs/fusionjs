@@ -18,18 +18,16 @@ import {
 } from './tokens';
 import ssrPlugin from './plugins/ssr';
 import contextMiddleware from './plugins/server-context.js';
-import getEnv from './get-env.js';
 
 export default function(): typeof BaseApp {
   const Koa = require('koa');
-  const envVars = getEnv();
 
   return class ServerApp extends BaseApp {
     _app: Koa;
     constructor(el, render) {
       super(el, render);
       this._app = new Koa();
-      this._app.proxy = envVars.env === 'production';
+      this._app.proxy = true;
       this.middleware(contextMiddleware);
       this.register(TimingToken, Timing);
       this.middleware(

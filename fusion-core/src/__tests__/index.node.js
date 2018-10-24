@@ -588,7 +588,7 @@ test('app handles no render token', async t => {
   }
 });
 
-test('proxy flag false by default', async t => {
+test('enable proxy flag', async t => {
   const flags = {render: false};
   const element = 'hi';
   const render = () => {
@@ -597,6 +597,6 @@ test('proxy flag false by default', async t => {
   };
   const app = new App(element, render);
   // $FlowFixMe
-  t.equal(app._app.proxy, false, 'fusion proxy should be false by default');
+  t.equal(app._app.proxy, true, 'fusion proxy should be true by default');
   t.end();
 });
