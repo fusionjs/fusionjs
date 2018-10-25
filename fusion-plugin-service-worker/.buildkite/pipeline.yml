@@ -6,3 +6,10 @@ steps:
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
       queue: builders
+  - name: ':docker: :package: node8'
+    plugins:
+      'docker-compose#v1.7.0':
+        build: fusion-plugin-service-worker-node-last
+        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+    agents:
+      queue: builders

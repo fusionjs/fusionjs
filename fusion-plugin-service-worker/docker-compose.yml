@@ -5,3 +5,9 @@ services:
     volumes:
       - '.:/fusion-plugin-service'
       - /fusion-plugin-service/node_modules/
+  fusion-plugin-service-node-last:
+    extends: fusion-plugin-service
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
