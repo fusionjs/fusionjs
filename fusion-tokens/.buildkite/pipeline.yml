@@ -6,6 +6,13 @@ steps:
       'docker-compose#v1.7.0':
         build: fusion-tokens
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+  - name: ':docker: :package: node8'
+    agents:
+      queue: builders
+    plugins:
+      'docker-compose#v1.7.0':
+        build: fusion-tokens-node-last
+        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
   - wait
   - name: ':eslint:'
     command: yarn lint
@@ -14,10 +21,24 @@ steps:
         run: fusion-tokens
     agents:
       queue: workers
+  - name: ':eslint: node8'
+    command: yarn lint
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-tokens-node-last
+    agents:
+      queue: workers
   - name: ':node:'
     command: yarn test
     plugins:
       'docker-compose#v1.7.0':
         run: fusion-tokens
+    agents:
+      queue: workers
+  - name: ':node: node8'
+    command: yarn test
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-tokens-node-last
     agents:
       queue: workers

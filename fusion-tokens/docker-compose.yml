@@ -2,3 +2,9 @@ version: '2'
 services:
   fusion-tokens:
     build: .
+  fusion-tokens-node-last:
+    extends: fusion-tokens
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
