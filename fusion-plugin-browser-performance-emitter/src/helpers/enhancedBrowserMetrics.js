@@ -19,10 +19,14 @@ function hasPerf(window) {
 
 function getEntries(window) {
   const resources = window.performance.getEntriesByType('resource');
-  const jsonResources = resources.filter(entry => {
-    return entry.name.indexOf('data:') !== 0 && entry.toJSON;
+  const jsonResources = resources.filter(
+    entry => entry.name.indexOf('data:') !== 0 && entry.toJSON
+  );
+  const navigations = window.performance.getEntriesByType('navigation');
+  const html = navigations.filter(entry => entry.entryType === 'navigation');
+  return jsonResources.concat(html).map(function(entry) {
+    return entry.toJSON();
   });
-  return jsonResources.map(entry => entry.toJSON());
 }
 
 function getServerTiming(window) {
