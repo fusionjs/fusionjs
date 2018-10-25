@@ -67,6 +67,7 @@
     "node": ">= 8.9.0"
   },
   "jest": {
+    "testURL": "http://localhost",
     "testMatch": [
       "**/__jest__/**/*.js"
     ]
