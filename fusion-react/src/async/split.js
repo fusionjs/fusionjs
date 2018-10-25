@@ -76,6 +76,9 @@ export default function withAsyncComponent({
         .then(([asyncComponent]) => {
           // Note: .default is toolchain specific, breaks w/ CommonJS exports
           AsyncComponent = asyncComponent.default;
+          if (AsyncComponent === undefined) {
+            throw new Error('Bundle does not contain a default export');
+          }
         })
         .catch(err => {
           error = err;
