@@ -3,7 +3,7 @@ services:
   create-fusion-plugin:
     build: .
     volumes:
-      - .:/create-fusion-plugin
+      - '.:/create-fusion-plugin'
       - /create-fusion-plugin/node_modules/
       - /create-fusion-plugin/templates/plugin/content/node_modules/
     environment:
@@ -16,3 +16,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  create-fusion-plugin-node-last:
+    extends: create-fusion-plugin
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
