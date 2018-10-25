@@ -15,3 +15,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-cli-node-last:
+    extends: fusion-cli
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
