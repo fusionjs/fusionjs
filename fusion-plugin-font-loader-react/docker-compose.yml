@@ -17,3 +17,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-plugin-font-loader-react-node-last:
+    extends: fusion-plugin-font-loader-react
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
