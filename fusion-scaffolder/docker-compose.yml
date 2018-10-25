@@ -3,7 +3,7 @@ services:
   fusion-scaffolder:
     build: .
     volumes:
-      - .:/fusion-scaffolder
+      - '.:/fusion-scaffolder'
       - /fusion-scaffolder/node_modules/
     environment:
       - CODECOV_TOKEN
@@ -15,3 +15,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-scaffolder-node-last:
+    extends: fusion-scaffolder
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
