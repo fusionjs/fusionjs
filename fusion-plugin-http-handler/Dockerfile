@@ -1,4 +1,5 @@
-FROM uber/web-base-image:1.0.7@sha256:68237a26e7d19669786e4aedfec44903ba0ec75ea0ed3d323405d0fa5c6b9323
+ARG BASE_IMAGE=uber/web-base-image:2.0.0
+FROM $BASE_IMAGE
 
 WORKDIR /fusion-plugin-http-handler
 
