@@ -3,7 +3,13 @@ services:
   fusion-apollo:
     build: .
     volumes:
-      - .:/fusion-apollo
+      - '.:/fusion-apollo'
       - /fusion-apollo/node_modules/
       - /fusion-apollo/dist/
       - /fusion-apollo/dist-tests/
+  fusion-apollo-node-last:
+    extends: fusion-apollo
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
