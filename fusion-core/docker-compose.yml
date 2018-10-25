@@ -3,7 +3,7 @@ services:
   fusion-core:
     build: .
     volumes:
-      - .:/fusion-core
+      - '.:/fusion-core'
       - /fusion-core/node_modules/
       - /fusion-core/dist/
       - /fusion-core/dist-tests/
@@ -17,3 +17,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-core-node-last:
+    extends: fusion-core
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
