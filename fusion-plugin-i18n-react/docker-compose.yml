@@ -17,3 +17,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-plugin-i18n-react-node-last:
+    extends: fusion-plugin-i18n-react
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
