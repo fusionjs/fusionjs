@@ -1,4 +1,5 @@
-FROM uber/web-base-image:1.0.8@sha256:c20637d449fa8604874e588780a6800dd05cc83028fae14c45a05186402607e5
+ARG BASE_IMAGE=uber/web-base-image:2.0.0
+FROM $BASE_IMAGE
 
 WORKDIR /fusion-plugin-connected-react-router
 
