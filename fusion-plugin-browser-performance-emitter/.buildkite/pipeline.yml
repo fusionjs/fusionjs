@@ -6,12 +6,26 @@ steps:
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
       queue: builders
+  - name: ':docker: :package: node8'
+    plugins:
+      'docker-compose#v1.7.0':
+        build: fusion-plugin-browser-performance-emitter-node-last
+        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+    agents:
+      queue: builders
   - wait
   - command: yarn flow
     name: ':flowtype:'
     plugins:
       'docker-compose#v1.7.0':
         run: fusion-plugin-browser-performance-emitter
+    agents:
+      queue: workers
+  - command: yarn flow
+    name: ':flowtype: node8'
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-browser-performance-emitter-node-last
     agents:
       queue: workers
   - name: ':eslint:'
@@ -21,6 +35,13 @@ steps:
         run: fusion-plugin-browser-performance-emitter
     agents:
       queue: workers
+  - name: ':eslint: node8'
+    command: yarn lint
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-browser-performance-emitter-node-last
+    agents:
+      queue: workers
   - name: ':chrome: :white_check_mark:'
     command: .buildkite/browserTests
     plugins:
@@ -28,10 +49,24 @@ steps:
         run: fusion-plugin-browser-performance-emitter
     agents:
       queue: workers
+  - name: ':chrome: :white_check_mark: node8'
+    command: .buildkite/browserTests
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-browser-performance-emitter-node-last
+    agents:
+      queue: workers
   - name: ':node: :white_check_mark:'
     command: .buildkite/nodeTests
     plugins:
       'docker-compose#v1.7.0':
         run: fusion-plugin-browser-performance-emitter
+    agents:
+      queue: workers
+  - name: ':node: :white_check_mark: node8'
+    command: .buildkite/nodeTests
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-browser-performance-emitter-node-last
     agents:
       queue: workers

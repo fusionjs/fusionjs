@@ -17,3 +17,9 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
+  fusion-plugin-browser-performance-emitter-node-last:
+    extends: fusion-plugin-browser-performance-emitter
+    build:
+      context: .
+      args:
+        BASE_IMAGE: 'uber/web-base-image:1.0.9'
