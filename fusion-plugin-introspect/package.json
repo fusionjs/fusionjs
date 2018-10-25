@@ -32,7 +32,7 @@
     "eslint-plugin-jest": "^21.25.1",
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "7.11.1",
-    "flow-bin": "^0.83.0",
+    "flow-bin": "^0.84.0",
     "fusion-core": "^1.8.0",
     "fusion-test-utils": "^1.2.3",
     "fusion-tokens": "^1.1.0",
