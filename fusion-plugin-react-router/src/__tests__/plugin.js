@@ -77,6 +77,23 @@ if (__NODE__) {
     cleanup();
     t.end();
   });
+
+  test('server side redirects with prefix', async t => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Redirect from="/" to="/lol" />
+        <Route path="/lol" component={Hello} />
+      </div>
+    );
+    const app = getPrefixApp(element);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/');
+    t.equal(ctx.status, 307);
+    t.equal(ctx.res.getHeader('Location'), '/test/lol');
+    cleanup();
+    t.end();
+  });
 }
 
 test('events with trackingId', async t => {

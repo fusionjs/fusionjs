@@ -16,6 +16,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import {createServerHistory} from './modules/ServerHistory';
 import type {HistoryType} from './types';
 import type {Token, Context} from 'fusion-core';
+import {addRoutePrefix} from './modules/utils';
 
 type ProviderPropsType = {
   history: HistoryType,
@@ -62,7 +63,9 @@ export default createPlugin({
             ctx.status = code;
           },
           redirect: url => {
-            ctx.redirect(url);
+            // $FlowFixMe
+            const toUrl: string = addRoutePrefix(url, prefix);
+            ctx.redirect(toUrl);
           },
         };
         // Expose the history object
