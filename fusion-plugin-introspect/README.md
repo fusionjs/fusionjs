@@ -53,7 +53,7 @@ The `data` that is passed to `store` and `storeSync` follows this schema:
   server: [{
     timestamp: number,
     dependencies: [{name: string, stack: string, dependencies: [string]}],
-    enhanced: [string],
+    enhanced: [{name: string}],
   }],
   browser: [{
     timestamp: number,
@@ -95,6 +95,39 @@ The `data` that is passed to `store` and `storeSync` follows this schema:
 - `devDependencies` - The `devDependencies` field in `package.json`
 - `varNames` - A list of all defined env var names (but not their values)
 - `vars` - A map of env vars, filtered by the `env` option
+
+#### Flow types
+
+```
+export type IntrospectionSchema = {
+  version: string,
+  server: Array<Dependencies>,
+  browser: Array<Dependencies>,
+  runtime: Metadata,
+};
+export type Dependencies = {
+  timestamp: number,
+  dependencies: Array<Dependency>,
+  enhanced: Array<{name: string}>,
+};
+export type Dependency = {
+  name: string,
+  stack: string,
+  dependencies: Array<string>,
+};
+export type Metadata = {
+  timestamp: number,
+  pid: number,
+  nodeVersion: string,
+  npmVersion: string,
+  yarnVersion: string,
+  lockFileType: string,
+  dependencies: {[string]: string},
+  devDependencies: {[string]: string},
+  varNames: Array<string>,
+  vars: {[string]: string},
+};
+```
 
 ---
 

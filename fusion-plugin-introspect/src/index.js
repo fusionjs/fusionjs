@@ -5,9 +5,16 @@
  *
  * @flow
  */
-import browser from './browser';
-import server from './server';
+import browser from './browser.js';
+import server from './server.js';
 import * as fs from './fs-store.js';
+
+export type {
+  IntrospectionSchema,
+  Dependencies,
+  Dependency,
+  Metadata,
+} from './server.js';
 
 export default (__NODE__ ? server : browser);
 // $FlowFixMe

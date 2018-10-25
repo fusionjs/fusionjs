@@ -13,6 +13,35 @@ import {collectDependencyData} from './collectDependencyData.js';
 import {collectMetadata} from './collectMetadata.js';
 import * as fsStore from './fs-store.js';
 
+export type IntrospectionSchema = {
+  version: string,
+  server: Array<Dependencies>,
+  browser: Array<Dependencies>,
+  runtime: Metadata,
+};
+export type Dependencies = {
+  timestamp: number,
+  dependencies: Array<Dependency>,
+  enhanced: Array<{name: string}>,
+};
+export type Dependency = {
+  name: string,
+  stack: string,
+  dependencies: Array<string>,
+};
+export type Metadata = {
+  timestamp: number,
+  pid: number,
+  nodeVersion: string,
+  npmVersion: string,
+  yarnVersion: string,
+  lockFileType: string,
+  dependencies: {[string]: string},
+  devDependencies: {[string]: string},
+  varNames: Array<string>,
+  vars: {[string]: string},
+};
+
 const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
   // istanbul ignore else
   if (__NODE__) {
@@ -28,7 +57,7 @@ const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
     // collect data once at startup to at least have some data in case of a crash
     // $FlowFixMe
     data.version = require(`${__dirname}/../package.json`).version; // eslint-disable-line import/no-dynamic-require
-    data.server = collectDependencyData(app);
+    data.server = [collectDependencyData(app)];
     data.runtime = collectMetadata('.', env);
     // store as much as we can before running the DI resolution algorithm (which could throw an error that we cannot catch)
     store.storeSync(data);
