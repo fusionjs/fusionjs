@@ -11,23 +11,15 @@ const path = require('path');
 const fs = require('fs');
 const loaderUtils = require('loader-utils');
 
-/*::
-import type {DevContext} from "./loader-context.js";
-*/
-const {devContextKey} = require('./loader-context.js');
-
 module.exports = function fileLoader(content /*: string */) {
-  const dev /*: DevContext */ = this[devContextKey];
-
   const done = assetContents => {
     const url = loaderUtils.interpolateName(this, '[hash].[ext]', {
       context: this.rootContext,
       content: assetContents,
     });
 
-    // This should match webpack config.output.path option, except
-    // assets should always go into client dist directory, regardless of source
-    const outputPath = path.posix.join(dev ? '/' : '../client', url);
+    // Assets should always go into client dist directory, regardless of source
+    const outputPath = path.posix.join('../client', url);
     this.emitFile(outputPath, assetContents);
     return `module.exports = __webpack_public_path__ + ${JSON.stringify(url)};`;
   };

@@ -15,7 +15,6 @@ const webpack = require('webpack');
 const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const rimraf = require('rimraf');
-const {getEnv} = require('fusion-core');
 
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const getWebpackConfig = require('./get-webpack-config.js');
@@ -26,8 +25,6 @@ const {
 } = require('./shared-state-containers.js');
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
-
-const {assetPath} = getEnv();
 
 function getStatsLogger({dir, logger, env}) {
   return (err, stats) => {
@@ -168,18 +165,7 @@ function Compiler(
   };
 
   this.getMiddleware = () => {
-    const dev = webpackDevMiddleware(compiler, {
-      filter: c => c.name === 'client',
-      noInfo: true,
-      quiet: true,
-      lazy: false,
-      stats: {
-        colors: true,
-      },
-      reporter: null,
-      serverSideRender: true,
-      publicPath: assetPath,
-    });
+    const dev = webpackDevMiddleware(compiler);
     const hot = webpackHotMiddleware(compiler, {log: false});
     return (req, res, next) => {
       dev(req, res, err => {

@@ -24,7 +24,10 @@ module.exports = function(dir /*: string */) {
         serve(path.resolve(dir, `.fusion/dist/${env}/client`), {
           defer: true,
           setHeaders: res => {
-            res.setHeader('Cache-Control', 'public, max-age=31536000');
+            // $FlowFixMe
+            if (!module.hot) {
+              res.setHeader('Cache-Control', 'public, max-age=31536000');
+            }
             res.setHeader('Timing-Allow-Origin', '*');
           },
         })

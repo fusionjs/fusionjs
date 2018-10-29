@@ -3,12 +3,12 @@ import App from 'fusion-core';
 import {assetUrl} from 'fusion-core';
 import * as jsonData from './static/test.json';
 
+import serverAsset from './server-asset.js';
+
 const hoistedUrl = assetUrl('./static/test.css');
 if (typeof window !== 'undefined') {
   window.__hoistedUrl__ = hoistedUrl;
 }
-
-import {serverAsset} from "./server-asset.js";
 
 export default (async function() {
   const app = new App('element', el => el);
@@ -29,7 +29,7 @@ export default (async function() {
       } else if (ctx.url === '/json-import') {
         ctx.body = JSON.stringify(jsonData);
       } else if (ctx.url === '/server-asset') {
-        ctx.body = assetUrl("./static/test-server-asset.txt");
+        ctx.body = serverAsset;
       }
       return next();
     });

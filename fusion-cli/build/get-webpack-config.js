@@ -217,12 +217,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         ? 'hidden-source-map'
         : 'cheap-module-source-map',
     output: {
-      // For in-memory filesystem in webpack dev middleware, write files to root
-      // Otherwise, write to appropriate location on disk
-      path:
-        dev && watch && id !== 'server'
-          ? '/'
-          : path.join(dir, `.fusion/dist/${env}/${runtime}`),
+      path: path.join(dir, `.fusion/dist/${env}/${runtime}`),
       filename:
         runtime === 'server'
           ? 'server-main.js'
