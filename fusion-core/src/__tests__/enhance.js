@@ -63,6 +63,49 @@ tape('enhancement with a plugin', t => {
   app.resolve();
 });
 
+tape('enhancement with a plugin allows orphan plugins', t => {
+  const app = new App('el', el => el);
+
+  type FnType = string => string;
+  const FnToken: Token<FnType> = createToken('FnType');
+  const BaseFn: FnType = a => a;
+  const BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
+    return createPlugin({
+      provides: () => {
+        return arg => {
+          return fn(arg) + ' enhanced';
+        };
+      },
+    });
+  };
+  app.register(FnToken, BaseFn);
+  app.enhance(FnToken, BaseFnEnhancer);
+  t.doesNotThrow(() => {
+    app.resolve();
+  });
+  t.end();
+});
+
+tape(
+  'enhancement with a non-plugin enhancer does not allow orphan plugins',
+  t => {
+    const app = new App('el', el => el);
+
+    type FnType = string => string;
+    const FnToken: Token<FnType> = createToken('FnType');
+    const BaseFn: FnType = a => a;
+    const BaseFnEnhancer = (fn: FnType): FnType => {
+      return fn;
+    };
+    app.register(FnToken, BaseFn);
+    app.enhance(FnToken, BaseFnEnhancer);
+    t.throws(() => {
+      app.resolve();
+    });
+    t.end();
+  }
+);
+
 tape('enhancement with a plugin with deps', t => {
   const app = new App('el', el => el);
 

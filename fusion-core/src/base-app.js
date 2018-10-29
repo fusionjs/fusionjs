@@ -262,6 +262,8 @@ class FusionApp {
           let nextProvides = e(provides);
           appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
+            // if the token has a plugin enhancer, allow it to be registered with no dependents
+            nonPluginTokens.delete(token);
             if (nextProvides.deps) {
               Object.values(nextProvides.deps).forEach(token =>
                 this._dependedOn.add(getTokenRef(token))
