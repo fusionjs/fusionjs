@@ -241,3 +241,53 @@ tape('browser middleware', async t => {
   t.equal(typeof rendered.find(Component).props().dispatch, 'function');
   t.end();
 });
+
+tape('browser - store creation without cleanup between iterations', t => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+
+  function getStore(appCreator, Redux) {
+    const provider = getService(appCreator, Redux);
+    return provider && provider.from().store;
+  }
+
+  const firstStore = getStore(appCreator(reducer), Redux);
+  const secondStore = getStore(appCreator(reducer), Redux);
+
+  t.equals(firstStore, secondStore, 'cached store should be returned');
+  t.end();
+});
+
+tape('browser - store creation with cleanup between iterations', t => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+
+  function getStore(appCreator, Redux) {
+    const provider = getService(appCreator, Redux);
+    return provider && provider.from().store;
+  }
+
+  const firstApp = appCreator(reducer)();
+  const firstStore = getStore(() => firstApp, Redux);
+  firstApp.cleanup();
+
+  const secondApp = appCreator(reducer)();
+  const secondStore = getStore(() => secondApp, Redux);
+
+  t.notEquals(
+    firstStore,
+    secondStore,
+    'store cache should be busted and fresh store should be returned'
+  );
+  t.end();
+});

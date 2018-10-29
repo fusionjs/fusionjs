@@ -81,6 +81,9 @@ const getPlugin = () => {
         return next();
       };
     },
+    cleanup: async () => {
+      storeCache = null;
+    },
   });
 };
 
