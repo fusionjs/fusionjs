@@ -3,7 +3,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
 
   <title>SVG Logo</title>
-
+  <symbol id="shouldNotBeRemoved"></symbol>
   <a xlink:href="http://www.w3.org/Graphics/SVG/" target="_parent"
      xlink:title="W3C SVG Working Group home page">
 
@@ -169,7 +169,7 @@
                H 10.30
                Q  5.30,95.00  5.30,90.00 Z"/>
 
-        <path 
+        <path
             id="shine"
             fill="#3F3F3F"
             d="M  14.657,54.211
@@ -227,7 +227,7 @@
                         49.920,76.342
                         54.755,53.005"/>
 
-         <path 
+         <path
             id="G"
             fill="#FFFFFF"
             stroke="#000000"

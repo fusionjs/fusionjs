@@ -19,7 +19,11 @@ module.exports = new CompressionPlugin({
   algorithm: function(buf, options, callback) {
     imagemin
       .buffer(buf, {
-        plugins: [svgo()],
+        plugins: [
+          svgo({
+            plugins: [{removeUselessDefs: false}, {cleanupIDs: false}],
+          }),
+        ],
       })
       .then(function(result) {
         callback(null, result);

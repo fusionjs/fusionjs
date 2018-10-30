@@ -654,6 +654,11 @@ test('`fusion build` compresses assets for production', async t => {
       ),
       'svg works'
     );
+    t.ok(
+      fs
+        .readFileSync(path.resolve(dir, 'src/assets/SVG_logo.svg'), 'utf8')
+        .includes('shouldNotBeRemoved')
+    );
   });
   t.end();
 });
