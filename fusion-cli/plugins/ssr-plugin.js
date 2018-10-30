@@ -116,11 +116,21 @@ export {SSRBodyTemplate};
 
 /**
 Safari 10.1 supports modules but not `nomodule` attribute.
+Edge must get transpiled classes due to:
+https://github.com/Microsoft/ChakraCore/issues/5030
+https://github.com/Microsoft/ChakraCore/issues/4663
+https://github.com/babel/babel/issues/8019
+
+Edge UA check is based on
+https://github.com/faisalman/ua-parser-js/blob/7aca357879ba18ec2e57d36403d391c860a1be2e/src/ua-parser.js#L264
+
 */
 function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
   return `
   <script nomodule nonce="${ctx.nonce}">window.__NOMODULE__ = true;</script>
-  <script nonce="${ctx.nonce}">(window.__NOMODULE__ ? ${JSON.stringify(
+  <script nonce="${
+    ctx.nonce
+  }">(window.__NOMODULE__ || /(edge|edgios|edga)/i.test(window.navigator.userAgent) ? ${JSON.stringify(
     legacyUrls
   )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
     var script = document.createElement('script');
