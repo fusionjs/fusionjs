@@ -146,8 +146,21 @@ module.exports = {
       },
       testFolder: {
         type: 'string',
-        default: '__tests__',
-        describe: 'Which folder to look for tests in.',
+        default: '',
+        describe:
+          'Which folder to look for tests in. Deprecated, use testMatch or testRegex instead.',
+      },
+      testMatch: {
+        type: 'string',
+        default: '["**/__tests__/**/*.js"]',
+        describe:
+          'Which folder to look for tests in. A JSON array of glob patterns.',
+      },
+      testRegex: {
+        type: 'string',
+        default: '',
+        describe:
+          'Which folder to look for tests in. A JSON array of regexp strings.',
       },
       configPath: {
         type: 'string',

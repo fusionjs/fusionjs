@@ -8,7 +8,10 @@
 
 /* eslint-env node */
 
-const testFolder = process.env.TEST_FOLDER || '__tests__';
+const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
+const matchValue = process.env.TEST_FOLDER
+  ? [`**/${process.env.TEST_FOLDER || '__tests__'}/**/*.js`]
+  : process.env.TEST_REGEX || JSON.parse(process.env.TEST_MATCH || '');
 
 function getReactVersion() {
   // $FlowFixMe
@@ -43,7 +46,7 @@ module.exports = {
   setupFiles: [require.resolve('./jest-framework-shims.js'), ...reactSetup],
   snapshotSerializers:
     reactSetup.length > 0 ? [require.resolve('enzyme-to-json/serializer')] : [],
-  testMatch: [`**/${testFolder}/**/*.js`],
+  [matchField]: matchValue,
   testURL: 'http://localhost:3000/',
   collectCoverageFrom: [
     'src/**/*.js',

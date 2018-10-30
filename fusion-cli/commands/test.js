@@ -17,7 +17,9 @@ exports.run = async function(
     debug,
     match,
     env,
-    testFolder,
+    testFolder, // deprecated
+    testMatch,
+    testRegex,
     configPath,
     // Allow snapshots to be updated using `-u` as well as --updateSnapshot.
     // We don't document this argument, but since jest output automatically
@@ -42,7 +44,9 @@ exports.run = async function(
     debug,
     match,
     env,
-    testFolder,
+    testFolder, // deprecated
+    testMatch,
+    testRegex,
     configPath,
     jestArgs,
   });

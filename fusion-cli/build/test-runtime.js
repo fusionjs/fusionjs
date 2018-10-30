@@ -20,7 +20,9 @@ module.exports.TestAppRuntime = function(
     debug = false,
     match,
     env,
-    testFolder,
+    testFolder, // deprecated
+    testMatch,
+    testRegex,
     updateSnapshot,
     configPath,
     jestArgs = {},
@@ -74,10 +76,11 @@ module.exports.TestAppRuntime = function(
     const spawnProc = () => {
       return new Promise((resolve, reject) => {
         const args = getArgs();
-
         const procEnv = {
           JEST_ENV: env,
-          TEST_FOLDER: testFolder,
+          TEST_FOLDER: testFolder, // deprecated
+          TEST_MATCH: testMatch,
+          TEST_REGEX: testRegex,
         };
         const proc = spawn('node', args, {
           cwd: rootDir,
