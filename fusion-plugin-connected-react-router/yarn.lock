@@ -2468,13 +2468,13 @@ fusion-plugin-react-redux@^1.0.8:
   dependencies:
     eslint-plugin-jest "^21.18.0"
 
-fusion-plugin-react-router@1.2.0-0:
-  version "1.2.0-0"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-1.2.0-0.tgz#e77e553c8e34e33961022f12aba7d92db9c91b9a"
+fusion-plugin-react-router@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-react-router/-/fusion-plugin-react-router-1.4.1.tgz#2edb4e11af8cbf5c63b8f3f5d9bb482bbeb7828c"
   dependencies:
     history "^4.7.2"
-    prop-types "^15.6.1"
-    react-router-dom "^4.2.2"
+    prop-types "^15.6.2"
+    react-router-dom "^4.3.1"
 
 fusion-plugin-universal-events@^1.0.5:
   version "1.2.0"
@@ -4299,7 +4299,7 @@ react-redux@^5.0.7:
     loose-envify "^1.1.0"
     prop-types "^15.6.0"
 
-react-router-dom@^4.2.2:
+react-router-dom@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-4.3.1.tgz#4c2619fc24c4fa87c9fd18f4fb4a43fe63fbd5c6"
   dependencies:
