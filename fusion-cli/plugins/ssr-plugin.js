@@ -135,6 +135,7 @@ function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
   )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
     var script = document.createElement('script');
     script.src = src;
+    script.async = false;
     script.setAttribute("nonce", ${JSON.stringify(ctx.nonce)});
     script.defer = true;
     if (script.src.indexOf(window.location.origin + '/') !== 0) {

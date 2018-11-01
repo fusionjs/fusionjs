@@ -273,6 +273,14 @@ test('`fusion build` app with dynamic imports integration', async t => {
 
   t.equal(await page.$$eval('script', els => els.length), BASE_COUNT);
 
+  // Async can causes race conditions as scripts may be executed before DOM is fully parsed.
+  t.ok(
+    await page.$$eval('script:not([type="application/json"])', els =>
+      els.every(el => el.async === false)
+    ),
+    'all scripts not be async'
+  );
+
   await page.click('#split-route-link');
   t.equal(
     await page.$$eval('script', els => els.length),
