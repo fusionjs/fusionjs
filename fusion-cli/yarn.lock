@@ -2531,7 +2531,7 @@ debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@^3.1.0:
+debug@^3.1.0, debug@~3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
@@ -3795,17 +3795,17 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-fusion-core@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.7.0.tgz#69e206a8fd8cb798a36d447d0f230d1a6e65f85c"
-  integrity sha512-9uj1xL31SLLhtr7DcfqqrpsEHyDUYjVwhP6Zs2KFuarRWazTy98AJLeDt/4P6ZAlw/VIt6zMklY8psVsC+kFwA==
+fusion-core@1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.9.0.tgz#a35436666c898de091aa259b295dc426df73e631"
+  integrity sha512-8ZuP/eAKXmREfnils4MHppeAG+6yqc5YHACD5Gt31TzDESpS1HOw1zORVgtXtrV/uCB9Y31lgy2by6MvHlyczg==
   dependencies:
-    koa "^2.4.1"
-    koa-compose "^4.0.0"
-    node-mocks-http "^1.6.6"
+    koa "^2.5.3"
+    koa-compose "^4.1.0"
+    node-mocks-http "^1.7.2"
     toposort "^2.0.1"
-    ua-parser-js "^0.7.17"
-    uuid "^3.2.1"
+    ua-parser-js "^0.7.18"
+    uuid "^3.3.2"
 
 fusion-plugin-i18n-react@^1.1.0:
   version "1.1.0"
@@ -5458,7 +5458,7 @@ koa-compose@^3.0.0:
   dependencies:
     any-promise "^1.1.0"
 
-koa-compose@^4.0.0, koa-compose@^4.1.0:
+koa-compose@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-4.1.0.tgz#507306b9371901db41121c812e923d0d67d3e877"
   integrity sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==
@@ -5513,6 +5513,36 @@ koa@^2.4.1:
     content-type "^1.0.4"
     cookies "~0.7.1"
     debug "^3.1.0"
+    delegates "^1.0.0"
+    depd "^1.1.2"
+    destroy "^1.0.4"
+    error-inject "^1.0.0"
+    escape-html "^1.0.3"
+    fresh "~0.5.2"
+    http-assert "^1.3.0"
+    http-errors "^1.6.3"
+    is-generator-function "^1.0.7"
+    koa-compose "^4.1.0"
+    koa-convert "^1.2.0"
+    koa-is-json "^1.0.0"
+    on-finished "^2.3.0"
+    only "~0.0.2"
+    parseurl "^1.3.2"
+    statuses "^1.5.0"
+    type-is "^1.6.16"
+    vary "^1.1.2"
+
+koa@^2.5.3:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/koa/-/koa-2.6.1.tgz#88cabb18cd297e0577a37e40f400c4b6f1699fef"
+  integrity sha512-n9R5Eex4y0drUeqFTeCIeXyz8wjr2AxBo2Cq8LvmiXbJl4yDA5KIrecMPkhnmgACZnPXMRyCLbJoyLmpM9aFAw==
+  dependencies:
+    accepts "^1.3.5"
+    cache-content-type "^1.0.0"
+    content-disposition "~0.5.2"
+    content-type "^1.0.4"
+    cookies "~0.7.1"
+    debug "~3.1.0"
     delegates "^1.0.0"
     depd "^1.1.2"
     destroy "^1.0.4"
@@ -6135,6 +6165,22 @@ node-mocks-http@^1.6.6:
     parseurl "^1.3.1"
     range-parser "^1.2.0"
     type-is "^1.6.14"
+
+node-mocks-http@^1.7.2:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/node-mocks-http/-/node-mocks-http-1.7.3.tgz#1c744189f012c1977f4d97443495931a7cd5b4d3"
+  integrity sha512-wayzLNhEroH3lJj113pFKQ1cd1GKG1mXoZR1HcKp/o9a9lTGGgVY/hYeLajiIFr/z4tXFKOdfJickqqihBtn9g==
+  dependencies:
+    accepts "^1.3.5"
+    depd "^1.1.0"
+    fresh "^0.5.2"
+    merge-descriptors "^1.0.1"
+    methods "^1.1.2"
+    mime "^1.3.4"
+    net "^1.0.2"
+    parseurl "^1.3.1"
+    range-parser "^1.2.0"
+    type-is "^1.6.16"
 
 node-notifier@^5.2.1:
   version "5.2.1"
@@ -8436,7 +8482,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-ua-parser-js@^0.7.17, ua-parser-js@^0.7.18:
+ua-parser-js@^0.7.18:
   version "0.7.18"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.18.tgz#a7bfd92f56edfb117083b69e31d2aa8882d4b1ed"
   integrity sha512-LtzwHlVHwFGTptfNSgezHp7WUlwiqb0gA9AALRbKaERfxwJoiX0A73QbTToxteIAuIaFshhgIZfqK8s7clqgnA==
@@ -8623,7 +8669,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.2.1, uuid@^3.3.2:
+uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
