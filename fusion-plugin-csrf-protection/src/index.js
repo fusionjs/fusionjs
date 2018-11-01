@@ -12,8 +12,4 @@ import clientCsrf from './browser.js';
 declare var __NODE__: Boolean;
 export default (__NODE__ ? serverCsrf : clientCsrf);
 
-export {
-  FetchForCsrfToken,
-  CsrfExpireToken,
-  CsrfIgnoreRoutesToken,
-} from './shared';
+export {CsrfIgnoreRoutesToken} from './shared';

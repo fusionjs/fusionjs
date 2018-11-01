@@ -4,13 +4,8 @@
 
 Provides a modified `fetch` that is automatically secure against CSRF attacks for non-idempotent HTTP methods.
 
-This plugin handles csrf protection by adding a server side middleware that checks for a valid csrf token on 
-requests for non-idempotent HTTP methods (e.g. POST). It generates a csrf secret once per session based 
-on a combination of a timestamp and a server side stored secret and stores this using the provided session plugin 
-(usually via an encrypted cookie). It uses this csrf secret to generate and validate csrf tokens per request.
-
-NOTE: If you're making requests to CSRF protected endpoints from React, you should use [fusion-plugin-csrf-protection-react](https://github.com/fusionjs/fusion-plugin-csrf-protection-react) instead of this package.
-
+This enhancer handles csrf protection by adding a server side middleware that checks for a valid csrf token on 
+requests for non-idempotent HTTP methods (e.g. POST). 
 --- 
 
 ### Table of contents
@@ -23,10 +18,7 @@ NOTE: If you're making requests to CSRF protected endpoints from React, you shou
     * [`CsrfProtection`](#csrfprotection)
     * [`FetchToken`](#fetchtoken)
   * [Dependencies](#dependencies)
-    * [`CsrfExpireToken`](#csrfexpiretoken)
     * [`CsrfIgnoreRoutesToken`](#csrfignoreroutestoken)
-    * [`FetchForCsrfToken`](#fetchforcsrftoken)
-    * [`SessionToken`](#sessiontoken)
   * [Service API](#service-api)
   
 ---
@@ -62,28 +54,17 @@ const pluginUsingFetch = createPlugin({
 ```js
 // src/main.js
 import React from 'react';
-import {FetchToken, SessionToken} from 'fusion-tokens';
+import {FetchToken} from 'fusion-tokens';
 import App from 'fusion-react';
-import Session from 'fusion-plugin-jwt';
-import CsrfProtection, {
-  FetchForCsrfToken,
-  CsrfExpireToken,
+import CsrfProtectionEnhancer, {
   CsrfIgnoreRoutesToken,
 } from 'fusion-plugin-csrf-protection';
 import fetch from unfetch;
 
 export default () => {
   const app = new App(<div></div>);
-  app.register(SessionToken, Session);
-  app.register(FetchForCsrfToken, fetch);
-  app.register(FetchToken, CsrfProtection);
-  if (__BROWSER__) {
-    app.register(FetchForCsrfToken, fetch);
-    // see usage example above
-    app.register(someToken, pluginUsingFetch);
-  } 
-  // optional
-  app.register(CsrfExpireToken, 60 * 60 * 24); 
+  app.register(FetchToken, fetch);
+  app.enhance(FetchToken, CsrfProtectionEnhancer);
   // optional
   __NODE__ && app.register(CsrfIgnoreRoutesToken, []);
 }
@@ -112,24 +93,6 @@ For more, see [the fusion-tokens repo](https://github.com/fusionjs/fusion-tokens
 
 #### Dependencies
 
-##### `CsrfExpireToken`
-
-```js
-import {CsrfExpireToken} from 'fusion-plugin-csrf-protection';
-```
-
-The number of seconds for csrf tokens to remain valid. Optional.
-
-**Types**
-
-```js
-type CsrfExpire = number;
-```
-
-**Default value**
-
-The default expire is `86400` seconds, or 24 hours.
-
 ##### `CsrfIgnoreRoutesToken`
 
 ```js
@@ -147,27 +110,6 @@ type CsrfIgnoreRoutes = Array<string>;
 **Default value**
 
 Empty array `[]`
-
-##### `FetchForCsrfToken`
-
-```js
-import {FetchForCsrfToken} from 'fusion-plugin-csrf-protection';
-```
-
-An implementation of `fetch` to be used by the `fusion-plugin-csrf-protection`. Usually this is simply a
-polyfill of fetch, or can even be a reference to `window.fetch`. It is useful to exist in the DI system 
-however for testing.
-
-For type information, see the [`FetchToken`](https://github.com/fusionjs/fusion-tokens#fetchtoken) docs. Required.
-
-##### `SessionToken`
-
-```js
-import {SessionToken} from 'fusion-tokens';
-```
-
-The canonical token for an implementation of a session. For type information, 
-see the [`SessionToken`](https://github.com/fusionjs/fusion-tokens#sessiontoken) docs. Required.
 
 #### Service API
 

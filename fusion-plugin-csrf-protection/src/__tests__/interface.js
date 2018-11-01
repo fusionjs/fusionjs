@@ -8,9 +8,10 @@
 
 import tape from 'tape-cup';
 
-import Plugin from '../index';
+import Plugin, {CsrfIgnoreRoutesToken} from '../index';
 
 tape('plugin api', t => {
   t.ok(Plugin);
+  t.ok(CsrfIgnoreRoutesToken);
   t.end();
 });
