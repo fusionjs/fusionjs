@@ -39,6 +39,12 @@ exports.run = async function(
     }
   });
 
+  if ([testFolder, testMatch, testRegex].filter(t => t !== '').length > 1) {
+    throw new Error(
+      'Only one of testMatch, testRegex and testFolder can be defined at one time'
+    );
+  }
+
   const testRuntime = new TestAppRuntime({
     dir,
     debug,

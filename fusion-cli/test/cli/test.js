@@ -105,13 +105,25 @@ test('`fusion test --testFolder=integration` runs correct tests', async t => {
   t.end();
 });
 
-test('`fusion test --testMatch=["**/__foo__/**.*js"]` runs correct tests', async t => {
+test('`fusion test --testMatch=**/__foo__/**/*js` runs correct tests', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
-  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testMatch=[\\"**/__foo__/**/*.js\\"]`;
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testMatch=**/__foo__/**/*.js`;
 
   const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
+
+  t.end();
+});
+
+test('`fusion test --testMatch=**/__foo__/**/*js,**/__integration__/**/*.js` runs correct tests', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testMatch=**/__foo__/**/*.js,**/__integration__/**/*.js`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+
+  t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
   t.end();
 });
@@ -123,6 +135,42 @@ test('`fusion test --testRegex=/__foo__/.*` runs correct tests', async t => {
   const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
+
+  t.end();
+});
+
+test('`fusion test --testRegex and --testMatch cannot occur at same time', async t => {
+  t.plan(1);
+
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testMatch=**/__foo__/**/*.js --testRegex=.*/__foo__/.*`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  await exec(`node -e "${cmd}"`).catch(e => t.pass());
+
+  t.end();
+});
+
+test('`fusion test --testFolder and --testMatch cannot occur at same time', async t => {
+  t.plan(1);
+
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testMatch=**/__foo__/**/*.js --testFolder=__foo__`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  await exec(`node -e "${cmd}"`).catch(e => t.pass());
+
+  t.end();
+});
+
+test('`fusion test --testFolder and --testRegex cannot occur at same time', async t => {
+  t.plan(1);
+
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --env=node --testRegex=.*/__foo__/.* --testFolder=__foo__`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  await exec(`node -e "${cmd}"`).catch(e => t.pass());
 
   t.end();
 });

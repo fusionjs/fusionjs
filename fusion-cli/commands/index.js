@@ -152,7 +152,7 @@ module.exports = {
       },
       testMatch: {
         type: 'string',
-        default: '["**/__tests__/**/*.js"]',
+        default: '',
         describe:
           'Which folder to look for tests in. A JSON array of glob patterns.',
       },

@@ -11,7 +11,8 @@
 const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
 const matchValue = process.env.TEST_FOLDER
   ? [`**/${process.env.TEST_FOLDER || '__tests__'}/**/*.js`]
-  : process.env.TEST_REGEX || JSON.parse(process.env.TEST_MATCH || '');
+  : process.env.TEST_REGEX ||
+    (process.env.TEST_MATCH || '**/__tests__/**/*.js').split(',');
 
 function getReactVersion() {
   // $FlowFixMe
