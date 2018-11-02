@@ -92,7 +92,7 @@ class FusionApp {
     const alias = (sourceToken: *, destToken: *) => {
       this._dependedOn.add(getTokenRef(destToken));
       if (aliases) {
-        aliases.set(sourceToken, destToken);
+        aliases.set(getTokenRef(sourceToken), destToken);
       }
       return {alias};
     };
@@ -140,8 +140,8 @@ class FusionApp {
     const appliedEnhancers = [];
     const resolveToken = (token: Token<TResolved>, tokenAliases) => {
       // Base: if we have already resolved the type, return it
-      if (tokenAliases && tokenAliases.has(token)) {
-        const newToken = tokenAliases.get(token);
+      if (tokenAliases && tokenAliases.has(getTokenRef(token))) {
+        const newToken = tokenAliases.get(getTokenRef(token));
         if (newToken) {
           token = newToken;
         }

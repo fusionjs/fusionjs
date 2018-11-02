@@ -183,6 +183,89 @@ tape('dependency registration with aliases', t => {
   t.end();
 });
 
+tape('optional dependency registration with aliases', t => {
+  const app = new App('el', el => el);
+  t.ok(app, 'creates an app');
+  const counters = {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+  };
+
+  const PluginA: FusionPlugin<void, AType> = createPlugin({
+    provides: () => {
+      counters.a++;
+      t.equal(counters.a, 1, 'only instantiates once');
+      return {
+        a: 'PluginA',
+      };
+    },
+  });
+  const PluginB: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+    deps: {
+      a: TokenA,
+    },
+    provides: deps => {
+      counters.b++;
+      t.equal(deps.a.a, 'PluginA');
+      t.equal(counters.b, 1, 'only instantiates once');
+      return {
+        b: 'PluginB',
+      };
+    },
+  });
+
+  type PluginCType = FusionPlugin<
+    {a: typeof TokenA, b: typeof TokenB.optional},
+    CType
+  >;
+  const PluginC: PluginCType = createPlugin({
+    deps: {
+      a: TokenA,
+      b: TokenB.optional,
+    },
+    provides: deps => {
+      counters.c++;
+      t.equal(deps.a.a, 'PluginA');
+      t.equal(deps.b && deps.b.b, 'PluginD', 'uses correct alias');
+      t.equal(counters.c, 1, 'only instantiates once');
+      return {
+        c: 'PluginC',
+      };
+    },
+  });
+
+  const PluginD: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+    deps: {
+      a: TokenA,
+    },
+    provides: deps => {
+      counters.d++;
+      t.equal(deps.a.a, 'PluginA');
+      t.equal(counters.d, 1, 'only instantiates once');
+      return {
+        b: 'PluginD',
+      };
+    },
+  });
+
+  app.register(TokenA, PluginA);
+  app.register(TokenB, PluginB);
+  app.register(TokenC, PluginC).alias(TokenB, TokenD);
+  app.register(TokenD, PluginD);
+  t.equal(counters.a, 0, 'does not instantiate until resolve is called');
+  t.equal(counters.b, 0, 'does not instantiate until resolve is called');
+  t.equal(counters.c, 0, 'does not instantiate until resolve is called');
+  t.equal(counters.d, 0, 'does not instantiate until resolve is called');
+  app.resolve();
+  t.equal(counters.a, 1, 'only instantiates once');
+  t.equal(counters.b, 1, 'only instantiates once');
+  t.equal(counters.c, 1, 'only instantiates once');
+  t.equal(counters.d, 1, 'only instantiates once');
+  t.end();
+});
+
 tape('dependency registration with aliasing non-plugins', t => {
   const app = new App('el', el => el);
   t.ok(app, 'creates an app');
