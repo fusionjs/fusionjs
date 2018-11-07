@@ -72,6 +72,7 @@ function middleware(ctx, next) {
     });
 }
 
+// $FlowFixMe - Update type for flow 0.85
 export default createPlugin({
   provides: () => timing,
   middleware: () => middleware,

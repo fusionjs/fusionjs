@@ -15,6 +15,7 @@ import type {
 } from '../types.js';
 
 const botRegex = /(bot|crawler|spider)/i;
+// $FlowFixMe - Update type for flow 0.85
 const SSRDecider = createPlugin({
   provides: () => {
     return ctx => {

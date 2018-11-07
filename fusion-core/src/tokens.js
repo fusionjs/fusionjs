@@ -9,11 +9,14 @@
 import {createToken} from './create-token';
 import type {SSRDecider, SSRBodyTemplate, Token, Context} from './types.js';
 
+// $FlowFixMe - Update type for flow 0.85
 export const RenderToken = createToken('RenderToken');
+// $FlowFixMe - Update type for flow 0.85
 export const ElementToken = createToken('ElementToken');
 export const SSRDeciderToken: Token<SSRDecider> = createToken(
   'SSRDeciderToken'
 );
+// $FlowFixMe - Update type for flow 0.85
 export const HttpServerToken = createToken('HttpServerToken');
 export const SSRBodyTemplateToken: Token<SSRBodyTemplate> = createToken(
   'SSRBodyTemplateToken'
