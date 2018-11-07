@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import * as React from 'react';
 
 import {REACT_PREPARE} from './constants';
 
@@ -30,7 +30,7 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
   };
   // Disable eslint for deprecated componentWillReceiveProps
   // eslint-disable-next-line react/no-deprecated
-  class PreparedComponent extends Component<*, *> {
+  class PreparedComponent extends React.Component<*, *> {
     // $FlowFixMe
     constructor(props, context) {
       super(props, context);

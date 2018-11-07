@@ -8,7 +8,7 @@
 
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
-import React, {Component} from 'react';
+import * as React from 'react';
 import Enzyme, {shallow} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import {prepare, prepared} from '../../index.js';
@@ -19,7 +19,7 @@ tape('Preparing a sync app', t => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -53,7 +53,7 @@ tape('Preparing a sync app with nested children', t => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -136,7 +136,7 @@ tape('Preparing an async app', t => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -181,7 +181,7 @@ tape('Preparing an async app with nested asyncs', t => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -238,7 +238,7 @@ tape('Preparing an app with sibling async components', t => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -303,7 +303,7 @@ tape('Rendering a component triggers componentWillMount before render', t => {
 
   // Disable eslint for deprecated componentWillMount
   // eslint-disable-next-line react/no-deprecated
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     UNSAFE_componentWillMount() {
       orderedMethodCalls.push('componentWillMount');
     }
@@ -316,7 +316,7 @@ tape('Rendering a component triggers componentWillMount before render', t => {
 
   // Disable eslint for deprecated componentWillMount
   // eslint-disable-next-line react/no-deprecated
-  class SimpleChildComponent extends Component<any> {
+  class SimpleChildComponent extends React.Component<any> {
     UNSAFE_componentWillMount() {
       orderedChildMethodCalls.push('componentWillMount');
     }
@@ -342,7 +342,7 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -398,7 +398,7 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
@@ -726,7 +726,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   let numPrepares = 0;
   let numDerivedStateFromProps = 0;
   let retainedState = false;
-  class SimpleComponent extends Component<any, any> {
+  class SimpleComponent extends React.Component<any, any> {
     constructor(props, context) {
       super(props, context);
       t.equal(

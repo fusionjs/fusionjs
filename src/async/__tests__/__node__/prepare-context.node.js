@@ -8,14 +8,14 @@
 
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
-import React, {Component} from 'react';
+import * as React from 'react';
 import {prepare} from '../../index.js';
 
 tape('Preparing a sync app passing through context', t => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
-  class SimpleComponent extends Component<any, any> {
+  class SimpleComponent extends React.Component<any, any> {
     constructor(props, context) {
       super(props, context);
       t.equal(
