@@ -28,7 +28,9 @@ import serverRender from './server';
 import clientRender from './client';
 
 type ApolloClientType = {
-  cache: mixed,
+  cache?: {
+    extract: () => mixed,
+  },
 };
 
 export type ApolloClient<TInitialState> = (
@@ -50,7 +52,9 @@ export const GraphQLSchemaToken: Token<string> = createToken(
   'GraphQlSchemaToken'
 );
 
-export const ApolloCacheContext = React.createContext();
+export const ApolloCacheContext = React.createContext<
+  $PropertyType<ApolloClientType, 'cache'>
+>();
 
 export default class App extends CoreApp {
   constructor(root: Element<*>) {
@@ -91,10 +95,13 @@ export default class App extends CoreApp {
 
           if (__NODE__) {
             return middleware(ctx, next).then(() => {
-              // $FlowFixMe
-              const initialState = client.cache.extract();
+              const initialState = client.cache && client.cache.extract();
               const serialized = JSON.stringify(initialState);
-              const script = html`<script type="application/json" id="__APOLLO_STATE__">${serialized}</script>`;
+              const script = html`
+                <script type="application/json" id="__APOLLO_STATE__">
+                  ${serialized}
+                </script>
+              `;
               ctx.template.body.push(script);
             });
           } else {
