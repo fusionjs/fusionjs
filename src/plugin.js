@@ -23,7 +23,9 @@ export default {
   create: <TDeps: *, TService: *>(
     name: string,
     // eslint-disable-next-line
-    plugin: FusionPluginNoHidden<TDeps, TService> | FusionPlugin<TDeps, TService>,
+    plugin:
+      | FusionPluginNoHidden<TDeps, TService>
+      | FusionPlugin<TDeps, TService>,
     provider?: React.ComponentType<*>
   ): FusionPlugin<TDeps, TService> => {
     if (plugin.__plugin__ === undefined) {

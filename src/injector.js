@@ -17,8 +17,8 @@ type Mapper = Services => Props;
 
 // React.createContext ponyfill
 function createContext(value) {
-  if (React.createContext) {
-    return React.createContext(value);
+  if ('createContext' in React) {
+    return React.createContext<(Dependencies) => Services>(value);
   }
 
   const key = `_fusionContextPonyfill${Math.random()}`;

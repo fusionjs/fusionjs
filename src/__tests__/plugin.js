@@ -7,7 +7,7 @@
  */
 
 import test from 'tape-cup';
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import ReactPlugin from '../plugin';
