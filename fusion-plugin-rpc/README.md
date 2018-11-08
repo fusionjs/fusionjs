@@ -195,17 +195,12 @@ const rpc: RPC = Rpc.from((ctx: Context));
 
 ### mock
 
-The package also exports a mock rpc plugin which can be useful for testing. For
-example:
-
-```js
-import {mock as MockRPC} from 'fusion-plugin-rpc';
-```
-
 The package also exports a mock RPC plugin which can be useful for testing. For
 example:
 
 ```js
+import {mock as MockRPC, RPCToken} from 'fusion-plugin-rpc';
+
 app.register(RPCToken, mock);
 ```
 
@@ -228,5 +223,68 @@ function testHandler() {
     };
     throw error;
   }
+}
+```
+
+### Generating mock RPC handlers from fixtures
+
+The package also exports a getMockRpcHandlers util which can be useful for testing.
+Fixtures need to be of the following type
+
+```js
+type RpcResponse = Object | ResponseError;
+type RpcResponseMap = Array<{
+  args: Array<*>,
+  response: RpcResponse,
+}>;
+type RpcFixtureT = {[string]: RpcResponseMap | RpcResponse};
+```
+
+`getMockRpcHandlers` has the following interface:
+
+```js
+type getMockRpcHandlersT = (
+  fixtures: Array<RpcFixtureT>,
+  onMockRpc?: OnMockRpcCallbackT
+) => HandlerType;
+```
+
+For example:
+
+```js
+import {getMockRpcHandlers, ResponseError} from 'fusion-plugin-rpc';
+
+const rpcFixtures = [
+  {
+    getUser: {
+      firstName: 'John',
+      lastName: 'Doe',
+      uuid: 123,
+    },
+  },
+  {
+    updateUser: [{
+      args: [{firstName: 'Jane'}],
+      response: {
+        firstName: 'John',
+        lastName: 'Doe',
+        uuid: 123,
+      },
+    }, {
+      args: [{firstName: ''}],
+      response: new ResponseError('Username cant be empty'),
+    }]
+  },
+];
+
+const mockRpcHandlers = getMockRpcHandlers(rpcFixtures);
+
+const user = await mockRpcHandlers.getUser();
+
+try {
+  const user = await mockRpcHandlers.updateUser({firstName: ''});
+} catch (updatedUserError) {
+  // When error object is passed as response in fixtures,
+  // it will be considered as a failure scenario and will be thrown by rpc handler.
 }
 ```

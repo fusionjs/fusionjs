@@ -22,7 +22,9 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "just-map-object": "^1.2.0",
     "koa-bodyparser": "4.2.1",
+    "lodash.isequal": "^4.5.0",
     "rollup": "^0.66.4"
   },
   "devDependencies": {
@@ -45,6 +47,7 @@
     "mock-req": "^0.2.0",
     "nyc": "^13.0.1",
     "prettier": "^1.14.3",
+    "sinon": "^7.1.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
