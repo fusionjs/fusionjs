@@ -8,7 +8,7 @@
 
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
-import React from 'react';
+import * as React from 'react';
 import {renderToString} from 'react-dom/server';
 import Provider from '../../prepare-provider';
 import {prepare, split} from '../../index.js';

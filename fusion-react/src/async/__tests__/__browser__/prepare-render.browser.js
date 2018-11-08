@@ -9,7 +9,7 @@
 /* eslint-env browser */
 /* eslint-disable react/no-multi-comp */
 import tape from 'tape-cup';
-import React, {Component} from 'react';
+import * as React from 'react';
 import {createPortal} from 'react-dom';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
@@ -25,7 +25,7 @@ tape('Preparing w/ Portal', t => {
   let numRenders = 0;
   let numChildRenders = 0;
 
-  class SimpleComponent extends Component<any> {
+  class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
       t.equal(

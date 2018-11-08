@@ -7,7 +7,7 @@
  */
 
 import tape from 'tape-cup';
-import React from 'react';
+import * as React from 'react';
 import {createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import PropTypes from 'prop-types';

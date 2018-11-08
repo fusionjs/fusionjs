@@ -9,7 +9,7 @@
 /* eslint-env browser */
 
 import test from 'tape-cup';
-import React from 'react';
+import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import render from '../client';
 import App from '../index';
