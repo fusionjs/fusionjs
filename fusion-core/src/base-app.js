@@ -68,6 +68,12 @@ class FusionApp {
         },
       };
     }
+    token.stacks.push({type: 'register', stack: new Error().stack});
+    // $FlowFixMe
+    if (value && value.__plugin__) {
+      // $FlowFixMe
+      token.stacks.push({type: 'plugin', stack: value.stack});
+    }
     return this._register(token, value);
   }
   _register<TResolved>(token: Token<TResolved>, value: *) {
@@ -90,6 +96,9 @@ class FusionApp {
       token,
     });
     const alias = (sourceToken: *, destToken: *) => {
+      const stack = new Error().stack;
+      sourceToken.stacks.push({type: 'alias-from', stack});
+      destToken.stacks.push({type: 'alias-to', stack});
       this._dependedOn.add(getTokenRef(destToken));
       if (aliases) {
         aliases.set(getTokenRef(sourceToken), destToken);
@@ -105,6 +114,7 @@ class FusionApp {
     this.register(createPlugin({deps, middleware}));
   }
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function) {
+    token.stacks.push({type: 'enhance', stack: new Error().stack});
     const {value, aliases, enhancers} = this.registered.get(
       getTokenRef(token)
     ) || {
@@ -204,14 +214,18 @@ class FusionApp {
           const downstreams =
             'This token is required by plugins registered with tokens: ' +
             dependentTokens.map(token => `"${token}"`).join(', ');
+          const stack = token.stacks.find(t => t.type === 'token');
           const meta = `Required token: ${
             token ? token.name : ''
-          }\n${downstreams}\n${token.stack}`;
+          }\n${downstreams}\n${stack ? stack.stack : ''}`;
           const clue = 'Different tokens with the same name were detected:\n\n';
           const suggestions = token
             ? this.plugins
                 .filter(p => p.name === token.name)
-                .map(c => `${c.name}\n${c.stack}\n\n`)
+                .map(p => {
+                  const stack = p.stacks.find(t => t.type === 'token');
+                  return `${p.name}\n${stack ? stack.stack : ''}\n\n`;
+                })
                 .join('\n\n')
             : '';
           const help =

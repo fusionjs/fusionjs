@@ -18,13 +18,16 @@ export class TokenImpl<TResolved> {
   ref: mixed;
   type: $Values<typeof TokenType>;
   optional: ?TokenImpl<TResolved>;
-  stack: string;
+  stacks: Array<{
+    type: 'token' | 'register' | 'enhance' | 'alias-from' | 'alias-to',
+    stack: string,
+  }>;
 
   constructor(name: string, ref: mixed) {
     this.name = name;
     this.ref = ref || new Ref();
     this.type = ref ? TokenType.Optional : TokenType.Required;
-    this.stack = new Error().stack;
+    this.stacks = [{type: 'token', stack: new Error().stack}];
     if (!ref) {
       this.optional = new TokenImpl(name, this.ref);
     }
