@@ -15,6 +15,11 @@ export class Redirect extends React.Component<any> {
     if (this.isStatic(context)) this.perform();
   }
 
+  static defaultProps = {
+    push: false,
+    code: 307,
+  };
+
   componentDidMount() {
     if (!this.isStatic()) this.perform();
   }
@@ -44,12 +49,6 @@ export class Redirect extends React.Component<any> {
     return null;
   }
 }
-
-// $FlowFixMe
-Redirect.defaultProps = {
-  push: false,
-  code: 307,
-};
 
 Redirect.contextTypes = {
   router: PropTypes.shape({

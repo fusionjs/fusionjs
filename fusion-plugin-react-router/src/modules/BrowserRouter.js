@@ -16,6 +16,11 @@ export {Redirect} from './Redirect';
 class BrowserRouter extends React.Component<any> {
   lastTitle: any;
 
+  static defaultProps = {
+    onRoute: () => {},
+    Provider: BaseRouter,
+  };
+
   constructor(props: any = {}, context: any) {
     super(props, context);
     this.lastTitle = null;
@@ -57,12 +62,6 @@ BrowserRouter.contextTypes = {
 
 BrowserRouter.childContextTypes = {
   onRoute: PropTypes.func.isRequired,
-};
-
-// $FlowFixMe
-BrowserRouter.defaultProps = {
-  onRoute: () => {},
-  Provider: BaseRouter,
 };
 
 export {BrowserRouter as Router};

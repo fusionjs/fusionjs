@@ -16,6 +16,13 @@ import {Router} from 'react-router-dom';
  * server-rendering scenarios.
  */
 export class ServerRouter extends React.Component<any> {
+  static defaultProps = {
+    basename: '',
+    context: {},
+    Provider: Router,
+    onRoute: () => {},
+  };
+
   getChildContext() {
     return {
       router: {
@@ -34,14 +41,6 @@ export class ServerRouter extends React.Component<any> {
     );
   }
 }
-
-// $FlowFixMe
-ServerRouter.defaultProps = {
-  basename: '',
-  context: {},
-  Provider: Router,
-  onRoute: () => {},
-};
 
 ServerRouter.childContextTypes = {
   router: () => {},

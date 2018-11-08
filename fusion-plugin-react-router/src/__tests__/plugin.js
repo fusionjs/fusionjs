@@ -13,6 +13,7 @@ import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import {withRouter, Link} from 'react-router-dom';
 import test from 'tape-cup';
+import type {FusionPlugin} from 'fusion-core';
 import {Route} from '../modules/Route';
 import {Redirect} from '../modules/Redirect.js';
 import RouterPlugin, {RouterProviderToken, RouterToken} from '../plugin';
@@ -59,17 +60,19 @@ if (__NODE__) {
       </div>
     );
     const app = getApp(element);
-    // $FlowFixMe
-    app.register(UniversalEventsToken, {
-      map() {},
-      emit() {},
-      from() {
-        return {
-          map() {},
-          emit() {},
-        };
-      },
+    const emitter: FusionPlugin<any, any> = createPlugin({
+      provides: () => ({
+        map() {},
+        emit() {},
+        from() {
+          return {
+            map() {},
+            emit() {},
+          };
+        },
+      }),
     });
+    app.register(UniversalEventsToken, emitter);
     const simulator = setup(app);
     const ctx = await simulator.render('/');
     t.equal(ctx.status, 307);
@@ -110,7 +113,6 @@ test('events with trackingId', async t => {
     title: 'home',
     page: '/',
   });
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -133,7 +135,6 @@ test('events with no tracking id', async t => {
     title: '/',
     page: '/',
   });
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -156,17 +157,23 @@ test('Custom Provider', async t => {
     title: '/',
     page: '/',
   });
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(RouterProviderToken, () => {
     return <div id="custom-node">CUSTOM PROVIDER RESULT</div>;
   });
   const simulator = setup(app);
   const {rendered} = await simulator.render('/');
-  const result = __BROWSER__
-    ? // $FlowFixMe
-      document.getElementById('custom-node').textContent
-    : rendered;
+  let result;
+  if (__BROWSER__) {
+    const node = document.getElementById('custom-node');
+    if (!node || !node.textContent) {
+      throw new Error('Could not find node.');
+    }
+    result = node && node.textContent;
+  } else {
+    result = rendered;
+  }
+
   t.ok(result.includes('CUSTOM PROVIDER RESULT'), 'uses custom provider');
   cleanup();
   t.end();
@@ -187,7 +194,6 @@ test('Router Providing History', async t => {
     title: '/',
     page: '/',
   });
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   app.middleware(
     {
@@ -230,7 +236,6 @@ test('events with no tracking id and route prefix', async t => {
     title: '/',
     page: '/',
   });
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/');
@@ -260,7 +265,6 @@ test('events with no tracking id and deep path', async t => {
     page: '/user/:uuid',
   });
 
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
@@ -297,7 +301,6 @@ test('events with no tracking id and deep path and route prefix', async t => {
     page: '/user/:uuid',
   });
 
-  // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
@@ -367,7 +370,7 @@ if (__BROWSER__) {
       {page: '/user/:uuid', params: {uuid: '1234'}, title: '/user/:uuid'},
     ];
     let mapper;
-    const UniversalEvents = createPlugin({
+    const UniversalEvents: FusionPlugin<any, any> = createPlugin({
       provides: () => ({
         map(m) {
           mapper = m;
@@ -386,14 +389,17 @@ if (__BROWSER__) {
       }),
     });
 
-    // $FlowFixMe
     app.register(UniversalEventsToken, UniversalEvents);
     const simulator = setup(app);
     await simulator.render('/');
   });
 }
 
-function getMockEvents({t, title: expectedTitle, page: expectedPage}) {
+function getMockEvents({
+  t,
+  title: expectedTitle,
+  page: expectedPage,
+}): FusionPlugin<any, any> {
   const expected = __NODE__
     ? ['pageview:server', 'render:server']
     : ['pageview:browser'];

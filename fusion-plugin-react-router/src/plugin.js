@@ -15,13 +15,14 @@ import {Router as DefaultProvider} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
 import {createServerHistory} from './modules/ServerHistory';
 import type {HistoryType} from './types';
-import type {Token, Context} from 'fusion-core';
+import type {Token, Context, FusionPlugin} from 'fusion-core';
 import {addRoutePrefix} from './modules/utils';
 
 type ProviderPropsType = {
   history: HistoryType,
   basename: string,
 };
+
 type HistoryWrapperType = {
   from: (
     ctx: Context
@@ -38,7 +39,12 @@ export const RouterToken: Token<HistoryWrapperType> = createToken('Router');
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
 
-export default createPlugin({
+type PluginDepsType = {
+  emitter: typeof UniversalEventsToken.optional,
+  Provider: typeof RouterProviderToken.optional,
+};
+
+const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
     Provider: RouterProviderToken.optional,
@@ -62,10 +68,11 @@ export default createPlugin({
           setCode: code => {
             ctx.status = code;
           },
-          redirect: url => {
-            // $FlowFixMe
-            const toUrl: string = addRoutePrefix(url, prefix);
-            ctx.redirect(toUrl);
+          redirect: (url: string) => {
+            const toUrl = addRoutePrefix(url, prefix);
+            if (typeof toUrl === 'string') {
+              ctx.redirect(toUrl);
+            }
           },
         };
         // Expose the history object
@@ -86,9 +93,11 @@ export default createPlugin({
         );
         return next().then(() => {
           ctx.template.body.push(
-            html`<script id="__ROUTER_DATA__" type="application/json">${JSON.stringify(
-              pageData
-            )}</script>`
+            html`
+              <script id="__ROUTER_DATA__" type="application/json">
+                ${JSON.stringify(pageData)}
+              </script>
+            `
           );
 
           if (emitter) {
@@ -159,3 +168,5 @@ export default createPlugin({
     };
   },
 });
+
+export default plugin;

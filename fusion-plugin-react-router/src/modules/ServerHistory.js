@@ -64,15 +64,19 @@ export function createServerHistory(
   function push(path: string) {
     context.action = 'PUSH';
     context.location = createLocation(path, basename);
-    // $FlowFixMe
-    context.url = createURL(path, basename);
+    const url = createURL(path, basename);
+    if (typeof url === 'string') {
+      context.url = url;
+    }
   }
 
   function replace(path: string) {
     context.action = 'REPLACE';
     context.location = createLocation(path, basename);
-    // $FlowFixMe
-    context.url = createURL(path, basename);
+    const url = createURL(path, basename);
+    if (typeof url === 'string') {
+      context.url = url;
+    }
   }
   const history = {
     length: 0,
