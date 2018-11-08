@@ -262,20 +262,30 @@ test('`fusion build` app with dynamic imports integration', async t => {
     content.includes('loaded-dynamic-import'),
     'app content contains loaded-dynamic-import'
   );
-  const NON_CHUNK_SCRIPT_COUNT = 4;
   const SYNC_CHUNK_COUNT = 3; // runtime + main + vendor
   const ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT = 1;
 
-  const BASE_COUNT =
-    NON_CHUNK_SCRIPT_COUNT +
-    SYNC_CHUNK_COUNT +
-    ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
+  const BASE_COUNT = SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
 
-  t.equal(await page.$$eval('script', els => els.length), BASE_COUNT);
+  t.equal(
+    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    BASE_COUNT
+  );
+  t.equal(
+    await page.$$eval(
+      'script[src]:not([type="module"]):not([type="application/json"])',
+      els => els.length
+    ),
+    BASE_COUNT
+  );
+  t.equal(
+    await page.$$eval('script[src][type="module"]', els => els.length),
+    BASE_COUNT
+  );
 
   // Async can causes race conditions as scripts may be executed before DOM is fully parsed.
   t.ok(
-    await page.$$eval('script:not([type="application/json"])', els =>
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
       els.every(el => el.async === false)
     ),
     'all scripts not be async'
@@ -283,55 +293,45 @@ test('`fusion build` app with dynamic imports integration', async t => {
 
   await page.click('#split-route-link');
   t.equal(
-    await page.$$eval('script', els => els.length),
+    await page.$$eval(
+      'script[src]:not([type="module"]):not([type="application/json"])',
+      els => els.length
+    ),
     BASE_COUNT + 1,
     'one extra script after loading new route'
   );
 
   t.ok(
-    await page.$$eval('script', els =>
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
       els.every(el => el.crossOrigin === null)
     ),
     'all scripts do not have crossorigin attribute'
   );
 
   t.ok(
-    await page.$$eval('script:not([type="application/json"])', els =>
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
       // eslint-disable-next-line
       els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),
     'all scripts have nonce attribute'
   );
 
-  await page.setRequestInterception(true);
-
-  let jsRequests = [];
-
-  page.on('request', req => {
-    if (req.url().endsWith('.js')) {
-      jsRequests.push(req);
-      // Prevent chunk exectution by blocking requests
-    } else {
-      req.continue();
-    }
-  });
-
-  await page.goto(`http://localhost:${port}/`, {waitUntil: 'domcontentloaded'});
+  await page.goto(`http://localhost:${port}/split-route`);
 
   t.equal(
-    jsRequests.length,
-    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT
+    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    BASE_COUNT + 1
   );
-
-  jsRequests = [];
-
-  await page.goto(`http://localhost:${port}/split-route`, {
-    waitUntil: 'domcontentloaded',
-  });
-
   t.equal(
-    jsRequests.length,
-    SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT + 1
+    await page.$$eval(
+      'script[src]:not([type="module"]):not([type="application/json"])',
+      els => els.length
+    ),
+    BASE_COUNT + 1
+  );
+  t.equal(
+    await page.$$eval('script[src][type="module"]', els => els.length),
+    BASE_COUNT + 1
   );
 
   await browser.close();
@@ -376,6 +376,7 @@ test('`fusion build` app with split translations integration', async t => {
     page.click('#split1-link'),
     page.waitForSelector('#split1-translation'),
   ]);
+
   const content2 = await page.content();
   t.ok(
     content2.includes('__SPLIT1_TRANSLATED__'),
@@ -703,7 +704,11 @@ test('`fusion build` with dynamic imports', async t => {
     testContent.dynamicContent.includes('loaded dynamic import'),
     'dynamic import is executed'
   );
-  t.deepEqual(testContent.chunkIds, [[1], [0]], 'Chunk IDs are populated');
+  t.deepEqual(
+    testContent.chunkIds,
+    [[10001, 1], [10000, 0]],
+    'Chunk IDs are populated'
+  );
 
   t.ok(
     await exists(
@@ -726,9 +731,9 @@ test('`fusion build` with dynamic imports and group chunks', async t => {
   const resA = await request(`http://localhost:${port}/test-a`);
   const resB = await request(`http://localhost:${port}/test-b`);
   const res = await request(`http://localhost:${port}/test`);
-  t.deepLooseEqual(JSON.parse(res), [3]);
-  t.deepLooseEqual(JSON.parse(resA), [1, 3]);
-  t.deepLooseEqual(JSON.parse(resB), [2, 3]);
+  t.deepLooseEqual(JSON.parse(res), [10003, 3]);
+  t.deepLooseEqual(JSON.parse(resA), [10001, 10003, 1, 3]);
+  t.deepLooseEqual(JSON.parse(resB), [10002, 10003, 2, 3]);
   proc.kill();
   t.end();
 });

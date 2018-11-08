@@ -454,7 +454,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       new InstrumentedImportDependencyTemplatePlugin(
         runtime !== 'client'
           ? // Server
-            state.clientChunkMetadata
+            state.mergedClientChunkMetadata
           : /**
              * Client
              * Don't wait for the client manifest on the client.

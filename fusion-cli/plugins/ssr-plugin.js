@@ -83,6 +83,7 @@ const SSRBodyTemplate = createPlugin({
 
       const legacyUrls = [];
       const modernUrls = [];
+
       for (let chunkId of allCriticalChunkIds) {
         const url = chunks.get(chunkId);
         if (url.includes('client-legacy')) {
@@ -92,10 +93,51 @@ const SSRBodyTemplate = createPlugin({
         }
       }
 
-      const criticalChunkScripts = getLoaderScript(ctx, {
-        legacyUrls,
-        modernUrls,
-      });
+      let preloadHints = [];
+      let criticalChunkScripts = [];
+
+      const browser = ctx.useragent.browser;
+
+      /*
+      Edge must get transpiled classes due to:
+      - https://github.com/Microsoft/ChakraCore/issues/5030
+      - https://github.com/Microsoft/ChakraCore/issues/4663
+      - https://github.com/babel/babel/issues/8019
+      Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
+      */
+      if (browser.name !== 'Edge') {
+        for (let url of modernUrls) {
+          const crossoriginAttr = url.startsWith(__webpack_public_path__)
+            ? ''
+            : ' crossorigin="anonymous"';
+          preloadHints.push(
+            `<link rel="modulepreload" href="${url}"${crossoriginAttr}/>`
+          );
+          criticalChunkScripts.push(
+            `<script type="module" defer src="${url}" nonce="${
+              ctx.nonce
+            }"${crossoriginAttr}></script>`
+          );
+        }
+      }
+
+      const isSafari10_1 =
+        (browser.name === 'Safari' || browser.name === 'Mobile Safari') &&
+        browser.version.startsWith('10.1');
+
+      // Safari 10.1 supports modules but not `nomodule` attribute.
+      if (!isSafari10_1) {
+        for (let url of legacyUrls) {
+          const crossoriginAttr = url.startsWith(__webpack_public_path__)
+            ? ''
+            : ' crossorigin="anonymous"';
+          criticalChunkScripts.push(
+            `<script nomodule defer src="${url}" nonce="${
+              ctx.nonce
+            }"${crossoriginAttr}></script>`
+          );
+        }
+      }
 
       return [
         '<!doctype html>',
@@ -103,7 +145,9 @@ const SSRBodyTemplate = createPlugin({
         `<head>`,
         `<meta charset="utf-8" />`,
         `<title>${safeTitle}</title>`,
-        `${coreGlobals}${criticalChunkScripts}${safeHead}`,
+        `${preloadHints.join('')}${coreGlobals}${criticalChunkScripts.join(
+          ''
+        )}${safeHead}`,
         `</head>`,
         `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
         '</html>',
@@ -113,35 +157,3 @@ const SSRBodyTemplate = createPlugin({
 });
 
 export {SSRBodyTemplate};
-
-/**
-Safari 10.1 supports modules but not `nomodule` attribute.
-Edge must get transpiled classes due to:
-https://github.com/Microsoft/ChakraCore/issues/5030
-https://github.com/Microsoft/ChakraCore/issues/4663
-https://github.com/babel/babel/issues/8019
-
-Edge UA check is based on
-https://github.com/faisalman/ua-parser-js/blob/7aca357879ba18ec2e57d36403d391c860a1be2e/src/ua-parser.js#L264
-
-*/
-function getLoaderScript(ctx, {legacyUrls, modernUrls}) {
-  return `
-  <script nomodule nonce="${ctx.nonce}">window.__NOMODULE__ = true;</script>
-  <script nonce="${
-    ctx.nonce
-  }">(window.__NOMODULE__ || /(edge|edgios|edga)/i.test(window.navigator.userAgent) ? ${JSON.stringify(
-    legacyUrls
-  )} : ${JSON.stringify(modernUrls)}).forEach(function(src) {
-    var script = document.createElement('script');
-    script.src = src;
-    script.async = false;
-    script.setAttribute("nonce", ${JSON.stringify(ctx.nonce)});
-    script.defer = true;
-    if (script.src.indexOf(window.location.origin + '/') !== 0) {
-      script.crossorigin = "anonymous";
-    }
-    document.head.appendChild(script);
-  });</script>
-  `;
-}
