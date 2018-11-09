@@ -26,11 +26,9 @@ const getMockEventEmitterFactory = function() {
     from(ctx) {
       return {
         on(type, handler) {
-          // $FlowFixMe
           handlers[type] = handler;
         },
         emit(type, event) {
-          // $FlowFixMe
           handlers[type](event, ctx);
         },
       };

@@ -9,7 +9,7 @@
 /* eslint-env browser,node */
 
 import type {StoreEnhancer, StoreCreator, Store} from 'redux';
-import type {Token} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
 
 import {createPlugin, createToken} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -21,12 +21,19 @@ export const ActionEmitterTransformerToken: Token<Function> = createToken(
   'ActionEmitterTransformerToken'
 );
 
+type PluginDepsType = {
+  emitter: typeof UniversalEventsToken,
+  transformer: typeof ActionEmitterTransformerToken.optional,
+};
+
+type ServiceType = StoreEnhancer<*, *, *>;
+
 const defaultTransformer = action => {
   const {type, _trackingMeta} = action;
   return {type, _trackingMeta};
 };
 
-const plugin = createPlugin({
+const plugin: FusionPlugin<PluginDepsType, ServiceType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken,
     transformer: ActionEmitterTransformerToken.optional,
@@ -39,12 +46,12 @@ const plugin = createPlugin({
     transformer?: Function,
   }) {
     if (__DEV__ && !emitter) {
-      throw new Error(`emitter is required, but was: ${emitter}`);
+      throw new Error(`emitter is required, but was: ${String(emitter)}`);
     }
 
-    const service: StoreEnhancer<*, *, *> = (
-      createStore: StoreCreator<*, *, *>
-    ) => (...args: *) => {
+    const service: ServiceType = (createStore: StoreCreator<*, *, *>) => (
+      ...args: *
+    ) => {
       const store: Store<*, *, *> = createStore(...args);
       return {
         ...store,
