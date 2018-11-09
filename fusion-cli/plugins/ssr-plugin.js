@@ -145,11 +145,12 @@ const SSRBodyTemplate = createPlugin({
       // Safari 10.1 does not respect nomodule attributes
       if (forceLegacyOnly || !isSafari10_1) {
         for (let url of legacyUrls) {
+          const nomoduleAttr = forceLegacyOnly ? '' : ' nomodule';
           const crossoriginAttr = url.startsWith(__webpack_public_path__)
             ? ''
             : ' crossorigin="anonymous"';
           criticalChunkScripts.push(
-            `<script nomodule defer src="${url}" nonce="${
+            `<script${nomoduleAttr} defer src="${url}" nonce="${
               ctx.nonce
             }"${crossoriginAttr}></script>`
           );
