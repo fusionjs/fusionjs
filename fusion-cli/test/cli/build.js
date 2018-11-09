@@ -15,6 +15,8 @@ const {promisify} = require('util');
 const babel = require('@babel/core');
 const request = require('request-promise');
 const puppeteer = require('puppeteer');
+const httpProxy = require('http-proxy');
+const getPort = require('get-port');
 
 const {cmd, run, start} = require('../run-command');
 
@@ -250,13 +252,35 @@ test('`fusion build` app with dynamic imports integration', async t => {
 
   await cmd(`build --dir=${dir} --production`, {env});
 
+  const proxyPort = await getPort();
+
   // Run puppeteer test to ensure that page loads with dynamic content.
   const {proc, port} = await start(`--dir=${dir}`, {env});
+
+  let proxy = httpProxy
+    .createProxyServer({target: `http://localhost:${port}`})
+    .listen(proxyPort);
+
+  const cookies = [];
+
+  proxy.on('proxyReq', (proxyReq, req, res, options) => {
+    if (req.url.endsWith('.js')) {
+      cookies.push(req.headers.cookie);
+    }
+  });
+
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
-  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  await page.setCookie({
+    name: 'foo',
+    value: 'bar',
+    url: `http://localhost:${proxyPort}/`,
+  });
+
+  await page.goto(`http://localhost:${proxyPort}/`, {waitUntil: 'load'});
   const content = await page.content();
   t.ok(
     content.includes('loaded-dynamic-import'),
@@ -302,10 +326,11 @@ test('`fusion build` app with dynamic imports integration', async t => {
   );
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.crossOrigin === null)
+    await page.$$eval(
+      'script[src]:not([type="application/json"]):not([type="module"])',
+      els => els.every(el => el.crossOrigin === null)
     ),
-    'all scripts do not have crossorigin attribute'
+    'non-module scripts do not have crossorigin attribute'
   );
 
   t.ok(
@@ -314,6 +339,12 @@ test('`fusion build` app with dynamic imports integration', async t => {
       els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),
     'all scripts have nonce attribute'
+  );
+
+  t.equal(cookies.length, BASE_COUNT + 1);
+  t.ok(
+    cookies.every(cookie => cookie === 'foo=bar'),
+    'cookies sent w/ every request to chunk'
   );
 
   await page.goto(`http://localhost:${port}/split-route`);
@@ -336,7 +367,7 @@ test('`fusion build` app with dynamic imports integration', async t => {
 
   await browser.close();
   proc.kill();
-
+  proxy.close();
   t.end();
 });
 

@@ -31,6 +31,8 @@ import {
   initialChunkIds, // $FlowFixMe
 } from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
 
+const CDN_URL_SET = Boolean(process.env.CDN_URL);
+
 const SSRBodyTemplate = createPlugin({
   deps: {
     criticalChunkIds: CriticalChunkIdsToken.optional,
@@ -96,6 +98,8 @@ const SSRBodyTemplate = createPlugin({
       let preloadHints = [];
       let criticalChunkScripts = [];
 
+      let forceLegacyOnly = false;
+
       const browser = ctx.useragent.browser;
 
       /*
@@ -105,28 +109,41 @@ const SSRBodyTemplate = createPlugin({
       - https://github.com/babel/babel/issues/8019
       Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
       */
-      if (browser.name !== 'Edge') {
+      if (browser.name === 'Edge') {
+        forceLegacyOnly = true;
+      }
+
+      const isSafari =
+        browser.name === 'Safari' || browser.name === 'Mobile Safari';
+
+      /*
+      Safari does not send credentials for same-origin module scripts.
+      https://bugs.webkit.org/show_bug.cgi?id=171550
+
+      Therefore, if no CDN is used and the app is behind auth, the requests will fail.
+      In this case, fallback to legacy only
+      */
+      if (!CDN_URL_SET && isSafari) {
+        forceLegacyOnly = true;
+      }
+
+      if (!forceLegacyOnly) {
         for (let url of modernUrls) {
-          const crossoriginAttr = url.startsWith(__webpack_public_path__)
-            ? ''
-            : ' crossorigin="anonymous"';
           preloadHints.push(
-            `<link rel="modulepreload" href="${url}"${crossoriginAttr}/>`
+            `<link rel="modulepreload" href="${url}" crossorigin="anonymous"/>`
           );
           criticalChunkScripts.push(
             `<script type="module" defer src="${url}" nonce="${
               ctx.nonce
-            }"${crossoriginAttr}></script>`
+            }" crossorigin="anonymous"></script>`
           );
         }
       }
 
-      const isSafari10_1 =
-        (browser.name === 'Safari' || browser.name === 'Mobile Safari') &&
-        browser.version.startsWith('10.1');
+      const isSafari10_1 = isSafari && browser.version.startsWith('10.1');
 
-      // Safari 10.1 supports modules but not `nomodule` attribute.
-      if (!isSafari10_1) {
+      // Safari 10.1 does not respect nomodule attributes
+      if (forceLegacyOnly || !isSafari10_1) {
         for (let url of legacyUrls) {
           const crossoriginAttr = url.startsWith(__webpack_public_path__)
             ? ''
