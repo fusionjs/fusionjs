@@ -281,6 +281,10 @@ test('`fusion build` app with dynamic imports integration', async t => {
   });
 
   await page.goto(`http://localhost:${proxyPort}/`, {waitUntil: 'load'});
+
+  // eslint-disable-next-line
+  t.ok(await page.evaluate(() => window.__MAIN_EXECUTED__));
+
   const content = await page.content();
   t.ok(
     content.includes('loaded-dynamic-import'),
@@ -368,6 +372,88 @@ test('`fusion build` app with dynamic imports integration', async t => {
   await browser.close();
   proc.kill();
   proxy.close();
+  t.end();
+});
+
+test('`fusion build` app with Safari user agent and same-origin', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/dynamic-import-app');
+
+  var env = Object.create(process.env);
+  env.NODE_ENV = 'production';
+
+  await cmd(`build --dir=${dir} --production`, {env});
+
+  // Run puppeteer test to ensure that page loads with dynamic content.
+  const {proc, port} = await start(`--dir=${dir}`, {env});
+
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+
+  await page.setUserAgent(
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.1 Safari/605.1.15'
+  );
+
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  // eslint-disable-next-line
+  t.ok(await page.evaluate(() => window.__MAIN_EXECUTED__));
+
+  const content = await page.content();
+  t.ok(
+    content.includes('loaded-dynamic-import'),
+    'app content contains loaded-dynamic-import'
+  );
+  const SYNC_CHUNK_COUNT = 3; // runtime + main + vendor
+  const ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT = 1;
+
+  const BASE_COUNT = SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
+
+  t.equal(
+    await page.$$eval(
+      'script[src]:not([type="module"]):not([type="application/json"])',
+      els => els.length
+    ),
+    BASE_COUNT
+  );
+
+  // Async can causes race conditions as scripts may be executed before DOM is fully parsed.
+  t.ok(
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
+      els.every(el => el.async === false)
+    ),
+    'all scripts not be async'
+  );
+
+  await page.click('#split-route-link');
+  t.equal(
+    await page.$$eval(
+      'script[src]:not([type="module"]):not([type="application/json"])',
+      els => els.length
+    ),
+    BASE_COUNT + 1,
+    'one extra script after loading new route'
+  );
+
+  t.ok(
+    await page.$$eval(
+      'script[src]:not([type="application/json"]):not([type="module"])',
+      els => els.every(el => el.crossOrigin === null)
+    ),
+    'non-module scripts do not have crossorigin attribute'
+  );
+
+  t.ok(
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
+      // eslint-disable-next-line
+      els.every(el => el.getAttribute('nonce') === window.__NONCE__)
+    ),
+    'all scripts have nonce attribute'
+  );
+
+  await browser.close();
+  proc.kill();
   t.end();
 });
 
@@ -737,7 +823,7 @@ test('`fusion build` with dynamic imports', async t => {
   );
   t.deepEqual(
     testContent.chunkIds,
-    [[10001, 1], [10000, 0]],
+    [[10002, 1], [10001, 0]],
     'Chunk IDs are populated'
   );
 

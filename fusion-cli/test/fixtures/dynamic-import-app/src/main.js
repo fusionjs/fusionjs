@@ -8,6 +8,10 @@ import UniversalEvents, {
 import {FetchToken} from 'fusion-tokens';
 import Root from './root.js';
 
+if (__BROWSER__) {
+  window.__MAIN_EXECUTED__ = true;
+}
+
 export default async function start() {
   const app = new App(<Root />);
   app.register(Router);

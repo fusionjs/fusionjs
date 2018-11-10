@@ -11,9 +11,10 @@ class ChunkIdPrefixPlugin {
   apply(compiler /*: Object */) {
     const name = this.constructor.name;
     compiler.hooks.thisCompilation.tap(name, compilation => {
-      compilation.hooks.afterOptimizeChunkIds.tap(name, chunks => {
+      compilation.hooks.beforeChunkIds.tap(name, chunks => {
+        let idx = 0;
         for (const chunk of chunks) {
-          chunk.id = 10000 + chunk.id;
+          chunk.id = 10000 + idx++;
         }
       });
     });
