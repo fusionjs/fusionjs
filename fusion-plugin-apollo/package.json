@@ -36,6 +36,8 @@
     "eslint-plugin-react": "7.11.1",
     "flow-bin": "0.85.0",
     "fusion-core": "^1.9.1-1",
+    "fusion-test-utils": "^1.2.3",
+    "fusion-tokens": "^1.1.0",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "prettier": "1.15.1",

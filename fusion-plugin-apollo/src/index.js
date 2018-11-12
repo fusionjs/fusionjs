@@ -57,7 +57,7 @@ export const ApolloCacheContext = React.createContext<
 >();
 
 export default class App extends CoreApp {
-  constructor(root: Element<*>) {
+  constructor(root: Element<*>, render: ?(Element<*>) => any) {
     const renderer = createPlugin({
       deps: {
         getApolloClient: ApolloClientToken,
@@ -65,7 +65,11 @@ export default class App extends CoreApp {
       provides() {
         return el => {
           return prepare(el).then(() => {
-            return __NODE__ ? serverRender(el) : clientRender(el);
+            return render
+              ? render(el)
+              : __NODE__
+              ? serverRender(el)
+              : clientRender(el);
           });
         };
       },

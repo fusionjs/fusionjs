@@ -118,11 +118,15 @@ A class that represents an application. An application is responsible for render
 
 **Constructor**
 
-```flow
-const app: App = new App(el: ReactElement);
+```js
+const app: App = new App(
+  (el: ReactElement),
+  (render: ?(el: ReactElement) => string)
+);
 ```
 
 - `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
+- `render: ?(el:ReactElement) => string` - Optional. Defines how rendering should occur. 
 
 **app.(register|middleware|enhance|cleanup)**
 
