@@ -62,7 +62,11 @@ test('plugin - service resolved as expected', t => {
         };
         const mockReducer: Reducer<*, *> = s => s;
         const enhanced = enhancer(createStore)(mockReducer);
-        enhanced.dispatch({});
+        enhanced.dispatch({
+          type: 'TEST',
+        });
+        enhanced.dispatch(function test() {});
+        enhanced.dispatch();
         wasResolved = true;
       },
     })
@@ -70,5 +74,6 @@ test('plugin - service resolved as expected', t => {
 
   t.true(wasResolved, 'test plugin was resolved');
   t.equal(eventsEmitted[0].type, 'redux-action-emitter:action');
+  t.equal(eventsEmitted.length, 1, 'only emits events for standard actions');
   t.end();
 });
