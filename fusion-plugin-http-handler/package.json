@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-http-handler",
   "description": "Allows integration of an existing http handler into the fusion request lifecycle",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": "fusionjs/fusion-plugin-http-handler",
   "files": [
     "dist",
