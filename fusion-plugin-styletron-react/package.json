@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-styletron-react",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-styletron-react",
