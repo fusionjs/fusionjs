@@ -5,8 +5,15 @@
  *
  * @flow
  */
+import type {
+  UniversalEventsDepsType,
+  UniversalEventsType,
+} from 'fusion-plugin-universal-events';
 
 import UniversalEvents from 'fusion-plugin-universal-events';
 import {ProviderPlugin} from 'fusion-react';
 
-export default ProviderPlugin.create('universalEvents', UniversalEvents);
+export default ProviderPlugin.create<
+  UniversalEventsDepsType,
+  UniversalEventsType
+>('universalEvents', UniversalEvents);
