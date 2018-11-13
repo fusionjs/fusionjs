@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-node-performance-emitter",
   "description": "A tool for collecting, aggregating, and emitting Node.js performance stats",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-node-performance-emitter",
   "files": [
