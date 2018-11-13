@@ -78,10 +78,17 @@ const pluginFactory: () => PluginType = () =>
             });
           });
           // i18n.locale is actually a locale.Locale instance
-          // $FlowFixMe
-          const localeCode = i18n.locale.code;
+          if (!i18n.locale) {
+            throw new Error('i18n.locale was empty');
+          }
+          const localeCode =
+            typeof i18n.locale === 'string' ? i18n.locale : i18n.locale.code;
           const serialized = JSON.stringify({chunks, localeCode, translations});
-          const script = html`<script type='application/json' id="__TRANSLATIONS__">${serialized}</script>`; // consumed by ./browser
+          const script = html`
+            <script type="application/json" id="__TRANSLATIONS__">
+              ${serialized}
+            </script>
+          `; // consumed by ./browser
           ctx.template.body.push(script);
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
