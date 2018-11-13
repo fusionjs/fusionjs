@@ -16,7 +16,7 @@ import Provider from './provider';
 // eslint-disable-next-line
 type FusionPluginNoHidden<TDeps, TService> = $Diff<
   FusionPlugin<TDeps, TService>,
-  {__plugin__: boolean}
+  {__plugin__: boolean, stack: string}
 >;
 
 export default {
