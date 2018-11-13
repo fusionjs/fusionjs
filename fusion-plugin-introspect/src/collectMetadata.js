@@ -24,9 +24,9 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
       : 'none';
   const lockFile =
     lockFileType === 'yarn'
-      ? fs.readFileSync(`${dir}/yarn.lock`)
+      ? fs.readFileSync(`${dir}/yarn.lock`, 'utf8')
       : lockFileType === 'npm'
-        ? fs.readFileSync(`${dir}/package-lock.json`)
+        ? fs.readFileSync(`${dir}/package-lock.json`, 'utf8')
         : '';
 
   return {

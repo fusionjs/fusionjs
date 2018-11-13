@@ -6,11 +6,10 @@
  * @flow
  */
 /* eslint-env browser */
-import test from 'tape-cup';
 import App from 'fusion-core';
 import plugin from '../browser.js';
 
-test('browser plugin', async t => {
+test('browser plugin', async () => {
   const app = new App(' ', v => v);
   const qs = document.querySelector;
   const xhr = window.XMLHttpRequest;
@@ -35,31 +34,18 @@ test('browser plugin', async t => {
 
     plugin(app);
 
-    t.deepEqual(
-      timeline[0],
-      ['querySelector', 'meta[name=diagnostics]'],
-      'checks for metadata'
-    );
-    t.deepEqual(
-      timeline[1],
-      ['open', 'POST', '/_diagnostics'],
-      'posts to correct url'
-    );
-    t.deepEqual(
-      timeline[2],
-      ['setRequestHeader', 'Content-Type', 'application/json;charset=UTF-8'],
-      'uses correct content-type'
-    );
-    t.equal(timeline[3][0], 'send', 'sends data');
-    t.equal(
-      JSON.parse(timeline[3][1]).timestamp.constructor,
-      Number,
-      'data is correct'
-    );
+    expect(timeline[0]).toEqual(['querySelector', 'meta[name=diagnostics]']);
+    expect(timeline[1]).toEqual(['open', 'POST', '/_diagnostics']);
+    expect(timeline[2]).toEqual([
+      'setRequestHeader',
+      'Content-Type',
+      'application/json;charset=UTF-8',
+    ]);
+    expect(timeline[3][0]).toEqual('send');
+    expect(JSON.parse(timeline[3][1]).timestamp.constructor).toEqual(Number);
   } finally {
     // $FlowFixMe
     document.querySelector = qs;
     window.XMLHttpRequest = xhr;
   }
-  t.end();
 });

@@ -6,27 +6,58 @@
  * @flow
  */
 import type App from 'fusion-core';
+import path from 'path';
+import process from 'process';
 
-const nodeOf = ({name, stack}) => ({name, stack});
+const nodeOf = ({name, stacks = []}) => ({
+  name,
+  sources: getSources(stacks, {
+    token: /create-token/,
+    plugin: /create-plugin/,
+  }),
+});
 
-type Token = {name: string, stack: string};
+type Token = {name: string, stacks: Array<{type: string, stack: string}>};
 
 export const collectDependencyData = (app: App) => {
   const registered = Array.from(app.registered.values());
   const dependencies = registered.map(({token, value}) => {
     const deps = value && value.deps ? value.deps : {};
+    const type =
+      value && value.__plugin__
+        ? value.provides
+          ? value.middleware
+            ? 'both'
+            : 'service'
+          : value.middleware
+            ? 'middleware'
+            : 'noop'
+        : 'value';
     return {
       ...nodeOf(token),
-      dependencies: ((Object.values(deps): any): Array<Token>)
-        .map(nodeOf)
-        .map(t => t.name),
+      type,
+      dependencies: ((Object.values(deps): any): Array<Token>).map(
+        ({name}) => name
+      ),
     };
   });
+  return {timestamp: Date.now(), dependencies};
+};
 
-  // $FlowFixMe enhancerToToken should be defined in type FusionApp
-  const enhanced = Array.from(app.enhancerToToken.values())
-    .filter(t => t.name)
-    .map(t => ({name: t.name}));
-
-  return {timestamp: Date.now(), dependencies, enhanced};
+const getSources = (stacks, ignore) => {
+  return stacks.map(({type, stack = ''}) => {
+    return {
+      type,
+      source: stack
+        .split('\n')
+        .filter(line => {
+          return line.match(/\//) && !line.match(ignore[type] || /base-app/);
+        })
+        .map(line => line.match(/\((.*?)\)/))
+        .filter(match => match && match[1])
+        .map(match => ((match: any): Array<string>)[1])
+        .map(to => path.relative(process.cwd(), to))
+        .shift(),
+    };
+  });
 };

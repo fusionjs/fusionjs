@@ -6,11 +6,9 @@
  * @flow
  */
 /* eslint-env node */
-import test from 'tape-cup';
 import {exec} from '../exec.js';
 
-test('exec', t => {
-  t.equal(exec('echo 1'), '1', 'success returns stdout');
-  t.equal(exec('exit 1'), '', 'failure returns empty string');
-  t.end();
+test('exec', () => {
+  expect(exec('echo 1')).toBe('1');
+  expect(exec('exit 1')).toBe('');
 });

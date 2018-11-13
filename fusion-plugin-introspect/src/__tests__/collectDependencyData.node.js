@@ -5,11 +5,10 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import App, {createPlugin, createToken} from 'fusion-core';
 import {collectDependencyData} from '../collectDependencyData.js';
 
-test('collectDependencyData', t => {
+test('collectDependencyData', () => {
   const app = new App();
 
   const V = createToken('V');
@@ -35,40 +34,40 @@ test('collectDependencyData', t => {
 
   const ssr = data.dependencies.find(d => d.name === 'SSRDeciderToken');
   if (ssr) {
-    t.equal(typeof ssr.stack, 'string', 'SSRDeciderToken has stack');
-    t.equal(ssr.name, 'SSRDeciderToken', 'SSRDeciderToken has correct name');
-    t.deepEqual(ssr.dependencies, [], 'SSRDeciderToken has correct deps');
-  } else t.fail('should find SSRDeciderToken');
+    expect(ssr.sources instanceof Array).toBe(true);
+    expect(ssr.name).toBe('SSRDeciderToken');
+    expect(ssr.dependencies).toEqual([]);
+  } else throw new Error('should find SSRDeciderToken');
 
   const v = data.dependencies.find(d => d.name === 'V');
   if (v) {
-    t.equal(typeof v.stack, 'string', 'V has stack');
-    t.equal(v.name, 'V', 'V has correct name');
-    t.deepEqual(v.dependencies, [], 'V has correct deps');
-  } else t.fail('should find V');
+    expect(v.sources instanceof Array).toBe(true);
+    expect(v.name).toBe('V');
+    expect(v.type).toBe('value');
+    expect(v.dependencies).toEqual([]);
+  } else throw new Error('should find V');
 
   const a = data.dependencies.find(d => d.name === 'A');
   if (a) {
-    t.equal(typeof a.stack, 'string', 'A has stack');
-    t.equal(a.name, 'A', 'A has correct name');
-    t.deepEqual(a.dependencies, [], 'A has correct deps');
-  } else t.fail('should find A');
+    expect(a.sources instanceof Array).toBe(true);
+    expect(a.name).toBe('A');
+    expect(a.type).toBe('noop');
+    expect(a.dependencies).toEqual([]);
+  } else throw new Error('should find A');
 
   const b = data.dependencies.find(d => d.name === 'B');
   if (b) {
-    t.equal(typeof b.stack, 'string', 'B has stack');
-    t.equal(b.name, 'B', 'B has correct name');
-    t.deepEqual(b.dependencies, ['A'], 'B has correct deps');
-  } else t.fail('should find B');
+    expect(b.sources instanceof Array).toBe(true);
+    expect(b.name).toBe('B');
+    expect(b.type).toBe('noop');
+    expect(b.dependencies).toEqual(['A']);
+  } else throw new Error('should find B');
 
   const c = data.dependencies.find(d => d.name === 'C');
   if (c) {
-    t.equal(typeof c.stack, 'string', 'C has stack');
-    t.equal(c.name, 'C', 'C has correct name');
-    t.deepEqual(c.dependencies, [], 'C has correct deps');
-  } else t.fail('should find C');
-
-  t.deepEqual(data.enhanced, [{name: 'C'}], 'C is enhanced');
-
-  t.end();
+    expect(c.sources instanceof Array).toBe(true);
+    expect(c.name).toBe('C');
+    expect(c.type).toBe('service');
+    expect(c.dependencies).toEqual([]);
+  } else throw new Error('should find C');
 });

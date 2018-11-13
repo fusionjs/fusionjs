@@ -5,12 +5,11 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import App, {createToken, createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import plugin from '../server.js';
 
-test('server plugin', async t => {
+test('server plugin', async () => {
   let store;
   const StorageToken = createToken('Storage');
   const StorageService = createPlugin({
@@ -38,20 +37,18 @@ test('server plugin', async t => {
   );
   const sim = getSimulator(app);
   await sim.render('/');
-  t.equal(data.server[0].dependencies.constructor, Array, 'has server key');
-  t.equal(data.runtime.constructor, Object, 'has runtime key');
-  t.equal(data.runtime.pid.constructor, Number, 'has runtime meta data');
-  t.equal(data.runtime.varNames.constructor, Array, 'has env vars');
+  expect(data.server[0].dependencies.constructor).toBe(Array);
+  expect(data.runtime.constructor).toBe(Object);
+  expect(data.runtime.pid.constructor).toBe(Number);
+  expect(data.runtime.varNames.constructor).toBe(Array);
 
   await sim.request('/_diagnostics', {method: 'POST', body: {foo: 1}});
   await sim.request('/_diagnostics', {method: 'POST', body: {foo: 2}});
-  t.equal(data.browser[0].foo, 1, 'has browser key');
-  t.equal(data, store, 'consumes DI service correctly');
-  t.end();
+  expect(data.browser[0].foo).toBe(1);
+  expect(data).toBe(store);
 });
 
-test('required arg', t => {
+test('required arg', () => {
   // $FlowFixMe prevent flow nag when testing that missing required arg throws...
-  t.throws(() => plugin(), 'app is required');
-  t.end();
+  expect(() => plugin()).toThrow();
 });

@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`middleware 1`] = `
+"Server:
+C  foo/bar:5:6
+B  foo/bar:3:4
+A  foo/bar:1:2
+
+"
+`;

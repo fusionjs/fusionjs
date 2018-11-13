@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`why 1`] = `
+"B is registered in:
+  foo/bar:3:4
+
+B is used by:
+└─ A
+
+B depends on:
+└─ C
+"
+`;

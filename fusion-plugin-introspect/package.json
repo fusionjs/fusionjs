@@ -3,7 +3,7 @@
   "description": "Collect runtime Fusion.js data for debugging",
   "version": "0.1.1",
   "license": "MIT",
-  "repository": "yourorg/fusion-plugin-yourplugin",
+  "repository": "fusionjs/fusion-plugin-introspect",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -17,10 +17,26 @@
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
+  "bin": {
+    "fusion-run-introspect": "src/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "koa-bodyparser": "^4.2.1",
+    "sade": "^1.4.1"
+  },
   "devDependencies": {
+    "@babel/core": "^7.1.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "7.0.0",
     "@types/redux": "3.6.31",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
     "create-universal-package": "3.4.6",
     "enzyme": "3.7.0",
     "enzyme-adapter-react-16": "1.6.0",
@@ -36,10 +52,8 @@
     "fusion-core": "^1.8.0",
     "fusion-test-utils": "^1.2.3",
     "fusion-tokens": "^1.1.0",
-    "nyc": "^13.1.0",
-    "prettier": "^1.14.3",
-    "tape-cup": "4.7.1",
-    "unitest": "2.1.1"
+    "jest": "^23.6.0",
+    "prettier": "^1.14.3"
   },
   "peerDependencies": {
     "fusion-core": "^1.8.0",
@@ -47,23 +61,54 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
+    "lint": "eslint .",
     "transpile": "npm run clean && cup build",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "cover": "npm run build-test && nyc npm run just-test && nyc report --reporter=html",
+    "test": "jest",
+    "cover": "jest --coverage",
     "view-cover": "npm run cover && open coverage/index.html",
     "prepublish": "npm run transpile"
   },
+  "jest": {
+    "projects": [
+      {
+        "name": "node",
+        "displayName": "node",
+        "browser": false,
+        "testEnvironment": "node",
+        "testRegex": ".*\\.node\\.js$",
+        "globals": {
+          "__BROWSER__": false,
+          "__NODE__": true,
+          "__DEV__": false
+        }
+      },
+      {
+        "name": "browser",
+        "displayName": "browser",
+        "browser": true,
+        "testEnvironment": "jsdom",
+        "testRegex": ".*\\.browser\\.js$",
+        "globals": {
+          "__BROWSER__": true,
+          "__NODE__": false,
+          "__DEV__": false
+        }
+      }
+    ]
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "@babel/preset-flow"
+        ],
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
+  },
   "engines": {
     "node": ">= 8.11.0"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "dependencies": {
-    "koa-bodyparser": "^4.2.1"
   }
 }

@@ -5,12 +5,11 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import proc from 'child_process';
 import fs from 'fs';
 import {storeSync, store} from '../fs-store.js';
 
-test('fs.storeSync', t => {
+test('fs.storeSync', () => {
   try {
     proc.execSync('mkdir -p .fusion');
     storeSync({a: 1});
@@ -18,13 +17,12 @@ test('fs.storeSync', t => {
       fs.readFileSync('.fusion/fusion-stats.json', 'utf8')
     );
 
-    t.deepEqual(data, {a: 1}, 'saves data');
+    expect(data).toEqual({a: 1});
   } finally {
     proc.execSync('rm -rf .fusion');
-    t.end();
   }
 });
-test('fs.store', async t => {
+test('fs.store', async () => {
   try {
     proc.execSync('mkdir -p .fusion');
     await store({a: 1});
@@ -32,9 +30,8 @@ test('fs.store', async t => {
       fs.readFileSync('.fusion/fusion-stats.json', 'utf8')
     );
 
-    t.deepEqual(data, {a: 1}, 'saves data');
+    expect(data).toEqual({a: 1});
   } finally {
     proc.execSync('rm -rf .fusion');
-    t.end();
   }
 });

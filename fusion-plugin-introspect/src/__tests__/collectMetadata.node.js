@@ -6,47 +6,42 @@
  * @flow
  */
 /* eslint-env node */
-import test from 'tape-cup';
 import {collectMetadata} from '../collectMetadata.js';
 
-test('collectMetadata', t => {
+test('collectMetadata', () => {
   process.env.FOO = 'foo';
   process.env.BAR = 'bar';
   const data = collectMetadata('.', ['FOO']);
-  t.equal(data.nodeVersion.constructor, String, 'nodeVersion is string');
-  t.ok(data.nodeVersion.length > 0, 'nodeVersion is non-empty');
-  t.equal(data.npmVersion.constructor, String, 'npmVersion is string');
-  t.ok(data.npmVersion.length > 0, 'npmVersion is non-empty');
-  t.equal(data.yarnVersion.constructor, String, 'yarnVersion is string');
-  t.ok(data.yarnVersion.length > 0, 'yarnVersion is non-empty');
-  t.equal(data.lockFileType, 'yarn', 'lockFileType is yarn');
-  t.equal(data.devDependencies.constructor, Object, 'deps are objects');
+  expect(data.nodeVersion.constructor).toBe(String);
+  expect(data.nodeVersion.length > 0).toBe(true);
+  expect(data.npmVersion.constructor).toBe(String);
+  expect(data.npmVersion.length > 0).toBe(true);
+  expect(data.yarnVersion.constructor).toBe(String);
+  expect(data.yarnVersion.length > 0).toBe(true);
+  expect(data.lockFileType).toBe('yarn');
+  expect(data.devDependencies.constructor).toBe(Object);
   // $FlowFixMe
-  t.equal(data.devDependencies['nyc'].constructor, String, 'dep is string');
+  expect(data.devDependencies['jest'].constructor).toBe(String);
   // $FlowFixMe
-  t.ok(data.devDependencies['nyc'].length > 0, 'dep version is non-empty');
-  t.equal(data.varNames.constructor, Array, 'Has available keys');
-  t.equal(data.varNames[0].constructor, String, 'Keys are strings');
-  t.deepEqual(data.vars, {FOO: 'foo'}, 'Actual values are exposed correctly');
-  t.end();
+  expect(data.devDependencies['jest'].length > 0).toBe(true);
+  expect(data.varNames.constructor).toBe(Array);
+  expect(data.varNames[0].constructor).toBe(String);
+  expect(data.vars).toEqual({FOO: 'foo'});
 });
 
-test('collectMetadata in hoisted', t => {
+test('collectMetadata in hoisted', () => {
   const data = collectMetadata('src/__tests__/__fixtures__/hoisted', []);
   // $FlowFixMe
-  t.equal(data.devDependencies['nyc'].constructor, String, 'dep is string');
-  t.end();
+  expect(data.devDependencies['jest'].constructor).toBe(String);
 });
 
-test('collectMetadata w/ npm lock file', t => {
+test('collectMetadata w/ npm lock file', () => {
   const data = collectMetadata('src/__tests__/__fixtures__/npm', []);
-  t.equal(data.lockFileType, 'npm', 'lock file type is npm');
-  t.end();
+  expect(data.lockFileType).toBe('npm');
 });
 
-test('collectMetadata outside', t => {
+test('collectMetadata outside', () => {
   const data = collectMetadata('/', []);
-  t.equal(data.lockFileType, 'none', 'lock file type is none');
-  t.deepEqual(data.devDependencies, {}, 'deps are empty');
-  t.end();
+  expect(data.lockFileType).toBe('none');
+  expect(data.devDependencies).toEqual({});
 });

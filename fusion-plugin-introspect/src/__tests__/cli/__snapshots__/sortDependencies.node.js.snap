@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sortDependencies 1`] = `
+Array [
+  Object {
+    "dependencies": Array [],
+    "name": "C",
+    "sources": Array [
+      Object {
+        "source": "foo/bar:5:6",
+        "type": "plugin",
+      },
+    ],
+    "type": "both",
+  },
+  Object {
+    "dependencies": Array [
+      "C",
+    ],
+    "name": "B",
+    "sources": Array [
+      Object {
+        "source": "foo/bar:3:4",
+        "type": "plugin",
+      },
+    ],
+    "type": "both",
+  },
+  Object {
+    "dependencies": Array [
+      "B",
+    ],
+    "name": "A",
+    "sources": Array [
+      Object {
+        "source": "foo/bar:1:2",
+        "type": "plugin",
+      },
+    ],
+    "type": "both",
+  },
+]
+`;
