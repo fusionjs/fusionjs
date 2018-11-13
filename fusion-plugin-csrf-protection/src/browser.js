@@ -14,13 +14,11 @@ const enhancer = (fetch: Fetch) => {
   const prefix = window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
   let fetchWithCsrfToken: Fetch = (url, options) => {
     if (!options) options = {};
-    // $FlowFixMe
     const isCsrfMethod = verifyMethod(options.method || 'GET');
     if (!isCsrfMethod) {
       return fetch(url, options);
     }
-    // $FlowFixMe
-    return fetch(prefix + url, {
+    return fetch(prefix + String(url), {
       ...options,
       credentials: 'same-origin',
       headers: {

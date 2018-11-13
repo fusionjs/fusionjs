@@ -6,12 +6,20 @@
  * @flow
  */
 
-import {createPlugin} from 'fusion-core';
+import {createPlugin, type FusionPlugin} from 'fusion-core';
 import type {Fetch} from 'fusion-tokens';
 
 import {verifyMethod, CsrfIgnoreRoutesToken} from './shared';
 
-const enhancer = (oldFetch: Fetch) => {
+type PluginDepsType = {
+  ignored: typeof CsrfIgnoreRoutesToken.optional,
+};
+
+type ServiceType = () => Promise<void>;
+
+const enhancer = (
+  oldFetch: Fetch
+): FusionPlugin<PluginDepsType, ServiceType> => {
   return createPlugin({
     deps: {
       ignored: CsrfIgnoreRoutesToken.optional,
