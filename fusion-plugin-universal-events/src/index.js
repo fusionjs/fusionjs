@@ -26,3 +26,6 @@ export const UniversalEventsToken: Token<IEmitter> = createToken(
 );
 
 export * from './storage/index.js';
+
+export type UniversalEventsDepsType = DepsType;
+export type UniversalEventsType = IEmitter;
