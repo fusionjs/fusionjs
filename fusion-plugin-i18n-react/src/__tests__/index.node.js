@@ -8,11 +8,10 @@
 
 /* eslint-env node */
 
-import test from 'tape-cup';
 import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import React from 'react';
-import {getSimulator} from 'fusion-test-utils';
+import {test, getSimulator} from 'fusion-test-utils';
 
 import Plugin, {
   I18nToken,
@@ -31,7 +30,6 @@ test('exports', t => {
   t.ok(createI18nLoader, 'exports createI18nLoader');
   t.ok(Translate, 'exports Translate');
   t.ok(withTranslations, 'exports withTranslations');
-  t.end();
 });
 
 test('plugin', async t => {
@@ -58,8 +56,8 @@ test('plugin', async t => {
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
-      t.equals(translator.translate('test'), 'hello');
-      t.equals(
+      t.equal(translator.translate('test'), 'hello');
+      t.equal(
         translator.translate('interpolated', {value: 'world'}),
         'hi world'
       );
@@ -69,5 +67,4 @@ test('plugin', async t => {
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
-  t.end();
 });
