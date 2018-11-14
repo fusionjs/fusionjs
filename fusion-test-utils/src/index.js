@@ -26,6 +26,7 @@ type ExtractFusionAppReturnType = <R>((FusionApp) => R) => R;
 export type Simulator = {
   request: $Call<ExtractFusionAppReturnType, typeof request>,
   render: $Call<ExtractFusionAppReturnType, typeof render>,
+  getService<T>(token: Token<T>): T,
 };
 export function getSimulator(
   app: FusionApp,
@@ -39,6 +40,8 @@ export function getSimulator(
   return {
     request: request(app),
     render: render(app),
+    // $FlowFixMe
+    getService: token => app.getService(token),
   };
 }
 

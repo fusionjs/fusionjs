@@ -41,7 +41,7 @@ const ctx = await simulator.request('/test-url', {
 
 ### API
 
-#### `getSimulator(app: FusionApp, testPlugin?: FusionPlugin) => { request, render }`
+#### `getSimulator(app: FusionApp, testPlugin?: FusionPlugin) => { request, render, getService }`
 
 Creates a simulator which exposes functionality to simulate requests and renders through your application.
 `app` - instance of a FusionApp
@@ -59,6 +59,17 @@ Simulates a request through your application.
 #### `getSimulator(...).render(url: String, options: ?Object)` => Promise<ctx>
 
 This is the same as `request`, but defaults the `accept` header to `text/html` which will trigger a render of your application.
+
+#### `getSimulator(...).getService(token: Token<T>)` => T
+
+This is a useful utility for testing the API provided by a plugin. For example:
+
+```js
+const app = new App(el, el => el);
+app.register(LoggerToken, LoggerPlugin);
+const sim = getSimulator(app);
+const logger = sim.getService(LoggerToken);
+```
 
 #### `test(testName: String, executor: (assert) => {})`
 
