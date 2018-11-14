@@ -10,7 +10,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'fusion-plugin-i18n';
-import type {I18nServiceType} from 'fusion-plugin-i18n';
+import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
 import {ProviderPlugin} from 'fusion-react';
 
 type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
@@ -41,4 +41,8 @@ BundleSplitConsumer.childContextTypes = {
   i18n: PropTypes.object.isRequired,
 };
 
-export default ProviderPlugin.create('i18n', i18n, BundleSplitConsumer);
+export default ProviderPlugin.create<I18nDepsType, I18nServiceType>(
+  'i18n',
+  i18n,
+  BundleSplitConsumer
+);
