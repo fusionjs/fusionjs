@@ -5,6 +5,7 @@
  *
  * @flow
  */
+import type {RPCDepsType, RPCServiceType} from './types';
 
 import browserDataFetching from './browser';
 import serverDataFetching from './server';
@@ -17,3 +18,6 @@ export default (__BROWSER__ ? browserDataFetching : serverDataFetching);
 export {BodyParserOptionsToken, RPCToken, RPCHandlersToken} from './tokens';
 
 export {default as getMockRpcHandlers} from './mock-rpc-handlers';
+
+export type {RPCDepsType};
+export type RPCType = RPCServiceType;
