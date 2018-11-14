@@ -32,7 +32,7 @@ export const fallbackLookup = {
 };
 
 export const fontFaces =
-  '\n@font-face {font-family: "Lato-Regular"; src: url("Lato-Regular.woff") format("woff")\n,url("Lato-Regular.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Bold"; src: url("Lato-Bold.woff") format("woff")\n,url("Lato-Bold.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Thin"; src: url("Lato-Thin.woff") format("woff")\n,url("Lato-Thin.woff2") format("woff2")\n;}';
+  '\n@font-face {font-family: "Lato-Regular"; font-display: \'fallback\', src: url("Lato-Regular.woff") format("woff")\n,url("Lato-Regular.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Bold"; font-display: \'fallback\', src: url("Lato-Bold.woff") format("woff")\n,url("Lato-Bold.woff2") format("woff2")\n;}\n@font-face {font-family: "Lato-Thin"; font-display: \'fallback\', src: url("Lato-Thin.woff") format("woff")\n,url("Lato-Thin.woff2") format("woff2")\n;}';
 
 export const preloadLinks =
   '\n<link rel="preload" href="Lato-Regular.woff2" as="font" type="font/woff2" crossorigin>';
