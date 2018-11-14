@@ -86,8 +86,8 @@ test('browser plugin integration test withRPCRedux', async t => {
   const withTest = compose(
     withRPCRedux('test'),
     connect(s => s),
-    prepared(
-      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    prepared(props =>
+      props.a ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
 
@@ -159,9 +159,8 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   const withTest = compose(
     withRPCRedux('test'),
     connect(s => s),
-    prepared(
-      props =>
-        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    prepared(props =>
+      props.message ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
 
@@ -216,8 +215,8 @@ test('browser mock integration test withRPCRedux', async t => {
   const withTest = compose(
     withRPCRedux('test'),
     connect(s => s),
-    prepared(
-      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    prepared(props =>
+      props.a ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
 
@@ -280,9 +279,8 @@ test('browser mock integration test withRPCRedux - failure', async t => {
   const withTest = compose(
     withRPCRedux('test'),
     connect(s => s),
-    prepared(
-      props =>
-        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    prepared(props =>
+      props.message ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
 
@@ -374,8 +372,8 @@ test('browser plugin integration test withRPCReactor', async t => {
         return {};
       },
     }),
-    prepared(
-      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    prepared(props =>
+      props.a ? Promise.resolve() : props.test({hello: 'world'})
     ),
     connect(s => s)
   );
@@ -460,8 +458,8 @@ test('browser mock plugin integration test withRPCReactor', async t => {
         return {};
       },
     }),
-    prepared(
-      props => (props.a ? Promise.resolve() : props.test({hello: 'world'}))
+    prepared(props =>
+      props.a ? Promise.resolve() : props.test({hello: 'world'})
     ),
     connect(s => s)
   );
@@ -557,9 +555,8 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
         };
       },
     }),
-    prepared(
-      props =>
-        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    prepared(props =>
+      props.message ? Promise.resolve() : props.test({hello: 'world'})
     ),
     connect(s => s)
   );
@@ -669,9 +666,8 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
         };
       },
     }),
-    prepared(
-      props =>
-        props.message ? Promise.resolve() : props.test({hello: 'world'})
+    prepared(props =>
+      props.message ? Promise.resolve() : props.test({hello: 'world'})
     ),
     connect(s => s)
   );
