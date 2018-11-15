@@ -73,9 +73,12 @@ const pluginFactory: () => PluginType = () =>
           });
           const fetchOpts = {
             method: 'POST',
-            ...(this.localeCode
-              ? {headers: {'X-Fusion-Locale-Code': this.localeCode}}
-              : {}),
+            headers: {
+              Accept: '*/*',
+              ...(this.localeCode
+                ? {'X-Fusion-Locale-Code': this.localeCode}
+                : {}),
+            },
           };
           if (unloaded.length > 0) {
             // Don't try to load translations again if a request is already in
