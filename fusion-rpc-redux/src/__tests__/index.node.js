@@ -123,6 +123,7 @@ test('createRPCHandler failure', t => {
       },
       failure: e => {
         t.equals(e.message, error.message);
+        t.deepEqual(e.initialArgs, 'transformed-args');
         return 'failure';
       },
     },
