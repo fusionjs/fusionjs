@@ -9,6 +9,8 @@ import type App from 'fusion-core';
 import path from 'path';
 import process from 'process';
 
+import type {Dep} from './cli/types.js';
+
 const nodeOf = ({name, stacks = []}) => ({
   name,
   sources: getSources(stacks, {
@@ -21,7 +23,7 @@ type Token = {name: string, stacks: Array<{type: string, stack: string}>};
 
 export const collectDependencyData = (app: App) => {
   const registered = Array.from(app.registered.values());
-  const dependencies = registered.map(({token, value}) => {
+  const dependencies = registered.map<Dep>(({token, value}) => {
     const deps = value && value.deps ? value.deps : {};
     const type =
       value && value.__plugin__
@@ -30,8 +32,8 @@ export const collectDependencyData = (app: App) => {
             ? 'both'
             : 'service'
           : value.middleware
-            ? 'middleware'
-            : 'noop'
+          ? 'middleware'
+          : 'noop'
         : 'value';
     return {
       ...nodeOf(token),
