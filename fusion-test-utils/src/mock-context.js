@@ -13,9 +13,19 @@ import type {Context} from 'fusion-core';
 
 declare var __BROWSER__: boolean;
 
-export function mockContext(
+type ContextOptions = {|
+  headers?: {[key: string]: string},
+  body?: mixed,
+  method?: string,
+|};
+
+const defaultContextOptions: ContextOptions = {
+  headers: {},
+};
+
+export function createRequestContext(
   url: string,
-  options: {body?: {[key: string]: any}}
+  options?: ContextOptions = defaultContextOptions
 ): Context {
   if (__BROWSER__) {
     const parsedUrl = {...parse(url)};
@@ -60,9 +70,16 @@ export function mockContext(
   return ctx;
 }
 
-export function renderContext(url: string, options: any = {}): Context {
-  options = Object.assign(options, {
-    headers: Object.assign({accept: 'text/html'}, options.headers),
+export function createRenderContext(
+  url: string,
+  options?: ContextOptions = defaultContextOptions
+): Context {
+  // $FlowFixMe
+  return createRequestContext(url, {
+    ...options,
+    headers: {
+      accept: 'text/html',
+      ...(options.headers || {}),
+    },
   });
-  return mockContext(url, options);
 }

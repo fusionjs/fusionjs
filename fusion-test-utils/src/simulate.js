@@ -10,7 +10,7 @@
 import FusionApp, {compose} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-import {mockContext, renderContext} from './mock-context.js';
+import {createRequestContext, createRenderContext} from './mock-context.js';
 
 export const request = (app: FusionApp) => (
   url: string,
@@ -21,7 +21,7 @@ export const request = (app: FusionApp) => (
       '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
     );
   }
-  const ctx = mockContext(url, options);
+  const ctx = createRequestContext(url, options);
   return simulate(app, ctx);
 };
 
@@ -37,7 +37,7 @@ export const render = (app: FusionApp) => (
       url: `http://localhost${url}`,
     });
   }
-  const ctx = renderContext(url, options);
+  const ctx = createRenderContext(url, options);
   return simulate(app, ctx);
 };
 

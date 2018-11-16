@@ -5,7 +5,12 @@
  */
 import App, {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
-import {test, getSimulator} from '../src/index.js';
+import {
+  test,
+  getSimulator,
+  createRequestContext,
+  createRenderContext,
+} from '../src/index.js';
 
 test('Some content', async assert => {
   assert.ok(true);
@@ -15,4 +20,13 @@ test('Some content', async assert => {
   const simulator = getSimulator(app);
   const a: string = simulator.getService(TokenA);
   assert.equal(a, 'test');
+  createRequestContext('/');
+  createRenderContext('/');
+  createRequestContext('/', {
+    headers: {
+      test: 'test',
+    },
+    body: 'test',
+    method: 'POST',
+  });
 });

@@ -17,8 +17,9 @@ import type {FusionPlugin, Token} from 'fusion-core';
  * .flowconfig libs.
  */
 import type {JestTestName, JestObjectType} from './flow/jest_v22.x.x.js';
-
 import {render, request} from './simulate';
+
+export {createRequestContext, createRenderContext} from './mock-context';
 
 declare var __BROWSER__: boolean;
 

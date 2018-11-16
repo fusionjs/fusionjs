@@ -10,7 +10,11 @@
 import test from 'tape-cup';
 import App from 'fusion-core';
 
-import {getSimulator} from '../index.js';
+import {
+  getSimulator,
+  createRequestContext,
+  createRenderContext,
+} from '../index.js';
 
 test('jsdom', async t => {
   let reconfigured = false;
@@ -126,5 +130,49 @@ test('body contains some message', async t => {
   });
   t.equals(ctx.status, 404, 'status is set');
   t.deepEquals(ctx.request.body, {message: 'test'}, 'body is set');
+  t.end();
+});
+
+test('createRequestContext', t => {
+  t.equal(createRequestContext('/').url, '/', 'url');
+  t.equal(createRequestContext('/test').url, '/test', 'url');
+  t.equal(createRequestContext('/', {method: 'POST'}).method, 'POST', 'method');
+  t.equal(
+    createRequestContext('/', {headers: {test: 'test'}}).headers.test,
+    'test',
+    'custom header'
+  );
+  t.equal(
+    createRequestContext('/', {body: 'test'}).request.body,
+    'test',
+    'body'
+  );
+  t.end();
+});
+
+test('createRenderContext', t => {
+  t.equal(createRenderContext('/').url, '/', 'url');
+  t.equal(createRenderContext('/test').url, '/test', 'url');
+  t.equal(createRenderContext('/', {method: 'POST'}).method, 'POST', 'method');
+  t.equal(
+    createRenderContext('/', {headers: {test: 'test'}}).headers.test,
+    'test',
+    'custom header'
+  );
+  t.equal(
+    createRenderContext('/', {headers: {test: 'test'}}).headers.accept,
+    'text/html',
+    'default accept header'
+  );
+  t.equal(
+    createRenderContext('/').headers.accept,
+    'text/html',
+    'default accept header'
+  );
+  t.equal(
+    createRenderContext('/', {body: 'test'}).request.body,
+    'test',
+    'body'
+  );
   t.end();
 });
