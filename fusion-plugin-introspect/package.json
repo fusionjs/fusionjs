@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-introspect",
   "description": "Collect runtime Fusion.js data for debugging",
-  "version": "0.2.0",
+  "version": "0.2.1-0",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-introspect",
   "main": "./dist/index.js",
