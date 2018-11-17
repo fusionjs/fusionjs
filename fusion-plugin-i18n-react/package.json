@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "fusion-cli": "^1.12.1",
-    "fusion-plugin-i18n": "^1.1.4-0",
+    "fusion-plugin-i18n": "^1.1.4",
     "prop-types": "^15.6.2"
   },
   "peerDependencies": {
@@ -55,7 +55,7 @@
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.86.0",
     "fusion-core": "^1.10.0",
-    "fusion-react": "^1.3.4-0",
+    "fusion-react": "^1.3.4",
     "fusion-test-utils": "^1.2.4",
     "fusion-tokens": "^1.1.1",
     "locale": "^0.1.0",
