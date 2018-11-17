@@ -52,21 +52,30 @@ const plugin =
           // ideally by calling `window.onerror` directly with an Error object
           // (which provides more robust stack traces across browsers), or via `throw`
           const script = html`
-<script nonce="${ctx.nonce}">
-onerror = function(m,s,l,c,e) {
-  var _e = e || {};
-  if (_e.__handled) return;
-  var error = {};
-  Object.getOwnPropertyNames(_e).forEach(function(key) {
-    error[key] = e[key];
-  });
-  var x = new XMLHttpRequest;
-  x.open('POST', '${ctx.prefix}/_errors');
-  x.setRequestHeader('Content-Type', 'application/json')
-  x.send(JSON.stringify({message: m, source: s, line: l, col: c, error: error}));
-  _e.__handled = true;
-};
-</script>`;
+            <script nonce="${ctx.nonce}">
+              onerror = function(m, s, l, c, e) {
+                var _e = e || {};
+                if (_e.__handled) return;
+                var error = {};
+                Object.getOwnPropertyNames(_e).forEach(function(key) {
+                  error[key] = e[key];
+                });
+                var x = new XMLHttpRequest();
+                x.open('POST', '${ctx.prefix}/_errors');
+                x.setRequestHeader('Content-Type', 'application/json');
+                x.send(
+                  JSON.stringify({
+                    message: m,
+                    source: s,
+                    line: l,
+                    col: c,
+                    error: error,
+                  })
+                );
+                _e.__handled = true;
+              };
+            </script>
+          `;
           ctx.template.head.unshift(script);
         } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
