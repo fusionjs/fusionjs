@@ -53,6 +53,9 @@ module.exports = {
     'src/**/*.js',
     '!**/__integration__/**',
     '!**/node_modules/**',
+    ...(process.env.COVERAGE_PATHS
+      ? process.env.COVERAGE_PATHS.split(',')
+      : []),
   ],
   testResultsProcessor: require.resolve('./results-processor.js'),
 };

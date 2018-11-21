@@ -123,6 +123,12 @@ module.exports = {
   test: {
     descr: 'Run browser tests, using Jest',
     options: {
+      collectCoverageFrom: {
+        type: 'string',
+        default: null,
+        describe:
+          'Comma-separated list of coverage globs added to the Fusion.js default list. You can ignore a path via: !**/path/to/file.js',
+      },
       dir: {
         type: 'string',
         default: '.',

@@ -13,6 +13,7 @@ exports.allowedJestOptions = [
   'changedSince',
   'ci',
   'clearCache',
+  'collectCoverageFrom',
   'colors',
   'coverage',
   'detectOpenHandles',

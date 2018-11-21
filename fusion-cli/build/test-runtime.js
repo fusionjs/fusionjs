@@ -24,6 +24,7 @@ module.exports.TestAppRuntime = function(
     testMatch,
     testRegex,
     updateSnapshot,
+    collectCoverageFrom,
     configPath,
     jestArgs = {},
   } /*: any */
@@ -81,6 +82,7 @@ module.exports.TestAppRuntime = function(
           TEST_FOLDER: testFolder, // deprecated
           TEST_MATCH: testMatch,
           TEST_REGEX: testRegex,
+          COVERAGE_PATHS: collectCoverageFrom,
         };
         const proc = spawn('node', args, {
           cwd: rootDir,

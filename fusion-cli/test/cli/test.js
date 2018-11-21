@@ -294,16 +294,39 @@ test('`fusion test` dynamic imports', async t => {
 
 test('`fusion test` coverage', async t => {
   const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
-  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage --match=passes`;
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js`;
 
   const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   const response = await exec(`node -e "${cmd}"`);
+
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
   // Look for something like coverage
   t.ok(response.stdout.includes('Uncovered Line #s'));
 
+  // This file is outside of src and should not be included in coverage
   t.ok(!response.stdout.includes('should-not-count-for-coverage.js'));
+
+  // These files instruments the istanbul ignore annotation and should not be included in coverage
+  t.ok(!response.stdout.includes('istanbul-ignore-coverage.js'));
+
+  // Ignored by the CLI flag
+  t.ok(!response.stdout.includes('istanbul-ignore-coverage-cli.js'));
+
+  t.end();
+});
+
+test('`fusion test` coverage ignore multiple globs from collectCoverageFrom', async t => {
+  const dir = path.resolve(__dirname, '../fixtures/test-jest-app');
+  const args = `test --dir=${dir} --configPath=../../../build/jest/jest-config.js --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js --collectCoverageFrom=!**/class-props.js`;
+
+  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+  const response = await exec(`node -e "${cmd}"`);
+
+  // Ignored by the CLI flags
+  t.ok(!response.stdout.includes('istanbul-ignore-coverage-cli.js'));
+  t.ok(!response.stdout.includes('class-props.js'));
+
   t.end();
 });
 

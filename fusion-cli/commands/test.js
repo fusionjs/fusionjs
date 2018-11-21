@@ -26,6 +26,7 @@ exports.run = async function(
     // suggests this as a valid argument, we support it in case it's used.
     u,
     updateSnapshot,
+    collectCoverageFrom,
     // Arguments which are passed through into jest
     ...rest
   } /*: any */
@@ -54,6 +55,7 @@ exports.run = async function(
     testMatch,
     testRegex,
     configPath,
+    collectCoverageFrom,
     jestArgs,
   });
 
