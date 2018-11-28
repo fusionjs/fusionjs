@@ -136,7 +136,14 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
     {type: /TEST_START/, payload: {hello: 'world'}},
     {
       type: /TEST_FAILURE/,
-      payload: {message: 'message', code: 'code', meta: {hello: 'world'}},
+      payload: {
+        message: 'message',
+        code: 'code',
+        meta: {hello: 'world'},
+        initialArgs: {
+          hello: 'world',
+        },
+      },
     },
   ];
   const store = createStore((state, action) => {
@@ -256,7 +263,12 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     {type: /TEST_START/, payload: {hello: 'world'}},
     {
       type: /TEST_FAILURE/,
-      payload: {message: 'message', code: 'code', meta: {hello: 'world'}},
+      payload: {
+        message: 'message',
+        code: 'code',
+        meta: {hello: 'world'},
+        initialArgs: {hello: 'world'},
+      },
     },
   ];
   const store = createStore((state, action) => {
@@ -546,6 +558,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
             code: e.code,
             // $FlowFixMe
             meta: e.meta,
+            initialArgs: {hello: 'world'},
           },
           'dispatches failure with correct payload'
         );
@@ -603,6 +616,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
             code: e.code,
             // $FlowFixMe
             meta: e.meta,
+            initialArgs: {hello: 'world'},
           },
         })
       )
@@ -657,6 +671,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
             code: e.code,
             // $FlowFixMe
             meta: e.meta,
+            initialArgs: {hello: 'world'},
           },
           'dispatches failure with correct payload'
         );
