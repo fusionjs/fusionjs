@@ -10,6 +10,7 @@
 import React from 'react';
 
 import CoreApp, {createPlugin, createToken, html, unescape} from 'fusion-core';
+import type {ApolloClient} from 'apollo-client';
 
 import {ApolloProvider} from 'react-apollo';
 
@@ -27,20 +28,14 @@ import type {Context, Token} from 'fusion-core';
 import serverRender from './server';
 import clientRender from './client';
 
-type ApolloClientType = {
-  cache?: {
-    extract: () => mixed,
-  },
-};
-
-export type ApolloClient<TInitialState> = (
+export type InitApolloClientType<TInitialState> = (
   ctx: Context,
   initialState: TInitialState
-) => ApolloClientType;
+) => ApolloClient<TInitialState>;
 
-export const ApolloClientToken: Token<ApolloClient<mixed>> = createToken(
-  'ApolloClientToken'
-);
+export const ApolloClientToken: Token<
+  InitApolloClientType<mixed>
+> = createToken('ApolloClientToken');
 
 export type ApolloContext<T> = (Context => T) | T;
 
@@ -53,7 +48,7 @@ export const GraphQLSchemaToken: Token<string> = createToken(
 );
 
 export const ApolloCacheContext = React.createContext<
-  $PropertyType<ApolloClientType, 'cache'>
+  $PropertyType<InitApolloClientType<mixed>, 'cache'>
 >();
 
 export default class App extends CoreApp {

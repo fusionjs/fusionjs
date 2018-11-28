@@ -26,6 +26,7 @@ test('App with custom render function', async t => {
     return 'rendered';
   });
   app.register(ApolloClientToken, () => {
+    // $FlowFixMe
     return {
       cache: {
         extract: () => {},

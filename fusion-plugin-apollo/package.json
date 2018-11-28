@@ -6,10 +6,7 @@
   "repository": "fusionjs/fusion-apollo",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "browser": {
     "./dist/index.js": "./dist/browser.es5.js",
     "./dist/index.es.js": "./dist/browser.es5.es.js"
@@ -59,7 +56,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
+    "lint": "eslint src/",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
