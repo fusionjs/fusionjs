@@ -7,31 +7,37 @@
  */
 
 /* eslint-env node */
-const {createPlugin, getEnv} = require('fusion-core');
+/*::
+import type {AssetsDepsType, AssetsType} from './types.js';
+*/
+import {createPlugin, getEnv} from 'fusion-core';
 
-const path = require('path');
-const mount = require('koa-mount');
-const serve = require('koa-static');
+import path from 'path';
+import mount from 'koa-mount';
+import serve from 'koa-static';
 
-module.exports = function(dir /*: string */) {
-  return createPlugin({
-    middleware: () => {
-      const {baseAssetPath, env} = getEnv();
-      // setting defer here tells the `serve` middleware to `await next` first before
-      // setting the response. This allows composition with user middleware
-      return mount(
-        baseAssetPath,
-        serve(path.resolve(dir, `.fusion/dist/${env}/client`), {
-          defer: true,
-          setHeaders: res => {
-            // $FlowFixMe
-            if (!module.hot) {
-              res.setHeader('Cache-Control', 'public, max-age=31536000');
-            }
-            res.setHeader('Timing-Allow-Origin', '*');
-          },
-        })
-      );
-    },
-  });
-};
+export default function(dir /*: string */) {
+  /* eslint-disable-next-line */
+  return createPlugin/*:: <AssetsDepsType, AssetsType> */(
+    {
+      middleware: () => {
+        const {baseAssetPath, env} = getEnv();
+        // setting defer here tells the `serve` middleware to `await next` first before
+        // setting the response. This allows composition with user middleware
+        return mount(
+          baseAssetPath,
+          serve(path.resolve(dir, `.fusion/dist/${env}/client`), {
+            defer: true,
+            setHeaders: res => {
+              // $FlowFixMe
+              if (!module.hot) {
+                res.setHeader('Cache-Control', 'public, max-age=31536000');
+              }
+              res.setHeader('Timing-Allow-Origin', '*');
+            },
+          })
+        );
+      },
+    }
+  );
+}

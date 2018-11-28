@@ -140,7 +140,7 @@ function Compiler(
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
   this.start = cb => {
-    cb = cb || function noop() {};
+    cb = cb || function noop(err, stats) {};
     // Handler may be called multiple times by `watch`
     // But only call `cb` the first tiem
     // subsequent rebuilds are subscribed to with 'compiler.on('done')'

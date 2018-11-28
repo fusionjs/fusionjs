@@ -8,17 +8,24 @@
 
 /* eslint-env node */
 
-const renderError = require('../build/server-error').renderError;
-const {createPlugin} = require('fusion-core');
+/*::
+import type {ServerErrorDepsType, ServerErrorType} from './types.js';
+*/
 
-module.exports = createPlugin({
-  middleware: () =>
-    async function middleware(ctx, next) {
-      try {
-        await next();
-      } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = renderError(err);
-      }
-    },
-});
+import serverError from '../build/server-error';
+import {createPlugin} from 'fusion-core';
+
+/* eslint-disable-next-line */
+export default createPlugin/*:: <ServerErrorDepsType, ServerErrorType> */(
+  {
+    middleware: () =>
+      async function middleware(ctx, next) {
+        try {
+          await next();
+        } catch (err) {
+          ctx.status = err.statusCode || err.status || 500;
+          ctx.body = serverError.renderError(err);
+        }
+      },
+  }
+);

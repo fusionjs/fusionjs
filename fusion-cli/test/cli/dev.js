@@ -410,9 +410,9 @@ test('`fusion dev` CHUNK_ID instrumentation', async t => {
   const resA = await request(`http://localhost:${port}/test-a`);
   const resB = await request(`http://localhost:${port}/test-b`);
   const res = await request(`http://localhost:${port}/test`);
-  t.deepLooseEqual(JSON.parse(res), [2]);
-  t.deepLooseEqual(JSON.parse(resA), [0, 2]);
-  t.deepLooseEqual(JSON.parse(resB), [1, 2]);
+  t.deepLooseEqual(JSON.parse(res), [0]);
+  t.deepLooseEqual(JSON.parse(resA), [0, 1]);
+  t.deepLooseEqual(JSON.parse(resB), [0, 2]);
   proc.kill();
   t.end();
 });
@@ -456,7 +456,7 @@ test('`fusion dev` app with split translations integration', async t => {
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const content = await page.content();
   t.ok(
-    content.includes('<span>__MAIN_TRANSLATED__</span>'),
+    content.includes('__MAIN_TRANSLATED__'),
     'app content contains translated main chunk'
   );
   t.ok(
@@ -543,7 +543,7 @@ test('`fusion dev` app with split translations integration (cached)', async t =>
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const content = await page.content();
   t.ok(
-    content.includes('<span>__MAIN_TRANSLATED__</span>'),
+    content.includes('__MAIN_TRANSLATED__'),
     'app content contains translated main chunk'
   );
 

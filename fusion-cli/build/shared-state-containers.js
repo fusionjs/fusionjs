@@ -47,9 +47,11 @@ class MergedDeferredState /*::<T, U>*/ {
   }
   reset() {
     this.result = Promise.all(
-      this.states.filter(state => state.enabled.value).map(state => {
-        return state.deferred.result;
-      })
+      this.states
+        .filter(state => state.enabled.value)
+        .map(state => {
+          return state.deferred.result;
+        })
     ).then(resolved => {
       const result = this.mergeResultsFn(resolved);
       return result;

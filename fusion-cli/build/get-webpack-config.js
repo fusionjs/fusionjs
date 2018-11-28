@@ -222,8 +222,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         runtime === 'server'
           ? 'server-main.js'
           : dev
-            ? 'client-[name].js'
-            : 'client-[name]-[chunkhash].js',
+          ? 'client-[name].js'
+          : 'client-[name]-[chunkhash].js',
       libraryTarget: runtime === 'server' ? 'commonjs2' : 'var',
       // This is the recommended default.
       // See https://webpack.js.org/configuration/output/#output-sourcemapfilename
