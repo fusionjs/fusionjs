@@ -29,6 +29,6 @@ export type CriticalChunkIdsService = {
   from(ctx: Context): CriticalChunkIds,
 };
 
-export const CriticalChunkIdsToken: Token<
-  CriticalChunkIdsService
-> = createToken('CriticalChunkIdsToken');
+export const CriticalChunkIdsToken: Token<CriticalChunkIdsService> = createToken(
+  'CriticalChunkIdsToken'
+);

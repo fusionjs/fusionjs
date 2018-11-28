@@ -10,7 +10,7 @@
  * Changelog
  * breaking: remove unused app.name
  * breaking: ctx.throw([status], [msg], [properties]) (caused by http-errors (#957) )
-**/
+ **/
 declare module 'koa' {
   // Currently, import type doesnt work well ?
   // so copy `Server` from flow/lib/node.js#L820
@@ -116,12 +116,12 @@ declare module 'koa' {
     get: (field: string) => string,
 
     /* https://github.com/jshttp/type-is/blob/master/test/test.js
-* Check if the incoming request contains the "Content-Type"
-* header field, and it contains any of the give mime `type`s.
-* If there is no request body, `null` is returned.
-* If there is no content type, `false` is returned.
-* Otherwise, it returns the first `type` that matches.
-*/
+     * Check if the incoming request contains the "Content-Type"
+     * header field, and it contains any of the give mime `type`s.
+     * If there is no request body, `null` is returned.
+     * If there is no content type, `false` is returned.
+     * Otherwise, it returns the first `type` that matches.
+     */
     is: ((args: string[]) => null | false | string) &
       ((arg: string, ...args: string[]) => null | false | string) &
       (() => string), // should return the mime type

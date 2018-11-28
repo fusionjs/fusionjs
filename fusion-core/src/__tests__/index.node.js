@@ -504,8 +504,16 @@ test('head and body must be sanitized', async t => {
   const element = 'hi';
   const render = el => el;
   const template = (ctx, next) => {
-    ctx.template.head.push(html`<meta charset="${'">'}" />`);
-    ctx.template.body.push(html`<div>${'">'}</div>`);
+    ctx.template.head.push(
+      html`
+        <meta charset="${'">'}" />
+      `
+    );
+    ctx.template.body.push(
+      html`
+        <div>${'">'}</div>
+      `
+    );
     return next();
   };
   const app = new App(element, render);

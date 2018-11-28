@@ -148,5 +148,7 @@ async function checkEnv() {
 }
 
 /*   - Case: sanitization typing */
-const sanitizedString = html`mystring`;
+const sanitizedString = html`
+  mystring
+`;
 consumeSanitizedHTML(sanitizedString);

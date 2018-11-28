@@ -31,21 +31,28 @@ test('unescaping works', async t => {
 });
 test('html sanitization works', async t => {
   const userData = '<malicious data="" />';
-  const value = html`<div>${userData}</div>${null}`;
+  const value = html`
+    <div>${userData}</div>
+    ${null}
+  `;
   t.equals(typeof value, 'object');
   t.equals(
     // $FlowFixMe
     consumeSanitizedHTML(value),
-    `<div>\\u003Cmalicious data=\\u0022\\u0022 \\u002F\\u003E</div>null`
+    `\n    <div>\\u003Cmalicious data=\\u0022\\u0022 \\u002F\\u003E</div>\n    null\n  `
   );
   t.end();
 });
 test('nested sanitization works', async t => {
-  const safe = html`hello`;
-  const value = html`<div>${safe}</div>`;
+  const safe = html`
+    hello
+  `;
+  const value = html`
+    <div>${safe}</div>
+  `;
   t.equals(typeof value, 'object');
   // $FlowFixMe
-  t.equals(consumeSanitizedHTML(value), `<div>hello</div>`);
+  t.equals(consumeSanitizedHTML(value), `\n    <div>\n    hello\n  </div>\n  `);
   t.end();
 });
 test('dangerouslySetHTML works', async t => {
