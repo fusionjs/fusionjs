@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "base64-url": "^2.2.0",
-    "eslint-plugin-jest": "^22.0.0"
+    "eslint-plugin-jest": "^22.1.0"
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0",
@@ -37,14 +37,14 @@
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "express": "^4.16.4",
-    "flow-bin": "^0.86.0",
-    "fusion-core": "^1.9.1-1",
-    "fusion-test-utils": "^1.2.3",
-    "fusion-tokens": "^1.1.0",
+    "flow-bin": "^0.87.0",
+    "fusion-core": "^1.10.0",
+    "fusion-test-utils": "^1.3.0",
+    "fusion-tokens": "^1.1.1",
     "generic-session": "0.1.2",
     "get-port": "4.0.0",
     "nyc": "^13.1.0",
-    "prettier": "^1.15.1",
+    "prettier": "^1.15.2",
     "sinon": "^7.1.1",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
