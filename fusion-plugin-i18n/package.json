@@ -6,6 +6,7 @@
   "files": [
     "dist",
     "chunk-translation-map.js",
+    "flow-typed",
     "src"
   ],
   "main": "./dist/index.js",
