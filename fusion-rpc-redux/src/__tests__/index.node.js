@@ -108,6 +108,128 @@ test('createRPCHandler success', t => {
   });
 });
 
+test('createRPCHandler error in success reducer', t => {
+  const expectedActions = ['start', 'success'];
+  const handler = createRPCHandler({
+    actions: {
+      start: args => {
+        return 'start';
+      },
+      success: result => {
+        throw new Error('Fail');
+      },
+      failure: () => {
+        t.fail('should not call failure');
+        return 'failure';
+      },
+    },
+    store: {
+      dispatch: action => {
+        t.equal(action, expectedActions.shift());
+      },
+      getState: () => {
+        return 'test-state';
+      },
+      subscribe: () => () => {},
+      replaceReducer: () => {},
+    },
+    rpc: {
+      request: rpcId => {
+        return Promise.resolve('test-resolve');
+      },
+    },
+    rpcId: 'test',
+  });
+  handler('args').catch(e => {
+    t.equal(e.message, 'Fail', 'bubbles error with message');
+    t.ok(e.stack, 'bubbles error with stack');
+    t.end();
+  });
+});
+
+test('createRPCHandler error in start reducer', async t => {
+  const expectedActions = ['start', 'success'];
+  const handler = createRPCHandler({
+    actions: {
+      start: args => {
+        throw new Error('Fail');
+      },
+      success: () => {
+        t.fail('should not call success');
+        return 'success';
+      },
+      failure: () => {
+        t.fail('should not call failure');
+        return 'failure';
+      },
+    },
+    store: {
+      dispatch: action => {
+        t.equal(action, expectedActions.shift());
+      },
+      getState: () => {
+        return 'test-state';
+      },
+      subscribe: () => () => {},
+      replaceReducer: () => {},
+    },
+    rpc: {
+      request: rpcId => {
+        return Promise.resolve('test-resolve');
+      },
+    },
+    rpcId: 'test',
+  });
+  try {
+    await handler('args');
+  } catch (e) {
+    t.equal(e.message, 'Fail', 'bubbles error with message');
+    t.ok(e.stack, 'bubbles error with stack');
+    t.end();
+  }
+});
+
+test('createRPCHandler error in failure reducer', async t => {
+  const expectedActions = ['start', 'success'];
+  const handler = createRPCHandler({
+    actions: {
+      start: args => {
+        return 'start';
+      },
+      success: () => {
+        t.fail('should not call success');
+        return 'success';
+      },
+      failure: () => {
+        throw new Error('Fail');
+      },
+    },
+    store: {
+      dispatch: action => {
+        t.equal(action, expectedActions.shift());
+      },
+      getState: () => {
+        return 'test-state';
+      },
+      subscribe: () => () => {},
+      replaceReducer: () => {},
+    },
+    rpc: {
+      request: rpcId => {
+        return Promise.reject('test-reject');
+      },
+    },
+    rpcId: 'test',
+  });
+  try {
+    await handler('args');
+  } catch (e) {
+    t.equal(e.message, 'Fail', 'bubbles error with message');
+    t.ok(e.stack, 'bubbles error with stack');
+    t.end();
+  }
+});
+
 test('createRPCHandler failure', t => {
   const expectedActions = ['start', 'failure'];
   const error = new Error('fail');

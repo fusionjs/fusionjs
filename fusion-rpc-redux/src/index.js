@@ -155,10 +155,19 @@ export function createRPCHandler({
     return rpc
       .request(rpcId, args)
       .then(result => {
-        store.dispatch(actions && actions.success(result));
+        try {
+          store.dispatch(actions && actions.success(result));
+        } catch (e) {
+          e.__shouldBubble = true;
+          throw e;
+        }
         return result;
       })
       .catch(e => {
+        if (e.__shouldBubble) {
+          delete e.__shouldBubble;
+          throw e;
+        }
         const error = Object.getOwnPropertyNames(e).reduce((obj, key) => {
           obj[key] = e[key];
           return obj;
