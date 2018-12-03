@@ -116,7 +116,7 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
             ? ''
             : ' crossorigin="anonymous"';
           preloadHints.push(
-            `<link rel="preload" href="${url}"${crossoriginAttr}/>`
+            `<link rel="preload" href="${url}"${crossoriginAttr} as="script"/>`
           );
           criticalChunkScripts.push(
             `<script defer src="${url}" nonce="${
