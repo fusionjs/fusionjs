@@ -151,13 +151,19 @@ Edge must get transpiled classes due to:
 - https://github.com/Microsoft/ChakraCore/issues/4663
 - https://github.com/babel/babel/issues/8019
 Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
+
+Safari 10.1 and 11 have some ES6 bugs:
+- https://github.com/mishoo/UglifyJS2/issues/1753
+- https://github.com/mishoo/UglifyJS2/issues/2344
+- https://github.com/terser-js/terser/issues/117
+Rather than enable terser workarounds that reduces minification for compliant browsers,
+Safari 10.1 and 11 should be treated as legacy.
 */
 function checkModuleSupport({name, version}) {
   if (name === 'Chrome' || name === 'Chrome Headless') {
     if (majorVersion(version) >= 61) return true;
   } else if (name === 'Mobile Safari' || name === 'Safari') {
-    // At least Safari 10.1
-    if (majorVersion(version) >= 10 && !version.startsWith('10.0')) return true;
+    if (majorVersion(version) >= 12) return true;
   } else if (name === 'Firefox') {
     if (majorVersion(version) >= 60) return true;
   }
