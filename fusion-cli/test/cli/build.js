@@ -161,12 +161,12 @@ test('`fusion build` works in production with a CDN_URL', async t => {
   });
 
   t.ok(
-    res.includes('https://cdn.com/test/client-main'),
-    'includes a reference to client-main'
+    res.includes('https://cdn.com/test/client-legacy-main'),
+    'includes a reference to client-legacy-main'
   );
   t.ok(
-    res.includes('https://cdn.com/test/client-vendor'),
-    'includes a reference to client-vendor'
+    res.includes('https://cdn.com/test/client-legacy-vendor'),
+    'includes a reference to client-legacy-vendor'
   );
   proc.kill();
   t.end();
@@ -298,18 +298,14 @@ test('`fusion build` app with dynamic imports integration', async t => {
   const BASE_COUNT = SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
 
   t.equal(
-    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    await page.$$eval('link[rel="preload"]', els => els.length),
     BASE_COUNT
   );
   t.equal(
     await page.$$eval(
-      'script[src]:not([type="module"]):not([type="application/json"])',
+      'script[src]:not([type="application/json"])',
       els => els.length
     ),
-    BASE_COUNT
-  );
-  t.equal(
-    await page.$$eval('script[src][type="module"]', els => els.length),
     BASE_COUNT
   );
 
@@ -324,7 +320,7 @@ test('`fusion build` app with dynamic imports integration', async t => {
   await page.click('#split-route-link');
   t.equal(
     await page.$$eval(
-      'script[src]:not([type="module"]):not([type="application/json"])',
+      'script[src]:not([type="application/json"])',
       els => els.length
     ),
     BASE_COUNT + 1,
@@ -332,9 +328,8 @@ test('`fusion build` app with dynamic imports integration', async t => {
   );
 
   t.ok(
-    await page.$$eval(
-      'script[src]:not([type="application/json"]):not([type="module"])',
-      els => els.every(el => el.crossOrigin === null)
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
+      els.every(el => el.crossOrigin === null)
     ),
     'non-module scripts do not have crossorigin attribute'
   );
@@ -356,18 +351,14 @@ test('`fusion build` app with dynamic imports integration', async t => {
   await page.goto(`http://localhost:${port}/split-route`);
 
   t.equal(
-    await page.$$eval('link[rel="modulepreload"]', els => els.length),
+    await page.$$eval('link[rel="preload"]', els => els.length),
     BASE_COUNT + 1
   );
   t.equal(
     await page.$$eval(
-      'script[src]:not([type="module"]):not([type="application/json"])',
+      'script[src]:not([type="application/json"])',
       els => els.length
     ),
-    BASE_COUNT + 1
-  );
-  t.equal(
-    await page.$$eval('script[src][type="module"]', els => els.length),
     BASE_COUNT + 1
   );
 
@@ -414,7 +405,7 @@ test('`fusion build` app with Safari user agent and same-origin', async t => {
 
   t.equal(
     await page.$$eval(
-      'script[src]:not([type="module"]):not([type="application/json"])',
+      'script[src]:not([type="application/json"])',
       els => els.length
     ),
     BASE_COUNT
@@ -431,7 +422,7 @@ test('`fusion build` app with Safari user agent and same-origin', async t => {
   await page.click('#split-route-link');
   t.equal(
     await page.$$eval(
-      'script[src]:not([type="module"]):not([type="application/json"])',
+      'script[src]:not([type="application/json"])',
       els => els.length
     ),
     BASE_COUNT + 1,
@@ -439,9 +430,8 @@ test('`fusion build` app with Safari user agent and same-origin', async t => {
   );
 
   t.ok(
-    await page.$$eval(
-      'script[src]:not([type="application/json"]):not([type="module"])',
-      els => els.every(el => el.crossOrigin === null)
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
+      els.every(el => el.crossOrigin === null)
     ),
     'non-module scripts do not have crossorigin attribute'
   );
@@ -548,12 +538,12 @@ test('`fusion build` works in production with default asset path and supplied RO
     env: Object.assign({}, process.env, {ROUTE_PREFIX: '/test-prefix'}),
   });
   t.ok(
-    res.includes('/test-prefix/_static/client-main'),
-    'includes a reference to client-main'
+    res.includes('/test-prefix/_static/client-legacy-main'),
+    'includes a reference to client-legacy-main'
   );
   t.ok(
-    res.includes('/test-prefix/_static/client-vendor'),
-    'includes a reference to client-vendor'
+    res.includes('/test-prefix/_static/client-legacy-vendor'),
+    'includes a reference to client-legacy-vendor'
   );
   proc.kill();
   t.end();
@@ -700,12 +690,12 @@ test('`fusion build` works in production', async t => {
   );
   const {res, proc} = await start(`--dir=${dir}`);
   t.ok(
-    res.includes('/_static/client-main'),
-    'includes a reference to client-main'
+    res.includes('/_static/client-legacy-main'),
+    'includes a reference to client-legacy-main'
   );
   t.ok(
-    res.includes('/_static/client-vendor'),
-    'includes a reference to client-vendor'
+    res.includes('/_static/client-legacy-vendor'),
+    'includes a reference to client-legacy-vendor'
   );
 
   clientFiles.forEach(file => {

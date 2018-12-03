@@ -282,6 +282,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
                       /fusion-cli\/entries/,
+                      /fusion-cli\/plugins/,
                     ],
                     ...babelOverrides,
                   },
@@ -318,6 +319,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
                       /fusion-cli\/entries/,
+                      /fusion-cli\/plugins/,
                     ],
                     ...babelOverrides,
                   },
@@ -354,6 +356,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
                       /fusion-cli\/entries/,
+                      /fusion-cli\/plugins/,
                     ],
                     ...legacyBabelOverrides,
                   },

@@ -27,8 +27,6 @@ import type {SSRBodyTemplateDepsType, SSRBodyTemplateType} from './types.js';
 declare var __webpack_public_path__: string;
 */
 
-const CDN_URL_SET = Boolean(process.env.CDN_URL);
-
 /* eslint-disable-next-line */
 const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplateType> */(
   {
@@ -93,66 +91,38 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
           }
         }
 
-        let preloadHints = [];
+        const isModernBrowser = checkModuleSupport(ctx.useragent.browser);
+
+        if (__DEV__) {
+          if (!isModernBrowser && legacyUrls.length === 0) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body style="padding:20vmin;font-family:sans-serif;font-size:16px;background:papayawhip">
+<p>You are using a legacy browser but only the modern bundle has been built (legacy bundles are skipped by default when using <code style="display:inline">fusion dev</code>).</p>
+<p>Please use a modern browser or <pre><code style="display:inline">fusion dev --forceLegacyBuild</code></pre> to build the legacy bundle.</p>
+</body>
+</html>`;
+          }
+        }
+
+        const criticalChunkUrls = isModernBrowser ? modernUrls : legacyUrls;
         let criticalChunkScripts = [];
+        let preloadHints = [];
 
-        let forceLegacyOnly = false;
-
-        const browser = ctx.useragent.browser;
-
-        /*
-      Edge must get transpiled classes due to:
-      - https://github.com/Microsoft/ChakraCore/issues/5030
-      - https://github.com/Microsoft/ChakraCore/issues/4663
-      - https://github.com/babel/babel/issues/8019
-      Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
-      */
-        if (browser.name === 'Edge') {
-          forceLegacyOnly = true;
-        }
-
-        const isSafari =
-          browser.name === 'Safari' || browser.name === 'Mobile Safari';
-
-        /*
-      Safari does not send credentials for same-origin module scripts.
-      https://bugs.webkit.org/show_bug.cgi?id=171550
-
-      Therefore, if no CDN is used and the app is behind auth, the requests will fail.
-      In this case, fallback to legacy only
-      */
-        if (!CDN_URL_SET && isSafari) {
-          forceLegacyOnly = true;
-        }
-
-        if (!forceLegacyOnly) {
-          for (let url of modernUrls) {
-            preloadHints.push(
-              `<link rel="modulepreload" href="${url}" crossorigin="anonymous"/>`
-            );
-            criticalChunkScripts.push(
-              `<script type="module" defer src="${url}" nonce="${
-                ctx.nonce
-              }" crossorigin="anonymous"></script>`
-            );
-          }
-        }
-
-        const isSafari10_1 = isSafari && browser.version.startsWith('10.1');
-
-        // Safari 10.1 does not respect nomodule attributes
-        if (forceLegacyOnly || !isSafari10_1) {
-          for (let url of legacyUrls) {
-            const nomoduleAttr = forceLegacyOnly ? '' : ' nomodule';
-            const crossoriginAttr = url.startsWith(__webpack_public_path__)
-              ? ''
-              : ' crossorigin="anonymous"';
-            criticalChunkScripts.push(
-              `<script${nomoduleAttr} defer src="${url}" nonce="${
-                ctx.nonce
-              }"${crossoriginAttr}></script>`
-            );
-          }
+        for (let url of criticalChunkUrls) {
+          const crossoriginAttr = url.startsWith(__webpack_public_path__)
+            ? ''
+            : ' crossorigin="anonymous"';
+          preloadHints.push(
+            `<link rel="preload" href="${url}"${crossoriginAttr}/>`
+          );
+          criticalChunkScripts.push(
+            `<script defer src="${url}" nonce="${
+              ctx.nonce
+            }"${crossoriginAttr}></script>`
+          );
         }
 
         return [
@@ -174,3 +144,26 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 );
 
 export {SSRBodyTemplate};
+
+/*
+Edge must get transpiled classes due to:
+- https://github.com/Microsoft/ChakraCore/issues/5030
+- https://github.com/Microsoft/ChakraCore/issues/4663
+- https://github.com/babel/babel/issues/8019
+Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
+*/
+function checkModuleSupport({name, version}) {
+  if (name === 'Chrome' || name === 'Chrome Headless') {
+    if (majorVersion(version) >= 61) return true;
+  } else if (name === 'Mobile Safari' || name === 'Safari') {
+    // At least Safari 10.1
+    if (majorVersion(version) >= 10 && !version.startsWith('10.0')) return true;
+  } else if (name === 'Firefox') {
+    if (majorVersion(version) >= 60) return true;
+  }
+  return false;
+}
+
+function majorVersion(version) {
+  return parseInt(version.split('.')[0], 10);
+}
