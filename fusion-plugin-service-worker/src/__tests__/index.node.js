@@ -1,3 +1,4 @@
+// @flow
 import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import App from 'fusion-core';
@@ -10,7 +11,7 @@ test('/health request', async t => {
   // Basic /health request
   const ctx_1 = await sim.request('/sw.js');
   t.equal(ctx_1.status, 200, 'sends 200 status on sw request');
-  t.equal(ctx_1.body, 'OK', 'sends OK response body');
+  t.ok(ctx_1.body.startsWith('var serviceWorker'), 'sends correct response');
   t.end();
 
   await app.cleanup();

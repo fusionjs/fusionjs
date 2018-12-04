@@ -17,16 +17,13 @@ export default function getHandlers(assetInfo: AssetInfo) {
         caches
           .open(cacheName)
           .then(cache => {
-            return (
-              cache
-                // $FlowFixMe
-                .addAll(precachePaths)
-                .then(() =>
-                  getOutdatedKeys(cache, cacheablePaths).then(outdatedKeys =>
-                    removeKeys(cache, outdatedKeys)
-                  )
+            return cache
+              .addAll(precachePaths)
+              .then(() =>
+                getOutdatedKeys(cache, cacheablePaths).then(outdatedKeys =>
+                  removeKeys(cache, outdatedKeys)
                 )
-            );
+              );
           })
           .catch(e => {
             throw new Error(`sw: error updating cache ${cacheName}: ${e}`);
@@ -43,26 +40,23 @@ export default function getHandlers(assetInfo: AssetInfo) {
         // bypass service worker, use network
         return;
       }
-      event.waitUntil(
-        // $FlowFixMe
-        event.respondWith(
-          caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) {
-              if (expectsHtml) {
-                const responseCreated = new Date(
-                  cachedResponse.headers.get('date')
-                ).valueOf();
-                if (Date.now() - responseCreated > HTML_TTL) {
-                  // html expired: use the cache, but refresh cache for next time
-                  fetchNCache(event.request, expectsHtml);
-                }
-              }
-              return cachedResponse;
+      const p = caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          if (expectsHtml) {
+            const responseCreated = new Date(
+              cachedResponse.headers.get('date') || 0
+            ).valueOf();
+            if (Date.now() - responseCreated > HTML_TTL) {
+              // html expired: use the cache, but refresh cache for next time
+              fetchNCache(event.request, expectsHtml);
             }
-            return fetchNCache(event.request, expectsHtml);
-          })
-        )
-      );
+          }
+          return cachedResponse;
+        }
+        return fetchNCache(event.request, expectsHtml);
+      });
+      event.respondWith(p);
+      event.waitUntil(p);
     },
   };
 }
@@ -115,4 +109,3 @@ function responseIsHtml(response) {
   const contentType = response.headers.get('content-type');
   return contentType && contentType.indexOf('html') > -1;
 }
-

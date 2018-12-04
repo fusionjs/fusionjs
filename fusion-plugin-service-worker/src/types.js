@@ -12,6 +12,6 @@ export type PluginServiceType = {
 };
 
 export type AssetInfo = {
-  precachePaths: Array<string>,
+  precachePaths: Array<RequestInfo>,
   cacheablePaths: Array<string>,
 };
