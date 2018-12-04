@@ -5,5 +5,7 @@
  *
  * @flow
  */
+import type {FusionPlugin} from 'fusion-core';
+import type {DepsType, ServiceType} from './types.js';
 
-export default null;
+export default (({}: any): FusionPlugin<DepsType, ServiceType>);

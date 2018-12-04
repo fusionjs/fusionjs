@@ -10,6 +10,6 @@ import test from 'tape-cup';
 import browserPlugin from '../browser.js';
 
 test('browser exports null', t => {
-  t.equal(browserPlugin, null);
+  t.deepEqual(browserPlugin, {});
   t.end();
 });
