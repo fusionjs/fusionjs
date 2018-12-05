@@ -29,12 +29,11 @@ export default function(): typeof BaseApp {
       const middleware = compose(this.plugins);
       return () => {
         // TODO(#62): Create noop context object to match server api
-        const ctx = {
+        const ctx: any = {
           url: window.location.path + window.location.search,
           element: null,
           body: null,
         };
-        // $FlowFixMe
         return middleware(ctx, () => Promise.resolve()).then(() => ctx);
       };
     }

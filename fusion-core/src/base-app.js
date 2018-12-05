@@ -13,8 +13,13 @@ import {SSRDecider} from './plugins/ssr';
 
 import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
+interface Register<T> {
+  (Token<T>, mixed): aliaser<Token<T>>;
+  (mixed): aliaser<Token<T>>;
+}
+
 class FusionApp {
-  constructor(el: Element | string, render: *) {
+  constructor(el: Element | string, render: any => any) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
     this._dependedOn = new Set();
@@ -42,17 +47,17 @@ class FusionApp {
   _getService: any => any;
   _dependedOn: Set<any>;
 
-  register(token: *, value: *): aliaser<*> {
-    // $FlowFixMe
-    if (token && token.__plugin__) {
-      value = token;
-      token = createToken('UnnamedPlugin');
-    }
-    if (!(token instanceof TokenImpl) && value === undefined) {
+  register: Register<*> = <T>(tokenOrValue, maybeValue) => {
+    const hasToken = tokenOrValue instanceof TokenImpl;
+    const token = hasToken
+      ? ((tokenOrValue: any): Token<T>)
+      : createToken('UnnamedPlugin');
+    const value: any = hasToken ? maybeValue : tokenOrValue;
+    if (!hasToken && (value == null || !value.__plugin__)) {
       throw new Error(
         __DEV__
           ? `Cannot register ${String(
-              token
+              tokenOrValue
             )} without a token. Did you accidentally register a ${
               __NODE__ ? 'browser' : 'server'
             } plugin on the ${__NODE__ ? 'server' : 'browser'}?`
@@ -69,13 +74,11 @@ class FusionApp {
       };
     }
     token.stacks.push({type: 'register', stack: new Error().stack});
-    // $FlowFixMe
     if (value && value.__plugin__) {
-      // $FlowFixMe
       token.stacks.push({type: 'plugin', stack: value.stack});
     }
     return this._register(token, value);
-  }
+  };
   _register<TResolved>(token: Token<TResolved>, value: *) {
     this.plugins.push(token);
     const {aliases, enhancers} = this.registered.get(getTokenRef(token)) || {
@@ -95,7 +98,7 @@ class FusionApp {
       enhancers,
       token,
     });
-    const alias = (sourceToken: *, destToken: *) => {
+    const alias = (sourceToken, destToken) => {
       const stack = new Error().stack;
       sourceToken.stacks.push({type: 'alias-from', stack});
       destToken.stacks.push({type: 'alias-to', stack});

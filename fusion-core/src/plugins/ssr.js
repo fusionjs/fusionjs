@@ -15,8 +15,7 @@ import type {
 } from '../types.js';
 
 const botRegex = /(bot|crawler|spider)/i;
-// $FlowFixMe - Update type for flow 0.85
-const SSRDecider = createPlugin({
+const SSRDecider = createPlugin<{}, SSRDeciderService>({
   provides: () => {
     return ctx => {
       // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
@@ -97,9 +96,7 @@ function legacySSRBodyTemplate(ctx) {
     .join('');
 
   const safeTitle = escape(title);
-  // $FlowFixMe
   const safeHead = head.map(consumeSanitizedHTML).join('');
-  // $FlowFixMe
   const safeBody = body.map(consumeSanitizedHTML).join('');
 
   const preloadHintLinks = getPreloadHintLinks(ctx);

@@ -108,16 +108,12 @@ const extractedServicelessMiddleware =
   noServiceWithSimpleMiddlewarePlugin.middleware;
 if (extractedServicelessMiddleware) {
   extractedServicelessMiddleware({str: 'hello'}); // no service
-  // $FlowFixMe
-  extractedServicelessMiddleware(); // should fail
 }
 
 /*   - Case: Extract and invoke a full middleware */
 const extractedFullMiddleware = simplePlugin.middleware;
 if (extractedFullMiddleware) {
   extractedFullMiddleware({str: 'hello'}, 'service');
-  // $FlowFixMe
-  extractedFullMiddleware({str: 'hello'}); // should fail
 }
 
 /*   - Case: Cleanup should be covered */

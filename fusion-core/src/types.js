@@ -12,7 +12,14 @@ export type Token<T> = {
   (): T,
   optional: () => void | T,
   stacks: Array<{
-    type: 'token' | 'register' | 'enhance' | 'alias-from' | 'alias-to',
+    // eslint-disable-next-line
+    type:
+      | 'token'
+      | 'plugin'
+      | 'register'
+      | 'enhance'
+      | 'alias-from'
+      | 'alias-to',
     stack: string,
   }>,
 };
@@ -66,3 +73,5 @@ export type aliaser<TToken> = {
 export type cleanupFn = (thing: any) => Promise<void>;
 
 export type SSRBodyTemplate = Context => $PropertyType<Context, 'body'>;
+
+export type RenderType = (any, Context) => any;

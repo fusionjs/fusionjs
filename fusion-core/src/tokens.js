@@ -7,21 +7,22 @@
  */
 
 import {createToken} from './create-token';
-import type {SSRDecider, SSRBodyTemplate, Token, Context} from './types.js';
+import type {
+  RenderType,
+  SSRDecider,
+  SSRBodyTemplate,
+  Context,
+} from './types.js';
+import type {Server} from 'http';
 
-// $FlowFixMe - Update type for flow 0.85
-export const RenderToken = createToken('RenderToken');
-// $FlowFixMe - Update type for flow 0.85
-export const ElementToken = createToken('ElementToken');
-export const SSRDeciderToken: Token<SSRDecider> = createToken(
-  'SSRDeciderToken'
-);
-// $FlowFixMe - Update type for flow 0.85
-export const HttpServerToken = createToken('HttpServerToken');
-export const SSRBodyTemplateToken: Token<SSRBodyTemplate> = createToken(
+export const RenderToken = createToken<RenderType>('RenderToken');
+export const ElementToken = createToken<any>('ElementToken');
+export const SSRDeciderToken = createToken<SSRDecider>('SSRDeciderToken');
+export const HttpServerToken = createToken<Server>('HttpServerToken');
+export const SSRBodyTemplateToken = createToken<SSRBodyTemplate>(
   'SSRBodyTemplateToken'
 );
-export const RoutePrefixToken: Token<string> = createToken('RoutePrefixToken');
+export const RoutePrefixToken = createToken<string>('RoutePrefixToken');
 
 export type CriticalChunkIds = Set<number>;
 
@@ -29,6 +30,6 @@ export type CriticalChunkIdsService = {
   from(ctx: Context): CriticalChunkIds,
 };
 
-export const CriticalChunkIdsToken: Token<CriticalChunkIdsService> = createToken(
+export const CriticalChunkIdsToken = createToken<CriticalChunkIdsService>(
   'CriticalChunkIdsToken'
 );

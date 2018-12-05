@@ -33,7 +33,6 @@ export function compose(middleware: Array<Middleware>): Middleware {
       if (i === middleware.length) fn = next;
       if (!fn) return Promise.resolve();
       try {
-        // $FlowFixMe
         return fn(context, function next() {
           return dispatch(i + 1);
         });
