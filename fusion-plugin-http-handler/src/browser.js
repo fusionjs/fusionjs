@@ -8,4 +8,4 @@
 import type {FusionPlugin} from 'fusion-core';
 import type {DepsType, ServiceType} from './types.js';
 
-export default (({}: any): FusionPlugin<DepsType, ServiceType>);
+export default ((null: any): FusionPlugin<DepsType, ServiceType>);
