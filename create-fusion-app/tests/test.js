@@ -10,23 +10,19 @@ function log(execOutput) {
   console.log(execOutput.stdout);
 }
 
-test(
-  'scaffolded app tests pass',
-  async () => {
-    await exec(`mkdir test-artifacts`);
-    log(
-      await exec(`node ../bin/cli.js test-scaffold`, {cwd: './test-artifacts'})
-    );
+test('scaffolded app tests pass', async () => {
+  await exec(`mkdir test-artifacts`);
+  log(
+    await exec(`node ../bin/cli.js test-scaffold`, {cwd: './test-artifacts'})
+  );
 
-    const options = {cwd: './test-artifacts/test-scaffold'};
-    log(await exec(`yarn build`, options));
+  const options = {cwd: './test-artifacts/test-scaffold'};
+  log(await exec(`yarn build`, options));
 
-    // Spin up server and validate SSR response
-    const {initialResponse, proc} = await startServer();
+  // Spin up server and validate SSR response
+  const {initialResponse, proc} = await startServer();
 
-    expect(initialResponse).toContain('Fusion.js');
+  expect(initialResponse).toContain('Fusion.js');
 
-    proc.kill();
-  },
-  300000
-);
+  proc.kill();
+}, 300000);

@@ -3,17 +3,17 @@
   "version": "0.0.0",
   "main": "index.js",
   "dependencies": {
-    "fusion-cli": "^1.11.0",
-    "fusion-core": "^1.7.0",
-    "fusion-plugin-react-helmet-async": "^1.0.0",
-    "fusion-plugin-react-router": "^1.4.0",
-    "fusion-plugin-styletron-react": "^2.5.3",
-    "fusion-react": "^1.3.0",
-    "fusion-tokens": "^1.1.0",
+    "fusion-cli": "^1.12.1",
+    "fusion-core": "^1.10.0",
+    "fusion-plugin-react-helmet-async": "^1.0.1",
+    "fusion-plugin-react-router": "^1.4.2",
+    "fusion-plugin-styletron-react": "^2.5.4",
+    "fusion-react": "^1.3.4",
+    "fusion-tokens": "^1.1.1",
     "prop-types": "^15.6.2",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "styletron-react": "^4.3.5"
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "styletron-react": "^4.3.6"
   },
   "scripts": {
     "dev": "fusion dev",
@@ -23,6 +23,6 @@
     "start": "fusion start"
   },
   "devDependencies": {
-    "enzyme": "^3.6.0"
+    "enzyme": "^3.7.0"
   }
 }
