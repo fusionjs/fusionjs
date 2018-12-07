@@ -77,7 +77,11 @@ const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
         return async (ctx, next) => {
           if (!browserDataCollected) {
             if (ctx.element) {
-              ctx.template.head.push(html`<meta name="diagnostics" />`);
+              ctx.template.head.push(
+                html`
+                  <meta name="diagnostics" />
+                `
+              );
             }
             if (ctx.method === 'POST' && ctx.path.startsWith('/_diagnostics')) {
               ctx.status = 200;

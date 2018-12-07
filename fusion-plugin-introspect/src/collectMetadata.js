@@ -20,14 +20,14 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
   const lockFileType = fs.existsSync(`${dir}/yarn.lock`)
     ? 'yarn'
     : fs.existsSync(`${dir}/package-lock.json`)
-      ? 'npm'
-      : 'none';
+    ? 'npm'
+    : 'none';
   const lockFile =
     lockFileType === 'yarn'
       ? fs.readFileSync(`${dir}/yarn.lock`, 'utf8')
       : lockFileType === 'npm'
-        ? fs.readFileSync(`${dir}/package-lock.json`, 'utf8')
-        : '';
+      ? fs.readFileSync(`${dir}/package-lock.json`, 'utf8')
+      : '';
 
   return {
     timestamp: Date.now(),
