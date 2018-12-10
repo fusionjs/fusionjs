@@ -17,6 +17,10 @@ import {
   GetInitialStateToken,
 } from './tokens.js';
 
+export type GetInitialStateType<TState> = (
+  ctx: Context
+) => Promise<TState> | TState;
+
 export type StoreWithContextType<S, A, D> = Store<S, A, D> & {ctx: Context};
 
 export type ReactReduxDepsType = {
