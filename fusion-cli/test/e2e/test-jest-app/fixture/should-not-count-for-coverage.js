@@ -1,0 +1,4 @@
+// @noflow
+module.exports = {
+  thisFileShouldNotCountForCoverage: () => {},
+};

@@ -42,14 +42,16 @@ steps:
         run: fusion-cli-node-last
     agents:
       queue: workers
-  - name: ':node: :white_check_mark:'
+  - name: ':node: :white_check_mark: worker %n'
+    parallelism: 5
     command: .buildkite/nodeTests
     plugins:
       'docker-compose#v1.7.0':
         run: fusion-cli
     agents:
       queue: workers
-  - name: ':node: :white_check_mark: node8'
+  - name: ':node: :white_check_mark: node8 worker %n'
+    parallelism: 5
     command: .buildkite/nodeTests
     plugins:
       'docker-compose#v1.7.0':

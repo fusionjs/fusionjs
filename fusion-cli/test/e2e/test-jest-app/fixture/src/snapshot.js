@@ -1,0 +1,2 @@
+// @noflow
+null;

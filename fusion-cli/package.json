@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "git clean -Xfd test/fixtures && node test/index.js"
+    "test": "git clean -Xfd test/fixtures && jest --maxWorkers 1"
   },
   "dependencies": {
     "@babel/core": "^7.1.6",
@@ -29,6 +29,7 @@
     "compression-webpack-plugin": "^2.0.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "enzyme-to-json": "^3.3.4",
+    "fs-extra": "^7.0.1",
     "fusion-plugin-universal-events": "^1.3.0",
     "get-port": "^4.0.0",
     "http-proxy": "^1.17.0",
@@ -75,6 +76,7 @@
     "fusion-react": "1.3.4",
     "fusion-test-utils": "^1.3.0",
     "fusion-tokens": "^1.1.1",
+    "globby": "^8.0.1",
     "prettier": "^1.15.2",
     "puppeteer": "^1.10.0",
     "react": "^16.6.3",

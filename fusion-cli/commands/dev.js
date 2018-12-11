@@ -88,13 +88,19 @@ exports.run = async function(
   compiler.on('done', runAll);
   compiler.on('invalid', () => devRuntime.invalidate());
 
+  function stop() {
+    watcher.close();
+    devRuntime.stop();
+    // $FlowFixMe
+    if (testRuntime) testRuntime.stop();
+  }
+
+  process.on('SIGTERM', () => {
+    stop();
+  });
+
   return {
     compiler,
-    stop() {
-      watcher.close();
-      devRuntime.stop();
-      // $FlowFixMe
-      if (testRuntime) testRuntime.stop();
-    },
+    stop,
   };
 };

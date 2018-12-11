@@ -86,6 +86,8 @@ module.exports.DevelopmentRuntime = function(
   this.run = async function reloadProc() {
     const childPort = await getPort();
     const command = `
+      process.on('SIGTERM', () => process.exit());
+
       const fs = require('fs');
       const path = require('path');
       const chalk = require('chalk');
