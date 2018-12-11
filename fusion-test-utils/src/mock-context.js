@@ -63,6 +63,8 @@ export function createRequestContext(
   // createContext is missing in Koa typings
   const ctx = (new Koa(): any).createContext(req, res);
 
+  ctx.memoized = new Map();
+
   if (options.body) {
     ctx.request.body = options.body;
   }

@@ -7,7 +7,7 @@
  */
 
 import test from 'tape-cup';
-import App, {createPlugin, createToken} from 'fusion-core';
+import App, {createPlugin, createToken, memoize} from 'fusion-core';
 import type {Token, FusionPlugin} from 'fusion-core';
 
 import {getSimulator, getService, test as exportedTest} from '../index.js';
@@ -171,5 +171,29 @@ test('getService - throws as expected due to missing dependency', async t => {
     },
   });
   t.throws(() => getService(() => new App('hi', el => el), simplePlugin));
+  t.end();
+});
+
+test('memoize helper', async t => {
+  const app = new App('hi', el => el);
+  app.register(
+    createPlugin({
+      provides: () => {
+        return {
+          from: memoize(ctx => {
+            return 5;
+          }),
+        };
+      },
+      middleware: (deps, self) => {
+        return (ctx, next) => {
+          t.equal(self.from(ctx), 5);
+          return next();
+        };
+      },
+    })
+  );
+  const sim = getSimulator(app);
+  await sim.render('/');
   t.end();
 });
