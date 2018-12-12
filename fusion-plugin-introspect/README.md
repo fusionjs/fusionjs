@@ -12,6 +12,11 @@ Visualize the tree of plugins in your app
 - [API](#api)
   - [Registration API](#registration-api)
   - [Storage](#storage)
+- [CLI](#cli)
+  - [fusion-run-introspect tokens](#fusion-run-introspect-tokens)
+  - [fusion-run-introspect why](#fusion-run-introspect-why)
+  - [fusion-run-introspect where](#fusion-run-introspect-where)
+  - [fusion-run-introspect middleware](#fusion-run-introspect-middleware)
 
 ---
 
@@ -205,3 +210,69 @@ import {fsStore} from 'fusion-plugin-introspect';
     - `data: Object` - An object that conforms to the [introspection data schema](#data-schema)
   - `storeSync: (data) => void` - called at startup time just in case the app crashes before data collection completes. Saves data to a file synchronously
     - `data: Object` - An object that conforms to the [introspection data schema](#data-schema)
+
+#### CLI
+
+You can introspect the Fusion dependency injection (DI) graph through the command line while an app is running.
+
+```
+yarn fusion-run-introspect
+
+  Usage
+    $ fusion-run-introspect <command> [options]
+
+  Available Commands
+    tokens        List of all DI tokens in order of resolution
+    why           How a DI token is used
+    where         Where a DI token is registered
+    middleware    Which tokens are registered w/ middleware and their order
+
+  For more info, run any command with the `--help` flag
+    $ fusion-run-introspect tokens --help
+    $ fusion-run-introspect why --help
+
+  Options
+    -v, --version    Displays current version
+    -h, --help       Displays this message
+```
+
+##### fusion-run-introspect tokens
+
+```
+yarn fusion-run-introspect tokens
+```
+
+Lists all Fusion DI tokens and the file/line where they are defined
+
+##### fusion-run-introspect why
+
+```
+yarn fusion-run-introspect why <token>
+```
+
+Provides various pieces of information about a token:
+
+- whether it is a plugin
+  - whether the plugin provides a service
+  - whether the plugin contains a middleware
+  - where the plugin is created
+- where the token is created
+- where the token is registered
+- what tokens/plugins are used by this plugin
+- what tokens/plugins depend on this plugin
+
+##### fusion-run-introspect where
+
+```
+yarn fusion-run-introspect where <token>
+```
+
+Displays where the token is registered
+
+##### fusion-run-introspect middleware
+
+```
+yarn fusion-run-introspect tokens
+```
+
+Lists all Fusion middleware in the order that they run
