@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-react-redux",
   "description": "Integrates React and Redux to a Fusion.js application",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-react-redux",
   "files": [
