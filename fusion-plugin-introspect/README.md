@@ -49,13 +49,13 @@ Some commands to try:
 
 ```sh
 # list tokens in order of registration
-fusion-plugin-introspect tokens
+fusion-run-introspect tokens
 
 # display tree of token's dependents and dependencies
-fusion-plugin-introspect why RenderToken
+fusion-run-introspect why RenderToken
 
 # discover more commands
-fusion-plugin-introspect -h
+fusion-run-introspect -h
 ```
 
 ## Full usage example
