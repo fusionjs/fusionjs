@@ -10,7 +10,7 @@
 import type App from 'fusion-core';
 import {collectDependencyData} from './collectDependencyData.js';
 
-const plugin = (app: App) => {
+const plugin = (app: App, _: any) => {
   /* istanbul ignore else  */
   if (__BROWSER__) {
     /* istanbul ignore else  */
