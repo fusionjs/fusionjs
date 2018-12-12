@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-connected-react-router",
   "description": "The `fusion-plugin-connected-react-router` package provides plugin to integrate connected-react-router with your app.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-connected-react-router",
   "files": [
