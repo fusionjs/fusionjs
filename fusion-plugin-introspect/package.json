@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-introspect",
-  "description": "Collect runtime Fusion.js data for debugging",
+  "description": "Visualize the tree of plugins in your app",
   "version": "0.2.1",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-introspect",

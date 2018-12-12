@@ -1,12 +1,13 @@
 # fusion-plugin-introspect
 
-Collects runtime metadata to aid debugging
+Visualize the tree of plugins in your app
 
 ---
 
-### Table of contents
+## Table of contents
 
-- [Usage](#usage)
+- [Try it out](#try-it-out)
+- [Full usage example](#full-usage-example)
 - [Data schema](#data-schema)
 - [API](#api)
   - [Registration API](#registration-api)
@@ -14,7 +15,45 @@ Collects runtime metadata to aid debugging
 
 ---
 
-### Usage
+## Try it out
+
+*(this assumes you've used a fusion scaffolder such as [create-fusion-app](https://github.com/fusionjs/create-fusion-app))*
+
+### 1. Register plugin
+
+`src/main.js`
+
+```js
+import introspect from 'fusion-plugin-introspect';
+
+export default () => {
+  //...
+  app.register(introspect(app));
+};
+```
+
+### 2. Run your app
+
+```sh
+yarn dev
+```
+
+### 3. Inspect with the cli
+
+Some commands to try:
+
+```sh
+# list tokens in order of registration
+fusion-plugin-introspect tokens
+
+# display tree of token's dependents and dependencies
+fusion-plugin-introspect why RenderToken
+
+# discover more commands
+fusion-plugin-introspect -h
+```
+
+## Full usage example
 
 ```js
 import App from 'fusion-core';
@@ -43,7 +82,7 @@ export default () => {
 }
 ```
 
-### Data schema
+## Data schema
 
 The `data` that is passed to `store` and `storeSync` follows this schema:
 
@@ -131,7 +170,7 @@ export type Metadata = {
 
 ---
 
-### API
+## API
 
 #### Registration API
 
