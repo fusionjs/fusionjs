@@ -7,7 +7,7 @@
  */
 /* eslint-env browser */
 
-import type App from 'fusion-core';
+import type App, {FusionPlugin} from 'fusion-core';
 import {collectDependencyData} from './collectDependencyData.js';
 
 const plugin = (app: App, _: any) => {
@@ -22,4 +22,4 @@ const plugin = (app: App, _: any) => {
     }
   }
 };
-export default plugin;
+export default ((plugin: any): (App, Object) => FusionPlugin<void, void>);
