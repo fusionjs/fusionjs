@@ -141,6 +141,14 @@ test('`fusion build` app with dynamic imports integration', async () => {
     await page.$$eval('link[rel="preload"]', els => els.length),
     BASE_COUNT
   );
+  t.ok(
+    await page.$$eval('link[rel="preload"]', els =>
+      // eslint-disable-next-line
+      els.every(el => el.getAttribute('nonce') === window.__NONCE__)
+    ),
+    'all preload hints have correct nonce attribute'
+  );
+
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
