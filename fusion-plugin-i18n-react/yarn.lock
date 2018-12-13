@@ -4605,10 +4605,10 @@ fusion-core@^1.10.0:
     ua-parser-js "^0.7.19"
     uuid "^3.3.2"
 
-fusion-plugin-i18n@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.1.5.tgz#92a22727686675132362eb90a81bc945beebc89b"
-  integrity sha512-xyjxfDXkEj42AniWLYZ/NFGmsvCy6rdg7u4yIhMODAN8jT8JPlGM/ws/7kLr+CxV8glOMiBlac8WKYOw5wrLiw==
+fusion-plugin-i18n@1.1.6-0:
+  version "1.1.6-0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-i18n/-/fusion-plugin-i18n-1.1.6-0.tgz#316ea904378bb8a113bfd3fd230f52958a40abc6"
+  integrity sha512-FFQYY3VtwWbbVkztEhtdvKlrn6o2GLCjVB62CKmQCYUVAaTeutHwZqKNCYE57O23Yl9MFd/rLEIxilQXgAwVkA==
   dependencies:
     eslint-plugin-jest "^22.0.0"
     locale "^0.1.0"
