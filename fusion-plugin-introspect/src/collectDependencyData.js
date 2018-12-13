@@ -58,7 +58,7 @@ const getSources = (stacks, ignore) => {
         .map(line => line.match(/\((.*?)\)/))
         .filter(match => match && match[1])
         .map(match => ((match: any): Array<string>)[1])
-        .map(to => path.relative(process.cwd(), to))
+        .map(to => __NODE__ ? path.relative(process.cwd(), to) : to)
         .shift(),
     };
   });
