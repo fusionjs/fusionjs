@@ -7,6 +7,7 @@
  */
 /* eslint-env browser */
 
+import {createPlugin} from 'fusion-core';
 import type App, {FusionPlugin} from 'fusion-core';
 import {collectDependencyData} from './collectDependencyData.js';
 
@@ -20,6 +21,7 @@ const plugin = (app: App, _: any) => {
       x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
       x.send(JSON.stringify(collectDependencyData(app)));
     }
+    return createPlugin({});
   }
 };
 export default ((plugin: any): (App, Object) => FusionPlugin<void, void>);
