@@ -218,7 +218,7 @@ const Component = prepare(element);
 - `Element: React.Element` - Required. A React element created via `React.createElement`
 - `Component: React.Component` - A React component
 
-Consider using [`fusion-react`](https://github.com/fusionjs/fusion-react) instead of setting up React manually and calling `prepare` directly, since that package does all of that for you.
+Typically, you shouldn't need to call prepare yourself, if you're using `App` from `fusion-react`. The only time you might need to call it is if you imported `App` from `fusion-core` to implement a custom Application class.
 
 The `prepare` function recursively traverses the element rendering tree and awaits the side effects of components decorated with `prepared` (or `dispatched`).
 
