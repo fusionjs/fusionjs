@@ -32,14 +32,14 @@
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "7.11.1",
     "flow-bin": "^0.87.0",
-    "fusion-core": "1.10.0",
+    "fusion-core": "1.10.1",
     "nyc": "13.1.0",
     "prettier": "1.15.2",
     "tape-cup": "4.7.1",
     "unitest": "2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^1.0.0"
+    "fusion-core": "^1.10.1"
   },
   "scripts": {
     "clean": "rm -rf dist",
