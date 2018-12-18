@@ -29,7 +29,8 @@ export default {
           return React.createElement(Component, props);
         }
       }
-      const displayName = Component.displayName || Component.name;
+      const displayName =
+        Component.displayName || Component.name || 'Anonymous';
       HOC.displayName =
         'With' +
         name.replace(/^./, c => c.toUpperCase()) +
