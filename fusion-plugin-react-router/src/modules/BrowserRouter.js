@@ -6,22 +6,38 @@
  * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
-import {Router as BaseRouter} from 'react-router-dom';
+import {Router as BaseRouterUntyped} from 'react-router-dom';
 
-export {Status, NotFound} from './Status';
-export {Redirect} from './Redirect';
+import type {RouterType, RouterHistoryType} from '../types.js';
 
-class BrowserRouter extends React.Component<any> {
-  lastTitle: any;
+export {Status, NotFound} from './Status.js';
+export {Redirect} from './Redirect.js';
+
+const BaseRouter: RouterType = (BaseRouterUntyped: any);
+
+type PropsType = {|
+  context?: any,
+  onRoute?: Function,
+  history: RouterHistoryType,
+  Provider?: RouterType,
+  basename?: string,
+  children?: React.Node,
+|};
+type ContextType = {
+  __IS_PREPARE__: boolean,
+};
+class BrowserRouter extends React.Component<PropsType> {
+  lastTitle: ?string;
+  context: ContextType;
 
   static defaultProps = {
     onRoute: () => {},
     Provider: BaseRouter,
   };
 
-  constructor(props: any = {}, context: any) {
+  constructor(props: PropsType, context: ContextType) {
     super(props, context);
     this.lastTitle = null;
   }
@@ -32,7 +48,7 @@ class BrowserRouter extends React.Component<any> {
       onRoute: (routeData: any) => {
         if (routeData.title !== this.lastTitle && !__IS_PREPARE__) {
           this.lastTitle = routeData.title;
-          this.props.onRoute(routeData);
+          this.props.onRoute && this.props.onRoute(routeData);
         }
       },
     };
@@ -40,6 +56,7 @@ class BrowserRouter extends React.Component<any> {
 
   render() {
     const {Provider, history, basename} = this.props;
+    if (!Provider) throw new Error('Missing Provider for Browser Router');
     return (
       <Provider basename={basename} history={history}>
         {this.props.children}
@@ -64,4 +81,5 @@ BrowserRouter.childContextTypes = {
   onRoute: PropTypes.func.isRequired,
 };
 
-export {BrowserRouter as Router};
+const BrowserRouterTyped: React.ComponentType<PropsType> = BrowserRouter;
+export {BrowserRouterTyped as Router};

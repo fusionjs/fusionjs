@@ -10,8 +10,10 @@
 import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, NotFound} from '../browser';
+
 import createBrowserHistory from 'history/createBrowserHistory';
+
+import {Router, Route, NotFound} from '../browser.js';
 
 test('noops', t => {
   const root = document.createElement('div');

@@ -6,20 +6,40 @@
  * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
-import {Route as ReactRouterRoute} from 'react-router-dom';
+import {Route as ReactRouterRouteUntyped} from 'react-router-dom';
 
-const isEmptyChildren = children => React.Children.count(children) === 0;
+import type {RouteType} from '../types.js';
 
-function Route(props: any, context: any) {
+const ReactRouterRoute: RouteType = ReactRouterRouteUntyped;
+
+const isEmptyChildren = (children: React.Node) =>
+  React.Children.count(children) === 0;
+
+type PropsType = {
+  trackingId?: any,
+  component?: React.ComponentType<*>,
+  render?: (...props: any) => React.Node,
+  children?: ((routeProps: {match: MatchType}) => React.Node) | React.Node,
+};
+type ContextType = {
+  onRoute: any,
+};
+type MatchType = {
+  isExact: boolean,
+  path: string,
+  params: Object,
+  url: string,
+};
+function Route(props: PropsType, context: ContextType) {
   const {trackingId, component, render, children, ...remainingProps} = props;
 
   return (
     <ReactRouterRoute
       {...remainingProps}
       // eslint-disable-next-line react/no-children-prop
-      children={routeProps => {
+      children={(routeProps: {match: MatchType}) => {
         const {match} = routeProps;
         if (match && match.isExact) {
           context.onRoute({

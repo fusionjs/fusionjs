@@ -7,27 +7,30 @@
  */
 
 import * as React from 'react';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {createPlugin, createToken, html, unescape, memoize} from 'fusion-core';
-import {Router as ServerRouter} from './server';
-import {Router as BrowserRouter} from './browser';
 import {Router as DefaultProvider} from 'react-router-dom';
 import createBrowserHistory from 'history/createBrowserHistory';
-import {createServerHistory} from './modules/ServerHistory';
-import type {HistoryType} from './types';
+
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin, createToken, html, unescape, memoize} from 'fusion-core';
 import type {Token, Context, FusionPlugin} from 'fusion-core';
-import {addRoutePrefix} from './modules/utils';
+
+import {Router as ServerRouter} from './server.js';
+import {Router as BrowserRouter} from './browser.js';
+import {createServerHistory} from './modules/ServerHistory.js';
+import {addRoutePrefix} from './modules/utils.js';
+import type {RouterHistoryType} from './types.js';
 
 type ProviderPropsType = {
-  history: HistoryType,
-  basename: string,
+  history: RouterHistoryType,
+  basename?: string,
+  children?: React.Node,
 };
 
 type HistoryWrapperType = {
   from: (
     ctx: Context
   ) => {
-    history: HistoryType,
+    history: RouterHistoryType,
   },
 };
 
@@ -160,7 +163,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   provides() {
     return {
       from: memoize(() => {
-        const api: {history: HistoryType} = ({
+        const api: {history: RouterHistoryType} = ({
           history: null,
         }: any);
         return api;

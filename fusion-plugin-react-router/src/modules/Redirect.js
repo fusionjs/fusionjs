@@ -6,11 +6,36 @@
  * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 
-export class Redirect extends React.Component<any> {
-  constructor(props: any, context: any) {
+import type {LocationShapeType, RedirectType} from '../types.js';
+
+type PropsType = {|
+  to: string | LocationShapeType,
+  push?: boolean,
+  from?: string,
+  exact?: boolean,
+  strict?: boolean,
+  code?: number | string,
+  children?: React.Node,
+|};
+type ContextType = {
+  router: {
+    history: {
+      push: (el: string | LocationShapeType) => void,
+      replace: (el: string | LocationShapeType) => void,
+    },
+    staticContext?: {
+      setCode: (code: number) => void,
+      redirect: (el: string | LocationShapeType) => void,
+    },
+  },
+};
+export class Redirect extends React.Component<PropsType> {
+  context: ContextType;
+
+  constructor(props: PropsType, context: ContextType) {
     super(props, context);
     if (this.isStatic(context)) this.perform();
   }
@@ -24,8 +49,8 @@ export class Redirect extends React.Component<any> {
     if (!this.isStatic()) this.perform();
   }
 
-  isStatic(context: any = this.context) {
-    return context.router && context.router.staticContext;
+  isStatic(context: ContextType = this.context): boolean {
+    return !!(context && context.router && context.router.staticContext);
   }
 
   perform() {
@@ -59,3 +84,6 @@ Redirect.contextTypes = {
     staticContext: PropTypes.object,
   }).isRequired,
 };
+
+// Sanity type checking
+(Redirect: RedirectType);

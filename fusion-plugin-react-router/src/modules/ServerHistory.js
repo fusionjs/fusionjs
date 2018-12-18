@@ -5,9 +5,11 @@
  *
  * @flow
  */
+
 import {createPath, parsePath} from 'history';
-import type {HistoryType, LocationType} from '../types';
-import {addRoutePrefix, removeRoutePrefix} from './utils';
+
+import {addRoutePrefix, removeRoutePrefix} from './utils.js';
+import type {RouterHistoryType, LocationType} from '../types.js';
 
 const createLocation = (
   path: string | LocationType,
@@ -28,12 +30,10 @@ const createPrefixedURL = (
   }
 };
 
-/**
- * @param {string|object} location
- * @param {string} prefix
- * @returns {string}
- */
-const createURL = (location, prefix) => {
+const createURL = (
+  location: string | LocationType,
+  prefix: string
+): string | LocationType => {
   if (typeof location === 'string') {
     return removeRoutePrefix(location, prefix);
   } else {
@@ -57,7 +57,7 @@ export function createServerHistory(
   basename: string,
   context: ContextType,
   location: string | LocationType
-): HistoryType {
+): RouterHistoryType {
   function createHref(location: string | LocationType): string | LocationType {
     return createPrefixedURL(location, basename);
   }
@@ -90,5 +90,5 @@ export function createServerHistory(
     goForward: staticHandler('forward'),
     listen: () => noop,
   };
-  return history;
+  return (history: any);
 }

@@ -6,11 +6,22 @@
  * @flow
  */
 
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 
-export class Status extends React.Component<any> {
-  constructor(props: any, context: any) {
+type StatusPropsType = {
+  children: React.Node,
+  code?: string | number,
+};
+type StatusContextType = {
+  router: {
+    staticContext: {
+      setCode: (code: number) => void,
+    },
+  },
+};
+export class Status extends React.Component<StatusPropsType> {
+  constructor(props: StatusPropsType, context: StatusContextType) {
     super(props, context);
     const {
       router: {staticContext},
@@ -32,6 +43,6 @@ Status.contextTypes = {
   }),
 };
 
-export const NotFound = (props: any) => (
+export const NotFound = <TProps: {children: React.Node}>(props: TProps) => (
   <Status code={404}>{props.children}</Status>
 );
