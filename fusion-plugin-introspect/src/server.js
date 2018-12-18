@@ -85,7 +85,7 @@ const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
             }
             if (ctx.method === 'POST' && ctx.path.startsWith('/_diagnostics')) {
               ctx.status = 200;
-              ctx.body = '';
+              ctx.body = 'OK';
               // if requests happen in parallel, ensure only one triggers store call
               // by setting flag in same tick as flag check at the top of this middleware function
               browserDataCollected = true;
