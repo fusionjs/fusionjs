@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-introspect",
   "description": "Visualize the tree of plugins in your app",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-introspect",
   "main": "./dist/index.js",
