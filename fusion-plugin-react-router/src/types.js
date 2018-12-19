@@ -91,7 +91,7 @@ export type MatchType = {
   url: string,
 };
 
-type ContextRouter = {|
+export type ContextRouterType = {|
   history: RouterHistoryType,
   location: LocationType,
   match: MatchType,
@@ -152,8 +152,8 @@ export type RedirectType = React.ComponentType<{|
 
 export type RouteType = React.ComponentType<{|
   component?: React.ComponentType<*>,
-  render?: (router: ContextRouter) => React.Node,
-  children?: React.ComponentType<ContextRouter> | React.Node,
+  render?: (router: ContextRouterType) => React.Node,
+  children?: React.ComponentType<ContextRouterType> | React.Node,
   path?: string | Array<string>,
   exact?: boolean,
   strict?: boolean,
