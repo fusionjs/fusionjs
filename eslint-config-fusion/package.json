@@ -14,7 +14,7 @@
   },
   "peerDependencies": {
     "eslint-plugin-flowtype": "^3.2.0",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jest": "^21.18.0",
     "eslint-plugin-react": "^7.4.0"
   },
