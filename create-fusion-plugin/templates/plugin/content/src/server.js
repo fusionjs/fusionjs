@@ -32,7 +32,11 @@ const plugin =
         await next();
 
         const serialized = JSON.stringify({value: pluginValue});
-        const script = html`<script type="application/json" id="__PLUGIN_VALUE__">${serialized}</script>`;
+        const script = html`
+          <script type="application/json" id="__PLUGIN_VALUE__">
+            ${serialized}
+          </script>
+        `;
         ctx.template.body.push(script);
       };
     },

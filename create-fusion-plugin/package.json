@@ -17,17 +17,17 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
-    "eslint": "^5.8.0",
+    "eslint": "^5.11.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.0.0",
+    "eslint-plugin-jest": "^22.1.2",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.85.0",
+    "flow-bin": "^0.89.0",
     "jest-cli": "^23.6.0",
-    "prettier": "^1.14.3"
+    "prettier": "^1.15.3"
   },
   "scripts": {
     "clean": "rm -rf test-artifacts",

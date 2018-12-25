@@ -9,18 +9,14 @@ function log(execOutput) {
   console.log(execOutput.stdout);
 }
 
-test(
-  'scaffolded plugin tests pass',
-  async () => {
-    await exec(`mkdir test-artifacts`);
-    log(
-      await exec(`node ../bin/cli.js test-scaffold`, {cwd: './test-artifacts'})
-    );
+test('scaffolded plugin tests pass', async () => {
+  await exec(`mkdir test-artifacts`);
+  log(
+    await exec(`node ../bin/cli.js test-scaffold`, {cwd: './test-artifacts'})
+  );
 
-    const options = {cwd: './test-artifacts/test-scaffold'};
-    log(await exec(`yarn lint`, options));
-    log(await exec(`yarn flow check`, options));
-    log(await exec(`yarn test`, options));
-  },
-  300000
-);
+  const options = {cwd: './test-artifacts/test-scaffold'};
+  log(await exec(`yarn lint`, options));
+  log(await exec(`yarn flow check`, options));
+  log(await exec(`yarn test`, options));
+}, 300000);
