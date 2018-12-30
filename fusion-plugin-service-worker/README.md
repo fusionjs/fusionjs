@@ -23,7 +23,7 @@ yarn add fusion-plugin-service-worker
 To use the default service worker, your `src/sw.js` should look like this:
 
 ```js
-import {getHandlers} from "fusion-plugin-sw";
+import {getHandlers} from "fusion-plugin-service-worker";
 
 export default (assetInfo) => {
   const {onFetch, onInstall} = getHandlers(assetInfo);
