@@ -74,7 +74,7 @@ export function withRPCRedux(
         return React.createElement(Component, props);
       }
     }
-    const displayName = Component.displayName || Component.name;
+    const displayName = Component.displayName || Component.name || 'Anonymous';
     withRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
     withRPCRedux.contextTypes = {
       rpc: PropTypes.object.isRequired,
