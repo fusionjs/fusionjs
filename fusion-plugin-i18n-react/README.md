@@ -303,9 +303,10 @@ export default () => {
 }
 
 // src/hello.js
+import {withServices} from 'fusion-react';
 import {I18nToken} from 'fusion-plugin-i18n-react';
 
-export default withDependencies({I18n: I18nToken})(({I18n}) => {
+export default withServices({I18n: I18nToken})(({I18n}) => {
   return withMiddleware((ctx, next) => {
     if (__NODE__ && ctx.path === '/hello') {
       const i18n = I18n(ctx);
