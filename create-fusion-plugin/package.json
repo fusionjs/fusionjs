@@ -33,7 +33,6 @@
     "clean": "rm -rf test-artifacts",
     "lint": "eslint .",
     "test": "yarn clean && jest",
-    "flow": "flow",
     "postinstall": "cd ./templates/plugin/content && yarn install"
   },
   "jest": {
