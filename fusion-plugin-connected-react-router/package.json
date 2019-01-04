@@ -63,7 +63,6 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "flow": "flow check",
     "lint": "eslint . --ignore-path .gitignore",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
