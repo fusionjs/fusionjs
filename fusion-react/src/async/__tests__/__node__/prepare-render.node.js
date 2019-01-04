@@ -265,7 +265,7 @@ tape('Preparing an app with sibling async components', t => {
       'test',
       'passes props through to prepared component correctly'
     );
-    return Promise.resolve();
+    return;
   })(SimpleComponent);
   const app = (
     <div>
