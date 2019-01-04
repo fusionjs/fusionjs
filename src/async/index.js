@@ -21,7 +21,7 @@ const prepareTyped: (
 ) => Promise<React.ComponentType<any>> = prepare;
 
 const preparedTyped: (
-  sideEffect: (props: Object, context: Object) => Promise<any>,
+  sideEffect: (props: Object, context: Object) => Promise<any> | any,
   opts?: {
     defer?: boolean,
     boundary?: boolean,
