@@ -3,10 +3,8 @@ FROM $BASE_IMAGE
 
 WORKDIR /create-fusion-plugin
 
-COPY package.json yarn.lock /create-fusion-plugin/
+COPY . . 
 
 RUN yarn
-
-COPY templates/plugin/content/package.json templates/plugin/content/yarn.lock /create-fusion-plugin/templates/plugin/content/
 
 RUN cd templates/plugin/content && yarn --ignore-scripts

@@ -3,6 +3,10 @@
   "description": "A Fusion.js plugin",
   "version": "0.0.0",
   "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
   "repository": "yourorg/fusion-plugin-yourplugin",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
