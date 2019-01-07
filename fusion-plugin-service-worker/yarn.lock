@@ -2332,9 +2332,9 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
-flow-bin@^0.87.0:
-  version "0.87.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.87.0.tgz#fab7f984d8cc767e93fa9eb01cf7d57ed744f19d"
+flow-bin@^0.89.0:
+  version "0.89.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.89.0.tgz#6bd29c2af7e0f429797f820662f33749105c32fa"
 
 for-each@~0.3.3:
   version "0.3.3"
