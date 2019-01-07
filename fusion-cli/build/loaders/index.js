@@ -39,6 +39,10 @@ const loaderIndex = {
     alias: '__SECRET_SYNC_CHUNK_IDS_LOADER__',
     path: require.resolve('./sync-chunk-ids-loader.js'),
   },
+  swLoader: {
+    alias: '__SECRET_SW_LOADER__',
+    path: require.resolve('./sw-loader.js'),
+  },
 };
 
 module.exports = loaderIndex;

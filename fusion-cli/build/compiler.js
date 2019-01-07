@@ -132,7 +132,7 @@ function Compiler(
 
   const dev = env === 'development';
   const compiler = webpack([
-    getWebpackConfig({id: 'client-legacy', dev, ...sharedOpts}),
+    getWebpackConfig({id: 'client-modern', dev, ...sharedOpts}),
     getWebpackConfig({id: 'server', dev, ...sharedOpts}),
   ]);
 

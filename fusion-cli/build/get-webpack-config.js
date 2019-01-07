@@ -34,6 +34,7 @@ const {
   chunkUrlMapLoader,
   syncChunkIdsLoader,
   syncChunkPathsLoader,
+  swLoader,
 } = require('./loaders/index.js');
 const {
   translationsManifestContextKey,
@@ -45,13 +46,21 @@ const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrument
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
 
 /*::
-type Runtime = "server" | "client";
+type Runtime = "server" | "client" | "sw";
 */
 
 const COMPILATIONS /*: {[string]: Runtime} */ = {
   server: 'server',
-  'client-legacy': 'client',
+  'client-modern': 'client',
+  sw: 'sw',
 };
+const EXCLUDE_TRANSPILATION_PATTERNS = [
+  /node_modules\/mapbox-gl\//,
+  /node_modules\/react-dom\//,
+  /node_modules\/react\//,
+  /node_modules\/core-js\//,
+];
+const JS_EXT_PATTERN = /\.jsx?$/;
 
 /*::
 import type {
@@ -64,7 +73,7 @@ import type {
   FusionRC
 } from "./load-fusionrc.js";
 
-type WebpackConfigOpts = {|
+export type WebpackConfigOpts = {|
   id: $Keys<typeof COMPILATIONS>,
   dir: string,
   dev: boolean,
@@ -176,7 +185,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   return {
     name: runtime,
-    target: {server: 'node', client: 'web'}[runtime],
+    target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
     entry: {
       main: [
         runtime === 'client' &&
@@ -213,7 +222,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
      */
     // TODO(#6): what about node v8 inspector?
     devtool:
-      runtime === 'client' && !dev
+      (runtime === 'client' && !dev) || runtime === 'sw'
         ? 'hidden-source-map'
         : 'cheap-module-source-map',
     output: {
@@ -258,16 +267,39 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'server' && {
-          compiler: 'server',
-          test: /\.jsx?$/,
-          exclude: [
-            // Blacklist mapbox-gl package because of issues with babel-loader and its AMD bundle
-            /node_modules\/mapbox-gl/,
-            // Blacklist known ES5 packages for build performance
-            /node_modules\/react-dom/,
-            /node_modules\/react/,
-            /node_modules\/core-js/,
+          compiler: id => id === 'server',
+          test: JS_EXT_PATTERN,
+          exclude: EXCLUDE_TRANSPILATION_PATTERNS,
+          use: [
+            {
+              loader: babelLoader.path,
+              options: {
+                ...babelConfig,
+                /**
+                 * Fusion-specific transforms (not applied to node_modules)
+                 */
+                overrides: [
+                  {
+                    include: [
+                      // Explictly only transpile user source code as well as fusion-cli entry files
+                      path.join(dir, 'src'),
+                      /fusion-cli\/entries/,
+                      /fusion-cli\/plugins/,
+                    ],
+                    ...babelOverrides,
+                  },
+                ],
+              },
+            },
           ],
+        },
+        /**
+         * Global transforms (including ES2017+ transpilations)
+         */
+        (runtime === 'client' || runtime === 'sw') && {
+          compiler: id => id === 'client' || id === 'sw',
+          test: JS_EXT_PATTERN,
+          exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
               loader: babelLoader.path,
@@ -295,53 +327,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'client' && {
-          compiler: 'client',
-          test: /\.jsx?$/,
-          exclude: [
-            // Blacklist mapbox-gl package because of issues with babel-loader and its AMD bundle
-            /node_modules\/mapbox-gl/,
-            // Blacklist known ES5 packages for build performance
-            /node_modules\/react-dom/,
-            /node_modules\/react/,
-            /node_modules\/core-js/,
-          ],
-          use: [
-            {
-              loader: babelLoader.path,
-              options: {
-                ...babelConfig,
-                /**
-                 * Fusion-specific transforms (not applied to node_modules)
-                 */
-                overrides: [
-                  {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli\/entries/,
-                      /fusion-cli\/plugins/,
-                    ],
-                    ...babelOverrides,
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        /**
-         * Global transforms (including ES2017+ transpilations)
-         */
-        runtime === 'client' && {
-          compiler: 'legacy-client-legacy',
-          test: /\.jsx?$/,
-          exclude: [
-            // Blacklist mapbox-gl package because of issues with babel-loader and its AMD bundle
-            /node_modules\/mapbox-gl\//,
-            // Blacklist known ES5 packages for build performance
-            /node_modules\/react-dom\//,
-            /node_modules\/react\//,
-            /node_modules\/core-js\//,
-          ],
+          compiler: id => id === 'client-legacy',
+          test: JS_EXT_PATTERN,
+          exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
               loader: babelLoader.path,
@@ -422,6 +410,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [syncChunkPathsLoader.alias]: syncChunkPathsLoader.path,
         [chunkUrlMapLoader.alias]: chunkUrlMapLoader.path,
         [i18nManifestLoader.alias]: i18nManifestLoader.path,
+        [swLoader.alias]: swLoader.path,
       },
     },
     plugins: [
@@ -433,6 +422,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
       new ProgressBarPlugin(),
+      runtime === 'server' &&
+        new LoaderContextProviderPlugin('optsContext', opts),
       new LoaderContextProviderPlugin(devContextKey, dev),
       runtime === 'server' &&
         new LoaderContextProviderPlugin(
@@ -487,10 +478,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           banner: getEnvBanner(env),
         }),
       new webpack.EnvironmentPlugin({NODE_ENV: env}),
-      id === 'client-legacy' &&
+      id === 'client-modern' &&
         new ClientChunkMetadataStateHydratorPlugin(state.clientChunkMetadata),
-      id === 'client-legacy' &&
+      id === 'client-modern' &&
         new ChildCompilationPlugin({
+          name: 'client-legacy',
           entry: [
             path.resolve(__dirname, '../entries/client-public-path.js'),
             path.resolve(__dirname, '../entries/client-entry.js'),

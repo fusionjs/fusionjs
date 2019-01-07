@@ -11,7 +11,7 @@
 module.exports = createNamedModuleVisitor;
 
 /*::
-  type RefsHandlerT = (t: Object, context: Object, refs: Object[]) => any;
+  type RefsHandlerT = (t: Object, context: Object, refs: Object[], specifierName: string, specifier: Object) => any;
 */
 
 /**
@@ -54,7 +54,7 @@ function createNamedModuleVisitor(
           const specifierName = specifier.get('imported').node.name;
           if (compareToModuleName(specifierName)) {
             // $FlowFixMe
-            refsHandler(t, state, refPaths, specifierName);
+            refsHandler(t, state, refPaths, specifierName, specifier);
           }
         } else if (t.isImportNamespaceSpecifier(specifier)) {
           // import * as pkg from 'packageName';

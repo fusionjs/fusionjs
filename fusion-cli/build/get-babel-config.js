@@ -143,6 +143,7 @@ function fusionPreset(
       require.resolve('./babel-plugins/babel-plugin-asseturl'),
       require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
+      require.resolve('./babel-plugins/babel-plugin-sw'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-paths'),
       require.resolve('./babel-plugins/babel-plugin-chunkid'),
       [

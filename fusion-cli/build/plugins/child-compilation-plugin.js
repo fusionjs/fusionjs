@@ -14,6 +14,7 @@ const JsonpTemplatePlugin = require('webpack/lib/web/JsonpTemplatePlugin.js');
 import type {SyncState} from "../shared-state-containers.js";
 
 type Opts = {
+  name: string;
   enabledState: SyncState<boolean>,
   entry: Array<any>,
   plugins: Object => Array<any>,
@@ -23,12 +24,14 @@ type Opts = {
 
 class ChildCompilationPlugin {
   /*::
+  name: string;
   enabledState: SyncState<boolean>;
   entry: Array<string>;
   plugins: Object => Array<any>;
   outputOptions: Object;
   */
   constructor(opts /*: Opts*/) {
+    this.name = opts.name;
     this.enabledState = opts.enabledState;
     this.entry = opts.entry;
     this.plugins = opts.plugins;
@@ -41,7 +44,7 @@ class ChildCompilationPlugin {
         return void callback();
       }
       const childCompiler = compilation.createChildCompiler(
-        'legacy-client-legacy',
+        this.name,
         this.outputOptions,
         [
           // "main" is default chunk name for string/array entries, see:

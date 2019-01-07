@@ -1,0 +1,4 @@
+import { swTemplate as frameworkSwTemplate } from "__SECRET_SW_LOADER__!";
+import swTemplate from 'sw-template';
+frameworkSwTemplate();
+swTemplate();

@@ -1,0 +1,5 @@
+import { swTemplate as frameworkSwTemplate } from 'fusion-cli/sw';
+import swTemplate from 'sw-template';
+
+frameworkSwTemplate();
+swTemplate();
