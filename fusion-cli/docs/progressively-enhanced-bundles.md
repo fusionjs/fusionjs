@@ -25,7 +25,7 @@ This behavior only happens with `fusion dev`; both modern and legacy builds are 
 
 ### What about Edge?
 
-ChakraCore has a few bugs related to native ES6 classes and subclassing that requires transpilation to ES5 as a workaround. Rather than degrade compliant browsers, Edge is served the legacy bundle. Given that ES6 classes is one of the costlier features to polyfill/transpile and Edge market share is low, this tradeoff seems favorable.
+ChakraCore has [a few bugs](https://github.com/babel/babel/issues/8019) related to [native ES6 classes](https://github.com/Microsoft/ChakraCore/issues/5030) and [subclassing](https://github.com/Microsoft/ChakraCore/issues/4663) that requires transpilation to ES5 as a workaround. Rather than degrade compliant browsers, Edge is served the legacy bundle. Given that ES6 classes is one of the costlier features to polyfill/transpile and Edge market share is low, this tradeoff seems favorable.
 
 ### What about Safari 10.1-11?
 
