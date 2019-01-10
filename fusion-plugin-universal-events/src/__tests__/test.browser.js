@@ -6,6 +6,7 @@
  * @flow
  */
 
+/* eslint-env browser */
 import test from 'tape-cup';
 
 import App from 'fusion-core';
@@ -19,6 +20,10 @@ import {
   UniversalEventsBatchStorageToken,
   inMemoryBatchStorage as store,
 } from '../storage/index.js';
+
+// Set document.visibilityState to test flushBeforeTerminated
+Object.defineProperty(document, 'visibilityState', {value: 'hidden'});
+const visibilitychangeEvent = new Event('visibilitychange');
 
 /* Test helpers */
 function getApp(fetch: Fetch) {
@@ -82,7 +87,7 @@ test('Browser EventEmitter', async t => {
         emitted = true;
       });
       emitter.emit('a', {x: 1});
-      emitter.flush();
+      window.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -107,7 +112,7 @@ test('Browser EventEmitter adds events back to queue if they fail to send', asyn
       const emitter = events.from(ctx);
       t.equal(emitter, events);
       emitter.emit('a', {x: 1});
-      emitter.flush();
+      window.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -130,7 +135,7 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
       const emitter = events.from(ctx);
       t.equal(emitter, events);
       emitter.emit('a', {x: 1});
-      emitter.flush();
+      window.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };

@@ -6,7 +6,7 @@ The `fusion-plugin-universal-events` is commonly required by other Fusion.js plu
 
 It's useful for when you want to collect data about user actions or other metrics, and send them in bulk to the server to minimize the number of HTTP requests.
 
-For convenience, this plugin automatically flushes its queue on page unload.
+For convenience, this plugin automatically flushes its queue before page unload on `document.visibilityState === 'hidden'`.
 
 If you need to use the universal event emitter from React, use [`fusion-plugin-universal-events-react`](https://github.com/fusionjs/fusion-plugin-universal-events-react)
 
