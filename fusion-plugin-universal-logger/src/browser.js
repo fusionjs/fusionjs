@@ -51,13 +51,19 @@ const plugin =
           });
         }
         log(level, ...args) {
-          return emitter.emit('universal-log', {
+          emitter.emit('universal-log', {
             level,
             args: args.map(normalizeErrors),
           });
+
+          // send errors immediately instead of batching to prevent
+          // unwieldy batch sizes
+          if (level === 'error') {
+            // $FlowFixMe
+            emitter.flush().catch(error => this.log('error', error));
+          }
         }
       }
-      // $FlowFixMe
       return new UniversalLogger();
     },
   });

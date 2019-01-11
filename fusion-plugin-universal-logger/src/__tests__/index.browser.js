@@ -32,8 +32,12 @@ const createMockEmitter = (
     off: () => {},
     mapEvent: () => {},
     handleEvent: () => {},
-    flush: (): void => {},
+    async flush() {
+      this.flushCount++;
+    },
+    flushCount: 0,
   };
+  // $FlowFixMe
   return emitter;
 };
 
@@ -65,7 +69,7 @@ test('browser logger', t => {
 });
 
 test('browser logger with errors', t => {
-  let called = false;
+  t.plan(6);
   const app = new App('el', el => el);
   app.register(LoggerToken, plugin);
 
@@ -79,7 +83,11 @@ test('browser logger with errors', t => {
     t.equal(typeof payload.args[1].error.stack, 'string');
     // $FlowFixMe
     t.equal(typeof payload.args[1].error.message, 'string');
-    called = true;
+
+    setTimeout(() => {
+      // $FlowFixMe
+      t.equal(mockEmitter.flushCount, 1, 'error immediately flushed');
+    }, 0);
   });
   const mockEmitterPlugin = createPlugin({
     provides: () => mockEmitter,
@@ -87,13 +95,10 @@ test('browser logger with errors', t => {
 
   app.register(UniversalEventsToken, mockEmitterPlugin);
   app.middleware({logger: LoggerToken}, ({logger}) => {
-    // $FlowFixMe
     logger.error('some-message', new Error('fail'));
     return (ctx, next) => next();
   });
   getSimulator(app);
-  t.equals(called, true, 'called');
-  t.end();
 });
 
 test('browser logger with errors as first argument', t => {
