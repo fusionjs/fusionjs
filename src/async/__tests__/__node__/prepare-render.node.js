@@ -451,9 +451,9 @@ tape('Preparing an async app with componentDidUpdate option', t => {
 
 tape('Preparing React.forwardRef', t => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef((props, ref) => (
-    <div ref={ref}>{props.children}</div>
-  ));
+  const Forwarded = React.forwardRef(function Inner(props, ref) {
+    return <div ref={ref}>{props.children}</div>;
+  });
 
   const app = (
     <Forwarded>
@@ -472,9 +472,9 @@ tape('Preparing React.forwardRef', t => {
 
 tape('Preparing React.forwardRef with async children', t => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef((props, ref) => (
-    <div ref={ref}>{props.children}</div>
-  ));
+  const Forwarded = React.forwardRef(function Inner(props, ref) {
+    return <div ref={ref}>{props.children}</div>;
+  });
   let numChildRenders = 0;
   let numPrepares = 0;
   function SimplePresentational() {

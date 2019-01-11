@@ -8,7 +8,7 @@
 
 export default function isReactFunctionalComponent(type: mixed) {
   if (
-    typeof type === 'function' &&
+    type instanceof Function &&
     (type.prototype == null || !type.prototype.render)
   )
     return true;
