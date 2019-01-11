@@ -48,7 +48,6 @@
     "fusion-core": "^1.0.0",
     "fusion-tokens": "^1.0.1",
     "react": "14.x - 16.x",
-    "react-redux": ">=5.0.6",
     "redux": ">=3.7.2"
   },
   "scripts": {

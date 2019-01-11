@@ -20,7 +20,8 @@ yarn add fusion-plugin-service-worker
 
 ### Default Service Worker
 
-To use the default service worker, your `src/sw.js` should look like this:
+To use the default service worker, your `src/sw.js` should probably look like this:
+(you can take advantage of the `handlers` module to reduce boilerplate)
 
 ```js
 import {getHandlers} from "fusion-plugin-service-worker";
@@ -34,7 +35,7 @@ export default (assetInfo) => {
 
 ### Custom Service Worker
 
-Customize the ServiceWorker by editing `src/sw.js` in your app.
+Customize the ServiceWorker by editing `src/sw.js` in your app. It shares the same transpile logic as regular fusion bundles.
 
 ---
 
@@ -42,9 +43,12 @@ Customize the ServiceWorker by editing `src/sw.js` in your app.
 ```js
 // src/main.js
 import App from 'fusion-react';
-import ServiceWorker from 'fusion-plugin-service-worker';
 
-app.register(ServiceWorker)
+import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
+import SwPlugin, {SWTemplateFunctionToken} from 'fusion-plugin-service-worker';
+
+app.register(SWTemplateFunctionToken, swTemplateFunction);
+app.register(SwPlugin);
 ```
 
 The browser will automatically register the default service worker on page load.
