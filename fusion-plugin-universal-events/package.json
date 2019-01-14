@@ -1,14 +1,11 @@
 {
   "name": "fusion-plugin-universal-events",
   "description": "Events Emitter",
-  "version": "1.3.0",
+  "version": "1.3.1-0",
   "repository": "fusionjs/fusion-plugin-universal-events",
   "keywords": [],
   "license": "MIT",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -54,7 +51,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
+    "just-test":
+      "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "prepublish": "npm run transpile"
   },
