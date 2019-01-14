@@ -27,6 +27,7 @@ import type {Context, Token} from 'fusion-core';
 
 import serverRender from './server';
 import clientRender from './client';
+import {LoggerToken} from 'fusion-tokens';
 
 export type InitApolloClientType<TInitialState> = (
   ctx: Context,
@@ -56,14 +57,15 @@ export default class App extends CoreApp {
     const renderer = createPlugin({
       deps: {
         getApolloClient: ApolloClientToken,
+        logger: LoggerToken.optional,
       },
-      provides() {
+      provides({logger}) {
         return el => {
           return prepare(el).then(() => {
             return render
               ? render(el)
               : __NODE__
-              ? serverRender(el)
+              ? serverRender(el, logger)
               : clientRender(el);
           });
         };
