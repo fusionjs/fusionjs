@@ -32,6 +32,11 @@ module.exports = {
         default: 'info',
         describe: 'Log level to show',
       },
+      preserveNames: {
+        type: 'boolean',
+        default: false,
+        describe: 'Disable name mangling during script minification',
+      },
     },
   },
   dev: {

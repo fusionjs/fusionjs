@@ -78,6 +78,7 @@ export type WebpackConfigOpts = {|
   dir: string,
   dev: boolean,
   watch: boolean,
+  preserveNames: boolean,
   state: {
     clientChunkMetadata: ClientChunkMetadataState,
     legacyClientChunkMetadata: ClientChunkMetadataState,
@@ -548,6 +549,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                     // https://github.com/mishoo/UglifyJS2/issues/2842
                     inline: 1,
                   },
+
+                  keep_fnames: opts.preserveNames,
+                  keep_classnames: opts.preserveNames,
                 },
               }),
             ]

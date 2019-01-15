@@ -91,7 +91,8 @@ type CompilerOpts = {
   env: "production" | "development",
   watch?: boolean,
   forceLegacyBuild?: boolean,
-  logger?: any
+  logger?: any,
+  preserveNames?: boolean,
 };
 */
 
@@ -100,6 +101,7 @@ function Compiler(
     dir = '.',
     env,
     forceLegacyBuild,
+    preserveNames,
     watch = false,
     logger = console,
   } /*: CompilerOpts */
@@ -128,7 +130,14 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  const sharedOpts = {dir: root, watch, state, fusionConfig, legacyPkgConfig};
+  const sharedOpts = {
+    dir: root,
+    watch,
+    state,
+    fusionConfig,
+    legacyPkgConfig,
+    preserveNames,
+  };
 
   const dev = env === 'development';
   const compiler = webpack([
