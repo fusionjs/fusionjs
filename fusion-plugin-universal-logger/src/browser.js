@@ -54,6 +54,7 @@ const plugin =
           emitter.emit('universal-log', {
             level,
             args: args.map(normalizeErrors),
+            source: 'browser',
           });
 
           // send errors immediately instead of batching to prevent

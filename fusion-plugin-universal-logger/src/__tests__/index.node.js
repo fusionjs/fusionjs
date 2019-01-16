@@ -28,7 +28,7 @@ type SupportedLevelsType =
   | 'silly';
 
 test('Server logger', async t => {
-  let called = false;
+  t.plan(4);
   class Transport extends TransportStream {
     name: string;
 
@@ -38,8 +38,7 @@ test('Server logger', async t => {
     }
     log({level, message}: {level: SupportedLevelsType, message: string}): void {
       t.equals(level, 'info', 'level is ok');
-      t.equals(message, 'test', 'message is ok');
-      called = true;
+      t.equals(message, 'test message', 'message is ok');
     }
   }
 
@@ -47,14 +46,23 @@ test('Server logger', async t => {
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
   app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});
-  app.middleware({logger: LoggerToken}, ({logger}) => {
-    t.ok(logger);
-    logger.info('test');
-    return (ctx, next) => next();
-  });
+  app.middleware(
+    {events: UniversalEventsToken, logger: LoggerToken},
+    ({events, logger}) => {
+      events.on('universal-log', ({args, level}) => {
+        t.equals(
+          args[0],
+          'test message',
+          'all logs are passed through event emitter'
+        );
+      });
+
+      t.ok(logger);
+      logger.info('test message');
+      return (ctx, next) => next();
+    }
+  );
   getSimulator(app);
-  t.equals(called, true, 'called');
-  t.end();
 });
 
 test('Server logger listening on events', async t => {
