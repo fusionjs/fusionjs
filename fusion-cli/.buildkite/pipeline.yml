@@ -42,7 +42,7 @@ steps:
         run: fusion-cli-node-last
     agents:
       queue: workers
-  - name: ':node: :white_check_mark: worker %n'
+  - name: ':node: :white_check_mark:'
     parallelism: 5
     command: .buildkite/nodeTests
     plugins:
@@ -50,7 +50,7 @@ steps:
         run: fusion-cli
     agents:
       queue: workers
-  - name: ':node: :white_check_mark: node8 worker %n'
+  - name: ':node: :white_check_mark: node8'
     parallelism: 5
     command: .buildkite/nodeTests
     plugins:
