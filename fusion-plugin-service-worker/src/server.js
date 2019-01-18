@@ -16,7 +16,6 @@ export default ((__NODE__ &&
     deps: {
       templateFn: SWTemplateFunctionToken,
     },
-
     middleware: ({templateFn}) => {
       return async (ctx, next) => {
         if (__NODE__) {
