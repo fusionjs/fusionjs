@@ -260,3 +260,31 @@ export default (ctx) => {
   return {locale, translations};
 }
 ```
+
+#### Custom locale resolver
+
+If you want to use the default loader, but want to provide a custom locale resolver, you can pass it into `createI18nLoader`
+
+```js
+// src/main.js
+import App from 'fusion-core';
+import I18n, {createI18nLoader, I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n';
+import {FetchToken} from 'fusion-tokens';
+import fetch from 'unfetch';
+
+// use custom locale header instead of default
+const myLocaleResolver = (ctx) => ctx.headers['my-locale-header'];
+
+export default () => {
+  const app = new App(<div></div>);
+
+  app.register(I18nToken, I18n);
+  __NODE__
+    ? app.register(I18nLoaderToken, createI18nLoader(myLocaleResolver));
+    : app.register(FetchToken, fetch);
+
+  // ....
+
+  return app;
+}
+```
