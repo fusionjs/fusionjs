@@ -11,6 +11,7 @@ import type {
   Middleware,
   Token,
   SSRBodyTemplate,
+  RenderType as Render,
 } from './types.js';
 
 import BaseApp from './base-app';
@@ -62,4 +63,5 @@ export type {
   Middleware,
   Token,
   SSRBodyTemplate,
+  Render,
 };
