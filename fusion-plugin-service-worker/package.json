@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-service-worker",
   "description": "A Fusion.js plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-service-worker",
   "main": "./dist/index.js",
