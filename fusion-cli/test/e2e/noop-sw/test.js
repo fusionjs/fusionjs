@@ -21,7 +21,7 @@ test('sw bundle works with serialized/deserialized arguments', async () => {
   const result = await request(`http://localhost:${port}/sw.js`);
   t.deepEqual(
     eval(result),
-    {foo: 'bar'},
+    [{foo: 'bar'}, 'browser.es2017.es.js'],
     'arguments serialized/deserialized correctly'
   );
 

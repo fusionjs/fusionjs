@@ -392,7 +392,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     ].filter(Boolean),
     resolve: {
       aliasFields: [
-        runtime === 'client' && 'browser',
+        (runtime === 'client' || runtime === 'sw') && 'browser',
         'es2015',
         'es2017',
       ].filter(Boolean),
