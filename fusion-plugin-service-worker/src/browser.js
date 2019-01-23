@@ -5,12 +5,7 @@
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 
-import {SWTemplateFunctionToken} from './tokens';
-
 export default ((createPlugin({
-  deps: {
-    templateFn: SWTemplateFunctionToken,
-  },
   middleware() {
     return (ctx, next) => {
       if ('serviceWorker' in window.navigator) {
