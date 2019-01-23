@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "fusion-cli": "^1.13.1",
-    "fusion-plugin-i18n": "1.1.6",
+    "fusion-plugin-i18n": "^1.2.0",
     "prop-types": "^15.6.2"
   },
   "peerDependencies": {
