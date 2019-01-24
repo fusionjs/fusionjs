@@ -151,7 +151,7 @@ function Compiler(
   this.start = cb => {
     cb = cb || function noop(err, stats) {};
     // Handler may be called multiple times by `watch`
-    // But only call `cb` the first tiem
+    // But only call `cb` the first time
     // subsequent rebuilds are subscribed to with 'compiler.on('done')'
     let hasCalledCb = false;
     const handler = (err, stats) => {
