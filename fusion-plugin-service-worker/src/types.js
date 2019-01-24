@@ -15,3 +15,5 @@ export type AssetInfo = {
   precachePaths: Array<RequestInfo>,
   cacheablePaths: Array<string>,
 };
+
+export type ConfigTokenType = any;
