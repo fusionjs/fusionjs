@@ -1,36 +1,37 @@
 // @flow
 import test from 'tape-cup';
 import sinon from 'sinon';
-import getMockRpcHandlers from '../mock-rpc-handlers';
-import ResponseError from '../response-error';
+
+import getMockRpcHandlers from '../mock-rpc-handlers.js';
+import type {RpcResponseMap} from '../mock-rpc-handlers.js';
+import ResponseError from '../response-error.js';
 
 test('mockRpcHandlers', async t => {
   t.plan(4);
-  const rpcFixtures = [
-    {
-      getUser: {
-        firstName: 'John',
-        lastName: 'Doe',
-        uuid: 123,
+  const getUserFixture = {
+    getUser: {
+      firstName: 'John',
+      lastName: 'Doe',
+      uuid: 123,
+    },
+  };
+  const updateUserFixture: {updateUser: RpcResponseMap | ResponseError} = {
+    updateUser: [
+      {
+        args: [{firstName: 'Jane'}],
+        response: {
+          firstName: 'Jane',
+          lastName: 'Doe',
+          uuid: 123,
+        },
       },
-    },
-    {
-      updateUser: [
-        {
-          args: [{firstName: 'Jane'}],
-          response: {
-            firstName: 'Jane',
-            lastName: 'Doe',
-            uuid: 123,
-          },
-        },
-        {
-          args: [{firstName: ''}],
-          response: new ResponseError('Username cant be empty'),
-        },
-      ],
-    },
-  ];
+      {
+        args: [{firstName: ''}],
+        response: new ResponseError('Username cant be empty'),
+      },
+    ],
+  };
+  const rpcFixtures = [getUserFixture, updateUserFixture];
 
   const onMockRpcSpy = sinon.spy();
 

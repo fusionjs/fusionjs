@@ -4,8 +4,8 @@ import isEqual from 'lodash.isequal';
 import ResponseError from './response-error';
 import {type HandlerType} from './tokens';
 
-type RpcResponse = Object | ResponseError;
-type RpcResponseMap = Array<{
+export type RpcResponse = Object | ResponseError;
+export type RpcResponseMap = Array<{
   args: Array<*>,
   response: RpcResponse,
 }>;
