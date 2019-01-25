@@ -22,24 +22,28 @@ import {
   localBatchStorage,
 } from './storage/index.js';
 
-class UniversalEmitter extends Emitter {
+export class UniversalEmitter extends Emitter {
   flush: any;
   fetch: any;
   interval: any;
   storage: BatchStorage;
 
-  constructor(fetch: Fetch, storage: BatchStorage): void {
+  constructor(
+    fetch: Fetch,
+    storage: BatchStorage,
+    interval?: number = 5000
+  ): void {
     super();
     //privates
     this.storage = storage;
     this.flush = this.flushInternal.bind(this);
     this.fetch = fetch;
-    this.setFrequency(5000);
+    this.setFrequency(interval);
     window.addEventListener('visibilitychange', this.flushBeforeTerminated);
   }
   setFrequency(frequency: number): void {
     window.clearInterval(this.interval);
-    this.interval = setInterval(this.flushInternal, frequency);
+    this.interval = setInterval(this.flush, frequency);
   }
   emit(type: mixed, payload: mixed): void {
     payload = super.mapEvent(type, payload);

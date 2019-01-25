@@ -14,7 +14,7 @@ import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
-import plugin from '../browser.js';
+import plugin, {UniversalEmitter} from '../browser.js';
 import {UniversalEventsToken} from '../index';
 import {
   UniversalEventsBatchStorageToken,
@@ -147,4 +147,23 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
 
   t.equal(store.data.length, 1, 'event stored when fetch fails');
   t.end();
+});
+
+test('Browser EventEmitter interval', async t => {
+  const emitter = new UniversalEmitter(
+    () => {
+      return Promise.resolve(createMockFetch({ok: true}));
+    },
+    {
+      add() {},
+      addToStart() {},
+      getAndClear() {
+        t.ok('Calls storage getAndClear on interval');
+        emitter.teardown();
+        t.end();
+        return [];
+      },
+    },
+    1
+  );
 });
