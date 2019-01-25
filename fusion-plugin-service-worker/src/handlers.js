@@ -65,7 +65,7 @@ function getOutdatedKeys(cache, cacheablePaths) {
   return cache.keys().then(requests =>
     requests.filter(request => {
       return !cacheablePaths.find(key => {
-        return location.origin + key === request.url;
+        return location.origin + String(key) === request.url;
       });
     })
   );

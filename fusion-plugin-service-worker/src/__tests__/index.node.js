@@ -17,7 +17,7 @@ test('/health request', async t => {
   t.ok(
     ctx_1.body
       .replace(/\n/g, '')
-      .startsWith('var sw =/******/ (function(modules) {'),
+      .startsWith(`var sw = (assetInfo: AssetInfo) => {`),
     'sends correct response'
   );
   t.end();

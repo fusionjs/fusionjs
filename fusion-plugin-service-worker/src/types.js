@@ -1,4 +1,5 @@
 // @flow
+import type {Token} from 'fusion-core';
 
 import type {Context} from 'fusion-core';
 
@@ -13,7 +14,8 @@ export type PluginServiceType = {
 
 export type AssetInfo = {
   precachePaths: Array<RequestInfo>,
-  cacheablePaths: Array<string>,
+  cacheablePaths: Array<RequestInfo>,
 };
 
-export type ConfigTokenType = any;
+type ConfigType = AssetInfo => string;
+export type ConfigTokenType = Token<ConfigType>;
