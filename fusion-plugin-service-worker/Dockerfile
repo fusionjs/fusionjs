@@ -3,8 +3,8 @@ FROM $BASE_IMAGE
 
 WORKDIR /fusion-plugin-service-worker
 
-### COPY . .
+COPY . .
 
-### RUN yarn
+RUN yarn
 
-### RUN yarn build-test
+RUN yarn --ignore-scripts run build-test

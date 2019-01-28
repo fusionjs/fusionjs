@@ -13,3 +13,68 @@ steps:
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
       queue: builders
+  - wait
+  - command: yarn flow
+    name: ':flowtype:'
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker
+    agents:
+      queue: workers
+  - command: yarn flow
+    name: ':flowtype: node8'
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker-node-last
+    agents:
+      queue: workers
+  - name: ':eslint:'
+    command: yarn lint
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker
+    agents:
+      queue: workers
+  - name: ':eslint: node8'
+    command: yarn lint
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker-node-last
+    agents:
+      queue: workers
+  - name: ':chrome: :white_check_mark:'
+    command: .buildkite/browserTests
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker
+    agents:
+      queue: workers
+  - name: ':chrome: :white_check_mark: node8'
+    command: .buildkite/browserTests
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker-node-last
+    agents:
+      queue: workers
+  - name: ':node: :white_check_mark:'
+    command: .buildkite/nodeTests
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker
+    agents:
+      queue: workers
+  - name: ':node: :white_check_mark: node8'
+    command: .buildkite/nodeTests
+    timeout_in_minutes: 10
+    plugins:
+      'docker-compose#v1.7.0':
+        run: fusion-plugin-service-worker-node-last
+    agents:
+      queue: workers
