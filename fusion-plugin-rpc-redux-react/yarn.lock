@@ -2526,10 +2526,10 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
-flow-bin@^0.87.0:
-  version "0.87.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.87.0.tgz#fab7f984d8cc767e93fa9eb01cf7d57ed744f19d"
-  integrity sha512-mnvBXXZkUp4y6A96bR5BHa3q1ioIIN2L10w5osxJqagAakTXFYZwjl0t9cT3y2aCEf1wnK6n91xgYypQS/Dqbw==
+flow-bin@^0.91.0:
+  version "0.91.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.91.0.tgz#f5c89729f74b2ccbd47df6fbfadbdcc89cc1e478"
+  integrity sha512-j+L+xNiUYnZZ27MjVI0y2c9474ZHOvdSQq0Tjwh56mEA7tfxYqp5Dcb6aZSwvs3tGMTjCrZow9aUlZf3OoRyDQ==
 
 for-each@~0.3.3:
   version "0.3.3"
@@ -2635,13 +2635,13 @@ fusion-plugin-universal-events@^1.3.0:
   dependencies:
     koa-bodyparser "4.2.1"
 
-fusion-react@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.3.4.tgz#10265436f4616e8e6e5c4e9d6f267e8350033b83"
-  integrity sha512-fxQQxnx3ligjgwEdVO0Z77YnTgJNr9Md6gQgkwLOlxpS6J4l6s/ePcrTAxfT0e1VTKROTYLQCiMmxbUrzgWz6A==
+fusion-react@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.3.7.tgz#7ece897feff9ef67c33f13f376929fd5a1e471f6"
+  integrity sha512-Zs60GxwkjEkDb2jqcdxnWmGDxUDtD8VJmT6ipnr66oXQHSDl3iMtUDQIXFFg9mZG6jeRFF+BAK1Bhf3SMKt2PQ==
   dependencies:
     prop-types "^15.6.2"
-    react-is "^16.6.3"
+    react-is "^16.7.0"
 
 fusion-rpc-redux@^1.3.0:
   version "1.3.0"
@@ -4694,6 +4694,11 @@ react-is@^16.3.2, react-is@^16.6.0, react-is@^16.6.3:
   version "16.6.3"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.6.3.tgz#d2d7462fcfcbe6ec0da56ad69047e47e56e7eac0"
   integrity sha512-u7FDWtthB4rWibG/+mFbVd5FvdI20yde86qKGx4lVUTWmPlSWQ4QxbBIrrs+HnXGbxOUlUzTAP/VDmvCwaP2yA==
+
+react-is@^16.7.0:
+  version "16.7.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.7.0.tgz#c1bd21c64f1f1364c6f70695ec02d69392f41bfa"
+  integrity sha512-Z0VRQdF4NPDoI0tsXVMLkJLiwEBa+RP66g0xDHxgxysxSoCUccSten4RTF/UFvZF1dZvZ9Zu1sx+MDXwcOR34g==
 
 react-lifecycles-compat@^3.0.0:
   version "3.0.4"
