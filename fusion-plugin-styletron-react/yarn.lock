@@ -3090,9 +3090,9 @@ https-browserify@^1.0.0:
   integrity sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
 
 hyphenate-style-name@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"
-  integrity sha1-MRYKNpMK2vH8BMYHT360FGXU7Es=
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.3.tgz#097bb7fa0b8f1a9cf0bd5c734cf95899981a9b48"
+  integrity sha512-EcuixamT82oplpoJ2XU4pDtKGWQ7b00CD9f1ug9IaQ3p1bkHMiKCZ9ut9QDI6qsa6cpUuB+A/I+zLtdNK4n2DQ==
 
 iconv-lite@^0.4.24, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.24"
@@ -5631,13 +5631,13 @@ strip-json-comments@^2.0.1, strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-styletron-engine-atomic@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.9.tgz#8f2428e63c45e707513933ebf75a407c20334fca"
-  integrity sha512-aIBJEonm+fb2QNwqwJ1X7cKXsQXw5Si+BRAgmqGuKzRhj2Sqb5swpoicWZobT0zJMDjHppxB9lq3x4aMmhqwNA==
+styletron-engine-atomic@^1.0.13:
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/styletron-engine-atomic/-/styletron-engine-atomic-1.0.13.tgz#0c53ec9c39fe153a7359f747ee677d54737cec10"
+  integrity sha512-aN1FKxEZwGwVoHtm9us/LxCKhe/hSQScu+4fZhc9jWa9S3ZX91L1vybrAHqsRYdLgtfmtCwJwfzuX1Nwm0/bxw==
   dependencies:
     inline-style-prefixer "^4.0.0"
-    styletron-standard "^1.0.7"
+    styletron-standard "^2.0.1"
 
 styletron-react-core@^1.3.3:
   version "1.3.3"
@@ -5660,6 +5660,13 @@ styletron-standard@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/styletron-standard/-/styletron-standard-1.0.7.tgz#f960c91a5ef127d7601222658892925e8dd5fa5d"
   integrity sha512-clCCuIhTGS6iU2VmxiPdsaApirH1DCvymy6s1o14Az0A+FUckziralQDuP8ylWEBSDpOWqoXkG16uDt5mWux9A==
+  dependencies:
+    inline-style-prefixer "^4.0.0"
+
+styletron-standard@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/styletron-standard/-/styletron-standard-2.0.1.tgz#09ea1e339876f56d80e3e0bf1cbc62490c9ac03f"
+  integrity sha512-yLUdUk9HDpXtuORy1VQqdc77idC2ayuTt2/F5FXy66u4VyDSAi4L0MDveZoUnkJf66wMErO8Pb70eHa1J5R8JQ==
   dependencies:
     inline-style-prefixer "^4.0.0"
 
