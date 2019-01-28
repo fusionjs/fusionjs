@@ -2118,9 +2118,10 @@ flat-cache@^1.2.1:
     rimraf "~2.6.2"
     write "^0.2.1"
 
-flow-bin@^0.89.0:
-  version "0.89.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.89.0.tgz#6bd29c2af7e0f429797f820662f33749105c32fa"
+flow-bin@^0.91.0:
+  version "0.91.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.91.0.tgz#f5c89729f74b2ccbd47df6fbfadbdcc89cc1e478"
+  integrity sha512-j+L+xNiUYnZZ27MjVI0y2c9474ZHOvdSQq0Tjwh56mEA7tfxYqp5Dcb6aZSwvs3tGMTjCrZow9aUlZf3OoRyDQ==
 
 for-each@~0.3.3:
   version "0.3.3"
@@ -2202,12 +2203,13 @@ fusion-plugin-universal-events@^1.3.2:
   dependencies:
     koa-bodyparser "4.2.1"
 
-fusion-react@^1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.3.5.tgz#3a8d3f13c9e3f8a9bcbc8a67428bfadcd9269b3c"
+fusion-react@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/fusion-react/-/fusion-react-1.3.7.tgz#7ece897feff9ef67c33f13f376929fd5a1e471f6"
+  integrity sha512-Zs60GxwkjEkDb2jqcdxnWmGDxUDtD8VJmT6ipnr66oXQHSDl3iMtUDQIXFFg9mZG6jeRFF+BAK1Bhf3SMKt2PQ==
   dependencies:
     prop-types "^15.6.2"
-    react-is "^16.6.3"
+    react-is "^16.7.0"
 
 fusion-test-utils@^1.3.1:
   version "1.3.1"
@@ -3911,9 +3913,10 @@ react-dom@^16.7.0:
     prop-types "^15.6.2"
     scheduler "^0.12.0"
 
-react-is@^16.6.3:
-  version "16.6.3"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.6.3.tgz#d2d7462fcfcbe6ec0da56ad69047e47e56e7eac0"
+react-is@^16.7.0:
+  version "16.7.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.7.0.tgz#c1bd21c64f1f1364c6f70695ec02d69392f41bfa"
+  integrity sha512-Z0VRQdF4NPDoI0tsXVMLkJLiwEBa+RP66g0xDHxgxysxSoCUccSten4RTF/UFvZF1dZvZ9Zu1sx+MDXwcOR34g==
 
 react@^16.7.0:
   version "16.7.0"
