@@ -1,4 +1,5 @@
 // @flow
+/* global window */
 import test from 'tape-cup';
 import type {Context} from 'fusion-core';
 import plugin from '../browser.js';
