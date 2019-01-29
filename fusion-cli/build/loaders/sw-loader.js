@@ -86,5 +86,8 @@ function getCompiler(opts) {
 function getSWTemplateFnSource(swBundle) {
   return `export const swTemplate = (...params) => "${JSON.stringify(
     swBundle.toString()
-  ).slice(1, -1)};${SW_IDENTIFIER}(..." + JSON.stringify(params) + ")"`;
+  ).slice(
+    1,
+    -1
+  )};${SW_IDENTIFIER}(..." + JSON.stringify(params) + ",${Date.now()})"`;
 }
