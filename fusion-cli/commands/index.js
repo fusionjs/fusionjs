@@ -175,7 +175,6 @@ module.exports = {
       },
       configPath: {
         type: 'string',
-        default: './node_modules/fusion-cli/build/jest/jest-config.js',
         describe: 'Path to the jest configuration, used for testing.',
       },
       ...jestOptionsDescriptions,

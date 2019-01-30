@@ -25,7 +25,7 @@ module.exports.TestAppRuntime = function(
     testRegex,
     updateSnapshot,
     collectCoverageFrom,
-    configPath,
+    configPath = `${__dirname}/jest/jest-config.js`,
     jestArgs = {},
   } /*: any */
 ) {

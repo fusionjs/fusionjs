@@ -68,7 +68,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--testFolder`: Which folder to look for tests in. Deprecated, use testMatch or testRegex instead.
   - `--testMatch`: Which folder to look for tests in. A comma-separated list of glob patterns.
   - `--testRegex`: Which folder to look for tests in. A comma-separated list of regexp strings.
-  - `--configPath`: Path to the jest configuration, used for testing.  (default ./node_modules/fusion-cli/build/jest/jest-config.js)
+  - `--configPath`: Path to the jest configuration, used for testing.  (default [path-to-fusion-cli]/build/jest/jest-config.js)
   - `--updateSnapshot`, `-u`: Updates snapshots
 
   Jest pass-through options
