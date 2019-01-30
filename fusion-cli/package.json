@@ -69,7 +69,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.89.0",
-    "fusion-core": "1.10.0",
+    "fusion-core": "1.10.2",
     "fusion-plugin-i18n-react": "^1.2.1",
     "fusion-plugin-universal-events": "^1.3.2",
     "fusion-plugin-react-router": "^1.4.2",
@@ -86,7 +86,7 @@
     "tape": "4.9.1"
   },
   "peerDependencies": {
-    "fusion-core": "^1.10.0",
+    "fusion-core": "^1.10.2",
     "fusion-tokens": "^1.1.1"
   },
   "engines": {
