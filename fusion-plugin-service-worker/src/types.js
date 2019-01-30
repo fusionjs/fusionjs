@@ -17,3 +17,6 @@ export type AssetInfo = {
 
 type ConfigType = AssetInfo => string;
 export type ConfigTokenType = Token<ConfigType>;
+
+type SWLoggerType = {log: (string, string) => void};
+export type SWLoggerTokenType = Token<SWLoggerType>;

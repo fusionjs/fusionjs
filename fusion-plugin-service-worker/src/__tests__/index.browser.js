@@ -1,8 +1,10 @@
 // @flow
 /* global window */
 import test from 'tape-cup';
-import type {Context} from 'fusion-core';
-import plugin from '../browser.js';
+import {getSimulator} from 'fusion-test-utils';
+import App from 'fusion-core';
+import ServiceWorker from '../index';
+import {SWLoggerToken} from '../tokens';
 
 const addEventListener = window.addEventListener;
 window.addEventListener = function(_, fn) {
@@ -20,20 +22,19 @@ if (window.navigator && window.navigator.serviceWorker) {
   };
 }
 
-const mockContext: Context = ({}: any);
 let logged = '';
 
-test('registers sw', t => {
-  const next = () => {
-    return t.pass('Called next()');
-  };
-  if (plugin.middleware) {
-    plugin.middleware({
-      log(...args) {
-        logged += args.join(' ');
-        t.equal(logged, '*** sw registered: /sw.js');
-        t.end();
-      },
-    })(mockContext, next);
-  }
+test('/registers sw', async t => {
+  const app = new App('el', el => el);
+  app.register(SWLoggerToken, {
+    log(...args) {
+      logged += args.join(' ');
+      t.equal(logged, '*** sw registered: /sw.js');
+      t.end();
+    },
+  });
+  app.register(ServiceWorker);
+  const sim = getSimulator(app);
+  await sim.render('/');
+  await app.cleanup();
 });

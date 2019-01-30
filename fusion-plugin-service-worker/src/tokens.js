@@ -8,8 +8,10 @@
 
 import {createToken} from 'fusion-core';
 
-import type {ConfigTokenType} from './types.js';
+import type {ConfigTokenType, SWLoggerTokenType} from './types.js';
 
 export const SWTemplateFunctionToken: ConfigTokenType = createToken(
   'SWTemplateFunctionToken'
 );
+
+export const SWLoggerToken: SWLoggerTokenType = createToken('SWLoggerToken');

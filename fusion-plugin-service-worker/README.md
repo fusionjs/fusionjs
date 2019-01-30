@@ -33,8 +33,6 @@ export default (assetInfo) => {
 }
 ```
 
-**NOTE:** The Service Worker cache will be updated whenever a resource name changes. In development resource names are not normally hashed, and so the cache will persist even when resource content is updated. **In development environments, apart from verifying that the Service Worker is working correctly, it is recommended to bypass the Service Worker by checking "bypass for network" under the application tab in Chrome Developer Tools**
-
 ### Custom Service Worker
 
 Customize the ServiceWorker by editing `src/sw.js` in your app. It shares the same transpile logic as regular fusion bundles.
@@ -51,6 +49,10 @@ import SwPlugin, {SWTemplateFunctionToken} from 'fusion-plugin-service-worker';
 
 app.register(SWTemplateFunctionToken, swTemplateFunction);
 app.register(SwPlugin);
+if (__NODE__) {
+  app.register(SWTemplateFunctionToken, swTemplateFunction);
+}
 ```
+Note: SWLoggerToken is an optional browser plugin dep that is not expected to be used outside of tests.
 
 The browser will automatically register the default service worker on page load.
