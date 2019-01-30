@@ -23,7 +23,7 @@
     "@babel/plugin-transform-flow-strip-types": "7.2.3",
     "babel-eslint": "10.0.1",
     "create-universal-package": "3.4.6",
-    "eslint": "5.9.0",
+    "eslint": "5.12.1",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "2.0.0",
     "eslint-plugin-flowtype": "3.2.0",
