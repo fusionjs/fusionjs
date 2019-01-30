@@ -1,6 +1,6 @@
 {
   "name": "fusion-cli",
-  "version": "1.15.2-0",
+  "version": "1.16.0-0",
   "description": "CLI",
   "repository": "fusionjs/fusion-cli",
   "bin": {
@@ -71,8 +71,8 @@
     "flow-bin": "^0.89.0",
     "fusion-core": "1.10.2",
     "fusion-plugin-i18n-react": "^1.2.1",
-    "fusion-plugin-universal-events": "^1.3.2",
     "fusion-plugin-react-router": "^1.4.2",
+    "fusion-plugin-universal-events": "^1.3.2",
     "fusion-react": "1.3.4",
     "fusion-test-utils": "^1.3.0",
     "fusion-tokens": "^1.1.1",
