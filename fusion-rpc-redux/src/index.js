@@ -10,7 +10,7 @@ import {createReactor} from 'redux-reactors';
 import type {Reactor} from 'redux-reactors';
 import type {Reducer, Store} from 'redux';
 
-type ActionType = {
+export type ActionType = {
   type: string,
   payload: *,
 };
