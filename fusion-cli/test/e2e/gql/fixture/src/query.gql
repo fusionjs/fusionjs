@@ -1,0 +1,6 @@
+# import './fragment.gql'
+query GetUser {
+  user {
+    ...UserFragment
+  }
+}

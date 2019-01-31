@@ -41,7 +41,8 @@ module.exports = {
   coverageReporters: ['json'],
   rootDir: process.cwd(),
   transform: {
-    '^.+\\.js$': require.resolve('./jest-transformer.js'),
+    '\\.js$': require.resolve('./jest-transformer.js'),
+    '\\.(gql|graphql)$': require.resolve('./graphql-jest-transformer.js'),
   },
   transformIgnorePatterns: ['/node_modules/(?!(fusion-cli.*build))'],
   setupFiles: [require.resolve('./jest-framework-shims.js'), ...reactSetup],

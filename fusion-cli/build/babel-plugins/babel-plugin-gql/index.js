@@ -8,7 +8,6 @@
 
 /* eslint-env node */
 
-const path = require('path');
 const createNamedModuleVisitor = require('../babel-plugin-utils/visit-named-module');
 
 module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
@@ -42,7 +41,6 @@ module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
         parentPath.replaceWith(getReplacementPath(args));
       }
     });
-
     function validateArgs(args, parentPath) {
       if (args.length !== 1) {
         throw parentPath.buildCodeFrameError(
@@ -57,41 +55,10 @@ module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
     }
 
     function getReplacementPath(args) {
-      if (inline) {
-        return t.callExpression(
-          t.callExpression(t.identifier('require'), [
-            t.stringLiteral('graphql-tag'),
-          ]),
-          [
-            t.callExpression(
-              t.memberExpression(
-                t.callExpression(
-                  t.memberExpression(
-                    t.callExpression(t.identifier('require'), [
-                      t.stringLiteral('fs'),
-                    ]),
-                    t.identifier('readFileSync')
-                  ),
-                  [
-                    t.stringLiteral(
-                      path.resolve(
-                        path.dirname(context.file.opts.filename),
-                        args[0].value
-                      )
-                    ),
-                  ]
-                ),
-                t.identifier('toString')
-              ),
-              []
-            ),
-          ]
-        );
-      } else {
-        return t.callExpression(t.identifier('require'), [
-          t.stringLiteral(`__SECRET_GQL_LOADER__!${args[0].value}`),
-        ]);
-      }
+      const arg = inline
+        ? args[0].value
+        : `__SECRET_GQL_LOADER__!${args[0].value}`;
+      return t.callExpression(t.identifier('require'), [t.stringLiteral(arg)]);
     }
   }
 };

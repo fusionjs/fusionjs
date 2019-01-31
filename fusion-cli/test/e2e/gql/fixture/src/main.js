@@ -4,8 +4,10 @@ import App from 'fusion-core';
 import {gql} from 'fusion-apollo';
 
 const schema = gql('./schema.gql');
+const query = gql('./query.gql');
 if (__BROWSER__) {
   window.schema = schema;
+  window.query = query;
 }
 
 export default (async function() {
