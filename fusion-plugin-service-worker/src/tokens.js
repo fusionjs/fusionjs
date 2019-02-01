@@ -7,11 +7,12 @@
  */
 
 import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
 import type {ConfigTokenType, SWLoggerTokenType} from './types.js';
 
+export const SWLoggerToken: SWLoggerTokenType = createToken('SWLoggerToken');
+export const SWRegisterToken: Token<boolean> = createToken('SWRegisterToken');
 export const SWTemplateFunctionToken: ConfigTokenType = createToken(
   'SWTemplateFunctionToken'
 );
-
-export const SWLoggerToken: SWLoggerTokenType = createToken('SWLoggerToken');

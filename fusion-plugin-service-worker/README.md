@@ -37,9 +37,8 @@ export default (assetInfo) => {
 
 Customize the ServiceWorker by editing `src/sw.js` in your app. It shares the same transpile logic as regular fusion bundles.
 
----
-
 ### Setup
+
 ```js
 // src/main.js
 import App from 'fusion-react';
@@ -56,3 +55,13 @@ if (__NODE__) {
 Note: SWLoggerToken is an optional browser plugin dep that is not expected to be used outside of tests.
 
 The browser will automatically register the default service worker on page load.
+
+### Troubleshooting
+
+If you need all users to unregister the Service Worker, you can register `SWRegisterToken` with the value `false`
+
+```
+if (__BROWSER__) {
+  app.register(SWRegisterToken, false);
+}
+```
