@@ -56,7 +56,7 @@ Note: SWLoggerToken is an optional browser plugin dep that is not expected to be
 
 The browser will automatically register the default service worker on page load.
 
-### Troubleshooting
+### Unregistering the Service Worker
 
 If you need all users to unregister the Service Worker, you can register `SWRegisterToken` with the value `false`
 
@@ -65,3 +65,7 @@ if (__BROWSER__) {
   app.register(SWRegisterToken, false);
 }
 ```
+
+### Service Worker Plugin Guide
+
+For more information on how to use the Fusion Service Worker Plugin and an explanation of Service Workers in general, please see the [Service Workers section in the Fusion.js Guide](https://fusionjs.com/docs/guides/performance/service-workers)
