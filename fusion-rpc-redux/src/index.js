@@ -175,7 +175,7 @@ export function createRPCHandler({
         delete error.stack;
         error.initialArgs = args;
         store.dispatch(actions && actions.failure(error));
-        return e;
+        throw e;
       });
   };
 }
