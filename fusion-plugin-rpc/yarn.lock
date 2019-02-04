@@ -2640,10 +2640,10 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-fusion-core@1.10.1:
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.10.1.tgz#99a0f2a3dcb1554db87a2b102b7fc031a7b9960d"
-  integrity sha512-XtJc5speIp0Yl0fwx3ri6TRgxQ+G9tW4l5ikMxScQ76yw5MSaXPl8vZwOcUwLjggWcs4oaeIFoV4idkvsQZukw==
+fusion-core@1.10.2:
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/fusion-core/-/fusion-core-1.10.2.tgz#4b098d1c08f61eb51838172fb0537eba5f107595"
+  integrity sha512-NjMQXv96scN4Q7azlBJTV0vEzpbj/H66W9ijHWC7e2sRrfGB40+QxZKHl74rnpKM6E6luodUBM3gK9j+eg2KSA==
   dependencies:
     koa "^2.6.2"
     koa-compose "^4.1.0"
