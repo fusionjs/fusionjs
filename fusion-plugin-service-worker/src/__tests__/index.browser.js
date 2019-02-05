@@ -14,18 +14,44 @@ function mockAddEventListener() {
   };
 }
 
-if (window.navigator && window.navigator.serviceWorker) {
-  window.navigator.serviceWorker.register = function(path) {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        resolve(path);
-      }, 300);
-    });
-  };
+function mockRegister() {
+  if (window.navigator && window.navigator.serviceWorker) {
+    const realRegister = window.navigator.serviceWorker.getRegistrations;
+    window.navigator.serviceWorker.register = function(path) {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          window.navigator.serviceWorker.register = realRegister;
+          resolve(path);
+        }, 300);
+      });
+    };
+  }
+}
+
+function mockGetRegistrations() {
+  if (window.navigator && window.navigator.serviceWorker) {
+    const realGetRegistrations =
+      window.navigator.serviceWorker.getRegistrations;
+    window.navigator.serviceWorker.getRegistrations = function() {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+          resolve([
+            {
+              unregister() {
+                window.navigator.serviceWorker.getRegistrations = realGetRegistrations;
+                return true;
+              },
+            },
+          ]);
+        }, 300);
+      });
+    };
+  }
 }
 
 test('/registers sw', async t => {
   mockAddEventListener();
+  mockRegister();
   let logged = '';
   const app = new App('el', el => el);
   app.register(SWLoggerToken, {
@@ -43,13 +69,14 @@ test('/registers sw', async t => {
 
 test('/unregisters sw', async t => {
   mockAddEventListener();
+  mockGetRegistrations();
   let logged = '';
   const app = new App('el', el => el);
   app.register(SWRegisterToken, false);
   app.register(SWLoggerToken, {
     log(...args) {
       logged += args.join(' ');
-      t.equal(logged, '*** sw unregistered');
+      t.equal(logged, '*** unregistering 1 sw');
       t.end();
     },
   });

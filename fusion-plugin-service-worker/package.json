@@ -45,7 +45,7 @@
     "unitest": "2.1.1"
   },
   "peerDependencies": {
-    "fusion-cli": "^1.15.2-0",
+    "fusion-cli": "^1.16.0",
     "fusion-core": "^1.0.0",
     "fusion-tokens": "^1.0.1",
     "react": "14.x - 16.x",
