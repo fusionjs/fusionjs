@@ -33,7 +33,7 @@ test('html sanitization works', async t => {
   const userData = '<malicious data="" />';
   const value = html`
     <div>${userData}</div>
-    ${null}
+    ${String(null)}
   `;
   t.equals(typeof value, 'object');
   t.equals(
