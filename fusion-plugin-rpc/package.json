@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-rpc",
   "description": "Fetch data on the server and client with an RPC style interface.",
-  "version": "2.3.1-0",
+  "version": "2.3.1",
   "repository": "fusionjs/fusion-plugin-rpc",
   "files": [
     "dist",
