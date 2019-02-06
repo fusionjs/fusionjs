@@ -65,7 +65,7 @@ function getOutdatedKeys(cache, cacheablePaths) {
   return cache.keys().then(requests =>
     requests.filter(request => {
       return !cacheablePaths.find(key => {
-        return location.origin + String(key) === request.url;
+        return origin() + String(key) === request.url;
       });
     })
   );
@@ -108,4 +108,9 @@ function responseIsHtml(response) {
   }
   const contentType = response.headers.get('content-type');
   return contentType && contentType.indexOf('html') > -1;
+}
+
+function origin() {
+  const {origin, protocol, hostname, port} = location;
+  return origin || `${protocol}'//'${hostname}${port ? ':' + port : ''}`;
 }
