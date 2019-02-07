@@ -93,9 +93,36 @@ test('error before await next in middleware after http handler', async t => {
   const {server, request} = await startServer(app.callback());
 
   t.equal(await request('/'), 'Caught error', 'catches errors');
-  t.equal(hitExpressMiddleware, true);
+  t.equal(hitExpressMiddleware, false);
   t.equal(hitFallthrough, false);
 
+  server.close();
+  t.end();
+});
+
+test('error in express middleware', async t => {
+  const app = new App('test', () => 'test');
+  // Error handler
+  app.middleware(async (ctx, next) => {
+    try {
+      await next();
+    } catch (e) {
+      t.equal(e.message, 'FAIL', 'catches correct error');
+      ctx.body = 'Caught error';
+    }
+  });
+
+  app.register(HttpHandlerPlugin);
+  const expressApp = express();
+  expressApp.use((req, res, next) => {
+    return next(new Error('FAIL'));
+  });
+
+  app.register(HttpHandlerToken, expressApp);
+
+  const {server, request} = await startServer(app.callback());
+
+  t.equal(await request('/'), 'Caught error', 'catches errors');
   server.close();
   t.end();
 });

@@ -15,13 +15,9 @@ import {startServer} from '../test-util.js';
 
 test('http handler with express using send', async t => {
   const app = new App('test', () => 'test');
-  app.register(HttpHandlerPlugin);
-  const expressApp = express();
-  expressApp.get('/express', (req, res) => {
-    res.send('OK');
-  });
-  app.register(HttpHandlerToken, expressApp);
-  app.middleware((ctx, next) => {
+
+  app.middleware(async (ctx, next) => {
+    await next();
     if (ctx.url === '/express') {
       t.equal(ctx.res.statusCode, 200, 'express route sets status code');
     } else {
@@ -30,8 +26,13 @@ test('http handler with express using send', async t => {
     // $FlowFixMe
     ctx.req.secure = false;
     ctx.body = 'hit fallthrough';
-    return next();
   });
+  app.register(HttpHandlerPlugin);
+  const expressApp = express();
+  expressApp.get('/express', (req, res) => {
+    res.send('OK');
+  });
+  app.register(HttpHandlerToken, expressApp);
 
   const {server, request} = await startServer(app.callback());
 

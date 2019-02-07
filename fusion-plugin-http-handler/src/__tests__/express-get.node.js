@@ -35,13 +35,6 @@ test('http handler with express', async t => {
 
   app.register(HttpHandlerToken, expressApp);
 
-  app.middleware((ctx, next) => {
-    if (!ctx.body) {
-      ctx.body = 'hit fallthrough';
-    }
-    return next();
-  });
-
   const {server, request} = await startServer(app.callback());
 
   t.equal(
@@ -57,16 +50,6 @@ test('http handler with express', async t => {
 
   t.equal(await request('/lol'), 'OK', 'express routes can send responses');
   t.equal(hitExpressMiddleware, true, 'express middleware hit');
-
-  hitExpressMiddleware = false;
-
-  t.equal(
-    await request('/fallthrough'),
-    'hit fallthrough',
-    'express routes can delegate back to koa'
-  );
-  t.equal(hitExpressMiddleware, true, 'express middleware hit');
-
   server.close();
   t.end();
 });

@@ -22,17 +22,16 @@ test('http handler with express', async t => {
   const proxyServer = http.createServer((req, res) => res.end('Proxy OK'));
   const port2 = await getPort();
   await new Promise(resolve => proxyServer.listen(port, resolve));
+  app.middleware(async (ctx, next) => {
+    await next();
+    t.equal(ctx.respond, false);
+  });
   app.register(HttpHandlerPlugin);
   const expressApp = express();
   expressApp.get('/proxy', (req, res) => {
     request(`http://localhost:${port}`).pipe(res);
   });
   app.register(HttpHandlerToken, expressApp);
-
-  app.middleware((ctx, next) => {
-    t.equal(ctx.respond, false);
-    return next();
-  });
 
   // $FlowFixMe
   const server = http.createServer(app.callback());

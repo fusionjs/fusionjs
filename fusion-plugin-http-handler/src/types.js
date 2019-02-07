@@ -12,4 +12,4 @@ export type DepsType = {
   handler: typeof HttpHandlerToken,
 };
 
-export type ServiceType = (mixed, mixed, () => Promise<void>) => void;
+export type ServiceType = (mixed, mixed, (error?: any) => Promise<any>) => void;
