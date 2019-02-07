@@ -35,7 +35,7 @@ export default function getHandlers(assetInfo: AssetInfo) {
       const expectsHtml = requestExpectsHtml(event.request);
       if (
         !expectsHtml &&
-        !cacheablePaths.includes(new URL(event.request.url)) &&
+        !cacheablePaths.includes(event.request.url) &&
         !cacheablePaths.includes(new URL(event.request.url).pathname)
       ) {
         // bypass service worker, use network
