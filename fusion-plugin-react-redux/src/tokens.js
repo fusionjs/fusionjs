@@ -23,6 +23,6 @@ export const PreloadedStateToken: Token<Object> = createToken(
 export const EnhancerToken: Token<StoreEnhancer<*, *, *>> = createToken(
   'EnhancerToken'
 );
-export const GetInitialStateToken: Token<
-  GetInitialStateType<Object>
-> = createToken('GetInitialStateToken');
+export const GetInitialStateToken: Token<GetInitialStateType<{}>> = createToken(
+  'GetInitialStateToken'
+);
