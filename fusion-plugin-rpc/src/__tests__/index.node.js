@@ -568,7 +568,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
     t.equal(
       // $FlowFixMe
       mockCtx.body.data.message,
-      'UnknownError - Use ResponseError for more detailed error messages'
+      'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
     );
     // $FlowFixMe
     t.equal(mockCtx.body.data.code, undefined);
