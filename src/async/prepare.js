@@ -6,8 +6,7 @@
  * @flow
  */
 
-const React = require('react');
-const renderToStaticMarkup = require('react-dom/server').renderToStaticMarkup;
+import * as React from 'react';
 
 class PrepareState {
   constructor() {
@@ -21,7 +20,9 @@ class PrepareState {
   }
 }
 
-function getMarkupFromTree(tree) {
+export default function prepare(element: any) {
+  const renderToStaticMarkup = require('react-dom/server').renderToStaticMarkup;
+
   const prepareState = new PrepareState();
 
   class PrepareContextProvider extends React.Component {
@@ -31,7 +32,7 @@ function getMarkupFromTree(tree) {
       };
     }
     render() {
-      return tree;
+      return element;
     }
   }
   PrepareContextProvider.childContextTypes = {
@@ -50,9 +51,3 @@ function getMarkupFromTree(tree) {
 
   return Promise.resolve().then(process);
 }
-
-function prepare(element: any) {
-  return getMarkupFromTree(element);
-}
-
-export default prepare;
