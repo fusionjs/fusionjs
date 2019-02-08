@@ -35,6 +35,9 @@ tape('Preparing a sync app passing through context', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational(props, context) {
     t.equal(context.test, 'data', 'handles child context correctly');
     numChildRenders++;

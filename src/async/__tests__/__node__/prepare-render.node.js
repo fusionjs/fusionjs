@@ -15,6 +15,21 @@ import {prepare, prepared} from '../../index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
+tape('Preparing a hook', t => {
+  function Component() {
+    const [state, setState] = React.useState(0);
+    return <span>{state}</span>;
+  }
+  const app = <Component />;
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    const wrapper = shallow(<div>{app}</div>);
+    t.equal(wrapper.find('span').length, 1, 'has one children');
+    t.end();
+  });
+});
+
 tape('Preparing a sync app', t => {
   let numConstructors = 0;
   let numRenders = 0;
@@ -34,6 +49,9 @@ tape('Preparing a sync app', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -68,6 +86,9 @@ tape('Preparing a sync app with nested children', t => {
       return <div>{this.props.children}</div>;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -102,6 +123,9 @@ tape(
       numRenders++;
       return <div>{props.children}</div>;
     }
+    SimpleComponent.contextTypes = {
+      __IS_PREPARE__: () => {},
+    };
     function SimplePresentational() {
       numChildRenders++;
       return <div>Hello World</div>;
@@ -151,6 +175,9 @@ tape('Preparing an async app', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -196,6 +223,9 @@ tape('Preparing an async app with nested asyncs', t => {
       return <div>{this.props.children}</div>;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
 
   function SimplePresentational() {
     numChildRenders++;
@@ -253,6 +283,9 @@ tape('Preparing an app with sibling async components', t => {
       return <div>{this.props.children}</div>;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
 
   function SimplePresentational() {
     numChildRenders++;
@@ -357,6 +390,9 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -413,6 +449,9 @@ tape('Preparing an async app with componentDidUpdate option', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -766,6 +805,9 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
       );
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;

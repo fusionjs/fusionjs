@@ -40,6 +40,9 @@ tape('Preparing w/ Portal', t => {
       return createPortal(this.props.children, portal);
     }
   }
+  SimpleComponent.contextTypes = {
+    __IS_PREPARE__: () => {},
+  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;

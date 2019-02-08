@@ -6,6 +6,8 @@
  * @flow
  */
 
+/* global __webpack_modules__ __webpack_require__ */
+
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
@@ -33,6 +35,14 @@ export default function withAsyncComponent({
   let chunkIds = [];
 
   function WithAsyncComponent(props) {
+    if (__BROWSER__) {
+      let promise = load();
+      let id = promise.__MODULE_ID;
+      if (__webpack_modules__[id]) {
+        AsyncComponent = __webpack_require__(id).default;
+      }
+    }
+
     if (error) {
       return <ErrorComponent error={error} />;
     }
@@ -58,6 +68,7 @@ export default function withAsyncComponent({
       } catch (e) {
         componentPromise = Promise.reject(e);
       }
+
       // $FlowFixMe
       chunkIds = componentPromise[CHUNKS_KEY] || [];
 

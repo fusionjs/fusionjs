@@ -8,9 +8,6 @@
 
 import * as React from 'react';
 
-import {REACT_PREPARE} from './constants';
-
-// $FlowFixMe
 const prepared = (sideEffect, opts = {}) => OriginalComponent => {
   opts = Object.assign(
     {
@@ -24,19 +21,8 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
     },
     opts
   );
-  const prep = {
-    prepare: (...args) => Promise.resolve(sideEffect(...args)),
-    defer: opts.defer,
-  };
-  // Disable eslint for deprecated componentWillReceiveProps
-  // eslint-disable-next-line react/no-deprecated
-  class PreparedComponent extends React.Component<*, *> {
-    // $FlowFixMe
-    constructor(props, context) {
-      super(props, context);
-      // $FlowFixMe
-      this[REACT_PREPARE] = prep;
-    }
+
+  class PreparedComponent extends React.Component {
     componentDidMount() {
       if (opts.componentDidMount) {
         Promise.resolve(sideEffect(this.props, this.context)).then(() => {
@@ -47,7 +33,6 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
       }
     }
 
-    // $FlowFixMe
     UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
       if (opts.componentWillReceiveProps) {
         sideEffect(nextProps, nextContext);
@@ -61,30 +46,40 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
     }
 
     render() {
-      return <OriginalComponent {...this.props} />;
+      const prepareState = this.context.__PREPARE_STATE__;
+      if (prepareState) {
+        if (opts.defer || opts.boundary) {
+          // skip prepare if defer or boundary
+          return null;
+        }
+
+        if (!prepareState.seen.has(PreparedComponent)) {
+          // need to mark as seen
+          const effectPromise = sideEffect(this.props, this.context);
+          prepareState.seen.add(PreparedComponent);
+          prepareState.promises.set(PreparedComponent, effectPromise);
+          // skip render until effect promise awaited
+          return null;
+        } else if (prepareState.promises.has(PreparedComponent)) {
+          // effect already in progress
+          return null;
+        }
+      }
+
+      return React.createElement(OriginalComponent, this.props);
     }
   }
 
+  PreparedComponent.contextTypes = {
+    __PREPARE_STATE__: () => {},
+    ...opts.contextTypes,
+  };
+
   const displayName =
     OriginalComponent.displayName || OriginalComponent.name || '';
-  PreparedComponent.contextTypes = opts.contextTypes;
   PreparedComponent.displayName = `PreparedComponent(${displayName})`;
 
   return PreparedComponent;
 };
 
-// $FlowFixMe
-function isPrepared(CustomComponent) {
-  return (
-    CustomComponent[REACT_PREPARE] &&
-    typeof CustomComponent[REACT_PREPARE].prepare === 'function'
-  );
-}
-
-// $FlowFixMe
-function getPrepare(CustomComponent) {
-  return CustomComponent[REACT_PREPARE] || {};
-}
-
-export {isPrepared, getPrepare};
 export default prepared;
