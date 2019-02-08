@@ -37,11 +37,6 @@ tape('Preparing a sync app', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -49,9 +44,6 @@ tape('Preparing a sync app', t => {
       return <SimplePresentational />;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -74,11 +66,6 @@ tape('Preparing a sync app with nested children', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -86,9 +73,6 @@ tape('Preparing a sync app with nested children', t => {
       return <div>{this.props.children}</div>;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -115,17 +99,9 @@ tape(
     let numChildRenders = 0;
     let numPrepares = 0;
     function SimpleComponent(props, context) {
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numRenders++;
       return <div>{props.children}</div>;
     }
-    SimpleComponent.contextTypes = {
-      __IS_PREPARE__: () => {},
-    };
     function SimplePresentational() {
       numChildRenders++;
       return <div>Hello World</div>;
@@ -163,11 +139,6 @@ tape('Preparing an async app', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -175,9 +146,6 @@ tape('Preparing an async app', t => {
       return <SimplePresentational />;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -211,11 +179,6 @@ tape('Preparing an async app with nested asyncs', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -223,9 +186,6 @@ tape('Preparing an async app with nested asyncs', t => {
       return <div>{this.props.children}</div>;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
 
   function SimplePresentational() {
     numChildRenders++;
@@ -271,11 +231,6 @@ tape('Preparing an app with sibling async components', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -283,9 +238,6 @@ tape('Preparing an app with sibling async components', t => {
       return <div>{this.props.children}</div>;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
 
   function SimplePresentational() {
     numChildRenders++;
@@ -378,11 +330,6 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -390,9 +337,6 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
       return <SimplePresentational />;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -437,11 +381,6 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -449,9 +388,6 @@ tape('Preparing an async app with componentDidUpdate option', t => {
       return <SimplePresentational />;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;
@@ -768,11 +704,6 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   class SimpleComponent extends React.Component<any, any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
       this.state = {
         firstRender: true,
@@ -805,9 +736,6 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
       );
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational() {
     numChildRenders++;
     return <div>Hello World</div>;

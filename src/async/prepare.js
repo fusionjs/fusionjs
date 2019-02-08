@@ -28,7 +28,6 @@ function getMarkupFromTree(tree) {
     getChildContext() {
       return {
         __PREPARE_STATE__: prepareState,
-        __IS_PREPARE__: true,
       };
     }
     render() {
@@ -37,7 +36,6 @@ function getMarkupFromTree(tree) {
   }
   PrepareContextProvider.childContextTypes = {
     __PREPARE_STATE__: () => {},
-    __IS_PREPARE__: () => {},
   };
 
   function process() {
@@ -54,7 +52,6 @@ function getMarkupFromTree(tree) {
 }
 
 function prepare(element: any) {
-  // context.__IS_PREPARE__ = true;
   return getMarkupFromTree(element);
 }
 

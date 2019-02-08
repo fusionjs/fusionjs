@@ -18,11 +18,6 @@ tape('Preparing a sync app passing through context', t => {
   class SimpleComponent extends React.Component<any, any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     getChildContext() {
@@ -35,9 +30,6 @@ tape('Preparing a sync app passing through context', t => {
       return <SimplePresentational />;
     }
   }
-  SimpleComponent.contextTypes = {
-    __IS_PREPARE__: () => {},
-  };
   function SimplePresentational(props, context) {
     t.equal(context.test, 'data', 'handles child context correctly');
     numChildRenders++;
