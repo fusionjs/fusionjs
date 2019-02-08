@@ -8,7 +8,6 @@
 
 import * as React from 'react';
 
-import dispatched from './dispatched';
 import prepare from './prepare';
 import prepared from './prepared';
 import split from './split';
@@ -46,7 +45,6 @@ const excludeTyped: (
 ) => React.ComponentType<any> = exclude;
 
 export {
-  dispatched,
   prepareTyped as prepare,
   preparedTyped as prepared,
   splitTyped as split,
