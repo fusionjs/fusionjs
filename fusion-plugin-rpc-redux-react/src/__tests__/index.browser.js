@@ -179,7 +179,9 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
-  await getSimulator(app).render('/');
+  await getSimulator(app)
+    .render('/')
+    .catch(e => t.equal(e.message, 'message'));
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
   t.end();
@@ -304,7 +306,9 @@ test('browser mock integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  await getSimulator(app).render('/');
+  await getSimulator(app)
+    .render('/')
+    .catch(e => t.equal(e.message, 'message'));
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
   t.end();
@@ -582,7 +586,9 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  await getSimulator(app).render('/');
+  await getSimulator(app)
+    .render('/')
+    .catch(e => t.equal(e.message, 'Some failure'));
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.failure, true, 'dispatches failure action');
@@ -695,7 +701,9 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
-  await getSimulator(app).render('/');
+  await getSimulator(app)
+    .render('/')
+    .catch(e => t.equal(e.message, 'Some failure'));
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
   t.equal(flags.failure, true, 'dispatches failure action');
