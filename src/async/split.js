@@ -33,7 +33,7 @@ export default function withAsyncComponent<Config>({
   load: () => Promise<{default: React.AbstractComponent<Config>}>,
   LoadingComponent: any,
   ErrorComponent: any,
-}) {
+}): React.AbstractComponent<Config> {
   let AsyncComponent = null;
   let error = null;
   let chunkIds = [];
@@ -108,5 +108,5 @@ export default function withAsyncComponent<Config>({
     {defer, contextTypes, forceUpdate: true}
   );
 
-  return hoc<Config>(WithAsyncComponent);
+  return hoc(WithAsyncComponent);
 }

@@ -14,7 +14,7 @@ import Provider from '../../prepare-provider';
 import {prepare, split} from '../../index.js';
 
 tape('Preparing an app with an async component', async t => {
-  function DeferredComponent() {
+  function DeferredComponent(props: {foo: 'foo'}) {
     return <div>Loaded</div>;
   }
   function LoadingComponent() {
@@ -33,7 +33,7 @@ tape('Preparing an app with an async component', async t => {
 
   const app = (
     <Provider>
-      <ToTest />
+      <ToTest foo="foo" />
     </Provider>
   );
 
