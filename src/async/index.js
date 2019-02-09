@@ -34,12 +34,6 @@ const preparedTyped: (
   Component: React.ComponentType<any>
 ) => React.ComponentType<any> = prepared;
 
-const splitTyped: (opts: {
-  load: () => Promise<any>,
-  LoadingComponent: React.ComponentType<any>,
-  ErrorComponent: React.ComponentType<any>,
-}) => React.ComponentType<any> = split;
-
 const excludeTyped: (
   Component: React.ComponentType<any>
 ) => React.ComponentType<any> = exclude;
@@ -47,7 +41,7 @@ const excludeTyped: (
 export {
   prepareTyped as prepare,
   preparedTyped as prepared,
-  splitTyped as split,
+  split,
   excludeTyped as exclude,
   middleware,
 };

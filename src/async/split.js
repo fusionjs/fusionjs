@@ -23,12 +23,16 @@ if (__NODE__) {
   contextTypes.markAsCritical = PropTypes.func;
 }
 
-// $FlowFixMe
-export default function withAsyncComponent({
+export default function withAsyncComponent<Config>({
   defer,
   load,
   LoadingComponent,
   ErrorComponent,
+}: {
+  defer: any,
+  load: () => Promise<{default: React.AbstractComponent<Config>}>,
+  LoadingComponent: any,
+  ErrorComponent: any,
 }) {
   let AsyncComponent = null;
   let error = null;
@@ -37,6 +41,7 @@ export default function withAsyncComponent({
   function WithAsyncComponent(props) {
     if (__BROWSER__) {
       let promise = load();
+      // $FlowFixMe
       let id = promise.__MODULE_ID;
       if (__webpack_modules__[id]) {
         AsyncComponent = __webpack_require__(id).default;
@@ -51,7 +56,8 @@ export default function withAsyncComponent({
     }
     return <AsyncComponent {...props} />;
   }
-  return prepared(
+
+  let hoc = prepared(
     (props, context) => {
       if (AsyncComponent) {
         if (__NODE__ && context.markAsCritical) {
@@ -100,5 +106,7 @@ export default function withAsyncComponent({
         });
     },
     {defer, contextTypes, forceUpdate: true}
-  )(WithAsyncComponent);
+  );
+
+  return hoc<Config>(WithAsyncComponent);
 }

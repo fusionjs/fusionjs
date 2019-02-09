@@ -60,7 +60,10 @@ tape('Preparing an app with an errored async component', async t => {
 
   const ToTest = split({
     defer: false,
-    load: () => Promise.reject(new Error('failed')),
+    load: () =>
+      (Promise.reject(new Error('failed')): Promise<{
+        default: React.AbstractComponent<any>,
+      }>),
     LoadingComponent,
     ErrorComponent,
   });

@@ -8,7 +8,22 @@
 
 import * as React from 'react';
 
-const prepared = (sideEffect, opts = {}) => OriginalComponent => {
+type PreparedOpts = {
+  boundary?: boolean,
+  defer?: boolean,
+  componentDidMount?: boolean,
+  componentWillReceiveProps?: boolean,
+  componentDidUpdate?: boolean,
+  contextTypes?: Object,
+  forceUpdate?: boolean,
+};
+
+const prepared = (
+  sideEffect: (any, any) => Promise<any>,
+  opts?: PreparedOpts = {}
+) => <Config>(
+  OriginalComponent: React.AbstractComponent<Config>
+): React.AbstractComponent<Config> => {
   opts = Object.assign(
     {
       boundary: false,
@@ -22,7 +37,7 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
     opts
   );
 
-  class PreparedComponent extends React.Component {
+  class PreparedComponent extends React.Component<any> {
     componentDidMount() {
       if (opts.componentDidMount) {
         Promise.resolve(sideEffect(this.props, this.context)).then(() => {
@@ -66,7 +81,7 @@ const prepared = (sideEffect, opts = {}) => OriginalComponent => {
         }
       }
 
-      return React.createElement(OriginalComponent, this.props);
+      return <OriginalComponent {...this.props} />;
     }
   }
 

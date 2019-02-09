@@ -9,6 +9,9 @@
 import * as React from 'react';
 
 class PrepareState {
+  seen: Set<any>;
+  promises: Map<any, Promise<any>>;
+
   constructor() {
     this.seen = new Set();
     this.promises = new Map();
@@ -25,7 +28,7 @@ export default function prepare(element: any) {
 
   const prepareState = new PrepareState();
 
-  class PrepareContextProvider extends React.Component {
+  class PrepareContextProvider extends React.Component<{}> {
     getChildContext() {
       return {
         __PREPARE_STATE__: prepareState,
