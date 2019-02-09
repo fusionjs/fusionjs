@@ -29,10 +29,10 @@ export default function withAsyncComponent<Config>({
   LoadingComponent,
   ErrorComponent,
 }: {
-  defer: any,
+  defer: boolean,
   load: () => Promise<{default: React.AbstractComponent<Config>}>,
-  LoadingComponent: any,
-  ErrorComponent: any,
+  LoadingComponent: React.AbstractComponent<any>,
+  ErrorComponent: React.AbstractComponent<any>,
 }): React.AbstractComponent<Config> {
   let AsyncComponent = null;
   let error = null;
@@ -57,7 +57,7 @@ export default function withAsyncComponent<Config>({
     return <AsyncComponent {...props} />;
   }
 
-  let hoc = prepared(
+  return prepared(
     (props, context) => {
       if (AsyncComponent) {
         if (__NODE__ && context.markAsCritical) {
@@ -106,7 +106,5 @@ export default function withAsyncComponent<Config>({
         });
     },
     {defer, contextTypes, forceUpdate: true}
-  );
-
-  return hoc(WithAsyncComponent);
+  )(WithAsyncComponent);
 }
