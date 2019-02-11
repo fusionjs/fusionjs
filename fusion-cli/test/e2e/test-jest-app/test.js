@@ -19,6 +19,8 @@ const runnerPath = require.resolve('../../../bin/cli-runner');
 
 const dir = path.resolve(__dirname, './fixture');
 
+jest.setTimeout(10000);
+
 test('`fusion test` passes', async () => {
   const args = `test --dir=${dir} --configPath=../../../../build/jest/jest-config.js --match=passes`;
 
