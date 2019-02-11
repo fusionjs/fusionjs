@@ -64,6 +64,13 @@ export function createRequestContext(
   const ctx = (new Koa(): any).createContext(req, res);
 
   ctx.memoized = new Map();
+  ctx.template = {
+    htmlAttrs: {},
+    bodyAttrs: {},
+    title: '',
+    head: [],
+    body: [],
+  };
 
   if (options.body) {
     ctx.request.body = options.body;
