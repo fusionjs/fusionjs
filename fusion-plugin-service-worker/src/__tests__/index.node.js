@@ -15,7 +15,7 @@ test('/health request', async t => {
   const ctx_1 = await sim.request('/sw.js');
   t.equal(ctx_1.status, 200, 'sends 200 status on sw request');
   t.ok(
-    ctx_1.body
+    String(ctx_1.body)
       .replace(/\n/g, '')
       .startsWith(`var sw = (assetInfo: AssetInfo) => {`),
     'sends correct response'
