@@ -16,7 +16,7 @@ async function startServer() {
   };
   const proc = spawn(
     './node_modules/.bin/fusion',
-    ['dev', '--port', port],
+    ['dev', '--port', port, '--no-open'],
     opts
   );
   const stdoutLines = [];
