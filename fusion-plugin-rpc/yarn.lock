@@ -2086,7 +2086,7 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-cup@^2.0.0, eslint-config-cup@^2.0.1:
+eslint-config-cup@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/eslint-config-cup/-/eslint-config-cup-2.0.1.tgz#20f5af07c66594a3bbcce718ccc30639e894ff81"
   integrity sha1-IPWvB8ZllKO7zOcYzMMGOeiU/4E=
@@ -2105,13 +2105,6 @@ eslint-config-prettier@^2.0.0:
   dependencies:
     get-stdin "^5.0.1"
 
-eslint-config-prettier@^3.1.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-3.6.0.tgz#8ca3ffac4bd6eeef623a0651f9d754900e3ec217"
-  integrity sha512-ixJ4U3uTLXwJts4rmSVW/lMXjlGwCijhBJHk8iVqKKSifeI0qgFEfWl8L63isfc8Od7EiBALF6BX3jKLluf/jQ==
-  dependencies:
-    get-stdin "^6.0.0"
-
 eslint-config-uber-base-stage-3@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/eslint-config-uber-base-stage-3/-/eslint-config-uber-base-stage-3-2.1.0.tgz#97aa40c3b254f6bdc40411eb3c7fa366b1777efe"
@@ -2119,34 +2112,12 @@ eslint-config-uber-base-stage-3@^2.1.0:
   dependencies:
     eslint-config-uber-base "^2.1.0"
 
-eslint-config-uber-base-stage-3@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-base-stage-3/-/eslint-config-uber-base-stage-3-3.0.0.tgz#8abf661ff0169c0fb06af1812958b867515c936e"
-  integrity sha512-3d7Z+7D1QY3S2T0SaVqBlVMKSZ0hIBu2xQPtJkBlESEPdMfDzGeFTEp9okAFB/7uQnUwOQ5dSfFtEwwaELKiJw==
-  dependencies:
-    eslint-config-uber-base "^3.0.0"
-
 eslint-config-uber-base@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/eslint-config-uber-base/-/eslint-config-uber-base-2.1.0.tgz#588d200eec45243728f2eeb66fab6fd296cf02cd"
   integrity sha512-F3cTfu2V6TtAfvHVcyh4l1EKm2bXmh0VM5mX1sLLMtMEG4v0wM7pdsvr/FWcX9EMP0V1HGD/So9ui0/qGWqy3w==
   dependencies:
     eslint-config-prettier "^2.0.0"
-
-eslint-config-uber-base@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-base/-/eslint-config-uber-base-3.0.0.tgz#35956a0b2ce1d21299a2bc6961563a5cc75c1582"
-  integrity sha512-NAj5a0kucvWTHD5+tI9bd7n2ZcNfhhwEE4SNZBwYaN1moWXlKbtQsLpAzmLFcJVy7SRH2RgoCzz+3NJVyaRpyg==
-  dependencies:
-    eslint-config-prettier "^3.1.0"
-
-eslint-config-uber-universal-stage-3@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-uber-universal-stage-3/-/eslint-config-uber-universal-stage-3-3.0.0.tgz#fd122b837646215b0ac9e0ff67199affafca738f"
-  integrity sha512-8yx3xCNizet88gwegkEiwAEvEtbfs5is9Swb8KlUUk5KMs2Or/sa/UjXIy79GiEhXu59WsBw5o3jByg3WjRiJg==
-  dependencies:
-    eslint-config-cup "^2.0.1"
-    eslint-config-uber-base-stage-3 "^3.0.0"
 
 eslint-config-uber-universal-stage-3@^2.0.0:
   version "2.1.0"
@@ -2700,11 +2671,6 @@ get-stdin@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/get-stdin/-/get-stdin-5.0.1.tgz#122e161591e21ff4c52530305693f20e6393a398"
   integrity sha1-Ei4WFZHiH/TFJTAwVpPyDmOTo5g=
-
-get-stdin@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/get-stdin/-/get-stdin-6.0.0.tgz#9e09bf712b360ab9225e812048f71fde9c89657b"
-  integrity sha512-jp4tHawyV7+fkkSKyvjuLZswblUtz+SQKzSWnBbii16BuZksJlU1wuBYXY75r+duh/llF1ur6oNwi+2ZzjKZ7g==
 
 get-stream@^3.0.0:
   version "3.0.0"
