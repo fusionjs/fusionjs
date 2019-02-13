@@ -2,6 +2,7 @@
 .*/node_modules/.*[^(package)]\.json$
 <PROJECT_ROOT>/dist/.*
 .*/.fusion/.*
+.*/i18n/fixture/.*
 
 [include]
 ./src/
