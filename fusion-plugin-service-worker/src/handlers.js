@@ -82,7 +82,7 @@ function fetchAndCache(request, expectsHtml) {
     const clonedResponse = resp.clone();
     caches.open(cacheName).then(cache => {
       if (expectsHtml) {
-        // check we got html before caching
+        // check we've got html before caching
         if (!responseIsHtml(clonedResponse)) {
           debug.log(
             `[sw debug] expected HTML but got ${(clonedResponse &&
@@ -90,11 +90,14 @@ function fetchAndCache(request, expectsHtml) {
               clonedResponse.headers.get('content-type')) ||
               'unknown'}`
           );
-          return Promise.resolve(resp);
+          // Might be redirect due to session expiry or error
+          // Clear cache but still pass original response back to browser
+          caches.delete(cacheName).then(() => Promise.resolve(resp));
         }
       }
       cache.put(request.url, clonedResponse);
     });
+    // Pass original response back to browser
     return Promise.resolve(resp);
   });
 }

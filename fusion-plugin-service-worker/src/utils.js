@@ -29,11 +29,7 @@ export function deleteAllCaches() {
   if (typeof caches === 'undefined') {
     return Promise.resolve(null);
   }
-  return caches.keys().then(function onKeysFetch(keyList) {
-    return Promise.all(
-      keyList.map(function eachKey(key) {
-        return caches.delete(key);
-      })
-    );
-  });
+  return caches
+    .keys()
+    .then(keyList => Promise.all(keyList.map(key => caches.delete(key))));
 }
