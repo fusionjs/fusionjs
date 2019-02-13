@@ -10,7 +10,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import {Route as ReactRouterRouteUntyped} from 'react-router-dom';
 
-import type {RouteType} from '../types.js';
+import type {ContextRouterType, RouteType} from '../types.js';
 
 const ReactRouterRoute: RouteType = ReactRouterRouteUntyped;
 
@@ -20,17 +20,11 @@ const isEmptyChildren = (children: React.Node) =>
 type PropsType = {
   trackingId?: any,
   component?: React.ComponentType<*>,
-  render?: (...props: any) => React.Node,
-  children?: ((routeProps: {match: MatchType}) => React.Node) | React.Node,
+  render?: (routeProps: ContextRouterType) => React.Node,
+  children?: ((routeProps: ContextRouterType) => React.Node) | React.Node,
 };
 type ContextType = {
   onRoute: any,
-};
-type MatchType = {
-  isExact: boolean,
-  path: string,
-  params: Object,
-  url: string,
 };
 function Route(props: PropsType, context: ContextType) {
   const {trackingId, component, render, children, ...remainingProps} = props;
@@ -39,7 +33,7 @@ function Route(props: PropsType, context: ContextType) {
     <ReactRouterRoute
       {...remainingProps}
       // eslint-disable-next-line react/no-children-prop
-      children={(routeProps: {match: MatchType}) => {
+      children={(routeProps: ContextRouterType) => {
         const {match} = routeProps;
         if (match && match.isExact) {
           context.onRoute({
