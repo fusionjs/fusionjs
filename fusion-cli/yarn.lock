@@ -1303,6 +1303,11 @@ babel-plugin-transform-cup-globals@^1.0.1:
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-cup-globals/-/babel-plugin-transform-cup-globals-1.0.2.tgz#e0b9a7207cceb87603085a6889314e1377ee7ae4"
   integrity sha512-BAZw2zrPvcAXvsnSa0nDuSyUoAQu7mwgiBQpLy00+1xLe4D+nannQIGyChcKFBPBGxw0aeP1C6LSo7tIdRPNXg==
 
+babel-plugin-transform-styletron-display-name@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-styletron-display-name/-/babel-plugin-transform-styletron-display-name-1.1.0.tgz#ad4bcf31674f94bc9ede27c3d67cd6c53bcd144c"
+  integrity sha512-XiFZF+LGfTPa1eLsORlJSKE9sKXHGNgTscd7+bhN66e3kxrpevpsnxHRJnV2AAzJKYVNn0/hz+4jeLzvG1AfMg==
+
 babel-preset-jest@^24.1.0:
   version "24.1.0"
   resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-24.1.0.tgz#83bc564fdcd4903641af65ec63f2f5de6b04132e"

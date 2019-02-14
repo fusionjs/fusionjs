@@ -23,6 +23,7 @@
     "babel-jest": "^24.0.0",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-plugin-transform-cup-globals": "^1.0.1",
+    "babel-plugin-transform-styletron-display-name": "^1.1.0",
     "bundle-analyzer": "^0.0.6",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
