@@ -1,6 +1,6 @@
 {
   "name": "fusion-plugin-i18n-react",
-  "version": "1.2.3",
+  "version": "1.2.4-0",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
   "repository": "fusionjs/fusion-plugin-i18n-react",
   "files": [
