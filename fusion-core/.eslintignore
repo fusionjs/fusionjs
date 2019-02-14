@@ -1,0 +1,10 @@
+flow-typed/
+node_modules/
+dist/
+dist-tests/
+coverage/
+.nyc_output/
+
+.DS_Store
+npm-debug.log
+yarn-error.log
