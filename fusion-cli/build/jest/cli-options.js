@@ -29,6 +29,7 @@ exports.allowedJestOptions = [
   'onlyChanged',
   'passWithNoTests',
   'reporters',
+  'runInBand',
   'showConfig',
   'silent',
   'testLocationInResults',
