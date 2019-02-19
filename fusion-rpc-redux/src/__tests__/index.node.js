@@ -277,7 +277,7 @@ test('createRPCHandler failure', t => {
   });
   const result = handler('args');
   t.ok(result instanceof Promise);
-  result.catch(reject => {
+  result.then(reject => {
     t.equal(reject, error);
     t.end();
   });
