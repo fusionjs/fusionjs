@@ -74,7 +74,6 @@
     "src"
   ],
   "dependencies": {
-    "fusion-plugin-service-worker": "1.1.2-7",
     "isomorphic-fetch": "^2.2.1",
     "puppeteer": "^1.12.2"
   }
