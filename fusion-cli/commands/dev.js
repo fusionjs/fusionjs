@@ -38,7 +38,7 @@ exports.run = async function(
     env: 'development',
     dir,
     forceLegacyBuild,
-    watch: hmr,
+    watch: true,
     logger,
   });
 
