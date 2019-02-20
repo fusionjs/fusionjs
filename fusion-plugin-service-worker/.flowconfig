@@ -1,6 +1,7 @@
 [ignore]
 .*/node_modules/.*[^(package)]\.json$
 <PROJECT_ROOT>/dist/.*
+.*/fixture-apps/.*
 
 [include]
 ./src/

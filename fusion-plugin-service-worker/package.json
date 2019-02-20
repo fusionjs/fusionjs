@@ -32,9 +32,13 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "7.12.4",
     "flow-bin": "^0.92.1",
+    "fusion-cli": "^1.16.0",
     "fusion-core": "^1.10.3",
+    "fusion-plugin-react-helmet-async": "^1.0.2",
+    "fusion-react": "^1.3.7",
     "fusion-test-utils": "^1.3.1",
     "fusion-tokens": "^1.1.1",
+    "get-port": "^4.1.0",
     "nyc": "^13.1.0",
     "prettier": "^1.12.1",
     "react": "^16.3.2",
@@ -53,10 +57,10 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
+    "lint": "eslint .",
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "just-test": "yarn pack --filename fusion-plugin-service-worker.tgz && node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "view-cover": "npm run cover && open coverage/index.html",
@@ -68,5 +72,10 @@
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "dependencies": {
+    "fusion-plugin-service-worker": "1.1.2-7",
+    "isomorphic-fetch": "^2.2.1",
+    "puppeteer": "^1.12.2"
+  }
 }

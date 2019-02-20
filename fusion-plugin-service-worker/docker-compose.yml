@@ -2,11 +2,6 @@ version: '2'
 services:
   fusion-plugin-service-worker:
     build: .
-    volumes:
-      - '.:/fusion-plugin-service-worker'
-      - /fusion-plugin-service-worker/node_modules/
-      - /fusion-plugin-service-worker/dist/
-      - /fusion-plugin-service-worker/dist-tests/
     environment:
       - CODECOV_TOKEN
       - CI=true
