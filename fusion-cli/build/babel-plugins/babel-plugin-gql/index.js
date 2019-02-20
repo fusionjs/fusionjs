@@ -11,7 +11,6 @@
 const createNamedModuleVisitor = require('../babel-plugin-utils/visit-named-module');
 
 module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
-  const inline = state.inline;
   const t = babel.types;
   const visitor = createNamedModuleVisitor(
     t,
@@ -55,9 +54,7 @@ module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
     }
 
     function getReplacementPath(args) {
-      const arg = inline
-        ? args[0].value
-        : `__SECRET_GQL_LOADER__!${args[0].value}`;
+      const arg = args[0].value;
       return t.callExpression(t.identifier('require'), [t.stringLiteral(arg)]);
     }
   }

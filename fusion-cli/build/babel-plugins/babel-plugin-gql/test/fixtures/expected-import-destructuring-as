@@ -2,4 +2,4 @@ import { gql as frameworkgql } from 'fusion-apollo';
 import gql from 'gql';
 gql('./file.graphql');
 
-require("__SECRET_GQL_LOADER__!./file.graphql");
+require("./file.graphql");

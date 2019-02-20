@@ -2,8 +2,8 @@ import { gql } from 'fusion-apollo';
 import { gql as gqlOther } from 'gql';
 const path = './test';
 
-require("__SECRET_GQL_LOADER__!./file.graphql");
+require("./file.graphql");
 
 gqlOther(path);
 
-require("__SECRET_GQL_LOADER__!./file.graphql");
+require("./file.graphql");
