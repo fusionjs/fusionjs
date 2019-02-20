@@ -22,7 +22,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-react": "1.3.7-0"
+    "fusion-react": "1.3.7"
   },
   "peerDependencies": {
     "fusion-core": "^1.10.3",
