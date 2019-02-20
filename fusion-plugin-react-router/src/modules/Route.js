@@ -36,11 +36,13 @@ function Route(props: PropsType, context: ContextType) {
       children={(routeProps: ContextRouterType) => {
         const {match} = routeProps;
         if (match && match.isExact) {
-          context.onRoute({
-            page: match.path,
-            title: trackingId || match.path,
-            params: match.params,
-          });
+          if (typeof context.onRoute === 'function') {
+            context.onRoute({
+              page: match.path,
+              title: trackingId || match.path,
+              params: match.params,
+            });
+          }
         }
 
         if (component)
@@ -60,7 +62,7 @@ function Route(props: PropsType, context: ContextType) {
 }
 
 Route.contextTypes = {
-  onRoute: PropTypes.func.isRequired,
+  onRoute: PropTypes.func,
 };
 
 Route.displayName = 'FusionRoute';
