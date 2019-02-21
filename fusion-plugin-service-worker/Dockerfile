@@ -7,8 +7,4 @@ COPY . .
 
 RUN yarn
 
-RUN yarn pack --filename fusion-plugin-service-worker.tgz
-
-RUN cd fixture-apps/app && rm -rf node_modules && yarn
-
 RUN yarn --ignore-scripts run build-test

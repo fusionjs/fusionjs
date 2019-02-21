@@ -5,7 +5,7 @@ import Styletron from 'fusion-plugin-styletron-react';
 // import {createToken} from 'fusion-core'
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
-import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken} from 'fusion-plugin-service-worker';
+import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken} from '../../../dist';
 
 import root from './root.js';
 

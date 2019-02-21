@@ -27,7 +27,7 @@ export async function startServer() {
   // })();
 
   const proc = spawn(
-    __dirname + '/../fixture-apps/app/node_modules/.bin/fusion',
+    __dirname + '/../node_modules/.bin/fusion',
     ['dev', '--port', port, '--no-open'],
     opts
   );
