@@ -34,7 +34,9 @@ app.register(
   GetInitialStateToken,
   createPlugin({
     provides: () => {
-      return function getInitialState(ctx: Context) {
+      return async function getInitialState(
+        ctx: Context
+      ): Promise<{something: any}> {
         return {
           something: ctx.state.something,
         };
