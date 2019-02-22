@@ -53,6 +53,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.js',
     '!**/__integration__/**',
+    '!**/__tests__/**',
     '!**/node_modules/**',
     ...(process.env.COVERAGE_PATHS
       ? process.env.COVERAGE_PATHS.split(',')
