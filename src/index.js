@@ -37,6 +37,9 @@ export default class App extends FusionApp {
         return (el: React.Element<*>) => {
           if (__NODE__) {
             return prepare(el).then(() => {
+              if (render) {
+                return render(el);
+              }
               return serverRender(el);
             });
           } else {

@@ -30,11 +30,17 @@ tape('Preparing a sync app passing through context', t => {
       return <SimplePresentational />;
     }
   }
+  SimpleComponent.childContextTypes = {
+    test: () => {},
+  };
   function SimplePresentational(props, context) {
     t.equal(context.test, 'data', 'handles child context correctly');
     numChildRenders++;
     return <div>Hello World</div>;
   }
+  SimplePresentational.contextTypes = {
+    test: () => {},
+  };
   const app = <SimpleComponent />;
   const p = prepare(app);
   t.ok(p instanceof Promise, 'prepare returns a promise');
