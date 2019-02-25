@@ -7,6 +7,9 @@ import Styletron from 'fusion-plugin-styletron-react';
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
 import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken} from '../../../dist';
 
+import MockRedirectPlugin from './plugins/mock-redirect';
+import MockErrorPlugin from './plugins/mock-server-error';
+
 import root from './root.js';
 
 export default () => {
@@ -21,6 +24,9 @@ export default () => {
   if (__NODE__) {
     app.register(SWTemplateFunctionToken, swTemplateFunction);
   }
+
+  app.register(MockRedirectPlugin);
+  app.register(MockErrorPlugin);
 
   return app;
 };

@@ -74,27 +74,29 @@ function removeKeys(cache, keys) {
 
 function fetchAndCache(request, expectsHtml) {
   return fetch(request).then(resp => {
-    // Allow 0 status code because that is opaque response from behind CORS
-    // We do an immediate network fetch after this, so if response was bad it won't stay bad
-    if (resp.status !== 200 && resp.status !== 0) {
-      return Promise.resolve(resp);
+    if (expectsHtml) {
+      // check we've got good html before caching
+      if (!responseIsOKAndHtml(resp)) {
+        debug.log(
+          `[sw debug] expected HTML but got ${(resp &&
+            resp.headers &&
+            resp.headers.get('content-type')) ||
+            'unknown'}`
+        );
+        // Might be redirect due to session expiry or error
+        // Clear cache but still pass original response back to browser
+        return caches.delete(cacheName).then(() => Promise.resolve(resp));
+      }
+    } else {
+      // For non html resources allow 0 status code because that is an opaque response from behind CORS
+      // We do an immediate network fetch after this, so if response was temporarily bad it won't stay bad
+      if (resp.status !== 200 && resp.status !== 0) {
+        return Promise.resolve(resp);
+      }
     }
+
     const clonedResponse = resp.clone();
     caches.open(cacheName).then(cache => {
-      if (expectsHtml) {
-        // check we've got html before caching
-        if (!responseIsHtml(clonedResponse)) {
-          debug.log(
-            `[sw debug] expected HTML but got ${(clonedResponse &&
-              clonedResponse.headers &&
-              clonedResponse.headers.get('content-type')) ||
-              'unknown'}`
-          );
-          // Might be redirect due to session expiry or error
-          // Clear cache but still pass original response back to browser
-          caches.delete(cacheName).then(() => Promise.resolve(resp));
-        }
-      }
       cache.put(request.url, clonedResponse);
     });
     // Pass original response back to browser
@@ -110,12 +112,14 @@ function requestExpectsHtml(request) {
   return acceptHeader && acceptHeader.indexOf('html') > -1;
 }
 
-function responseIsHtml(response) {
-  if (!response || !response.headers) {
+function responseIsOKAndHtml(response) {
+  if (!response || !response.headers || !response.status) {
     return false;
   }
   const contentType = response.headers.get('content-type');
-  return contentType && contentType.indexOf('html') > -1;
+  return (
+    response.status === 200 && contentType && contentType.indexOf('html') > -1
+  );
 }
 
 function origin() {
