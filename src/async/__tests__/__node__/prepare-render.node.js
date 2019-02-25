@@ -17,7 +17,7 @@ Enzyme.configure({adapter: new Adapter()});
 
 tape('Preparing a hook', t => {
   function Component() {
-    const [state, setState] = React.useState(0);
+    const [state] = React.useState(0);
     return <span>{state}</span>;
   }
   const app = <Component />;

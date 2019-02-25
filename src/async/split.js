@@ -43,7 +43,9 @@ export default function withAsyncComponent<Config>({
       let promise = load();
       // $FlowFixMe
       let id = promise.__MODULE_ID;
+
       if (__webpack_modules__[id]) {
+        // If module is already loaded, it can be synchronously imported
         AsyncComponent = __webpack_require__(id).default;
       }
     }
