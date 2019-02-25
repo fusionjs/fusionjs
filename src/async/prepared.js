@@ -61,6 +61,7 @@ const prepared = (
     }
 
     render() {
+      const effectId = this.props.effectId || 'defaultId';
       const prepareState = this.context.__PREPARE_STATE__;
       if (prepareState) {
         if (opts.defer || opts.boundary) {
@@ -68,15 +69,14 @@ const prepared = (
           return null;
         }
 
-        if (!prepareState.seen.has(PreparedComponent)) {
-          // need to mark as seen
-          const effectPromise = sideEffect(this.props, this.context);
-          prepareState.seen.add(PreparedComponent);
-          prepareState.promises.set(PreparedComponent, effectPromise);
-          // skip render until effect promise awaited
-          return null;
-        } else if (prepareState.promises.has(PreparedComponent)) {
-          // effect already in progress
+        const isResolved = prepareState.isResolved(
+          PreparedComponent,
+          effectId,
+          () => sideEffect(this.props, this.context)
+        );
+
+        if (!isResolved) {
+          // Wait until resolved
           return null;
         }
       }

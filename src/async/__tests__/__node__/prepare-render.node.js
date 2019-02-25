@@ -24,7 +24,7 @@ tape('Preparing a hook', t => {
   const p = prepare(app);
   t.ok(p instanceof Promise, 'prepare returns a promise');
   p.then(() => {
-    const wrapper = shallow(<div>{app}</div>);
+    const wrapper = shallow(app);
     t.equal(wrapper.find('span').length, 1, 'has one children');
     t.end();
   });
@@ -201,8 +201,8 @@ tape('Preparing an async app with nested asyncs', t => {
     return Promise.resolve();
   })(SimpleComponent);
   const app = (
-    <AsyncParent data="test">
-      <AsyncParent data="test">
+    <AsyncParent effectId="1" data="test">
+      <AsyncParent effectId="2" data="test">
         <SimplePresentational />
       </AsyncParent>
     </AsyncParent>
@@ -214,10 +214,10 @@ tape('Preparing an async app with nested asyncs', t => {
     t.equal(numPrepares, 2, 'runs each prepare function once');
     t.equal(
       numConstructors,
-      2,
+      3,
       'constructs SimpleComponent once for each render'
     );
-    t.equal(numRenders, 2, 'renders SimpleComponent twice');
+    t.equal(numRenders, 3, 'renders SimpleComponent three times');
     t.equal(numChildRenders, 1, 'renders SimplePresentational once');
     t.end();
   });
@@ -254,10 +254,10 @@ tape('Preparing an app with sibling async components', t => {
   })(SimpleComponent);
   const app = (
     <div>
-      <AsyncParent data="test">
+      <AsyncParent effectId="1" data="test">
         <SimplePresentational />
       </AsyncParent>
-      <AsyncParent data="test">
+      <AsyncParent effectId="2" data="test">
         <SimplePresentational />
       </AsyncParent>
     </div>
@@ -467,8 +467,8 @@ tape('Preparing React.forwardRef with async children', t => {
   })(SimplePresentational);
   const app = (
     <Forwarded>
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </Forwarded>
   );
   const p = prepare(app);
@@ -515,8 +515,8 @@ tape('Preparing a fragment with async children', t => {
   const app = (
     // $FlowFixMe
     <React.Fragment>
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </React.Fragment>
   );
   const p = prepare(app);
@@ -580,8 +580,8 @@ tape('Preparing React.createContext() with async children', t => {
 
   const app = (
     <Provider value="dark">
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </Provider>
   );
   const p = prepare(app);
@@ -689,7 +689,7 @@ tape('Preparing React.createContext() using the default provider value', t => {
   p.then(() => {
     t.equal(numPrepares, 1, 'runs prepare function');
     t.equal(numChildRenders, 1, 'prepares SimplePresentational');
-    t.equal(numRenderPropsRenders, 1, 'runs render prop function');
+    t.ok(numRenderPropsRenders > 0, 'runs render prop function');
     t.end();
   });
 });
