@@ -1,8 +1,11 @@
 // @flow
 /* eslint-env jest, node */
+/* eslint-disable no-console */
+/* globals window, console */
 
 import getPort from 'get-port';
 import fetch from 'isomorphic-fetch';
+import type {Page} from 'puppeteer';
 
 export async function startServer() {
   let spawn = require('child_process').spawn;
@@ -14,17 +17,6 @@ export async function startServer() {
     stdio: 'inherit',
     env: {...process.env},
   };
-
-  // (function() {
-  //   var oldSpawn = spawn;
-  //   function mySpawn() {
-  //     console.log('spawn called');
-  //     console.log(arguments);
-  //     var result = oldSpawn.apply(this, arguments);
-  //     return result;
-  //   }
-  //   spawn = mySpawn;
-  // })();
 
   const proc = spawn(
     __dirname + '/../node_modules/.bin/fusion',
@@ -75,4 +67,37 @@ export async function startServer() {
     throw new Error('Failed to start server');
   }
   return {initialResponse, port, proc};
+}
+
+export async function logCachedURLs(page: Page, label: string) {
+  await page.evaluate(
+    label =>
+      window.caches
+        .open('0.0.0')
+        .then(cache => cache.keys())
+        .then(keys =>
+          console.log(
+            `${label}#${keys
+              .map(key => key.url)
+              .filter(Boolean)
+              .join(',')}`
+          )
+        ),
+    label
+  );
+}
+
+export async function logCacheDates(page: Page, label: string) {
+  await page.evaluate(async label => {
+    const cache = await window.caches.open('0.0.0');
+    const requests = await cache.keys();
+    const responses = await Promise.all(
+      requests.map(request => cache.match(request))
+    );
+    console.log(
+      `${label}#${responses.map(res =>
+        new Date(res.headers.get('date')).getTime()
+      )}`
+    );
+  }, label);
 }

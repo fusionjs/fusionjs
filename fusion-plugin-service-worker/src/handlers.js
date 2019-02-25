@@ -1,7 +1,7 @@
 // @flow
 
 /* eslint-env serviceworker */
-/* globals location, URL, fetch,  */
+/* globals URL, fetch,  */
 
 import type {AssetInfo} from './types';
 
@@ -14,25 +14,20 @@ export default function getHandlers(assetInfo: AssetInfo) {
     onInstall: (event: InstallEvent) => {
       self.skipWaiting();
       event.waitUntil(
-        // remove old cache
-        caches
-          .open(cacheName)
-          .then(cache => {
-            return cache
-              .addAll(precachePaths)
-              .then(() =>
-                getOutdatedKeys(cache, cacheablePaths).then(outdatedKeys =>
-                  removeKeys(cache, outdatedKeys)
-                )
-              );
-          })
-          .catch(e => {
-            // Don't throw an error because we expect CORS (CDN) requests to not be precacheable
-            // (`addAll` expects a 200 response, but CORS returns an opaque response)
-            // CORS resources will be lazily cached on first fetch instead
-            /* eslint-disable-next-line no-console */
-            debug.log(`[sw debug] unable to pre-cache some resources: ${e}`);
-          })
+        // remove old caches, then precache
+        caches.delete(cacheName).then(() =>
+          caches
+            .open(cacheName)
+            .then(cache => {
+              return cache.addAll(precachePaths);
+            })
+            .catch(e => {
+              // Don't throw an error because we expect CORS (CDN) requests to not be precacheable
+              // (`addAll` expects a 200 response, but CORS returns an opaque response)
+              // CORS resources will be lazily cached on first fetch instead
+              debug.log(`[sw debug] unable to pre-cache some resources: ${e}`);
+            })
+        )
       );
     },
     onFetch: (event: FetchEvent) => {
@@ -56,20 +51,6 @@ export default function getHandlers(assetInfo: AssetInfo) {
       event.waitUntil(p);
     },
   };
-}
-
-function getOutdatedKeys(cache, cacheablePaths) {
-  return cache.keys().then(requests =>
-    requests.filter(request => {
-      return !cacheablePaths.find(key => {
-        return origin() + String(key) === request.url;
-      });
-    })
-  );
-}
-
-function removeKeys(cache, keys) {
-  return Promise.all(keys.map(key => cache.delete(key)));
 }
 
 function fetchAndCache(request, expectsHtml) {
@@ -120,9 +101,4 @@ function responseIsOKAndHtml(response) {
   return (
     response.status === 200 && contentType && contentType.indexOf('html') > -1
   );
-}
-
-function origin() {
-  const {origin, protocol, hostname, port} = location;
-  return origin || `${protocol}'//'${hostname}${port ? ':' + port : ''}`;
 }
