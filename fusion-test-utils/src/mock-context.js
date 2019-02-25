@@ -42,6 +42,12 @@ export function createRequestContext(
   let req = httpMocks.createRequest({url, ...options});
   let res = httpMocks.createResponse();
 
+  const outHeadersKey = Object.getOwnPropertySymbols(
+    // $FlowFixMe
+    new (require('http')).OutgoingMessage()
+  ).filter(sym => /outHeadersKey/.test(sym.toString()))[0];
+  res[outHeadersKey] = null; // required for headers to work correctly in Node >10
+
   /**
    * Copied from https://github.com/koajs/koa/blob/master/test/helpers/context.js
    * Copyright (c) 2016 Koa contributors
