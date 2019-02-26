@@ -10,6 +10,9 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
 
+declare var __webpack_modules__: {[string]: any};
+declare var __webpack_require__: any => any;
+
 const CHUNKS_KEY = '__CHUNK_IDS';
 
 const contextTypes = {
@@ -21,18 +24,33 @@ if (__NODE__) {
   contextTypes.markAsCritical = PropTypes.func;
 }
 
-// $FlowFixMe
-export default function withAsyncComponent({
+export default function withAsyncComponent<Config>({
   defer,
   load,
   LoadingComponent,
   ErrorComponent,
-}) {
+}: {
+  defer?: boolean,
+  load: () => Promise<{default: React.ComponentType<Config>}>,
+  LoadingComponent: React.ComponentType<any>,
+  ErrorComponent: React.ComponentType<any>,
+}): React.ComponentType<Config> {
   let AsyncComponent = null;
   let error = null;
   let chunkIds = [];
 
   function WithAsyncComponent(props) {
+    if (__BROWSER__) {
+      let promise = load();
+      // $FlowFixMe
+      let id = promise.__MODULE_ID;
+
+      if (__webpack_modules__[id]) {
+        // If module is already loaded, it can be synchronously imported
+        AsyncComponent = __webpack_require__(id).default;
+      }
+    }
+
     if (error) {
       return <ErrorComponent error={error} />;
     }
@@ -41,6 +59,7 @@ export default function withAsyncComponent({
     }
     return <AsyncComponent {...props} />;
   }
+
   return prepared(
     (props, context) => {
       if (AsyncComponent) {
@@ -58,6 +77,7 @@ export default function withAsyncComponent({
       } catch (e) {
         componentPromise = Promise.reject(e);
       }
+
       // $FlowFixMe
       chunkIds = componentPromise[CHUNKS_KEY] || [];
 

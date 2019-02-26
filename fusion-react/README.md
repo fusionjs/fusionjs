@@ -200,12 +200,11 @@ import {split} from 'fusion-react';
 
 const Component = split({load, LoadingComponent, ErrorComponent});
 ```
-
 - `load: () => Promise` - Required. Load a component asynchronously. Typically, this should make a dynamic `import()` call.
   The Fusion compiler takes care of bundling the appropriate code and de-duplicating dependencies. The argument to `import` should be a string literal (not a variable). See [webpack docs](https://webpack.js.org/api/module-methods/#import-) for more information.
 - `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
 - `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
-- `Component` - A placeholder component that can be used in your view which will show the asynchronous component
+- `defer: boolean` - Defaults to false. Whether split component should be deferred.
 
 #### prepare
 
@@ -243,6 +242,33 @@ const hoc = prepared(sideEffect, opts);
   - `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
 - `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
   - `Component: React.Component` - Required.
+
+##### Prepared component props
+
+- `effectId: string` - Used to enable `effectFn` to be called multiple times when rendering the same component.
+
+```js
+
+const PreparedComponent = prepared(effectFn)(SomeComponent);
+
+// effectFn called only once
+const app1 = (
+  <div>
+    <PreparedComponent />
+    <PreparedComponent />
+    <PreparedComponent />
+  </div>
+)
+
+// effectFn called for each rendered PreparedComponent
+const app2 = (
+  <div>
+    <PreparedComponent effectId="1" />
+    <PreparedComponent effectId="2" />
+    <PreparedComponent effectId="3" />
+  </div>
+)
+```
 
 #### exclude
 

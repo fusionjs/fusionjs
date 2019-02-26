@@ -15,6 +15,21 @@ import {prepare, prepared} from '../../index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
+tape('Preparing a hook', t => {
+  function Component() {
+    const [state] = React.useState(0);
+    return <span>{state}</span>;
+  }
+  const app = <Component />;
+  const p = prepare(app);
+  t.ok(p instanceof Promise, 'prepare returns a promise');
+  p.then(() => {
+    const wrapper = shallow(app);
+    t.equal(wrapper.find('span').length, 1, 'has one children');
+    t.end();
+  });
+});
+
 tape('Preparing a sync app', t => {
   let numConstructors = 0;
   let numRenders = 0;
@@ -22,11 +37,6 @@ tape('Preparing a sync app', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -56,11 +66,6 @@ tape('Preparing a sync app with nested children', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -94,11 +99,6 @@ tape(
     let numChildRenders = 0;
     let numPrepares = 0;
     function SimpleComponent(props, context) {
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numRenders++;
       return <div>{props.children}</div>;
     }
@@ -123,7 +123,7 @@ tape(
     const p = prepare(app);
     t.ok(p instanceof Promise, 'prepare returns a promise');
     p.then(() => {
-      t.equal(numRenders, 1, 'renders SimpleComponent once');
+      t.equal(numRenders, 2, 'renders SimpleComponent twice');
       t.equal(numPrepares, 1, 'runs prepare function once');
       t.equal(numChildRenders, 1, 'renders SimplePresentational once');
       t.end();
@@ -139,11 +139,6 @@ tape('Preparing an async app', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -184,11 +179,6 @@ tape('Preparing an async app with nested asyncs', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -211,8 +201,8 @@ tape('Preparing an async app with nested asyncs', t => {
     return Promise.resolve();
   })(SimpleComponent);
   const app = (
-    <AsyncParent data="test">
-      <AsyncParent data="test">
+    <AsyncParent effectId="1" data="test">
+      <AsyncParent effectId="2" data="test">
         <SimplePresentational />
       </AsyncParent>
     </AsyncParent>
@@ -224,10 +214,10 @@ tape('Preparing an async app with nested asyncs', t => {
     t.equal(numPrepares, 2, 'runs each prepare function once');
     t.equal(
       numConstructors,
-      2,
+      3,
       'constructs SimpleComponent once for each render'
     );
-    t.equal(numRenders, 2, 'renders SimpleComponent twice');
+    t.equal(numRenders, 3, 'renders SimpleComponent three times');
     t.equal(numChildRenders, 1, 'renders SimplePresentational once');
     t.end();
   });
@@ -241,11 +231,6 @@ tape('Preparing an app with sibling async components', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -258,21 +243,20 @@ tape('Preparing an app with sibling async components', t => {
     numChildRenders++;
     return <div>Hello World</div>;
   }
-  const AsyncParent = prepared(props => {
+  const AsyncParent = prepared(async props => {
     numPrepares++;
     t.equal(
       props.data,
       'test',
       'passes props through to prepared component correctly'
     );
-    return;
   })(SimpleComponent);
   const app = (
     <div>
-      <AsyncParent data="test">
+      <AsyncParent effectId="1" data="test">
         <SimplePresentational />
       </AsyncParent>
-      <AsyncParent data="test">
+      <AsyncParent effectId="2" data="test">
         <SimplePresentational />
       </AsyncParent>
     </div>
@@ -345,11 +329,6 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -401,11 +380,6 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   class SimpleComponent extends React.Component<any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
     }
     render() {
@@ -492,8 +466,8 @@ tape('Preparing React.forwardRef with async children', t => {
   })(SimplePresentational);
   const app = (
     <Forwarded>
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </Forwarded>
   );
   const p = prepare(app);
@@ -540,8 +514,8 @@ tape('Preparing a fragment with async children', t => {
   const app = (
     // $FlowFixMe
     <React.Fragment>
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </React.Fragment>
   );
   const p = prepare(app);
@@ -605,8 +579,8 @@ tape('Preparing React.createContext() with async children', t => {
 
   const app = (
     <Provider value="dark">
-      <AsyncChild data="test" />
-      <AsyncChild data="test" />
+      <AsyncChild effectId="1" data="test" />
+      <AsyncChild effectId="2" data="test" />
     </Provider>
   );
   const p = prepare(app);
@@ -669,7 +643,7 @@ tape('Preparing React.createContext() with deep async children', t => {
   p.then(() => {
     t.equal(numPrepares, 1, 'runs prepare function');
     t.equal(numChildRenders, 1, 'prepares SimplePresentational');
-    t.equal(numRenderPropsRenders, 1, 'runs render prop function');
+    t.ok(numRenderPropsRenders > 0, 'runs render prop function');
     t.end();
   });
 });
@@ -714,7 +688,7 @@ tape('Preparing React.createContext() using the default provider value', t => {
   p.then(() => {
     t.equal(numPrepares, 1, 'runs prepare function');
     t.equal(numChildRenders, 1, 'prepares SimplePresentational');
-    t.equal(numRenderPropsRenders, 1, 'runs render prop function');
+    t.ok(numRenderPropsRenders > 0, 'runs render prop function');
     t.end();
   });
 });
@@ -729,11 +703,6 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   class SimpleComponent extends React.Component<any, any> {
     constructor(props, context) {
       super(props, context);
-      t.equal(
-        context.__IS_PREPARE__,
-        true,
-        'sets __IS_PREPARE__ to true in context'
-      );
       numConstructors++;
       this.state = {
         firstRender: true,
