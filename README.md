@@ -244,6 +244,33 @@ const hoc = prepared(sideEffect, opts);
 - `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
   - `Component: React.Component` - Required.
 
+##### Prepared component props
+
+- `effectId: string` - Used to enable `effectFn` to be called multiple times when rendering the same component.
+
+```js
+
+const PreparedComponent = prepared(effectFn)(SomeComponent);
+
+// effectFn called only once
+const app1 = (
+  <div>
+    <PreparedComponent />
+    <PreparedComponent />
+    <PreparedComponent />
+  </div>
+)
+
+// effectFn called for each rendered PreparedComponent
+const app2 = (
+  <div>
+    <PreparedComponent effectId="1" />
+    <PreparedComponent effectId="2" />
+    <PreparedComponent effectId="3" />
+  </div>
+)
+```
+
 #### exclude
 
 ```js
