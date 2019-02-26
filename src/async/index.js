@@ -14,34 +14,4 @@ import split from './split';
 import exclude from './traverse-exclude';
 import middleware from './middleware';
 
-const prepareTyped: (
-  element: React.Element<any>
-  // $FlowFixMe
-) => Promise<React.ComponentType<any>> = prepare;
-
-const preparedTyped: (
-  sideEffect: (props: Object, context: Object) => Promise<any> | any,
-  opts?: {
-    defer?: boolean,
-    boundary?: boolean,
-    componentDidMount?: boolean,
-    componentWillReceiveProps?: boolean,
-    componentDidUpdate?: boolean,
-    forceUpdate?: boolean,
-    contextTypes?: Object,
-  }
-) => (
-  Component: React.ComponentType<any>
-) => React.ComponentType<any> = prepared;
-
-const excludeTyped: (
-  Component: React.ComponentType<any>
-) => React.ComponentType<any> = exclude;
-
-export {
-  prepareTyped as prepare,
-  preparedTyped as prepared,
-  split,
-  excludeTyped as exclude,
-  middleware,
-};
+export {prepare, prepared, split, exclude, middleware};

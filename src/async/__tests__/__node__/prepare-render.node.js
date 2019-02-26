@@ -243,14 +243,13 @@ tape('Preparing an app with sibling async components', t => {
     numChildRenders++;
     return <div>Hello World</div>;
   }
-  const AsyncParent = prepared(props => {
+  const AsyncParent = prepared(async props => {
     numPrepares++;
     t.equal(
       props.data,
       'test',
       'passes props through to prepared component correctly'
     );
-    return;
   })(SimpleComponent);
   const app = (
     <div>

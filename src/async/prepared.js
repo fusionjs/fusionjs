@@ -23,7 +23,7 @@ const prepared = (
   opts?: PreparedOpts = {}
 ) => <Config>(
   OriginalComponent: React.AbstractComponent<Config>
-): React.AbstractComponent<Config> => {
+): React.AbstractComponent<{...Config, effectId?: string}> => {
   opts = Object.assign(
     {
       boundary: false,
