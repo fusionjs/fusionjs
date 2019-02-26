@@ -34,8 +34,7 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
-    "prop-types": "^15.6.2",
-    "react-is": "^16.7.0"
+    "prop-types": "^15.6.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -63,8 +62,8 @@
   },
   "peerDependencies": {
     "fusion-core": "^1.10.3",
-    "react": "14.x - 16.x",
-    "react-dom": "14.x - 16.x"
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1"
   },
   "engines": {
     "node": ">= 8.9.0"

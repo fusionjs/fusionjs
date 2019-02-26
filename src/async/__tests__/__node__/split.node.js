@@ -14,7 +14,7 @@ import Provider from '../../prepare-provider';
 import {prepare, split} from '../../index.js';
 
 tape('Preparing an app with an async component', async t => {
-  function DeferredComponent() {
+  function DeferredComponent(props: {foo: 'foo'}) {
     return <div>Loaded</div>;
   }
   function LoadingComponent() {
@@ -33,7 +33,7 @@ tape('Preparing an app with an async component', async t => {
 
   const app = (
     <Provider>
-      <ToTest />
+      <ToTest foo="foo" />
     </Provider>
   );
 
@@ -60,7 +60,10 @@ tape('Preparing an app with an errored async component', async t => {
 
   const ToTest = split({
     defer: false,
-    load: () => Promise.reject(new Error('failed')),
+    load: () =>
+      (Promise.reject(new Error('failed')): Promise<{
+        default: React.ComponentType<any>,
+      }>),
     LoadingComponent,
     ErrorComponent,
   });
