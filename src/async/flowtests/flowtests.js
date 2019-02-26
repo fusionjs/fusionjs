@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {prepared, split} from '../index.js';
+import {prepared} from '../index.js';
 
 function StrictProps(props: {|foo: 'foo'|}) {
   return <div>Hello World</div>;

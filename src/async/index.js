@@ -6,8 +6,6 @@
  * @flow
  */
 
-import * as React from 'react';
-
 import prepare from './prepare';
 import prepared from './prepared';
 import split from './split';
