@@ -283,8 +283,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                     include: [
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
-                      /fusion-cli\/entries/,
-                      /fusion-cli\/plugins/,
+                      /fusion-cli(\/|\\)entries/,
+                      /fusion-cli(\/|\\)plugins/,
                     ],
                     ...babelOverrides,
                   },
@@ -313,8 +313,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                     include: [
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
-                      /fusion-cli\/entries/,
-                      /fusion-cli\/plugins/,
+                      /fusion-cli(\/|\\)entries/,
+                      /fusion-cli(\/|\\)plugins/,
                     ],
                     ...babelOverrides,
                   },
@@ -343,8 +343,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                     include: [
                       // Explictly only transpile user source code as well as fusion-cli entry files
                       path.join(dir, 'src'),
-                      /fusion-cli\/entries/,
-                      /fusion-cli\/plugins/,
+                      /fusion-cli(\/|\\)entries/,
+                      /fusion-cli(\/|\\)plugins/,
                     ],
                     ...legacyBabelOverrides,
                   },
@@ -469,9 +469,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           raw: true,
           entryOnly: false,
           // source-map-support is a dep of framework, so we need to resolve this path
-          banner: `require('${require.resolve(
-            'source-map-support'
-          )}').install();`,
+          banner: `require('${require
+            .resolve('source-map-support')
+            // replace windows backslashes since this is generated code (#461)
+            .split(path.sep)
+            .join('/')}').install();`,
         }),
       runtime === 'server' &&
         new webpack.BannerPlugin({
