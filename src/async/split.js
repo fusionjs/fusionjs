@@ -31,10 +31,10 @@ export default function withAsyncComponent<Config>({
   ErrorComponent,
 }: {
   defer?: boolean,
-  load: () => Promise<{default: React.AbstractComponent<Config>}>,
-  LoadingComponent: React.AbstractComponent<any>,
-  ErrorComponent: React.AbstractComponent<any>,
-}): React.AbstractComponent<Config> {
+  load: () => Promise<{default: React.ComponentType<Config>}>,
+  LoadingComponent: React.ComponentType<any>,
+  ErrorComponent: React.ComponentType<any>,
+}): React.ComponentType<Config> {
   let AsyncComponent = null;
   let error = null;
   let chunkIds = [];

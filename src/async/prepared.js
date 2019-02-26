@@ -22,8 +22,8 @@ const prepared = (
   sideEffect: (any, any) => Promise<any>,
   opts?: PreparedOpts = {}
 ) => <Config>(
-  OriginalComponent: React.AbstractComponent<Config>
-): React.AbstractComponent<{...Config, effectId?: string}> => {
+  OriginalComponent: React.ComponentType<Config>
+): React.ComponentType<{...Config, effectId?: string}> => {
   opts = Object.assign(
     {
       boundary: false,

@@ -62,7 +62,7 @@ tape('Preparing an app with an errored async component', async t => {
     defer: false,
     load: () =>
       (Promise.reject(new Error('failed')): Promise<{
-        default: React.AbstractComponent<any>,
+        default: React.ComponentType<any>,
       }>),
     LoadingComponent,
     ErrorComponent,
