@@ -6,11 +6,12 @@
  * @flow
  */
 
-/* global __webpack_modules__ __webpack_require__ */
-
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
+
+declare var __webpack_modules__: {[string]: any};
+declare var __webpack_require__: any => any;
 
 const CHUNKS_KEY = '__CHUNK_IDS';
 
@@ -29,7 +30,7 @@ export default function withAsyncComponent<Config>({
   LoadingComponent,
   ErrorComponent,
 }: {
-  defer: boolean,
+  defer?: boolean,
   load: () => Promise<{default: React.AbstractComponent<Config>}>,
   LoadingComponent: React.AbstractComponent<any>,
   ErrorComponent: React.AbstractComponent<any>,
