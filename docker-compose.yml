@@ -1,0 +1,10 @@
+version: '3'
+services:
+  ci:
+    build: .
+    environment:
+      - CODECOV_TOKEN
+      - CI=true
+      - BUILDKITE
+      - BUILDKITE_PARALLEL_JOB
+      - BUILDKITE_PARALLEL_JOB_COUNT
