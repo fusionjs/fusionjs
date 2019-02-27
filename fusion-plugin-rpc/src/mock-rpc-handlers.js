@@ -1,6 +1,6 @@
 // @flow
 import mapObject from 'just-map-object';
-import isEqual from 'lodash.isequal';
+import isEqual from 'just-compare';
 import ResponseError from './response-error';
 import {type HandlerType} from './tokens';
 
