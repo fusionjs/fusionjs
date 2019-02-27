@@ -5,7 +5,7 @@ import Styletron from 'fusion-plugin-styletron-react';
 // import {createToken} from 'fusion-core'
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
-import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken} from '../../../dist';
+import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken, SWMaxCacheDurationMs} from '../../../dist';
 
 import MockRedirectPlugin from './plugins/mock-redirect';
 import MockErrorPlugin from './plugins/mock-server-error';
@@ -23,6 +23,10 @@ export default () => {
   }
   if (__NODE__) {
     app.register(SWTemplateFunctionToken, swTemplateFunction);
+    const expiry = parseInt(process.env.EXPIRY, 0);
+    if (expiry) {
+      app.register(SWMaxCacheDurationMs, expiry);
+    }
   }
 
   app.register(MockRedirectPlugin);

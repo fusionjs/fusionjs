@@ -84,10 +84,7 @@ test('/response to error', async t => {
     t.ok(isReady, 'service worker is active');
 
     controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.notOk(
-      controller,
-      'first page load: page did not have existing service worker'
-    );
+    t.ok(controller, 'first page load: page already claimed service worker');
 
     await logCachedURLs(page, '[TEST] cached after first load:');
 
@@ -100,12 +97,7 @@ test('/response to error', async t => {
 
     // 2. TRIGGER 500 BUT WITH GOOD HTML
     await page.goto(`${hostname}${port}/error-500`);
-
     controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.ok(
-      controller,
-      'repeat page load: page has an existing active service worker'
-    );
 
     await logCachedURLs(
       page,
@@ -115,21 +107,12 @@ test('/response to error', async t => {
     // 3. RELOAD A GOOD PAGE
     await page.goto(`${hostname}${port}`);
     controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.ok(
-      controller,
-      'repeat page load: page has an existing active service worker'
-    );
 
     await logCachedURLs(page, '[TEST] cached after second good load:');
 
     // 4. TRIGGER 200 WITH BAD HTML
     await page.goto(`${hostname}${port}/error-200`);
-
     controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.ok(
-      controller,
-      'repeat page load: page has an existing active service worker'
-    );
 
     await logCachedURLs(page, `[TEST] cached after error (200 WITH BAD HTML):`);
 

@@ -29,6 +29,7 @@ import {getHandlers} from "fusion-plugin-service-worker";
 export default (assetInfo) => {
   const {onFetch, onInstall} = getHandlers(assetInfo);
   self.addEventListener("install", onInstall);
+  self.addEventListener('activate', onActivate);
   self.addEventListener("fetch", onFetch);
 }
 ```
@@ -48,13 +49,65 @@ import SwPlugin, {SWTemplateFunctionToken} from 'fusion-plugin-service-worker';
 
 app.register(SWTemplateFunctionToken, swTemplateFunction);
 app.register(SwPlugin);
-if (__NODE__) {
-  app.register(SWTemplateFunctionToken, swTemplateFunction);
+  if (__BROWSER__) {
+    // optional (default true).
+    // If false will unregister existing service workers and clear cache
+    app.register(SWRegisterToken, true);
+  }
+  if (__NODE__) {
+    app.register(SWTemplateFunctionToken, swTemplateFunction);
+    // optional (default 24 hours)
+    // The time (in ms) before the service worker cache will automatically expire
+    app.register(SWMaxCacheDurationMs, expiry);
+  }
+```
+
+The browser will automatically register the service worker on page load.
+
+### Cache Expiry
+
+Because Service Workers typically cache the HTML there is a possibility that an error or unexpected response will lead to apps being perpetually stuck behind a cache wall and cut off from the network. The Service Worker plugin includes several safeguards that significantly reduce this probability. These include deleting all caches when an HTML request returns a non-200 or non HTML response and backgraound-refreshing the cache from the network after every fetch.
+
+As a last-resort protection, we assign a built-in expiry time to html caches. By default this is 24 hours, but you can override by passing the `SWMaxCacheDurationMs` token. This is recommended when shipping a Service Worker for the first time, so as to prevent network isolation until the app owner is confident the Service Worker Plugin is working as expected.
+
+*main.js*
+```js
+  if (__NODE__) {
+    // ...
+    app.register(SWMaxCacheDurationMs, 1000 * 60 * 5); // set to 5 minutes for trial run
+  }
+```
+
+### Messaging
+
+The Service Worker sends status updates to the browser client in the form of postMessages.
+These messages take the form:
+
+```ts
+{
+  type: string,
+  text: string
 }
 ```
-Note: SWLoggerToken is an optional browser plugin dep that is not expected to be used outside of tests.
 
-The browser will automatically register the default service worker on page load.
+Your app can listen to these post messages and filter by type:
+
+```js
+if ('serviceWorker' in window.navigator) {
+  window.navigator.serviceWorker.addEventListener('message', event => {
+    if (existingSW && event.data.type === 'upgrade-available') {
+      // prompt user to reload for new build
+      logger.log(event.data.text);
+    }
+  });
+}
+```
+
+Message types include: \
+**upgrade-available:** A new build has occured and the user should reload the page to get the latest version. The service worker plugin will `console.log` this message by default
+
+**cache-expired:** The Service Worker cache wan not been updated for a period exceeding the cache expiry period (see above) and so has been auto-refreshed.
+
 
 ### Unregistering the Service Worker
 

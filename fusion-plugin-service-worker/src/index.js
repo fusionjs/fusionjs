@@ -7,7 +7,14 @@ import {
   SWTemplateFunctionToken,
   SWLoggerToken,
   SWRegisterToken,
+  SWMaxCacheDurationMs,
 } from './tokens';
 
 export default (__NODE__ ? serverPlugin : browserPlugin);
-export {getHandlers, SWTemplateFunctionToken, SWLoggerToken, SWRegisterToken};
+export {
+  getHandlers,
+  SWTemplateFunctionToken,
+  SWLoggerToken,
+  SWRegisterToken,
+  SWMaxCacheDurationMs,
+};

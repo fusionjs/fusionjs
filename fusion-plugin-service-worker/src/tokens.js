@@ -16,3 +16,6 @@ export const SWRegisterToken: Token<boolean> = createToken('SWRegisterToken');
 export const SWTemplateFunctionToken: ConfigTokenType = createToken(
   'SWTemplateFunctionToken'
 );
+export const SWMaxCacheDurationMs: Token<number> = createToken(
+  'SWMaxCacheDurationMs'
+);

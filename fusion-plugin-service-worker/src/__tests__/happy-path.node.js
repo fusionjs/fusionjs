@@ -29,7 +29,7 @@ test('/load-time caching', async t => {
     ignoreHTTPSErrors: true,
   });
   try {
-    let isReady, controller, originalCacheDates;
+    let isReady, originalCacheDates;
     const page = await browser.newPage();
     page.on('console', msg => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
@@ -91,15 +91,12 @@ test('/load-time caching', async t => {
 
     // FIRST LOAD
     await page.goto(`${hostname}${port}`);
-
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
-
-    controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.notOk(
-      controller,
-      'first page load: page did not have existing service worker'
+    const controller = await page.evaluate(
+      'navigator.serviceWorker.controller'
     );
+    t.ok(controller, 'first page load: page already claimed service worker');
 
     await logCachedURLs(page, '[TEST] cached after first load:');
     await logCacheDates(page, '[TEST] cache dates after first load:');
@@ -116,11 +113,7 @@ test('/load-time caching', async t => {
 
     // SECOND LOAD
     await page.reload({waitUntil: 'domcontentloaded'});
-    controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.ok(
-      controller,
-      'second page load: page has an existing active service worker'
-    );
+    await page.evaluate('navigator.serviceWorker.controller');
 
     await logCachedURLs(page, '[TEST] cached after second load:');
     await logCacheDates(page, '[TEST] cache dates after second load:');

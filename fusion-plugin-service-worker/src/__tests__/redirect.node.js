@@ -25,7 +25,7 @@ test('/response to redirect', async t => {
     ignoreHTTPSErrors: true,
   });
   try {
-    let isReady, controller;
+    let isReady;
     const page = await browser.newPage();
     page.on('console', msg => {
       if (msg._text.startsWith('[TEST] cached after redirect:')) {
@@ -54,11 +54,10 @@ test('/response to redirect', async t => {
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
 
-    controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.notOk(
-      controller,
-      'first page load: page did not have existing service worker'
+    const controller = await page.evaluate(
+      'navigator.serviceWorker.controller'
     );
+    t.ok(controller, 'first page load: page already claimed service worker');
 
     // Capture requests during next load.
     const allRequests = new Map();
@@ -70,12 +69,7 @@ test('/response to redirect', async t => {
     // 2. TRIGGER REDIRECT
     await page.goto(`${hostname}${port}/redirect`);
 
-    controller = await page.evaluate('navigator.serviceWorker.controller');
-    t.ok(
-      controller,
-      'second page load: page has an existing active service worker'
-    );
-
+    await page.evaluate('navigator.serviceWorker.controller');
     await logCachedURLs(page, '[TEST] cached after redirect:');
 
     t.ok(

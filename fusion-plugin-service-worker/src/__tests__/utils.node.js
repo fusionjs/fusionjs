@@ -7,7 +7,7 @@ import getPort from 'get-port';
 import fetch from 'isomorphic-fetch';
 import type {Page} from 'puppeteer';
 
-export async function startServer() {
+export async function startServer(customEnvVariables: any) {
   let spawn = require('child_process').spawn;
   const port = await getPort();
 
@@ -15,7 +15,7 @@ export async function startServer() {
   const opts = {
     cwd: __dirname + '/../fixture-apps/app',
     stdio: 'inherit',
-    env: {...process.env},
+    env: {...process.env, ...customEnvVariables},
   };
 
   const proc = spawn(
