@@ -24,10 +24,11 @@ To use the default service worker, your `src/sw.js` should probably look like th
 (you can take advantage of the `handlers` module to reduce boilerplate)
 
 ```js
-import {getHandlers} from "fusion-plugin-service-worker";
+import {getHandlers} from 'fusion-plugin-service-worker';
+import type {AssetInfo} from 'fusion-plugin-service-worker';
 
 export default (assetInfo) => {
-  const {onFetch, onInstall} = getHandlers(assetInfo);
+  const {onFetch, onInstall, onActivate} = getHandlers(assetInfo);
   self.addEventListener("install", onInstall);
   self.addEventListener('activate', onActivate);
   self.addEventListener("fetch", onFetch);
@@ -45,9 +46,8 @@ Customize the ServiceWorker by editing `src/sw.js` in your app. It shares the sa
 import App from 'fusion-react';
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
-import SwPlugin, {SWTemplateFunctionToken} from 'fusion-plugin-service-worker';
+import SwPlugin, {SWTemplateFunctionToken, SWRegisterToken} from 'fusion-plugin-service-worker';
 
-app.register(SWTemplateFunctionToken, swTemplateFunction);
 app.register(SwPlugin);
   if (__BROWSER__) {
     // optional (default true).

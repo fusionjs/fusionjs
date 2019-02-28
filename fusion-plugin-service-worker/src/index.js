@@ -9,6 +9,7 @@ import {
   SWRegisterToken,
   SWMaxCacheDurationMs,
 } from './tokens';
+import type {AssetInfo} from './types';
 
 export default (__NODE__ ? serverPlugin : browserPlugin);
 export {
@@ -18,3 +19,4 @@ export {
   SWRegisterToken,
   SWMaxCacheDurationMs,
 };
+export type {AssetInfo};
