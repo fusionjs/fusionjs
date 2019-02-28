@@ -26,7 +26,7 @@ export const withRPCReactor = (
   }: {
     propName?: string,
     transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any) => any,
+    mapStateToParams?: (state: any, args?: any, ownProps?: any) => any,
   } = {}
 ) => {
   return withRPCRedux(rpcId, {
@@ -49,7 +49,7 @@ export function withRPCRedux(
     propName?: string,
     actions?: any,
     transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any) => any,
+    mapStateToParams?: (state: any, args?: any, ownProps?: any) => any,
   } = {}
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   if (!propName) {
@@ -59,6 +59,10 @@ export function withRPCRedux(
     class withRPCRedux extends React.Component<*, *> {
       render() {
         const {rpc, store} = this.context;
+        if (mapStateToParams) {
+          const mapState = mapStateToParams;
+          mapStateToParams = (state, args) => mapState(state, args, this.props);
+        }
         const handler = createRPCHandler({
           rpcId,
           rpc,

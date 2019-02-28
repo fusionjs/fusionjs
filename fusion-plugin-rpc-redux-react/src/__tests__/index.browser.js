@@ -106,6 +106,83 @@ test('browser plugin integration test withRPCRedux', async t => {
   t.end();
 });
 
+test('browser plugin integration test withRPCRedux and options', async t => {
+  setup();
+  const fetch = (url, options) => {
+    if (!options || !options.body || typeof options.body !== 'string') {
+      throw new Error(`Expected a string from options.body`);
+    }
+    const body: string = options.body;
+
+    t.equal(url, '/api/test', 'fetches to expected url');
+    t.deepLooseEqual(
+      JSON.parse(body),
+      {arg: 1, state: 2, prop: 3},
+      'sends correct body'
+    );
+    t.equal(options.method, 'POST', 'makes POST request');
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          status: 'success',
+          data: {
+            a: 'b',
+          },
+        })
+      )
+    );
+  };
+
+  const expectedActions = [
+    {type: initActionPattern},
+    {type: /TEST_START/, payload: {arg: 1, state: 2, prop: 3}},
+    {type: /TEST_SUCCESS/, payload: {a: 'b'}},
+  ];
+  const store = createStore(
+    (state, action) => {
+      const fixture = expectedActions.shift();
+      t.ok(fixture.type.test(action.type), 'dispatches expected action type');
+      t.deepLooseEqual(
+        action.payload,
+        // $FlowFixMe
+        fixture.payload,
+        'dispatches expected action payload'
+      );
+      return {...state, ...action.payload};
+    },
+    {state: 2}
+  );
+
+  const Component = props => {
+    t.equal(typeof props.test, 'function', 'passes correct prop to component');
+    return React.createElement('span', null, 'hello world');
+  };
+
+  const mapStateToParams = (state, args, props) => {
+    return {...state, ...args, ...props};
+  };
+
+  const withTest = compose(
+    withRPCRedux('test', {mapStateToParams}),
+    connect(s => s),
+    prepared(props => (props.a ? Promise.resolve() : props.test({arg: 1})))
+  )(Component);
+
+  const element = React.createElement(
+    Provider,
+    {store},
+    React.createElement(withTest, {prop: 3})
+  );
+  const app = new App(element);
+  app.register(Plugin);
+  app.register(FetchToken, fetch);
+  await getSimulator(app).render('/');
+  t.equal(expectedActions.length, 0, 'dispatches all actions');
+
+  teardown();
+  t.end();
+});
+
 test('browser plugin integration test withRPCRedux - failure', async t => {
   setup();
   const fetch = (url, options) => {
