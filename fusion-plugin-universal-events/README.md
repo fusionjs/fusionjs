@@ -77,7 +77,7 @@ import {FetchToken} from 'fusion-tokens';
 export default function() {
   const app = new App();
   app.register(UniversalEventsToken, UniversalEvents);
-  __BROWSER__ && app.register(FetchToken, window.fetch);
+  __BROWSER__ && app.register(FetchToken, window.fetch.bind(window));
   return app;
 }
 ```
@@ -103,7 +103,7 @@ The plugin. Provides the [service API](#service-api). Typically should be regist
 ```js
 import {FetchToken} from 'fusion-tokens';
 // ...
-__BROWSER__ && app.register(FetchToken, window.fetch);
+__BROWSER__ && app.register(FetchToken, window.fetch.bind(window));
 ```
 
 **Required. Browser-only.** See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
