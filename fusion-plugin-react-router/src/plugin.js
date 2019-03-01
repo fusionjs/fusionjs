@@ -47,6 +47,9 @@ type PluginDepsType = {
   Provider: typeof RouterProviderToken.optional,
 };
 
+// Preserve browser history instance across HMR
+let browserHistory;
+
 const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
@@ -141,11 +144,13 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             return payload;
           });
         // Expose the history object
-        const history = createBrowserHistory({basename: ctx.prefix});
-        myAPI.history = history;
+        if (!browserHistory) {
+          browserHistory = createBrowserHistory({basename: ctx.prefix});
+        }
+        myAPI.history = browserHistory;
         ctx.element = (
           <Router
-            history={history}
+            history={browserHistory}
             Provider={Provider}
             basename={ctx.prefix}
             onRoute={payload => {
