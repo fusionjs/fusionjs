@@ -145,6 +145,7 @@ function fusionPreset(
       require.resolve('./babel-plugins/babel-plugin-sw'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-paths'),
       require.resolve('./babel-plugins/babel-plugin-chunkid'),
+      require.resolve('./babel-plugins/babel-plugin-workerurl'),
       [
         require.resolve('babel-plugin-transform-cup-globals'),
         {target: targetEnv},

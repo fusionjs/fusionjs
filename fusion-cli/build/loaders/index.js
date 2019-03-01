@@ -39,6 +39,10 @@ const loaderIndex = {
     alias: '__SECRET_SW_LOADER__',
     path: require.resolve('./sw-loader.js'),
   },
+  workerLoader: {
+    alias: '__SECRET_WORKER_LOADER__',
+    path: require.resolve('./worker-loader.js'),
+  },
 };
 
 module.exports = loaderIndex;

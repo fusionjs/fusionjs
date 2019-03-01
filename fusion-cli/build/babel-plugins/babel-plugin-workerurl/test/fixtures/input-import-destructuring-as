@@ -1,0 +1,5 @@
+import { workerUrl as frameworkWorkerUrl } from 'fusion-core';
+import workerUrl from 'workerURL';
+
+workerUrl('./path');
+frameworkWorkerUrl('./path');

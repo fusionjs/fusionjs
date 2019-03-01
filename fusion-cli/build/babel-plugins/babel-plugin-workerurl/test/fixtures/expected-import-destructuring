@@ -1,0 +1,6 @@
+import { workerUrl } from 'fusion-core';
+import { workerUrl as workerUrlOther } from 'workerUrl';
+const path = './test';
+workerUrl(require("__SECRET_WORKER_LOADER__!./path"));
+workerUrlOther(path);
+workerUrl(require("__SECRET_WORKER_LOADER__!./path"));

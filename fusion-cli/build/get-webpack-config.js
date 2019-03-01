@@ -34,6 +34,7 @@ const {
   syncChunkIdsLoader,
   syncChunkPathsLoader,
   swLoader,
+  workerLoader,
 } = require('./loaders/index.js');
 const {
   translationsManifestContextKey,
@@ -182,7 +183,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
         specOnly: false,
       });
-
   return {
     name: runtime,
     target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
@@ -414,6 +414,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [chunkUrlMapLoader.alias]: chunkUrlMapLoader.path,
         [i18nManifestLoader.alias]: i18nManifestLoader.path,
         [swLoader.alias]: swLoader.path,
+        [workerLoader.alias]: workerLoader.path,
       },
     },
     plugins: [

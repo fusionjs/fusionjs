@@ -1,0 +1,4 @@
+import { workerUrl as frameworkWorkerUrl } from 'fusion-core';
+import workerUrl from 'workerURL';
+workerUrl('./path');
+frameworkWorkerUrl(require("__SECRET_WORKER_LOADER__!./path"));

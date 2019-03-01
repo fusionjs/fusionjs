@@ -1,0 +1,7 @@
+import { workerUrl } from 'fusion-core';
+import { workerUrl as workerUrlOther } from 'workerUrl';
+
+const path = './test';
+workerUrl('./path');
+workerUrlOther(path);
+workerUrl('./path');
