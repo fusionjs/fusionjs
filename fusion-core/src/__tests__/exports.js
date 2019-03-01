@@ -19,6 +19,7 @@ import App, {
   chunkId,
   syncChunkIds,
   syncChunkPaths,
+  workerUrl,
   RenderToken,
   ElementToken,
   SSRDeciderToken,
@@ -48,6 +49,7 @@ test('fusion-core api', t => {
   t.ok(compose, 'exports compose');
   t.ok(memoize, 'exports memoize');
   t.ok(assetUrl, 'exports assetUrl');
+  t.ok(workerUrl, 'exports assetUrl');
   t.ok(chunkId, 'exports chunkId');
   t.ok(syncChunkIds, 'exports syncChunkIds');
   t.ok(syncChunkPaths, 'exports syncChunkPaths');

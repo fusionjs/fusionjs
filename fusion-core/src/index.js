@@ -39,6 +39,7 @@ export {
   chunkId,
   syncChunkIds,
   syncChunkPaths,
+  workerUrl,
 } from './virtual/index.js';
 
 export {

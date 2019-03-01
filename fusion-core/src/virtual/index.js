@@ -37,3 +37,11 @@ export function syncChunkPaths(argument: any): any {
    */
   return argument;
 }
+
+export function workerUrl(url: string): string {
+  /**
+   * PLEASE NOTE: a build step transforms
+   * the arguments provided to this function
+   */
+  return url;
+}
