@@ -35,19 +35,16 @@ export default class App extends FusionApp {
       },
       provides() {
         return (el: React.Element<*>) => {
-          if (__NODE__) {
-            return prepare(el).then(() => {
-              if (render) {
-                return render(el);
-              }
-              return serverRender(el);
-            });
-          } else {
+          return prepare(el).then(() => {
             if (render) {
               return render(el);
             }
-            return clientRender(el);
-          }
+            if (__NODE__) {
+              return serverRender(el);
+            } else {
+              return clientRender(el);
+            }
+          });
         };
       },
       middleware({criticalChunkIds}) {
