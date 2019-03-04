@@ -2196,10 +2196,10 @@ fusion-core@^1.10.1:
     ua-parser-js "^0.7.19"
     uuid "^3.3.2"
 
-fusion-plugin-universal-events@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.3.2.tgz#b97463547c733405741c12711bb4bcdcd391beb0"
-  integrity sha512-O5xDe5EfjKuCaCqAXhnCzjzVeXGdbbkUSXMDBcCuwnXvLUQJ77nW7fWZrscR9CNyNLger0G7dp/etW3BCpMmWw==
+fusion-plugin-universal-events@^1.3.3-0:
+  version "1.3.3-0"
+  resolved "https://registry.yarnpkg.com/fusion-plugin-universal-events/-/fusion-plugin-universal-events-1.3.3-0.tgz#8f8eae3d534bca94e48d3c744e6147518a50b6ad"
+  integrity sha512-4tUp6Qswy7RDFEsG4atSwvEyQoJPKTUcwpoVML41wH6TT5QdWZhoTzN1yjla8CJLMthrg/CzbsrhXx0te/U5aw==
   dependencies:
     koa-bodyparser "4.2.1"
 
