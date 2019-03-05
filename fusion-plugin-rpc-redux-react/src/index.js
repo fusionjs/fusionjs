@@ -13,6 +13,7 @@ import {
   ResponseError,
 } from 'fusion-plugin-rpc';
 import {createRPCReducer} from 'fusion-rpc-redux';
+import type {ActionType} from 'fusion-rpc-redux';
 import {withRPCRedux, withRPCReactor} from './hoc';
 import plugin, {mock} from './plugin';
 
@@ -27,3 +28,4 @@ export {
   withRPCRedux,
   withRPCReactor,
 };
+export type {ActionType};
