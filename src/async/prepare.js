@@ -71,6 +71,7 @@ export default function prepare(element: any) {
   class PrepareContextProvider extends React.Component<{}> {
     getChildContext() {
       return {
+        __IS_PREPARE__: true,
         __PREPARE_STATE__: prepareState,
       };
     }
@@ -80,6 +81,7 @@ export default function prepare(element: any) {
   }
   PrepareContextProvider.childContextTypes = {
     __PREPARE_STATE__: () => {},
+    __IS_PREPARE__: () => {},
   };
 
   function process() {
