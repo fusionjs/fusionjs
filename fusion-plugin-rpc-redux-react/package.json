@@ -1,7 +1,7 @@
 {
   "name": "fusion-plugin-rpc-redux-react",
   "description": "Triggers Redux actions when RPC methods are called.",
-  "version": "2.1.0-0",
+  "version": "2.1.0-1",
   "license": "MIT",
   "repository": "fusionjs/fusion-plugin-rpc-redux-react",
   "files": [
