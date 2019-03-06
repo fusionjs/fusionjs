@@ -56,11 +56,17 @@ function chunkIndexFromWebpackChunks(chunks) {
     const chunkId = c.id;
 
     const files = [];
-    for (const m of c.modulesIterable) {
-      if (m.resource) {
-        files.push(m.resource);
-      } else if (m.modules) {
-        files.push(...m.modules.map(module => module.resource));
+
+    // Iterate through the groups this chunk belongs to, adding the files of the other chunks in that group as well
+    for (const g of c.groupsIterable) {
+      for (const cc of g.chunks) {
+        for (const m of cc.modulesIterable) {
+          if (m.resource) {
+            files.push(m.resource);
+          } else if (m.modules) {
+            files.push(...m.modules.map(module => module.resource));
+          }
+        }
       }
     }
 
