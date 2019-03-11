@@ -20,7 +20,7 @@ import {Server as Styletron} from 'styletron-engine-atomic';
 
 import LegacyProvider from './legacy-provider.js';
 import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
-import {workerRoute, wasmRoute} from './constants.js';
+import {workerRoute, wasmRoute, AtomicPrefixToken} from './constants.js';
 
 let workerPath;
 let wasmPath;
@@ -36,7 +36,10 @@ const StyletronCompat = injectDeclarationCompatMixin(Styletron);
 const plugin =
   __NODE__ &&
   createPlugin({
-    middleware: () => (ctx, next) => {
+    deps: {
+      prefix: AtomicPrefixToken.optional,
+    },
+    middleware: ({prefix}) => (ctx, next) => {
       if (__DEV__) {
         if (ctx.url === workerRoute) {
           ctx.body = fs.createReadStream(workerPath);
@@ -49,7 +52,8 @@ const plugin =
       }
 
       if (ctx.element) {
-        const engine = new StyletronCompat();
+        const config = prefix === void 0 ? void 0 : {prefix};
+        const engine = new StyletronCompat(config);
 
         ctx.element = (
           <StyletronProvider value={engine}>

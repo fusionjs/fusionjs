@@ -2,35 +2,36 @@
   "name": "fusion-plugin-styletron-react",
   "version": "2.5.4",
   "description": "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
-  "license": "MIT",
   "repository": "fusionjs/fusion-plugin-styletron-react",
   "files": [
-    "dist",
+    "dist-browser-esm",
+    "dist-node-cjs",
+    "dist-node-esm",
     "src"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
-  "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "browser": "./dist-browser-esm/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
+    "transpile": "npm run clean && cup build",
+    "test": "jest",
+    "prepublish": "npm run transpile"
   },
   "dependencies": {
     "css-to-js-sourcemap-worker": "^2.0.4",
     "styletron-engine-atomic": "^1.0.13"
   },
+  "peerDependencies": {
+    "fusion-core": "^1.10.1",
+    "react": "14.x - 16.x",
+    "styletron-react": "^4.3.0"
+  },
   "devDependencies": {
     "@babel/preset-react": "7.0.0",
     "babel-eslint": "10.0.1",
-    "create-universal-package": "3.4.6",
-    "enzyme": "3.8.0",
-    "enzyme-adapter-react-16": "1.9.1",
+    "create-universal-package": "^4.0.0",
     "eslint": "5.13.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "2.0.1",
@@ -40,30 +41,19 @@
     "eslint-plugin-prettier": "3.0.1",
     "eslint-plugin-react": "7.11.1",
     "flow-bin": "^0.87.0",
+    "fusion-cli": "^1.17.0",
     "fusion-core": "1.10.1",
-    "nyc": "13.1.0",
+    "fusion-react": "^2.0.0",
+    "get-port": "^4.2.0",
+    "jest": "^24.1.0",
     "prettier": "1.15.2",
-    "react": "16.6.3",
-    "react-dom": "16.6.3",
-    "styletron-react": "^4.3.6",
-    "tape-cup": "4.7.1",
-    "unitest": "2.1.1"
-  },
-  "peerDependencies": {
-    "fusion-core": "^1.10.1",
-    "react": "14.x - 16.x",
-    "styletron-react": "^4.3.0"
-  },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "npm run clean && cup build",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "prepublish": "npm run transpile"
+    "puppeteer": "^1.13.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "styletron-react": "^4.4.5"
   },
   "engines": {
     "node": ">= 8.9.0"
-  }
+  },
+  "license": "MIT"
 }

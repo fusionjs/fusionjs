@@ -1,8 +1,10 @@
 node_modules/
-dist/
-dist-tests/
+dist-browser-esm/
+dist-node-cjs/
+dist-node-esm/
 coverage/
 .nyc_output/
+test/*/.fusion
 
 .DS_Store
 npm-debug.log

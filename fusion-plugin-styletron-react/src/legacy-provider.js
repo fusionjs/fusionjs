@@ -18,8 +18,7 @@ class LegacyStyletronProvider extends React.Component<*, *> {
   getChildContext() {
     return {styletron: this.styletron};
   }
-  // $FlowFixMe
-  constructor(props, context) {
+  constructor(props: any, context: any) {
     super(props, context);
     this.styletron = props.value;
   }

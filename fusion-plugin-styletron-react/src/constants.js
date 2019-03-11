@@ -6,5 +6,9 @@
  * @flow
  */
 
+import {createToken} from 'fusion-core';
+
+export const AtomicPrefixToken = createToken<string>('EngineConfigToken');
+
 export const workerRoute = '/__styletron_debugger_worker.js';
 export const wasmRoute = '/__styletron_debugger_mappings.wasm';

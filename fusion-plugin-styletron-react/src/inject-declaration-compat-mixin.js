@@ -6,11 +6,9 @@
  * @flow
  */
 
-// $FlowFixMe
-export const injectDeclarationCompatMixin = Base =>
+export const injectDeclarationCompatMixin = (Base: any) =>
   class extends Base {
-    // $FlowFixMe
-    injectDeclaration({prop, val, media, pseudo}) {
+    injectDeclaration({prop, val, media, pseudo}: any) {
       let style = {[prop]: val};
       if (pseudo) {
         style = {

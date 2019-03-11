@@ -1,12 +1,13 @@
-version: '2'
+version: "2"
 services:
   fusion-plugin-styletron-react:
     build: .
     volumes:
-      - '.:/fusion-plugin-styletron-react'
+      - ".:/fusion-plugin-styletron-react"
       - /fusion-plugin-styletron-react/node_modules/
-      - /fusion-plugin-styletron-react/dist/
-      - /fusion-plugin-styletron-react/dist-tests/
+      - /fusion-plugin-styletron-react/dist-browser-esm/
+      - /fusion-plugin-styletron-react/dist-node-cjs/
+      - /fusion-plugin-styletron-react/dist-node-esm/
     environment:
       - CODECOV_TOKEN
       - CI=true
@@ -17,9 +18,3 @@ services:
       - BUILDKITE_BUILD_URL
       - BUILDKITE_PROJECT_SLUG
       - BUILDKITE_COMMIT
-  fusion-plugin-styletron-react-node-last:
-    extends: fusion-plugin-styletron-react
-    build:
-      context: .
-      args:
-        BASE_IMAGE: 'uber/web-base-image:1.0.9'

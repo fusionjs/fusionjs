@@ -32,6 +32,17 @@ export default () => {
 }
 ```
 
+### Atomic class prefix
+
+By default, it is assumed there is no global CSS that will result in collisions with the generated atomic class names. If this is not the case, collisions can be avoided by adding a prefix to the generated atomic class names via `AtomicPrefixToken`.
+
+```js
+import Styletron, {AtomicPrefixToken} from 'fusion-plugin-styletron-react';
+
+app.register(Styletron);
+app.register(AtomicPrefixToken, "_");
+```
+
 ### Creating styled components
 For API details and usage examples, see [the official `styletron-react` documentation](https://github.com/rtsao/styletron/tree/master/packages/styletron-react)
 
