@@ -272,7 +272,7 @@ Displays where the token is registered
 ##### fusion-run-introspect middleware
 
 ```
-yarn fusion-run-introspect tokens
+yarn fusion-run-introspect middleware
 ```
 
 Lists all Fusion middleware in the order that they run
