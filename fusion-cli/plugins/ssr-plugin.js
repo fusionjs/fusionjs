@@ -102,6 +102,7 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 <body style="padding:20vmin;font-family:sans-serif;font-size:16px;background:papayawhip">
 <p>You are using a legacy browser but only the modern bundle has been built (legacy bundles are skipped by default when using <code style="display:inline">fusion dev</code>).</p>
 <p>Please use a modern browser or <pre><code style="display:inline">fusion dev --forceLegacyBuild</code></pre> to build the legacy bundle.</p>
+<p>For more information, see the docs on <a href="https://github.com/fusionjs/fusion-cli/blob/master/docs/progressively-enhanced-bundles.md">progressively enhanced bundles</a>.</p>
 </body>
 </html>`;
           }
