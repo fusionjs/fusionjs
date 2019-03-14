@@ -89,6 +89,7 @@ type CompilerType = {
 type CompilerOpts = {
   dir?: string,
   env: "production" | "development",
+  hmr?: boolean,
   watch?: boolean,
   forceLegacyBuild?: boolean,
   logger?: any,
@@ -100,6 +101,7 @@ function Compiler(
   {
     dir = '.',
     env,
+    hmr = true,
     forceLegacyBuild,
     preserveNames,
     watch = false,
@@ -132,6 +134,8 @@ function Compiler(
 
   const sharedOpts = {
     dir: root,
+    dev: env === 'development',
+    hmr,
     watch,
     state,
     fusionConfig,
@@ -139,10 +143,9 @@ function Compiler(
     preserveNames,
   };
 
-  const dev = env === 'development';
   const compiler = webpack([
-    getWebpackConfig({id: 'client-modern', dev, ...sharedOpts}),
-    getWebpackConfig({id: 'server', dev, ...sharedOpts}),
+    getWebpackConfig({id: 'client-modern', ...sharedOpts}),
+    getWebpackConfig({id: 'server', ...sharedOpts}),
   ]);
 
   const statsLogger = getStatsLogger({dir, logger, env});

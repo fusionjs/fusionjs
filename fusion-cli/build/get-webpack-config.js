@@ -77,6 +77,7 @@ export type WebpackConfigOpts = {|
   id: $Keys<typeof COMPILATIONS>,
   dir: string,
   dev: boolean,
+  hmr: boolean,
   watch: boolean,
   preserveNames: boolean,
   state: {
@@ -96,7 +97,16 @@ export type WebpackConfigOpts = {|
 module.exports = getWebpackConfig;
 
 function getWebpackConfig(opts /*: WebpackConfigOpts */) {
-  const {id, dev, dir, watch, state, fusionConfig, legacyPkgConfig = {}} = opts;
+  const {
+    id,
+    dev,
+    dir,
+    hmr,
+    watch,
+    state,
+    fusionConfig,
+    legacyPkgConfig = {},
+  } = opts;
   const main = 'src/main.js';
 
   if (!fs.existsSync(path.join(dir, main))) {
@@ -193,11 +203,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         runtime === 'server' &&
           path.join(__dirname, '../entries/server-public-path.js'),
         dev &&
+          hmr &&
           watch &&
           runtime !== 'server' &&
           `${require.resolve('webpack-hot-middleware/client')}?name=client`,
         // TODO(#46): use 'webpack/hot/signal' instead
         dev &&
+          hmr &&
           watch &&
           runtime === 'server' &&
           `${require.resolve('webpack/hot/poll')}?1000`,
@@ -460,7 +472,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
              */
             void 0
       ),
-      dev && watch && new webpack.HotModuleReplacementPlugin(),
+      dev && hmr && watch && new webpack.HotModuleReplacementPlugin(),
       !dev && runtime === 'client' && new webpack.HashedModuleIdsPlugin(),
       runtime === 'client' &&
         // case-insensitive paths can cause problems
