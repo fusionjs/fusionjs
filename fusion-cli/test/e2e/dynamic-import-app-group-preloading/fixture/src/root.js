@@ -27,8 +27,8 @@ export default function Root() {
   return (
     <div>
       <Switch>
-        <Route exact path={'/a'} component={A} />
-        <Route exact path={'/b'} component={A} />
+        <Route exact path={'/split-a'} component={A} />
+        <Route exact path={'/split-b'} component={A} />
       </Switch>
     </div>
   );
