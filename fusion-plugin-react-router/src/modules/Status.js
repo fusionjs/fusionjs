@@ -30,8 +30,7 @@ export class Status extends React.Component<StatusPropsType> {
   }
 
   render() {
-    const children = this.props && this.props.children;
-    return Array.isArray(children) ? children[0] : children;
+    return this.props.children;
   }
 }
 
