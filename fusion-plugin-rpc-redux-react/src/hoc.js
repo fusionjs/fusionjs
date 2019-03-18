@@ -16,7 +16,7 @@ type RPCReducersType = {
   success?: Reducer<*, *>,
   failure?: Reducer<*, *>,
 };
-export const withRPCReactor = (
+export function withRPCReactor<Props: {}>(
   rpcId: string,
   reducers: RPCReducersType,
   {
@@ -26,9 +26,9 @@ export const withRPCReactor = (
   }: {
     propName?: string,
     transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any, args?: any, ownProps?: any) => any,
+    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any,
   } = {}
-) => {
+) {
   return withRPCRedux(rpcId, {
     actions: createRPCReactors(rpcId, reducers),
     propName,
@@ -36,12 +36,12 @@ export const withRPCReactor = (
     transformParams,
     mapStateToParams,
   });
-};
+}
 
-export function withRPCRedux(
+export function withRPCRedux<Props: {}>(
   rpcId: string,
   {
-    propName,
+    propName = rpcId,
     actions,
     transformParams,
     mapStateToParams,
@@ -49,14 +49,11 @@ export function withRPCRedux(
     propName?: string,
     actions?: any,
     transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any, args?: any, ownProps?: any) => any,
+    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any,
   } = {}
 ): (React.ComponentType<*>) => React.ComponentType<*> {
-  if (!propName) {
-    propName = rpcId;
-  }
-  return (Component: React.ComponentType<*>) => {
-    class withRPCRedux extends React.Component<*, *> {
+  return (Component: React.ComponentType<Props>) => {
+    class withRPCRedux extends React.Component<Props, *> {
       render() {
         const {rpc, store} = this.context;
         if (mapStateToParams) {
