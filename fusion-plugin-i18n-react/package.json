@@ -29,7 +29,7 @@
     "prepublish": "npm run transpile"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "^1.2.0",
+    "fusion-plugin-i18n": "^1.2.1-0",
     "prop-types": "^15.6.2"
   },
   "peerDependencies": {
