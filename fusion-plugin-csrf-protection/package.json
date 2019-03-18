@@ -2,7 +2,7 @@
   "name": "fusion-plugin-csrf-protection",
   "description": "Generic CSRF-protection utility for use with any session manager or csrf secret/token generator",
   "repository": "fusionjs/fusion-plugin-csrf-protection",
-  "version": "2.0.0",
+  "version": "2.0.1-0",
   "files": [
     "dist",
     "src"
