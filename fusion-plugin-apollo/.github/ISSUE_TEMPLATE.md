@@ -1,7 +1,7 @@
 <!--
   Thank you for taking the time to submit an issue.
 
-  Before opening a new issue, please search existing issues (https://github.com/fusionjs/fusion-apollo/issues)
+  Before opening a new issue, please search existing issues (https://github.com/fusionjs/fusion-plugin-apollo/issues)
   to double-check your issue isn't already known.
 
   To make it easier for us to help you — please follow the suggested format below.
@@ -33,7 +33,7 @@
 
 ### Your environment
 
-* fusion-apollo version:
+* fusion-plugin-apollo version:
 
 * Node.js version (`node --version`):
 

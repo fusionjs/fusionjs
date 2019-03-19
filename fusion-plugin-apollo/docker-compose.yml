@@ -1,14 +1,14 @@
 version: '2'
 services:
-  fusion-apollo:
+  fusion-plugin-apollo:
     build: .
     volumes:
-      - '.:/fusion-apollo'
-      - /fusion-apollo/node_modules/
-      - /fusion-apollo/dist/
-      - /fusion-apollo/dist-tests/
-  fusion-apollo-node-last:
-    extends: fusion-apollo
+      - '.:/fusion-plugin-apollo'
+      - /fusion-plugin-apollo/node_modules/
+      - /fusion-plugin-apollo/dist/
+      - /fusion-plugin-apollo/dist-tests/
+  fusion-plugin-apollo-node-last:
+    extends: fusion-plugin-apollo
     build:
       context: .
       args:

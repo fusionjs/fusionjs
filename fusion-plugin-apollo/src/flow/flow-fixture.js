@@ -10,9 +10,6 @@ import App, {createPlugin} from 'fusion-core';
 import {ApolloContextToken} from '../index.js';
 
 const app = new App();
-app.register(ApolloContextToken, {
-  testcase: 'just an object',
-});
 
 app.register(ApolloContextToken, ctx => ({
   testcase: ctx.path,
@@ -24,7 +21,7 @@ app.register(ApolloContextToken, () => ({
 
 const plugin = createPlugin({
   provides: () => {
-    return {};
+    return () => {};
   },
 });
 

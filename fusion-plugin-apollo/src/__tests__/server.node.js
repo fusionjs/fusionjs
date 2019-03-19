@@ -12,13 +12,33 @@ import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import React from 'react';
 import render from '../server';
-import App, {ApolloClientToken} from '../index';
-import {ApolloClient} from 'apollo-client';
-import {InMemoryCache} from 'apollo-cache-inmemory';
-import {SchemaLink} from 'apollo-link-schema';
+import plugin, {GraphQLSchemaToken, ApolloClientToken} from '../index';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
 import {Query} from 'react-apollo';
+import App from 'fusion-react/dist';
+import {RenderToken} from 'fusion-core';
+import {ApolloClient} from 'apollo-client';
+import {InMemoryCache} from 'apollo-cache-inmemory';
+import {SchemaLink} from 'apollo-link-schema';
+
+function testApp(el, {typeDefs, resolvers}) {
+  const app = new App(el);
+  const schema = makeExecutableSchema({typeDefs, resolvers});
+  app.register(RenderToken, plugin);
+  app.register(GraphQLSchemaToken, schema);
+  app.register(ApolloClientToken, ctx => {
+    return new ApolloClient({
+      ssrMode: true,
+      cache: new InMemoryCache().restore({}),
+      link: new SchemaLink({
+        schema,
+        context: ctx,
+      }),
+    });
+  });
+  return app;
+}
 
 test('renders', async t => {
   const rendered = await render(
@@ -33,7 +53,6 @@ test('renders', async t => {
 
 test('Server render simulate', async t => {
   const el = <div>Hello World</div>;
-  const app = new App(el);
   const typeDefs = gql`
     type Query {
       test: String
@@ -41,55 +60,15 @@ test('Server render simulate', async t => {
   `;
   const resolvers = {
     Query: {
-      test() {
+      test(parent, args, ctx) {
         return 'test';
       },
     },
   };
-  const schema = makeExecutableSchema({typeDefs, resolvers});
-  app.register(ApolloClientToken, () => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new SchemaLink({schema}),
-    });
-  });
+  const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
-  t.end();
-});
-
-test('Server render simulate with custom render function', async t => {
-  const el = <div>Hello World</div>;
-  const app = new App(el, (el, ctx) => {
-    t.ok(el, 'passes in the element');
-    t.ok(ctx, 'passes in the context object');
-    return 'TEST OVERRIDE';
-  });
-  const typeDefs = gql`
-    type Query {
-      test: String
-    }
-  `;
-  const resolvers = {
-    Query: {
-      test() {
-        return 'test';
-      },
-    },
-  };
-  const schema = makeExecutableSchema({typeDefs, resolvers});
-  app.register(ApolloClientToken, () => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new SchemaLink({schema}),
-    });
-  });
-  const simulator = getSimulator(app);
-  const ctx = await simulator.render('/');
-  t.equal(ctx.rendered, 'TEST OVERRIDE', 'renders correctly');
   t.end();
 });
 
@@ -114,7 +93,6 @@ test('SSR with <Query>', async t => {
       </Query>
     </div>
   );
-  const app = new App(el);
   const typeDefs = gql`
     type Query {
       test: String
@@ -122,19 +100,13 @@ test('SSR with <Query>', async t => {
   `;
   const resolvers = {
     Query: {
-      test() {
+      test(parent, args, ctx) {
+        t.equal(ctx.path, '/', 'context defaults correctly');
         return 'test';
       },
     },
   };
-  const schema = makeExecutableSchema({typeDefs, resolvers});
-  app.register(ApolloClientToken, () => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new SchemaLink({schema}),
-    });
-  });
+  const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('test'), true, 'renders correctly');
@@ -163,7 +135,6 @@ test('SSR with <Query> and errors', async t => {
       </Query>
     </div>
   );
-  const app = new App(el);
   const typeDefs = gql`
     type Query {
       test: String
@@ -176,14 +147,7 @@ test('SSR with <Query> and errors', async t => {
       },
     },
   };
-  const schema = makeExecutableSchema({typeDefs, resolvers});
-  app.register(ApolloClientToken, () => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new SchemaLink({schema}),
-    });
-  });
+  const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('test'), false, 'does not fetch data');
