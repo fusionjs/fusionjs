@@ -4,6 +4,7 @@
   "description": "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
   "repository": "fusionjs/fusion-plugin-styletron-react",
   "files": [
+    "dist-browser-cjs",
     "dist-browser-esm",
     "dist-node-cjs",
     "dist-node-esm",
@@ -11,7 +12,10 @@
   ],
   "main": "./dist-node-cjs/index.js",
   "module": "./dist-node-esm/index.js",
-  "browser": "./dist-browser-esm/index.js",
+  "browser": {
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
@@ -31,7 +35,7 @@
   "devDependencies": {
     "@babel/preset-react": "7.0.0",
     "babel-eslint": "10.0.1",
-    "create-universal-package": "^4.0.0",
+    "create-universal-package": "^4.1.0",
     "eslint": "5.13.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "2.0.1",

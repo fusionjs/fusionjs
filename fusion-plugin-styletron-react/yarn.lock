@@ -2119,10 +2119,10 @@ create-react-context@^0.2.2:
     fbjs "^0.8.0"
     gud "^1.0.0"
 
-create-universal-package@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-4.0.0.tgz#a32005dc6f869255339a596e534b63a81d84aa9a"
-  integrity sha512-JsJSZDSBSZiRsCA8uZH2M3ZIeiSiL2O66Nnks5YtpUirt3bqZlLwTkErcFW6xQ8EuDWifXDqscQY94ut8cATVQ==
+create-universal-package@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-4.1.0.tgz#7b5a56d13cde4f3f482a23a07fed2d19a91287de"
+  integrity sha512-6yz3Uuak8wvatrXhp322A5+UnwfT6y9lRqaU0JGX8nw1kypkVX9CLNZi2j8iY5cXd8613dcoKK0igJO8eINo2Q==
   dependencies:
     "@babel/core" "^7.2.2"
     "@babel/plugin-syntax-flow" "^7.2.0"
