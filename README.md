@@ -318,7 +318,7 @@ export const Plugin = ProviderPlugin.create('console', plugin);
 export const HOC = ProvidedHOC.create('console');
 
 // in src/main.js
-import {Plugin} from './plugins/my-plugin.js';
+import {Plugin, HOC} from './plugins/my-plugin.js';
 app.register(Plugin);
 
 // in components/some-component.js
