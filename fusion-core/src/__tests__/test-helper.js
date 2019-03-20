@@ -30,6 +30,7 @@ function getContext() {
   return __BROWSER__
     ? {}
     : {
+        method: 'GET',
         path: '/',
         headers: {
           accept: 'text/html',

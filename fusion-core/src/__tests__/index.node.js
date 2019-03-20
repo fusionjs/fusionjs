@@ -130,6 +130,7 @@ test('ssr with bot user agent', async t => {
     // $FlowFixMe
 
     let initialCtx = {
+      method: 'GET',
       headers: {
         accept: '*/*',
         'user-agent': 'AdsBot-Google',
@@ -147,6 +148,39 @@ test('ssr with bot user agent', async t => {
   t.end();
 });
 
+test('POST request with bot user agent', async t => {
+  const flags = {render: false};
+  const element = 'hi';
+  const render = () => {
+    flags.render = true;
+    return 'lol';
+  };
+  const app = new App(element, render);
+
+  app.middleware(async (ctx, next) => {
+    t.notOk(ctx.element, 'does not set ctx.element');
+    ctx.body = 'OK';
+    await next();
+  });
+  try {
+    let initialCtx = {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        'user-agent': 'AdsBot-Google',
+      },
+    };
+    // $FlowFixMe
+    const ctx = await run(app, initialCtx);
+    t.notOk(ctx.rendered, 'does not set ctx.rendered');
+    t.equal(ctx.body, 'OK', 'sets ctx.body');
+    t.equal(flags.render, false, 'does not call render');
+  } catch (e) {
+    t.ifError(e, 'should not error');
+  }
+  t.end();
+});
+
 test('ssr without valid accept header', async t => {
   const flags = {render: false};
   const element = 'hi';
@@ -155,6 +189,7 @@ test('ssr without valid accept header', async t => {
   };
   const app = new App(element, render);
   let initialCtx = {
+    method: 'GET',
     headers: {accept: '*/*'},
   };
   try {
@@ -179,6 +214,7 @@ test('ssr without valid bot user agent', async t => {
   };
   const app = new App(element, render);
   let initialCtx = {
+    method: 'GET',
     headers: {
       accept: '*/*',
       'user-agent': 'test',
@@ -232,6 +268,7 @@ test('disable SSR by composing SSRDecider with a plugin', async t => {
 
   try {
     let initialCtx = {
+      method: 'GET',
       path: '/foo',
     };
     // $FlowFixMe
@@ -278,6 +315,7 @@ test('disable SSR by composing SSRDecider with a function', async t => {
 
   try {
     let initialCtx = {
+      method: 'GET',
       path: '/foo',
     };
     // $FlowFixMe
@@ -327,6 +365,7 @@ test('SSR extension handling', async t => {
     for (let i in extensionToSSRSupported) {
       flags.render = false;
       let initialCtx = {
+        method: 'GET',
         path: `/some-path.${i}`,
       };
       // $FlowFixMe

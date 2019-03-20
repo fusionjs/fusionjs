@@ -24,6 +24,7 @@ test('context composition', async t => {
   chunkIdZero.set('es5', 'es5-file.js');
   chunkUrlMap.set(0, chunkIdZero);
   const context = {
+    method: 'GET',
     headers: {accept: 'text/html'},
     path: '/',
     syncChunks: [0],
@@ -66,6 +67,7 @@ test('context composition with a cdn', async t => {
   chunkIdZero.set('es5', 'es5-file.js');
   chunkUrlMap.set(0, chunkIdZero);
   const context = {
+    method: 'GET',
     headers: {accept: 'text/html'},
     path: '/',
     syncChunks: [0],

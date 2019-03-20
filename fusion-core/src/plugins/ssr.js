@@ -25,7 +25,7 @@ const SSRDecider = createPlugin<{}, SSRDeciderService>({
       // Bots don't always include the accept header.
       if (ctx.headers['user-agent']) {
         const agent = ctx.headers['user-agent'];
-        if (botRegex.test(agent)) {
+        if (botRegex.test(agent) && ctx.method === 'GET') {
           return true;
         }
       }
