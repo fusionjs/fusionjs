@@ -1,4 +1,4 @@
-import { gql } from 'fusion-apollo';
+import { gql } from 'fusion-plugin-apollo';
 import { gql as gqlOther } from 'gql';
 
 const path = './test';

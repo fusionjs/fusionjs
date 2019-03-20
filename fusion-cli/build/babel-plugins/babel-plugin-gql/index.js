@@ -15,7 +15,7 @@ module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
   const visitor = createNamedModuleVisitor(
     t,
     'gql',
-    'fusion-apollo',
+    ['fusion-apollo', 'fusion-plugin-apollo'],
     refsHandler
   );
   return {visitor};
