@@ -341,6 +341,8 @@ test('disable SSR by composing SSRDecider with a function', async t => {
 
 test('SSR extension handling', async t => {
   const extensionToSSRSupported = {
+    'js.map': false,
+    svg: false,
     js: false,
     gif: false,
     jpg: false,

@@ -20,7 +20,8 @@ const SSRDecider = createPlugin<{}, SSRDeciderService>({
     return ctx => {
       // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
       // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
-      if (ctx.path.match(/\.(js|gif|jpg|png|pdf|json)$/)) return false;
+      if (ctx.path.match(/\.(js|js\.map|gif|jpg|png|pdf|json|svg)$/))
+        return false;
 
       // Bots don't always include the accept header.
       if (ctx.headers['user-agent']) {
