@@ -39,14 +39,24 @@ export type DepsType = {
 
 export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
 
-export default createPlugin<DepsType, ProvidesType>({
-  deps: {
-    logger: LoggerToken.optional,
-    schema: GraphQLSchemaToken,
-    endpoint: GraphQLEndpointToken.optional,
+function getDeps(): DepsType {
+  if (__NODE__) {
+    return {
+      apolloContext: ApolloContextToken.optional,
+      logger: LoggerToken.optional,
+      schema: GraphQLSchemaToken,
+      endpoint: GraphQLEndpointToken.optional,
+      getApolloClient: ApolloClientToken,
+    };
+  }
+  // $FlowFixMe
+  return {
     getApolloClient: ApolloClientToken,
-    apolloContext: ApolloContextToken.optional,
-  },
+  };
+}
+
+export default createPlugin<DepsType, ProvidesType>({
+  deps: getDeps(),
   provides(deps) {
     return async (el, ctx) => {
       return prepare(el).then(() => {
@@ -55,7 +65,6 @@ export default createPlugin<DepsType, ProvidesType>({
     };
   },
   middleware({
-    logger,
     schema,
     endpoint = '/graphql',
     getApolloClient,
@@ -97,31 +106,32 @@ export default createPlugin<DepsType, ProvidesType>({
 
       return next();
     };
-    if (__BROWSER__) {
+    if (__NODE__) {
+      const opts = schema.typeDefs && schema.resolvers ? schema : {schema};
+      const server = new ApolloServer({
+        ...opts,
+        // investigate other options
+        context: ({ctx}) => {
+          if (typeof apolloContext === 'function') {
+            return apolloContext(ctx);
+          }
+          return apolloContext;
+        },
+      });
+      let serverMiddleware = [];
+      server.applyMiddleware({
+        // switch to server.getMiddleware once https://github.com/apollographql/apollo-server/pull/2435 lands
+        app: {
+          use: m => {
+            serverMiddleware.push(m);
+          },
+        },
+        // investigate other options
+        path: endpoint,
+      });
+      return compose([...serverMiddleware, renderMiddleware]);
+    } else {
       return renderMiddleware;
     }
-    const opts = schema.typeDefs && schema.resolvers ? schema : {schema};
-    const server = new ApolloServer({
-      ...opts,
-      // investigate other options
-      context: ({ctx}) => {
-        if (typeof apolloContext === 'function') {
-          return apolloContext(ctx);
-        }
-        return apolloContext;
-      },
-    });
-    let serverMiddleware = [];
-    server.applyMiddleware({
-      // switch to server.getMiddleware once https://github.com/apollographql/apollo-server/pull/2435 lands
-      app: {
-        use: m => {
-          serverMiddleware.push(m);
-        },
-      },
-      // investigate other options
-      path: endpoint,
-    });
-    return compose([...serverMiddleware, renderMiddleware]);
   },
 });
