@@ -1,7 +1,7 @@
 // @noflow
 import App from 'fusion-core';
 import {assetUrl} from 'fusion-core';
-import * as jsonData from './static/test.json';
+import {key as jsonField} from './static/test.json';
 
 import serverAsset from './server-asset.js';
 
@@ -27,7 +27,7 @@ export default (async function() {
       } else if (ctx.url === '/json') {
         ctx.body = assetUrl('./static/test.json');
       } else if (ctx.url === '/json-import') {
-        ctx.body = JSON.stringify(jsonData);
+        ctx.body = jsonField;
       } else if (ctx.url === '/server-asset') {
         ctx.body = serverAsset;
       }

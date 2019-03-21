@@ -89,11 +89,24 @@ test('`fusion dev` works with assets', async () => {
     );
     t.equal(await request(`${url}/dirname`), 'src');
     t.equal(await request(`${url}/filename`), 'src/main.js');
-    t.equal(
-      await request(`${url}/json`),
-      '/_static/20355efabaae9ed4d51fbc5a68eb4ce3.json'
+
+    const jsonAssetUrl = await request(`${url}/json`);
+    const jsonAsset = await request(url + jsonAssetUrl);
+    t.equal(jsonAssetUrl, '/_static/8dc83113b16a107e573e02bd18468b22.json');
+    t.deepEqual(
+      JSON.parse(jsonAsset),
+      {key: 'value', unused_key: ''},
+      'assetUrl saves original json file'
     );
-    t.equal(await request(`${url}/json-import`), '{"key":"value"}');
+    t.equal(
+      await request(`${url}/json-import`),
+      'value',
+      'importing a single json key works'
+    );
+    t.ok(
+      clientMain.indexOf('unused_key') === -1,
+      'json tree shaking removes unused keys'
+    );
     t.equal(await request(`${url}/hoisted`), expectedAssetPath);
 
     const page = await app.browser().newPage();
