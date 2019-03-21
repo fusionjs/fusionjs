@@ -128,7 +128,7 @@ type Reducer = (state: any, action: Object) => any
 ##### `EnhancerToken`
 
 ```js
-import {ReducerToken} from 'fusion-plugin-react-redux';
+import {EnhancerToken} from 'fusion-plugin-react-redux';
 ```
 
 Redux [enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer). Optional.
