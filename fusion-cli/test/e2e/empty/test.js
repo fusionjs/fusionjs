@@ -10,6 +10,8 @@ const dir = path.resolve(__dirname, './fixture');
 
 const {cmd} = require('../utils.js');
 
+jest.setTimeout(10000);
+
 test('generates error if missing default export', async () => {
   await cmd(`build --dir=${dir}`);
 

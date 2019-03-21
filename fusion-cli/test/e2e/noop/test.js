@@ -16,6 +16,8 @@ const {cmd, dev, run, start} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
 
+jest.setTimeout(20000);
+
 test('`fusion dev --dir` works w/ relative dir', async () => {
   const entryPath = `.fusion/dist/development/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);

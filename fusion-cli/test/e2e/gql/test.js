@@ -21,6 +21,8 @@ const dev = require('../setup.js');
 
 const dir = path.resolve(__dirname, './fixture');
 
+jest.setTimeout(100000);
+
 test('`fusion dev` works with gql', async () => {
   const app = dev(dir);
   await app.setup();
@@ -67,7 +69,7 @@ type User {
     t.ifError(e);
   }
   app.teardown();
-}, 100000);
+});
 
 test('`fusion build --production` works with gql', async () => {
   let browser;
@@ -122,7 +124,7 @@ type User {
   // $FlowFixMe
   browser.close();
   proc.kill();
-}, 100000);
+});
 
 test('`fusion test` with gql macro', async () => {
   const args = `test --dir=${dir} --configPath=../../../../build/jest/jest-config.js`;
