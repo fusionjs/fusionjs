@@ -26,15 +26,39 @@ const {
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
 
+function getErrors(info) {
+  let errors = [].concat(info.errors);
+  if (info.children.length) {
+    errors = errors.concat(
+      info.children.reduce((x, child) => {
+        return x.concat(getErrors(child));
+      }, [])
+    );
+  }
+  return dedupeErrors(errors);
+}
+
+function getWarnings(info) {
+  let warnings = [].concat(info.warnings);
+  if (info.children.length) {
+    warnings = warnings.concat(
+      info.children.reduce((x, child) => {
+        return x.concat(getWarnings(child));
+      }, [])
+    );
+  }
+  return dedupeErrors(warnings);
+}
+
+function dedupeErrors(items) {
+  const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
+  return items.map(item => item.replace(re, '$2'));
+}
+
 function getStatsLogger({dir, logger, env}) {
   return (err, stats) => {
     // syntax errors are logged 4 times (once by webpack, once by babel, once on server and once on client)
     // we only want to log each syntax error once
-    function dedupeErrors(items) {
-      const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-      return items.map(item => item.replace(re, '$2'));
-    }
-
     const isProd = env === 'production';
 
     if (err) {
@@ -50,7 +74,7 @@ function getStatsLogger({dir, logger, env}) {
     fs.writeFile(file, JSON.stringify(info, null, 2), () => {});
 
     if (stats.hasErrors()) {
-      dedupeErrors(info.errors).forEach(e => logger.error(e));
+      getErrors(info).forEach(e => logger.error(e));
     }
     // TODO(#13): These logs seem to be kinda noisy for dev.
     if (isProd) {
@@ -71,7 +95,7 @@ function getStatsLogger({dir, logger, env}) {
       });
     }
     if (stats.hasWarnings()) {
-      dedupeErrors(info.warnings).forEach(e => logger.warn(e));
+      getWarnings(info).forEach(e => logger.warn(e));
     }
   };
 }

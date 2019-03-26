@@ -25,8 +25,13 @@ function testDev(title, dir) {
       const env = 'development';
       const entryPath = `.fusion/dist/${env}/server/server-main.js`;
       const entry = path.resolve(dir, entryPath);
+      const logger = {
+        warn: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+      };
 
-      const compiler = new Compiler({env, dir});
+      const compiler = new Compiler({env, dir, logger});
       await compiler.clean();
 
       const compilationError = await new Promise(resolve => {
@@ -35,10 +40,11 @@ function testDev(title, dir) {
             return resolve(err || new Error('Compiler stats included errors.'));
           }
 
+          expect(logger.warn.mock.calls.length).toMatchSnapshot(`dev-warn`);
+          expect(logger.error.mock.calls.length).toMatchSnapshot(`dev-error`);
           return resolve(false);
         });
       });
-
       t.ok(compilationError, 'Should produce compilation error');
       // $FlowFixMe
       t.throws(() => require(entry), 'Should throw');
@@ -53,8 +59,12 @@ function testProd(title, dir) {
       const env = 'production';
       const entryPath = `.fusion/dist/${env}/server/server-main.js`;
       const entry = path.resolve(dir, entryPath);
-
-      const compiler = new Compiler({env, dir});
+      const logger = {
+        warn: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+      };
+      const compiler = new Compiler({env, dir, logger});
       await compiler.clean();
 
       const compilationError = await new Promise(resolve => {
@@ -66,8 +76,11 @@ function testProd(title, dir) {
           return resolve(false);
         });
       });
-
       t.ok(compilationError, 'Should produce compilation error');
+      expect(logger.warn.mock.calls.length).toMatchSnapshot(`production-warn`);
+      expect(logger.error.mock.calls.length).toMatchSnapshot(
+        `production-error`
+      );
 
       // $FlowFixMe
       t.throws(() => require(entry), 'Should throw');

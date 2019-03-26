@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`missing module prod: production-error 1`] = `5`;
+
+exports[`missing module prod: production-warn 1`] = `0`;

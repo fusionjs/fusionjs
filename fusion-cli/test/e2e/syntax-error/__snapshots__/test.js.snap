@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`syntax error prod: production-error 1`] = `5`;
+
+exports[`syntax error prod: production-warn 1`] = `0`;
