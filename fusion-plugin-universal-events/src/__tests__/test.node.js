@@ -157,6 +157,34 @@ test('Server EventEmitter - mapping', async t => {
   t.end();
 });
 
+test('Server EventEmitter error handling', async t => {
+  t.plan(1);
+  const app = new App('fake-element', el => el);
+  app.register(UniversalEventsToken, UniversalEventsPlugin);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return async (ctx, next) => {
+      const emitter = events.from(ctx);
+      emitter.on('test-pre-await', ({x}) => {
+        t.equals(x, 1, 'payload is correct');
+      });
+      emitter.emit('test-pre-await', {x: 1});
+      ctx.throw(403, 'error');
+      return next();
+    };
+  });
+  app.middleware((ctx, next) => {
+    t.fail('should not reach this middleware');
+    return next();
+  });
+  const simulator = getSimulator(app);
+  await simulator
+    .request('/lol', {method: 'POST'})
+    .then(() => {
+      t.fail('should throw');
+    })
+    .catch(() => {});
+});
+
 test('Server EventEmitter batching', async t => {
   const app = new App('fake-element', el => el);
   const flags = {

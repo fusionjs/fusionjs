@@ -99,10 +99,14 @@ const plugin =
         }
         // awaiting next before registering `then` on ctx.timing.end to try and get as much as possible
         // into the event batch flush.
-        await next();
-        ctx.timing.end.then(() => {
-          emitter.flush();
-        });
+        try {
+          await next();
+        } finally {
+          // handle flushing in the case of an error
+          ctx.timing.end.then(() => {
+            emitter.flush();
+          });
+        }
       };
     },
   });
