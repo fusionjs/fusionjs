@@ -8,6 +8,7 @@
 import React from 'react';
 import {createToken, type Context, type Token} from 'fusion-core';
 import type {ApolloClient} from 'apollo-client';
+import type {GraphQLResolveInfo} from 'graphql';
 
 export type InitApolloClientType<TInitialState> = (
   ctx: Context,
@@ -34,3 +35,20 @@ export const GraphQLEndpointToken: Token<string> = createToken(
 export const ApolloClientToken: Token<
   InitApolloClientType<mixed>
 > = createToken('ApolloClientToken');
+
+type ResolveFn = (
+  root: any,
+  args: any,
+  context: Context,
+  info: GraphQLResolveInfo
+) => Promise<any>;
+export type GraphQLMiddlewareType = (
+  resolve: ResolveFn,
+  root: any,
+  args: any,
+  context: Context,
+  info: GraphQLResolveInfo
+) => Promise<any>;
+export const GraphQLMiddlewareToken: Token<
+  GraphQLMiddlewareType[]
+> = createToken('GraphQLMiddlewareToken');

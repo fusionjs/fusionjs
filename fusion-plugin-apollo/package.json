@@ -21,13 +21,16 @@
     "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
-  "peerDependencies": {
-    "fusion-core": "^1.10.4",
-    "fusion-react": "^2.0.0",
-    "fusion-tokens": "^1.1.1",
-    "react": "16.x",
-    "react-apollo": "^2.0.4",
-    "react-dom": "16.x"
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.3.12",
+    "apollo-client": "^2.4.7",
+    "apollo-link": "^1.2.9",
+    "apollo-link-http": "^1.5.12",
+    "apollo-link-schema": "^1.1.4",
+    "apollo-server-koa": "^2.4.8",
+    "graphql-middleware": "^3.0.2",
+    "graphql-tools": "^4.0.3",
+    "koa-compose": "^4.1.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -49,7 +52,6 @@
     "get-port": "^4.2.0",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.0",
-    "graphql-tools": "^4.0.3",
     "node-fetch": "^2.3.0",
     "prettier": "^1.15.2",
     "react": "^16.6.3",
@@ -58,6 +60,14 @@
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
+  },
+  "peerDependencies": {
+    "fusion-core": "^1.10.4",
+    "fusion-react": "^2.0.0",
+    "fusion-tokens": "^1.1.1",
+    "react": "16.x",
+    "react-apollo": "^2.0.4",
+    "react-dom": "16.x"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -70,14 +80,5 @@
   },
   "engines": {
     "node": ">= 8.9.0"
-  },
-  "dependencies": {
-    "apollo-cache-inmemory": "^1.3.12",
-    "apollo-client": "^2.4.7",
-    "apollo-link": "^1.2.9",
-    "apollo-link-http": "^1.5.12",
-    "apollo-link-schema": "^1.1.4",
-    "apollo-server-koa": "^2.4.8",
-    "koa-compose": "^4.1.0"
   }
 }

@@ -21,12 +21,16 @@ import clientRender from './client';
 import {LoggerToken} from 'fusion-tokens';
 import {ApolloServer} from 'apollo-server-koa';
 import compose from 'koa-compose';
+import {applyMiddleware} from 'graphql-middleware';
+import {makeExecutableSchema} from 'graphql-tools';
+
 import {
   ApolloContextToken,
   ApolloCacheContext,
   GraphQLSchemaToken,
   GraphQLEndpointToken,
   ApolloClientToken,
+  GraphQLMiddlewareToken,
 } from './tokens';
 
 export type DepsType = {
@@ -34,6 +38,7 @@ export type DepsType = {
   logger: typeof LoggerToken.optional,
   schema: typeof GraphQLSchemaToken,
   endpoint: typeof GraphQLEndpointToken.optional,
+  middleware: typeof GraphQLMiddlewareToken.optional,
   getApolloClient: typeof ApolloClientToken,
 };
 
@@ -46,6 +51,7 @@ function getDeps(): DepsType {
       logger: LoggerToken.optional,
       schema: GraphQLSchemaToken,
       endpoint: GraphQLEndpointToken.optional,
+      middleware: GraphQLMiddlewareToken.optional,
       getApolloClient: ApolloClientToken,
     };
   }
@@ -71,6 +77,7 @@ export default createPlugin<DepsType, ProvidesType>({
     apolloContext = ctx => {
       return ctx;
     },
+    middleware,
   }) {
     const renderMiddleware = (ctx, next) => {
       if (!ctx.element) {
@@ -107,9 +114,14 @@ export default createPlugin<DepsType, ProvidesType>({
       return next();
     };
     if (__NODE__) {
-      const opts = schema.typeDefs && schema.resolvers ? schema : {schema};
+      if (schema.typeDefs && schema.resolvers) {
+        schema = makeExecutableSchema(schema);
+      }
+      if (middleware) {
+        schema = applyMiddleware(schema, ...middleware);
+      }
       const server = new ApolloServer({
-        ...opts,
+        schema,
         // investigate other options
         context: ({ctx}) => {
           if (typeof apolloContext === 'function') {
