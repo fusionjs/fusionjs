@@ -17,12 +17,13 @@ import {HttpLink} from 'apollo-link-http';
 import getPort from 'get-port';
 import http from 'http';
 import fetch from 'node-fetch';
+import {makeExecutableSchema} from 'graphql-tools';
 
 async function testApp(el, {typeDefs, resolvers}) {
   const port = await getPort();
   const endpoint = `http://localhost:${port}/graphql`;
   const app = new App(el);
-  const schema = {typeDefs, resolvers};
+  const schema = makeExecutableSchema({typeDefs, resolvers});
   const client = new ApolloClient({
     ssrMode: true,
     cache: new InMemoryCache().restore({}),

@@ -135,7 +135,7 @@ type ApolloContext<T> = (ctx: Context => T) | T;
 import {GraphQLSchemaToken} from 'fusion-plugin-apollo';
 ```
 
-Your graphql schema is registered on the `GraphQLSchemaToken` token. This can be an Object of `{typeDefs, resolvers}` or the result from `makeExecutableSchema` or `makeRemoteExecutableSchema` from the `graphql-tools` library.
+Your graphql schema is registered on the `GraphQLSchemaToken` token. This is the result of `makeExecutableSchema` or `makeRemoteExecutableSchema` from the `graphql-tools` library.
 
 ##### GraphQLEndpointToken
 

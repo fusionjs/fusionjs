@@ -22,7 +22,6 @@ import {LoggerToken} from 'fusion-tokens';
 import {ApolloServer} from 'apollo-server-koa';
 import compose from 'koa-compose';
 import {applyMiddleware} from 'graphql-middleware';
-import {makeExecutableSchema} from 'graphql-tools';
 
 import {
   ApolloContextToken,
@@ -114,9 +113,6 @@ export default createPlugin<DepsType, ProvidesType>({
       return next();
     };
     if (__NODE__) {
-      if (schema.typeDefs && schema.resolvers) {
-        schema = makeExecutableSchema(schema);
-      }
       if (middleware) {
         schema = applyMiddleware(schema, ...middleware);
       }

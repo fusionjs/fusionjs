@@ -29,7 +29,7 @@
     "apollo-link-schema": "^1.1.4",
     "apollo-server-koa": "^2.4.8",
     "graphql-middleware": "^3.0.2",
-    "graphql-tools": "^4.0.3",
+    "graphql-tools": "^4.0.4",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
