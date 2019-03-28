@@ -17,7 +17,8 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/load-time caching', async t => {
+test('/happy path', async t => {
+  t.plan(13);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
   const browser = await puppeteer.launch({
@@ -93,6 +94,9 @@ test('/load-time caching', async t => {
     await page.goto(`${hostname}${port}`);
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
+
+    await page.waitFor(1000);
+
     const controller = await page.evaluate(
       'navigator.serviceWorker.controller'
     );

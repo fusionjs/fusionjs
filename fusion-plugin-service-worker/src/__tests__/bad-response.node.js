@@ -18,6 +18,7 @@ const precachePaths = [
 ];
 
 test('/response to error', async t => {
+  t.plan(10);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
   const browser = await puppeteer.launch({
@@ -72,7 +73,7 @@ test('/response to error', async t => {
           !cacheKeys.includes(`${hostname}${port}/`) &&
             !cacheKeys.includes(`${hostname}${port}/error-200`) &&
             !cacheKeys.includes(`${hostname}${port}/error-500`),
-          'error page load: no navigation requests cached'
+          'error page load: no navigation requests cached after error'
         );
       }
     });
@@ -82,6 +83,8 @@ test('/response to error', async t => {
 
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
+
+    await page.waitFor(1000);
 
     controller = await page.evaluate('navigator.serviceWorker.controller');
     t.ok(controller, 'first page load: page already claimed service worker');

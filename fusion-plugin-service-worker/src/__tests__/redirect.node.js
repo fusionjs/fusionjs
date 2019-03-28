@@ -14,6 +14,7 @@ const cacheablePaths = [
 ];
 
 test('/response to redirect', async t => {
+  t.plan(7);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
   const browser = await puppeteer.launch({
@@ -53,6 +54,8 @@ test('/response to redirect', async t => {
 
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
+
+    await page.waitFor(1000);
 
     const controller = await page.evaluate(
       'navigator.serviceWorker.controller'

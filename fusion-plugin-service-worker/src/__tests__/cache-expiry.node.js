@@ -20,6 +20,7 @@ const precachePaths = [
 ];
 
 test('/cache expiry', async t => {
+  t.plan(6);
   const hostname = 'http://localhost:';
   // for testing, set cache expiry to 4 seconds instead of
   // the default 24 hours.
@@ -65,6 +66,8 @@ all cacheable resources (including document) are re-cached immediately after exp
 
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
+
+    await page.waitFor(1000);
 
     const controller = await page.evaluate(
       'navigator.serviceWorker.controller'

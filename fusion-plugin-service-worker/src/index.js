@@ -7,7 +7,7 @@ import {
   SWTemplateFunctionToken,
   SWLoggerToken,
   SWRegisterToken,
-  SWMaxCacheDurationMs,
+  SWOptionsToken,
 } from './tokens';
 import type {AssetInfo} from './types';
 
@@ -17,6 +17,6 @@ export {
   SWTemplateFunctionToken,
   SWLoggerToken,
   SWRegisterToken,
-  SWMaxCacheDurationMs,
+  SWOptionsToken,
 };
 export type {AssetInfo};

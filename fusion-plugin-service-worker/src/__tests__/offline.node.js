@@ -19,6 +19,7 @@ const precachePaths = [
 ];
 
 test('/works offline', async t => {
+  t.plan(10);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
   const browser = await puppeteer.launch({
@@ -73,6 +74,8 @@ test('/works offline', async t => {
 
     isReady = await page.evaluate('navigator.serviceWorker.ready');
     t.ok(isReady, 'service worker is active');
+
+    await page.waitFor(1000);
 
     const controller = await page.evaluate(
       'navigator.serviceWorker.controller'

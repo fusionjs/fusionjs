@@ -9,6 +9,7 @@ import {SWTemplateFunctionToken} from '../tokens';
 import swTemplateFunction from './fixtures/swTemplate.js';
 
 test('/health request', async t => {
+  t.plan(2);
   const app = new App('el', el => el);
   app.register(SWTemplateFunctionToken, swTemplateFunction);
   app.register(ServiceWorker);

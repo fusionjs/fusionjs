@@ -12,9 +12,13 @@ const defaultMaxCacheDuration = 24 * 60 * 60 * 1000; // one day
 export default function getHandlers(assetInfo: AssetInfo) {
   const {
     precachePaths,
-    cacheablePaths,
-    maxCacheDurationMs = defaultMaxCacheDuration,
+    cacheableResourcePaths,
+    cacheableRoutePatternStrings,
+    cacheBustingPatternStrings,
+    cacheDuration = defaultMaxCacheDuration,
   } = assetInfo;
+  const cacheableRoutePatterns = mapToRegex(cacheableRoutePatternStrings);
+  const cacheBustingPatterns = mapToRegex(cacheBustingPatternStrings);
   return {
     onInstall: (event: InstallEvent) => {
       self.skipWaiting();
@@ -50,14 +54,31 @@ export default function getHandlers(assetInfo: AssetInfo) {
     onFetch: (event: FetchEvent) => {
       try {
         const expectsHtml = requestExpectsHtml(event.request);
-        if (requestNotCacheable(expectsHtml, cacheablePaths, event)) {
+        if (shouldInvalidateCache(event, cacheBustingPatterns)) {
+          // clear cache then bypass service worker, use network
+          return caches
+            .delete(cacheName)
+            .then(() =>
+              debug.log(
+                `[debug] navigation to ${event.request.url}, invalidated cache`
+              )
+            );
+        }
+        if (
+          !requestIsCacheable(
+            expectsHtml,
+            cacheableResourcePaths,
+            cacheableRoutePatterns,
+            event
+          )
+        ) {
           // bypass service worker, use network
           return;
         }
         const p = caches.match(event.request).then(cachedResponse => {
           if (cachedResponse) {
             if (expectsHtml) {
-              if (cacheHasExpired(cachedResponse, maxCacheDurationMs)) {
+              if (cacheHasExpired(cachedResponse, cacheDuration)) {
                 // if html cache has expired, clear all caches and refetch
                 return caches
                   .delete(cacheName)
@@ -135,19 +156,35 @@ function responseIsOKAndHtml(response) {
   );
 }
 
-function requestNotCacheable(expectsHtml, cacheablePaths, event) {
-  return (
-    !expectsHtml &&
-    !cacheablePaths.includes(event.request.url) &&
-    !cacheablePaths.includes(new URL(event.request.url).pathname)
-  );
+function requestIsCacheable(
+  expectsHtml,
+  cacheablePaths,
+  cacheableRoutePatterns,
+  event
+) {
+  const url = new URL(event.request.url);
+  if (expectsHtml) {
+    // cache html unless cacheableRoutePatterns is specified and non-matching
+    return cacheableRoutePatterns
+      ? cacheableRoutePatterns.some(p => (url.pathname + url.search).match(p))
+      : true;
+  } else {
+    return cacheablePaths.includes(url.pathname);
+  }
 }
 
-function cacheHasExpired(cachedResponse, maxCacheDurationMs) {
+function cacheHasExpired(cachedResponse, cacheDuration) {
   const dateHeader = cachedResponse.headers.get('date');
   return dateHeader
-    ? Date.now() - new Date(dateHeader).valueOf() > maxCacheDurationMs
+    ? Date.now() - new Date(dateHeader).valueOf() > cacheDuration
     : false;
+}
+
+function shouldInvalidateCache(event, cacheBustingPatterns) {
+  return (
+    cacheBustingPatterns &&
+    cacheBustingPatterns.some(pattern => event.request.url.match(pattern))
+  );
 }
 
 function unexpectedResponseMessage(resp) {
@@ -155,4 +192,8 @@ function unexpectedResponseMessage(resp) {
     resp.headers &&
     resp.headers.get('content-type')) ||
     'unknown'}`;
+}
+
+function mapToRegex(arr) {
+  return arr.length ? arr.map(str => new RegExp(str.replace(/\//g, ''))) : null;
 }

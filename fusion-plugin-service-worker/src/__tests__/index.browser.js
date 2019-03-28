@@ -51,6 +51,7 @@ function mockGetRegistrations() {
 }
 
 test('/registers sw', async t => {
+  t.plan(1);
   mockAddEventListener();
   mockRegister();
   let logged = '';
@@ -69,6 +70,7 @@ test('/registers sw', async t => {
 });
 
 test('/unregisters sw', async t => {
+  t.plan(1);
   mockAddEventListener();
   mockGetRegistrations();
   let logged = '';

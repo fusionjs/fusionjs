@@ -6,7 +6,7 @@ import url from 'url';
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 
-import {SWTemplateFunctionToken, SWMaxCacheDurationMs} from './tokens';
+import {SWTemplateFunctionToken, SWOptionsToken} from './tokens';
 
 function invokeTemplateFn(templateFn, resources) {
   return templateFn(resources);
@@ -20,9 +20,16 @@ export default ((__NODE__ &&
   createPlugin({
     deps: {
       templateFn: SWTemplateFunctionToken,
-      maxCacheDurationMs: SWMaxCacheDurationMs.optional,
+      options: SWOptionsToken.optional,
     },
-    middleware: ({templateFn, maxCacheDurationMs}) => {
+    middleware: ({
+      templateFn,
+      options: {
+        cacheBustingPatterns,
+        cacheableRoutePatterns,
+        cacheDuration,
+      } = {},
+    }) => {
       return async (ctx, next) => {
         if (__NODE__) {
           if (ctx.method === 'GET' && ctx.url === '/sw.js') {
@@ -34,15 +41,21 @@ export default ((__NODE__ &&
               ctx.set('Cache-Control', 'max-age=0');
               ctx.body = invokeTemplateFn(templateFn, {
                 // TODO(#24): also include images etc.
-                cacheablePaths: chunkUrls,
+                cacheableResourcePaths: chunkUrls,
                 // cannot precache from different domain
                 precachePaths: chunkUrls.filter(url =>
                   hasSameHostName(url, ctx.url)
                 ),
-                maxCacheDurationMs,
+                cacheBustingPatternStrings: cacheBustingPatterns
+                  ? cacheBustingPatterns.map(regex => String(regex))
+                  : [],
+                cacheableRoutePatternStrings: cacheableRoutePatterns
+                  ? cacheableRoutePatterns.map(regex => String(regex))
+                  : [],
+                cacheDuration,
               });
             } catch (e) {
-              // TODO(#25): do something maybe
+              console.log('Error in Service Worker endpoint:', e); // eslint-disable-line
             }
           }
           return next();

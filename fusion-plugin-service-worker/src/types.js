@@ -12,8 +12,10 @@ export type PluginServiceType = {
 
 export type AssetInfo = {
   precachePaths: Array<RequestInfo>,
-  cacheablePaths: Array<RequestInfo>,
-  maxCacheDurationMs?: number,
+  cacheableResourcePaths: Array<RequestInfo>,
+  cacheableRoutePatternStrings: Array<string>,
+  cacheBustingPatternStrings: Array<string>,
+  cacheDuration?: number,
 };
 
 type ConfigType = AssetInfo => string;
