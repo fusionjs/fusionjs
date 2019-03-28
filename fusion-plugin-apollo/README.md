@@ -20,7 +20,6 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`ApolloClientToken`](#apolloclienttoken)
     - [`GraphQLSchemaToken`](#graphqlschematoken)
     - [`GraphQLEndpointToken`](#graphqlendpointtoken)
-    - [`GraphQLMiddlewareToken`](#graphqlmiddlewaretoken)
   - [Plugin](#plugin)
   - [Provider](#providers)
 
@@ -75,30 +74,6 @@ const query = gql('./some-query.graphql');
 const schema = gql('./some-schema.graphql');
 ```
 
-### Middleware
-
-`fusion-plugin-apollo` ships with graphql middleware support using the [`graphql-middleware`](https://github.com/prisma/graphql-middleware/) package. This can be useful for incorporating logging, tracing, and metrics into your graphql server.
-
-```js
-import {GraphQLMiddlewareToken} from 'fusion-plugin-apollo';
-
-const logInput = async (resolve, root, args, context, info) => {
-  console.log(`1. logInput: ${JSON.stringify(args)}`)
-  const result = await resolve(root, args, context, info)
-  console.log(`5. logInput`)
-  return result
-}
-
-const logResult = async (resolve, root, args, context, info) => {
-  console.log(`2. logResult`)
-  const result = await resolve(root, args, context, info)
-  console.log(`4. logResult: ${JSON.stringify(result)}`)
-  return result
-}
-
-app.register(GraphQLMiddlewareToken, [logInput, logResult]);
-```
-
 ---
 
 ### API
@@ -147,31 +122,6 @@ Optional - the endpoint for serving the graphql API. Defaults to `'/graphql'`.
 
 ```js
 type GraphQLEndpoint = string;
-```
-
-##### GraphQLMiddlewareToken
-
-```js
-import {GraphQLMiddlewareToken} from 'fusion-plugin-apollo';
-```
-
-Optional - an array of graphql middleware compatible with the [`graphql-middleware`](https://github.com/prisma/graphql-middleware/) package.
-
-```js
-type GraphQLMiddleware = (
-  resolve: ResolveFn,
-  root: any,
-  args: any,
-  context: Context,
-  info: GraphQLResolveInfo
-) => Promise<any>;
-
-type ResolveFn = (
-  root: any,
-  args: any,
-  context: Context,
-  info: GraphQLResolveInfo
-) => Promise<any>;
 ```
 
 #### Plugin
