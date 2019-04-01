@@ -18,7 +18,7 @@ test('useService hook', async t => {
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
   function TestComponent() {
-    const provides = useService<typeof TestToken>(TestToken);
+    const provides = useService(TestToken);
     didRender = true;
     t.equal(provides, 3, 'gets registered service');
     return React.createElement('div', null, 'hello');
