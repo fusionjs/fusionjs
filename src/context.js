@@ -4,33 +4,29 @@ import {createPlugin} from 'fusion-core';
 import type FusionApp, {FusionPlugin, Middleware, Token} from 'fusion-core';
 import type {Element} from 'react';
 
-type ExtractReturnType = <V>(() => V) => V;
+export const FusionContext = React.createContext<any>({});
+export const ServiceContext = React.createContext<any>(() => {});
 
-type ServiceContextType<T> = {
-  (): $Call<ExtractReturnType, T>,
-};
-
-export const ServiceContext = React.createContext<ServiceContextType<any>>(
-  () => {}
-);
-
-export function useService<T: Token<any>>(token: T): ServiceContextType<T> {
-  const getService: T => ServiceContextType<T> = React.useContext(
+export function useService<TService>(token: Token<TService>): TService {
+  const getService: (Token<TService>) => TService = React.useContext(
     ServiceContext
   );
   const provides = getService(token);
   return provides;
 }
 
-type ServiceConsumerProps<T> = {
-  token: T,
-  children: (ServiceContextType<T>) => Element<any>,
+type ServiceConsumerProps<TService> = {
+  token: Token<TService>,
+  children: TService => Element<any>,
 };
 
-export function ServiceConsumer<T>({token, children}: ServiceConsumerProps<T>) {
+export function ServiceConsumer<TService>({
+  token,
+  children,
+}: ServiceConsumerProps<TService>) {
   return (
     <ServiceContext.Consumer>
-      {(getService: T => ServiceContextType<T>) => {
+      {(getService: (Token<TService>) => TService) => {
         const provides = getService(token);
         return children(provides);
       }}
@@ -39,13 +35,26 @@ export function ServiceConsumer<T>({token, children}: ServiceConsumerProps<T>) {
 }
 
 export function serviceContextPlugin(app: FusionApp): FusionPlugin<void, void> {
+  function getService(token) {
+    const provides = app.getService(token);
+    if (typeof provides === 'undefined') {
+      throw new Error(
+        `Token not registered or registered plugin does not provide a service: For token ${
+          token.name
+        }`
+      );
+    }
+    return provides;
+  }
   return createPlugin({
     middleware(): Middleware {
       return (ctx, next) => {
         ctx.element = ctx.element && (
-          <ServiceContext.Provider value={app.getService.bind(app)}>
-            {ctx.element}
-          </ServiceContext.Provider>
+          <FusionContext.Provider value={ctx}>
+            <ServiceContext.Provider value={getService}>
+              {ctx.element}
+            </ServiceContext.Provider>
+          </FusionContext.Provider>
         );
         return next();
       };

@@ -21,10 +21,11 @@ import ProviderPlugin from './plugin';
 import ProvidedHOC from './hoc';
 import Provider from './provider';
 import {
-  useService,
-  serviceContextPlugin,
-  ServiceContext,
+  FusionContext,
   ServiceConsumer,
+  ServiceContext,
+  serviceContextPlugin,
+  useService,
 } from './context.js';
 
 declare var __NODE__: Boolean;
@@ -87,13 +88,14 @@ export default class App extends FusionApp {
 }
 
 export {
+  FusionContext,
   ProviderPlugin,
   ProvidedHOC,
   Provider,
-  withServices,
-  useService,
-  ServiceContext,
   ServiceConsumer,
+  ServiceContext,
+  useService,
+  withServices,
 };
 
 function noop() {}
