@@ -37,7 +37,7 @@ test('enhancedBrowserMetrics', t => {
           w,
           null,
           2
-        )}`
+        ) || ''}`
       );
     }
   );
