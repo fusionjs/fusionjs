@@ -45,7 +45,7 @@ test('context error', async t => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
-    const provides = useService(TestToken);
+    useService(TestToken);
     didRender = true;
     return React.createElement('div', null, 'hello');
   }
