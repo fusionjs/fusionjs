@@ -302,8 +302,8 @@ function Component() {
 }
 ```
 
-- `token: Token` - Required. The token used to lookup the registered plugin.
-- `service: any` - The service provided by the registered plugin.
+- `token: Token<TService>` - Required. The token used to look up the registered plugin that resolves to `TService`.
+- `service: TService` - The service provided by the registered plugin.
 
 If no plugin has been registered to this token, an exception is thrown.
 
