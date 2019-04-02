@@ -33,6 +33,9 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
   - [prepare](#prepare)
   - [prepared](#prepared)
   - [exclude](#exclude)
+  - [useService](#useservice)
+  - [ServiceConsumer](#serviceconsumer)
+  - [FusionContext](#fusioncontext)
 - [Examples](#examples)
 
 ---
@@ -282,6 +285,72 @@ const NewComponent = exclude(Component);
 - `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
 
 Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
+
+#### useService
+
+*React Hooks were introduced in React v16.8. Make sure you are using a compatible version.*
+
+```js
+import {useService} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component() {
+  const service = useService(ExampleToken);
+  return (
+    <button onClick={service}>Invoke Service</button>
+  );
+}
+```
+
+- `token: Token` - Required. The token used to lookup the registered plugin.
+- `service: any` - The service provided by the registered plugin.
+
+If no plugin has been registered to this token, an exception is thrown.
+
+#### ServiceConsumer
+
+```js
+import {ServiceConsumer} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component() {
+  return (
+    <ServiceConsumer token={ExampleToken}>
+      {service => (
+        <button onClick={service}>Invoke Service</button>
+      )}
+    </ServiceConsumer>
+  );
+}
+```
+
+- `token: Token` - Required. The token used to lookup the registered plugin.
+- `children: Service => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
+- `service: any` - The service provided by the registered plugin.
+
+This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist.
+
+#### FusionContext
+
+```js
+import {useContext} from 'react';
+import {FusionContext} from 'fusion-react';
+
+function Component() {
+  const ctx = useContext(FusionContext);
+  // ...
+}
+```
+
+- `ctx: Context` The Fusion middleware context for this request.
+
+FusionContext is provided in the case where a plugin may be memoized based on request, i.e.:
+
+```js
+const session = Session.from(ctx);
+```
+
+In this case, you will need to not only use `useService` to get the service you are interested in, but you will also have to get the FusionContext to pass into your service.
 
 ---
 
