@@ -9,7 +9,11 @@ module.exports = {
     require.resolve('eslint-config-uber-universal-stage-3'),
   ],
 
-  plugins: ['eslint-plugin-flowtype', 'eslint-plugin-react'],
+  plugins: [
+    'eslint-plugin-flowtype',
+    'eslint-plugin-react',
+    'eslint-plugin-react-hooks',
+  ],
   rules: {
     // Enforce flow file declarations
     'flowtype/require-valid-file-annotation': ['error', 'always'],
@@ -20,5 +24,11 @@ module.exports = {
     // Enforces consistent spacing within generic type annotation parameters.
     // https://github.com/gajus/eslint-plugin-flowtype/blob/master/.README/rules/generic-spacing.md
     'flowtype/generic-spacing': 'off',
+
+    // Enforce hook rules
+    // https://reactjs.org/docs/hooks-faq.html#what-exactly-do-the-lint-rules-enforce
+    'react-hooks/rules-of-hooks': 'error',
+    // https://github.com/facebook/react/issues/14920
+    'react-hooks/exhaustive-deps': 'warn',
   },
 };
