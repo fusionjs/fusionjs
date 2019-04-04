@@ -20,7 +20,9 @@ import App from 'fusion-react/dist';
 import {RenderToken} from 'fusion-core';
 import {ApolloClient} from 'apollo-client';
 import {InMemoryCache} from 'apollo-cache-inmemory';
+import {HttpLink} from 'apollo-link-http';
 import {SchemaLink} from 'apollo-link-schema';
+import fetch from 'node-fetch';
 
 function testApp(el, {typeDefs, resolvers}) {
   const app = new App(el);
@@ -48,6 +50,26 @@ test('renders', async t => {
   );
   t.ok(/<span/.test(rendered), 'has right tag');
   t.ok(/hello/.test(rendered), 'has right text');
+  t.end();
+});
+
+test('Server renders without schema', async t => {
+  const el = <div>Hello World</div>;
+  const app = new App(el);
+  app.register(RenderToken, plugin);
+  app.register(ApolloClientToken, ctx => {
+    return new ApolloClient({
+      ssrMode: true,
+      cache: new InMemoryCache().restore({}),
+      link: new HttpLink({
+        uri: 'http://localhost:4000',
+        fetch,
+      }),
+    });
+  });
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
+  t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
   t.end();
 });
 

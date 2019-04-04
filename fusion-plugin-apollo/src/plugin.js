@@ -32,7 +32,7 @@ import {
 export type DepsType = {
   apolloContext: typeof ApolloContextToken.optional,
   logger: typeof LoggerToken.optional,
-  schema: typeof GraphQLSchemaToken,
+  schema: typeof GraphQLSchemaToken.optional,
   endpoint: typeof GraphQLEndpointToken.optional,
   getApolloClient: typeof ApolloClientToken,
 };
@@ -44,7 +44,7 @@ function getDeps(): DepsType {
     return {
       apolloContext: ApolloContextToken.optional,
       logger: LoggerToken.optional,
-      schema: GraphQLSchemaToken,
+      schema: GraphQLSchemaToken.optional,
       endpoint: GraphQLEndpointToken.optional,
       getApolloClient: ApolloClientToken,
     };
@@ -106,7 +106,7 @@ export default createPlugin<DepsType, ProvidesType>({
 
       return next();
     };
-    if (__NODE__) {
+    if (__NODE__ && schema) {
       const server = new ApolloServer({
         schema,
         // investigate other options

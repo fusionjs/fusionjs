@@ -61,6 +61,34 @@ export default function() {
 }
 ```
 
+### Usage with external server
+
+When schema file is not provided, the plugin will not run graphQL server locally. The endpoint of the external graphQL server can be then provided using `GraphQLEndpointToken`.
+
+```js
+// ./src/main.js
+import React from 'react';
+import App from 'fusion-react';
+import {RenderToken} from 'fusion-core';
+
+// New import provided by this plugin
+import ApolloPlugin, {
+  GraphQLEndpointToken,
+  ApolloClientToken
+} from 'fusion-plugin-apollo';
+
+// Plugin which provides an apollo client pre-configured for universal rendering
+import ApolloUniversalClient from 'fusion-apollo-universal-client';
+
+export default function() {
+  const app = new App(<Hello />);
+  app.register(RenderToken, ApolloPlugin);
+  app.register(ApolloClientToken, ApolloUniversalClient);
+  app.register(GraphQLEndpointToken, '...');
+  return app;
+}
+```
+
 ### Loading GraphQL Queries/Schemas
 
 fusion-plugin-apollo ships with a compiler plugin that lets you load graphql queries and schemas with the `gql` macro. 
@@ -118,7 +146,7 @@ Your graphql schema is registered on the `GraphQLSchemaToken` token. This is the
 import {GraphQLEndpointToken} from 'fusion-plugin-apollo'; 
 ```
 
-Optional - the endpoint for serving the graphql API. Defaults to `'/graphql'`.
+Optional - the endpoint for serving the graphql API. Defaults to `'/graphql'`. This can also be an endpoint of an external graphQL server (hosted outside fusion app).
 
 ```js
 type GraphQLEndpoint = string;
