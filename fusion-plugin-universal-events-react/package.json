@@ -5,10 +5,7 @@
   "repository": "fusionjs/fusion-plugin-universal-events-react",
   "keywords": [],
   "license": "MIT",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "browser": {
@@ -23,7 +20,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-universal-events": "^1.3.3",
+    "fusion-plugin-universal-events": "^1.3.4-0",
     "fusion-test-utils": "^1.3.1"
   },
   "devDependencies": {
