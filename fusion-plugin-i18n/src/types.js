@@ -16,6 +16,11 @@ import {I18nLoaderToken} from './tokens.js';
 
 export type TranslationsObjectType = {[string]: string};
 
+export type TranslateFuncType = (
+  key: string,
+  interpolations?: TranslationsObjectType
+) => string;
+
 export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
@@ -29,9 +34,6 @@ export type I18nServiceType = {
     +locale?: string | Locale,
     +translations?: TranslationsObjectType,
     +load: (chunkIds: Array<number | string>) => Promise<void>,
-    +translate: (
-      key: string,
-      interpolations?: TranslationsObjectType
-    ) => string,
+    +translate: TranslateFuncType,
   },
 };
