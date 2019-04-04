@@ -93,7 +93,10 @@ const pluginFactory: () => PluginType = () =>
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
           const ids = querystring.parse(ctx.querystring).ids || '';
-          const chunks = ids.split(',').map(id => parseInt(id, 10));
+          const chunks = ids.split(',').map(id => {
+            const parsed = parseInt(id, 10);
+            return Number.isNaN(parsed) ? id : parsed;
+          });
           const translations = {};
           chunks.forEach(id => {
             const keys = [...chunkTranslationMap.translationsForChunk(id)];
