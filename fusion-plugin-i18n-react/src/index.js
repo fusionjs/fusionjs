@@ -14,6 +14,13 @@ export {
   HydrationStateToken,
   createI18nLoader,
 } from 'fusion-plugin-i18n';
+export type {
+  I18nDepsType,
+  I18nServiceType,
+  TranslationsObjectType,
+  TranslateFuncType,
+} from 'fusion-plugin-i18n';
+
 export {withTranslations} from './with-translations';
 export {Translate} from './translate';
 
