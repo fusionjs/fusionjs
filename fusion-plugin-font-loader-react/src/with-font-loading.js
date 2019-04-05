@@ -30,10 +30,11 @@ const withFontLoading = (fontName: string) => {
   return (
     OriginalComponent: React.ComponentType<*>
   ): React.ComponentType<*> => {
-    class WithFontLoading extends React.Component<*> {
+    class WithFontLoading extends React.Component<*, *> {
       props: *;
       context: *;
-      state: *;
+      state: {$fontStyles: {fontFamily: string}};
+      mounted: ?boolean;
 
       constructor(props: any, context: any) {
         super(props, context);
@@ -48,17 +49,22 @@ const withFontLoading = (fontName: string) => {
       }
 
       componentDidMount() {
+        this.mounted = true;
         if (this.state.$fontStyles.fontFamily !== fontName) {
-          // $FlowFixMe
+          // $FlowFixMe (this can only be browser so will not be undefined)
           loadFont(`${fontName}`).then(() => {
-            // $FlowFixMe
-            this.setState({$fontStyles: {fontFamily: fontName}});
+            this.mounted &&
+              this.setState({$fontStyles: {fontFamily: fontName}});
           });
         }
       }
 
       render() {
         return <OriginalComponent {...{...this.state, ...this.props}} />;
+      }
+
+      componentWillUnmount() {
+        this.mounted = false;
       }
     }
 
