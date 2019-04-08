@@ -324,9 +324,9 @@ function Component() {
 }
 ```
 
-- `token: Token` - Required. The token used to lookup the registered plugin.
-- `children: Service => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
-- `service: any` - The service provided by the registered plugin.
+- `token: Token<TService>` - Required. The token used to lookup the registered plugin.
+- `children: TService => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
+- `service: TService` - The service provided by the registered plugin.
 
 This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist.
 
