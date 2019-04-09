@@ -57,11 +57,28 @@ test('context error', async t => {
     await sim.render('/');
   } catch (e) {
     t.ok(
-      /Token not registered/.test(e.message),
+      /Token .* not registered/.test(e.message),
       'throws when token not registered'
     );
   }
   t.notOk(didRender);
+  t.end();
+});
+
+test('context error with optional token', async t => {
+  let didRender = false;
+  function TestComponent() {
+    const TestToken = createToken('test');
+    useService(TestToken.optional);
+    didRender = true;
+    return React.createElement('div', null, 'hello');
+  }
+  const element = React.createElement(TestComponent);
+  const app = new App(element);
+  app.register(serviceContextPlugin(app));
+  const sim = getSimulator(app);
+  await sim.render('/');
+  t.ok(didRender);
   t.end();
 });
 
