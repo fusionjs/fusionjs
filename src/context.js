@@ -37,11 +37,12 @@ export function ServiceConsumer<TService>({
 export function serviceContextPlugin(app: FusionApp): FusionPlugin<void, void> {
   function getService(token) {
     const provides = app.getService(token);
-    if (typeof provides === 'undefined') {
+    const isRequiredToken = Boolean(token.optional);
+    if (typeof provides === 'undefined' && isRequiredToken) {
       throw new Error(
-        `Token not registered or registered plugin does not provide a service: For token ${
+        `Token ${
           token.name
-        }`
+        } not registered or registered plugin does not provide a service. To use an optional plugin, use \`Token.optional\`.`
       );
     }
     return provides;

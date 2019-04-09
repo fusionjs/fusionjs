@@ -305,7 +305,7 @@ function Component() {
 - `token: Token<TService>` - Required. The token used to look up the registered plugin that resolves to `TService`.
 - `service: TService` - The service provided by the registered plugin.
 
-If no plugin has been registered to this token, an exception is thrown.
+If no plugin has been registered to this token, an exception is thrown. If you intend you use an optional Token, you can suppress this exception by using `useService(Token.optional)`.
 
 #### ServiceConsumer
 
@@ -328,7 +328,7 @@ function Component() {
 - `children: TService => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
 - `service: TService` - The service provided by the registered plugin.
 
-This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist.
+This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist. Use `Token.optional` to if you intend to use an optional plugin.
 
 #### FusionContext
 
