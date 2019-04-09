@@ -11,12 +11,15 @@
 import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import React from 'react';
-import render from '../server';
-import plugin, {GraphQLSchemaToken, ApolloClientToken} from '../index';
+import {
+  ApolloRenderEnhancer,
+  GraphQLSchemaToken,
+  ApolloClientToken,
+} from '../index';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
 import {Query} from 'react-apollo';
-import App from 'fusion-react/dist';
+import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 import {ApolloClient} from 'apollo-client';
 import {InMemoryCache} from 'apollo-cache-inmemory';
@@ -27,7 +30,7 @@ import fetch from 'node-fetch';
 function testApp(el, {typeDefs, resolvers}) {
   const app = new App(el);
   const schema = makeExecutableSchema({typeDefs, resolvers});
-  app.register(RenderToken, plugin);
+  app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(GraphQLSchemaToken, schema);
   app.register(ApolloClientToken, ctx => {
     return new ApolloClient({
@@ -42,21 +45,10 @@ function testApp(el, {typeDefs, resolvers}) {
   return app;
 }
 
-test('renders', async t => {
-  const rendered = await render(
-    React.createElement('span', null, 'hello'),
-    // $FlowFixMe
-    console
-  );
-  t.ok(/<span/.test(rendered), 'has right tag');
-  t.ok(/hello/.test(rendered), 'has right text');
-  t.end();
-});
-
 test('Server renders without schema', async t => {
   const el = <div>Hello World</div>;
   const app = new App(el);
-  app.register(RenderToken, plugin);
+  app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(ApolloClientToken, ctx => {
     return new ApolloClient({
       ssrMode: true,

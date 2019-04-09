@@ -58,7 +58,9 @@
     "react-dom": "^16.6.3",
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "unfetch": "^4.1.0",
+    "unitest": "^2.1.1",
+    "nyc": "^13.3.0"
   },
   "peerDependencies": {
     "fusion-core": "^1.10.4",
@@ -74,6 +76,8 @@
     "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
+    "cover": "npm run build-test && npm run just-cover",
+    "just-cover": "nyc --reporter=cobertura --reporter=text npm run just-test",
     "test": "npm run build-test && npm run just-test",
     "prepublish": "npm run transpile"
   },

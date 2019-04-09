@@ -20,8 +20,11 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`ApolloClientToken`](#apolloclienttoken)
     - [`GraphQLSchemaToken`](#graphqlschematoken)
     - [`GraphQLEndpointToken`](#graphqlendpointtoken)
-  - [Plugin](#plugin)
-  - [Provider](#providers)
+    - [`GetApolloClientCacheToken`](#GetApolloClientCacheToken)
+    - [`ApolloClientCredentialsToken`](#apolloclientcredentialstoken)
+    - [`GetApolloClientLinksToken`](#getapolloclientlinkstoken)
+    - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
+  = [GQL Macro]($gql)
 
 ---
 
@@ -41,19 +44,17 @@ import React from 'react';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 
-// New import provided by this plugin
-import ApolloPlugin, {
+import {
+  ApolloRenderEnhancer,
+  ApolloClientPlugin,
+  ApolloClientToken,
   GraphQLSchemaToken, 
-  ApolloClientToken
 } from 'fusion-plugin-apollo';
-
-// Plugin which provides an apollo client pre-configured for universal rendering
-import ApolloUniversalClient from 'fusion-apollo-universal-client';
 
 export default function() {
   const app = new App(<Hello />);
-  app.register(RenderToken, ApolloPlugin);
-  app.register(ApolloClientToken, ApolloUniversalClient);
+  app.enhance(RenderToken, ApolloRenderEnhancer);
+  app.register(ApolloClientToken, ApolloClientPlugin);
   if (__NODE__) {
     app.register(GraphQLSchemaToken, YourGraphQLSchema);
   }
@@ -71,20 +72,18 @@ import React from 'react';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 
-// New import provided by this plugin
-import ApolloPlugin, {
-  GraphQLEndpointToken,
-  ApolloClientToken
+import {
+  ApolloRenderEnhancer,
+  ApolloClientPlugin,
+  ApolloClientToken,
+  GraphQLSchemaToken, 
 } from 'fusion-plugin-apollo';
-
-// Plugin which provides an apollo client pre-configured for universal rendering
-import ApolloUniversalClient from 'fusion-apollo-universal-client';
 
 export default function() {
   const app = new App(<Hello />);
-  app.register(RenderToken, ApolloPlugin);
-  app.register(ApolloClientToken, ApolloUniversalClient);
-  app.register(GraphQLEndpointToken, '...');
+  app.enhance(RenderToken, ApolloRenderEnhancer);
+  app.register(ApolloClientToken, ApolloClientPlugin);
+  app.register(GraphQLEndpointToken, 'http://website.com/graphql');
   return app;
 }
 ```
@@ -152,13 +151,54 @@ Optional - the endpoint for serving the graphql API. Defaults to `'/graphql'`. T
 type GraphQLEndpoint = string;
 ```
 
-#### Plugin
+##### `GetApolloClientCacheToken`
 
 ```js
-import ApolloPlugin from 'fusion-plugin-apollo';
+import {GetApolloClientCacheToken} from 'fusion-apollo-universal-client';
 ```
 
-A plugin which is responsible for rendering (both virtual DOM and server-side rendering).
+Optional - A function that returns an Apollo [cache implementation](https://www.apollographql.com/docs/react/advanced/caching.html).
+
+```js
+type GetApolloClientCache = (ctx: Context) => ApolloCache
+```
+
+###### Default value
+
+The default cache implementation uses [InMemoryCache](https://github.com/apollographql/apollo-client/tree/master/packages/apollo-cache-inmemory).
+
+##### `ApolloClientCredentialsToken`
+
+```js
+import {ApolloClientCredentialsToken} from 'fusion-apollo-universal-client';
+```
+
+Optional - A configuration value that provides the value of credentials value passed directly into the [fetch implementation](https://github.com/github/fetch). 
+The default value is `same-origin`.
+
+```js
+type ApolloClientCredentials = 'omit' | 'include' | 'same-origin'
+```
+
+##### `GetApolloClientLinksToken`
+
+```js
+import {GetApolloClientLinksToken} from 'fusion-apollo-universal-client';
+```
+
+Optional - A configuration value that provides a array of [ApolloLinks](https://www.apollographql.com/docs/link/composition.html). The default links are provided as an argument to the provided function.
+
+```js
+type GetApolloClientLinks = (Array<ApolloLinkType>) => Array<ApolloLinkType>
+```
+
+##### `ApolloClientResolversToken`
+
+```js
+import { ApolloClientResolversToken } from "fusion-apollo-universal-client";
+```
+
+Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
 
 #### gql
 

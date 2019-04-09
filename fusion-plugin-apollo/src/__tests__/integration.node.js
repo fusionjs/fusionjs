@@ -7,7 +7,11 @@
  */
 import test from 'tape-cup';
 import React from 'react';
-import plugin, {GraphQLSchemaToken, ApolloClientToken} from '../index';
+import {
+  ApolloRenderEnhancer,
+  GraphQLSchemaToken,
+  ApolloClientToken,
+} from '../index';
 import gql from 'graphql-tag';
 import App from 'fusion-react/dist';
 import {RenderToken} from 'fusion-core';
@@ -36,7 +40,7 @@ async function testApp(el, {typeDefs, resolvers}) {
       },
     }),
   });
-  app.register(RenderToken, plugin);
+  app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(GraphQLSchemaToken, schema);
   app.register(ApolloClientToken, ctx => {
     // $FlowFixMe
