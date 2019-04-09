@@ -12,7 +12,7 @@ export default function generateFontFaces(fontDictionary: {}) {
     const font = fontDictionary[fontName];
     if (font) {
       faces.push(
-        `@font-face {font-family: "${fontName}"; font-display: 'fallback'; src: ${String(
+        `@font-face {font-family: "${fontName}"; font-display: fallback; src: ${String(
           asFontFaceSrc(font.urls)
         )};}`
       );
