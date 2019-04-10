@@ -7,8 +7,10 @@ import type {Element} from 'react';
 export const FusionContext = React.createContext<any>({});
 export const ServiceContext = React.createContext<any>(() => {});
 
-export function useService<TService>(token: Token<TService>): TService {
-  const getService: (Token<TService>) => TService = React.useContext(
+type ReturnsType<T> = () => T;
+
+export function useService<TService>(token: ReturnsType<TService>): TService {
+  const getService: (ReturnsType<TService>) => TService = React.useContext(
     ServiceContext
   );
   const provides = getService(token);
@@ -16,7 +18,7 @@ export function useService<TService>(token: Token<TService>): TService {
 }
 
 type ServiceConsumerProps<TService> = {
-  token: Token<TService>,
+  token: ReturnsType<TService>,
   children: TService => Element<any>,
 };
 
@@ -26,7 +28,7 @@ export function ServiceConsumer<TService>({
 }: ServiceConsumerProps<TService>) {
   return (
     <ServiceContext.Consumer>
-      {(getService: (Token<TService>) => TService) => {
+      {(getService: (ReturnsType<TService>) => TService) => {
         const provides = getService(token);
         return children(provides);
       }}
