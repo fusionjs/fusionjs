@@ -20,6 +20,13 @@ import clientRender from './client';
 import ProviderPlugin from './plugin';
 import ProvidedHOC from './hoc';
 import Provider from './provider';
+import {
+  FusionContext,
+  ServiceConsumer,
+  ServiceContext,
+  serviceContextPlugin,
+  useService,
+} from './context.js';
 
 declare var __NODE__: Boolean;
 
@@ -76,10 +83,20 @@ export default class App extends FusionApp {
     });
     super(root, renderer);
     registerInjector(this);
+    this.register(serviceContextPlugin(this));
   }
 }
 
-export {ProviderPlugin, ProvidedHOC, Provider, withServices};
+export {
+  FusionContext,
+  ProviderPlugin,
+  ProvidedHOC,
+  Provider,
+  ServiceConsumer,
+  ServiceContext,
+  useService,
+  withServices,
+};
 
 function noop() {}
 
