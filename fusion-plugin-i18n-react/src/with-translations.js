@@ -29,13 +29,19 @@ export const withTranslations = (
 ) => {
   return <T: {}>(
     Component: React$ComponentType<T>
-  ): Class<React$Component<$Diff<T, {|translate?: TranslateType|}>>> => {
+  ): Class<
+    React$Component<
+      $Diff<T, {|translate?: TranslateType, localeCode?: string|}>
+    >
+  > => {
     class WithTranslations extends React.Component<T> {
       translate: TranslateType;
+      localeCode: string;
 
       constructor(props: T, context: Context) {
         super(props, context);
         const {i18n} = context;
+        this.localeCode = i18n ? i18n.localeCode : 'en_US';
         this.translate = i18n
           ? (key: string, interpolations?: {[string]: string | number}) =>
               i18n.translate(key, interpolations)
@@ -43,7 +49,13 @@ export const withTranslations = (
       }
 
       render() {
-        return <Component {...this.props} translate={this.translate} />;
+        return (
+          <Component
+            {...this.props}
+            translate={this.translate}
+            localeCode={this.localeCode}
+          />
+        );
       }
     }
 

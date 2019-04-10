@@ -257,13 +257,14 @@ const TranslatedComponent = withTranslations(['key'])(Component);
 
 Be aware that the `withTranslations` function expects an array of string literals. This plugin uses a babel transform and the argument to this function must be an inline value, i.e. you cannot pass a variable.
 
-The original `Component` receives a prop called `{translate}`.
+The original `Component` receives a prop called `{translate}` and the `{localeCode}`.
 
 **Types**
 
 ```js
 type TranslateProp = {
   translate: (key: string, interpolations: Object) => string,
+  localeCode: string
 };
 type WithTranslations = (
   translationKeys: Array<string>
@@ -272,6 +273,7 @@ type WithTranslations = (
 
 * `translationKeys: Array<string>` - list of keys with which to provide translations for.
 * `translate: (key: string, interpolations: Object) => string` - returns the translation for the given key, with the provided interpolations.
+* `localeCode: string = 'en_US'` - the current `localeCode` we are tranlating to. Defaults to `en_US`.
 
 ---
 
