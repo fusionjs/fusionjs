@@ -13,7 +13,9 @@ import App from '../index';
 
 test('custom render function', async t => {
   let didRender = false;
-  const app = new App(React.createElement('span', null, 'hello'), () => {
+  const app = new App(React.createElement('span', null, 'hello'), (el, ctx) => {
+    t.ok(el);
+    t.ok(ctx);
     didRender = true;
     return 10;
   });
