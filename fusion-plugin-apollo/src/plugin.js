@@ -100,7 +100,7 @@ export default (renderFn: Render) =>
           const serialized = JSON.stringify(initialState);
           const script = html`
             <script type="application/json" id="__APOLLO_STATE__">
-              ${serialized}
+              ${String(serialized)}
             </script>
           `;
           ctx.template.body.push(script);
