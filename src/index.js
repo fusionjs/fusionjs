@@ -9,7 +9,11 @@
 /* eslint-env browser */
 import * as React from 'react';
 
-import FusionApp, {createPlugin, CriticalChunkIdsToken} from 'fusion-core';
+import FusionApp, {
+  createPlugin,
+  CriticalChunkIdsToken,
+  type Context,
+} from 'fusion-core';
 import {prepare} from './async/index.js';
 import PrepareProvider from './async/prepare-provider';
 import {registerInjector, withServices} from './injector.js';
@@ -24,7 +28,10 @@ import Provider from './provider';
 declare var __NODE__: Boolean;
 
 export default class App extends FusionApp {
-  constructor(root: React.Element<*>, render: ?(React.Element<*>) => any) {
+  constructor(
+    root: React.Element<*>,
+    render: ?(React.Element<*>, context: Context) => any
+  ) {
     if (!React.isValidElement(root))
       throw new Error(
         'Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)'
@@ -34,10 +41,10 @@ export default class App extends FusionApp {
         criticalChunkIds: CriticalChunkIdsToken.optional,
       },
       provides() {
-        return (el: React.Element<*>) => {
+        return (el: React.Element<*>, ctx) => {
           return prepare(el).then(() => {
             if (render) {
-              return render(el);
+              return render(el, ctx);
             }
             if (__NODE__) {
               return serverRender(el);

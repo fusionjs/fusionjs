@@ -76,13 +76,14 @@ A class that represents an application. An application is responsible for render
 ```js
 const app: App = new App(
   (el: ReactElement),
-  (render: ?(el: ReactElement) => any)
+  (render: ?(el: ReactElement, ctx: Context) => any)
 );
 ```
 
 - `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
 - `render: ?Plugin<Render>|Render` - Optional. Defines how rendering should occur. A Plugin should provide a value of type `Render`
-  - `type Render = (el:any) => any`
+  - `type Render = (el:ReactComponent, ctx: Context) => any`
+  
 
 **app.register**
 
