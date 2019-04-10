@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import {createPlugin} from 'fusion-core';
-import type FusionApp, {FusionPlugin, Middleware, Token} from 'fusion-core';
+import type FusionApp, {FusionPlugin, Middleware} from 'fusion-core';
 import type {Element} from 'react';
 
 export const FusionContext = React.createContext<any>({});
