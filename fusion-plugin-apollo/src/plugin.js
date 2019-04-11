@@ -74,7 +74,7 @@ export default (renderFn: Render) =>
         return ctx;
       },
     }) {
-      const renderMiddleware = (ctx, next) => {
+      const renderMiddleware = async (ctx, next) => {
         if (!ctx.element) {
           return next();
         }
@@ -94,6 +94,8 @@ export default (renderFn: Render) =>
           </ApolloCacheContext.Provider>
         );
 
+        await next();
+
         if (__NODE__) {
           // Serialize state into html on server side render
           const initialState = client.cache && client.cache.extract();
@@ -105,8 +107,6 @@ export default (renderFn: Render) =>
           `;
           ctx.template.body.push(script);
         }
-
-        return next();
       };
       if (__NODE__ && schema) {
         const server = new ApolloServer({
