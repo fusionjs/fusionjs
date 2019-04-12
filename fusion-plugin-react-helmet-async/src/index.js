@@ -6,10 +6,10 @@
  * @flow
  */
 
-import Helmet from 'react-helmet-async';
+import {Helmet, HelmetProvider} from 'react-helmet-async';
 import serverPlugin from './server';
 import clientPlugin from './browser';
 
 declare var __NODE__: Boolean;
 export default (__NODE__ ? serverPlugin : clientPlugin);
-export {Helmet};
+export {Helmet, HelmetProvider};
