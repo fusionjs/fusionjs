@@ -13,12 +13,11 @@ import {getSimulator} from 'fusion-test-utils';
 import App from '../index';
 import {
   FusionContext,
-  serviceContextPlugin,
   ServiceConsumer,
   useService,
 } from '../context.js';
 
-test('useService hook', async t => {
+test('context#useService', async t => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
@@ -33,7 +32,6 @@ test('useService hook', async t => {
   const element = React.createElement(TestComponent);
   const app = new App(element);
   app.register(TestToken, TestPlugin);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
@@ -41,7 +39,7 @@ test('useService hook', async t => {
   t.end();
 });
 
-test('context error', async t => {
+test('context#useService - unregistered token', async t => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -51,7 +49,6 @@ test('context error', async t => {
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   try {
     await sim.render('/');
@@ -65,7 +62,7 @@ test('context error', async t => {
   t.end();
 });
 
-test('context error with optional token', async t => {
+test('context#useService - optional token', async t => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -75,14 +72,13 @@ test('context error with optional token', async t => {
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   await sim.render('/');
-  t.ok(didRender);
+  t.ok(didRender, 'renders without error');
   t.end();
 });
 
-test('context consumer component', async t => {
+test('context#ServiceConsumer', async t => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
