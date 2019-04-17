@@ -70,3 +70,44 @@ export function serviceContextPlugin(app: FusionApp): FusionPlugin<void, void> {
     },
   });
 }
+
+type Dependencies = {[string]: ReturnsType<mixed>};
+type Services = {[string]: ReturnsType<mixed>};
+type Props = {[string]: any};
+type Mapper = Services => Props;
+
+function getServices(getService, deps: Dependencies): Services {
+  const services = {};
+
+  Object.keys(deps).forEach((name: string) => {
+    services[name] = getService(deps[name]);
+  });
+
+  return services;
+}
+
+const identity = i => i;
+
+export function withServices(
+  deps: Dependencies,
+  mapServicesToProps: Mapper = identity
+) {
+  function resolve(getService) {
+    const services = getServices(getService, deps);
+    const serviceProps = mapServicesToProps(services);
+
+    return serviceProps;
+  }
+
+  return (Component: React.ComponentType<*>) => {
+    return function WithServices(props?: Props) {
+      return (
+        <ServiceContext.Consumer>
+          {(getService: <TService>(ReturnsType<TService>) => TService) => (
+            <Component {...resolve(getService)} {...props} />
+          )}
+        </ServiceContext.Consumer>
+      );
+    };
+  };
+}
