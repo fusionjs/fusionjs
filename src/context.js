@@ -16,7 +16,7 @@ export const ServiceContext = React.createContext<any>(() => {});
 type ReturnsType<T> = () => T;
 
 export function useService<TService>(token: ReturnsType<TService>): TService {
-  const getService: (ReturnsType<TService>) => TService = React.useContext(
+  const getService = React.useContext<(ReturnsType<TService>) => TService>(
     ServiceContext
   );
   const provides = getService(token);
