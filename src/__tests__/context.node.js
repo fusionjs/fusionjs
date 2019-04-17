@@ -15,6 +15,7 @@ import {
   FusionContext,
   ServiceConsumer,
   useService,
+  withServices,
 } from '../context.js';
 
 test('context#useService', async t => {
@@ -96,7 +97,37 @@ test('context#ServiceConsumer', async t => {
   const element = React.createElement(TestComponent);
   const app = new App(element);
   app.register(TestToken, TestPlugin);
-  app.register(serviceContextPlugin(app));
+  const sim = getSimulator(app);
+  const ctx = await sim.render('/');
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
+  t.ok(didRender);
+  t.end();
+});
+
+test('context#withServices', async t => {
+  const TestToken1 = createToken('test-1');
+  const TestToken2 = createToken('test-2');
+  const TestPlugin1 = createPlugin({provides: () => 1});
+  const TestPlugin2 = createPlugin({provides: () => 2});
+  let didRender = false;
+  function TestComponent({mappedOne, mappedTwo, propValue}) {
+    didRender = true;
+    t.equal(mappedOne, 1, 'gets registered service');
+    t.equal(mappedTwo, 2, 'gets registered service');
+    t.equal(propValue, 3, 'passes props through');
+    return React.createElement('div', null, 'hello');
+  }
+  const WrappedComponent = withServices(
+    {
+      test1: TestToken1,
+      test2: TestToken2,
+    },
+    deps => ({mappedOne: deps.test1, mappedTwo: deps.test2})
+  )(TestComponent);
+  const element = React.createElement(WrappedComponent, {propValue: 3});
+  const app = new App(element);
+  app.register(TestToken1, TestPlugin1);
+  app.register(TestToken2, TestPlugin2);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
