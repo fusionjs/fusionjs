@@ -140,6 +140,8 @@ Calls all plugin cleanup methods. Useful for testing.
 
 #### Provider
 
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to add a `Provider` to your application. Services are made available through a generic `Context` instance in the `fusion-react` app class.
+
 **Provider.create**
 
 ```js
@@ -154,6 +156,8 @@ const ProviderComponent: React.Component = Provider.create((name: string));
 - returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
 
 #### ProviderPlugin
+
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to register a `ProviderPlugin` in place of a `Plugin`. This is handled within the `fusion-react` app class.
 
 ```js
 import {ProviderPlugin} from 'fusion-react';
@@ -177,6 +181,8 @@ const plugin: Plugin = ProviderPlugin.create(
 - `Plugin: Plugin` - A plugin that registers its provider onto the React tree
 
 #### ProvidedHOC
+
+**[DEPRECATED]** See [`withServices`](#withservices) for a generic HOC. For applications still using `ProvidedHOC`, note that this will work without registering a `ProviderPlugin` to wrap your `Plugin`, but it is recommended to migrate to using `useService`, `ServiceConsumer`, or `withServices` instead.
 
 ```js
 import {ProvidedHOC} from 'fusion-react';
@@ -343,7 +349,7 @@ function Component() {
 }
 ```
 
-- `ctx: Context` The Fusion middleware context for this request.
+- `ctx: Context` The Fusion middleware context for this request. Instance of `React.createContext()`
 
 FusionContext is provided in the case where a plugin may be memoized based on request, i.e.:
 
