@@ -201,7 +201,8 @@ const hoc: HOC = ProvidedHOC.create(
 ```
 
 - `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
-- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
+- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC.
+- `token: Token<TService>` - Optional. By supplying a token, the HOC will return a component that uses the `useService` hook instead of the legacy Context API.
 - returns `hoc: Component => Component`
 
 #### split
