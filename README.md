@@ -36,6 +36,7 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
   - [useService](#useservice)
   - [ServiceConsumer](#serviceconsumer)
   - [FusionContext](#fusioncontext)
+  - [withServices](#withservices)
 - [Examples](#examples)
 
 ---
@@ -358,6 +359,32 @@ const session = Session.from(ctx);
 ```
 
 In this case, you will need to not only use `useService` to get the service you are interested in, but you will also have to get the FusionContext to pass into your service.
+
+#### withServices
+
+```js
+import {withServices} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component({exampleProp}) {
+  return (
+    <h1>{exampleProp}</h1>
+  );
+}
+
+export default withServices(
+  {
+    example: ExampleToken,
+  },
+  deps => ({ exampleProp: deps.example }),
+)(Component);
+```
+
+- `deps: {[string]: Token<TService>}` - Required. Object whose values are Tokens.
+- `mapServicesToProps: {[string]: TService} => {[string]: any}` - Optional. Function receives an object whose values are resolved services and returns an object to spread as props to a component. If omitted, the deps object is returned as-is.
+- `HOC: Component => Component` - An HOC is returned that passes the result of `mapServicesToProps` to it's Component argument.
+
+`withServices` is a generic HOC creator that takes a set of Tokens and an optional mapping function and returns a higher-order component that will pass the resolved services into the given Component.
 
 ---
 
