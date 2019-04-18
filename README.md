@@ -406,32 +406,6 @@ const render = __NODE__
 const app = new App(root, render);
 ```
 
-#### Creating a Provider/HOC pair
-
-```js
-// in src/plugins/my-plugin.js
-import {createPlugin} from 'fusion-core';
-
-const plugin = createPlugin({
-  provides() {
-    return console;
-  },
-});
-
-export const Plugin = ProviderPlugin.create('console', plugin);
-export const HOC = ProvidedHOC.create('console');
-
-// in src/main.js
-import {Plugin} from './plugins/my-plugin.js';
-app.register(Plugin);
-
-// in components/some-component.js
-const component = ({console}) => {
-  return <button onClick={() => console.log('hello')}>Click me</button>;
-};
-export default HOC(component);
-```
-
 #### Data fetching
 
 ```js
