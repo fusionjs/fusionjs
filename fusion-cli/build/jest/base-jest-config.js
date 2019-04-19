@@ -52,6 +52,7 @@ module.exports = {
   testURL: 'http://localhost:3000/',
   collectCoverageFrom: [
     'src/**/*.js',
+    '!**/__generated__/**',
     '!**/__integration__/**',
     '!**/__tests__/**',
     '!**/node_modules/**',
