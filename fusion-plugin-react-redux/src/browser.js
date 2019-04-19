@@ -53,7 +53,7 @@ const getPlugin = () => {
               __DEV__ &&
               window.__REDUX_DEVTOOLS_EXTENSION__ &&
               // $FlowFixMe
-              __REDUX_DEVTOOLS_EXTENSION__();
+              __REDUX_DEVTOOLS_EXTENSION__({trace: true, traceLimit: 25});
             const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
               Boolean
             );
