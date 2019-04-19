@@ -10,22 +10,28 @@
 
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
-import {HttpHandlerToken} from './tokens.js';
+import {HttpHandlerToken, HttpHandlerConfigToken} from './tokens.js';
 import type {DepsType} from './types.js';
+
+const defaultConfig = {
+  defer: true,
+};
 
 const plugin =
   __NODE__ &&
   createPlugin({
     deps: {
       handler: HttpHandlerToken,
+      config: HttpHandlerConfigToken.optional,
     },
-
     middleware: deps => {
-      const {handler} = deps;
+      const {handler, config = defaultConfig} = deps;
       return async (ctx, next) => {
-        await next();
+        if (config.defer) {
+          await next();
+        }
         if (ctx.body) {
-          return;
+          return config.defer || next();
         }
         return new Promise((resolve, reject) => {
           const {req, res} = ctx;
@@ -68,6 +74,10 @@ const plugin =
               return reject(error);
             }
             return resolve();
+          }
+        }).then(() => {
+          if (!config.defer) {
+            return next();
           }
         });
       };

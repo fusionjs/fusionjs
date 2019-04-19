@@ -8,6 +8,9 @@
 
 import {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
-import type {ServiceType} from './types.js';
+import type {ServiceType, ConfigType} from './types.js';
 
 export const HttpHandlerToken: Token<ServiceType> = createToken('HttpHandler');
+export const HttpHandlerConfigToken: Token<ConfigType> = createToken(
+  'HttpHandlerConfigToken'
+);

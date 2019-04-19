@@ -44,3 +44,16 @@ export default function main() {
   return app;
 }
 ```
+
+### Configuration
+
+You can configure whether to run the middleware before or after await next. The default is running after await next.
+
+```js
+import {HttpHandlerConfigToken} from 'fusion-plugin-http-handler';
+
+// Configure to run before await next
+if (__NODE__) {
+  app.register(HttpHandlerConfigToken, {defer: false});
+}
+```

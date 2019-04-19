@@ -13,3 +13,7 @@ export type DepsType = {
 };
 
 export type ServiceType = (mixed, mixed, (error?: any) => Promise<any>) => void;
+
+export type ConfigType = {
+  defer: boolean,
+};

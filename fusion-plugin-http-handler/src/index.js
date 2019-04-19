@@ -12,4 +12,4 @@ import server from './server';
 const plugin = __BROWSER__ ? browser : server;
 
 export default plugin;
-export {HttpHandlerToken} from './tokens.js';
+export {HttpHandlerToken, HttpHandlerConfigToken} from './tokens.js';
