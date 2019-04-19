@@ -17,15 +17,15 @@ import {
 
 test('escaping works', async t => {
   t.equals(
-    escape('<meta name="" />'),
-    '\\u003Cmeta name=\\u0022\\u0022 \\u002F\\u003E'
+    escape('<meta name="" />&'),
+    '\\u003Cmeta name=\\u0022\\u0022 /\\u003E\\u0026'
   );
   t.end();
 });
 test('unescaping works', async t => {
   t.equals(
-    unescape('\\u003Cmeta name=\\u0022\\u0022 \\u002F\\u003E'),
-    '<meta name="" />'
+    unescape('\\u003Cmeta name=\\u0022\\u0022 /\\u003E\\u0026'),
+    '<meta name="" />&'
   );
   t.end();
 });
@@ -37,9 +37,8 @@ test('html sanitization works', async t => {
   `;
   t.equals(typeof value, 'object');
   t.equals(
-    // $FlowFixMe
     consumeSanitizedHTML(value),
-    `\n    <div>\\u003Cmalicious data=\\u0022\\u0022 \\u002F\\u003E</div>\n    null\n  `
+    `\n    <div>\\u003Cmalicious data=\\u0022\\u0022 /\\u003E</div>\n    null\n  `
   );
   t.end();
 });
@@ -51,14 +50,12 @@ test('nested sanitization works', async t => {
     <div>${safe}</div>
   `;
   t.equals(typeof value, 'object');
-  // $FlowFixMe
   t.equals(consumeSanitizedHTML(value), `\n    <div>\n    hello\n  </div>\n  `);
   t.end();
 });
 test('dangerouslySetHTML works', async t => {
   const trusted = dangerouslySetHTML(JSON.stringify({a: 1}));
   t.equals(typeof trusted, 'object');
-  // $FlowFixMe
   t.equals(consumeSanitizedHTML(trusted), `{"a":1}`);
   t.end();
 });

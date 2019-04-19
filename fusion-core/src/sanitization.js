@@ -22,7 +22,7 @@ if (__NODE__) {
     '<': '\\u003C',
     '>': '\\u003E',
     '"': '\\u0022',
-    '/': '\\u002F',
+    '&': '\\u0026',
     '\u2028': '\\u2028',
     '\u2029': '\\u2029',
   };
@@ -44,7 +44,7 @@ if (__NODE__) {
   dangerouslySetHTML = (str: string): Object => html([str]);
   escape = (str: any): string => {
     if (str && str[key]) return consumeSanitizedHTML(str);
-    return String(str).replace(/[<>"/\u2028\u2029]/g, replaceForbidden);
+    return String(str).replace(/[<>&"\u2028\u2029]/g, replaceForbidden);
   };
   consumeSanitizedHTML = (h: SanitizedHTMLWrapper): string => {
     if (typeof h === 'string') {
@@ -56,7 +56,7 @@ if (__NODE__) {
 const replaceEscaped = c => String.fromCodePoint(parseInt(c.slice(2), 16));
 const unescape = (str: string): string => {
   return str.replace(
-    /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029/g,
+    /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029|\\u0026/g,
     replaceEscaped
   );
 };

@@ -532,7 +532,7 @@ test('HTML escaping works', async t => {
     t.ok(ctx.body.includes('<html lang="\\u0022\\u003E">'), 'lang works');
     t.ok(ctx.body.includes('<body test="\\u0022\\u003E">'), 'bodyAttrs work');
     t.ok(
-      ctx.body.includes('<title>\\u003C\\u002Ftitle\\u003E</title>'),
+      ctx.body.includes('<title>\\u003C/title\\u003E</title>'),
       'title works'
     );
   } catch (e) {
