@@ -25,18 +25,17 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
 - [Usage](#usage)
 - [API](#api)
   - [App](#app)
-  - [Provider](#provider)
-  - [ProviderPlugin](#providerplugin)
-  - [ProvidedHOC](#providedhoc)
-  - [middleware](#middleware)
-  - [split](#split)
-  - [prepare](#prepare)
-  - [prepared](#prepared)
-  - [exclude](#exclude)
   - [useService](#useservice)
   - [ServiceConsumer](#serviceconsumer)
   - [FusionContext](#fusioncontext)
   - [withServices](#withservices)
+  - [split](#split)
+  - [prepare](#prepare)
+  - [prepared](#prepared)
+  - [exclude](#exclude)
+  - [Provider - DEPRECATED](#provider)
+  - [ProviderPlugin - DEPRECATED](#providerplugin)
+  - [ProvidedHOC - DEPRECATED](#providedhoc)
 - [Examples](#examples)
 
 ---
@@ -139,162 +138,6 @@ Calls all plugin cleanup methods. Useful for testing.
 
 ---
 
-#### Provider
-
-**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to add a `Provider` to your application. Services are made available through a generic `Context` instance in the `fusion-react` app class.
-
-**Provider.create**
-
-```js
-import {Provider} from 'fusion-react';
-```
-
-```js
-const ProviderComponent: React.Component = Provider.create((name: string));
-```
-
-- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-- returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
-
-#### ProviderPlugin
-
-**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to register a `ProviderPlugin` in place of a `Plugin`. This is handled within the `fusion-react` app class.
-
-```js
-import {ProviderPlugin} from 'fusion-react';
-```
-
-Creates a plugin that wraps the React tree with a context provider component.
-
-**ProviderPlugin.create**
-
-```js
-const plugin: Plugin = ProviderPlugin.create(
-  (name: string),
-  (plugin: Plugin),
-  (ProviderComponent: React.Component)
-);
-```
-
-- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-- `plugin: Plugin` - Required. Creates a provider for this plugin.
-- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
-- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
-
-#### ProvidedHOC
-
-**[DEPRECATED]** See [`withServices`](#withservices) for a generic HOC. For applications still using `ProvidedHOC`, note that this will work without registering a `ProviderPlugin` to wrap your `Plugin`, but it is recommended to migrate to using `useService`, `ServiceConsumer`, or `withServices` instead.
-
-```js
-import {ProvidedHOC} from 'fusion-react';
-```
-
-Creates a HOC that exposes a value from React context to the component's props.
-
-**ProvidedHOC.create**
-
-```js
-const hoc: HOC = ProvidedHOC.create(
-  (name: string),
-  (mapProvidesToProps: Object => Object)
-);
-```
-
-- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
-- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC.
-- `token: Token<TService>` - Optional. By supplying a token, the HOC will return a component that uses the `useService` hook instead of the legacy Context API.
-- returns `hoc: Component => Component`
-
-#### split
-
-```js
-import {split} from 'fusion-react';
-
-const Component = split({load, LoadingComponent, ErrorComponent});
-```
-- `load: () => Promise` - Required. Load a component asynchronously. Typically, this should make a dynamic `import()` call.
-  The Fusion compiler takes care of bundling the appropriate code and de-duplicating dependencies. The argument to `import` should be a string literal (not a variable). See [webpack docs](https://webpack.js.org/api/module-methods/#import-) for more information.
-- `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
-- `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
-- `defer: boolean` - Defaults to false. Whether split component should be deferred.
-
-#### prepare
-
-```js
-import {prepare} from 'fusion-react';
-
-const Component = prepare(element);
-```
-
-- `Element: React.Element` - Required. A React element created via `React.createElement`
-- `Component: React.Component` - A React component
-
-Typically, you shouldn't need to call prepare yourself, if you're using `App` from `fusion-react`. The only time you might need to call it is if you imported `App` from `fusion-core` to implement a custom Application class.
-
-The `prepare` function recursively traverses the element rendering tree and awaits the side effects of components decorated with `prepared` (or `dispatched`).
-
-It should be used (and `await`-ed) _before_ calling `renderToString` on the server. If any of the side effects throws, `prepare` will also throw.
-
-#### prepared
-
-```js
-import {prepared} from 'fusion-react';
-
-const hoc = prepared(sideEffect, opts);
-```
-
-- `sideEffect: (props: Object, context: Object) => Promise` - Required. When `prepare` is called, `sideEffect` is called (and awaited) before continuing the rendering traversal.
-- `opts: {defer, boundary, componentDidMount, componentWillReceiveProps, componentDidUpdate, forceUpdate, contextTypes}` - Optional
-  - `defer: boolean` - Optional. Defaults to `false`. If the component is deferred, skip the prepare step.
-  - `boundary: boolean` - Optional. Defaults to `false`. Stop traversing if the component is defer or boundary.
-  - `componentDidMount: boolean` - Optional. Defaults to `true`. On the browser, `sideEffect` is called when the component is mounted.
-  - [TO BE DEPRECATED] `componentWillReceiveProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again whenever the component receive props.
-  - `componentDidUpdate: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again right after updating occurs.
-  - `forceUpdate: boolean` - Optional. Defaults to `false`.
-  - `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
-- `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
-  - `Component: React.Component` - Required.
-
-##### Prepared component props
-
-- `effectId: string` - Used to enable `effectFn` to be called multiple times when rendering the same component.
-
-```js
-
-const PreparedComponent = prepared(effectFn)(SomeComponent);
-
-// effectFn called only once
-const app1 = (
-  <div>
-    <PreparedComponent />
-    <PreparedComponent />
-    <PreparedComponent />
-  </div>
-)
-
-// effectFn called for each rendered PreparedComponent
-const app2 = (
-  <div>
-    <PreparedComponent effectId="1" />
-    <PreparedComponent effectId="2" />
-    <PreparedComponent effectId="3" />
-  </div>
-)
-```
-
-#### exclude
-
-```js
-import {exclude} from 'fusion-react';
-
-const NewComponent = exclude(Component);
-```
-
-- `Component: React.Component` - Required. A component that should not be traversed via `prepare`.
-- `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
-
-Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
-
 #### useService
 
 *React Hooks were introduced in React v16.8. Make sure you are using a compatible version.*
@@ -387,9 +230,198 @@ export default withServices(
 
 `withServices` is a generic HOC creator that takes a set of Tokens and an optional mapping function and returns a higher-order component that will pass the resolved services into the given Component.
 
+#### split
+
+```js
+import {split} from 'fusion-react';
+
+const Component = split({load, LoadingComponent, ErrorComponent});
+```
+- `load: () => Promise` - Required. Load a component asynchronously. Typically, this should make a dynamic `import()` call.
+  The Fusion compiler takes care of bundling the appropriate code and de-duplicating dependencies. The argument to `import` should be a string literal (not a variable). See [webpack docs](https://webpack.js.org/api/module-methods/#import-) for more information.
+- `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
+- `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
+- `defer: boolean` - Defaults to false. Whether split component should be deferred.
+
+#### prepare
+
+```js
+import {prepare} from 'fusion-react';
+
+const Component = prepare(element);
+```
+
+- `Element: React.Element` - Required. A React element created via `React.createElement`
+- `Component: React.Component` - A React component
+
+Typically, you shouldn't need to call prepare yourself, if you're using `App` from `fusion-react`. The only time you might need to call it is if you imported `App` from `fusion-core` to implement a custom Application class.
+
+The `prepare` function recursively traverses the element rendering tree and awaits the side effects of components decorated with `prepared` (or `dispatched`).
+
+It should be used (and `await`-ed) _before_ calling `renderToString` on the server. If any of the side effects throws, `prepare` will also throw.
+
+#### prepared
+
+```js
+import {prepared} from 'fusion-react';
+
+const hoc = prepared(sideEffect, opts);
+```
+
+- `sideEffect: (props: Object, context: Object) => Promise` - Required. When `prepare` is called, `sideEffect` is called (and awaited) before continuing the rendering traversal.
+- `opts: {defer, boundary, componentDidMount, componentWillReceiveProps, componentDidUpdate, forceUpdate, contextTypes}` - Optional
+  - `defer: boolean` - Optional. Defaults to `false`. If the component is deferred, skip the prepare step.
+  - `boundary: boolean` - Optional. Defaults to `false`. Stop traversing if the component is defer or boundary.
+  - `componentDidMount: boolean` - Optional. Defaults to `true`. On the browser, `sideEffect` is called when the component is mounted.
+  - [TO BE DEPRECATED] `componentWillReceiveProps: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again whenever the component receive props.
+  - `componentDidUpdate: boolean` - Optional. Defaults to `false`. On the browser, `sideEffect` is called again right after updating occurs.
+  - `forceUpdate: boolean` - Optional. Defaults to `false`.
+  - `contextTypes: Object` - Optional. Custom React context types to add to the prepared component.
+- `hoc: (Component: React.Component) => React.Component` - A higher-order component that returns a component that awaits for async side effects before rendering.
+  - `Component: React.Component` - Required.
+
+##### Prepared component props
+
+- `effectId: string` - Used to enable `effectFn` to be called multiple times when rendering the same component.
+
+```js
+
+const PreparedComponent = prepared(effectFn)(SomeComponent);
+
+// effectFn called only once
+const app1 = (
+  <div>
+    <PreparedComponent />
+    <PreparedComponent />
+    <PreparedComponent />
+  </div>
+)
+
+// effectFn called for each rendered PreparedComponent
+const app2 = (
+  <div>
+    <PreparedComponent effectId="1" />
+    <PreparedComponent effectId="2" />
+    <PreparedComponent effectId="3" />
+  </div>
+)
+```
+
+#### exclude
+
+```js
+import {exclude} from 'fusion-react';
+
+const NewComponent = exclude(Component);
+```
+
+- `Component: React.Component` - Required. A component that should not be traversed via `prepare`.
+- `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
+
+Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
+
+#### Provider
+
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to add a `Provider` to your application. Services are made available through a generic `Context` instance in the `fusion-react` app class.
+
+**Provider.create**
+
+```js
+import {Provider} from 'fusion-react';
+```
+
+```js
+const ProviderComponent: React.Component = Provider.create((name: string));
+```
+
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
+
+#### ProviderPlugin
+
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to register a `ProviderPlugin` in place of a `Plugin`. This is handled within the `fusion-react` app class.
+
+```js
+import {ProviderPlugin} from 'fusion-react';
+```
+
+Creates a plugin that wraps the React tree with a context provider component.
+
+**ProviderPlugin.create**
+
+```js
+const plugin: Plugin = ProviderPlugin.create(
+  (name: string),
+  (plugin: Plugin),
+  (ProviderComponent: React.Component)
+);
+```
+
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- `plugin: Plugin` - Required. Creates a provider for this plugin.
+- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
+- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
+
+#### ProvidedHOC
+
+**[DEPRECATED]** See [`withServices`](#withservices) for a generic HOC. For applications still using `ProvidedHOC`, note that this will work without registering a `ProviderPlugin` to wrap your `Plugin`, but it is recommended to migrate to using `useService`, `ServiceConsumer`, or `withServices` instead.
+
+```js
+import {ProvidedHOC} from 'fusion-react';
+```
+
+Creates a HOC that exposes a value from React context to the component's props.
+
+**ProvidedHOC.create**
+
+```js
+const hoc: HOC = ProvidedHOC.create(
+  (name: string),
+  (mapProvidesToProps: Object => Object)
+);
+```
+
+- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
+- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC.
+- `token: Token<TService>` - Optional. By supplying a token, the HOC will return a component that uses the `useService` hook instead of the legacy Context API.
+- returns `hoc: Component => Component`
+
 ---
 
 ### Examples
+
+#### Using a service
+
+```js	
+// src/plugins/my-plugin.js	
+import {createPlugin, createToken} from 'fusion-core';	
+
+export const MyToken = createToken('my-token');
+export const MyPlugin = createPlugin({	
+  provides() {	
+    return console;	
+  },	
+});	
+
+// src/main.js	
+import {MyPlugin, MyToken} from './plugins/my-plugin.js';	
+
+export default (app: FusionApp) => {
+  app.register(MyToken, MyPlugin);	
+  // ...
+};
+
+// components/some-component.js	
+import {MyToken} from '../plugins/my-plugin.js';	
+import {useService} from 'fusion-react';
+
+exoprt default Component (props) {	
+  const console = useService(MyToken);
+  return (
+    <button onClick={() => console.log('hello')}>Click me</button>
+  );	
+}
+```
 
 #### Disabling server-side rendering
 
