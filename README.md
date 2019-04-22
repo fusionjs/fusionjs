@@ -25,17 +25,17 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
 - [Usage](#usage)
 - [API](#api)
   - [App](#app)
-  - [Provider](#provider)
-  - [ProviderPlugin](#providerplugin)
-  - [ProvidedHOC](#providedhoc)
-  - [middleware](#middleware)
+  - [useService](#useservice)
+  - [ServiceConsumer](#serviceconsumer)
+  - [FusionContext](#fusioncontext)
+  - [withServices](#withservices)
   - [split](#split)
   - [prepare](#prepare)
   - [prepared](#prepared)
   - [exclude](#exclude)
-  - [useService](#useservice)
-  - [ServiceConsumer](#serviceconsumer)
-  - [FusionContext](#fusioncontext)
+  - [Provider - DEPRECATED](#provider)
+  - [ProviderPlugin - DEPRECATED](#providerplugin)
+  - [ProvidedHOC - DEPRECATED](#providedhoc)
 - [Examples](#examples)
 
 ---
@@ -138,64 +138,97 @@ Calls all plugin cleanup methods. Useful for testing.
 
 ---
 
-#### Provider
+#### useService
 
-**Provider.create**
-
-```js
-import {Provider} from 'fusion-react';
-```
+*React Hooks were introduced in React v16.8. Make sure you are using a compatible version.*
 
 ```js
-const ProviderComponent: React.Component = Provider.create((name: string));
+import {useService} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component() {
+  const service = useService(ExampleToken);
+  return (
+    <button onClick={service}>Invoke Service</button>
+  );
+}
 ```
 
-- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-- returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
+- `token: Token<TService>` - Required. The token used to look up the registered plugin that resolves to `TService`.
+- `service: TService` - The service provided by the registered plugin.
 
-#### ProviderPlugin
+If no plugin has been registered to this token, an exception is thrown. If you intend you use an optional Token, you can suppress this exception by using `useService(Token.optional)`.
+
+#### ServiceConsumer
 
 ```js
-import {ProviderPlugin} from 'fusion-react';
+import {ServiceConsumer} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component() {
+  return (
+    <ServiceConsumer token={ExampleToken}>
+      {service => (
+        <button onClick={service}>Invoke Service</button>
+      )}
+    </ServiceConsumer>
+  );
+}
 ```
 
-Creates a plugin that wraps the React tree with a context provider component.
+- `token: Token<TService>` - Required. The token used to lookup the registered plugin.
+- `children: TService => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
+- `service: TService` - The service provided by the registered plugin.
 
-**ProviderPlugin.create**
+This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist. Use `Token.optional` to if you intend to use an optional plugin.
+
+#### FusionContext
 
 ```js
-const plugin: Plugin = ProviderPlugin.create(
-  (name: string),
-  (plugin: Plugin),
-  (ProviderComponent: React.Component)
-);
+import {useContext} from 'react';
+import {FusionContext} from 'fusion-react';
+
+function Component() {
+  const ctx = useContext(FusionContext);
+  // ...
+}
 ```
 
-- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
-- `plugin: Plugin` - Required. Creates a provider for this plugin.
-- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
-- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
+- `ctx: Context` The Fusion middleware context for this request. Instance of `React.createContext()`
 
-#### ProvidedHOC
+FusionContext is provided in the case where a plugin may be memoized based on request, i.e.:
 
 ```js
-import {ProvidedHOC} from 'fusion-react';
+const session = Session.from(ctx);
 ```
 
-Creates a HOC that exposes a value from React context to the component's props.
+In this case, you will need to not only use `useService` to get the service you are interested in, but you will also have to get the FusionContext to pass into your service.
 
-**ProvidedHOC.create**
+#### withServices
 
 ```js
-const hoc: HOC = ProvidedHOC.create(
-  (name: string),
-  (mapProvidesToProps: Object => Object)
-);
+import {withServices} from 'fusion-react';
+import {ExampleToken} from 'fusion-tokens';
+
+function Component({exampleProp}) {
+  return (
+    <h1>{exampleProp}</h1>
+  );
+}
+
+export default withServices(
+  {
+    example: ExampleToken,
+  },
+  deps => ({ exampleProp: deps.example }),
+)(Component);
 ```
 
-- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
-- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC
-- returns `hoc: Component => Component`
+- `deps: {[string]: Token<TService>}` - Required. Object whose values are Tokens.
+- `mapServicesToProps: {[string]: TService} => {[string]: any}` - Optional. Function receives an object whose values are resolved services and returns an object to spread as props to a component. If omitted, the deps object is returned as-is.
+- `HOC: Component => Component` - An HOC is returned that passes the result of `mapServicesToProps` to it's Component argument.
+
+`withServices` is a generic HOC creator that takes a set of Tokens and an optional mapping function and returns a higher-order component that will pass the resolved services into the given Component.
 
 #### split
 
@@ -287,75 +320,108 @@ const NewComponent = exclude(Component);
 
 Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
 
-#### useService
+#### Provider
 
-*React Hooks were introduced in React v16.8. Make sure you are using a compatible version.*
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to add a `Provider` to your application. Services are made available through a generic `Context` instance in the `fusion-react` app class.
 
-```js
-import {useService} from 'fusion-react';
-import {ExampleToken} from 'fusion-tokens';
-
-function Component() {
-  const service = useService(ExampleToken);
-  return (
-    <button onClick={service}>Invoke Service</button>
-  );
-}
-```
-
-- `token: Token<TService>` - Required. The token used to look up the registered plugin that resolves to `TService`.
-- `service: TService` - The service provided by the registered plugin.
-
-If no plugin has been registered to this token, an exception is thrown. If you intend you use an optional Token, you can suppress this exception by using `useService(Token.optional)`.
-
-#### ServiceConsumer
+**Provider.create**
 
 ```js
-import {ServiceConsumer} from 'fusion-react';
-import {ExampleToken} from 'fusion-tokens';
-
-function Component() {
-  return (
-    <ServiceConsumer token={ExampleToken}>
-      {service => (
-        <button onClick={service}>Invoke Service</button>
-      )}
-    </ServiceConsumer>
-  );
-}
+import {Provider} from 'fusion-react';
 ```
-
-- `token: Token<TService>` - Required. The token used to lookup the registered plugin.
-- `children: TService => React.Element<any>` - Required. Render prop that is passed the registered service. Should return the React Element to render.
-- `service: TService` - The service provided by the registered plugin.
-
-This is the same pattern as the `useService` hook. Opt for using the hook. `ServiceConsumer` is provided as a replacement for any legacy Context usage that may exist. Use `Token.optional` to if you intend to use an optional plugin.
-
-#### FusionContext
 
 ```js
-import {useContext} from 'react';
-import {FusionContext} from 'fusion-react';
-
-function Component() {
-  const ctx = useContext(FusionContext);
-  // ...
-}
+const ProviderComponent: React.Component = Provider.create((name: string));
 ```
 
-- `ctx: Context` The Fusion middleware context for this request.
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- returns `ProviderComponent: React.Component` - A component that sets a context property on a class that extends BaseComponent
 
-FusionContext is provided in the case where a plugin may be memoized based on request, i.e.:
+#### ProviderPlugin
+
+**[DEPRECATED]** When using `useService`, `ServiceConsumer`, or `withServices` it is no longer necessary to register a `ProviderPlugin` in place of a `Plugin`. This is handled within the `fusion-react` app class.
 
 ```js
-const session = Session.from(ctx);
+import {ProviderPlugin} from 'fusion-react';
 ```
 
-In this case, you will need to not only use `useService` to get the service you are interested in, but you will also have to get the FusionContext to pass into your service.
+Creates a plugin that wraps the React tree with a context provider component.
+
+**ProviderPlugin.create**
+
+```js
+const plugin: Plugin = ProviderPlugin.create(
+  (name: string),
+  (plugin: Plugin),
+  (ProviderComponent: React.Component)
+);
+```
+
+- `name: string` - Required. The name of the property set in `context` by the provider component. `name` is also used to generate the `displayName` of `ProviderComponent`, e.g. if `name` is `foo`, `ProviderComponent.displayName` becomes `FooProvider`
+- `plugin: Plugin` - Required. Creates a provider for this plugin.
+- `ProviderComponent: React.Component` - Optional. An overriding provider component for custom logic
+- `Plugin: Plugin` - A plugin that registers its provider onto the React tree
+
+#### ProvidedHOC
+
+**[DEPRECATED]** See [`withServices`](#withservices) for a generic HOC. For applications still using `ProvidedHOC`, note that this will work without registering a `ProviderPlugin` to wrap your `Plugin`, but it is recommended to migrate to using `useService`, `ServiceConsumer`, or `withServices` instead.
+
+```js
+import {ProvidedHOC} from 'fusion-react';
+```
+
+Creates a HOC that exposes a value from React context to the component's props.
+
+**ProvidedHOC.create**
+
+```js
+const hoc: HOC = ProvidedHOC.create(
+  (name: string),
+  (mapProvidesToProps: Object => Object)
+);
+```
+
+- `name: string` - Required. The name of the property set in `context` by the corresponding provider component.
+- `mapProvidesToProps: Object => Object` - Optional. Defaults to `provides => ({[name]: provides})`. Determines what props are exposed by the HOC.
+- `token: Token<TService>` - Optional. By supplying a token, the HOC will return a component that uses the `useService` hook instead of the legacy Context API.
+- returns `hoc: Component => Component`
 
 ---
 
 ### Examples
+
+#### Using a service
+
+```js	
+// src/plugins/my-plugin.js	
+import {createPlugin, createToken} from 'fusion-core';	
+
+export const MyToken = createToken('my-token');
+export const MyPlugin = createPlugin({	
+  provides() {	
+    return console;	
+  },	
+});	
+
+// src/main.js	
+import {MyPlugin, MyToken} from './plugins/my-plugin.js';	
+
+export default (app: FusionApp) => {
+  app.register(MyToken, MyPlugin);	
+  // ...
+};
+
+// components/some-component.js	
+import {MyToken} from '../plugins/my-plugin.js';	
+import {useService} from 'fusion-react';
+
+exoprt default Component (props) {	
+  const console = useService(MyToken);
+  return (
+    <button onClick={() => console.log('hello')}>Click me</button>
+  );	
+}
+```
 
 #### Disabling server-side rendering
 
@@ -370,33 +436,6 @@ const render = __NODE__
   ? () => '<div id="root"></div>'
   : el => ReactDOM.render(el, document.getElementById('root'));
 const app = new App(root, render);
-```
-
-#### Creating a Provider/HOC pair
-
-```js
-// in src/plugins/my-plugin.js
-import {createPlugin} from 'fusion-core';
-
-const plugin = createPlugin({
-  provides() {
-    return console;
-  },
-});
-
-export const Plugin = ProviderPlugin.create('console', plugin);
-export const HOC = ProvidedHOC.create('console');
-
-// in src/main.js
-import {Plugin} from './plugins/my-plugin.js';
-app.register(Plugin);
-
-// in components/some-component.js
-import {HOC} from '../plugins/my-plugin.js';
-const component = ({console}) => {
-  return <button onClick={() => console.log('hello')}>Click me</button>;
-};
-export default HOC(component);
 ```
 
 #### Data fetching

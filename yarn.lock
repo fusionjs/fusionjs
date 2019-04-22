@@ -3609,6 +3609,11 @@ jsx-ast-utils@^2.0.1:
   dependencies:
     array-includes "^3.0.3"
 
+just-compose@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/just-compose/-/just-compose-1.1.0.tgz#ee914e4f04e044895d2908fec08b1e5f48ff5ac1"
+  integrity sha512-X9X19Xe3uigbsAL9084V0yWyAv0ZoFnvTSeYg/ElL/ui12lz3kL+enzUimCL9bSJmL7FuL4dfICYBmeSJLtMkg==
+
 keygrip@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/keygrip/-/keygrip-1.0.3.tgz#399d709f0aed2bab0a059e0cdd3a5023a053e1dc"

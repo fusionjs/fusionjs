@@ -16,7 +16,6 @@ import FusionApp, {
 } from 'fusion-core';
 import {prepare} from './async/index.js';
 import PrepareProvider from './async/prepare-provider';
-import {registerInjector, withServices} from './injector.js';
 
 import serverRender from './server';
 import clientRender from './client';
@@ -24,12 +23,14 @@ import clientRender from './client';
 import ProviderPlugin from './plugin';
 import ProvidedHOC from './hoc';
 import Provider from './provider';
+
 import {
   FusionContext,
   ServiceConsumer,
   ServiceContext,
   serviceContextPlugin,
   useService,
+  withServices,
 } from './context.js';
 
 export type Render = (el: React.Element<*>, context: Context) => any;
@@ -88,7 +89,6 @@ export default class App extends FusionApp {
       },
     });
     super(root, renderer);
-    registerInjector(this);
     this.register(serviceContextPlugin(this));
   }
 }

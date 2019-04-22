@@ -13,12 +13,12 @@ import {getSimulator} from 'fusion-test-utils';
 import App from '../index';
 import {
   FusionContext,
-  serviceContextPlugin,
   ServiceConsumer,
   useService,
+  withServices,
 } from '../context.js';
 
-test('useService hook', async t => {
+test('context#useService', async t => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
@@ -33,7 +33,6 @@ test('useService hook', async t => {
   const element = React.createElement(TestComponent);
   const app = new App(element);
   app.register(TestToken, TestPlugin);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
@@ -41,7 +40,7 @@ test('useService hook', async t => {
   t.end();
 });
 
-test('context error', async t => {
+test('context#useService - unregistered token', async t => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -51,7 +50,6 @@ test('context error', async t => {
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   try {
     await sim.render('/');
@@ -65,7 +63,7 @@ test('context error', async t => {
   t.end();
 });
 
-test('context error with optional token', async t => {
+test('context#useService - optional token', async t => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -75,14 +73,13 @@ test('context error with optional token', async t => {
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
-  app.register(serviceContextPlugin(app));
   const sim = getSimulator(app);
   await sim.render('/');
-  t.ok(didRender);
+  t.ok(didRender, 'renders without error');
   t.end();
 });
 
-test('context consumer component', async t => {
+test('context#ServiceConsumer', async t => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
@@ -100,7 +97,37 @@ test('context consumer component', async t => {
   const element = React.createElement(TestComponent);
   const app = new App(element);
   app.register(TestToken, TestPlugin);
-  app.register(serviceContextPlugin(app));
+  const sim = getSimulator(app);
+  const ctx = await sim.render('/');
+  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
+  t.ok(didRender);
+  t.end();
+});
+
+test('context#withServices', async t => {
+  const TestToken1 = createToken('test-1');
+  const TestToken2 = createToken('test-2');
+  const TestPlugin1 = createPlugin({provides: () => 1});
+  const TestPlugin2 = createPlugin({provides: () => 2});
+  let didRender = false;
+  function TestComponent({mappedOne, mappedTwo, propValue}) {
+    didRender = true;
+    t.equal(mappedOne, 1, 'gets registered service');
+    t.equal(mappedTwo, 2, 'gets registered service');
+    t.equal(propValue, 3, 'passes props through');
+    return React.createElement('div', null, 'hello');
+  }
+  const WrappedComponent = withServices(
+    {
+      test1: TestToken1,
+      test2: TestToken2,
+    },
+    deps => ({mappedOne: deps.test1, mappedTwo: deps.test2})
+  )(TestComponent);
+  const element = React.createElement(WrappedComponent, {propValue: 3});
+  const app = new App(element);
+  app.register(TestToken1, TestPlugin1);
+  app.register(TestToken2, TestPlugin2);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
