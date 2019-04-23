@@ -18,11 +18,15 @@ exports.run = async function(
     production,
     preserveNames,
     logLevel,
+    zopfli,
+    minify,
   } /*: {
     dir: string,
     production: boolean,
     preserveNames: boolean,
     logLevel: string,
+    zopfli: boolean,
+    minify: boolean
   }*/
 ) {
   const logger = winston.createLogger({
@@ -35,7 +39,14 @@ exports.run = async function(
 
   const env = production ? 'production' : 'development';
 
-  const compiler = new Compiler({env, dir, logger, preserveNames});
+  const compiler = new Compiler({
+    env,
+    dir,
+    logger,
+    preserveNames,
+    zopfli,
+    minify,
+  });
 
   await compiler.clean();
 

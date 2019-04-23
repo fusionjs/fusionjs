@@ -118,6 +118,8 @@ type CompilerOpts = {
   forceLegacyBuild?: boolean,
   logger?: any,
   preserveNames?: boolean,
+  zopfli?: boolean,
+  minify?: boolean
 };
 */
 
@@ -130,6 +132,8 @@ function Compiler(
     preserveNames,
     watch = false,
     logger = console,
+    zopfli = true,
+    minify = true,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
@@ -165,6 +169,8 @@ function Compiler(
     fusionConfig,
     legacyPkgConfig,
     preserveNames,
+    zopfli,
+    minify,
   };
 
   const compiler = webpack([

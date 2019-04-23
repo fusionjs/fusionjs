@@ -80,6 +80,8 @@ export type WebpackConfigOpts = {|
   hmr: boolean,
   watch: boolean,
   preserveNames: boolean,
+  zopfli: boolean,
+  minify: boolean,
   state: {
     clientChunkMetadata: ClientChunkMetadataState,
     legacyClientChunkMetadata: ClientChunkMetadataState,
@@ -105,6 +107,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     watch,
     state,
     fusionConfig,
+    zopfli,
+    minify,
     legacyPkgConfig = {},
   } = opts;
   const main = 'src/main.js';
@@ -452,7 +456,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             translationsManifestContextKey,
             state.i18nManifest
           ),
-      !dev && zopfliWebpackPlugin,
+      !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
       // In development, skip the emitting phase on errors to ensure there are
@@ -548,8 +552,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
         },
       },
+      minimize: minify,
       minimizer:
-        !dev && runtime === 'client'
+        !dev && minify && runtime === 'client'
           ? [
               new TerserPlugin({
                 sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
