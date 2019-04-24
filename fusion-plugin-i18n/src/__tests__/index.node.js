@@ -19,7 +19,7 @@ import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
 test('translate', async t => {
-  const data = {test: 'hello', interpolated: 'hi ${value}'};
+  const data = {test: 'hello', interpolated: 'hi ${adjective} ${noun}'};
   const app = new App('el', el => el);
   app.register(I18nToken, I18n);
   app.register(I18nLoaderToken, {
@@ -30,9 +30,18 @@ test('translate', async t => {
       const translator = i18n.from(ctx);
       t.equals(translator.translate('test'), 'hello');
       t.equals(
-        translator.translate('interpolated', {value: 'world'}),
-        'hi world'
+        translator.translate('interpolated', {adjective: 'big', noun: 'world'}),
+        'hi big world'
       );
+      t.equals(
+        translator.translate('interpolated', {noun: 'world'}),
+        'hi ${adjective} world'
+      );
+      t.equals(
+        translator.translate('interpolated', {adjective: '', noun: 0}),
+        'hi  0'
+      );
+      t.equals(translator.translate('interpolated'), 'hi ${adjective} ${noun}');
       return next();
     };
   });
