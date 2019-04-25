@@ -21,7 +21,7 @@ export default ((createPlugin({
           if (shouldRegister) {
             sw.register('/sw.js')
               .then(res => logger.log('*** sw registered:', res))
-              .catch(e => logger.log('*** sw registration faiiled:', e));
+              .catch(e => logger.log('*** sw registration failed:', e));
             sw.addEventListener('message', event => {
               // additional listeners can be added at the app level
               if (existingSW && event.data.type === 'upgrade-available') {
