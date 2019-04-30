@@ -33,7 +33,7 @@ module.exports = {
   },
   settings: {
     react: {
-      version: 'detect',
+      version: 'latest',
     },
   },
 };
