@@ -1,0 +1,19 @@
+{
+  "eslint.autoFixOnSave": true,
+  "eslint.nodePath": "common/temp/node_modules",
+  "eslint.options": {
+    "ignorePattern": [
+      "node_modules",
+      "templates",
+    ],
+  },
+  "files.associations": {
+    // json comments in rush config files
+    "command-line.json": "jsonc",
+    "common-versions.json": "jsonc",
+    "rush.json": "jsonc",
+    "version-policies.json": "jsonc",
+  },
+  "flow.pathToFlow": "${workspaceFolder}/common/temp/node_modules/.bin/flow",
+  "javascript.validate.enable": false,
+}

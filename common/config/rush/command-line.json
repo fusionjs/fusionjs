@@ -118,6 +118,12 @@
    * For example, you might define a "--production" parameter for the "rush build" command.
    */
   "parameters": [
+    {
+      "parameterKind": "flag",
+      "longName": "--fix",
+      "description": "Fix eslint errors",
+      "associatedCommands": ["lint"],
+    },
     // {
     //   /**
     //    * (Required) Determines the type of custom parameter.
