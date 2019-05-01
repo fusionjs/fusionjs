@@ -28,7 +28,7 @@
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
     "compression-webpack-plugin": "^2.0.0",
-    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-adapter-react-16": "^1.12.1",
     "enzyme-to-json": "^3.3.4",
     "get-port": "^4.0.0",
     "graphql-tag": "^2.10.1",
@@ -61,7 +61,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "chrome-remote-interface": "^0.27.0",
-    "enzyme": "^3.7.0",
+    "enzyme": "^3.9.0",
     "eslint": "^5.9.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "^2.0.0",
