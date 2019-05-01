@@ -6,9 +6,11 @@
  * @flow
  */
 
+import type {AtomicFontsObjectType} from './types';
+
 export default function generatePreloadLinks(
   fontNames: {},
-  fontDictionary: {}
+  fontDictionary: AtomicFontsObjectType
 ) {
   const links = [];
   Object.keys(fontNames).forEach(fontName => {

@@ -10,24 +10,44 @@ import type {FusionPlugin, Token} from 'fusion-core';
 
 type FontURLsType = {
   woff?: string,
-  woff2?: string,
+  woff2: string,
 };
+
 type FontFallbackType = {
   name: string,
   styles?: {
     [string]: string,
   },
 };
-export type FontType = {
+
+export type AtomicFontType = {
   urls: FontURLsType,
-  fallback: FontFallbackType,
+  fallback?: FontFallbackType,
+  styles?: {},
 };
+
+export type AtomicFontsObjectType = {
+  [string]: AtomicFontType,
+};
+
+export type StyledFontsObjectType = {
+  [string]: Array<AtomicFontType>,
+};
+
 export type ConfigType = {
-  fonts: {
-    [string]: FontType,
-  },
-  preloadDepth: number,
+  fonts: AtomicFontsObjectType | StyledFontsObjectType,
+  preloadDepth?: number,
+  withStyleOverloads?: boolean,
+  preloadOverrides?: {},
 };
+
+export type AtomicConfigType = {
+  fonts: AtomicFontsObjectType,
+  preloadDepth: number,
+  withStyleOverloads?: boolean,
+  preloadOverrides?: {}, // intended for testing only
+};
+
 export type ConfigTokenType = Token<ConfigType>;
 
 type DepsType = {

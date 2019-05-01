@@ -38,6 +38,12 @@ const withFontLoading = (fontName: string) => {
 
       constructor(props: any, context: any) {
         super(props, context);
+        if (typeof this.context.getFontDetails !== 'function') {
+          throw new Error(
+            `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
+to true in the font loader config`
+          );
+        }
         const {fallbackName, styles} = this.context.getFontDetails(fontName);
         if (fallbackName) {
           // switch to fallback name and apply styles to trigger faux font rendition

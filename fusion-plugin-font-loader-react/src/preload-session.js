@@ -23,6 +23,8 @@ class PreloadSession {
     this.fallbackLookup = fallbackLookup;
   }
 
+  // this will get called by component code on the server
+  // use this to only preload what will be used by current bundles
   getFontDetails = (name: string) => {
     const {name: fallbackName, styles = {}} = this.fallbackLookup[name] || {};
     const result = {

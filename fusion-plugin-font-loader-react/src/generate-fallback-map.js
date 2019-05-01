@@ -6,7 +6,12 @@
  * @flow
  */
 
-export default function generateFallbackMap(fonts: {}, preloadDepth: number) {
+import type {AtomicFontsObjectType} from './types';
+
+export default function generateFallbackMap(
+  fonts: AtomicFontsObjectType,
+  preloadDepth: number
+) {
   // map of font name to array of possible fallbacks (name and style offsets) (closest match first)
   const fallbackCandidateLookup = {};
   // keys are fonts that depth strategy suggests we should preload, values are always true
