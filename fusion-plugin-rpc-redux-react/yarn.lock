@@ -1672,10 +1672,10 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-universal-package@^3.4.6:
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.6.tgz#17ad35f1bc023fb539c2e0203d315e7ff735d292"
-  integrity sha1-F6018bwCP7U5wuAgPTFef/c10pI=
+create-universal-package@^3.4.7:
+  version "3.4.7"
+  resolved "https://registry.yarnpkg.com/create-universal-package/-/create-universal-package-3.4.7.tgz#b6c081e840d7e6fc741f7bd9c54226ef9eee0111"
+  integrity sha512-aDu2zednHicVW/5tvOM7ujIPI+brobMKc7lnOorXjLoPhUkBsi/6mkWwiVa9rCscaefC8oI3SQVcW8HylRI5nw==
   dependencies:
     "@babel/core" "^7.0.0-beta.55"
     "@babel/plugin-proposal-class-properties" "7.0.0-beta.55"
