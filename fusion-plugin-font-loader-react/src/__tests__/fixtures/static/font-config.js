@@ -41,7 +41,7 @@ const atomicFonts: AtomicFontsObjectType = {
     fallback: {
       name: 'Lato-Regular',
       styles: {
-        'font-weight': 'bold',
+        fontWeight: 'bold',
       },
     },
   },
@@ -53,7 +53,7 @@ const atomicFonts: AtomicFontsObjectType = {
     fallback: {
       name: 'Lato-Regular',
       styles: {
-        'font-weight': '100',
+        fontWeight: '100',
       },
     },
   },
@@ -67,7 +67,7 @@ const styledFonts: StyledFontsObjectType = {
         woff2: 'Lato-Regular.woff2',
       },
       styles: {
-        'font-weight': 400,
+        fontWeight: 400,
       },
     },
     {
@@ -76,7 +76,7 @@ const styledFonts: StyledFontsObjectType = {
         woff2: 'Lato-Bold.woff2',
       },
       styles: {
-        'font-weight': 600,
+        fontWeight: 600,
       },
     },
     {
@@ -85,7 +85,7 @@ const styledFonts: StyledFontsObjectType = {
         woff2: 'Lato-Thin.woff2',
       },
       styles: {
-        'font-weight': 200,
+        fontWeight: 200,
       },
     },
   ],

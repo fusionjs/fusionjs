@@ -11,11 +11,11 @@ export const fallbackLookup = {
   depth1: {
     'Lato-Bold': {
       name: 'Lato-Regular',
-      styles: {'font-weight': 'bold'},
+      styles: {fontWeight: 'bold'},
     },
     'Lato-Thin': {
       name: 'Lato-Regular',
-      styles: {'font-weight': '100'},
+      styles: {fontWeight: '100'},
     },
   },
   depth2: {

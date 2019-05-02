@@ -6,6 +6,7 @@
  * @flow
  */
 
+import toKebabCase from 'just-kebab-case';
 import type {AtomicFontsObjectType, StyledFontsObjectType} from './types';
 
 export function generateAtomicFontFaces(fonts: AtomicFontsObjectType) {
@@ -18,7 +19,6 @@ export function generateAtomicFontFaces(fonts: AtomicFontsObjectType) {
           font-family: "${fontName}";
           font-display: fallback;
           src: ${String(asFontFaceSrc(font.urls))};
-          ${String(asFontFaceStyles(font.styles || {}))}
         }`
       );
     }
@@ -51,6 +51,6 @@ function asFontFaceSrc(urls) {
 
 function asFontFaceStyles(styles) {
   return styles
-    ? Object.keys(styles).map(key => `${key}: ${styles[key]};\n`)
+    ? Object.keys(styles).map(key => `${toKebabCase(key)}: ${styles[key]};\n`)
     : '';
 }
