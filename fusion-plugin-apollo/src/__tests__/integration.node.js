@@ -11,6 +11,7 @@ import {
   ApolloRenderEnhancer,
   GraphQLSchemaToken,
   ApolloClientToken,
+  ApolloBodyParserConfigToken,
 } from '../index';
 import gql from 'graphql-tag';
 import App from 'fusion-react/dist';
@@ -23,7 +24,7 @@ import http from 'http';
 import fetch from 'node-fetch';
 import {makeExecutableSchema} from 'graphql-tools';
 
-async function testApp(el, {typeDefs, resolvers}) {
+async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   const port = await getPort();
   const endpoint = `http://localhost:${port}/graphql`;
   const app = new App(el);
@@ -46,6 +47,9 @@ async function testApp(el, {typeDefs, resolvers}) {
     // $FlowFixMe
     return {}; // should hit server
   });
+  if (enhanceApp) {
+    enhanceApp(app);
+  }
   // $FlowFixMe
   const server = http.createServer(app.callback());
   await new Promise((resolve, reject) =>
@@ -78,6 +82,47 @@ test('SSR with <Query>', async t => {
   };
   const {server, client} = await testApp(el, {typeDefs, resolvers});
   const result = await client.query({query});
+  t.deepEqual(result, {
+    data: {test: 'test'},
+    loading: false,
+    networkStatus: 7,
+    stale: false,
+  });
+  server.close();
+  t.end();
+});
+
+test('/graphql endpoint with body parser config', async t => {
+  const query = gql`
+    query Test {
+      test
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        t.equal(ctx.path, '/graphql', 'context defaults correctly');
+        return 'test';
+      },
+    },
+  };
+  let called = false;
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+    app.register(ApolloBodyParserConfigToken, {
+      detectJSON: ctx => {
+        called = true;
+        return true;
+      },
+    });
+  });
+  const result = await client.query({query});
+  t.ok(called, 'calls detectJSON function');
   t.deepEqual(result, {
     data: {test: 'test'},
     loading: false,

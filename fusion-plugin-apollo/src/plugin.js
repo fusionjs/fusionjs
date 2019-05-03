@@ -25,6 +25,7 @@ import {
   GraphQLSchemaToken,
   GraphQLEndpointToken,
   ApolloClientToken,
+  ApolloBodyParserConfigToken,
 } from './tokens';
 
 export type DepsType = {
@@ -33,6 +34,7 @@ export type DepsType = {
   schema: typeof GraphQLSchemaToken.optional,
   endpoint: typeof GraphQLEndpointToken.optional,
   getApolloClient: typeof ApolloClientToken,
+  bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
 };
 
 export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
@@ -45,6 +47,7 @@ function getDeps(): DepsType {
       schema: GraphQLSchemaToken.optional,
       endpoint: GraphQLEndpointToken.optional,
       getApolloClient: ApolloClientToken,
+      bodyParserConfig: ApolloBodyParserConfigToken.optional,
     };
   }
   // $FlowFixMe
@@ -73,6 +76,7 @@ export default (renderFn: Render) =>
       apolloContext = ctx => {
         return ctx;
       },
+      bodyParserConfig = {},
     }) {
       const renderMiddleware = async (ctx, next) => {
         if (!ctx.element) {
@@ -126,6 +130,7 @@ export default (renderFn: Render) =>
           },
           // investigate other options
           path: endpoint,
+          bodyParserConfig,
         });
         return compose([...serverMiddleware, renderMiddleware]);
       } else {

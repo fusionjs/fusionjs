@@ -34,3 +34,19 @@ export const GraphQLEndpointToken: Token<string> = createToken(
 export const ApolloClientToken: Token<
   InitApolloClientType<mixed>
 > = createToken('ApolloClientToken');
+
+type BodyParserConfigType = {
+  enableTypes?: Array<string>,
+  encoding?: string,
+  formLimit?: string,
+  jsonLimit?: string,
+  textLimit?: string,
+  strict?: boolean,
+  detectJSON?: (ctx: Context) => boolean,
+  extendTypes?: any,
+  onerror?: (err: any, ctx: Context) => any,
+  disableBodyParser?: (ctx: Context, next: () => Promise<any>) => Promise<any>,
+};
+export const ApolloBodyParserConfigToken: Token<BodyParserConfigType> = createToken(
+  'ApolloBodyParserConfigToken'
+);

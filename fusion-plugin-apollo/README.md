@@ -24,6 +24,7 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`ApolloClientCredentialsToken`](#apolloclientcredentialstoken)
     - [`GetApolloClientLinksToken`](#getapolloclientlinkstoken)
     - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
+    - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
   = [GQL Macro]($gql)
 
 ---
@@ -199,6 +200,19 @@ import { ApolloClientResolversToken } from "fusion-apollo-universal-client";
 ```
 
 Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
+
+##### `ApolloBodyParserConfigToken`
+
+```js
+import { ApolloBodyParserConfigToken } from "fusion-apollo-universal-client";
+// Example for increasing the json limit
+app.register(ApolloBodyParserConfigToken, {
+  jsonLimit: '5mb',
+});
+```
+
+Optional - Provides body parser config to koa-bodyparser for apollo-server. See https://github.com/koajs/bodyparser
+
 
 #### gql
 
