@@ -12,7 +12,6 @@
 // $FlowFixMe flow should be aware of native timers module
 import nodeTimers from 'timers';
 import gcStats from 'gc-stats';
-// $FlowFixMe flow should be aware of http.globalAgent property
 import {globalAgent} from 'http';
 import assert from 'assert';
 
@@ -72,7 +71,15 @@ class NodePerformanceEmitter {
   memoryIntervalRef: number;
   isTrackingGarbageCollection: boolean;
 
-  constructor(config, emit, timers) {
+  constructor(
+    config: {
+      eventLoopLagInterval: number,
+      memoryInterval: number,
+      socketInterval: number,
+    },
+    emit: (string, any) => void,
+    timers: Timers
+  ) {
     assert.ok(config, 'config provided, as expected');
     assert.ok(emit, 'emit provided, as expected');
     assert.ok(timers, 'timers provided, as expected');
