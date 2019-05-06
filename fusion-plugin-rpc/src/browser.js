@@ -9,11 +9,14 @@
 /* eslint-env browser */
 
 import {createPlugin, type Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 
 import type {HandlerType} from './tokens.js';
 import type {RPCPluginType, IEmitter} from './types.js';
+
+const statKey = 'rpc:method-client';
 
 class RPC {
   ctx: ?Context;
@@ -21,8 +24,9 @@ class RPC {
   handlers: ?HandlerType;
   fetch: ?Fetch;
 
-  constructor(fetch: Fetch) {
+  constructor(fetch: Fetch, emitter: any) {
     this.fetch = fetch;
+    this.emitter = emitter;
   }
 
   request<TArgs, TResult>(
@@ -33,7 +37,12 @@ class RPC {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');
     }
+    if (!this.emitter) {
+      throw new Error('Missing emitter registered to UniversalEventsToken');
+    }
     const fetch = this.fetch;
+    const emitter = this.emitter;
+    const startTime = Date.now();
 
     // TODO(#3) handle args instanceof FormData
     return fetch(`/api/${rpcId}`, {
@@ -48,8 +57,19 @@ class RPC {
       .then(args => {
         const {status, data} = args;
         if (status === 'success') {
+          emitter.emit(statKey, {
+            method: rpcId,
+            status: 'success',
+            timing: Date.now() - startTime,
+          });
           return data;
         } else {
+          emitter.emit(statKey, {
+            method: rpcId,
+            error: data,
+            status: 'failure',
+            timing: Date.now() - startTime,
+          });
           return Promise.reject(data);
         }
       });
@@ -60,11 +80,12 @@ const pluginFactory: () => RPCPluginType = () =>
   createPlugin({
     deps: {
       fetch: FetchToken,
+      emitter: UniversalEventsToken,
     },
     provides: deps => {
-      const {fetch = window.fetch} = deps;
+      const {fetch = window.fetch, emitter} = deps;
 
-      return {from: () => new RPC(fetch)};
+      return {from: () => new RPC(fetch, emitter)};
     },
   });
 

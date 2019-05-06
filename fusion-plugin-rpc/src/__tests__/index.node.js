@@ -20,6 +20,7 @@ import RPCPlugin from '../server';
 import type {IEmitter, RPCServiceType} from '../types.js';
 import MockRPCPlugin from '../mock.js';
 import ResponseError from '../response-error.js';
+import createMockEmitter from './create-mock-emitter';
 
 const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
@@ -45,25 +46,6 @@ function createTestFixture() {
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
-}
-
-function createMockEmitter<TProps>(props: TProps): IEmitter {
-  const emitter = {
-    from: () => {
-      return emitter;
-    },
-    emit: () => {},
-    setFrequency: () => {},
-    teardown: () => {},
-    map: () => {},
-    on: () => {},
-    off: () => {},
-    mapEvent: () => {},
-    handleEvent: () => {},
-    flush: () => undefined,
-    ...props,
-  };
-  return emitter;
 }
 
 function mockRequest() {
