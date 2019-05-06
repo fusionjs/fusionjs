@@ -19,7 +19,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "npm run clean && cup build",
+    "transpile": "npm run clean && cup4 build",
     "test": "jest",
     "prepublish": "npm run transpile"
   },
@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0",
+    "@rtsao/create-universal-package-4": "^4.1.0",
     "babel-eslint": "10.0.1",
-    "create-universal-package": "^4.1.0",
     "eslint": "5.13.0",
     "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "2.0.1",
