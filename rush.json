@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-universal-logger",
+      "projectFolder": "fusion-plugin-universal-logger"
+    },
+    {
       "packageName": "fusion-plugin-universal-events",
       "projectFolder": "fusion-plugin-universal-events"
     },
