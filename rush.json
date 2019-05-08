@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-scaffolder",
+      "projectFolder": "fusion-scaffolder"
+    },
+    {
       "packageName": "fusion-rpc-redux",
       "projectFolder": "fusion-rpc-redux"
     },
