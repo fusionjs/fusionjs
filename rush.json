@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "eslint-config-fusion",
+      "projectFolder": "eslint-config-fusion"
+    },
+    {
       "packageName": "create-fusion-plugin",
       "projectFolder": "create-fusion-plugin"
     },
