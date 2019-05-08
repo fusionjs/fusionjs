@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-i18n-react",
+      "projectFolder": "fusion-plugin-i18n-react"
+    },
+    {
       "packageName": "fusion-plugin-http-handler",
       "projectFolder": "fusion-plugin-http-handler"
     },
