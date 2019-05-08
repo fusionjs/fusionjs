@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-react-redux",
+      "projectFolder": "fusion-plugin-react-redux"
+    },
+    {
       "packageName": "fusion-plugin-react-helmet-async",
       "projectFolder": "fusion-plugin-react-helmet-async"
     },
