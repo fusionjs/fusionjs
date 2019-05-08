@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-node-performance-emitter",
+      "projectFolder": "fusion-plugin-node-performance-emitter"
+    },
+    {
       "packageName": "fusion-plugin-jwt",
       "projectFolder": "fusion-plugin-jwt"
     },
