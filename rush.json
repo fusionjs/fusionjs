@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "create-fusion-plugin",
+      "projectFolder": "create-fusion-plugin"
+    },
+    {
       "packageName": "create-fusion-app",
       "projectFolder": "create-fusion-app"
     },
