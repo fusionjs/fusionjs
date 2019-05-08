@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-redux-action-emitter-enhancer",
+      "projectFolder": "fusion-plugin-redux-action-emitter-enhancer"
+    },
+    {
       "packageName": "fusion-plugin-react-router",
       "projectFolder": "fusion-plugin-react-router"
     },
