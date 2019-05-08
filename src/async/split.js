@@ -101,7 +101,9 @@ export default function withAsyncComponent<Config>({
 
       const loadPromises = [
         componentPromise,
-        ...context.splitComponentLoaders.map(loader => loader(metadata)),
+        ...context.splitComponentLoaders.map(loader =>
+          loader(metadata.chunkIds, metadata)
+        ),
       ];
 
       return Promise.all(loadPromises)
