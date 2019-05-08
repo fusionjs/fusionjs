@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-introspect",
+      "projectFolder": "fusion-plugin-introspect"
+    },
+    {
       "packageName": "fusion-plugin-i18n",
       "projectFolder": "fusion-plugin-i18n"
     },
