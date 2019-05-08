@@ -256,5 +256,9 @@
    * 3. It's useful to have a centralized inventory of all projects and their important metadata.
    */
   "projects": [
+    {
+      "packageName": "create-fusion-app",
+      "projectFolder": "create-fusion-app"
+    },
   ]
 }
