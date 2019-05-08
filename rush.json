@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-service-worker",
+      "projectFolder": "fusion-plugin-service-worker"
+    },
+    {
       "packageName": "fusion-plugin-rpc",
       "projectFolder": "fusion-plugin-rpc"
     },
