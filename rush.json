@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-font-loader-react",
+      "projectFolder": "fusion-plugin-font-loader-react"
+    },
+    {
       "packageName": "fusion-plugin-error-handling",
       "projectFolder": "fusion-plugin-error-handling"
     },
