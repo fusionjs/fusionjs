@@ -89,7 +89,7 @@ type Session = {
 }
 ```
 
-Typically, the service provided by [`fusion-plugin-jwt`](https://github.com/fusionjs/fusion-plugin-jwt) or a custom wrapper around similar key-value store APIs (such as [Redis](https://redis.io/)).
+Typically, the service provided by [`fusion-plugin-jwt`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-jwt) or a custom wrapper around similar key-value store APIs (such as [Redis](https://redis.io/)).
 
 #### `CacheToken`
 

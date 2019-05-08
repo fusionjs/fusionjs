@@ -1,5 +1,7 @@
 # fusion-plugin-introspect
 
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
+
 Visualize the tree of plugins in your app
 
 ---
@@ -22,7 +24,7 @@ Visualize the tree of plugins in your app
 
 ## Try it out
 
-*(this assumes you've used a fusion scaffolder such as [create-fusion-app](https://github.com/fusionjs/create-fusion-app))*
+*(this assumes you've used a fusion scaffolder such as [create-fusion-app](https://github.com/fusionjs/fusionjs/tree/master/create-fusion-app))*
 
 ### 1. Register plugin
 

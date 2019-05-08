@@ -1,6 +1,6 @@
 # node-performance-emitter
 
-[![Build status](https://badge.buildkite.com/cd218d02957b19e9397231aea7fe019ea61f5e50225d7a47a8.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-node-performance-emitter)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 A tool for collecting, aggregating, and emitting Node.js performance stats.
 
@@ -110,7 +110,7 @@ Typically should be registered with [`NodePerformanceEmitter`](NodePerformanceEm
 
 ##### `UniversalEventsToken`
 
-Required. See [https://github.com/fusionjs/fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events)
+Required. See [https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events)
 
 ##### `TimersToken`
 

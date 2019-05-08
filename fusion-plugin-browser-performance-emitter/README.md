@@ -1,6 +1,6 @@
 # fusion-plugin-browser-performance-emitter
 
-[![Build status](https://badge.buildkite.com/a7317a979159381e5e4ffb14e1ccd0d39737fd159f73863915.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-browser-performance-emitter)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The plugin emits events of performance stats from the browser on initial page loads - with the following API when avaliable:
 (see https://developer.mozilla.org/en-US/docs/Web/API/Window/performance)
@@ -95,7 +95,7 @@ export default () => {
 import BrowserPerformanceEmitter from 'fusion-plugin-browser-performance-emitter';
 ```
 
-The browser performance emitter plugin. Typically, it doesn't need to be associated with a [token](https://github.com/fusionjs/fusion-core#token).
+The browser performance emitter plugin. Typically, it doesn't need to be associated with a [token](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#token).
 
 #### Dependencies
 
@@ -107,7 +107,7 @@ import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-eve
 app.register(UniversalEventsToken, UniversalEvents);
 ```
 
-An event emitter plugin to emit stats to, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+An event emitter plugin to emit stats to, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events).
 
 #### Service API
 

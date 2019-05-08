@@ -1,6 +1,6 @@
 # fusion-test-utils
 
-[![Build status](https://badge.buildkite.com/830e5ff24d46977835ad18ae693019740e07413e091581905e.svg?branch=master)](https://buildkite.com/uberopensource/fusion-test-utils)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides test utility functions for Fusion.js
 
@@ -87,7 +87,7 @@ The same as `createRequestContext`, but defaults the `accept` header to `text/ht
 
 #### `test(testName: String, executor: (assert) => {})`
 
-A block which executes a test case when using [fusion-cli](https://github.com/fusionjs/fusion-cli) as a test runner. The first argument is the name of the test, and the second argument is a function that executes your test code. The test case will receive a cross-environment assertion helper with all methods defined in the [assert module](https://nodejs.org/api/assert.html), as well as a `.matchSnapshot()` method.
+A block which executes a test case when using [fusion-cli](https://github.com/fusionjs/fusionjs/tree/master/fusion-cli) as a test runner. The first argument is the name of the test, and the second argument is a function that executes your test code. The test case will receive a cross-environment assertion helper with all methods defined in the [assert module](https://nodejs.org/api/assert.html), as well as a `.matchSnapshot()` method.
 
 Example usage:
 ```js

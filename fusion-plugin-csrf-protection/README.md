@@ -1,6 +1,6 @@
 # fusion-plugin-csrf-protection
 
-[![Build status](https://badge.buildkite.com/3fef89529147193838107b8bf6a5e0cb9f1dc8d11502461920.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-csrf-protection)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides a modified `fetch` that is automatically secure against CSRF attacks for non-idempotent HTTP methods.
 
@@ -89,7 +89,7 @@ a server side middleware for validating csrf requests.
 import {FetchToken} from 'fusion-tokens';
 ```
 The canonical token for an implementation of `fetch`. This plugin is generally registered on that token. 
-For more, see [the fusion-tokens repo](https://github.com/fusionjs/fusion-tokens#fetchtoken).
+For more, see [the fusion-tokens repo](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken).
 
 #### Dependencies
 

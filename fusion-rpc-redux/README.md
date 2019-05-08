@@ -1,10 +1,10 @@
 # fusion-rpc-redux
 
-[![Build status](https://badge.buildkite.com/0a5101ffd6b6091e4d0066aa93b65b79a2e5f9141cb2b4316f.svg?branch=master)](https://buildkite.com/uberopensource/fusion-rpc-redux)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 A collection of helper functions for working with Redux and RPC together
 
-If using RPC from React components, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react) instead of this package.
+If using RPC from React components, you should use [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-rpc-redux-react) instead of this package.
 
 ---
 

@@ -1,6 +1,6 @@
 # fusion-plugin-connected-react-router
 
-[![Build status](https://badge.buildkite.com/d34fd7f072f20da4e71a6ea59dd8d20efbce3c4ebec0c057dd.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-connected-react-router)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The `fusion-plugin-connected-react-router` package provides integration points with [connected-react-router](https://github.com/supasate/connected-react-router). It is designed
 to be used along side of `fusion-plugin-react-router`.

@@ -1,6 +1,6 @@
 # fusion-plugin-rpc
 
-[![Build status](https://badge.buildkite.com/5165e82185b13861275cd0a69f29c2a13bc66dfb9461ee4af5.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Fetch data on the server and client with an
 [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call) style interface.
@@ -16,7 +16,7 @@ as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g.
 `PATCH /api/orders/:id`).
 
 If you're using React/Redux, you should use
-[`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusion-plugin-rpc-redux-react)
+[`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-rpc-redux-react)
 instead of this package.
 
 ---
@@ -134,7 +134,7 @@ the [RPC](#rpc) plugin.
 ##### `UniversalEventsToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusion-plugin-universal-events#api)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api)
 
 ##### `RPCHandlersToken`
 
@@ -156,17 +156,17 @@ of type `RPCHandlers`.
 ##### `FetchToken`
 
 Required. Browser-only. See
-[https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken)
 
 ##### `ReduxToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
 ##### `ReducerToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
 ---
 
@@ -177,7 +177,7 @@ const rpc: RPC = Rpc.from((ctx: Context));
 ```
 
 - `ctx: Context` - Required. A
-  [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+  [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 - returns `rpc: {request: (method: string, args: any) => Promise<any>}`
 
   - `request: (method: string, args: any) => Promise<any>` - Makes an RPC call

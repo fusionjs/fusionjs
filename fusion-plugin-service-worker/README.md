@@ -1,6 +1,6 @@
 # fusion-plugin-service-worker
 
-[![Build status](https://badge.buildkite.com/176b20938d88e3b7836a9deb744a94d9e58626679d29b22e0f.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-service-worker)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The Fusion plugin for Service Workers.
 

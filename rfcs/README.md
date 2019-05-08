@@ -9,7 +9,7 @@ through a bit of a design process and produce a consensus among the FusionJS tea
 The "RFC" (request for comments) process is intended to provide a
 consistent and controlled path for new features to enter the project.
 
-[Active RFC List](https://github.com/fusionjs/rfcs/pulls)
+[Active RFC List](https://github.com/fusionjs/fusionjs/tree/master/rfcs/pulls)
 
 FusionJS is still **actively developing** this process, and it will still change as
 more features are implemented and the community settles on specific approaches
@@ -54,7 +54,7 @@ the RFC merged into the RFC repo as a markdown file. At that point the RFC
 is 'active' and may be implemented with the goal of eventual inclusion
 into FusionJS.
 
-* Fork the RFC repo http://github.com/fusionjs/rfcs
+* Fork the RFC repo http://github.com/fusionjs/fusionjs/tree/master/rfcs
 * Copy `0000-template.md` to `text/0000-my-feature.md` (where
   'my-feature' is descriptive. Don't assign an RFC number yet).
 * Fill in the RFC. Put care into the details: **RFCs that do not

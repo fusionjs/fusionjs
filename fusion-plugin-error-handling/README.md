@@ -1,6 +1,6 @@
 # fusion-plugin-error-handling
 
-[![Build status](https://badge.buildkite.com/1a76dbe95f76cd888a286290c365fabd54fcc62edb3895aa5d.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-error-handling)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Collects browser errors, server request errors, and uncaught exceptions, and provides an API for consuming them.
 
@@ -50,7 +50,7 @@ export default __NODE__ && createPlugin({
 });
 ```
 
-Normally, instead of using `console`, you would consume errors via something like [Kafka](https://kafka.apache.org/) or at least use a production logger (such as [`fusion-plugin-universal-logger`](https://github.com/fusionjs/fusion-plugin-universal-logger)) in conjunction with a logging service such as LogEntries or Papertrail.
+Normally, instead of using `console`, you would consume errors via something like [Kafka](https://kafka.apache.org/) or at least use a production logger (such as [`fusion-plugin-universal-logger`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-logger)) in conjunction with a logging service such as LogEntries or Papertrail.
 
 ---
 
@@ -85,7 +85,7 @@ export default () => {
 import ErrorHandling from 'fusion-plugin-error-handling';
 ```
 
-The plugin. Typically doesn't need to be associated with a [token](https://github.com/fusionjs/fusion-core#token).
+The plugin. Typically doesn't need to be associated with a [token](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#token).
 
 #### Dependencies
 

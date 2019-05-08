@@ -3,9 +3,11 @@
 <PROJECT_ROOT>/dist/.*
 
 [include]
+../common/temp/node_modules
 ./src/
 
 [libs]
+./node_modules/fusion-core/flow-typed
 
 [lints]
 

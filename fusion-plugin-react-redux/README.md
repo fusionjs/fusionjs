@@ -1,12 +1,12 @@
 # fusion-plugin-react-redux
 
-[![Build status](https://badge.buildkite.com/b1165dac1a1aea4fee2d97e52c74f5101efeed82f6907bb16c.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-redux?branch=master)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Integrates React and Redux to a Fusion.js application
 
 It handles creating your store, wrapping your element tree in a provider, and serializing/deserializing your store between server and client.
 
-Note that this plugin extends the Redux state with a property called `ctx` that references the request's [context](https://github.com/fusionjs/fusion-core#context)
+Note that this plugin extends the Redux state with a property called `ctx` that references the request's [context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 
 ---
 
@@ -162,7 +162,7 @@ type InitialState = (ctx: Context) => Promise<State> | State
 const service: ReduxServiceInstance = Redux.from((ctx: Context));
 ```
 
-* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 * returns `service:ReduxServiceInstance`
 
 ###### Types
@@ -175,7 +175,7 @@ type ReduxServiceInstance = {
 }
 ```
 
-* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 * `store: Store` - A Redux store
 * `initStore: () => Promise<Store>` - calls the function provided by [`GetInitialStateToken`](#getinitialstatetoken)
 

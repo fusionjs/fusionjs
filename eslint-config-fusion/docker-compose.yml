@@ -1,7 +1,0 @@
-version: '2'
-services:
-  eslint-config-fusion:
-    build: .
-    volumes:
-      - .:/eslint-config-fusion
-      - /eslint-config-fusion/node_modules/

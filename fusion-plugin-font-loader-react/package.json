@@ -1,9 +1,13 @@
 {
   "name": "fusion-plugin-font-loader-react",
-  "version": "1.2.0-1",
+  "version": "0.0.0-monorepo",
   "description": "The Fusion plugin for declaring and optimizing the loading of cutsom fonts",
   "license": "MIT",
-  "repository": "fusionjs/fusion-plugin-font-loading",
+  "repository": {
+    "directory": "fusion-plugin-font-loader-react",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
   "files": [
     "dist",
     "src"
@@ -23,46 +27,50 @@
   },
   "dependencies": {
     "just-kebab-case": "^1.1.0",
-    "prop-types": "^15.6.2"
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.6",
-    "enzyme": "^3.7.0",
-    "enzyme-adapter-react-16": "^1.7.0",
-    "eslint": "^5.9.0",
-    "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "^2.0.0",
-    "eslint-plugin-flowtype": "^3.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.1.0",
-    "eslint-plugin-prettier": "^3.0.0",
-    "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.92.0",
-    "fusion-core": "^1.10.0",
-    "fusion-test-utils": "^1.3.0",
-    "nyc": "^13.1.0",
-    "prettier": "^1.15.2",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
+    "create-universal-package": "^3.4.7",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0",
+    "flow-bin": "^0.98.1",
+    "fusion-core": "0.0.0-monorepo",
+    "fusion-test-utils": "0.0.0-monorepo",
+    "nyc": "^14.1.0",
+    "prettier": "^1.17.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^1.10.3",
-    "react": "14.x - 16.x"
+    "fusion-core": "0.0.0-monorepo",
+    "react": "^16.8.6"
   },
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
-    "prepublish": "npm run transpile"
+    "prepublish": "npm run build",
+    "build": "npm run clean && cup build",
+    "flow": "flow check"
   },
   "engines": {
-    "node": ">= 8.9.0"
-  }
+    "node": ">=8.9.0 <11",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "homepage": "https://fusionjs.com/api/fusion-plugin-font-loader-react"
 }

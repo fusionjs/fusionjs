@@ -1,6 +1,6 @@
 {
   "name": "create-fusion-plugin",
-  "version": "0.0.4",
+  "version": "0.0.0-monorepo",
   "main": "index.js",
   "license": "MIT",
   "files": [
@@ -11,29 +11,31 @@
     "create-fusion-plugin": "bin/cli.js"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
-    "fusion-scaffolder": "^0.0.2"
+    "chalk": "^2.4.2",
+    "fusion-scaffolder": "0.0.0-monorepo"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
-    "eslint": "^5.11.0",
-    "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "^2.0.0",
-    "eslint-plugin-flowtype": "^3.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.1.2",
-    "eslint-plugin-prettier": "^3.0.0",
-    "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.89.0",
+    "babel-jest": "^24.8.0",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0",
+    "flow-bin": "^0.98.1",
     "jest-cli": "^23.6.0",
-    "prettier": "^1.15.3"
+    "prettier": "^1.17.0"
   },
   "scripts": {
     "clean": "rm -rf test-artifacts",
     "lint": "eslint .",
     "test": "yarn clean && jest",
-    "postinstall": "cd ./templates/plugin/content && yarn install"
+    "postinstall": "cd ./templates/plugin/content && yarn install",
+    "build": "echo ok",
+    "flow": "flow check"
   },
   "jest": {
     "cache": false,
@@ -44,5 +46,16 @@
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     }
+  },
+  "engines": {
+    "node": ">=8.9.0 <11",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "homepage": "https://fusionjs.com/api/create-fusion-plugin",
+  "repository": {
+    "directory": "create-fusion-plugin",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
   }
 }

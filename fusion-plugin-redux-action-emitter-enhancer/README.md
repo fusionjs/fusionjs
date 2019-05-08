@@ -1,6 +1,6 @@
 # fusion-plugin-redux-action-emitter-enhancer
 
-[![Build status](https://badge.buildkite.com/1864b671ca8edc1b7a6f8470ae320c6163268c23c4085ee82a.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-redux-action-emitter-enhancer)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Redux store enhancer that emits actions via an injected event emitter.
 
@@ -56,7 +56,7 @@ export default createPlugin({
 
 #### Transforming action payloads on emission
 
-This plugin depends on [fusion-plugin-universal-events](https://github.com/fusionjs/fusion-plugin-universal-events) to emit the action payloads, which means the payloads are sent over-the-wire to the server-side, which **can consume much of the network bandwidth**, or even cause 413 Payload Too Large HTTP errors. The dependence is the reason why by default the plugin will only emit [certain properties](#default-transformer) from the raw action payload.
+This plugin depends on [fusion-plugin-universal-events](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events) to emit the action payloads, which means the payloads are sent over-the-wire to the server-side, which **can consume much of the network bandwidth**, or even cause 413 Payload Too Large HTTP errors. The dependence is the reason why by default the plugin will only emit [certain properties](#default-transformer) from the raw action payload.
 
 By default, `_trackingMeta` is an opinionated property to be picked and emitted from the raw payload for tracking(analytics) purposes. **For customizations, you should provide a transformer function to mainly filter/pick properties for emission.**
 
@@ -145,7 +145,7 @@ This plugin.  It can be registered as a dependency to any plugin that expects a 
 import {EnhancerToken} from 'fusion-plugin-react-redux';
 ```
 
-If you are using [`fusion-plugin-react-redux`](https://github.com/fusionjs/fusion-plugin-react-redux), we recommend registering this plugin to the `EnhancerToken`.
+If you are using [`fusion-plugin-react-redux`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux), we recommend registering this plugin to the `EnhancerToken`.
 
 ##### `ActionEmitterTransformerToken`
 
@@ -166,7 +166,7 @@ import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-eve
 app.register(UniversalEventsToken, UniversalEvents);
 ```
 
-An event emitter plugin which emits the actions.  Typically, it is registered with [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+An event emitter plugin which emits the actions.  Typically, it is registered with [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events).
 
 #### Service API
 

@@ -4,6 +4,7 @@
 <PROJECT_ROOT>/src/fixtures/
 
 [include]
+../common/temp/node_modules
 ./src/
 
 [libs]

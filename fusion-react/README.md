@@ -1,10 +1,10 @@
 # fusion-react
 
-[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusion-react?branch=master)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides a Fusion.js application class that is pre-configured with React universal rendering.
 
-The `App` class from this package should typically be used instead of `App` from [`fusion-core`](https://github.com/fusionjs/fusion-core) if you want React as the rendering engine, and you want it to be configured to do both server and client rendering.
+The `App` class from this package should typically be used instead of `App` from [`fusion-core`](https://github.com/fusionjs/fusionjs/tree/master/fusion-core) if you want React as the rendering engine, and you want it to be configured to do both server and client rendering.
 
 This package allows you to have deeply nested components with asynchronous dependencies and have everything just work with server-side rendering.
 
@@ -72,7 +72,7 @@ export default function() {
 import App from 'fusion-react';
 ```
 
-A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusion-core#plugin).
+A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#plugin).
 
 **Constructor**
 
@@ -100,8 +100,8 @@ Call this method to register a plugin or configuration value into a Fusion.js ap
 
 You can optionally pass a token as the first argument to associate the plugin/value to the token, so that they can be referenced by other plugins within Fusion.js' dependency injection system.
 
-- `plugin: Plugin` - a [Plugin](https://github.com/fusionjs/fusion-core#plugin) created via [`createPlugin`](https://github.com/fusionjs/fusion-core#createplugin)
-- `token: Token` - a [Token](https://github.com/fusionjs/fusion-core#token) created via [`createToken`](https://github.com/fusionjs/fusion-core#createtoken)
+- `plugin: Plugin` - a [Plugin](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#plugin) created via [`createPlugin`](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#createplugin)
+- `token: Token` - a [Token](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#token) created via [`createToken`](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#createtoken)
 - `value: any` - a configuration value
 - returns `undefined`
 
@@ -112,8 +112,8 @@ app.middleware((deps: Object<string, Token>), (deps: Object) => Middleware);
 app.middleware((middleware: Middleware));
 ```
 
-- `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](https://github.com/fusionjs/fusion-core#token)
-- `middleware: Middleare` - a [middleware](https://github.com/fusionjs/fusion-core#middleware)
+- `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#token)
+- `middleware: Middleare` - a [middleware](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#middleware)
 - returns `undefined`
 
 This method is a shortcut for registering middleware plugins. Typically, you should write middlewares as plugins so you can organize different middlewares into different files.

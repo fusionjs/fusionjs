@@ -1,10 +1,10 @@
 # fusion-core
 
-[![Build status](https://badge.buildkite.com/f21b82191811f668ef6fe24f6151058a84fa2c645cfa8810d0.svg?branch=master)](https://buildkite.com/uberopensource/fusion-core)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime. It also provides primitives for implementing server-side code, and utilities for assembling plugins into an application to augment its functionality.
 
-If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusion-react) package instead of `fusion-core`.
+If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-react) package instead of `fusion-core`.
 
 ---
 

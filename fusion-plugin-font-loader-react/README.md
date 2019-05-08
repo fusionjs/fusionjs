@@ -1,6 +1,6 @@
 # fusion-plugin-font-loader-react
 
-[![Build status](https://badge.buildkite.com/a09fc8cc2c13e72534ae4e791fb891753489fb80e02d82021b.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-font-loader-react)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 This plugin generates font faces and optionally improves percieved font load performance on slow networks.
 
@@ -99,7 +99,7 @@ const Li = styled('li', {
 
 ## Styled Mode Config
 
-To use this plugin in Styled Mode your config object should have `withStyleOverloads` set to `true` and pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusion-plugin-font-loader-react/blob/master/src/types.js) for more details on this data structure)
+To use this plugin in Styled Mode your config object should have `withStyleOverloads` set to `true` and pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-font-loader-react/blob/master/src/types.js) for more details on this data structure)
 
 ```js
 {

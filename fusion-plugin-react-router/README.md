@@ -1,6 +1,6 @@
 # fusion-plugin-react-router
 
-[![Build status](https://badge.buildkite.com/e7e66157aa0c6e75c355db44ddf818637e7f00f9d7d640c879.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-react-router)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The `fusion-plugin-react-router` package provides a universal router plugin for React. The plugin automatically configures a router provider to account for route prefix, routing events, hydration in bundle splitting scenarios, etc.
 
@@ -142,7 +142,7 @@ This is necessary for integrating with `connected-react-router`.
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 ```
 
-The [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin. Optional.
+The [universal events](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events) plugin. Optional.
 
 Provide the UniversalEventsToken when you would like to emit routing events for data collection.
 
@@ -151,7 +151,7 @@ Provide the UniversalEventsToken when you would like to emit routing events for 
 
 #### Routing Events and Timing Metrics
 
-Router will emit the following events/metrics via the [universal events](https://github.com/fusionjs/fusion-plugin-universal-events) plugin if provided:
+Router will emit the following events/metrics via the [universal events](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events) plugin if provided:
 
 ##### Server-side routing metrics via events
 * `'pageview:server'`
@@ -163,7 +163,7 @@ Router will emit the following events/metrics via the [universal events](https:/
   - `page: string` - (1)The path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (2)`ctx.path`.
   - `title: string` - (1)`props.trackingId` provided by [`<Route>`](#route), or (2)the path of an [exact match](https://reacttraining.com/react-router/web/api/match), or (3)`ctx.path`.
   - `status: number` - HTTP status of the response
-  - `timing: number` - Milliseconds. The execution time of [renderer](https://github.com/fusionjs/fusion-core#app).
+  - `timing: number` - Milliseconds. The execution time of [renderer](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#app).
 
 ##### Browser routing events
 * `'pageview:browser'`

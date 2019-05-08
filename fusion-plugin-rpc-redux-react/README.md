@@ -1,6 +1,6 @@
 # fusion-plugin-rpc-redux-react
 
-[![Build status](https://badge.buildkite.com/c16ece6ba0a81b30d11d69cb90b8f4d77a0967860144d12f44.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-rpc-redux-react)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides a higher order component that connects RPC methods to Redux as well as
 React component props
@@ -136,7 +136,7 @@ the [RPC](#rpc) plugin.
 ##### `UniversalEventsToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusion-plugin-universal-events#api)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api)
 
 ##### `RPCHandlersToken`
 
@@ -158,17 +158,17 @@ of type `RPCHandlers`.
 ##### `FetchToken`
 
 Required. Browser-only. See
-[https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken)
 
 ##### `ReduxToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
 ##### `ReducerToken`
 
 Required. See
-[https://github.com/fusionjs/fusion-plugin-react-redux](https://github.com/fusionjs/fusion-plugin-react-redux)
+[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
 ---
 

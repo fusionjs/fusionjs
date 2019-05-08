@@ -1,10 +1,10 @@
 # fusion-plugin-universal-logger
 
-[![Build status](https://badge.buildkite.com/b2263b681b25bfe410fdf3ba640e682491c77bd61b4f0e63c9.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-logger)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 A logger plugin that can handle logging both server side and client side. On the server it uses [winston](https://github.com/winstonjs/winston) directly. On the client, it batches logs and sends them via network to the server at set intervals.
 
-Depends on [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events).
+Depends on [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events).
 
 ---
 
@@ -99,7 +99,7 @@ import {LoggerToken} from 'fusion-tokens';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 ```
 
-An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusion-plugin-universal-events). Required.
+An event emitter plugin, such as the one provided by [`fusion-plugin-universal-events`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events). Required.
 
 ##### `UniversalLoggerConfigToken`
 

@@ -1,6 +1,6 @@
 # fusion-plugin-i18n
 
-[![Build status](https://badge.buildkite.com/3f2d84d5538d87a19677f5d79304ac46a8a67f970520d13884.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-i18n)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Adds I18n (Internationalization) string support to a Fusion.js app.
 
@@ -152,7 +152,7 @@ type I18nLoader = {
 ```
 
 * `loader.from: (ctx) => ({locale, translations})` -
-  * `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusion-core#context) object.
+  * `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context) object.
   * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
   * `translations: {[string]: string}` - A object that maps translation keys to translated values for the given locale
 

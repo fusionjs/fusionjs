@@ -1,4 +1,4 @@
-flow-typed/*
+flow-typed/
 node_modules/
-templates/**/node_modules/
-templates/**/dist/
+templates/
+test-artifacts/

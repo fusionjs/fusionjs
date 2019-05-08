@@ -1,6 +1,6 @@
 # fusion-plugin-http-handler
 
-[![Build status](https://badge.buildkite.com/14a7cf8799610714c295d2d38333b8cd941dfbf50efec06c03.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-http-handler)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides a way to hook http handlers into the fusion request lifecycle.
 

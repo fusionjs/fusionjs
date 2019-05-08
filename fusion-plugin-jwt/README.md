@@ -1,6 +1,6 @@
 # fusion-plugin-jwt
 
-[![Build status](https://badge.buildkite.com/0652871d45303631a598c88e1231073ea80b5dffaea46aa2b4.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-jwt?branch=master)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Session library that uses JSON Web Token and cookies
 
@@ -91,11 +91,11 @@ export default () => {
 import Session from 'fusion-plugin-jwt';
 ```
 
-The plugin. Should typically be registered to [`SessionToken`](https://github.com/fusionjs/fusion-tokens#sessiontoken)
+The plugin. Should typically be registered to [`SessionToken`](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#sessiontoken)
 
 ##### `SessionToken`
 
-Typically should be registered with [`Session`](#session). See [https://github.com/fusionjs/fusion-tokens#sessiontoken](https://github.com/fusionjs/fusion-tokens#sessiontoken)
+Typically should be registered with [`Session`](#session). See [https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#sessiontoken](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#sessiontoken)
 
 #### Dependencies
 
@@ -149,7 +149,7 @@ type CookieName = number;
 const session: Session = Session.from((ctx: Context));
 ```
 
-* `ctx: Context` - a [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+* `ctx: Context` - a [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 * returns `session: Session`
 
 ###### Types

@@ -3,6 +3,7 @@
 <PROJECT_ROOT>/dist/.*
 
 [include]
+../common/temp/node_modules
 ./src/
 
 [libs]

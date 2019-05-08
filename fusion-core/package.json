@@ -1,9 +1,13 @@
 {
   "name": "fusion-core",
   "description": "A generic entry point class for FusionJS applications that is used by the FusionJS runtime.",
-  "version": "1.10.6",
+  "version": "0.0.0-monorepo",
   "license": "MIT",
-  "repository": "fusionjs/fusion-core",
+  "repository": {
+    "directory": "fusion-core",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
   "files": [
     "dist",
     "flow-typed",
@@ -25,19 +29,20 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint src",
-    "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=html npm run just-test",
     "view-cover": "npm run cover && open coverage/index.html",
-    "prepublish": "npm run transpile"
+    "prepublish": "npm run build",
+    "build": "npm run clean && cup build",
+    "flow": "flow check"
   },
   "dependencies": {
-    "koa": "^2.6.2",
+    "koa": "^2.7.0",
     "koa-compose": "^4.1.0",
-    "node-mocks-http": "^1.7.3",
+    "node-mocks-http": "^1.7.5",
     "toposort": "^2.0.2",
     "ua-parser-js": "^0.7.19",
     "uuid": "^3.3.2"
@@ -45,23 +50,26 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "create-universal-package": "^3.4.6",
-    "eslint": "^5.9.0",
-    "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "^2.0.0",
-    "eslint-plugin-flowtype": "^3.2.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^22.1.2",
-    "eslint-plugin-prettier": "^3.0.0",
-    "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.94.0",
+    "create-universal-package": "^3.4.7",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0",
+    "flow-bin": "^0.98.1",
     "node-fetch": "^2.3.0",
-    "nyc": "^13.1.0",
-    "prettier": "^1.15.3",
+    "nyc": "^14.1.0",
+    "prettier": "^1.17.0",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
   },
   "engines": {
-    "node": ">= 8.9.0"
-  }
+    "node": ">=8.9.0 <11",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "homepage": "https://fusionjs.com/api/fusion-core"
 }

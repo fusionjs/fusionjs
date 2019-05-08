@@ -8,7 +8,7 @@ It's useful for when you want to collect data about user actions or other metric
 
 For convenience, this plugin automatically flushes its queue before page unload on `document.visibilityState === 'hidden'`.
 
-If you need to use the universal event emitter from React, use [`fusion-plugin-universal-events-react`](https://github.com/fusionjs/fusion-plugin-universal-events-react)
+If you need to use the universal event emitter from React, use [`fusion-plugin-universal-events-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events-react)
 
 ### Differences between UniversalEvents and other event emitter libraries
 
@@ -106,7 +106,7 @@ import {FetchToken} from 'fusion-tokens';
 __BROWSER__ && app.register(FetchToken, window.fetch.bind(window));
 ```
 
-**Required. Browser-only.** See [https://github.com/fusionjs/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusion-tokens#fetchtoken)
+**Required. Browser-only.** See [https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken)
 
 ##### `UniversalEventsBatchStorageToken`
 
@@ -190,7 +190,7 @@ const scoped = events.from(ctx: Context);
 
 Returns a scoped version of the events api.
 
-- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusion-core#context)
+- `ctx: Context` - A [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
 
 ---
 

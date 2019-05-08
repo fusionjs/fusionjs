@@ -1,6 +1,7 @@
 [ignore]
 
 [include]
+../common/temp/node_modules
 ./flow-typed/*
 
 [libs]

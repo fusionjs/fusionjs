@@ -1,7 +1,7 @@
 {
   "name": "fusion-tokens",
   "description": "Dependency injection tokens for FusionJS",
-  "version": "1.1.1",
+  "version": "0.0.0-monorepo",
   "files": [
     "dist",
     "src"
@@ -21,37 +21,49 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-flow-strip-types": "7.2.3",
-    "babel-eslint": "10.0.1",
-    "create-universal-package": "3.4.6",
-    "eslint": "5.15.3",
-    "eslint-config-fusion": "^4.0.0",
-    "eslint-plugin-cup": "2.0.1",
-    "eslint-plugin-flowtype": "3.4.2",
-    "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-jest": "^22.1.0",
-    "eslint-plugin-prettier": "3.0.0",
-    "eslint-plugin-react": "7.11.1",
-    "flow-bin": "^0.87.0",
-    "fusion-core": "1.10.1",
-    "nyc": "13.1.0",
-    "prettier": "1.15.2",
-    "tape-cup": "4.7.1",
-    "unitest": "2.1.1"
+    "babel-eslint": "^10.0.1",
+    "create-universal-package": "^3.4.7",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0",
+    "flow-bin": "^0.98.1",
+    "fusion-core": "0.0.0-monorepo",
+    "nyc": "^14.1.0",
+    "prettier": "^1.17.0",
+    "tape-cup": "^4.7.1",
+    "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "^1.10.1"
+    "fusion-core": "0.0.0-monorepo"
   },
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "npm run clean && cup build",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=html npm run just-test",
     "view-cover": "npm run cover && open coverage/index.html",
-    "prepublish": "npm run transpile"
+    "prepublish": "npm run build",
+    "build": "npm run clean && cup build",
+    "flow": "flow check"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.9.0 <11",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "homepage": "https://fusionjs.com/api/fusion-tokens",
+  "repository": {
+    "directory": "fusion-tokens",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  }
 }
