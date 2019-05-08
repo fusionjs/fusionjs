@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-react-helmet-async",
+      "projectFolder": "fusion-plugin-react-helmet-async"
+    },
+    {
       "packageName": "fusion-plugin-node-performance-emitter",
       "projectFolder": "fusion-plugin-node-performance-emitter"
     },
