@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-react",
+      "projectFolder": "fusion-react"
+    },
+    {
       "packageName": "fusion-plugin-universal-logger",
       "projectFolder": "fusion-plugin-universal-logger"
     },
