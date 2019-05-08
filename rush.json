@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-rpc-redux-react",
+      "projectFolder": "fusion-plugin-rpc-redux-react"
+    },
+    {
       "packageName": "fusion-plugin-redux-action-emitter-enhancer",
       "projectFolder": "fusion-plugin-redux-action-emitter-enhancer"
     },
