@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-apollo",
+      "projectFolder": "fusion-plugin-apollo"
+    },
+    {
       "packageName": "fusion-core",
       "projectFolder": "fusion-core"
     },
