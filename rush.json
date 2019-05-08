@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-test-utils",
+      "projectFolder": "fusion-test-utils"
+    },
+    {
       "packageName": "fusion-scaffolder",
       "projectFolder": "fusion-scaffolder"
     },
