@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-universal-events-react",
+      "projectFolder": "fusion-plugin-universal-events-react"
+    },
+    {
       "packageName": "fusion-plugin-styletron-react",
       "projectFolder": "fusion-plugin-styletron-react"
     },
