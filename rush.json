@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-connected-react-router",
+      "projectFolder": "fusion-plugin-connected-react-router"
+    },
+    {
       "packageName": "fusion-plugin-browser-performance-emitter",
       "projectFolder": "fusion-plugin-browser-performance-emitter"
     },
