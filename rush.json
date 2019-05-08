@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-error-handling",
+      "projectFolder": "fusion-plugin-error-handling"
+    },
+    {
       "packageName": "fusion-plugin-csrf-protection",
       "projectFolder": "fusion-plugin-csrf-protection"
     },
