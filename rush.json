@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-csrf-protection",
+      "projectFolder": "fusion-plugin-csrf-protection"
+    },
+    {
       "packageName": "fusion-plugin-connected-react-router",
       "projectFolder": "fusion-plugin-connected-react-router"
     },
