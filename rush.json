@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-i18n",
+      "projectFolder": "fusion-plugin-i18n"
+    },
+    {
       "packageName": "fusion-plugin-i18n-react",
       "projectFolder": "fusion-plugin-i18n-react"
     },
