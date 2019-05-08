@@ -257,6 +257,10 @@
    */
   "projects": [
     {
+      "packageName": "fusion-plugin-http-handler",
+      "projectFolder": "fusion-plugin-http-handler"
+    },
+    {
       "packageName": "fusion-plugin-font-loader-react",
       "projectFolder": "fusion-plugin-font-loader-react"
     },
