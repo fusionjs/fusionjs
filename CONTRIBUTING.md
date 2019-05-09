@@ -1,3 +1,4 @@
+foo
 # Contributing to fusionjs
 
 **Before continuing, make sure you've read the Rush [Getting Started as a Developer](https://rushjs.io/pages/developer/new_developer/) guide**.
