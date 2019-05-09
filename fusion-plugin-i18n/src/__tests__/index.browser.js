@@ -124,7 +124,7 @@ test('load', t => {
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   const fetch: any = (url, options) => {
-    t.equals(url, '/_translations?ids=0', 'url is ok');
+    t.equals(url, '/_translations?keys=test-key', 'url is ok');
     t.equals(options && options.method, 'POST', 'method is ok');
     t.equals(
       options && options.headers && options.headers['X-Fusion-Locale-Code'],
@@ -138,12 +138,11 @@ test('load', t => {
   const mockContext: Context = ({}: any);
   if (plugin) {
     const i18n = plugin.from(mockContext);
-    i18n.load([0]).then(() => {
+    i18n.load(['test-key']).then(() => {
       t.ok(called, 'fetch called');
       t.equals(i18n.translate('test'), 'hello');
       t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
-      // $FlowFixMe
-      t.same(i18n.loadedChunks, [0]); // private
+      t.ok(i18n.translations && !('test-key' in i18n.translations));
       t.end();
     });
   } else {

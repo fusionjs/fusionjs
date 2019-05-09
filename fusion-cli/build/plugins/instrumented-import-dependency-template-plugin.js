@@ -9,7 +9,25 @@
 /* eslint-env node */
 
 /*::
-import type {ClientChunkMetadataState, ClientChunkMetadata} from "../types.js";
+import type {
+  ClientChunkMetadataState,
+  ClientChunkMetadata,
+  TranslationsManifest,
+} from "../types.js";
+
+type InstrumentationPluginOpts =
+  | ClientPluginOpts
+  | ServerPluginOpts;
+
+type ServerPluginOpts = {
+  compilation: "server",
+  clientChunkMetadata: ClientChunkMetadataState
+};
+
+type ClientPluginOpts = {
+  compilation: "client",
+  i18nManifest: TranslationsManifest
+};
 */
 
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
@@ -34,9 +52,16 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
 
 class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
   /*:: clientChunkIndex: ?$PropertyType<ClientChunkMetadata, "fileManifest">; */
+  /*:: manifest: ?TranslationsManifest; */
 
-  constructor(clientChunkMetadata /*: ?ClientChunkMetadata */) {
+  constructor(
+    {
+      clientChunkMetadata,
+      translationsManifest,
+    } /*: {clientChunkMetadata?: ClientChunkMetadata, translationsManifest?: TranslationsManifest}*/
+  ) {
     super();
+    this.translationsManifest = translationsManifest;
     if (clientChunkMetadata) {
       this.clientChunkIndex = clientChunkMetadata.fileManifest;
     }
@@ -69,13 +94,26 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       chunkIds = getChunkGroupIds(depBlock.chunkGroup);
     }
 
+    let translationKeys = [];
+    if (this.translationsManifest) {
+      const modules = getChunkGroupModules(dep);
+      for (const module of modules) {
+        if (this.translationsManifest.has(module)) {
+          const keys = this.translationsManifest.get(module).keys();
+          translationKeys.push(...keys);
+        }
+      }
+    }
+
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
     // - `__MODULE_ID`: the webpack module id of the dynamically imported module. Equivalent to require.resolveWeak(path)
+    // - `__I18N_KEYS`: the translation keys used in the client chunk group for this import()
     const customContent = chunkIds
       ? `Object.defineProperties(${content}, {
         "__CHUNK_IDS": {value:${JSON.stringify(chunkIds)}},
-        "__MODULE_ID": {value:${JSON.stringify(dep.module.id)}}
+        "__MODULE_ID": {value:${JSON.stringify(dep.module.id)}},
+        "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
       : content;
 
@@ -90,10 +128,10 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
  */
 
 class InstrumentedImportDependencyTemplatePlugin {
-  /*:: clientChunkIndexState: ?ClientChunkMetadataState; */
+  /*:: opts: InstrumentationPluginOpts;*/
 
-  constructor(clientChunkIndexState /*: ?ClientChunkMetadataState*/) {
-    this.clientChunkIndexState = clientChunkIndexState;
+  constructor(opts /*: InstrumentationPluginOpts*/) {
+    this.opts = opts;
   }
 
   apply(compiler /*: any */) {
@@ -104,22 +142,30 @@ class InstrumentedImportDependencyTemplatePlugin {
      * `make` is the subsequent lifeycle method, so we can override this value here.
      */
     compiler.hooks.make.tapAsync(name, (compilation, done) => {
-      if (this.clientChunkIndexState) {
+      if (this.opts.compilation === 'server') {
         // server
-        this.clientChunkIndexState.result.then(chunkIndex => {
+        this.opts.clientChunkMetadata.result.then(chunkIndex => {
           compilation.dependencyTemplates.set(
             ImportDependency,
-            new InstrumentedImportDependencyTemplate(chunkIndex)
+            new InstrumentedImportDependencyTemplate({
+              clientChunkMetadata: chunkIndex,
+            })
           );
           done();
         });
-      } else {
+      } else if (this.opts.compilation === 'client') {
         // client
         compilation.dependencyTemplates.set(
           ImportDependency,
-          new InstrumentedImportDependencyTemplate()
+          new InstrumentedImportDependencyTemplate({
+            translationsManifest: this.opts.i18nManifest,
+          })
         );
         done();
+      } else {
+        throw new Error(
+          'InstrumentationImportDependencyPlugin called without clientChunkMetadata or i18nManifest'
+        );
       }
     });
   }
@@ -138,4 +184,23 @@ function getChunkGroupIds(chunkGroup) {
     }
     return [chunkGroup.id];
   }
+}
+
+function getChunkGroupModules(dep) {
+  const modulesSet = new Set();
+  // For ConcatenatedModules in production build
+  if (dep.module && dep.module.dependencies) {
+    dep.module.dependencies.forEach(dependency => {
+      if (dependency.originModule) {
+        modulesSet.add(dependency.originModule.userRequest);
+      }
+    });
+  }
+  // For NormalModules
+  dep.block.chunkGroup.chunks.forEach(chunk => {
+    for (const module of chunk._modules) {
+      modulesSet.add(module.resource);
+    }
+  });
+  return modulesSet;
 }

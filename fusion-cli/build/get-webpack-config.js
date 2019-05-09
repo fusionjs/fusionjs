@@ -66,6 +66,7 @@ const JS_EXT_PATTERN = /\.jsx?$/;
 /*::
 import type {
   ClientChunkMetadataState,
+  TranslationsManifest,
   TranslationsManifestState,
   LegacyBuildEnabledState,
 } from "./types.js";
@@ -87,7 +88,8 @@ export type WebpackConfigOpts = {|
     clientChunkMetadata: ClientChunkMetadataState,
     legacyClientChunkMetadata: ClientChunkMetadataState,
     mergedClientChunkMetadata: ClientChunkMetadataState,
-    i18nManifest: TranslationsManifestState,
+    i18nManifest: TranslationsManifest,
+    i18nDeferredManifest: TranslationsManifestState,
     legacyBuildEnabled: LegacyBuildEnabledState,
   },
   fusionConfig: FusionRC,
@@ -468,10 +470,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           state.mergedClientChunkMetadata
         ),
       runtime === 'client'
-        ? new I18nDiscoveryPlugin(state.i18nManifest)
+        ? new I18nDiscoveryPlugin(
+            state.i18nDeferredManifest,
+            state.i18nManifest
+          )
         : new LoaderContextProviderPlugin(
             translationsManifestContextKey,
-            state.i18nManifest
+            state.i18nDeferredManifest
           ),
       !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
@@ -482,17 +487,21 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // in dev because the CLI will not exit with an error code if the option is enabled,
       // so failed builds would look like successful ones.
       watch && new webpack.NoEmitOnErrorsPlugin(),
-      new InstrumentedImportDependencyTemplatePlugin(
-        runtime !== 'client'
-          ? // Server
-            state.mergedClientChunkMetadata
-          : /**
-             * Client
-             * Don't wait for the client manifest on the client.
-             * The underlying plugin handles client instrumentation on its own.
-             */
-            void 0
-      ),
+      runtime === 'server'
+        ? // Server
+          new InstrumentedImportDependencyTemplatePlugin({
+            compilation: 'server',
+            clientChunkMetadata: state.mergedClientChunkMetadata,
+          })
+        : /**
+           * Client
+           * Don't wait for the client manifest on the client.
+           * The underlying plugin is able determine client chunk metadata on its own.
+           */
+          new InstrumentedImportDependencyTemplatePlugin({
+            compilation: 'client',
+            i18nManifest: state.i18nManifest,
+          }),
       dev && hmr && watch && new webpack.HotModuleReplacementPlugin(),
       !dev && runtime === 'client' && new webpack.HashedModuleIdsPlugin(),
       runtime === 'client' &&
@@ -533,7 +542,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               options.optimization.splitChunks
             ),
             // need to re-apply template
-            new InstrumentedImportDependencyTemplatePlugin(void 0),
+            new InstrumentedImportDependencyTemplatePlugin({
+              compilation: 'client',
+              i18nManifest: state.i18nManifest,
+            }),
             new ClientChunkMetadataStateHydratorPlugin(
               state.legacyClientChunkMetadata
             ),
