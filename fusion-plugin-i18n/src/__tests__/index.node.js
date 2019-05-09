@@ -90,7 +90,6 @@ test('ssr', async t => {
     consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0],
     'hello'
   );
-  // $FlowFixMe
   t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
@@ -112,7 +111,7 @@ test('endpoint', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
     path: '/_translations',
-    querystring: 'ids=0',
+    querystring: 'keys=test,interpolated',
     memoized: new Map(),
     body: '',
   };
