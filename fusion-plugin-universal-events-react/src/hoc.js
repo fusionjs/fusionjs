@@ -7,5 +7,10 @@
  */
 
 import {ProvidedHOC} from 'fusion-react';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-export default ProvidedHOC.create('universalEvents');
+export default ProvidedHOC.create(
+  'universalEvents',
+  undefined,
+  UniversalEventsToken
+);
