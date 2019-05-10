@@ -19,11 +19,15 @@ module.exports.run = (args /*: any*/) => {
   const instance = sade('fusion').version(require('../package.json').version);
   for (const [command, metadata] of Object.entries(data)) {
     if (metadata instanceof Object) {
+      // $FlowFixMe
       instance.command(command).describe(metadata.descr);
       // Add subcommands
+      // $FlowFixMe
       if (metadata.options) {
+        // $FlowFixMe
         for (const [opt, optmeta] of Object.entries(metadata.options)) {
           if (optmeta instanceof Object) {
+            // $FlowFixMe
             instance.option('--' + opt, optmeta.describe, optmeta.default);
           }
         }
