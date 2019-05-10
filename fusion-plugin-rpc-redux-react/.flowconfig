@@ -1,4 +1,5 @@
 [ignore]
+.*/fixtures/failure/.*
 .*/node_modules/.*[^(package)]\.json$
 <PROJECT_ROOT>/dist/.*
 
