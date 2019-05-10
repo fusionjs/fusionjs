@@ -68,7 +68,7 @@ test('`fusion dev` works with assets', async () => {
     const clientMain = await request(`${url}/_static/client-main.js`);
     t.ok(clientMain, 'serves client-main from memory correctly');
     t.ok(
-      clientMain.includes('"src", "src/main.js")'),
+      clientMain.includes('"src","src/main.js")'),
       'transpiles __dirname and __filename'
     );
     t.ok(
