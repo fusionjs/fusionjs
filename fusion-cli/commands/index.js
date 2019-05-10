@@ -17,6 +17,11 @@ module.exports = {
   build: {
     descr: 'Build your app',
     options: {
+      experimentalServerless: {
+        type: 'boolean',
+        default: false,
+        describe: 'Build a serverless entry',
+      },
       dir: {
         type: 'string',
         default: '.',

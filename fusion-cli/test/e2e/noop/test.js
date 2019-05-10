@@ -6,6 +6,9 @@ const path = require('path');
 const {promisify} = require('util');
 const fs = require('fs');
 const getPort = require('get-port');
+const getHandler = require('../../../serverless.js');
+const http = require('http');
+const request = require('request-promise');
 
 const puppeteer = require('puppeteer');
 
@@ -86,6 +89,121 @@ test('`fusion build` works', async () => {
     await exists(clientMainVendorMap),
     'Client vendor file sourcemap gets compiled'
   );
+}, 100000);
+
+test('`fusion build --experimental-serverless` works', async () => {
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/development/server/server-main.js`
+  );
+  const serverMapPath = path.resolve(
+    dir,
+    `.fusion/dist/development/server/server-main.js.map`
+  );
+  const clientMain = path.resolve(
+    dir,
+    `.fusion/dist/development/client/client-main.js`
+  );
+  const clientMainMap = path.resolve(
+    dir,
+    `.fusion/dist/development/client/client-main.js.map`
+  );
+  const clientMainVendor = path.resolve(
+    dir,
+    `.fusion/dist/development/client/client-vendor.js`
+  );
+  const clientMainVendorMap = path.resolve(
+    dir,
+    `.fusion/dist/development/client/client-vendor.js.map`
+  );
+  await cmd(`build --dir=${dir} --experimental-serverless`);
+  t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
+  t.ok(
+    await exists(serverMapPath),
+    'Server Entry file sourcemap gets compiled'
+  );
+  t.ok(await exists(clientMain), 'Client Entry file gets compiled');
+  t.ok(
+    await exists(clientMainMap),
+    'Client Entry file sourcemap gets compiled'
+  );
+  t.ok(await exists(clientMainVendor), 'Client vendor file gets compiled');
+  t.ok(
+    await exists(clientMainVendorMap),
+    'Client vendor file sourcemap gets compiled'
+  );
+  const handler = getHandler({env: 'development', dir});
+  t.equal(
+    typeof handler,
+    'function',
+    'serverless build exposes a handler function'
+  );
+  const port = await getPort();
+  const server = http.createServer((req, res) => {
+    handler(req, res);
+  });
+  await new Promise((resolve, reject) => {
+    server.listen(port, err => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+  const response = await request(
+    `http://localhost:${port}/_static/client-main.js`
+  );
+  const renderResponse = await request(`http://localhost:${port}/`, {
+    headers: {
+      accept: 'text/html',
+    },
+  });
+  t.ok(response);
+  t.ok(renderResponse);
+  server.close();
+}, 100000);
+
+test('`fusion build --experimental-serverless --production` works', async () => {
+  const serverEntryPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js`
+  );
+  const serverMapPath = path.resolve(
+    dir,
+    `.fusion/dist/production/server/server-main.js.map`
+  );
+  await cmd(`build --dir=${dir} --experimental-serverless --production`, {
+    env: {...process.env, NODE_ENV: 'production'},
+  });
+  t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
+  t.ok(
+    await exists(serverMapPath),
+    'Server Entry file sourcemap gets compiled'
+  );
+  const oldEnv = process.env.NODE_ENV;
+  process.env.NODE_ENV = 'production';
+  const handler = getHandler({env: 'production', dir});
+  t.equal(
+    typeof handler,
+    'function',
+    'serverless build exposes a handler function'
+  );
+  const port = await getPort();
+  const server = http.createServer((req, res) => {
+    handler(req, res);
+  });
+  await new Promise((resolve, reject) => {
+    server.listen(port, err => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+  const renderResponse = await request(`http://localhost:${port}/`, {
+    headers: {
+      accept: 'text/html',
+    },
+  });
+  t.ok(renderResponse);
+  server.close();
+  process.env.NODE_ENV = oldEnv;
 }, 100000);
 
 test('`fusion build` works in production with a CDN_URL', async () => {
