@@ -163,7 +163,7 @@ declare module 'react-router-dom' {
   >(
     WrappedComponent: Component
   ): React$ComponentType<
-    $Diff<React$ElementConfig<$Supertype<Component>>, ContextRouterVoid>
+    $Diff<React$ElementConfig<Component>, ContextRouterVoid>
   >;
 
   declare type MatchPathOptions = {
