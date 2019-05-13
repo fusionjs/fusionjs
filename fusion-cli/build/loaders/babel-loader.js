@@ -118,6 +118,7 @@ async function loader(
   });
 
   if (result) {
+    // $FlowFixMe
     const {code, map, metadata} = result;
 
     if (discoveryState && metadata.translationIds) {

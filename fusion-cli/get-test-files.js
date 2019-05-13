@@ -28,12 +28,19 @@ function getFiles() /*: Array<string> */ {
       '**/*.test.js',
       ...testPathIgnorePatterns.map(pattern => `!${pattern}`),
     ],
-    {gitignore: true}
+    {
+      gitignore: true,
+      ignore: ['node_modules'],
+    }
   );
 
-  const filesPerJob = Math.ceil(allFiles.length / JOB_COUNT);
+  const filesPerJob = Math.floor(allFiles.length / JOB_COUNT);
   const startIndex = filesPerJob * JOB_INDEX;
-  return allFiles.slice(startIndex, startIndex + filesPerJob);
+  if (JOB_INDEX == JOB_COUNT - 1) {
+    return allFiles.slice(startIndex);
+  } else {
+    return allFiles.slice(startIndex, startIndex + filesPerJob);
+  }
 }
 
 const files = getFiles();

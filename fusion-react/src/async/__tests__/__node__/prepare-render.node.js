@@ -425,7 +425,7 @@ tape('Preparing an async app with componentDidUpdate option', t => {
 
 tape('Preparing React.forwardRef', t => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef(function Inner(props, ref) {
+  const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
   });
 
@@ -446,7 +446,7 @@ tape('Preparing React.forwardRef', t => {
 
 tape('Preparing React.forwardRef with async children', t => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef(function Inner(props, ref) {
+  const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
   });
   let numChildRenders = 0;

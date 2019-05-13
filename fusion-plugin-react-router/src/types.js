@@ -169,7 +169,7 @@ export type SwitchType = React.ComponentType<{|
 export type withRouterType = <WrappedComponent: React.ComponentType<*>>(
   Component: WrappedComponent
 ) => React.ComponentType<
-  $Diff<React.ElementConfig<$Supertype<WrappedComponent>>, ContextRouterVoid>
+  $Diff<React.ElementConfig<WrappedComponent>, ContextRouterVoid>
 >;
 
 type MatchPathOptions = {
