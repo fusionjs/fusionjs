@@ -115,3 +115,20 @@ test('Unhandled rejections', async t => {
     t.end();
   });
 });
+
+test('Unhandled rejections with non-error', async t => {
+  // $FlowFixMe
+  const forked = fork('./fixtures/unhandled-rejection-non-error.js', {
+    stdio: 'pipe',
+  });
+  let stdout = '';
+  forked.stdout.on('data', data => {
+    stdout += data.toString();
+  });
+  forked.on('close', code => {
+    t.equal(code, 1, 'exits with code 1');
+    t.ok(stdout.includes('ERROR HANDLER'), 'outputs expected error');
+    t.ok(stdout.includes('INSTANCEOF ERROR true'), 'outputs expected error');
+    t.end();
+  });
+});
