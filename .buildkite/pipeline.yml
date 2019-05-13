@@ -5,14 +5,10 @@ steps:
       'docker-compose#v3.0.0':
         build: ci
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
-        args:
-          - UNPM_TOKEN=$UNPM_TOKEN
     agents:
       queue: builders
   - label: ':pipeline:'
     timeout_in_minutes: 1
     command: .buildkite/bootstrap.sh | buildkite-agent pipeline upload
-    env:
-      - UNPM_TOKEN
     agents:
       queue: workers
