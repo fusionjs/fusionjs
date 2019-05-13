@@ -30,7 +30,7 @@ function getFiles() /*: Array<string> */ {
     ],
     {
       gitignore: true,
-      ignore: ['node_modules']
+      ignore: ['node_modules'],
     }
   );
 
