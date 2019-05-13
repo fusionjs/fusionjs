@@ -1544,7 +1544,7 @@
 
 "@rush-temp/fusion-cli@file:./projects/fusion-cli.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-cli.tgz#5e494c8c0c53fd90881ad87581b575d2f08244cd"
+  resolved "file:./projects/fusion-cli.tgz#aee9815bdb4c6b6b365f67e6b0db21cd5db91f50"
   dependencies:
     "@babel/core" "^7.4.4"
     "@babel/plugin-syntax-dynamic-import" "7.2.0"
@@ -1584,7 +1584,7 @@
     iltorb "^2.4.1"
     imagemin "^6.0.0"
     imagemin-svgo "^7.0.0"
-    istanbul-api "^2.0.6"
+    istanbul-api "2.1.6"
     istanbul-lib-coverage "^2.0.1"
     jest "^24.8.0"
     jest-environment-jsdom-global "^1.2.0"
@@ -6818,6 +6818,24 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.npmjs.org/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
+istanbul-api@2.1.6:
+  version "2.1.6"
+  resolved "https://registry.npmjs.org/istanbul-api/-/istanbul-api-2.1.6.tgz#d61702a9d1c66ad89d92e66d401e16b0bda4a35f"
+  dependencies:
+    async "^2.6.2"
+    compare-versions "^3.4.0"
+    fileset "^2.0.3"
+    istanbul-lib-coverage "^2.0.5"
+    istanbul-lib-hook "^2.0.7"
+    istanbul-lib-instrument "^3.3.0"
+    istanbul-lib-report "^2.0.8"
+    istanbul-lib-source-maps "^3.0.6"
+    istanbul-reports "^2.2.4"
+    js-yaml "^3.13.1"
+    make-dir "^2.1.0"
+    minimatch "^3.0.4"
+    once "^1.4.0"
+
 istanbul-api@^1.3.1:
   version "1.3.7"
   resolved "https://registry.npmjs.org/istanbul-api/-/istanbul-api-1.3.7.tgz#a86c770d2b03e11e3f778cd7aedd82d2722092aa"
@@ -6832,24 +6850,6 @@ istanbul-api@^1.3.1:
     istanbul-reports "^1.5.1"
     js-yaml "^3.7.0"
     mkdirp "^0.5.1"
-    once "^1.4.0"
-
-istanbul-api@^2.0.6:
-  version "2.1.7"
-  resolved "https://registry.npmjs.org/istanbul-api/-/istanbul-api-2.1.7.tgz#82786b79f3b93d481349c7aa1e2c2b4eeb48c8a8"
-  dependencies:
-    async "^2.6.2"
-    compare-versions "^3.4.0"
-    fileset "^2.0.3"
-    istanbul-lib-coverage "^2.0.5"
-    istanbul-lib-hook "^2.0.7"
-    istanbul-lib-instrument "^3.3.0"
-    istanbul-lib-report "^2.0.8"
-    istanbul-lib-source-maps "^3.0.6"
-    istanbul-reports "^2.2.5"
-    js-yaml "^3.13.1"
-    make-dir "^2.1.0"
-    minimatch "^3.0.4"
     once "^1.4.0"
 
 istanbul-lib-coverage@^1.1.1, istanbul-lib-coverage@^1.2.0, istanbul-lib-coverage@^1.2.1:
@@ -6942,12 +6942,6 @@ istanbul-reports@^1.5.1:
 istanbul-reports@^2.1.1, istanbul-reports@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/istanbul-reports/-/istanbul-reports-2.2.4.tgz#4e0d0ddf0f0ad5b49a314069d31b4f06afe49ad3"
-  dependencies:
-    handlebars "^4.1.2"
-
-istanbul-reports@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/istanbul-reports/-/istanbul-reports-2.2.5.tgz#7fd354847124b46861365ac41165a4dfe5f67ea5"
   dependencies:
     handlebars "^4.1.2"
 
@@ -9827,8 +9821,8 @@ reflect.ownkeys@^0.2.0:
   resolved "https://registry.npmjs.org/reflect.ownkeys/-/reflect.ownkeys-0.2.0.tgz#749aceec7f3fdf8b63f927a04809e90c5c0b3460"
 
 regenerate-unicode-properties@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.npmjs.org/regenerate-unicode-properties/-/regenerate-unicode-properties-8.0.2.tgz#7b38faa296252376d363558cfbda90c9ce709662"
+  version "8.1.0"
+  resolved "https://registry.npmjs.org/regenerate-unicode-properties/-/regenerate-unicode-properties-8.1.0.tgz#ef51e0f0ea4ad424b77bf7cb41f3e015c70a3f0e"
   dependencies:
     regenerate "^1.4.0"
 
@@ -11070,8 +11064,8 @@ ts-invariant@^0.3.2:
     tslib "^1.9.3"
 
 ts-invariant@^0.4.0:
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/ts-invariant/-/ts-invariant-0.4.1.tgz#2612cb76626cf7c6debf59e6d284d0abd9caae07"
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/ts-invariant/-/ts-invariant-0.4.2.tgz#8685131b8083e67c66d602540e78763408be9113"
   dependencies:
     tslib "^1.9.3"
 
