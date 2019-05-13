@@ -198,6 +198,55 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
         specOnly: false,
       });
+
+  const experimentalCompileTest = fusionConfig.experimentalCompileTest;
+  const babelTester = experimentalCompileTest
+    ? modulePath => {
+        if (!JS_EXT_PATTERN.test(modulePath)) {
+          return false;
+        }
+        const {transpile} = experimentalCompileTest(modulePath, {
+          transpile: 'spec',
+          bundle: 'client',
+        });
+        if (transpile === 'none') {
+          return false;
+        } else if (transpile === 'all' || transpile === 'spec') {
+          return true;
+        } else {
+          throw new Error(
+            `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
+          );
+        }
+      }
+    : JS_EXT_PATTERN;
+
+  if (experimentalCompileTest) {
+    babelOverrides.test = legacyBabelOverrides.test = modulePath => {
+      if (!JS_EXT_PATTERN.test(modulePath)) {
+        return false;
+      }
+      const {transpile} = experimentalCompileTest(modulePath, {
+        transpile: fusionConfig.experimentalCompile ? 'all' : 'spec',
+        bundle: 'client',
+      });
+      if (transpile === 'none' || transpile === 'spec') {
+        return false;
+      } else if (transpile === 'all') {
+        return true;
+      } else {
+        throw new Error(
+          `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
+        );
+      }
+    };
+  } else {
+    babelOverrides.include = legacyBabelOverrides.include = [
+      path.join(dir, 'src'),
+      /fusion-cli(\/|\\)entries/,
+      /fusion-cli(\/|\\)plugins/,
+    ];
+  }
   return {
     name: runtime,
     target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
@@ -285,7 +334,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         runtime === 'server' && {
           compiler: id => id === 'server',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -297,12 +346,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...babelOverrides,
                   },
                 ],
@@ -315,7 +358,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         (runtime === 'client' || runtime === 'sw') && {
           compiler: id => id === 'client' || id === 'sw',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -327,12 +370,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...babelOverrides,
                   },
                 ],
@@ -345,7 +382,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         runtime === 'client' && {
           compiler: id => id === 'client-legacy',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -357,12 +394,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...legacyBabelOverrides,
                   },
                 ],
@@ -398,11 +429,28 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtime === 'server' &&
         ((context, request, callback) => {
           if (/^[@a-z\-0-9]+/.test(request)) {
-            // do not bundle external packages and those not whitelisted
             const absolutePath = resolveFrom.silent(context, request);
+            // do not bundle external packages and those not whitelisted
             if (absolutePath === null) {
               // if module is missing, skip rewriting to absolute path
               return callback(null, request);
+            }
+            if (experimentalCompileTest) {
+              const {bundle} = experimentalCompileTest(absolutePath, {
+                transpile: 'none', // default transpile value doesn't actually matter here
+                bundle: 'client',
+              });
+              if (bundle === 'client') {
+                // don't bundle on the server
+                return callback(null, 'commonjs ' + absolutePath);
+              } else if (bundle === 'both') {
+                // bundle on the server
+                return callback();
+              } else {
+                throw new Error(
+                  `Unknown bundle value: ${bundle} from experimentalCompileTest. Expected 'client' | 'both'.`
+                );
+              }
             }
             return callback(null, 'commonjs ' + absolutePath);
           }

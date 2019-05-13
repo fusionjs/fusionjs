@@ -16,10 +16,16 @@ const chalk = require('chalk');
 let loggedNotice = false;
 
 /*::
+
+type CompileResult = {
+  bundle: 'both' | 'client',
+  transpile: 'spec' | 'all' | 'none',
+};
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
   experimentalCompile?: boolean,
+  experimentalCompileTest?: (modulePath: string) => CompileResult,
   nodeBuiltins?: {[string]: any},
 };
 */
@@ -61,6 +67,7 @@ function isValid(config) {
         'babel',
         'assumeNoImportSideEffects',
         'experimentalCompile',
+        'experimentalCompileTest',
         'nodeBuiltins',
       ].includes(key)
     )
