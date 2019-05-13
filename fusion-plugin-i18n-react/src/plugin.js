@@ -24,7 +24,9 @@ class BundleSplitConsumer extends React.Component<*, *> {
     // props.provides comes from fusion-react/plugin and references i18n()
     this.i18n = props.provides.from(props.ctx);
     if (context.splitComponentLoaders) {
-      context.splitComponentLoaders.push((_, {i18nKeys}) => this.i18n.load(i18nKeys));
+      context.splitComponentLoaders.push((_, {i18nKeys}) =>
+        this.i18n.load(i18nKeys)
+      );
     }
   }
   getChildContext() {
