@@ -39,7 +39,8 @@ class ChildCompilationPlugin {
   }
 
   apply(compiler /*: Object*/) {
-    compiler.plugin('make', (compilation, callback) => {
+    const name = this.constructor.name;
+    compiler.hooks.make.tapAsync(name, (compilation, callback) => {
       if (this.enabledState.value === false) {
         return void callback();
       }
