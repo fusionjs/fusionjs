@@ -12,8 +12,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     elif [ $PROJECT = "create-fusion-app" ]; then
@@ -23,8 +21,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     else
@@ -34,8 +30,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     fi;
