@@ -17,14 +17,15 @@ import {getSimulator} from 'fusion-test-utils';
 import ErrorHandling, {ErrorHandlerToken} from '../server';
 
 test('request errors', async t => {
-  t.plan(4);
+  t.plan(6);
 
   const app = new App('test', el => el);
 
   let called = 0;
   const expectedTypes = ['browser', 'request'];
-  const onError = (body, type) => {
+  const onError = (body, type, ctx) => {
     t.equal(type, expectedTypes.shift());
+    t.ok(ctx);
     called++;
   };
   app.register(ErrorHandling);

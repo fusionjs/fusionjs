@@ -80,14 +80,14 @@ const plugin =
         } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
           // $FlowFixMe
-          await onError(ctx.request.body, captureTypes.browser);
+          await onError(ctx.request.body, captureTypes.browser, ctx);
           ctx.body = {ok: 1};
         }
         try {
           await next();
         } catch (e) {
           // Don't await onError here because we want to send a response as soon as possible to the user
-          onError(e, captureTypes.request);
+          onError(e, captureTypes.request, ctx);
           throw e;
         }
       }

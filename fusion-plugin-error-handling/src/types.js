@@ -6,7 +6,7 @@
  * @flow
  */
 
-import type {FusionPlugin} from 'fusion-core';
+import type {FusionPlugin, Context} from 'fusion-core';
 
 import {ErrorHandlingEmitterToken} from './client.js';
 import {ErrorHandlerToken} from './server.js';
@@ -20,5 +20,6 @@ export type ErrorHandlerPluginType = FusionPlugin<DepsType, empty>;
 
 export type ErrorHandlerType = (
   e: Error,
-  captureType: string
+  captureType: string,
+  ctx: ?Context
 ) => Promise<*> | void;
