@@ -32,8 +32,13 @@ const plugin =
     deps: {onError: ErrorHandlerToken},
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
-      const err = async e => {
-        await onError(e, captureTypes.server);
+      // It's possible to call reject with a non-error
+      const err = async (e: mixed) => {
+        if (e instanceof Error) {
+          await onError(e, captureTypes.server);
+        } else {
+          await onError(new Error(String(e)), captureTypes.server);
+        }
         process.exit(1);
       };
       process.once('uncaughtException', err);
