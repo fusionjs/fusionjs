@@ -7,8 +7,10 @@
  */
 
 import * as React from 'react';
+import {useService} from 'fusion-react';
 import PropTypes from 'prop-types';
 
+import {FontLoaderReactToken} from './tokens';
 import loadFont from './font-loader';
 
 /*
@@ -38,13 +40,16 @@ const withFontLoading = (fontName: string) => {
 
       constructor(props: any, context: any) {
         super(props, context);
-        if (typeof this.context.getFontDetails !== 'function') {
+
+        const {getFontDetails} = useService(FontLoaderReactToken);
+
+        if (typeof getFontDetails !== 'function') {
           throw new Error(
             `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
 to true in the font loader config`
           );
         }
-        const {fallbackName, styles} = this.context.getFontDetails(fontName);
+        const {fallbackName, styles} = getFontDetails(fontName);
         if (fallbackName) {
           // switch to fallback name and apply styles to trigger faux font rendition
           this.state = {$fontStyles: {fontFamily: fallbackName, ...styles}};
@@ -74,9 +79,6 @@ to true in the font loader config`
       }
     }
 
-    WithFontLoading.contextTypes = {
-      getFontDetails: PropTypes.func,
-    };
     return WithFontLoading;
   };
 };

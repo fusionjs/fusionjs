@@ -45,6 +45,7 @@
     "eslint-plugin-react": "^7.13.0",
     "flow-bin": "^0.98.1",
     "fusion-core": "0.0.0-monorepo",
+    "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",

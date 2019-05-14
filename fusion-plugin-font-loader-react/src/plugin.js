@@ -30,7 +30,15 @@ const plugin = createPlugin({
   deps: {
     config: ConfigToken,
   },
+  provides: ({config}) => {
+    const {fonts, preloadDepth} = config;
+    const atomicFonts: AtomicFontsObjectType = (fonts: any);
+    const fallbackLookup = generateFallbackMap(atomicFonts, preloadDepth || 0);
+    const preloadSession = new PreloadSession(fallbackLookup);
+    return preloadSession.getFontDetails;
+  },
   middleware: ({config}) => {
+    // TODO: all this duplicate code
     const {fonts, preloadDepth, withStyleOverloads, preloadOverrides} = config;
     const atomicFonts: AtomicFontsObjectType = (fonts: any);
     const styledFonts: StyledFontsObjectType = (fonts: any);
@@ -39,13 +47,13 @@ const plugin = createPlugin({
 
     return (ctx, next) => {
       if (ctx.element) {
-        if (!withStyleOverloads) {
-          ctx.element = (
-            <FontProvider getFontDetails={preloadSession.getFontDetails}>
-              {ctx.element}
-            </FontProvider>
-          );
-        }
+        // if (!withStyleOverloads) {
+        //   ctx.element = (
+        //     <FontProvider getFontDetails={preloadSession.getFontDetails}>
+        //       {ctx.element}
+        //     </FontProvider>
+        //   );
+        // }
         return next().then(() => {
           if (__NODE__) {
             ctx.template.head.push(html`<style>`);
