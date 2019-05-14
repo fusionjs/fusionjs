@@ -222,6 +222,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     : JS_EXT_PATTERN;
 
   if (experimentalCompileTest) {
+    // $FlowFixMe
     babelOverrides.test = legacyBabelOverrides.test = modulePath => {
       if (!JS_EXT_PATTERN.test(modulePath)) {
         return false;
@@ -241,6 +242,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       }
     };
   } else {
+    // $FlowFixMe
     babelOverrides.include = legacyBabelOverrides.include = [
       path.join(dir, 'src'),
       /fusion-cli(\/|\\)entries/,

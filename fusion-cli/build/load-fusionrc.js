@@ -25,7 +25,7 @@ export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
   experimentalCompile?: boolean,
-  experimentalCompileTest?: (modulePath: string) => CompileResult,
+  experimentalCompileTest?: (modulePath: string, defaults: CompileResult) => CompileResult,
   nodeBuiltins?: {[string]: any},
 };
 */
