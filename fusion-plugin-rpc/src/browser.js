@@ -24,7 +24,7 @@ class RPC {
   handlers: ?HandlerType;
   fetch: ?Fetch;
 
-  constructor(fetch: Fetch, emitter: any) {
+  constructor(fetch: Fetch, emitter: IEmitter) {
     this.fetch = fetch;
     this.emitter = emitter;
   }

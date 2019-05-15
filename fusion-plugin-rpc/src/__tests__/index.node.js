@@ -27,6 +27,13 @@ const MOCK_JSON_PARAMS = {test: 'test-args'};
 
 const mockService: RPCServiceType = getService(() => {
   const app = new App('content', el => el);
+  const mockEmitter: IEmitter = (new MockEmitter(): any);
+  // $FlowFixMe
+  mockEmitter.from = () => mockEmitter;
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
+  app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, {});
   return app;
 }, MockRPCPlugin);

@@ -19,7 +19,7 @@ import {
 type ExtractReturnType = <V>(() => V) => V;
 
 export type RPCDepsType = {
-  emitter?: typeof UniversalEventsToken,
+  emitter: typeof UniversalEventsToken,
   handlers?: typeof RPCHandlersToken,
   bodyParserOptions?: typeof BodyParserOptionsToken.optional,
   fetch?: typeof FetchToken,
