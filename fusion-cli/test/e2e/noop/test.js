@@ -91,7 +91,7 @@ test('`fusion build` works', async () => {
   );
 }, 100000);
 
-test('`fusion build --experimental-serverless` works', async () => {
+test('`fusion build --experimentalServerless` works', async () => {
   const serverEntryPath = path.resolve(
     dir,
     `.fusion/dist/development/server/server-main.js`
@@ -116,7 +116,7 @@ test('`fusion build --experimental-serverless` works', async () => {
     dir,
     `.fusion/dist/development/client/client-vendor.js.map`
   );
-  await cmd(`build --dir=${dir} --experimental-serverless`);
+  await cmd(`build --dir=${dir} --experimentalServerless`);
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
   t.ok(
     await exists(serverMapPath),
@@ -161,7 +161,7 @@ test('`fusion build --experimental-serverless` works', async () => {
   server.close();
 }, 100000);
 
-test('`fusion build --experimental-serverless --production` works', async () => {
+test('`fusion build --experimentalServerless --production` works', async () => {
   const serverEntryPath = path.resolve(
     dir,
     `.fusion/dist/production/server/server-main.js`
@@ -170,7 +170,7 @@ test('`fusion build --experimental-serverless --production` works', async () => 
     dir,
     `.fusion/dist/production/server/server-main.js.map`
   );
-  await cmd(`build --dir=${dir} --experimental-serverless --production`, {
+  await cmd(`build --dir=${dir} --experimentalServerless --production`, {
     env: {...process.env, NODE_ENV: 'production'},
   });
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
