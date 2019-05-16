@@ -11,7 +11,11 @@ import type FusionApp, {FusionPlugin, Middleware} from 'fusion-core';
 import type {Element} from 'react';
 
 export const FusionContext = React.createContext<any>({});
-export const ServiceContext = React.createContext<any>(() => {});
+export const ServiceContext = React.createContext<any>(() => {
+  throw new Error(
+    '`ServiceContext.Provider` was never added to the component tree. This usually happens in tests that are using `ServiceContext` but never called `app.register(serviceContexPlugin(app))`'
+  );
+});
 
 type ReturnsType<T> = () => T;
 
