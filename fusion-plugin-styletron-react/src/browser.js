@@ -17,7 +17,6 @@ import {Provider as StyletronProvider, DebugEngine} from 'styletron-react';
 import {Client as Styletron} from 'styletron-engine-atomic';
 import {workerRoute, wasmRoute, AtomicPrefixToken} from './constants.js';
 
-import LegacyProvider from './legacy-provider.js';
 import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
 
 const StyletronCompat = injectDeclarationCompatMixin(Styletron);
@@ -70,7 +69,7 @@ const plugin =
             debug={debugEngine}
             debugAfterHydration={Boolean(debugEngine)}
           >
-            <LegacyProvider value={engine}>{ctx.element}</LegacyProvider>
+            {ctx.element}
           </StyletronProvider>
         );
       }
