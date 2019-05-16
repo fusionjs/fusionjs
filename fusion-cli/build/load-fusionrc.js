@@ -19,7 +19,7 @@ let loggedNotice = false;
 
 type CompileResult = {
   bundle: 'universal' | 'browser-only',
-  transpile: 'spec' | 'all' | 'none',
+  transform: 'all' | 'spec' | 'none',
 };
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
