@@ -9,15 +9,17 @@
 /* eslint-env browser */
 import test from 'tape-cup';
 import React from 'react';
-import App, {prepared} from 'fusion-react';
+import App, {prepared, serviceContextPlugin} from 'fusion-react';
 import {compose, createStore} from 'redux';
 import {Provider, connect} from 'react-redux';
 import {getSimulator} from 'fusion-test-utils';
 import {reactorEnhancer} from 'redux-reactors';
 import {FetchToken} from 'fusion-tokens';
-import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
+import {mock as RPCPluginMock, RPCToken, RPCHandlersToken} from '../index';
 import Plugin from '../plugin';
 import {withRPCRedux, withRPCReactor} from '../hoc';
+
+console.log({serviceContextPlugin});
 
 const initActionPattern = /^@@redux\/INIT.*/;
 
@@ -97,8 +99,9 @@ test('browser plugin integration test withRPCRedux', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.register(Plugin);
+  app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -174,8 +177,9 @@ test('browser plugin integration test withRPCRedux and options', async t => {
     React.createElement(withTest, {prop: 3})
   );
   const app = new App(element);
-  app.register(Plugin);
+  app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -254,8 +258,9 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.register(Plugin);
+  app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -312,8 +317,9 @@ test('browser mock integration test withRPCRedux', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.register(RPCPluginMock);
+  app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
@@ -381,8 +387,9 @@ test('browser mock integration test withRPCRedux - failure', async t => {
     React.createElement(withTest)
   );
   const app = new App(element);
-  app.register(RPCPluginMock);
+  app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -477,8 +484,9 @@ test('browser plugin integration test withRPCReactor', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.register(Plugin);
+  app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -563,8 +571,9 @@ test('browser mock plugin integration test withRPCReactor', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.register(RPCPluginMock);
+  app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -661,8 +670,9 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.register(RPCPluginMock);
+  app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));
@@ -776,8 +786,9 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
     React.createElement(hoc(Component))
   );
   const app = new App(element);
-  app.register(Plugin);
+  app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
+  app.register(serviceContextPlugin(app));
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));
