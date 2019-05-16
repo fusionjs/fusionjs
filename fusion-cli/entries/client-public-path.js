@@ -4,8 +4,8 @@ declare var __webpack_public_path__: string;
 declare var __webpack_nonce__: string;
 */
 
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 // eslint-disable-next-line
 __webpack_public_path__ = window.__FUSION_ASSET_PATH__;
