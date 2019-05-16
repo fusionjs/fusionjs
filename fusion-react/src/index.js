@@ -100,6 +100,7 @@ export {
   Provider,
   ServiceConsumer,
   ServiceContext,
+  serviceContextPlugin,
   useService,
   withServices,
 };
