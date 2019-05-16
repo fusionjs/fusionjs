@@ -6,10 +6,12 @@
  * @flow
  */
 
-import PropTypes from 'prop-types';
 import * as React from 'react';
 import type {Reducer} from 'redux';
 import {createRPCHandler, createRPCReactors} from 'fusion-rpc-redux';
+import {FusionContext, useService} from 'fusion-react';
+import {RPCToken} from 'fusion-plugin-rpc';
+import {connect} from 'react-redux';
 
 type RPCReducersType = {
   start?: Reducer<*, *>,
@@ -53,34 +55,39 @@ export function withRPCRedux<Props: {}>(
   } = {}
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   return (Component: React.ComponentType<Props>) => {
-    class withRPCRedux extends React.Component<Props, *> {
-      render() {
-        const {rpc, store} = this.context;
-        if (mapStateToParams) {
-          const mapState = mapStateToParams;
-          mapStateToParams = (state, args) => mapState(state, args, this.props);
-        }
-        const handler = createRPCHandler({
-          rpcId,
-          rpc,
-          store,
-          actions,
-          mapStateToParams,
-          transformParams,
-        });
-        const props = {
-          ...this.props,
-          [propName]: handler,
-        };
-        return React.createElement(Component, props);
+    function WithRPCRedux(oldProps: Props) {
+      const {dispatch, state, ...restProps} = oldProps;
+      console.log({dispatch, state});
+      const service = useService(RPCToken);
+      const ctx = React.useContext(FusionContext);
+      const rpc = service.from(ctx);
+      if (mapStateToParams) {
+        const mapState = mapStateToParams;
+        mapStateToParams = (state, args) => mapState(state, args, restProps);
       }
+      const handler = createRPCHandler({
+        rpcId,
+        rpc,
+        store: { dispatch, getState() { return state; } },
+        actions,
+        mapStateToParams,
+        transformParams,
+      });
+      const props = {
+        ...restProps,
+        [propName]: handler,
+      };
+      return React.createElement(Component, props);
     }
+    const connected = connect(
+      state => ({state}),
+      dispatch => ({dispatch}),
+    )(WithRPCRedux);
     const displayName = Component.displayName || Component.name || 'Anonymous';
-    withRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
-    withRPCRedux.contextTypes = {
-      rpc: PropTypes.object.isRequired,
-      store: PropTypes.object.isRequired,
-    };
-    return withRPCRedux;
+    connected.displayName = 'WithRPCRedux' + '(' + displayName + ')';
+    return connected;
   };
 }
+
+// This depends fusion-plugin-rpc, but doesnt specify it
+// Rewrite plugin?

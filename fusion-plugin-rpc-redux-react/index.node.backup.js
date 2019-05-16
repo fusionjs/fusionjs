@@ -10,16 +10,18 @@ import React from 'react';
 import test from 'tape-cup';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
-import App, {createPlugin} from 'fusion-core';
-import ReactApp from 'fusion-react';
+import App from 'fusion-core';
 import type {Context} from 'fusion-core';
-import {getService, getSimulator} from 'fusion-test-utils';
+import {getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {Provider} from 'react-redux';
 
 import Plugin from '../plugin';
-import {mock, ResponseError, RPCToken, RPCHandlersToken} from '../index';
+import {mock, RPCToken, RPCHandlersToken, ResponseError} from '../index';
 import {withRPCRedux, withRPCReactor} from '../hoc';
+import {serviceContextPlugin} from 'fusion-react';
+
+console.log({serviceContextPlugin});
+
 
 /* Test helpers */
 function createMockEmitter(props: mixed) {
@@ -41,15 +43,18 @@ function createMockEmitter(props: mixed) {
   return emitter;
 }
 
+const EventEmitter = createMockEmitter();
+
 test('plugin', t => {
   t.equals(typeof Plugin.provides, 'function');
   const handlers = {test() {}};
-  const EventEmitter = createMockEmitter();
 
   const appCreator = () => {
     const app = new App('content', el => el);
+    app.register(RPCToken, Plugin);
     app.register(RPCHandlersToken, handlers);
     app.register(UniversalEventsToken, EventEmitter);
+    app.register(serviceContextPlugin(app));
     return app;
   };
 
@@ -65,7 +70,10 @@ test('mock plugin', t => {
 
   const appCreator = () => {
     const app = new App('content', el => el);
+    app.register(RPCToken, Plugin);
     app.register(RPCHandlersToken, handlers);
+    app.register(UniversalEventsToken, EventEmitter);
+    app.register(serviceContextPlugin(app));
     return app;
   };
 
@@ -75,59 +83,33 @@ test('mock plugin', t => {
   t.end();
 });
 
-test('withRPCRedux hoc', async t => {
-  function Test(props) {
-    didRender = true;
-    console.log({props});
-    t.equal(
-      typeof props.test,
-      'function',
-      'passes the handler through to props'
-    );
-    props.test('test-args');
+test('withRPCRedux hoc', t => {
+  function Test() {
     return null;
   }
-  const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
-  const expectedPayloads = ['test-args', 'test-resolve'];
-  const store = {
-    dispatch(action) {
-      t.equal(action.type, expectedActions.shift());
-      t.equal(action.payload, expectedPayloads.shift());
-    },
-    getState() {},
-    subscribe() {},
-  };
   t.equals(typeof withRPCRedux, 'function');
   const Connected = withRPCRedux('test')(Test);
   t.equals(Connected.displayName, 'WithRPCRedux(Test)');
-
-  let didRender = false;
-  const root = React.createElement(
-    Provider,
-    {store},
-    React.createElement(Connected),
-  );
-  const app = new ReactApp(root);
-  app.register(RPCToken, mock);
-  app.register(RPCHandlersToken, createPlugin({
-    provides() {
-      return {
-        request(method, args) {
-          t.equal(method, 'test');
-          t.equal(args, 'test-args');
-          return Promise.resolve('test-resolve');
-        },
-      };
-    }
-  }));
-
-  const sim = getSimulator(app);
-  const ctx = await sim.render('/');
-  // t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
-  t.ok(didRender);
-  t.end();
-
-  /*
+  const renderer = new ShallowRenderer();
+  const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
+  const expectedPayloads = ['test-args', 'test-resolve'];
+  renderer.render(React.createElement(Connected), {
+    rpc: {
+      request(method, args) {
+        t.equal(method, 'test');
+        t.equal(args, 'test-args');
+        return Promise.resolve('test-resolve');
+      },
+    },
+    store: {
+      dispatch(action) {
+        t.equal(action.type, expectedActions.shift());
+        t.equal(action.payload, expectedPayloads.shift());
+      },
+      getState() {},
+    },
+  });
+  const rendered = renderer.getRenderOutput();
   t.equal(
     typeof rendered.props.test,
     'function',
@@ -135,10 +117,9 @@ test('withRPCRedux hoc', async t => {
   );
   rendered.props.test('test-args');
   t.end();
-  */
 });
 
-test.skip('withRPCReactor hoc', t => {
+test('withRPCReactor hoc', t => {
   function Test() {
     return null;
   }

@@ -23,7 +23,9 @@ export function useService<TService>(token: ReturnsType<TService>): TService {
   const getService = React.useContext<(ReturnsType<TService>) => TService>(
     ServiceContext
   );
+  console.log({getService});
   const provides = getService(token);
+  console.log({provides});
   return provides;
 }
 
@@ -50,6 +52,7 @@ export function serviceContextPlugin(app: FusionApp): FusionPlugin<void, void> {
   function getService(token) {
     const provides = app.getService(token);
     const isRequiredToken = Boolean(token.optional);
+    console.log({isRequiredToken});
     if (typeof provides === 'undefined' && isRequiredToken) {
       throw new Error(
         `Token ${
