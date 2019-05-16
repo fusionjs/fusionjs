@@ -18,7 +18,7 @@ let loggedNotice = false;
 /*::
 
 type CompileResult = {
-  bundle: 'both' | 'client',
+  bundle: 'universal' | 'browser-only',
   transpile: 'spec' | 'all' | 'none',
 };
 export type FusionRC = {
