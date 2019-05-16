@@ -1,9 +1,11 @@
-// flow-typed signature: 284e255a331cbe00e3ddf88897c9452d
-// flow-typed version: 7e7beb7540/node-fetch_v1.x.x/flow_>=v0.44.x
+// @flow
 
 /* eslint-disable */
 
 declare module 'node-fetch' {
+  import type http from 'http';
+  import type https from 'https';
+
   declare export class Request mixins Body {
     constructor(input: string | Request, init?: RequestInit): this;
     method: string;
@@ -15,42 +17,68 @@ declare module 'node-fetch' {
 
     // node-fetch extensions
     compress: boolean;
-    agent: http$Agent;
+    agent: http.Agent | https.Agent;
     counter: number;
     follow: number;
     hostname: string;
     protocol: string;
     port: number;
     timeout: number;
-    size: number
+    size: number;
   }
 
   declare type HeaderObject = {
-    [index: string]: string
-  }
+    [index: string]: string,
+  };
 
   declare interface RequestInit {
-    method?: string,
-    headers?: HeaderObject,
-    body?: BodyInit,
-    redirect?: RequestRedirect,
+    method?: string;
+    headers?: HeaderObject;
+    body?: BodyInit;
+    redirect?: RequestRedirect;
 
     // node-fetch extensions
-    timeout?: number,
-    compress?: boolean,
-    size?: number,
-    agent?: http$Agent,
-    follow?: number
+    timeout?: number;
+    compress?: boolean;
+    size?: number;
+    agent?: http.Agent | https.Agent;
+    follow?: number;
   }
 
   declare type RequestContext =
-    'audio' | 'beacon' | 'cspreport' | 'download' | 'embed' |
-    'eventsource' | 'favicon' | 'fetch' | 'font' | 'form' | 'frame' |
-    'hyperlink' | 'iframe' | 'image' | 'imageset' | 'import' |
-    'internal' | 'location' | 'manifest' | 'object' | 'ping' | 'plugin' |
-    'prefetch' | 'script' | 'serviceworker' | 'sharedworker' |
-    'subresource' | 'style' | 'track' | 'video' | 'worker' |
-    'xmlhttprequest' | 'xslt';
+    | 'audio'
+    | 'beacon'
+    | 'cspreport'
+    | 'download'
+    | 'embed'
+    | 'eventsource'
+    | 'favicon'
+    | 'fetch'
+    | 'font'
+    | 'form'
+    | 'frame'
+    | 'hyperlink'
+    | 'iframe'
+    | 'image'
+    | 'imageset'
+    | 'import'
+    | 'internal'
+    | 'location'
+    | 'manifest'
+    | 'object'
+    | 'ping'
+    | 'plugin'
+    | 'prefetch'
+    | 'script'
+    | 'serviceworker'
+    | 'sharedworker'
+    | 'subresource'
+    | 'style'
+    | 'track'
+    | 'video'
+    | 'worker'
+    | 'xmlhttprequest'
+    | 'xslt';
   declare type RequestRedirect = 'follow' | 'error' | 'manual';
 
   declare export class Headers {
@@ -60,7 +88,7 @@ declare module 'node-fetch' {
     getAll(name: string): Array<string>;
     has(name: string): boolean;
     set(name: string, value: string): void;
-    forEach(callback: (value: string, name: string) => void): void
+    forEach(callback: (value: string, name: string) => void): void;
   }
 
   declare export class Body {
@@ -69,7 +97,7 @@ declare module 'node-fetch' {
     json(): Promise<any>;
     json<T>(): Promise<T>;
     text(): Promise<string>;
-    buffer(): Promise<Buffer >
+    buffer(): Promise<Buffer>;
   }
 
   declare export class Response mixins Body {
@@ -84,7 +112,7 @@ declare module 'node-fetch' {
     statusText: string;
     timeout: number;
     headers: Headers;
-    clone(): Response
+    clone(): Response;
   }
 
   declare type ResponseType =
@@ -96,13 +124,16 @@ declare module 'node-fetch' {
     | 'opaqueredirect';
 
   declare interface ResponseInit {
-    status: number,
-    statusText?: string,
-    headers?: HeaderInit
+    status: number;
+    statusText?: string;
+    headers?: HeaderInit;
   }
 
   declare type HeaderInit = Headers | Array<string>;
   declare type BodyInit = string;
 
-  declare export default function fetch(url: string | Request, init?: RequestInit): Promise<Response>
+  declare export default function fetch(
+    url: string | Request,
+    init?: RequestInit
+  ): Promise<Response>;
 }
