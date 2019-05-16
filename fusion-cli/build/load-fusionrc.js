@@ -75,6 +75,25 @@ function isValid(config) {
     throw new Error(`Invalid property in .fusionrc.js`);
   }
 
+  if (config.experimentalCompile && config.experimentalCompileTest) {
+    throw new Error(
+      `Cannot use both experimentalCompile and experimentalCompileTest in .fusionrc.js`
+    );
+  }
+
+  if (config.experimentalCompile) {
+    console.log(
+      'WARNING: experimentalCompile is deprecated. Use experimentalCompileTest instead.'
+    );
+    config.experimentalCompileTest = (file, defaults) => {
+      return {
+        bundle: defaults.bundle,
+        transform: 'all',
+      };
+    };
+    delete config.experimentalCompile;
+  }
+
   if (
     config.babel &&
     !Object.keys(config.babel).every(el => ['plugins', 'presets'].includes(el))

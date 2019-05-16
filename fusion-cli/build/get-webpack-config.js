@@ -205,17 +205,17 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         if (!JS_EXT_PATTERN.test(modulePath)) {
           return false;
         }
-        const {transpile} = experimentalCompileTest(modulePath, {
-          transpile: 'spec',
-          bundle: 'client',
+        const {transform} = experimentalCompileTest(modulePath, {
+          transform: 'spec',
+          bundle: 'browser-only',
         });
-        if (transpile === 'none') {
+        if (transform === 'none') {
           return false;
-        } else if (transpile === 'all' || transpile === 'spec') {
+        } else if (transform === 'all' || transform === 'spec') {
           return true;
         } else {
           throw new Error(
-            `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
+            `Unknown transform value from experimentalCompileTest ${transform}. Expected 'spec' | 'all' | 'none'`
           );
         }
       }
@@ -227,17 +227,17 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       if (!JS_EXT_PATTERN.test(modulePath)) {
         return false;
       }
-      const {transpile} = experimentalCompileTest(modulePath, {
-        transpile: fusionConfig.experimentalCompile ? 'all' : 'spec',
-        bundle: 'client',
+      const {transform} = experimentalCompileTest(modulePath, {
+        transform: fusionConfig.experimentalCompile ? 'all' : 'spec',
+        bundle: 'browser-only',
       });
-      if (transpile === 'none' || transpile === 'spec') {
+      if (transform === 'none' || transform === 'spec') {
         return false;
-      } else if (transpile === 'all') {
+      } else if (transform === 'all') {
         return true;
       } else {
         throw new Error(
-          `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
+          `Unknown transform value from experimentalCompileTest ${transform}. Expected 'spec' | 'all' | 'none'`
         );
       }
     };
@@ -439,18 +439,18 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             }
             if (experimentalCompileTest) {
               const {bundle} = experimentalCompileTest(absolutePath, {
-                transpile: 'none', // default transpile value doesn't actually matter here
-                bundle: 'client',
+                transform: 'none', // default transform value doesn't actually matter here
+                bundle: 'browser-only',
               });
-              if (bundle === 'client') {
+              if (bundle === 'browser-only') {
                 // don't bundle on the server
                 return callback(null, 'commonjs ' + absolutePath);
-              } else if (bundle === 'both') {
+              } else if (bundle === 'universal') {
                 // bundle on the server
                 return callback();
               } else {
                 throw new Error(
-                  `Unknown bundle value: ${bundle} from experimentalCompileTest. Expected 'client' | 'both'.`
+                  `Unknown bundle value: ${bundle} from experimentalCompileTest. Expected 'browser-only' | 'universal'.`
                 );
               }
             }
