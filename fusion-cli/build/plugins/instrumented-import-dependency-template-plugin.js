@@ -105,6 +105,8 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       }
     }
 
+    console.log('----------------------------------------------- translations ' + JSON.stringify(translationKeys) );
+
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
     // - `__MODULE_ID`: the webpack module id of the dynamically imported module. Equivalent to require.resolveWeak(path)
@@ -154,6 +156,7 @@ class InstrumentedImportDependencyTemplatePlugin {
           done();
         });
       } else if (this.opts.compilation === 'client') {
+        console.log('---------------------------------- making client ----------------------------------------');
         // client
         compilation.dependencyTemplates.set(
           ImportDependency,

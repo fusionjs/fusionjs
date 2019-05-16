@@ -24,3 +24,10 @@ export default function Root() {
     </div>
   );
 }
+
+if (module.hot) {
+  console.log('this shit is hot');
+  module.hot.dispose('./routes.js', (...args) => {
+    console.log('------------------------' + JSON.stringify(args));
+  });
+}
