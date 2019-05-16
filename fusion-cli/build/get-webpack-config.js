@@ -121,83 +121,47 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
 
-  const babelConfig = fusionConfig.experimentalCompile
-    ? getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: false,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      })
-    : getBabelConfig({
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: true,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      });
+  const babelConfig = getBabelConfig({
+    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+    specOnly: true,
+    plugins:
+      fusionConfig.babel && fusionConfig.babel.plugins
+        ? fusionConfig.babel.plugins
+        : [],
+    presets:
+      fusionConfig.babel && fusionConfig.babel.presets
+        ? fusionConfig.babel.presets
+        : [],
+  });
 
-  const babelOverrides = fusionConfig.experimentalCompile
-    ? {}
-    : getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: false,
-      });
+  const babelOverrides = getBabelConfig({
+    dev: dev,
+    fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+    specOnly: false,
+  });
 
-  const legacyBabelConfig = fusionConfig.experimentalCompile
-    ? getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: false,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      })
-    : getBabelConfig({
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: true,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      });
+  const legacyBabelConfig = getBabelConfig({
+    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+    specOnly: true,
+    plugins:
+      fusionConfig.babel && fusionConfig.babel.plugins
+        ? fusionConfig.babel.plugins
+        : [],
+    presets:
+      fusionConfig.babel && fusionConfig.babel.presets
+        ? fusionConfig.babel.presets
+        : [],
+  });
 
-  const legacyBabelOverrides = fusionConfig.experimentalCompile
-    ? {}
-    : getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: false,
-      });
+  const legacyBabelOverrides = getBabelConfig({
+    dev: dev,
+    fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+    specOnly: false,
+  });
 
   const experimentalCompileTest = fusionConfig.experimentalCompileTest;
   const babelTester = experimentalCompileTest
@@ -228,7 +192,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         return false;
       }
       const {transform} = experimentalCompileTest(modulePath, {
-        transform: fusionConfig.experimentalCompile ? 'all' : 'spec',
+        transform: 'spec',
         bundle: 'browser-only',
       });
       if (transform === 'none' || transform === 'spec') {
