@@ -13,7 +13,7 @@ import type {Element} from 'react';
 export const FusionContext = React.createContext<any>({});
 export const ServiceContext = React.createContext<any>(() => {
   throw new Error(
-    '`ServiceContext.Provider` was never added to the component tree. This usually happens in tests that are using `ServiceContext` but never called `app.register(serviceContexPlugin(app))`'
+    '`ServiceContext.Provider` was not found. This occurs if you are attempting to use `ServiceContext` in a non-React fusion application.'
   );
 });
 
