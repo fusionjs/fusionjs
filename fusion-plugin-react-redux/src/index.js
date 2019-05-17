@@ -13,6 +13,8 @@ export default (__NODE__ ? serverPlugin : browserPlugin());
 
 export type {GetInitialStateType} from './types';
 
+export {useRedux} from './hook';
+
 export {
   ReduxToken,
   ReducerToken,
