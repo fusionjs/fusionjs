@@ -7,6 +7,7 @@ React component props
 
 RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. Unlike [RESTful architectures](https://en.wikipedia.org/wiki/Representational_state_transfer), RPC-based architectures are not required to conform to statelessness constraints and are free to return session-scoped data. Additionally, the semantics of RPC calls are not constrained by the availability of suitably-descriptive HTTP methods and RPC calls can express complex state change requests more naturally as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g. `PATCH /api/orders/:id`).
 
+
 ---
 
 ### Table of contents
@@ -46,7 +47,7 @@ export default {
 
 // Define your reducers
 // src/redux/index.js
-import {createRPCReducer} from 'fusion-plugin-rpc-redux-react';
+import {createRPCReducer} from 'fusion-rpc-redux';
 export default createRPCReducer('greet', {
   start: (state, action) => ({...state, loading: true}),
   success: (state, action) => ({...state, loading: false, greeting: action.payload.greeting}),
@@ -56,11 +57,16 @@ export default createRPCReducer('greet', {
 // connect your component
 // src/components/index.js
 import React from 'react';
-import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
-import {connect} from 'react-redux';
-import {compose} from 'redux';
+import {FusionContext, useService} from 'fusion-react';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {useRPCHandler} from 'fusion-plugin-rpc-redux-react';
 
-function Example({greet, greeting, loading, error}) {
+function Example({greeting, loading, error}) {
+  const greet = useRPCHandler('greet');
+  const ctx = React.useContext(FusionContext);
+  const {store} = useService(ReduxToken).from(ctx);
+  const {greeting, loading, error} = store.getState();
+
   return (
     <div>
       <button onClick={() => greet({name: 'person'})}>Greet</button>
@@ -70,6 +76,19 @@ function Example({greet, greeting, loading, error}) {
     </div>
   );
 }
+
+export default Example;
+```
+
+This example can also be accomplished without React hooks by using the `withRPCRedux` higher-order component.
+
+```js
+import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
+
+// ...
+
 const hoc = compose(
   withRPCRedux('greet'),
   connect(({greeting, loading, error}) => ({greeting, loading, error})),
@@ -86,7 +105,7 @@ export default hoc(Example);
 import App from 'fusion-react';
 import UniversalEvents, {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import Redux, {ReduxToken, ReducerToken} from 'fusion-plugin-react-redux';
-import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
 import {FetchToken} from 'fusion-tokens';
 import fetch from 'unfetch';
 
@@ -104,6 +123,8 @@ export default () => {
     : app.register(FetchToken, fetch);
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
+
+  return app;
 }
 ```
 
@@ -113,64 +134,44 @@ export default () => {
 
 #### Registration API
 
-##### `RPC`
+The utilities from this package require that the following plugins are registered.
 
-```js
-import RPC from 'fusion-plugin-rpc-redux-react';
-```
+##### RPC
 
-The plugin. Typically it should be registered to [`RPCToken`](#rpctoken).
-Installs an RPC provider at the root of the React tree.
+The RPC plugin must be registered from `fusion-plugin-rpc`. See [fusion-plugin-rpc](../fusion-plugin-rpc#registration-api) for registration requirements.
 
-###### `RPCToken`
 
-```js
-import {RPCToken} from 'fusion-plugin-rpc-redux-react';
-```
+##### Redux
 
-The canonical token for the RPC plugin. Typically, it should be registered with
-the [RPC](#rpc) plugin.
+The Redux plugin must be registered from `fusion-plugin-react-redux`. See [fusion-plugin-react-redx](../fusion-plugin-react-redux#registration-api) for registration requirements.
 
-#### Dependencies
-
-##### `UniversalEventsToken`
-
-Required. See
-[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events#api)
-
-##### `RPCHandlersToken`
-
-```js
-import {RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
-```
-
-Configures what RPC handlers exist. Required. Server-only.
-
-###### Types
-
-```flow
-type RPCHandlers = {[string]: (rpcArgs: Object, ctx: Context) => Promise<Object>}
-```
-
-You can register a value of type `RPCHandlers` or a Plugin that provides a value
-of type `RPCHandlers`.
-
-##### `FetchToken`
-
-Required. Browser-only. See
-[https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken)
-
-##### `ReduxToken`
-
-Required. See
-[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
-
-##### `ReducerToken`
-
-Required. See
-[https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
 ---
+
+#### `useRPCHandler`
+
+```js
+import {useRPCHandler} from 'fusion-plugin-rpc-redux-react';
+```
+
+Returns the given RPC method. It can additionally configure the mapped method
+with parameters from state or from a transformation function.
+
+```js
+const handler = useRPCHandler(rpcId: string, {
+  mapStateToParams: ?(state: any) => any,
+  transformParams: ?(params: any) => any,
+}?: OptionsObject)
+
+```
+
+* `rpcId: string` - The name of the RPC method to expose in the component's
+  props
+* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
+  parameters from Redux state
+* `transformParams: ?(params: any) => any` - transforms the params
+* returns `handler: (...any) => any`
+
 
 #### `withRPCRedux`
 
@@ -235,40 +236,6 @@ const hoc:HOC = withRPCReactor(rpcId: string, {
 * `transformParams: ?(params: any) => any` - transforms the params
 * returns `hoc: Component => Component`
 
-#### ResponseError
-
-Use the `ResponseError` error subclass for sending error responses. If this
-error class is not used, a generic message will be sent to the client.
-
-```js
-import {ResponseError} from 'fusion-plugin-rpc';
-
-function testHandler() {
-  try {
-    doThing();
-  } catch (e) {
-    const error = new ResponseError('Failed to do thing');
-    error.code = 'DOTHING';
-    error.meta = {
-      custom: 'metadata',
-    };
-    throw error;
-  }
-}
-```
-
-#### mock
-
-```js
-import {mock as MockRPC} from 'fusion-plugin-rpc-redux-react';
-```
-
-The package also exports a mock RPC plugin which can be useful for testing. For
-example:
-
-```js
-app.register(RPCToken, mock);
-```
 
 ---
 
@@ -293,7 +260,7 @@ import Redux, {
   ReducerToken,
   EnhancerToken
 } from 'fusion-plugin-react-redux';
-import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+import RPC, {RPCToken, RPCHandlersToken} from 'fusion-plugin-rpc';
 import {FetchToken} from 'fusion-tokens';
 import {reactorEnhancer} from 'redux-reactors';
 import fetch from 'unfetch';
