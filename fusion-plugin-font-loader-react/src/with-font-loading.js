@@ -30,24 +30,25 @@ All requested fonts should be defined in src/fonts/fontConfig.js
 
 const withFontLoading = (fontName: string) => {
   return (OriginalComponent: ComponentType<*>): ComponentType<*> => {
-    return function WithFontLoading(props: any) {
+    return FontLoader;
+
+    function FontLoader(props: any) {
       const mounted: {current: ?boolean} = useRef(null);
-      const {getFontDetails} = useService(FontLoaderReactToken);
+      const getFontDetails = useService(FontLoaderReactToken);
       if (typeof getFontDetails !== 'function') {
         throw new Error(
           `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
-to true in the font loader config`
+    to true in the font loader config`
         );
       }
       const {fallbackName, styles} = getFontDetails(fontName);
-      const [fontStyles, setFontStyles] = useState([]);
-      if (fallbackName) {
-        // switch to fallback name and apply styles to trigger faux font rendition
-        setFontStyles({fontFamily: fallbackName, ...styles});
-      } else {
-        // no need to do the fallback dance
-        setFontStyles({$fontStyles: {fontFamily: fontName}});
-      }
+      const initialFontStyles = fallbackName
+        ? // switch to fallback name and apply styles to trigger faux font rendition
+          {fontFamily: fallbackName, ...styles}
+        : // no fallback so just apply true font
+          {fontFamily: fontName};
+
+      const [fontStyles, setFontStyles] = useState(initialFontStyles);
 
       useEffect(() => {
         mounted.current = true;
@@ -62,8 +63,8 @@ to true in the font loader config`
         };
       });
 
-      return <OriginalComponent {...{...this.state, ...this.props}} />;
-    };
+      return <OriginalComponent $fontStyles={fontStyles} {...props} />;
+    }
   };
 };
 
