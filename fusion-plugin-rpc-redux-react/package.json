@@ -27,15 +27,15 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "0.0.0-monorepo",
     "fusion-rpc-redux": "0.0.0-monorepo",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-rpc": "0.0.0-monorepo",
+    "fusion-plugin-react-redux": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-redux": "^5.1.1"
+    "redux": "^4.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
