@@ -8,16 +8,15 @@
 
 import * as React from 'react';
 import type {Reducer} from 'redux';
-import {createRPCHandler, createRPCReactors} from 'fusion-rpc-redux';
-import {FusionContext, useService} from 'fusion-react';
-import {RPCToken} from 'fusion-plugin-rpc';
-import {connect} from 'react-redux';
+import {createRPCReactors} from 'fusion-rpc-redux';
+import {useRPCHandler} from './hook.js';
 
 type RPCReducersType = {
   start?: Reducer<*, *>,
   success?: Reducer<*, *>,
   failure?: Reducer<*, *>,
 };
+
 export function withRPCReactor<Props: {}>(
   rpcId: string,
   reducers: RPCReducersType,
@@ -55,39 +54,20 @@ export function withRPCRedux<Props: {}>(
   } = {}
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   return (Component: React.ComponentType<Props>) => {
-    function WithRPCRedux(oldProps: Props) {
-      const {dispatch, state, ...restProps} = oldProps;
-      console.log({dispatch, state});
-      const service = useService(RPCToken);
-      const ctx = React.useContext(FusionContext);
-      const rpc = service.from(ctx);
+    function WithRPCRedux(props: Props) {
       if (mapStateToParams) {
         const mapState = mapStateToParams;
-        mapStateToParams = (state, args) => mapState(state, args, restProps);
+        mapStateToParams = (state, args) => mapState(state, args, props);
       }
-      const handler = createRPCHandler({
-        rpcId,
-        rpc,
-        store: { dispatch, getState() { return state; } },
+      const handler = useRPCHandler(rpcId, {
         actions,
         mapStateToParams,
         transformParams,
       });
-      const props = {
-        ...restProps,
-        [propName]: handler,
-      };
-      return React.createElement(Component, props);
+      return React.createElement(Component, {...props, [propName]: handler});
     }
-    const connected = connect(
-      state => ({state}),
-      dispatch => ({dispatch}),
-    )(WithRPCRedux);
     const displayName = Component.displayName || Component.name || 'Anonymous';
-    connected.displayName = 'WithRPCRedux' + '(' + displayName + ')';
-    return connected;
+    WithRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
+    return WithRPCRedux;
   };
 }
-
-// This depends fusion-plugin-rpc, but doesnt specify it
-// Rewrite plugin?
