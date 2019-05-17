@@ -36,6 +36,9 @@ const initialize = main
 
 export default async function loadApp(dir /*: string */ = '.') {
   const app = await initialize();
+  if (!app) {
+    throw new Error('Application entry point did not return an App');
+  }
   const AssetsPlugin = AssetsFactory(dir);
   reverseRegister(app, ContextPlugin);
   app.register(AssetsPlugin);

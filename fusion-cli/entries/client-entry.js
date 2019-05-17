@@ -16,6 +16,9 @@ function reload() {
   const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line
   const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
+    if (!app) {
+      throw new Error('Application entry point did not return an App');
+    }
     if (window.__ROUTE_PREFIX__) {
       // No-op plugin so token can be registered without any consumers
       // Should not be needed when route prefixing is refactored into a separate plugin
