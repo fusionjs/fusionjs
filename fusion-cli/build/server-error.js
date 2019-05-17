@@ -27,7 +27,7 @@ function renderError(error /*: any */ = {}) {
         <style>html {background:red;color:white;line-height:2;}</style>
       </head>
       <body>
-        <pre>${displayError.stack.replace(/\[\d\dm/gm, '')}</pre>
+        <pre>${(displayError.stack || '').replace(/\[\d\dm/gm, '')}</pre>
       </body>
     </html>
   `;
