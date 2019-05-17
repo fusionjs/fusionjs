@@ -8,12 +8,7 @@
 
 import tape from 'tape-cup';
 
-import Plugin, {
-  createRPCReducer,
-  mock,
-  withRPCRedux,
-  withRPCReactor,
-} from '../index';
+import Plugin, {createRPCReducer, mock, withRPCRedux, withRPCReactor} from '..';
 
 tape('interface', t => {
   t.equal(typeof Plugin.provides, 'function', 'default export function');

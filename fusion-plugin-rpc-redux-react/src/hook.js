@@ -12,7 +12,13 @@ import {RPCToken} from 'fusion-plugin-rpc';
 import {ReduxToken} from 'fusion-plugin-react-redux';
 import {createRPCHandler} from 'fusion-rpc-redux';
 
-export function useRPCHandler(rpcId, opts) {
+type OptionalHandlerArgs = {
+  actions?: any,
+  transformParams?: (params: any) => any,
+  mapStateToParams?: (state: any, args?: any, ownProps: {}) => any,
+};
+
+export function useRPCHandler(rpcId: string, opts: OptionalHandlerArgs) {
   const ctx = React.useContext(FusionContext);
   const {store} = useService(ReduxToken).from(ctx);
   const rpc = useService(RPCToken).from(ctx);
