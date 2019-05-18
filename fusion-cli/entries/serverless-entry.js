@@ -11,7 +11,7 @@
 // $FlowFixMe
 import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-line
 
-import {
+import BaseApp, {
   RoutePrefixToken,
   SSRBodyTemplateToken,
   CriticalChunkIdsToken,
@@ -36,7 +36,7 @@ const initialize = main
 
 export default async function loadApp(dir /*: string */ = '.') {
   const app = await initialize();
-  if (!app) {
+  if (!(app instanceof BaseApp)) {
     throw new Error('Application entry point did not return an App');
   }
   const AssetsPlugin = AssetsFactory(dir);

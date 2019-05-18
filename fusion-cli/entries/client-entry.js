@@ -9,14 +9,14 @@
 /* eslint-env browser */
 /* global module */
 
-import {createPlugin, RoutePrefixToken} from 'fusion-core';
+import BaseApp, {createPlugin, RoutePrefixToken} from 'fusion-core';
 
 function reload() {
   // $FlowFixMe
   const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line
   const initialize = main.default || main;
   Promise.resolve(initialize()).then(app => {
-    if (!app) {
+    if (!(app instanceof BaseApp)) {
       throw new Error('Application entry point did not return an App');
     }
     if (window.__ROUTE_PREFIX__) {
