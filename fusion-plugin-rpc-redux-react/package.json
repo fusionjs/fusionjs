@@ -9,7 +9,9 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "files": [
-    "dist",
+    "dist-browser-esm",
+    "dist-node-cjs",
+    "dist-node-esm",
     "flow-typed",
     "src"
   ],
