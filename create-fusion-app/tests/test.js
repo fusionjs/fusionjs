@@ -36,9 +36,11 @@ test('scaffolded app tests pass', async () => {
   await browser.close();
   expect(response).toContain('Fusion.js');
 
-  const newPackageJson = fs.readFileSync(
-    path.join(__dirname, `../test-artifacts/${appName}/package.json`),
-    'utf-8'
+  const newPackageJson /*: {[string]:any}*/ = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, `../test-artifacts/${appName}/package.json`),
+      'utf-8'
+    )
   );
   expect(newPackageJson.name).toEqual(appName);
 
