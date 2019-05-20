@@ -15,4 +15,3 @@ export function useRedux() {
   const {store} = useService(ReduxToken).from(ctx);
   return store;
 }
-

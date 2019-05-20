@@ -15,7 +15,7 @@ import ReactApp from 'fusion-react';
 import type {FusionPlugin} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
 
-import {useRedux} from '../hook.js'
+import {useRedux} from '../hook.js';
 import Redux from '../index.js';
 import {
   EnhancerToken,
@@ -51,20 +51,20 @@ tape('useRedux has access to Redux', async t => {
       test: action.payload || 1,
     };
   };
-  const Root = function () {
+  const Root = function() {
+    const store = useRedux();
     if (!didRender) {
       didRender = true;
-      const store = useRedux();
       t.deepLooseEqual(store.getState(), {test: 1});
       store.dispatch({type: 'CHANGE', payload: 2});
       t.equals(store.getState().test, 2, 'state receives dispatch');
     }
     return 'hello';
-  }
+  };
   const app = new ReactApp(React.createElement(Root));
   app.register(ReducerToken, reducer);
   app.register(ReduxToken, Redux);
-  const sim = getSimulator(app)
+  const sim = getSimulator(app);
   await sim.render('/');
   t.ok(didRender);
   t.end();
