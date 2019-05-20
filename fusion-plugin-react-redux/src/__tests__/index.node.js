@@ -11,9 +11,11 @@ import React from 'react';
 import type {Reducer, StoreEnhancer} from 'redux';
 
 import App, {consumeSanitizedHTML, createPlugin} from 'fusion-core';
+import ReactApp from 'fusion-react';
 import type {FusionPlugin} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
 
+import {useRedux} from '../hook.js'
 import Redux from '../index.js';
 import {
   EnhancerToken,
@@ -40,6 +42,33 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
   }
   return () => app;
 };
+
+tape('useRedux has access to Redux', async t => {
+  let didRender = false;
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  const Root = function () {
+    if (!didRender) {
+      didRender = true;
+      const store = useRedux();
+      t.deepLooseEqual(store.getState(), {test: 1});
+      store.dispatch({type: 'CHANGE', payload: 2});
+      t.equals(store.getState().test, 2, 'state receives dispatch');
+    }
+    return 'hello';
+  }
+  const app = new ReactApp(React.createElement(Root));
+  app.register(ReducerToken, reducer);
+  app.register(ReduxToken, Redux);
+  const sim = getSimulator(app)
+  await sim.render('/');
+  t.ok(didRender);
+  t.end();
+});
 
 tape('interface', async t => {
   const ctx = {memoized: new Map()};
