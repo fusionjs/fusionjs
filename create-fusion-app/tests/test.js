@@ -5,6 +5,7 @@ const {promisify} = require('util');
 const exec = promisify(require('child_process').exec);
 const {startServer} = require('../test-utils/test-utils.js');
 const path = require('path');
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 function log(execOutput) {
@@ -35,11 +36,9 @@ test('scaffolded app tests pass', async () => {
   await browser.close();
   expect(response).toContain('Fusion.js');
 
-  const newPackageJson = require(
-    path.join(
-      __dirname,
-      `../test-artifacts/${appName}/package.json`
-    )
+  const newPackageJson = fs.readFileSync(
+    path.join(__dirname, `../test-artifacts/${appName}/package.json`),
+    'utf-8'
   );
   expect(newPackageJson.name).toEqual(appName);
 
