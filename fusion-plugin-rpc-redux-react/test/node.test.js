@@ -16,9 +16,14 @@ import {getService, getSimulator} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {ReduxToken} from 'fusion-plugin-react-redux';
 
-import Plugin from '../plugin';
-import {mock, ResponseError, RPCToken, RPCHandlersToken} from '../index';
-import {withRPCRedux, withRPCReactor} from '../hoc';
+import Plugin, {
+  mock,
+  ResponseError,
+  RPCToken,
+  RPCHandlersToken,
+  withRPCRedux,
+  withRPCReactor,
+} from '../src/index.js';
 
 /* Test helpers */
 function createMockEmitter(props: mixed) {

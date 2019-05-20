@@ -17,9 +17,13 @@ import {getSimulator} from 'fusion-test-utils';
 import {reactorEnhancer} from 'redux-reactors';
 import {ReduxToken} from 'fusion-plugin-react-redux';
 import {FetchToken} from 'fusion-tokens';
-import {mock as RPCPluginMock, RPCToken, RPCHandlersToken} from '../index';
-import Plugin from '../plugin';
-import {withRPCRedux, withRPCReactor} from '../hoc';
+import Plugin, {
+  withRPCRedux,
+  withRPCReactor,
+  mock as RPCPluginMock,
+  RPCToken,
+  RPCHandlersToken,
+} from '../src/index.js';
 
 const initActionPattern = /^@@redux\/INIT.*/;
 
