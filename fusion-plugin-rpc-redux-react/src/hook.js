@@ -24,4 +24,3 @@ export function useRPCHandler(rpcId, opts) {
   });
   return handler;
 }
-

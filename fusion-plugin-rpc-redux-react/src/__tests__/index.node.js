@@ -8,7 +8,6 @@
 
 import React from 'react';
 import test from 'tape-cup';
-import ShallowRenderer from 'react-test-renderer/shallow';
 
 import App, {createPlugin} from 'fusion-core';
 import ReactApp from 'fusion-react';
@@ -107,23 +106,29 @@ test('withRPCRedux hoc', async t => {
   t.equals(Connected.displayName, 'WithRPCRedux(Test)');
   const app = new ReactApp(React.createElement(Connected));
   app.register(RPCToken, mock);
-  app.register(RPCHandlersToken, createPlugin({
-    provides() {
-      return {
-        test(args) {
-          t.equal(args, 'test-args');
-          return Promise.resolve('test-resolve');
-        },
-      };
-    }
-  }));
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    RPCHandlersToken,
+    createPlugin({
+      provides() {
+        return {
+          test(args) {
+            t.equal(args, 'test-args');
+            return Promise.resolve('test-resolve');
+          },
+        };
+      },
+    })
+  );
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
@@ -167,23 +172,29 @@ test('withRPCReactor hoc', async t => {
   };
   const app = new ReactApp(React.createElement(Connected));
   app.register(RPCToken, mock);
-  app.register(RPCHandlersToken, createPlugin({
-    provides() {
-      return {
-        test(args) {
-          t.equal(args, 'test-args');
-          return Promise.resolve('test-resolve');
-        },
-      };
-    }
-  }));
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    RPCHandlersToken,
+    createPlugin({
+      provides() {
+        return {
+          test(args) {
+            t.equal(args, 'test-args');
+            return Promise.resolve('test-resolve');
+          },
+        };
+      },
+    })
+  );
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
