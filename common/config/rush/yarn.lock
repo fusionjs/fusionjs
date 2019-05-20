@@ -2512,7 +2512,7 @@
 
 "@types/node@*":
   version "12.0.2"
-  resolved "https://unpm.uberinternal.com/@types%2fnode/-/node-12.0.2.tgz#3452a24edf9fea138b48fad4a0a028a683da1e40"
+  resolved "https://registry.npmjs.org/@types%2fnode/-/node-12.0.2.tgz#3452a24edf9fea138b48fad4a0a028a683da1e40"
 
 "@types/node@^10.1.0":
   version "10.14.6"
