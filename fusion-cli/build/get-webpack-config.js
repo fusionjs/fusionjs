@@ -51,6 +51,7 @@ type Runtime = "server" | "client" | "sw";
 
 const COMPILATIONS /*: {[string]: Runtime} */ = {
   server: 'server',
+  serverless: 'server',
   'client-modern': 'client',
   sw: 'sw',
 };
@@ -218,7 +219,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           runtime === 'server' &&
           `${require.resolve('webpack/hot/poll')}?1000`,
         runtime === 'server' &&
-          path.join(__dirname, '../entries/server-entry.js'),
+          path.join(__dirname, `../entries/${id}-entry.js`), // server-entry or serverless-entry
         runtime === 'client' &&
           path.join(__dirname, '../entries/client-entry.js'),
       ].filter(Boolean),

@@ -32,8 +32,13 @@ const plugin =
     deps: {onError: ErrorHandlerToken},
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
-      const err = async e => {
-        await onError(e, captureTypes.server);
+      // It's possible to call reject with a non-error
+      const err = async (e: mixed) => {
+        if (e instanceof Error) {
+          await onError(e, captureTypes.server);
+        } else {
+          await onError(new Error(String(e)), captureTypes.server);
+        }
         process.exit(1);
       };
       process.once('uncaughtException', err);
@@ -80,14 +85,14 @@ const plugin =
         } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
           // $FlowFixMe
-          await onError(ctx.request.body, captureTypes.browser);
+          await onError(ctx.request.body, captureTypes.browser, ctx);
           ctx.body = {ok: 1};
         }
         try {
           await next();
         } catch (e) {
           // Don't await onError here because we want to send a response as soon as possible to the user
-          onError(e, captureTypes.request);
+          onError(e, captureTypes.request, ctx);
           throw e;
         }
       }

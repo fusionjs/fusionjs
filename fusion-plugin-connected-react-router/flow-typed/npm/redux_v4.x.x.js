@@ -1,6 +1,6 @@
 // @flow
-// flow-typed signature: df80bdd535bfed9cf3223e077f3b4543
-// flow-typed version: c4c8963c9c/redux_v4.x.x/flow_>=v0.55.x
+// flow-typed signature: a49a6c96fe8a8bb3330cce2028588f4c
+// flow-typed version: de5b3a01c6/redux_v4.x.x/flow_>=v0.89.x
 
 declare module 'redux' {
   /*
@@ -11,8 +11,13 @@ declare module 'redux' {
 
   */
 
+  declare export type Action<T> = {
+    type: T,
+  };
+
   declare export type DispatchAPI<A> = (action: A) => A;
-  declare export type Dispatch<A: {type: $Subtype<string>}> = DispatchAPI<A>;
+
+  declare export type Dispatch<A: {type: *}> = DispatchAPI<A>;
 
   declare export type MiddlewareAPI<S, A, D = Dispatch<A>> = {
     dispatch: D,
@@ -66,7 +71,9 @@ declare module 'redux' {
   ): StoreEnhancer<S, A, D>;
 
   declare export type ActionCreator<A, B> = (...args: Array<B>) => A;
-  declare export type ActionCreators<K, A> = {[key: K]: ActionCreator<A, any>};
+  declare export type ActionCreators<K, A> = {
+    [key: K]: ActionCreator<A, any>,
+  };
 
   declare export function bindActionCreators<
     A,
@@ -86,7 +93,7 @@ declare module 'redux' {
     dispatch: D
   ): C;
 
-  declare export function combineReducers<O: Object, A>(
+  declare export function combineReducers<O: {}, A>(
     reducers: O
   ): CombinedReducer<$ObjMap<O, <S>(r: Reducer<S, any>) => S>, A>;
 

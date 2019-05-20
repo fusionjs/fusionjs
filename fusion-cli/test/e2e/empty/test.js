@@ -26,7 +26,7 @@ test('generates error if missing default export', async () => {
     // $FlowFixMe
     t.fail('did not error');
   } catch (e) {
-    t.ok(e.stderr.includes('initialize is not a function'));
+    t.ok(e.stderr.includes(' is not a function'));
   } finally {
     proc.kill();
   }

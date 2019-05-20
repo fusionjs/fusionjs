@@ -20,7 +20,9 @@ exports.run = async function(
     logLevel,
     zopfli,
     minify,
+    experimentalServerless,
   } /*: {
+    experimentalServerless: boolean,
     dir: string,
     production: boolean,
     preserveNames: boolean,
@@ -46,6 +48,7 @@ exports.run = async function(
     preserveNames,
     zopfli,
     minify,
+    serverless: experimentalServerless,
   });
 
   await compiler.clean();

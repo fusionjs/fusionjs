@@ -3,7 +3,7 @@ echo "  - wait"
 
 for d in */ ; do (
   PROJECT=$(basename "$d");
-  if [ -d "$d" ] && [ $PROJECT != "common" ] && [ $PROJECT != "scripts" ] && [ $PROJECT != "flow-typed" ]; then
+  if [ -d "$d" ] && [ $PROJECT != "common" ] && [ $PROJECT != "scripts" ] && [ $PROJECT != "flow-typed" ] && [ $PROJECT != "rfcs" ]; then
     if [ $PROJECT = "fusion-cli" ]; then
       echo "  - label: fusion-cli";
       echo "    command: cd fusion-cli && .buildkite/nodeTests";
@@ -12,8 +12,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     elif [ $PROJECT = "create-fusion-app" ]; then
@@ -23,8 +21,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     else
@@ -34,8 +30,6 @@ for d in */ ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
-      echo "        env:";
-      echo "          - UNPM_TOKEN";
       echo "    agents:";
       echo "      queue: workers";
     fi;

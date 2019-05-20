@@ -111,6 +111,7 @@ type CompilerType = {
 
 /*::
 type CompilerOpts = {
+  serverless?: boolean,
   dir?: string,
   env: "production" | "development",
   hmr?: boolean,
@@ -134,6 +135,7 @@ function Compiler(
     logger = console,
     zopfli = true,
     minify = true,
+    serverless = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
@@ -175,7 +177,7 @@ function Compiler(
 
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
-    getWebpackConfig({id: 'server', ...sharedOpts}),
+    getWebpackConfig({id: serverless ? 'serverless' : 'server', ...sharedOpts}),
   ]);
 
   const statsLogger = getStatsLogger({dir, logger, env});

@@ -19,6 +19,7 @@ import HttpHandlerPlugin from '../server.js';
 test('http handler with express', async t => {
   const app = new App('test', () => 'test');
   const port = await getPort();
+  // $FlowFixMe
   const proxyServer = http.createServer((req, res) => res.end('Proxy OK'));
   const port2 = await getPort();
   await new Promise(resolve => proxyServer.listen(port, resolve));
