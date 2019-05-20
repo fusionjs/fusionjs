@@ -101,13 +101,16 @@ test('browser plugin integration test withRPCRedux', async t => {
   const app = new App(element);
   app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -185,13 +188,16 @@ test('browser plugin integration test withRPCRedux and options', async t => {
   const app = new App(element);
   app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -272,13 +278,16 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -337,13 +346,16 @@ test('browser mock integration test withRPCRedux', async t => {
   const app = new App(element);
   app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
@@ -413,13 +425,16 @@ test('browser mock integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -516,13 +531,16 @@ test('browser plugin integration test withRPCReactor', async t => {
   const app = new App(element);
   app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -609,13 +627,16 @@ test('browser mock plugin integration test withRPCReactor', async t => {
   const app = new App(element);
   app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -714,13 +735,16 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   const app = new App(element);
   app.register(RPCToken, RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));
@@ -836,13 +860,16 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
   const app = new App(element);
   app.register(RPCToken, Plugin);
   app.register(FetchToken, fetch);
-  app.register(ReduxToken, createPlugin({
-    provides() {
-      return {
-        from: () => ({store}),
-      };
-    },
-  }));
+  app.register(
+    ReduxToken,
+    createPlugin({
+      provides() {
+        return {
+          from: () => ({store}),
+        };
+      },
+    })
+  );
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));
