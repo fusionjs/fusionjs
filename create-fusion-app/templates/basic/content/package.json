@@ -1,7 +1,7 @@
 {
   "name": "example-fusion-app",
   "version": "0.0.0",
-  "main": "index.js",
+  "private": true,
   "dependencies": {
     "fusion-cli": "^1.18.3",
     "fusion-core": "^1.10.6",
