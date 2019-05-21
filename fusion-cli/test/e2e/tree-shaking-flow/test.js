@@ -27,6 +27,7 @@ test('`fusion build` strips unused types in dev and correctly tree shakes remain
         'UnusedUserlandType',
         'UnusedUserlandOtherType',
         '__FIXTURE_USERLAND_UNUSED__',
+
         // node modules
         'UnusedDependencyType',
         'UnusedDependencyOtherType',

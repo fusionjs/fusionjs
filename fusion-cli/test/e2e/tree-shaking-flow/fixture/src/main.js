@@ -48,12 +48,17 @@ if (__NODE__) {
 
 // used in the browser
 //  - node modules
-const usedDepVal: UsedDependencyType = { shouldBeUsed: usedDependencyValue};
-const usedDepVal2: UsedDependencyOtherType = { alsoShouldBeUsed: usedDependencyValue};;
+/* NOTE: As of 2019-05-21, the import below currently leaks the unused import
+ * ('unusedDependencyValue') into the browser bundle.
+ *
+ * This appears unrelated to Flow type imports, and so remain commented out for now.
+ */
+// const usedDepVal: UsedDependencyType = { shouldBeUsed: usedDependencyValue};
+// const usedDepVal2: UsedDependencyOtherType = { alsoShouldBeUsed: usedDependencyValue};;
 //  - userland
 const usedUserlandVal: UsedUserlandType = { shouldBeUsed: usedUserlandValue};
 const usedUserlandVal2: UsedUserlandOtherType = { alsoShouldBeUsed: usedUserlandValue};;
 
-console.log(usedDepVal, usedDepVal2, usedUserlandVal, usedUserlandVal2);
+console.log(/*usedDepVal, usedDepVal2,*/ usedUserlandVal, usedUserlandVal2);
 
 export default () => {};
