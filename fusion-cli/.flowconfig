@@ -1,11 +1,10 @@
 [ignore]
 .*/node_modules/.*[^(package)]\.json$
 <PROJECT_ROOT>/dist/.*
-.*/.fusion/.*
-.*/i18n/fixture/.*
 
 [include]
-../common/temp/node_modules
+../common/temp/node_module
+../../common/temp/node_modules
 
 [libs]
 ./node_modules/fusion-core/flow-typed
