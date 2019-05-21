@@ -13,7 +13,7 @@
 
 ## What is it?
 
-> fu·sion — *noun*
+> **fu·sion** — *noun*
 >
 > The process or result of joining two or more things together to form a single entity.
 
