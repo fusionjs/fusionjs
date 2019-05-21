@@ -55,7 +55,7 @@ export type NavLinkType = React.ComponentType<{
   activeStyle?: Object,
   style?: Object,
   isActive?: (match: MatchType, location: LocationType) => boolean,
-  children?: React$Node,
+  children?: React.Node,
   exact?: boolean,
   strict?: boolean,
 }>;
@@ -169,7 +169,7 @@ export type SwitchType = React.ComponentType<{|
 
 export type withRouterType = <Props: {}, Component: React.ComponentType<Props>>(
   WrappedComponent: Component
-) => React$ComponentType<
+) => React.ComponentType<
   $Diff<React.ElementConfig<Component>, ContextRouterVoid>
 >;
 
