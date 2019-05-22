@@ -3,27 +3,21 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-import tape from 'tape-cup';
-
-import Plugin, {
+const {
+  default: Plugin,
   createRPCReducer,
   mock,
   withRPCRedux,
   withRPCReactor,
-} from '../src/index.js';
+} = require('..');
 
-tape('interface', t => {
-  t.equal(typeof Plugin.provides, 'function', 'default export function');
-  t.equal(
-    typeof createRPCReducer,
-    'function',
-    'createRPCReducer function export'
-  );
-  t.equal(typeof mock.provides, 'function', 'mock function export');
-  t.equal(typeof withRPCRedux, 'function', 'withRPCRedux function export');
-  t.equal(typeof withRPCReactor, 'function', 'withRPCReactor function export');
-  t.end();
+test('interface', () => {
+  expect(typeof Plugin.provides).toBe('function');
+  expect(typeof createRPCReducer).toBe('function');
+  expect(typeof mock.provides).toBe('function');
+  expect(typeof withRPCRedux).toBe('function');
+  expect(typeof withRPCReactor).toBe('function');
 });
