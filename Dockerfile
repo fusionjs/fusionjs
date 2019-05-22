@@ -4,5 +4,13 @@ RUN mkdir /monorepo
 WORKDIR /monorepo
 COPY . /monorepo/
 
-RUN node common/scripts/install-run-rush install && \
+ARG BUILDKITE_BRANCH
+ARG BUILDKITE_MESSAGE
+ARG BUILDKITE_REPO
+ARG GH_EMAIL
+ARG GH_TOKEN
+ARG GH_USERNAME
+
+RUN node common/scripts/configure-buildkite-git.js && \
+  node common/scripts/rush-install-or-update && \
   node common/scripts/install-run-rush build
