@@ -1,16 +1,16 @@
 module.exports = {
-  experimentalCompileTest(modulePath, defaults) {
+  experimentalTransformTest(modulePath, defaults) {
     if (modulePath.includes('fixture-es2017-pkg')) {
-      return {
-        bundle: 'browser-only',
-        transform: 'spec',
-      }
+      return 'spec';
     }
     if (modulePath.includes('fixture-macro-pkg')) {
-      return {
-        bundle: 'universal',
-        transform: 'all',
-      };
+      return 'all';
+    }
+    return defaults;
+  },
+  experimentalBundleTest(modulePath, defaults) {
+    if (modulePath.includes('fixture-macro-pkg')) {
+      return 'universal';
     }
     return defaults;
   }
