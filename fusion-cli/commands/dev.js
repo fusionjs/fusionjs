@@ -24,6 +24,8 @@ exports.run = async function(
     hmr,
     open,
     logLevel,
+    preserveNames,
+    minify,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -41,6 +43,8 @@ exports.run = async function(
     forceLegacyBuild,
     watch: true,
     logger,
+    preserveNames,
+    minify,
   });
 
   const devRuntime = new DevelopmentRuntime(

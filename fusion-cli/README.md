@@ -32,7 +32,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--production`: Build production assets
   - `--log-level`: Log level to output to console `[default: "info"]`
 
-- `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild]`
+- `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild] [--preserveNames] [--minify]`
   Builds development assets and runs the application in development mode
 
   Note that this command only builds browser artifacts in memory, and it doesn't save them to the filesystem. This allows hot module reloading to occur faster since there's no performance cost due to I/O access.
@@ -42,7 +42,8 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--test`: Run tests as well as application
   - `--log-level`: Log level to output to console `[default: "info"]`
   - `--forceLegacyBuild`: Force enable legacy build. By default not compiled in dev.
-  - `--perserve-names`: Disable name mangling during script minification
+  - `--perserveNames`: Disable name mangling during script minification
+  - `--minify`: Enables script minification  `[default: true]`
 
 <!--
 * `fusion profile [--environment] [--watch] [--file-count]`: Profile your application
