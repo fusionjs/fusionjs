@@ -51,7 +51,6 @@ type Runtime = "server" | "client" | "sw";
 
 const COMPILATIONS /*: {[string]: Runtime} */ = {
   server: 'server',
-  serverless: 'server',
   'client-modern': 'client',
   sw: 'sw',
 };
@@ -121,86 +120,126 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
 
-  const babelConfig = getBabelConfig({
-    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-    specOnly: true,
-    plugins:
-      fusionConfig.babel && fusionConfig.babel.plugins
-        ? fusionConfig.babel.plugins
-        : [],
-    presets:
-      fusionConfig.babel && fusionConfig.babel.presets
-        ? fusionConfig.babel.presets
-        : [],
-  });
+  const babelConfig = fusionConfig.experimentalCompile
+    ? getBabelConfig({
+        dev: dev,
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+        specOnly: false,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      })
+    : getBabelConfig({
+        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+        specOnly: true,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      });
 
-  const babelOverrides = getBabelConfig({
-    dev: dev,
-    fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-    specOnly: false,
-  });
+  const babelOverrides = fusionConfig.experimentalCompile
+    ? {}
+    : getBabelConfig({
+        dev: dev,
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+        specOnly: false,
+      });
 
-  const legacyBabelConfig = getBabelConfig({
-    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-    specOnly: true,
-    plugins:
-      fusionConfig.babel && fusionConfig.babel.plugins
-        ? fusionConfig.babel.plugins
-        : [],
-    presets:
-      fusionConfig.babel && fusionConfig.babel.presets
-        ? fusionConfig.babel.presets
-        : [],
-  });
+  const legacyBabelConfig = fusionConfig.experimentalCompile
+    ? getBabelConfig({
+        dev: dev,
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+        specOnly: false,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      })
+    : getBabelConfig({
+        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+        specOnly: true,
+        plugins:
+          fusionConfig.babel && fusionConfig.babel.plugins
+            ? fusionConfig.babel.plugins
+            : [],
+        presets:
+          fusionConfig.babel && fusionConfig.babel.presets
+            ? fusionConfig.babel.presets
+            : [],
+      });
 
-  const legacyBabelOverrides = getBabelConfig({
-    dev: dev,
-    fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-    specOnly: false,
-  });
+  const legacyBabelOverrides = fusionConfig.experimentalCompile
+    ? {}
+    : getBabelConfig({
+        dev: dev,
+        fusionTransforms: true,
+        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+        specOnly: false,
+      });
 
-  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
-  const babelTester = experimentalTransformTest
+  const experimentalCompileTest = fusionConfig.experimentalCompileTest;
+  const babelTester = experimentalCompileTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
           return false;
         }
-        const transform = experimentalTransformTest(modulePath, 'spec');
-        if (transform === 'none') {
+        const {transpile} = experimentalCompileTest(modulePath, {
+          transpile: 'spec',
+          bundle: 'client',
+        });
+        if (transpile === 'none') {
           return false;
-        } else if (transform === 'all' || transform === 'spec') {
+        } else if (transpile === 'all' || transpile === 'spec') {
           return true;
         } else {
           throw new Error(
-            `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+            `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
           );
         }
       }
     : JS_EXT_PATTERN;
 
-  if (experimentalTransformTest) {
-    // $FlowFixMe
+  if (experimentalCompileTest) {
     babelOverrides.test = legacyBabelOverrides.test = modulePath => {
       if (!JS_EXT_PATTERN.test(modulePath)) {
         return false;
       }
-      const transform = experimentalTransformTest(modulePath, 'spec');
-      if (transform === 'none' || transform === 'spec') {
+      const {transpile} = experimentalCompileTest(modulePath, {
+        transpile: fusionConfig.experimentalCompile ? 'all' : 'spec',
+        bundle: 'client',
+      });
+      if (transpile === 'none' || transpile === 'spec') {
         return false;
-      } else if (transform === 'all') {
+      } else if (transpile === 'all') {
         return true;
       } else {
         throw new Error(
-          `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+          `Unknown transpile value from experimentalCompileTest ${transpile}. Expected 'spec' | 'all' | 'none'`
         );
       }
     };
   } else {
-    // $FlowFixMe
     babelOverrides.include = legacyBabelOverrides.include = [
       path.join(dir, 'src'),
       /fusion-cli(\/|\\)entries/,
@@ -228,7 +267,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           runtime === 'server' &&
           `${require.resolve('webpack/hot/poll')}?1000`,
         runtime === 'server' &&
-          path.join(__dirname, `../entries/${id}-entry.js`), // server-entry or serverless-entry
+          path.join(__dirname, '../entries/server-entry.js'),
         runtime === 'client' &&
           path.join(__dirname, '../entries/client-entry.js'),
       ].filter(Boolean),
@@ -395,20 +434,20 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               // if module is missing, skip rewriting to absolute path
               return callback(null, request);
             }
-            if (experimentalBundleTest) {
-              const bundle = experimentalBundleTest(
-                absolutePath,
-                'browser-only'
-              );
-              if (bundle === 'browser-only') {
+            if (experimentalCompileTest) {
+              const {bundle} = experimentalCompileTest(absolutePath, {
+                transpile: 'none', // default transpile value doesn't actually matter here
+                bundle: 'client',
+              });
+              if (bundle === 'client') {
                 // don't bundle on the server
                 return callback(null, 'commonjs ' + absolutePath);
-              } else if (bundle === 'universal') {
+              } else if (bundle === 'both') {
                 // bundle on the server
                 return callback();
               } else {
                 throw new Error(
-                  `Unexpected value: ${bundle} from experimentalBundleTest. Expected 'browser-only' | 'universal'.`
+                  `Unknown bundle value: ${bundle} from experimentalCompileTest. Expected 'client' | 'both'.`
                 );
               }
             }
