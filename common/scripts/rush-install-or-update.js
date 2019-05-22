@@ -17,7 +17,7 @@ const {
 const RUSH_CMD = `node ${path.join(__dirname, 'install-run-rush.js')}`;
 
 function configureGit() {
-  const repoName = BUILDKITE_REPO.replace(/^git@github\.com:|\.git$/, '');
+  const repoName = BUILDKITE_REPO.replace(/^git@github\.com:|\.git$/g, '');
   const remote = `https://${GH_USERNAME}:${GH_TOKEN}@github.com/${repoName}.git`;
 
   return execSync([
@@ -29,11 +29,25 @@ function configureGit() {
   ].join(' && '), {stdio: 'inherit'});
 }
 
+function getGitBranch() {
+  return execSync(`git rev-parse --abbrev-ref HEAD`, {
+    encoding: 'utf-8',
+  }).replace(/\n$/, '');
+}
+
+console.log('BUILDKITE_MESSAGE');
+console.log(BUILDKITE_MESSAGE);
+console.log('git branch');
+console.log(getGitBranch());
+process.exit(1);
+
 if (BUILDKITE_MESSAGE.includes('Pull request')) {
   console.log('Attempting `rush install`...');
 
   try {
     const res = execSync(`${RUSH_CMD} install`, {encoding: 'utf-8'});
+    // can't inherit stdio because then it wouldn't be available
+    // as `error.stdout` if it fails
     console.log(res);
   } catch (error) {
     if (error.stdout.includes('The shrinkwrap file (yarn.lock) is out of date.')) {
@@ -42,13 +56,11 @@ if (BUILDKITE_MESSAGE.includes('Pull request')) {
       configureGit();
       execSync([
         `${RUSH_CMD} update --full --purge`,
-        `git checkout -b test-update`,
         `git add common/config/rush/yarn.lock`,
         `git commit -m 'Update lockfile'`,
-        `git push origin2 test-update`,
+        `git push -u origin ${getGitBranch()}`,
       ].join(' && '), {stdio: 'inherit'});
     } else {
-      // stdout because it seems like rush doesn't use stderr
       console.error(error.stdout);
     }
 
