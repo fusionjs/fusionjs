@@ -4,5 +4,5 @@ RUN mkdir /monorepo
 WORKDIR /monorepo
 COPY . /monorepo/
 
-RUN node common/scripts/install-run-rush install && \
+RUN node common/scripts/rush-install-or-update && \
   node common/scripts/install-run-rush build
