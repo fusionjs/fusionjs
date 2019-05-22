@@ -55,5 +55,5 @@ if (BUILDKITE_MESSAGE.includes('Pull request')) {
     process.exit(1);
   }
 } else {
-  execSync(`node ${rushPath} install`, {stdio: 'inherit'});
+  execSync(`${RUSH_CMD} install`, {stdio: 'inherit'});
 }
