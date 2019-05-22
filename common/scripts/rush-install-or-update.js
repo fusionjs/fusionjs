@@ -8,22 +8,17 @@ const {execSync} = require('child_process');
 const path = require('path');
 
 const {
-  BUILDKITE_PULL_REQUEST,
-  BUILDKITE_PULL_REQUEST_REPO,
+  BUILDKITE_MESSAGE,
+  BUILDKITE_REPO,
   GH_EMAIL,
   GH_TOKEN,
   GH_USERNAME,
 } = process.env;
 const RUSH_CMD = `node ${path.join(__dirname, 'install-run-rush.js')}`;
 
-// temporary just to see how buildkite formats this var for our repos
-console.log('BUILDKITE_PULL_REQUEST_REPO');
-console.log(BUILDKITE_PULL_REQUEST_REPO);
-process.exit(1);
-
 function configureGit() {
-  const remote = BUILDKITE_PULL_REQUEST_REPO
-    .replace('https://', `https://${GH_USERNAME}:${GH_TOKEN}@`);
+  const repoName = BUILDKITE_REPO.replace(/^git@github\.com:|\.git$/, '');
+  const remote = `https://${GH_USERNAME}:${GH_TOKEN}@github.com/${repoName}.git`;
 
   return execSync([
     `git config user.email ${GH_EMAIL}`,
@@ -34,7 +29,7 @@ function configureGit() {
   ].join(' && '), {stdio: 'inherit'});
 }
 
-if (BUILDKITE_PULL_REQUEST && BUILDKITE_PULL_REQUEST !== 'false') {
+if (BUILDKITE_MESSAGE.includes('Pull request')) {
   console.log('Attempting `rush install`...');
 
   try {
