@@ -1,15 +1,17 @@
 version: '3'
 services:
   ci:
-    build: .
+    build:
+      context: .
+      args:
+        BUILDKITE_MESSAGE: $BUILDKITE_MESSAGE
+        BUILDKITE_REPO: $BUILDKITE_REPO
+        GH_EMAIL: $GH_EMAIL
+        GH_TOKEN: $GH_TOKEN
+        GH_USERNAME: $GH_USERNAME
     environment:
       - CODECOV_TOKEN
       - CI=true
       - BUILDKITE
-      - BUILDKITE_MESSAGE
       - BUILDKITE_PARALLEL_JOB
       - BUILDKITE_PARALLEL_JOB_COUNT
-      - BUILDKITE_REPO
-      - GH_EMAIL
-      - GH_TOKEN
-      - GH_USERNAME
