@@ -47,7 +47,7 @@ export default {
 
 // Define your reducers
 // src/redux/index.js
-import {createRPCReducer} from 'fusion-rpc-redux';
+import {createRPCReducer} from 'fusion-plugin-rpc-redux-react';
 export default createRPCReducer('greet', {
   start: (state, action) => ({...state, loading: true}),
   success: (state, action) => ({...state, loading: false, greeting: action.payload.greeting}),
@@ -57,16 +57,11 @@ export default createRPCReducer('greet', {
 // connect your component
 // src/components/index.js
 import React from 'react';
-import {FusionContext, useService} from 'fusion-react';
-import {ReduxToken} from 'fusion-plugin-react-redux';
-import {useRPCHandler} from 'fusion-plugin-rpc-redux-react';
+import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
 
-function Example({greeting, loading, error}) {
-  const greet = useRPCHandler('greet');
-  const ctx = React.useContext(FusionContext);
-  const {store} = useService(ReduxToken).from(ctx);
-  const {greeting, loading, error} = store.getState();
-
+function Example({greet, greeting, loading, error}) {
   return (
     <div>
       <button onClick={() => greet({name: 'person'})}>Greet</button>
@@ -76,19 +71,6 @@ function Example({greeting, loading, error}) {
     </div>
   );
 }
-
-export default Example;
-```
-
-This example can also be accomplished without React hooks by using the `withRPCRedux` higher-order component.
-
-```js
-import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
-import {connect} from 'react-redux';
-import {compose} from 'redux';
-
-// ...
-
 const hoc = compose(
   withRPCRedux('greet'),
   connect(({greeting, loading, error}) => ({greeting, loading, error})),
@@ -147,31 +129,6 @@ The Redux plugin must be registered from `fusion-plugin-react-redux`. See [fusio
 
 
 ---
-
-#### `useRPCHandler`
-
-```js
-import {useRPCHandler} from 'fusion-plugin-rpc-redux-react';
-```
-
-Returns the given RPC method. It can additionally configure the mapped method
-with parameters from state or from a transformation function.
-
-```js
-const handler = useRPCHandler(rpcId: string, {
-  mapStateToParams: ?(state: any) => any,
-  transformParams: ?(params: any) => any,
-}?: OptionsObject)
-
-```
-
-* `rpcId: string` - The name of the RPC method to expose in the component's
-  props
-* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
-  parameters from Redux state
-* `transformParams: ?(params: any) => any` - transforms the params
-* returns `handler: (...any) => any`
-
 
 #### `withRPCRedux`
 
