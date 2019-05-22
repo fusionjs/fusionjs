@@ -1,6 +1,6 @@
 // @flow
-// flow-typed signature: bfbfd99e158d6ba552a6d4d43e9ea945
-// flow-typed version: 84e615b60b/prop-types_v15.x.x/flow_>=v0.89.x
+
+/* eslint-disable */
 
 type $npm$propTypes$ReactPropsCheckType = (
   props: any,

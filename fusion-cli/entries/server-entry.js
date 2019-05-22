@@ -13,7 +13,7 @@ import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-lin
 
 import http from 'http';
 
-import {
+import BaseApp, {
   createPlugin,
   HttpServerToken,
   RoutePrefixToken,
@@ -68,6 +68,9 @@ export async function start({port, dir = '.'} /*: any */) {
 
 async function reload() {
   const app = await initialize();
+  if (!(app instanceof BaseApp)) {
+    throw new Error('Application entry point did not return an App');
+  }
   reverseRegister(app, ContextPlugin);
   app.register(AssetsPlugin);
   app.register(SSRBodyTemplateToken, SSRBodyTemplate);
