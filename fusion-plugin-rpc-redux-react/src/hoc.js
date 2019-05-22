@@ -8,8 +8,10 @@
 
 import * as React from 'react';
 import type {Reducer} from 'redux';
-import {createRPCReactors} from 'fusion-rpc-redux';
-import {useRPCHandler} from './hook.js';
+import {RPCToken} from 'fusion-plugin-rpc';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {FusionContext, useService} from 'fusion-react';
+import {createRPCReactors, createRPCHandler} from 'fusion-rpc-redux';
 
 type RPCReducersType = {
   start?: Reducer<*, *>,
@@ -55,11 +57,17 @@ export function withRPCRedux<Props: {}>(
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   return (Component: React.ComponentType<Props>) => {
     function WithRPCRedux(props: Props) {
+      const ctx = React.useContext(FusionContext);
+      const {store} = useService(ReduxToken).from(ctx);
+      const rpc = useService(RPCToken).from(ctx);
       if (mapStateToParams) {
         const mapState = mapStateToParams;
         mapStateToParams = (state, args) => mapState(state, args, props);
       }
-      const handler = useRPCHandler(rpcId, {
+      const handler = createRPCHandler({
+        rpcId,
+        rpc,
+        store,
         actions,
         mapStateToParams,
         transformParams,
