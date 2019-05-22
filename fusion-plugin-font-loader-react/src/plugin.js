@@ -8,10 +8,7 @@
 
 /* eslint-env node */
 
-import React from 'react';
-
 import {createPlugin, html, dangerouslySetHTML} from 'fusion-core';
-import FontProvider from './provider';
 import PreloadSession from './preload-session';
 import generateFallbackMap from './generate-fallback-map';
 import generatePreloadLinks from './generate-preload-links';
@@ -26,26 +23,38 @@ import type {
   StyledFontsObjectType,
 } from './types.js';
 
+let preloadSession;
+
 const plugin = createPlugin({
   deps: {
     config: ConfigToken,
+  },
+  provides: ({config}) => {
+    if (!preloadSession) {
+      const {fonts, preloadDepth} = config;
+      const atomicFonts: AtomicFontsObjectType = (fonts: any);
+      const fallbackLookup = generateFallbackMap(
+        atomicFonts,
+        preloadDepth || 0
+      );
+      preloadSession = new PreloadSession(fallbackLookup);
+    }
+    return preloadSession.getFontDetails;
   },
   middleware: ({config}) => {
     const {fonts, preloadDepth, withStyleOverloads, preloadOverrides} = config;
     const atomicFonts: AtomicFontsObjectType = (fonts: any);
     const styledFonts: StyledFontsObjectType = (fonts: any);
-    const fallbackLookup = generateFallbackMap(atomicFonts, preloadDepth || 0);
-    const preloadSession = new PreloadSession(fallbackLookup);
+    if (!preloadSession) {
+      const fallbackLookup = generateFallbackMap(
+        atomicFonts,
+        preloadDepth || 0
+      );
+      preloadSession = new PreloadSession(fallbackLookup);
+    }
 
     return (ctx, next) => {
       if (ctx.element) {
-        if (!withStyleOverloads) {
-          ctx.element = (
-            <FontProvider getFontDetails={preloadSession.getFontDetails}>
-              {ctx.element}
-            </FontProvider>
-          );
-        }
         return next().then(() => {
           if (__NODE__) {
             ctx.template.head.push(html`<style>`);
