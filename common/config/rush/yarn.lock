@@ -1775,7 +1775,7 @@
 
 "@rush-temp/fusion-plugin-font-loader-react@file:./projects/fusion-plugin-font-loader-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-font-loader-react.tgz#9bae8f8d65987f13f752e7f60e73b628b9065896"
+  resolved "file:./projects/fusion-plugin-font-loader-react.tgz#97e8e18af85fccefb77caee72a3127da2f6b3dff"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
