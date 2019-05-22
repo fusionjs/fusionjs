@@ -6,57 +6,44 @@
  * @noflow
  */
 
-const path = require('path');
+/* eslint-env node */
 const puppeteer = require('puppeteer');
 const getPort = require('get-port');
 const child_process = require('child_process');
 const {promisify} = require('util');
+
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
 const request = require('request-promise');
 
-exports.withFixture = async function withFixture(fixture, tests) {
-  const cwd = path.join(__dirname, fixture);
-  const env = Object.assign({}, process.env, {NODE_ENV: 'production'});
+/* Test helpers */
+module.exports.createMockEmitter = function createMockEmitter(props) {
+  const emitter = {
+    from: () => {
+      return emitter;
+    },
+    emit: () => {},
+    setFrequency: () => {},
+    teardown: () => {},
+    map: () => {},
+    on: () => {},
+    off: () => {},
+    mapEvent: () => {},
+    handleEvent: () => {},
+    flush: () => {},
+    ...props,
+  };
+  return emitter;
+};
 
-  const [port] = await Promise.all([
-    getPort(),
-    execFile('fusion', ['build'], {cwd, env}),
-  ]);
-
-  const server = spawn('fusion', ['start', `--port=${port}`], {
-    stdio: 'inherit',
-    cwd,
-    env,
-  });
-
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  });
-
-  const page = await browser.newPage();
-  await untilReady(page, port);
-
-  page.on('console', msg => msg.args().forEach(async arg => {
-    console.log(await arg.jsonValue());
-  }));
-
-  try {
-    await tests(page)
-  } finally {
-    await server.kill();
-    await browser.close();
-  }
-}
-
-exports.Runtime = class Runtime {
+module.exports.Runtime = class Runtime {
   constructor(opts) {
     this.fixturePath = opts.fixture || '.';
     this.collectLogs = opts.collectLogs || false;
     this.started = false;
   }
   async start() {
-    const cwd = path.join(__dirname, this.fixturePath);
+    const cwd = this.fixturePath;
     const env = Object.assign({}, process.env, {NODE_ENV: 'production'});
 
     const [port] = await Promise.all([
@@ -81,15 +68,15 @@ exports.Runtime = class Runtime {
 
     this.started = true;
     if (this.collectLogs) {
-      this.page.on('console', msg => msg.args().forEach(async arg => {
-        console.log(await arg.jsonValue());
-      }));
+      this.page.on('console', msg =>
+        msg.args().forEach(async arg => {
+          console.log(await arg.jsonValue()); // eslint-disable-line
+        })
+      );
     }
   }
   request(path) {
-    const url = `${this.url}${
-      path.startsWith('/') ? path : `/${path}`
-    }`;
+    const url = `${this.url}${path.startsWith('/') ? path : `/${path}`}`;
     return request(url);
   }
   async end() {
@@ -119,4 +106,4 @@ async function untilReady(page, port) {
   if (!started) {
     throw new Error('Failed to start');
   }
-};
+}

@@ -8,14 +8,19 @@
 
 const {Runtime} = require('../utils.js');
 
-test('browser plugin integration test withRPCRedux', async () => {
-  const runtime = new Runtime({fixture: '.'});
+/* eslint-env node */
+test('browser plugin integration test withRPCRedux', async done => {
+  const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
   // rpc actions are dispatched as sideEffect
   // result of successful rpc call is returned in dom
-  const userId = await runtime.page.$eval('[data-testid="user-id"]', el => el.textContent);
+  const userId = await runtime.page.$eval(
+    '[data-testid="user-id"]',
+    el => el.textContent
+  );
   expect(userId).toEqual('123');
 
   await runtime.end();
+  done();
 }, 30000);

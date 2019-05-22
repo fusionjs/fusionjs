@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
@@ -6,7 +7,9 @@ import {withRPCRedux} from '../../..';
 
 function Root(props) {
   return (
-    <div id="user" data-testid="user-id">{props.user.id}</div>
+    <div id="user" data-testid="user-id">
+      {props.user.id}
+    </div>
   );
 }
 
