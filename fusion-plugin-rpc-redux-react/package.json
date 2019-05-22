@@ -35,9 +35,10 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-redux": "^5.1.1"
+    "react-redux": ">=6.x"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "create-universal-package": "^3.4.7",
@@ -60,7 +61,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^5.1.1",
+    "react-redux": "^7.0.3",
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "redux-reactors": "^1.0.3",
