@@ -35,6 +35,10 @@ export const ApolloClientToken: Token<
   InitApolloClientType<mixed>
 > = createToken('ApolloClientToken');
 
+export const GetDataFromTreeToken: Token<
+  InitApolloClientType<mixed>
+> = createToken('GetDataFromTreeToken');
+
 type BodyParserConfigType = {
   enableTypes?: Array<string>,
   encoding?: string,
