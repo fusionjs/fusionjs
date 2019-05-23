@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "fusion-plugin-react-redux": "0.0.0-monorepo",
-    "react-redux": "6.x"
+    "react-redux": ">=6.x",
+    "reduce-reducers": "^1.0.4"
   },
   "peerDependencies": {
     "connected-react-router": "^4.4.1",

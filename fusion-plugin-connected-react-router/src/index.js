@@ -13,6 +13,8 @@ import {
   connectRouter,
 } from 'connected-react-router';
 import {RouterToken} from 'fusion-plugin-react-router';
+import {combineReducers} from 'redux';
+import reduceReducers from 'reduce-reducers';
 
 import type {ConnectedRouterPluginType} from './types';
 
@@ -26,7 +28,11 @@ const plugin: ConnectedRouterPluginType = createPlugin({
         const store = createStore(reducer, initialState);
         // $FlowFixMe - We enhance the store to add ctx onto it, which doesn't exist in the redux libdef
         const {history} = router.from(store.ctx);
-        store.replaceReducer(connectRouter(history)(reducer));
+        const routerReducer = combineReducers({
+          router: connectRouter(history),
+        });
+        const rootReducer = reduceReducers(routerReducer, reducer);
+        store.replaceReducer(rootReducer);
         const oldDispatch = store.dispatch;
         const routerMiddleware = createRouterMiddleware(history)(store);
         store.dispatch = action => {
