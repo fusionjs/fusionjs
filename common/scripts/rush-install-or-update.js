@@ -10,7 +10,7 @@ const path = require('path');
 const {BUILDKITE_MESSAGE} = process.env;
 const RUSH_CMD = `node ${path.join(__dirname, 'install-run-rush.js')}`;
 
-if (BUILDKITE_MESSAGE.includes('Pull request')) {
+if (/^pull request/i.test(BUILDKITE_MESSAGE)) {
   console.log('Attempting `rush install`...');
 
   try {
