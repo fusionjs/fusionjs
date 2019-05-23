@@ -86,6 +86,7 @@ if (
           // git is authenticated with github token via basic auth in remote url
           `git remote remove origin`,
           `git remote add origin ${remoteUrl}`,
+          `git checkout -b ${branchName}`,
           `git branch --set-upstream-to origin/${branchName}`,
         ].join(' && '),
         {stdio: 'inherit'}
