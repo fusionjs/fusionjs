@@ -58,9 +58,6 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
         if (!t.isJSXIdentifier(attr.name)) {
           return;
         }
-        if (!t.isStringLiteral(attr.value)) {
-          return;
-        }
         if (attr.name.name !== 'id') {
           return;
         }
