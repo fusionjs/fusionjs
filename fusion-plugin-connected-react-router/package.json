@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "fusion-plugin-react-redux": "0.0.0-monorepo",
-    "react-redux": "^5.1.1"
+    "react-redux": "6.x"
   },
   "peerDependencies": {
     "connected-react-router": "^4.4.1",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "connected-react-router": "^4.4.1",
+    "connected-react-router": "^6.4.0",
     "create-universal-package": "^3.4.7",
     "eslint": "^5.16.0",
     "eslint-config-fusion": "0.0.0-monorepo",

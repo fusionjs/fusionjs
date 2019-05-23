@@ -35,7 +35,7 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-redux": ">=6.x"
+    "react-redux": "6.x"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -61,7 +61,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^7.0.3",
+    "react-redux": "6.x",
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "redux-reactors": "^1.0.3",
