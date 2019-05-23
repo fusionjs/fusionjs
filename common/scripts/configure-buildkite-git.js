@@ -28,7 +28,7 @@ async function getRepoInfo() {
     branchName = BUILDKITE_BRANCH;
   } else {
     const [, pullRequestNumber] =
-      /^Pull request #(\d+)/.exec(BUILDKITE_MESSAGE) || [];
+      /^Pull request #(\d+)/i.exec(BUILDKITE_MESSAGE) || [];
     // this might fail if PR uses a fork and `maintainersCanModify` is false
     const pullRequest = await githubGraphql({
       token: GH_TOKEN,
