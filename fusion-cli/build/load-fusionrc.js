@@ -17,15 +17,14 @@ let loggedNotice = false;
 
 /*::
 
-type CompileResult = {
-  bundle: 'both' | 'client',
-  transpile: 'spec' | 'all' | 'none',
-};
+type BundleResult =  'universal' | 'browser-only';
+type TransformResult = 'all' | 'spec' | 'none';
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
   experimentalCompile?: boolean,
-  experimentalCompileTest?: (modulePath: string) => CompileResult,
+  experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
+  experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
   nodeBuiltins?: {[string]: any},
 };
 */
@@ -67,12 +66,34 @@ function isValid(config) {
         'babel',
         'assumeNoImportSideEffects',
         'experimentalCompile',
-        'experimentalCompileTest',
+        'experimentalTransformTest',
+        'experimentalBundleTest',
         'nodeBuiltins',
       ].includes(key)
     )
   ) {
     throw new Error(`Invalid property in .fusionrc.js`);
+  }
+
+  if (config.experimentalCompile && config.experimentalTransformTest) {
+    throw new Error(
+      `Cannot use both experimentalCompile and experimentalTransformTest in .fusionrc.js`
+    );
+  }
+  if (config.experimentalCompile && config.experimentalBundleTest) {
+    throw new Error(
+      `Cannot use both experimentalCompile and experimentalBundleTest in .fusionrc.js`
+    );
+  }
+
+  if (config.experimentalCompile) {
+    console.log(
+      'WARNING: experimentalCompile is deprecated. Use experimentalTransformTest instead.'
+    );
+    config.experimentalTransformTest = (file, defaults) => {
+      return 'all';
+    };
+    delete config.experimentalCompile;
   }
 
   if (
