@@ -163,13 +163,26 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     specOnly: false,
   });
 
+  const getTransformDefault = modulePath => {
+    if (
+      modulePath.startsWith(path.join(dir, 'src')) ||
+      /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
+    ) {
+      return 'all';
+    }
+    return 'spec';
+  };
+
   const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
   const babelTester = experimentalTransformTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
           return false;
         }
-        const transform = experimentalTransformTest(modulePath, 'spec');
+        const transform = experimentalTransformTest(
+          modulePath,
+          getTransformDefault(modulePath)
+        );
         if (transform === 'none') {
           return false;
         } else if (transform === 'all' || transform === 'spec') {
@@ -182,31 +195,25 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       }
     : JS_EXT_PATTERN;
 
-  if (experimentalTransformTest) {
-    // $FlowFixMe
-    babelOverrides.test = legacyBabelOverrides.test = modulePath => {
-      if (!JS_EXT_PATTERN.test(modulePath)) {
-        return false;
-      }
-      const transform = experimentalTransformTest(modulePath, 'spec');
-      if (transform === 'none' || transform === 'spec') {
-        return false;
-      } else if (transform === 'all') {
-        return true;
-      } else {
-        throw new Error(
-          `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
-        );
-      }
-    };
-  } else {
-    // $FlowFixMe
-    babelOverrides.include = legacyBabelOverrides.include = [
-      path.join(dir, 'src'),
-      /fusion-cli(\/|\\)entries/,
-      /fusion-cli(\/|\\)plugins/,
-    ];
-  }
+  // $FlowFixMe
+  babelOverrides.test = legacyBabelOverrides.test = modulePath => {
+    if (!JS_EXT_PATTERN.test(modulePath)) {
+      return false;
+    }
+    const defaultTransform = getTransformDefault(modulePath);
+    const transform = experimentalTransformTest
+      ? experimentalTransformTest(modulePath, defaultTransform)
+      : defaultTransform;
+    if (transform === 'none' || transform === 'spec') {
+      return false;
+    } else if (transform === 'all') {
+      return true;
+    } else {
+      throw new Error(
+        `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+      );
+    }
+  };
   return {
     name: runtime,
     target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
