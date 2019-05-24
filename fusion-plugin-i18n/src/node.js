@@ -94,6 +94,10 @@ const pluginFactory: () => PluginType = () =>
             </script>
           `; // consumed by ./browser
           ctx.template.body.push(script);
+
+          // set HTML lang tag as a hint for signal screen readers to switch to the
+          // recommended language.
+          ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
           const ids = querystring.parse(ctx.querystring).ids || '';
