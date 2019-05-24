@@ -7,6 +7,7 @@
  */
 
 import * as React from 'react';
+import ssrPrepass from 'react-ssr-prepass';
 
 class PrepareState {
   seen: Map<any, Set<string>>;
@@ -64,8 +65,6 @@ class PrepareState {
 }
 
 export default function prepare(element: any) {
-  const renderToStaticMarkup = require('react-dom/server').renderToStaticMarkup;
-
   const prepareState = new PrepareState();
 
   class PrepareContextProvider extends React.Component<{}> {
@@ -85,9 +84,7 @@ export default function prepare(element: any) {
   };
 
   function process() {
-    const html = renderToStaticMarkup(
-      React.createElement(PrepareContextProvider)
-    );
+    const html = ssrPrepass(React.createElement(PrepareContextProvider));
 
     return prepareState.pending.size
       ? prepareState.consumeAndAwaitPromises().then(process)
