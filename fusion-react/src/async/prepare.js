@@ -84,11 +84,11 @@ export default function prepare(element: any) {
   };
 
   function process() {
-    const html = ssrPrepass(React.createElement(PrepareContextProvider));
+    ssrPrepass(React.createElement(PrepareContextProvider));
 
-    return prepareState.pending.size
-      ? prepareState.consumeAndAwaitPromises().then(process)
-      : html;
+    if (prepareState.pending.size) {
+      return prepareState.consumeAndAwaitPromises().then(process);
+    }
   }
 
   return Promise.resolve().then(process);
