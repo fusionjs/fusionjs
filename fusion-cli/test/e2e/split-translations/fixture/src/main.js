@@ -30,3 +30,15 @@ if (__BROWSER__ && module.hot) {
     module.hot.addStatusHandler(handler);
   };
 }
+
+if (__BROWSER__) {
+  window.check = () => {
+    module.hot.check().then(outdatedModules => {
+      console.log({outdatedModules});
+      // outdated modules...
+    }).catch(error => {
+      // catch errors
+      console.error(error);
+    });
+  }
+}
