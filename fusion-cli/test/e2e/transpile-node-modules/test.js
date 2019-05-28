@@ -55,5 +55,5 @@ test('transpiles node_modules', async () => {
     ],
   });
 
-  t.ok(clientVendor.includes(`"fixturepkg_string"`));
+  t.ok(clientVendor.includes(`'fixturepkg_string'`));
 }, 100000);
