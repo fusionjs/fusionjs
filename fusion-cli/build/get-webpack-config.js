@@ -121,83 +121,99 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
 
-  const babelConfig = fusionConfig.experimentalCompile
-    ? getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: false,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      })
-    : getBabelConfig({
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: true,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      });
+  const babelConfig = getBabelConfig({
+    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+    specOnly: true,
+    plugins:
+      fusionConfig.babel && fusionConfig.babel.plugins
+        ? fusionConfig.babel.plugins
+        : [],
+    presets:
+      fusionConfig.babel && fusionConfig.babel.presets
+        ? fusionConfig.babel.presets
+        : [],
+  });
 
-  const babelOverrides = fusionConfig.experimentalCompile
-    ? {}
-    : getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
-        specOnly: false,
-      });
+  const babelOverrides = getBabelConfig({
+    dev: dev,
+    fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
+    specOnly: false,
+  });
 
-  const legacyBabelConfig = fusionConfig.experimentalCompile
-    ? getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: false,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      })
-    : getBabelConfig({
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: true,
-        plugins:
-          fusionConfig.babel && fusionConfig.babel.plugins
-            ? fusionConfig.babel.plugins
-            : [],
-        presets:
-          fusionConfig.babel && fusionConfig.babel.presets
-            ? fusionConfig.babel.presets
-            : [],
-      });
+  const legacyBabelConfig = getBabelConfig({
+    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+    specOnly: true,
+    plugins:
+      fusionConfig.babel && fusionConfig.babel.plugins
+        ? fusionConfig.babel.plugins
+        : [],
+    presets:
+      fusionConfig.babel && fusionConfig.babel.presets
+        ? fusionConfig.babel.presets
+        : [],
+  });
 
-  const legacyBabelOverrides = fusionConfig.experimentalCompile
-    ? {}
-    : getBabelConfig({
-        dev: dev,
-        fusionTransforms: true,
-        assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
-        target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-        specOnly: false,
-      });
+  const legacyBabelOverrides = getBabelConfig({
+    dev: dev,
+    fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+    specOnly: false,
+  });
+
+  const getTransformDefault = modulePath => {
+    if (
+      modulePath.startsWith(path.join(dir, 'src')) ||
+      /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
+    ) {
+      return 'all';
+    }
+    return 'spec';
+  };
+
+  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
+  const babelTester = experimentalTransformTest
+    ? modulePath => {
+        if (!JS_EXT_PATTERN.test(modulePath)) {
+          return false;
+        }
+        const transform = experimentalTransformTest(
+          modulePath,
+          getTransformDefault(modulePath)
+        );
+        if (transform === 'none') {
+          return false;
+        } else if (transform === 'all' || transform === 'spec') {
+          return true;
+        } else {
+          throw new Error(
+            `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+          );
+        }
+      }
+    : JS_EXT_PATTERN;
+
+  // $FlowFixMe
+  babelOverrides.test = legacyBabelOverrides.test = modulePath => {
+    if (!JS_EXT_PATTERN.test(modulePath)) {
+      return false;
+    }
+    const defaultTransform = getTransformDefault(modulePath);
+    const transform = experimentalTransformTest
+      ? experimentalTransformTest(modulePath, defaultTransform)
+      : defaultTransform;
+    if (transform === 'none' || transform === 'spec') {
+      return false;
+    } else if (transform === 'all') {
+      return true;
+    } else {
+      throw new Error(
+        `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+      );
+    }
+  };
   return {
     name: runtime,
     target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
@@ -285,7 +301,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         runtime === 'server' && {
           compiler: id => id === 'server',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -297,12 +313,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...babelOverrides,
                   },
                 ],
@@ -315,7 +325,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         (runtime === 'client' || runtime === 'sw') && {
           compiler: id => id === 'client' || id === 'sw',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -327,12 +337,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...babelOverrides,
                   },
                 ],
@@ -345,7 +349,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          */
         runtime === 'client' && {
           compiler: id => id === 'client-legacy',
-          test: JS_EXT_PATTERN,
+          test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
@@ -357,12 +361,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                  */
                 overrides: [
                   {
-                    include: [
-                      // Explictly only transpile user source code as well as fusion-cli entry files
-                      path.join(dir, 'src'),
-                      /fusion-cli(\/|\\)entries/,
-                      /fusion-cli(\/|\\)plugins/,
-                    ],
                     ...legacyBabelOverrides,
                   },
                 ],
@@ -398,11 +396,28 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtime === 'server' &&
         ((context, request, callback) => {
           if (/^[@a-z\-0-9]+/.test(request)) {
-            // do not bundle external packages and those not whitelisted
             const absolutePath = resolveFrom.silent(context, request);
+            // do not bundle external packages and those not whitelisted
             if (absolutePath === null) {
               // if module is missing, skip rewriting to absolute path
               return callback(null, request);
+            }
+            if (experimentalBundleTest) {
+              const bundle = experimentalBundleTest(
+                absolutePath,
+                'browser-only'
+              );
+              if (bundle === 'browser-only') {
+                // don't bundle on the server
+                return callback(null, 'commonjs ' + absolutePath);
+              } else if (bundle === 'universal') {
+                // bundle on the server
+                return callback();
+              } else {
+                throw new Error(
+                  `Unexpected value: ${bundle} from experimentalBundleTest. Expected 'browser-only' | 'universal'.`
+                );
+              }
             }
             return callback(null, 'commonjs ' + absolutePath);
           }

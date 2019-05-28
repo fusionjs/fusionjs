@@ -65,14 +65,14 @@ test('ssr', async t => {
     headers: {'accept-language': 'en-US'},
     element: 'test',
     // $FlowFixMe - Invalid context
-    template: {body: []},
+    template: {htmlAttrs: {}, body: []},
     memoized: new Map(),
   };
   const deps = {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(3);
+  t.plan(4);
   if (!I18n.provides) {
     t.end();
     return;
@@ -92,6 +92,7 @@ test('ssr', async t => {
   );
   // $FlowFixMe
   t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
+  t.equals(ctx.template.htmlAttrs['lang'], 'en-US');
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
