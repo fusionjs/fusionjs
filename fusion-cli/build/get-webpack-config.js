@@ -120,7 +120,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
-  const shouldMinify = !dev && minify && runtime === 'client';
+  const shouldMinify = !dev && minify;
 
   const babelConfig = getBabelConfig({
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
