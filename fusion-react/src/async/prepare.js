@@ -83,8 +83,8 @@ export default function prepare(element: any) {
     __IS_PREPARE__: () => {},
   };
 
-  function process() {
-    ssrPrepass(React.createElement(PrepareContextProvider));
+  async function process() {
+    await ssrPrepass(React.createElement(PrepareContextProvider));
 
     if (prepareState.pending.size) {
       return prepareState.consumeAndAwaitPromises().then(process);
