@@ -1,6 +1,5 @@
 // @noflow
-import App from 'fusion-core';
-import {assetUrl} from 'fusion-core';
+import App, {assetUrl} from 'fusion-core';
 import {key as jsonField} from './static/test.json';
 
 import serverAsset from './server-asset.js';
@@ -8,6 +7,8 @@ import serverAsset from './server-asset.js';
 const hoistedUrl = assetUrl('./static/test.css');
 if (typeof window !== 'undefined') {
   window.__hoistedUrl__ = hoistedUrl;
+  window.__hoistedDirname__ = __dirname;
+  window.__hoistedFilename__ = __filename;
 }
 
 export default (async function() {
@@ -33,8 +34,5 @@ export default (async function() {
       }
       return next();
     });
-
-  __BROWSER__ && console.log('Dirname is', __dirname);
-  __BROWSER__ && console.log('Filename is', __filename);
   return app;
 });

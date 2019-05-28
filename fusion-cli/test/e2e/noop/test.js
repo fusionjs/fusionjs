@@ -42,8 +42,9 @@ test('`fusion dev` works', async () => {
   const entryPath = `.fusion/dist/development/server/server-main.js`;
   const entry = path.resolve(dir, entryPath);
 
-  const {proc} = await dev(`--dir=${dir}`);
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const {proc, port} = await dev(`--dir=${dir}`);
+  const resp = await request(`http://localhost:${port}/_static/client-main.js`);
+  expect(resp.includes(`longVariableNameForElement`)).toEqual(true);
   t.ok(await exists(entry), 'Entry file gets compiled');
   proc.kill();
 });

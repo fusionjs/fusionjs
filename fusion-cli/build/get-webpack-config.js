@@ -120,6 +120,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
+  const shouldMinify = !dev && minify;
 
   const babelConfig = getBabelConfig({
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
@@ -568,32 +569,31 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
         },
       },
-      minimize: minify,
-      minimizer:
-        !dev && minify && runtime === 'client'
-          ? [
-              new TerserPlugin({
-                sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
-                cache: true, // default from webpack
-                parallel: true, // default from webpack
-                terserOptions: {
-                  compress: {
-                    // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
-                    // This mangles mapbox-gl creating an error when used alongside with window global mangling:
-                    // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
-                    typeofs: false,
+      minimize: shouldMinify,
+      minimizer: shouldMinify
+        ? [
+            new TerserPlugin({
+              sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
+              cache: true, // default from webpack
+              parallel: true, // default from webpack
+              terserOptions: {
+                compress: {
+                  // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
+                  // This mangles mapbox-gl creating an error when used alongside with window global mangling:
+                  // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
+                  typeofs: false,
 
-                    // inline=2 can cause const reassignment
-                    // https://github.com/mishoo/UglifyJS2/issues/2842
-                    inline: 1,
-                  },
-
-                  keep_fnames: opts.preserveNames,
-                  keep_classnames: opts.preserveNames,
+                  // inline=2 can cause const reassignment
+                  // https://github.com/mishoo/UglifyJS2/issues/2842
+                  inline: 1,
                 },
-              }),
-            ]
-          : undefined,
+
+                keep_fnames: opts.preserveNames,
+                keep_classnames: opts.preserveNames,
+              },
+            }),
+          ]
+        : undefined,
     },
   };
 }
