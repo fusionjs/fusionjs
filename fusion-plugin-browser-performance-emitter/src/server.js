@@ -21,7 +21,19 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
     provides: deps => {
       const emitter = deps.emitter;
       emitter.on('browser-performance-emitter:stats:browser-only', (e, ctx) => {
-        emitter.emit('browser-performance-emitter:stats', mapPerfEvent(e), ctx);
+        if (ctx) {
+          const scopedEmitter = emitter.from(ctx);
+          scopedEmitter.emit(
+            'browser-performance-emitter:stats',
+            mapPerfEvent(e)
+          );
+        } else {
+          emitter.emit(
+            'browser-performance-emitter:stats',
+            mapPerfEvent(e),
+            ctx
+          );
+        }
       });
 
       /* Helper Functions */
