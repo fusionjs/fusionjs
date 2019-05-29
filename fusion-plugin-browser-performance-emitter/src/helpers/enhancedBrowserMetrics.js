@@ -23,7 +23,9 @@ function getEntries(window) {
     entry => entry.name.indexOf('data:') !== 0 && entry.toJSON
   );
   const navigations = window.performance.getEntriesByType('navigation');
-  const html = navigations.filter(entry => entry.entryType === 'navigation');
+  const html = navigations.filter(
+    entry => entry.entryType === 'navigation' && entry.toJSON
+  );
   return jsonResources.concat(html).map(function(entry) {
     return entry.toJSON();
   });
