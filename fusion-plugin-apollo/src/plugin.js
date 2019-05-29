@@ -35,7 +35,7 @@ export type DepsType = {
   schema: typeof GraphQLSchemaToken.optional,
   endpoint: typeof GraphQLEndpointToken.optional,
   getApolloClient: typeof ApolloClientToken,
-  getDataFromTree: typeof GetDataFromTreeToken,
+  getDataFromTree: typeof GetDataFromTreeToken.optional,
   bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
 };
 
