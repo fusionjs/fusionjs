@@ -9,9 +9,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-// $FlowFixMe
-import {__RouterContext as RouterContext} from 'react-router-dom';
-
 import type {LocationShapeType, RedirectType} from '../types.js';
 
 type PropsType = {|
@@ -23,52 +20,41 @@ type PropsType = {|
   code?: number | string,
   children?: React.Node,
 |};
-
-type HistoryContextType = {
-  push: (el: string | LocationShapeType) => void,
-  replace: (el: string | LocationShapeType) => void,
-};
-
-type StaticContextType = {
-  setCode: (code: number) => void,
-  redirect: (el: string | LocationShapeType) => void,
-};
-
 type ContextType = {
-  router?: {
-    staticContext?: StaticContextType,
+  router: {
+    history: {
+      push: (el: string | LocationShapeType) => void,
+      replace: (el: string | LocationShapeType) => void,
+    },
+    staticContext?: {
+      setCode: (code: number) => void,
+      redirect: (el: string | LocationShapeType) => void,
+    },
   },
 };
-
-class Lifecycle extends React.Component<{
-  onConstruct?: () => void,
-  onMount?: () => void,
-}> {
-  constructor(props) {
-    super(props);
-    if (this.props.onConstruct) this.props.onConstruct.call(this, this);
-  }
-  componentDidMount() {
-    if (this.props.onMount) this.props.onMount.call(this, this);
-  }
-  render() {
-    return null;
-  }
-}
-
 export class Redirect extends React.Component<PropsType> {
   context: ContextType;
+
+  constructor(props: PropsType, context: ContextType) {
+    super(props, context);
+    if (this.isStatic(context)) this.perform();
+  }
 
   static defaultProps = {
     push: false,
     code: 307,
   };
 
+  componentDidMount() {
+    if (!this.isStatic()) this.perform();
+  }
+
   isStatic(context: ContextType = this.context): boolean {
     return !!(context && context.router && context.router.staticContext);
   }
 
-  perform(history: HistoryContextType, staticContext: ?StaticContextType) {
+  perform() {
+    const {history, staticContext} = this.context.router;
     const {push, to, code} = this.props;
 
     if (__NODE__ && staticContext) {
@@ -85,29 +71,18 @@ export class Redirect extends React.Component<PropsType> {
   }
 
   render() {
-    return (
-      <RouterContext.Consumer>
-        {context => {
-          const history = context.history;
-          const staticContext =
-            this.context.router && this.context.router.staticContext;
-          const perform = () => this.perform(history, staticContext);
-
-          const props = this.isStatic()
-            ? {onConstruct: perform}
-            : {onMount: perform};
-
-          return <Lifecycle {...props} />;
-        }}
-      </RouterContext.Consumer>
-    );
+    return null;
   }
 }
 
 Redirect.contextTypes = {
   router: PropTypes.shape({
+    history: PropTypes.shape({
+      push: PropTypes.func.isRequired,
+      replace: PropTypes.func.isRequired,
+    }).isRequired,
     staticContext: PropTypes.object,
-  }),
+  }).isRequired,
 };
 
 // Sanity type checking
