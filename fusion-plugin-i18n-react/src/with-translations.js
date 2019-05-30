@@ -61,6 +61,7 @@ export const withTranslations = (
 
     const displayName = Component.displayName || Component.name || 'Anonymous';
     WithTranslations.displayName = `withTranslations(${displayName})`;
+    // $FlowFixMe
     WithTranslations.contextType = I18nContext;
 
     return WithTranslations;

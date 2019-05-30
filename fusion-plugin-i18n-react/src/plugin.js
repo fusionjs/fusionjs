@@ -13,11 +13,12 @@ import i18n, {I18nToken} from 'fusion-plugin-i18n';
 import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
 import {FusionContext, ProviderPlugin, useService} from 'fusion-react';
 
-export const I18nContext = React.createContext(() => {
-  throw new Error(
-    'Attempting to use i18n Context without registering Fusion.js plugin from `fusion-plugin-i18n-react`'
-  );
-});
+type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
+export type I18nType = $Call<
+  ExtractReturnType,
+  $PropertyType<I18nServiceType, 'from'>
+>;
+export const I18nContext = React.createContext<I18nType>({});
 
 /**
  * The i18n service is loaded with the fusion ctx and provided to the
@@ -27,7 +28,8 @@ export const I18nContext = React.createContext(() => {
  */
 function BundleSplitConsumer(props, {splitComponentLoaders}) {
   const ctx = React.useContext(FusionContext);
-  const i18n = useService(I18nToken).from(ctx);
+  const service: I18nServiceType = useService(I18nToken);
+  const i18n = service.from(ctx);
   React.useMemo(() => {
     // `splitComponentLoaders` comes from fusion-react/async/prepare-provider
     // `ids` comes from fusion-react/async/split

@@ -17,6 +17,7 @@ test('withTranslations() HOC - localeCode', () => {
   });
 
   const mockI18n = {
+    async load() {},
     localeCode: 'fr_CA',
     translate() {
       return 'foo bar baz';
