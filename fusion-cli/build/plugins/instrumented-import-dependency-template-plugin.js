@@ -30,6 +30,9 @@ type ClientPluginOpts = {
 };
 */
 
+const Dependency = require('webpack/lib/Dependency');
+const ImportPlugin = require('webpack/lib/dependencies/ImportPlugin');
+const ImportParserPlugin = require('webpack/lib/dependencies/ImportParserPlugin');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
@@ -50,6 +53,43 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
  * // Also returns a promise, but with extra non-enumerable properties
  */
 
+
+class InstrumentedImportDependency extends Dependency {
+  constructor(module) {
+    super();
+    console.log('=== constructor =======');
+    this.module = module;
+    this.originModule = module;
+    this.block = {};
+    // console.log(Object.keys(module));
+    /*
+    this.originalModule = originalModule;
+    this.block = block;
+    */
+  }
+
+  updateHash(hash) {
+    super.updateHash(hash);
+    console.log('=== update hash =======');
+    /*
+    const importedModule = this.module;
+    console.log('--------------------------', {meta: importedModule.buildMeta});
+    */
+  /*
+    hash.update(
+    (importedModule &&
+    (!importedModule.buildMeta || importedModule.buildMeta.exportsType)) +
+    ""
+    );
+    hash.update((importedModule && importedModule.id) + "");
+  */
+  }
+}
+
+InstrumentedImportDependency.Template = class MyDependencyTemplate {
+  apply() {}
+};
+
 class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
   /*:: clientChunkIndex: ?$PropertyType<ClientChunkMetadata, "fileManifest">; */
   /*:: manifest: ?TranslationsManifest; */
@@ -66,12 +106,14 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       this.clientChunkIndex = clientChunkMetadata.fileManifest;
     }
   }
+
   /**
    * It may be possible to avoid duplicating code by extending `super`, but
    * for now, we'll just override this method entirely with a modified version
    * Based on https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/ImportDependency.js
    */
   apply(dep /*: any */, source /*: any */, runtime /*: any */) {
+    // console.log(dep)
     const depBlock = dep.block;
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
@@ -129,15 +171,41 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
  * See InstrumentedImportDependencyTemplate for more info
  */
 
-class InstrumentedImportDependencyTemplatePlugin {
+class InstrumentedImportDependencyTemplatePlugin extends ImportPlugin {
   /*:: opts: InstrumentationPluginOpts;*/
 
   constructor(opts /*: InstrumentationPluginOpts*/) {
+    super();
     this.opts = opts;
   }
 
   apply(compiler /*: any */) {
+    super.apply(compiler);
     const name = this.constructor.name;
+
+    compiler.hooks.compilation.tap(name, (compilation, {normalModuleFactory}) => {
+      compilation.dependencyFactories.set(
+        InstrumentedImportDependency,
+        normalModuleFactory,
+      );
+      /*
+      compilation.dependencyTemplates.set(
+        InstrumentedImportDependency,
+        new InstrumentedImportDependency.Template(),
+      );
+      */
+      compilation.hooks.buildModule.tap(name, module => {
+        /*
+        console.log(module.dependencies)
+        console.log(module.deps)
+        console.log(module.originModule)
+        console.log(module.module)
+        console.log(module.request)
+        */
+        //module.addDependency(new InstrumentedImportDependency(module));
+      });
+    });
+
     /**
      * The standard plugin is added on `compile`,
      * which sets the default value for `ImportDependency` in  the `dependencyTemplates` map.
@@ -147,6 +215,7 @@ class InstrumentedImportDependencyTemplatePlugin {
       if (this.opts.compilation === 'server') {
         // server
         this.opts.clientChunkMetadata.result.then(chunkIndex => {
+          // also add factory
           compilation.dependencyTemplates.set(
             ImportDependency,
             new InstrumentedImportDependencyTemplate({
@@ -156,7 +225,6 @@ class InstrumentedImportDependencyTemplatePlugin {
           done();
         });
       } else if (this.opts.compilation === 'client') {
-        console.log('---------------------------------- making client ----------------------------------------');
         // client
         compilation.dependencyTemplates.set(
           ImportDependency,
