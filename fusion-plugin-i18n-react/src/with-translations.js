@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import type {Context} from 'fusion-core';
 import {I18nContext} from './plugin.js';
 

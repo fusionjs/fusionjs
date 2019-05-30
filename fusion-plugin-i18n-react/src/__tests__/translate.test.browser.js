@@ -3,18 +3,17 @@
 import React from 'react';
 import {mount} from 'enzyme';
 
-import {withTranslations} from '../index';
+import {Translate} from '../index';
 import {I18nContext} from '../plugin.js';
 
-test('withTranslations() HOC - localeCode', () => {
-  const Foo = withTranslations([])(({localeCode, translate}) => {
+test('Translate', () => {
+  const Foo = () => {
     return (
       <div>
-        {localeCode}
-        {translate()}
+        <Translate id={'foo'} />
       </div>
     );
-  });
+  };
 
   const mockI18n = {
     localeCode: 'fr_CA',
