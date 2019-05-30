@@ -26,6 +26,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
+    "fusion-react": "0.0.0-monorepo",
     "just-kebab-case": "^1.1.0",
     "prop-types": "^15.7.2"
   },

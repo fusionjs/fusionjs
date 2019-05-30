@@ -31,11 +31,11 @@ test('development env globals', async () => {
   const clientContent = await readFile(clientEntryPath, 'utf8');
 
   t.ok(
-    clientContent.includes(`"main __BROWSER__ is",!0`),
+    clientContent.includes(`'main __BROWSER__ is', true`),
     `__BROWSER__ is transpiled to be true in development`
   );
   t.ok(
-    clientContent.includes(`"main __NODE__ is",!1`),
+    clientContent.includes(`'main __NODE__ is', false`),
     '__NODE__ is transpiled to be false'
   );
 

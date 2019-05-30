@@ -12,7 +12,7 @@ export type LocationType = {
   pathname: string,
   search: string,
   hash: string,
-  state?: Object,
+  state?: any,
   key?: string,
 };
 
@@ -20,7 +20,7 @@ export type LocationShapeType = {
   pathname?: string,
   search?: string,
   hash?: string,
-  state?: Object,
+  state?: any,
 };
 
 /* Types below adapted from flow-typed's libdef for react-router-dom
@@ -49,7 +49,7 @@ export type LinkType = React.ComponentType<{
 }>;
 
 export type NavLinkType = React.ComponentType<{
-  to?: string | LocationShapeType,
+  to: string | LocationShapeType,
   activeClassName?: string,
   className?: string,
   activeStyle?: Object,
@@ -77,8 +77,9 @@ export type RouterHistoryType = {
   goForward(): void,
   canGo?: (n: number) => boolean,
   block(
-    callback: (location: LocationType, action: HistoryActionType) => boolean
-  ): void,
+      callback: | string // eslint-disable-line
+      | ((location: LocationType, action: HistoryActionType) => ?string)
+  ): () => void,
   // createMemoryHistory
   index?: number,
   entries?: Array<LocationType>,
@@ -166,10 +167,10 @@ export type SwitchType = React.ComponentType<{|
   location?: LocationType,
 |}>;
 
-export type withRouterType = <WrappedComponent: React.ComponentType<*>>(
-  Component: WrappedComponent
+export type withRouterType = <Props: {}, Component: React.ComponentType<Props>>(
+  WrappedComponent: Component
 ) => React.ComponentType<
-  $Diff<React.ElementConfig<WrappedComponent>, ContextRouterVoid>
+  $Diff<React.ElementConfig<Component>, ContextRouterVoid>
 >;
 
 type MatchPathOptions = {

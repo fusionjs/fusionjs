@@ -32,6 +32,7 @@ scaffold({
   cwd: path.join(__dirname, '..'),
   projectPath: path.join(process.cwd(), projectName),
   project: projectName,
+  packageJsonFields: {name: projectName},
 })
   .then(() => {
     console.log(`

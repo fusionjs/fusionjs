@@ -6,9 +6,11 @@
  * @flow
  */
 
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import React, {useState, useEffect, useRef} from 'react';
+import type {ComponentType} from 'react';
+import {useService} from 'fusion-react';
 
+import {FontLoaderReactToken} from './tokens';
 import loadFont from './font-loader';
 
 /*
@@ -27,57 +29,42 @@ All requested fonts should be defined in src/fonts/fontConfig.js
 */
 
 const withFontLoading = (fontName: string) => {
-  return (
-    OriginalComponent: React.ComponentType<*>
-  ): React.ComponentType<*> => {
-    class WithFontLoading extends React.Component<*, *> {
-      props: *;
-      context: *;
-      state: {$fontStyles: {fontFamily: string}};
-      mounted: ?boolean;
+  return (OriginalComponent: ComponentType<*>): ComponentType<*> => {
+    return FontLoader;
 
-      constructor(props: any, context: any) {
-        super(props, context);
-        if (typeof this.context.getFontDetails !== 'function') {
-          throw new Error(
-            `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
-to true in the font loader config`
-          );
-        }
-        const {fallbackName, styles} = this.context.getFontDetails(fontName);
-        if (fallbackName) {
-          // switch to fallback name and apply styles to trigger faux font rendition
-          this.state = {$fontStyles: {fontFamily: fallbackName, ...styles}};
-        } else {
-          // no need to do the fallback dance
-          this.state = {$fontStyles: {fontFamily: fontName}};
-        }
+    function FontLoader(props: any) {
+      const mounted: {current: ?boolean} = useRef(null);
+      const getFontDetails = useService(FontLoaderReactToken);
+      if (typeof getFontDetails !== 'function') {
+        throw new Error(
+          `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
+    to true in the font loader config`
+        );
       }
+      const {fallbackName, styles} = getFontDetails(fontName);
+      const initialFontStyles = fallbackName
+        ? // switch to fallback name and apply styles to trigger faux font rendition
+          {fontFamily: fallbackName, ...styles}
+        : // no fallback so just apply true font
+          {fontFamily: fontName};
 
-      componentDidMount() {
-        this.mounted = true;
-        if (this.state.$fontStyles.fontFamily !== fontName) {
+      const [fontStyles, setFontStyles] = useState(initialFontStyles);
+
+      useEffect(() => {
+        mounted.current = true;
+        if (fontStyles.fontFamily !== fontName) {
           // $FlowFixMe (this can only be browser so will not be undefined)
           loadFont(`${fontName}`).then(() => {
-            this.mounted &&
-              this.setState({$fontStyles: {fontFamily: fontName}});
+            mounted && setFontStyles({fontFamily: fontName});
           });
         }
-      }
+        return () => {
+          mounted.current = false;
+        };
+      });
 
-      render() {
-        return <OriginalComponent {...{...this.state, ...this.props}} />;
-      }
-
-      componentWillUnmount() {
-        this.mounted = false;
-      }
+      return <OriginalComponent $fontStyles={fontStyles} {...props} />;
     }
-
-    WithFontLoading.contextTypes = {
-      getFontDetails: PropTypes.func,
-    };
-    return WithFontLoading;
   };
 };
 

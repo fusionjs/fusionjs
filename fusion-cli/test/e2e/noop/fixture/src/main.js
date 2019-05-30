@@ -2,6 +2,7 @@
 import App from 'fusion-core';
 
 export default async function() {
-  const app = new App('element', el => el);
+  const longVariableNameForElement = 'element';
+  const app = new App(longVariableNameForElement, el => el);
   return app;
 }

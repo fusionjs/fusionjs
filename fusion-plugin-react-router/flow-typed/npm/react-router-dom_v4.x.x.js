@@ -1,6 +1,4 @@
 // @flow
-// flow-typed signature: 5514042185f40bea708c7d73e53fabda
-// flow-typed version: be05cd918c/react-router-dom_v4.x.x/flow_>=v0.63.x
 
 declare module 'react-router-dom' {
   declare export var BrowserRouter: React$ComponentType<{|
@@ -123,10 +121,10 @@ declare module 'react-router-dom' {
     children?: React$Node,
   |}>;
 
-  declare export var Router: React$ComponentType<{|
+  declare export var Router: React$ComponentType<{
     history: RouterHistory,
     children?: React$Node,
-  |}>;
+  }>;
 
   declare export var Prompt: React$ComponentType<{|
     message: string | ((location: Location) => string | boolean),

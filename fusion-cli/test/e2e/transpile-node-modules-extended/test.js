@@ -22,9 +22,16 @@ test('transpiles node_modules', async () => {
     `.fusion/dist/development/client/client-legacy-vendor.js`
   );
 
+  const serverMainPath = path.resolve(
+    dir,
+    `.fusion/dist/development/server/server-main.js`
+  );
+
   t.ok(await exists(clientVendorPath), 'Client vendor file gets compiled');
+  t.ok(await exists(serverMainPath), 'Server main file gets compiled');
 
   const clientVendor = await readFile(clientVendorPath, 'utf8');
+  const serverMain = await readFile(serverMainPath, 'utf8');
 
   babel.transform(clientVendor, {
     plugins: [
@@ -56,4 +63,8 @@ test('transpiles node_modules', async () => {
   });
 
   t.ok(clientVendor.includes(`'fixturepkg_string'`));
+  t.equal(serverMain.includes(`'fixturepkg_string'`), false);
+  t.ok(
+    serverMain.includes(`__SECRET_FILE_LOADER__?assetUrl=true!./package.json`)
+  );
 }, 100000);

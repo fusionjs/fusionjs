@@ -68,10 +68,6 @@ test('`fusion dev` works with assets', async () => {
     const clientMain = await request(`${url}/_static/client-main.js`);
     t.ok(clientMain, 'serves client-main from memory correctly');
     t.ok(
-      clientMain.includes('"src","src/main.js")'),
-      'transpiles __dirname and __filename'
-    );
-    t.ok(
       await request(`${url}/_static/client-vendor.js`),
       'serves client-vendor from memory correctly'
     );
@@ -114,11 +110,19 @@ test('`fusion dev` works with assets', async () => {
     const browserAssetUrl = await page.evaluate(() => {
       return typeof window !== undefined && window.__hoistedUrl__; //eslint-disable-line
     });
+    const browserDirname = await page.evaluate(() => {
+      return typeof window !== undefined && window.__hoistedDirname__; //eslint-disable-line
+    });
+    const browserFilename = await page.evaluate(() => {
+      return typeof window !== undefined && window.__hoistedFilename__; //eslint-disable-line
+    });
     t.equal(
       browserAssetUrl,
       expectedAssetPath,
       'hoisted assetURL works in the browser'
     );
+    t.equal(browserDirname, 'src', '__dirname works in the browser');
+    t.equal(browserFilename, 'src/main.js', '__filename works in the browser');
   } catch (e) {
     t.ifError(e);
   }
