@@ -38,7 +38,7 @@ test('throws rendering errors', async t => {
     });
   };
   const app = new App(element, render);
-  const callback = app.callback();
+  const callback = await app.callback();
 
   try {
     await callback();

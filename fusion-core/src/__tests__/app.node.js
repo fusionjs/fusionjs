@@ -41,7 +41,7 @@ test('context composition', async t => {
   const app = new App(element, render);
   app.middleware(wrap);
   try {
-    app.resolve();
+    await app.resolve();
     const middleware = compose(app.plugins);
     // $FlowFixMe
     await middleware(context, () => Promise.resolve());

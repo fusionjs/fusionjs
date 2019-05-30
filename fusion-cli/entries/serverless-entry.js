@@ -47,7 +47,7 @@ export default async function loadApp(dir /*: string */ = '.') {
   if (prefix) {
     app.register(RoutePrefixToken, prefix);
   }
-  const appHandler = app.callback();
+  const appHandler = await app.callback();
   const handler = (req /*: any */, res /*: any */) => {
     if (prefix) {
       stripRoutePrefix(req, prefix);

@@ -39,15 +39,15 @@ export default function(): typeof BaseApp {
         ssrPlugin
       );
     }
-    resolve() {
+    async resolve() {
       this.middleware(
         {timing: TimingToken, render: RenderToken},
         serverRenderer
       );
-      return super.resolve();
+      return await super.resolve();
     }
-    callback() {
-      this.resolve();
+    async callback() {
+      await this.resolve();
       this._app.use(compose(this.plugins));
       return this._app.callback();
     }

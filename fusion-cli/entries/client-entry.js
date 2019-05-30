@@ -29,7 +29,7 @@ function reload() {
       );
       app.register(RoutePrefixToken, window.__ROUTE_PREFIX__);
     }
-    app.callback().call();
+    Promise.resolve(app.callback()).then(handler => handler.call());
   });
 }
 reload();
