@@ -9,38 +9,41 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-import i18n from 'fusion-plugin-i18n';
+import i18n, {I18nToken} from 'fusion-plugin-i18n';
 import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
-import {ProviderPlugin} from 'fusion-react';
+import {FusionContext, ProviderPlugin, useService} from 'fusion-react';
 
-type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
-class BundleSplitConsumer extends React.Component<*, *> {
-  i18n: $Call<ExtractReturnType, $PropertyType<I18nServiceType, 'from'>>;
+export const I18nContext = React.createContext(() => {
+  throw new Error(
+    'Attempting to use i18n Context without registering Fusion.js plugin from `fusion-plugin-i18n-react`'
+  );
+});
 
-  constructor(props, context) {
-    super(props, context);
-    // splitComponentLoaders comes from fusion-react-async/prepare-provider
-    // ids comes from fusion-react-async/split
-    // props.provides comes from fusion-react/plugin and references i18n()
-    this.i18n = props.provides.from(props.ctx);
-    if (context.splitComponentLoaders) {
-      context.splitComponentLoaders.push((_, {i18nKeys}) =>
-        this.i18n.load(i18nKeys)
-      );
+/**
+ * The i18n service is loaded with the fusion ctx and provided to the
+ * application. This is not explicitly necessary from an API perspective, but it
+ * is critical that we register a callback to splitComponentLoaders for
+ * dynamically loading translations.
+ */
+function BundleSplitConsumer(props, {splitComponentLoaders}) {
+  const ctx = React.useContext(FusionContext);
+  const i18n = useService(I18nToken).from(ctx);
+  React.useMemo(() => {
+    // `splitComponentLoaders` comes from fusion-react/async/prepare-provider
+    // `ids` comes from fusion-react/async/split
+    if (splitComponentLoaders) {
+      splitComponentLoaders.push((_, {i18nKeys}) => i18n.load(i18nKeys));
     }
-  }
-  getChildContext() {
-    return {i18n: this.i18n};
-  }
-  render() {
-    return React.Children.only(this.props.children);
-  }
+  }, [splitComponentLoaders, i18n]);
+  return (
+    <I18nContext.Provider value={i18n}>
+      {React.Children.only(props.children)}
+    </I18nContext.Provider>
+  );
 }
+
 BundleSplitConsumer.contextTypes = {
   splitComponentLoaders: PropTypes.array,
-};
-BundleSplitConsumer.childContextTypes = {
-  i18n: PropTypes.object.isRequired,
 };
 
 export default ProviderPlugin.create<I18nDepsType, I18nServiceType>(

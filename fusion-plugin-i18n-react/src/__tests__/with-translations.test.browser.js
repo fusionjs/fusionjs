@@ -5,23 +5,7 @@ import PropTypes from 'prop-types';
 import {mount} from 'enzyme';
 
 import {withTranslations} from '../index';
-
-function mockProvider(i18n) {
-  class I18NProvider extends Component<*, *> {
-    getChildContext() {
-      return {i18n};
-    }
-    render() {
-      return React.Children.only(this.props.children);
-    }
-  }
-
-  I18NProvider.childContextTypes = {
-    i18n: PropTypes.object.isRequired,
-  };
-
-  return I18NProvider;
-}
+import {I18nContext} from '../plugin.js'
 
 test('withTranslations() HOC - localeCode', () => {
   const Foo = withTranslations([])(({localeCode, translate}) => {
@@ -33,18 +17,18 @@ test('withTranslations() HOC - localeCode', () => {
     );
   });
 
-  const Provider = mockProvider({
+  const mockI18n = {
     localeCode: 'fr_CA',
     translate() {
       return 'foo bar baz';
     },
-  });
+  };
 
   expect(
     mount(
-      <Provider>
+      <I18nContext.Provider value={mockI18n}>
         <Foo />
-      </Provider>
+      </I18nContext.Provider>
     ).html()
   ).toMatchSnapshot();
 });
