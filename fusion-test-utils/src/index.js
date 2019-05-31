@@ -29,14 +29,14 @@ export type Simulator = {
   render: $Call<ExtractFusionAppReturnType, typeof render>,
   getService<T>(token: Token<T>): T,
 };
-export function getSimulator(
+export async function getSimulator(
   app: FusionApp,
   testPlugin?: FusionPlugin<*, *>
-): Simulator {
+): Promise<Simulator> {
   if (testPlugin) {
     app.register(testPlugin);
   }
-  app.resolve();
+  await app.resolve();
 
   return {
     request: request(app),
@@ -46,10 +46,10 @@ export function getSimulator(
   };
 }
 
-export function getService<TDeps, TService>(
+export async function getService<TDeps, TService>(
   appCreator: () => FusionApp,
   plugin: FusionPlugin<TDeps, TService>
-): TService {
+): Promise<TService> {
   const app = appCreator();
   const token: Token<TService> = createToken('service-helper');
 
@@ -63,7 +63,7 @@ export function getService<TDeps, TService>(
       },
     })
   );
-  app.resolve();
+  await app.resolve();
 
   if (!extractedService) {
     throw new Error('Provided plugin does not export a service');

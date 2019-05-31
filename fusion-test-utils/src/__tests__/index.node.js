@@ -25,7 +25,7 @@ test('jsdom', async t => {
     },
   };
   const app = new App('el', () => 'hello');
-  await getSimulator(app).render('/test');
+  await (await getSimulator(app)).render('/test');
   t.equal(reconfigured, true);
   t.end();
   delete global.jsdom;
@@ -40,7 +40,7 @@ test('jsdom with empty string', async t => {
     },
   };
   const app = new App('el', () => 'hello');
-  await getSimulator(app).render('');
+  await (await getSimulator(app)).render('');
   t.equal(reconfigured, true);
   t.end();
   delete global.jsdom;
@@ -55,7 +55,7 @@ test('jsdom with /', async t => {
     },
   };
   const app = new App('el', () => 'hello');
-  await getSimulator(app).render('/');
+  await (await getSimulator(app)).render('/');
   t.equal(reconfigured, true);
   t.end();
   delete global.jsdom;
@@ -63,7 +63,7 @@ test('jsdom with /', async t => {
 
 test('status is 404 if ctx.body is never updated', async t => {
   const app = new App('el', el => el);
-  const ctx = await getSimulator(app).request('/');
+  const ctx = await (await getSimulator(app)).request('/');
   t.equals(ctx.status, 404, 'status defaults to 404');
   t.end();
 });
@@ -74,7 +74,7 @@ test('status is 200 if ctx.body is updated in request', async t => {
     ctx.body = {ok: 1};
     return next();
   });
-  const ctx = await getSimulator(app).request('/');
+  const ctx = await (await getSimulator(app)).request('/');
   t.equals(ctx.status, 200, 'status defaults to 200');
   t.end();
 });
@@ -86,14 +86,14 @@ test('status is set if ctx.status is updated in request', async t => {
     ctx.body = {error: 'error'};
     return next();
   });
-  const ctx = await getSimulator(app).render('/');
+  const ctx = await (await getSimulator(app)).render('/');
   t.equals(ctx.status, 500, 'status is set');
   t.end();
 });
 
 test('status is 200 if ctx.body is updated in render', async t => {
   const app = new App('el', () => 'hello');
-  const ctx = await getSimulator(app).render('/');
+  const ctx = await (await getSimulator(app)).render('/');
   t.equals(ctx.status, 200, 'status defaults to 200');
   t.end();
 });
@@ -104,7 +104,7 @@ test('status is set if ctx.status is updated in render', async t => {
     ctx.status = 500;
     return next();
   });
-  const ctx = await getSimulator(app).render('/');
+  const ctx = await (await getSimulator(app)).render('/');
   t.equals(ctx.status, 500, 'status is set');
   t.end();
 });
@@ -113,7 +113,7 @@ test('simulator accepts extra headers', async t => {
   const app = new App('hi', () => {});
   const simulator = getSimulator(app);
 
-  const ctx = await simulator.render('/', {
+  const ctx = await (await simulator).render('/', {
     headers: {
       'x-header': 'value',
     },
@@ -125,7 +125,7 @@ test('simulator accepts extra headers', async t => {
 
 test('body contains some message', async t => {
   const app = new App('el', () => 'hello');
-  const ctx = await getSimulator(app).request('/_errors', {
+  const ctx = await (await getSimulator(app)).request('/_errors', {
     body: {message: 'test'},
   });
   t.equals(ctx.status, 404, 'status is set');
