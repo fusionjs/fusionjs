@@ -10,6 +10,7 @@
 
 /* eslint-disable import/first */
 import sourceMapSupport from 'source-map-support';
+
 sourceMapSupport.install();
 
 // $FlowFixMe
