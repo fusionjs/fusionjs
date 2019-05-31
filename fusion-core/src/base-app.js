@@ -249,7 +249,7 @@ class FusionApp {
         const resolvedDeps = {};
         for (const key in registeredDeps) {
           const registeredToken = registeredDeps[key];
-          resolvedDeps[key] = resolveToken(registeredToken, aliases);
+          resolvedDeps[key] = await resolveToken(registeredToken, aliases);
         }
         // `provides` should be undefined if the plugin does not have a `provides` function
         let provides =

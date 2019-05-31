@@ -39,9 +39,11 @@ function getContext() {
 }
 
 // $FlowFixMe
-export function run(app: any, ctx: Context = {}) {
+export async function run(app: any, ctx: Context = {}) {
   // $FlowFixMe
   ctx = Object.assign(getContext(), ctx);
-  app.resolve();
-  return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);
+  await app.resolve();
+  return await compose(app.plugins)(ctx, () => Promise.resolve()).then(
+    () => ctx
+  );
 }

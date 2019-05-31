@@ -25,7 +25,7 @@ export default function(): typeof BaseApp {
       return super.resolve();
     }
     async callback() {
-      this.resolve();
+      await this.resolve();
       const middleware = compose(this.plugins);
       return () => {
         // TODO(#62): Create noop context object to match server api
