@@ -24,14 +24,16 @@ import {
 
 export class UniversalEmitter extends Emitter {
   flush: any;
-  fetch: any;
+  fetch: Fetch;
   interval: any;
   storage: BatchStorage;
+  limit: number;
 
   constructor(
     fetch: Fetch,
     storage: BatchStorage,
-    interval?: number = 5000
+    interval?: number = 5000,
+    limit?: number = 1000
   ): void {
     super();
     //privates
@@ -39,6 +41,7 @@ export class UniversalEmitter extends Emitter {
     this.flush = this.flushInternal.bind(this);
     this.fetch = fetch;
     this.setFrequency(interval);
+    this.limit = limit;
     window.addEventListener('visibilitychange', this.flushBeforeTerminated);
   }
   setFrequency(frequency: number): void {
@@ -57,7 +60,7 @@ export class UniversalEmitter extends Emitter {
   flushBeforeTerminated = () =>
     document.visibilityState === 'hidden' && this.flushInternal();
   async flushInternal(): Promise<void> {
-    const items = this.storage.getAndClear();
+    const items = this.storage.getAndClear(this.limit);
     if (items.length === 0) return;
 
     try {
@@ -68,8 +71,12 @@ export class UniversalEmitter extends Emitter {
         },
         body: JSON.stringify({items}),
       });
-
       if (!res.ok) {
+        // If the server responds with a 413, it means the size of the payload was too large.
+        // We handle this by cutting our limit in half for the next attempt.
+        if (res.status === 413) {
+          this.limit = this.limit / 2;
+        }
         // sending failed so put the logs back into storage
         this.storage.addToStart(...items);
       }
