@@ -55,6 +55,23 @@ Object.keys(toBeTested).forEach(storageType => {
       t.end();
     });
 
+    t.test('getAndClear with limit', t => {
+      const data = {type: 'nick', payload: 'test'};
+      getAndClear();
+      add(data);
+      add(data);
+      add(data);
+
+      t.deepEqual(
+        getAndClear(2),
+        [data, data],
+        'getAndClear should get current array with limit'
+      );
+      t.deepEqual(getAndClear(), [data], 'should clear with limit correctly');
+      t.notOk(getAndClear().length, 'finally is cleared');
+      t.end();
+    });
+
     t.end();
   });
 });

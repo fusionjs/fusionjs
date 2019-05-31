@@ -150,6 +150,7 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
 });
 
 test('Browser EventEmitter interval', async t => {
+  store.getAndClear();
   const emitter = new UniversalEmitter(
     () => {
       return Promise.resolve(createMockFetch({ok: true}));
@@ -166,4 +167,36 @@ test('Browser EventEmitter interval', async t => {
     },
     1
   );
+});
+
+test('Respects the limit when flushing', async t => {
+  store.getAndClear();
+  const fetch: Fetch = () => Promise.resolve(createMockFetch({ok: true}));
+  const emitter = new UniversalEmitter(fetch, store, 2000, 20);
+  for (let index = 0; index < 50; index++) {
+    emitter.emit('a', {x: 1});
+  }
+  await emitter.flush();
+  t.equal(store.data.length, 30, 'only flushes the limit of events');
+  await emitter.flush();
+  t.equal(store.data.length, 10, 'only flushes the limit of events');
+  await emitter.flush();
+  t.equal(store.data.length, 0, 'flushes the rest of the events');
+  emitter.teardown();
+  t.end();
+});
+
+test('Lowers limit for 413 errors', async t => {
+  store.getAndClear();
+  const fetch: Fetch = () =>
+    Promise.resolve(createMockFetch({status: 413, ok: false}));
+  const emitter = new UniversalEmitter(fetch, store, 2000, 20);
+  emitter.emit('a', {x: 1});
+  await emitter.flush();
+  t.equal(store.data.length, 1, 'event stored when fetch fails');
+  t.equal(emitter.limit, 10, 'cuts limit in half when receiving a 413');
+  await emitter.flush();
+  t.equal(emitter.limit, 5, 'cuts limit in half when receiving a 413');
+  await emitter.flush();
+  t.end();
 });
