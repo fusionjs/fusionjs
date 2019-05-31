@@ -81,9 +81,7 @@ tape('enhancement with a plugin allows orphan plugins', async t => {
   };
   app.register(FnToken, BaseFn);
   app.enhance(FnToken, BaseFnEnhancer);
-  await doesNotThrowAsync(t, async () => {
-    await app.resolve();
-  });
+  await doesNotThrowAsync(t, app.resolve.bind(app));
   t.end();
 });
 
@@ -100,9 +98,7 @@ tape(
     };
     app.register(FnToken, BaseFn);
     app.enhance(FnToken, BaseFnEnhancer);
-    await throwsAsync(t, async () => {
-      await app.resolve();
-    });
+    await throwsAsync(t, app.resolve.bind(app));
     t.end();
   }
 );
@@ -208,7 +204,7 @@ tape('enhancement with a plugin with missing deps', async t => {
   });
   await throwsAsync(
     t,
-    async () => app.resolve(),
+    app.resolve.bind(app),
     /This token is required by plugins registered with tokens: "EnhancerOf<FnType>"/
   );
   t.end();

@@ -432,7 +432,7 @@ tape('dependency registration with missing dependency', async t => {
   });
   app.register(TokenA, PluginA);
   app.register(TokenC, PluginC);
-  await throwsAsync(t, () => app.resolve(), 'Catches missing dependencies');
+  await throwsAsync(t, app.resolve.bind(app), 'Catches missing dependencies');
   t.end();
 });
 
@@ -530,11 +530,7 @@ tape('dependency registration with missing deep tree dependency', async t => {
   app.register(TokenC, PluginC);
   app.register(TokenA, PluginA);
   app.register(TokenB, PluginB);
-  await throwsAsync(
-    t,
-    async () => app.resolve(),
-    'Catches missing dependencies'
-  );
+  await throwsAsync(t, app.resolve.bind(app), 'Catches missing dependencies');
   t.end();
 });
 
@@ -558,11 +554,7 @@ tape('dependency registration with circular dependency', async t => {
   });
   app.register(TokenB, PluginB);
   app.register(TokenC, PluginC);
-  await throwsAsync(
-    t,
-    async () => app.resolve(),
-    'Catches circular dependencies'
-  );
+  await throwsAsync(t, app.resolve.bind(app), 'Catches circular dependencies');
   t.end();
 });
 
@@ -588,12 +580,12 @@ tape('dependency configuration with missing deps', async t => {
   app.register(StringToken, 'string-a');
   await throwsAsync(
     t,
-    async () => app.resolve(),
+    app.resolve.bind(app),
     'throws if dependencies are not configured'
   );
   await throwsAsync(
     t,
-    async () => app.resolve(),
+    app.resolve.bind(app),
     /required by plugins registered with tokens: "parent-token"/
   );
   t.end();
@@ -619,7 +611,7 @@ tape('error message when dependent plugin does not have token', async t => {
   app.register(StringToken, 'string-a');
   await throwsAsync(
     t,
-    async () => app.resolve(),
+    app.resolve.bind(app),
     /required by plugins registered with tokens: "UnnamedPlugin"/
   );
   t.end();
@@ -629,7 +621,7 @@ tape('Extraneous dependencies', async t => {
   const app = new App('el', el => el);
   const TestToken = createToken('test');
   app.register(TestToken, 'some-value');
-  await throwsAsync(t, async () => app.resolve());
+  await throwsAsync(t, app.resolve.bind(app));
   t.end();
 });
 
@@ -645,11 +637,11 @@ tape('Extraneous dependencies after re-registering', async t => {
   );
   app.register(TokenB, 'test');
   app.register(TokenA, createPlugin({}));
-  await doesNotThrowAsync(t, async () => app.resolve());
+  await doesNotThrowAsync(t, app.resolve.bind(app));
   t.end();
 });
 
-tape('Missing token errors reasonably', async t => {
+tape('Missing token errors reasonably', t => {
   const app = new App('el', el => el);
   // $FlowFixMe
   t.throws(() => app.register('some-value'), /Cannot register some-value/);
@@ -676,7 +668,7 @@ tape('retrieve dependency', async t => {
   t.end();
 });
 
-tape('retrieve unresolved dependency', async t => {
+tape('retrieve unresolved dependency', t => {
   const app = new App('el', el => el);
   const TokenA = createToken('a');
   const PluginA = createPlugin({
