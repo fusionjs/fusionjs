@@ -3,6 +3,7 @@
 
 import type {BatchType, BatchStorage} from '../types';
 import {inMemoryBatchStorage} from './in-memory';
+import {split} from './split';
 
 const storageKey = 'fusion-events';
 
@@ -12,14 +13,6 @@ const get = () => {
     return Array.isArray(events) ? events : [];
   } catch (e) {
     return [];
-  }
-};
-
-const clear = () => {
-  try {
-    window.localStorage.removeItem(storageKey);
-  } catch (e) {
-    // do nothing
   }
 };
 
@@ -40,10 +33,11 @@ class LocalBatchStorage implements BatchStorage {
     set(toBeAdded.concat(get()));
   };
 
-  getAndClear = () => {
-    const events = get();
-    clear();
-    return events;
+  getAndClear = (limit?: number = Infinity): BatchType[] => {
+    const allEvents = get();
+    const [eventsToSend, eventsToStore] = split(allEvents, limit);
+    set(eventsToStore);
+    return eventsToSend;
   };
 }
 
