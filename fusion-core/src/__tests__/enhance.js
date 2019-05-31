@@ -6,6 +6,7 @@ import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
 import {createToken} from '../create-token';
 import type {FusionPlugin, Token} from '../types.js';
+import {throwsAsync, doesNotThrowAsync} from './test-helper.js';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
@@ -80,10 +81,9 @@ tape('enhancement with a plugin allows orphan plugins', async t => {
   };
   app.register(FnToken, BaseFn);
   app.enhance(FnToken, BaseFnEnhancer);
-  // WIP
-  // t.doesNotThrow(() => {
-  //   await app.resolve();
-  // });
+  await doesNotThrowAsync(t, async () => {
+    await app.resolve();
+  });
   t.end();
 });
 
@@ -100,10 +100,9 @@ tape(
     };
     app.register(FnToken, BaseFn);
     app.enhance(FnToken, BaseFnEnhancer);
-    // WIP
-    // t.throws(() => {
-    //   await app.resolve();
-    // });
+    await throwsAsync(t, async () => {
+      await app.resolve();
+    });
     t.end();
   }
 );
@@ -207,10 +206,10 @@ tape('enhancement with a plugin with missing deps', async t => {
     t.end();
     return (ctx, next) => next();
   });
-  // WIP
-  // t.throws(
-  //   () => app.resolve(),
-  //   /This token is required by plugins registered with tokens: "EnhancerOf<FnType>"/
-  // );
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    /This token is required by plugins registered with tokens: "EnhancerOf<FnType>"/
+  );
   t.end();
 });

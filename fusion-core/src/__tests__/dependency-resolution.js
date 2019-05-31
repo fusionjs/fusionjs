@@ -5,6 +5,7 @@ import ServerAppFactory from '../server-app';
 import {createPlugin} from '../create-plugin';
 import {createToken} from '../create-token';
 import type {FusionPlugin, Token} from '../types.js';
+import {throwsAsync, doesNotThrowAsync} from './test-helper.js';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 type AType = {
@@ -431,38 +432,35 @@ tape('dependency registration with missing dependency', async t => {
   });
   app.register(TokenA, PluginA);
   app.register(TokenC, PluginC);
-  // WIP
-  // t.throws(() => app.resolve(), 'Catches missing dependencies');
+  await throwsAsync(t, () => app.resolve(), 'Catches missing dependencies');
   t.end();
 });
 
 tape('dependency registration with null value', async t => {
   const app = new App('el', el => el);
 
-  // WIP
-  // t.doesNotThrow(() => {
-  //   const PluginC = createPlugin({
-  //     deps: {optionalNull: TokenEAsNullable},
-  //     provides: deps => {
-  //       t.equal(deps.optionalNull, null, 'null provided as expected');
-  //     },
-  //   });
-  //   app.register(TokenEAsNullable, null);
-  //   app.register(PluginC);
-  //   await app.resolve();
-  // });
+  await doesNotThrowAsync(t, async () => {
+    const PluginC = createPlugin({
+      deps: {optionalNull: TokenEAsNullable},
+      provides: deps => {
+        t.equal(deps.optionalNull, null, 'null provided as expected');
+      },
+    });
+    app.register(TokenEAsNullable, null);
+    app.register(PluginC);
+    await app.resolve();
+  });
 
-  // WIP
-  // t.doesNotThrow(() => {
-  //   const app = new App('el', el => el);
-  //   // $FlowFixMe
-  //   app.register(TokenString, null);
-  //   app.middleware({something: TokenString}, ({something}) => {
-  //     t.equal(something, null, 'null provided as expected');
-  //     return (ctx, next) => next();
-  //   });
-  //   await app.resolve();
-  // });
+  await doesNotThrowAsync(t, async () => {
+    const app = new App('el', el => el);
+    // $FlowFixMe
+    app.register(TokenString, null);
+    app.middleware({something: TokenString}, ({something}) => {
+      t.equal(something, null, 'null provided as expected');
+      return (ctx, next) => next();
+    });
+    await app.resolve();
+  });
   t.end();
 });
 
@@ -532,8 +530,11 @@ tape('dependency registration with missing deep tree dependency', async t => {
   app.register(TokenC, PluginC);
   app.register(TokenA, PluginA);
   app.register(TokenB, PluginB);
-  // WIP
-  // t.throws(() => app.resolve(), 'Catches missing dependencies');
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    'Catches missing dependencies'
+  );
   t.end();
 });
 
@@ -557,8 +558,11 @@ tape('dependency registration with circular dependency', async t => {
   });
   app.register(TokenB, PluginB);
   app.register(TokenC, PluginC);
-  // WIP
-  // t.throws(() => app.resolve(), 'Catches circular dependencies');
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    'Catches circular dependencies'
+  );
   t.end();
 });
 
@@ -582,13 +586,16 @@ tape('dependency configuration with missing deps', async t => {
     })
   );
   app.register(StringToken, 'string-a');
-  // WIP
-  // t.throws(() => app.resolve(), 'throws if dependencies are not configured');
-  // WIP
-  // t.throws(
-  //   () => app.resolve(),
-  //   /required by plugins registered with tokens: "parent-token"/
-  // );
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    'throws if dependencies are not configured'
+  );
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    /required by plugins registered with tokens: "parent-token"/
+  );
   t.end();
 });
 
@@ -610,11 +617,11 @@ tape('error message when dependent plugin does not have token', async t => {
     })
   );
   app.register(StringToken, 'string-a');
-  // WIP
-  // t.throws(
-  //   () => app.resolve(),
-  //   /required by plugins registered with tokens: "UnnamedPlugin"/
-  // );
+  await throwsAsync(
+    t,
+    async () => app.resolve(),
+    /required by plugins registered with tokens: "UnnamedPlugin"/
+  );
   t.end();
 });
 
@@ -622,8 +629,7 @@ tape('Extraneous dependencies', async t => {
   const app = new App('el', el => el);
   const TestToken = createToken('test');
   app.register(TestToken, 'some-value');
-  // WIP
-  // t.throws(() => app.resolve());
+  await throwsAsync(t, async () => app.resolve());
   t.end();
 });
 
@@ -639,8 +645,7 @@ tape('Extraneous dependencies after re-registering', async t => {
   );
   app.register(TokenB, 'test');
   app.register(TokenA, createPlugin({}));
-  // WIP
-  // t.doesNotThrow(() => app.resolve());
+  await doesNotThrowAsync(t, async () => app.resolve());
   t.end();
 });
 
