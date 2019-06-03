@@ -30,12 +30,62 @@ type ClientPluginOpts = {
 };
 */
 
-const Dependency = require('webpack/lib/Dependency');
-const ImportPlugin = require('webpack/lib/dependencies/ImportPlugin');
-const ImportParserPlugin = require('webpack/lib/dependencies/ImportParserPlugin');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
+
+class InstrumentedImportDependency extends ImportDependency {
+  constructor(dep, opts) {
+    super(dep.request, dep.originModule, dep.block);
+    this.module = dep.module;
+    this.loc = dep.loc;
+
+    if (opts.compilation === 'client') {
+      this.translationsManifest = opts.i18nManifest;
+    }
+    if (opts.compilation === 'server' && opts.clientChunkMetadata) {
+      // server
+      opts.clientChunkMetadata.result.then(chunkIndex => {
+        this.clientChunkIndex = chunkIndex.fileManifest;
+      });
+    }
+  }
+  getInstrumentation() {
+    if (this.clientChunkIndex) {
+      // server-side, use values from client bundle
+      let ids = this.clientChunkIndex.get(
+        (this.module && this.module.resource) || this.originModule.resource
+      );
+      this.chunkIds = ids ? Array.from(ids) : [];
+    } else {
+      // client-side, use built-in values
+      this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
+    }
+
+    this.translationKeys = [];
+    if (this.translationsManifest) {
+      const modules = getChunkGroupModules(this);
+      for (const module of modules) {
+        if (this.translationsManifest.has(module)) {
+          const keys = this.translationsManifest.get(module).keys();
+          this.translationKeys.push(...keys);
+        }
+      }
+    }
+
+    return {
+      chunkIds: this.chunkIds,
+      translationKeys: this.translationKeys,
+    };
+  }
+  updateHash(hash) {
+    super.updateHash(hash);
+    const {translationKeys} = this.getInstrumentation();
+    // Invalidate this dependency when the translation keys change
+    // Necessary for HMR
+    hash.update(JSON.stringify(translationKeys));
+  }
+}
 
 /**
  * We create an extension to the original ImportDependency template
@@ -49,72 +99,18 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
  *
  * into:
  *
- * Object.defineProperties(import('./foo.js'), {__CHUNK_IDS: [5], __MODULE_ID: "abc"})
+ * Object.defineProperties(import('./foo.js'), {__CHUNK_IDS: [5], __MODULE_ID: "abc", __I18N_KEYS: ['key1']})
  * // Also returns a promise, but with extra non-enumerable properties
  */
-
-
-class InstrumentedImportDependency extends Dependency {
-  constructor(module) {
-    super();
-    console.log('=== constructor =======');
-    this.module = module;
-    this.originModule = module;
-    this.block = {};
-    // console.log(Object.keys(module));
-    /*
-    this.originalModule = originalModule;
-    this.block = block;
-    */
-  }
-
-  updateHash(hash) {
-    super.updateHash(hash);
-    console.log('=== update hash =======');
-    /*
-    const importedModule = this.module;
-    console.log('--------------------------', {meta: importedModule.buildMeta});
-    */
-  /*
-    hash.update(
-    (importedModule &&
-    (!importedModule.buildMeta || importedModule.buildMeta.exportsType)) +
-    ""
-    );
-    hash.update((importedModule && importedModule.id) + "");
-  */
-  }
-}
-
-InstrumentedImportDependency.Template = class MyDependencyTemplate {
-  apply() {}
-};
-
-class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
-  /*:: clientChunkIndex: ?$PropertyType<ClientChunkMetadata, "fileManifest">; */
-  /*:: manifest: ?TranslationsManifest; */
-
-  constructor(
-    {
-      clientChunkMetadata,
-      translationsManifest,
-    } /*: {clientChunkMetadata?: ClientChunkMetadata, translationsManifest?: TranslationsManifest}*/
-  ) {
-    super();
-    this.translationsManifest = translationsManifest;
-    if (clientChunkMetadata) {
-      this.clientChunkIndex = clientChunkMetadata.fileManifest;
-    }
-  }
-
+InstrumentedImportDependency.Template = class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
   /**
    * It may be possible to avoid duplicating code by extending `super`, but
    * for now, we'll just override this method entirely with a modified version
    * Based on https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/ImportDependency.js
    */
   apply(dep /*: any */, source /*: any */, runtime /*: any */) {
-    // console.log(dep)
     const depBlock = dep.block;
+    const {chunkIds, translationKeys} = dep.getInstrumentation();
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
       module: dep.module,
@@ -122,32 +118,6 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       strict: dep.originModule.buildMeta.strictHarmonyModule,
       message: 'import()',
     });
-
-    let chunkIds;
-
-    if (this.clientChunkIndex) {
-      // server-side, use values from client bundle
-      let ids = this.clientChunkIndex.get(
-        (dep.module && dep.module.resource) || dep.originModule.resource
-      );
-      chunkIds = ids ? Array.from(ids) : [];
-    } else {
-      // client-side, use built-in values
-      chunkIds = getChunkGroupIds(depBlock.chunkGroup);
-    }
-
-    let translationKeys = [];
-    if (this.translationsManifest) {
-      const modules = getChunkGroupModules(dep);
-      for (const module of modules) {
-        if (this.translationsManifest.has(module)) {
-          const keys = this.translationsManifest.get(module).keys();
-          translationKeys.push(...keys);
-        }
-      }
-    }
-
-    console.log('----------------------------------------------- translations ' + JSON.stringify(translationKeys) );
 
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
@@ -164,80 +134,49 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
     // replace with `customContent` instead of `content`
     source.replace(depBlock.range[0], depBlock.range[1] - 1, customContent);
   }
-}
+};
 
 /**
  * Webpack plugin to replace standard ImportDependencyTemplate with custom one
  * See InstrumentedImportDependencyTemplate for more info
  */
-
-class InstrumentedImportDependencyTemplatePlugin extends ImportPlugin {
+class InstrumentedImportDependencyTemplatePlugin {
   /*:: opts: InstrumentationPluginOpts;*/
 
   constructor(opts /*: InstrumentationPluginOpts*/) {
-    super();
     this.opts = opts;
   }
 
   apply(compiler /*: any */) {
-    super.apply(compiler);
     const name = this.constructor.name;
 
-    compiler.hooks.compilation.tap(name, (compilation, {normalModuleFactory}) => {
+    // Add a new template and factory for IntrumentedImportDependency
+    compiler.hooks.compilation.tap(name, (compilation, params) => {
       compilation.dependencyFactories.set(
         InstrumentedImportDependency,
-        normalModuleFactory,
+        params.normalModuleFactory
       );
-      /*
       compilation.dependencyTemplates.set(
         InstrumentedImportDependency,
-        new InstrumentedImportDependency.Template(),
+        new InstrumentedImportDependency.Template()
       );
-      */
-      compilation.hooks.buildModule.tap(name, module => {
-        /*
-        console.log(module.dependencies)
-        console.log(module.deps)
-        console.log(module.originModule)
-        console.log(module.module)
-        console.log(module.request)
-        */
-        //module.addDependency(new InstrumentedImportDependency(module));
+      compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
+        // Replace ImportDependency with our Instrumented dependency
+        for (const module of modules) {
+          if (module.blocks) {
+            module.blocks.forEach(block => {
+              block.dependencies.forEach((dep, index) => {
+                if (dep instanceof ImportDependency) {
+                  block.dependencies[index] = new InstrumentedImportDependency(
+                    dep,
+                    this.opts
+                  );
+                }
+              });
+            });
+          }
+        }
       });
-    });
-
-    /**
-     * The standard plugin is added on `compile`,
-     * which sets the default value for `ImportDependency` in  the `dependencyTemplates` map.
-     * `make` is the subsequent lifeycle method, so we can override this value here.
-     */
-    compiler.hooks.make.tapAsync(name, (compilation, done) => {
-      if (this.opts.compilation === 'server') {
-        // server
-        this.opts.clientChunkMetadata.result.then(chunkIndex => {
-          // also add factory
-          compilation.dependencyTemplates.set(
-            ImportDependency,
-            new InstrumentedImportDependencyTemplate({
-              clientChunkMetadata: chunkIndex,
-            })
-          );
-          done();
-        });
-      } else if (this.opts.compilation === 'client') {
-        // client
-        compilation.dependencyTemplates.set(
-          ImportDependency,
-          new InstrumentedImportDependencyTemplate({
-            translationsManifest: this.opts.i18nManifest,
-          })
-        );
-        done();
-      } else {
-        throw new Error(
-          'InstrumentationImportDependencyPlugin called without clientChunkMetadata or i18nManifest'
-        );
-      }
     });
   }
 }
