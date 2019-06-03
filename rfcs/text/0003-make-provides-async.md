@@ -143,11 +143,11 @@ When a plugin depends upon another plugin whose `.provides` method returns a pro
 
 A proof of concept (PoC) detailing the necessary changes to `fusion-core` and `fusion-cli` can be found here:
 
-TBD
+https://github.com/fusionjs/fusionjs/pull/444
 
 Additionally, a PoC for the changes necessary for `fusion-test-utils` can be found here:
 
-TBD
+https://github.com/fusionjs/fusionjs/pull/445
 
 # Drawbacks
 
