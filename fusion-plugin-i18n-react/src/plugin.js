@@ -12,21 +12,6 @@ import PropTypes from 'prop-types';
 import i18n from 'fusion-plugin-i18n';
 import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
 import {ProviderPlugin} from 'fusion-react';
-import chunkTranslationMap from 'fusion-plugin-i18n/chunk-translation-map';
-
-/*
-function i18nKeysFromChunkIds(chunkIds) {
-  const i18nKeys = [];
-  console.log(JSON.stringify({chunkIds}))
-  for (let chunkId of chunkIds) {
-    i18nKeys.push(
-      ...chunkTranslationMap.translationsForChunk(chunkId)
-    );
-  }
-  console.log(JSON.stringify({i18nKeys}))
-  return i18nKeys;
-}
-*/
 
 type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
 class BundleSplitConsumer extends React.Component<*, *> {
@@ -39,11 +24,9 @@ class BundleSplitConsumer extends React.Component<*, *> {
     // props.provides comes from fusion-react/plugin and references i18n()
     this.i18n = props.provides.from(props.ctx);
     if (context.splitComponentLoaders) {
-      context.splitComponentLoaders.push((_, {i18nKeys}) => {
-        //this.i18n.load(i18nKeysFromChunkIds(chunkIds))
-        console.log('split i18nkeys ' + JSON.stringify(i18nKeys));
-        return this.i18n.load(i18nKeys)
-      });
+      context.splitComponentLoaders.push((_, {i18nKeys}) =>
+        this.i18n.load(i18nKeys)
+      );
     }
   }
   getChildContext() {
