@@ -17,7 +17,7 @@ test('Some content', async assert => {
   const app = new App('el', el => el);
   const TokenA: Token<string> = createToken('A');
   app.register(TokenA, 'test');
-  const simulator = getSimulator(app);
+  const simulator = await getSimulator(app);
   const a: string = simulator.getService(TokenA);
   assert.equal(a, 'test');
   createRequestContext('/');

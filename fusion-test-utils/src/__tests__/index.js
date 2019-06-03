@@ -19,7 +19,7 @@ test('simulate render request', async t => {
     flags.render = true;
   };
   const app = new App(element, renderFn);
-  var testApp = getSimulator(app);
+  var testApp = await getSimulator(app);
   const ctx = await testApp.render('/');
   t.ok(flags.render, 'triggered ssr');
   t.ok(ctx.element, 'sets ctx.element');
@@ -32,7 +32,7 @@ test('simulate multi-render requests', async t => {
     counter.renderCount++;
   };
   const app = new App('hello', renderFn);
-  var testApp = getSimulator(app);
+  var testApp = await getSimulator(app);
 
   for (var i = 1; i <= 5; i++) {
     await testApp.render('/');
@@ -49,10 +49,10 @@ test('simulate non-render request', async t => {
     flags.render = true;
   };
   const app = new App(element, renderFn);
-  const testApp = getSimulator(app);
+  const testApp = await getSimulator(app);
   if (__BROWSER__) {
     try {
-      testApp.request('/');
+      await testApp.request('/');
       t.fail('should have thrown');
     } catch (e) {
       t.ok(e, 'throws an error');
@@ -105,7 +105,7 @@ test('use simulator with fixture and plugin dependencies', async t => {
       return 'yay!';
     },
   });
-  getSimulator(app, testPlugin);
+  await getSimulator(app, testPlugin);
 
   t.end();
 });
@@ -130,7 +130,7 @@ test('getService - returns service as expected, with no dependencies', async t =
     },
   });
 
-  const service = getService(() => new App('hi', el => el), simplePlugin);
+  const service = await getService(() => new App('hi', el => el), simplePlugin);
   t.ok(service);
   t.equal(service.meaningOfLife, 42);
 
@@ -151,7 +151,7 @@ test('getService - returns service as expected, with dependencies', async t => {
     },
   });
 
-  const service = getService(() => {
+  const service = await getService(() => {
     const app = new App('hi', el => el);
     app.register(meaningOfLifeToken, meaningOfLifePlugin);
     return app;
@@ -170,7 +170,13 @@ test('getService - throws as expected due to missing dependency', async t => {
       return {meaningOfLife: meaning};
     },
   });
-  t.throws(() => getService(() => new App('hi', el => el), simplePlugin));
+
+  try {
+    await getService(() => new App('hi', el => el), simplePlugin);
+    t.fail('should not reach here');
+  } catch (e) {
+    // no-op
+  }
   t.end();
 });
 
@@ -193,7 +199,7 @@ test('memoize helper', async t => {
       },
     })
   );
-  const sim = getSimulator(app);
+  const sim = await getSimulator(app);
   await sim.render('/');
   t.end();
 });
