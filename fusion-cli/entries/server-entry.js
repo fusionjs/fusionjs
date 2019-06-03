@@ -89,7 +89,7 @@ async function reload() {
   if (__DEV__) {
     reverseRegister(app, ServerErrorPlugin);
   }
-  state.serve = app.callback();
+  state.serve = await app.callback();
   // $FlowFixMe
   state.app = app;
 }

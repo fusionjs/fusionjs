@@ -9,7 +9,7 @@
 import test from 'tape-cup';
 import App from '../index';
 
-test('interface', t => {
+test('interface', async t => {
   const element = () => 'hi';
   const render = () => {};
 
@@ -18,6 +18,10 @@ test('interface', t => {
   t.equal(typeof app.register, 'function', 'has a register function');
   t.equal(typeof app.getService, 'function', 'has a getService function');
   t.ok(typeof app.callback === 'function', 'callback is function');
-  t.ok(typeof app.callback() === 'function', 'callback returns server handler');
+  t.ok(app.callback() instanceof Promise, 'callback() is a Promise');
+  t.ok(
+    typeof (await app.callback()) === 'function',
+    'callback returns server handler'
+  );
   t.end();
 });

@@ -20,7 +20,7 @@ test('app callback', async t => {
     return el;
   };
   const app = new App(element, render);
-  const callback = app.callback();
+  const callback = await app.callback();
   t.equal(typeof callback, 'function');
   // $FlowFixMe
   const ctx = await callback();
@@ -38,7 +38,7 @@ test('throws rendering errors', async t => {
     });
   };
   const app = new App(element, render);
-  const callback = app.callback();
+  const callback = await app.callback();
 
   try {
     await callback();

@@ -20,12 +20,12 @@ export default function(): typeof BaseApp {
       this.register(TimingToken, timing);
       this.middleware({element: ElementToken}, createClientHydrate);
     }
-    resolve() {
+    async resolve() {
       this.middleware({render: RenderToken}, createClientRenderer);
       return super.resolve();
     }
-    callback() {
-      this.resolve();
+    async callback() {
+      await this.resolve();
       const middleware = compose(this.plugins);
       return () => {
         // TODO(#62): Create noop context object to match server api

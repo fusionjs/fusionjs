@@ -39,9 +39,54 @@ function getContext() {
 }
 
 // $FlowFixMe
-export function run(app: any, ctx: Context = {}) {
+export async function run(app: any, ctx: Context = {}) {
   // $FlowFixMe
   ctx = Object.assign(getContext(), ctx);
-  app.resolve();
-  return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);
+  await app.resolve();
+  return await compose(app.plugins)(ctx, () => Promise.resolve()).then(
+    () => ctx
+  );
+}
+
+type FuncType = (...args: Array<any>) => any;
+/**
+ * Acts similar to t.throws(...) but allows for Promises to be supplied as the
+ * test function.
+ */
+export async function throwsAsync(
+  t: tape$Context,
+  func: FuncType,
+  messageOrExpected?: string | RegExp | FuncType
+): Promise<void> {
+  const message: ?string =
+    typeof messageOrExpected === 'string' ? messageOrExpected : null;
+  const expected: ?(RegExp | FuncType) =
+    typeof messageOrExpected !== 'string' ? messageOrExpected : null;
+
+  try {
+    await func();
+    t.notok(message ? `Did not throw: ${message}` : 'Does not throw');
+  } catch (e) {
+    if (expected) {
+      t.throws(() => {
+        throw e;
+      }, expected);
+    }
+  }
+}
+
+/**
+ * Acts similar to t.doesNotThrow(...) but allows for Promises to be supplied as the
+ * test function.
+ */
+export async function doesNotThrowAsync(
+  t: tape$Context,
+  func: FuncType,
+  message?: string
+): Promise<void> {
+  try {
+    await func();
+  } catch (e) {
+    t.notok(message ? `Throws: ${message}` : 'Throws');
+  }
 }

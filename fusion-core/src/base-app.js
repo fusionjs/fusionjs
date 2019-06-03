@@ -140,7 +140,7 @@ class FusionApp {
   cleanup() {
     return Promise.all(this.cleanups.map(fn => fn()));
   }
-  resolve<TResolved>() {
+  async resolve<TResolved>() {
     if (!this.renderer) {
       throw new Error('Missing registration for RenderToken');
     }
@@ -151,7 +151,7 @@ class FusionApp {
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
     const appliedEnhancers = [];
-    const resolveToken = (token: Token<TResolved>, tokenAliases) => {
+    const resolveToken = async (token: Token<TResolved>, tokenAliases) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(getTokenRef(token))) {
         const newToken = tokenAliases.get(getTokenRef(token));
@@ -244,16 +244,18 @@ class FusionApp {
       // Recursive: get the registered type and resolve it
       resolving.add(getTokenRef(token));
 
-      function resolvePlugin(plugin) {
+      async function resolvePlugin(plugin) {
         const registeredDeps = (plugin && plugin.deps) || {};
         const resolvedDeps = {};
         for (const key in registeredDeps) {
           const registeredToken = registeredDeps[key];
-          resolvedDeps[key] = resolveToken(registeredToken, aliases);
+          resolvedDeps[key] = await resolveToken(registeredToken, aliases);
         }
         // `provides` should be undefined if the plugin does not have a `provides` function
         let provides =
-          plugin && plugin.provides ? plugin.provides(resolvedDeps) : undefined;
+          plugin && plugin.provides
+            ? await plugin.provides(resolvedDeps)
+            : undefined;
         if (plugin && plugin.middleware) {
           resolvedPlugins.push(plugin.middleware(resolvedDeps, provides));
         }
@@ -262,7 +264,7 @@ class FusionApp {
 
       let provides = value;
       if (value && value.__plugin__) {
-        provides = resolvePlugin(provides);
+        provides = await resolvePlugin(provides);
         if (value.cleanup) {
           this.cleanups.push(function() {
             return typeof value.cleanup === 'function'
@@ -297,7 +299,7 @@ class FusionApp {
     };
 
     for (let i = 0; i < this.plugins.length; i++) {
-      resolveToken(this.plugins[i]);
+      await resolveToken(this.plugins[i]);
     }
     for (const token of nonPluginTokens) {
       if (

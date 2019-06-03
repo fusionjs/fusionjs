@@ -14,7 +14,7 @@ test('app.cleanup with no cleanup plugins', async t => {
       middleware: () => (ctx, next) => next(),
     })
   );
-  app.resolve();
+  await app.resolve();
   await app.cleanup();
   t.ok('cleans up ok');
   t.end();
@@ -46,7 +46,7 @@ test('app.cleanup with async cleanup plugins', async t => {
       middleware: () => (ctx, next) => next(),
     })
   );
-  app.resolve();
+  await app.resolve();
   t.notOk(firstCleanupCalled, 'resolve() does not call cleanups');
   t.notOk(nextCleanupCalled, 'resolve() does not call cleanups');
   await app.cleanup();
@@ -65,7 +65,7 @@ test('app.cleanup does not cleanup if cleanup was not given a function', async t
       middleware: () => (ctx, next) => next(),
     })
   );
-  app.resolve();
+  await app.resolve();
   await app.cleanup();
   t.end();
 });
