@@ -62,6 +62,9 @@ const pluginFactory: () => PluginType = () =>
       // TODO(#4) refactor: this currently depends on babel plugins in framework's webpack config.
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
       const chunkTranslationMap = require('../chunk-translation-map');
+
+      // Need to load dynamic translations
+
       return async (ctx, next) => {
         if (ctx.element) {
           await next();
@@ -73,14 +76,41 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.preloadChunks,
           ];
           const translations = {};
+          const possibleTranslations = i18n.translations ? Object.keys(i18n.translations) : [];
           chunks.forEach(id => {
             const keys = Array.from(
               chunkTranslationMap.translationsForChunk(id)
             );
             keys.forEach(key => {
-              translations[key] = i18n.translations && i18n.translations[key];
+              if (key.includes('*')) {
+                /*
+                const regex = new RegExp(
+                  key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                    .replace('\\*', '.*')
+                );
+                const hits = possibleTranslations.forEach(str => {
+                  if (regex.test(str)) {
+                    console.log({str});
+                    translations[str] = i18n.translations && i18n.translations[str];
+                  }
+                });
+                */
+                const matcher = key.replace('*', '');
+                // should also consider if the string starts with *
+                // pattern.*
+                // other-pattern.* - should not be matched by first pattern
+                const hits = possibleTranslations.forEach(str => {
+                  if (str.includes(matcher)) {
+                    console.log({str});
+                    translations[str] = i18n.translations && i18n.translations[str];
+                  }
+                });
+              } else {
+                translations[key] = i18n.translations && i18n.translations[key];
+              }
             });
           });
+          console.log({translations})
           // i18n.locale is actually a locale.Locale instance
           if (!i18n.locale) {
             throw new Error('i18n.locale was empty');

@@ -11,7 +11,7 @@
 const createModuleVisitor = require('../babel-plugin-utils/visit-named-module');
 
 const PACKAGE_NAME = ['fusion-plugin-i18n-react', 'fusion-plugin-i18n-preact'];
-const COMPONENT_IDENTIFIER = ['Translate', 'withTranslations'];
+const COMPONENT_IDENTIFIER = ['Translate', 'withTranslations', 'useTranslations'];
 
 module.exports = i18nPlugin;
 
@@ -43,6 +43,16 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
             if (!t.isStringLiteral(element)) {
               throw new Error(errorMessage);
             }
+            translationIds.add(element.value);
+          });
+        } else if (specifierName === 'useTranslations') {
+          const errorMessage =
+            'The useTranslations hook must be called with an array of strings';
+          if (!t.isArrayExpression(firstArg)) {
+            throw new Error(errorMessage);
+          }
+          const elements = firstArg.elements;
+          elements.forEach(element => {
             translationIds.add(element.value);
           });
         }
