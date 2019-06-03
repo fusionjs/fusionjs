@@ -501,17 +501,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtime === 'server' &&
         new webpack.BannerPlugin({
           raw: true,
-          entryOnly: false,
-          // source-map-support is a dep of framework, so we need to resolve this path
-          banner: `require('${require
-            .resolve('source-map-support')
-            // replace windows backslashes since this is generated code (#461)
-            .split(path.sep)
-            .join('/')}').install();`,
-        }),
-      runtime === 'server' &&
-        new webpack.BannerPlugin({
-          raw: true,
           entryOnly: true,
           // Enforce NODE_ENV at runtime
           banner: getEnvBanner(env),

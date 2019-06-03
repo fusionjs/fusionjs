@@ -8,6 +8,11 @@
 
 /* eslint-env node */
 
+/* eslint-disable import/first */
+import sourceMapSupport from 'source-map-support';
+
+sourceMapSupport.install();
+
 // $FlowFixMe
 import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-line
 
