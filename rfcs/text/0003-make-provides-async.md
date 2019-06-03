@@ -153,7 +153,7 @@ TBD
 
 This approach involves a breaking change.  Plugin resolution now occurs asynchronously, which requires changes to `fusion-core` (breaking) and `fusion-cli` (non-breaking).
 
-Downstream effects include breaking changes to many consumers' test suites as well as testing helpers, like `fusion-test-utils`.  These often resolve the `FusionApp` themselves which must now be done asynchronously.
+Downstream effects include breaking changes to many consumers' test suites as well as testing helpers, like `fusion-test-utils`.  These often resolve the `FusionApp` themselves which must now be done asynchronously.  Many of these changes can be codemodded to avoid distruption to existing consumers, provided they follow best practices around testing for Fusion.js.
 
 # Alternatives
 
