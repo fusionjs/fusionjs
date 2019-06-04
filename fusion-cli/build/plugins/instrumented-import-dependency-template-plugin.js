@@ -39,29 +39,13 @@ class InstrumentedImportDependency extends ImportDependency {
     super(dep.request, dep.originModule, dep.block);
     this.module = dep.module;
     this.loc = dep.loc;
-
     if (opts.compilation === 'client') {
       this.translationsManifest = opts.i18nManifest;
     }
-    if (opts.compilation === 'server' && opts.clientChunkMetadata) {
-      // server
-      opts.clientChunkMetadata.result.then(chunkIndex => {
-        this.clientChunkIndex = chunkIndex.fileManifest;
-      });
-    }
   }
   getInstrumentation() {
-    if (this.clientChunkIndex) {
-      // server-side, use values from client bundle
-      let ids = this.clientChunkIndex.get(
-        (this.module && this.module.resource) || this.originModule.resource
-      );
-      this.chunkIds = ids ? Array.from(ids) : [];
-    } else {
-      // client-side, use built-in values
-      this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
-    }
-
+    // client-side, use built-in values
+    this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
     this.translationKeys = [];
     if (this.translationsManifest) {
       const modules = getChunkGroupModules(this);
@@ -72,7 +56,6 @@ class InstrumentedImportDependency extends ImportDependency {
         }
       }
     }
-
     return {
       chunkIds: this.chunkIds,
       translationKeys: this.translationKeys,
@@ -103,6 +86,12 @@ class InstrumentedImportDependency extends ImportDependency {
  * // Also returns a promise, but with extra non-enumerable properties
  */
 InstrumentedImportDependency.Template = class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
+  constructor(clientChunkIndex) {
+    super();
+    if (clientChunkIndex) {
+      this.clientChunkIndex = clientChunkIndex;
+    }
+  }
   /**
    * It may be possible to avoid duplicating code by extending `super`, but
    * for now, we'll just override this method entirely with a modified version
@@ -110,7 +99,28 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
    */
   apply(dep /*: any */, source /*: any */, runtime /*: any */) {
     const depBlock = dep.block;
-    const {chunkIds, translationKeys} = dep.getInstrumentation();
+    let chunkIds = [];
+    let translationKeys = [];
+    if (dep instanceof InstrumentedImportDependency) {
+      const instrumentation = dep.getInstrumentation();
+      chunkIds = instrumentation.chunkIds;
+      translationKeys = instrumentation.translationKeys;
+    } else if (this.clientChunkIndex) {
+      // Template invoked without InstrumentedImportDependency
+      // server-side, use values from client bundle
+      let ids = this.clientChunkIndex.get(
+        (dep.module && dep.module.resource) || dep.originModule.resource
+      );
+      chunkIds = ids ? Array.from(ids) : [];
+    } else {
+      chunkIds = getChunkGroupIds(dep.block.chunkGroup);
+    }
+
+    // This is a hack. Some production builds had undefined for the module.id
+    // which broke the build.
+    dep.module.id =
+      dep.module.id || (dep.module.identifier && dep.module.identifier());
+
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
       module: dep.module,
@@ -149,35 +159,47 @@ class InstrumentedImportDependencyTemplatePlugin {
 
   apply(compiler /*: any */) {
     const name = this.constructor.name;
-
-    // Add a new template and factory for IntrumentedImportDependency
-    compiler.hooks.compilation.tap(name, (compilation, params) => {
-      compilation.dependencyFactories.set(
-        InstrumentedImportDependency,
-        params.normalModuleFactory
-      );
-      compilation.dependencyTemplates.set(
-        InstrumentedImportDependency,
-        new InstrumentedImportDependency.Template()
-      );
-      compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
-        // Replace ImportDependency with our Instrumented dependency
-        for (const module of modules) {
-          if (module.blocks) {
-            module.blocks.forEach(block => {
-              block.dependencies.forEach((dep, index) => {
-                if (dep instanceof ImportDependency) {
-                  block.dependencies[index] = new InstrumentedImportDependency(
-                    dep,
-                    this.opts
-                  );
-                }
-              });
-            });
-          }
-        }
+    if (this.opts.compilation === 'server') {
+      const {clientChunkMetadata} = this.opts;
+      compiler.hooks.make.tapAsync(name, (compilation, done) => {
+        clientChunkMetadata.result.then(metadata => {
+          compilation.dependencyTemplates.set(
+            ImportDependency,
+            new InstrumentedImportDependency.Template(metadata.fileManifest)
+          );
+          done();
+        });
       });
-    });
+    }
+    if (this.opts.compilation === 'client') {
+      // Add a new template and factory for IntrumentedImportDependency
+      compiler.hooks.compilation.tap(name, (compilation, params) => {
+        compilation.dependencyFactories.set(
+          InstrumentedImportDependency,
+          params.normalModuleFactory
+        );
+        compilation.dependencyTemplates.set(
+          InstrumentedImportDependency,
+          new InstrumentedImportDependency.Template()
+        );
+        compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
+          // Replace ImportDependency with our Instrumented dependency
+          for (const module of modules) {
+            if (module.blocks) {
+              module.blocks.forEach(block => {
+                block.dependencies.forEach((dep, index) => {
+                  if (dep instanceof ImportDependency) {
+                    block.dependencies[
+                      index
+                    ] = new InstrumentedImportDependency(dep, this.opts);
+                  }
+                });
+              });
+            }
+          }
+        });
+      });
+    }
   }
 }
 
