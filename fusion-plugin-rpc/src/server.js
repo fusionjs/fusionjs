@@ -34,7 +34,7 @@ class RPC {
   handlers: ?HandlerType;
   fetch: ?Fetch;
 
-  constructor(emitter: any, handlers: any, ctx: Context): RPC {
+  constructor(emitter: IEmitter, handlers: any, ctx: Context): RPC {
     if (!ctx || !ctx.headers) {
       throw new Error('fusion-plugin-rpc requires `ctx`');
     }

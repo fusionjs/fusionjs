@@ -7,28 +7,47 @@
  */
 
 import test from 'tape-cup';
+import MockEmitter from 'events';
 
 import App, {createPlugin, createToken} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 import type {Token} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import RPCPlugin from '../browser';
+import type {IEmitter} from '../types.js';
+import createMockEmitter from './create-mock-emitter';
 
 const MockPluginToken: Token<any> = createToken('test-plugin-token');
 function createTestFixture() {
   const mockFetch = (...args) =>
     Promise.resolve({json: () => ({status: 'success', data: args})});
+  const mockEmitter: IEmitter = (new MockEmitter(): any);
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
 
   const app = new App('content', el => el);
   // $FlowFixMe
   app.register(FetchToken, mockFetch);
+  app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(MockPluginToken, RPCPlugin);
   return app;
 }
 
 test('success status request', t => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method-client');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
   const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
 
   let wasResolved = false;
   getSimulator(
@@ -65,7 +84,17 @@ test('success status request', t => {
 });
 
 test('success status request w/args and header', t => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method-client');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
   const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
 
   let wasResolved = false;
   getSimulator(
@@ -109,10 +138,21 @@ test('success status request w/args and header', t => {
 test('failure status request', t => {
   const mockFetchAsFailure = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method-client');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'failure');
+      t.equal(typeof payload.timing, 'number');
+      t.equal(payload.error, 'failure data');
+    },
+  });
 
   const app = createTestFixture();
   // $FlowFixMe
   app.register(FetchToken, mockFetchAsFailure);
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
 
   let wasResolved = false;
   getSimulator(
