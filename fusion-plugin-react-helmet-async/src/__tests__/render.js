@@ -11,7 +11,7 @@ import {render} from 'react-dom';
 import fs from 'fs';
 import React from 'react';
 import {getSimulator} from 'fusion-test-utils';
-import Helmet from 'react-helmet-async';
+import {Helmet} from 'react-helmet-async';
 import test from 'tape-cup';
 import HelmetPlugin from '../index.js';
 
