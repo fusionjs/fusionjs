@@ -1,2 +1,1 @@
-// @flow
 module.exports = 'a';

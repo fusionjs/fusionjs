@@ -1,28 +1,10 @@
-// @flow
+const {readFile} = require('fs');
+const {promisify} = require('util');
 const {satisfies} = require('semver');
-const {read} = require('./node-helpers.js');
 
-/*::
-export type GetLocalDependenciesArgs = {
-  dirs: Array<string>,
-  target: string,
-};
-export type GetLocalDependencies = (GetLocalDependenciesArgs) => Promise<Array<Metadata>>;
-export type Metadata = {
-  dir: string,
-  meta: PackageJson,
-};
-export type PackageJson = {
-  name: string,
-  version: string,
-  dependencies: {[string]: string} | void,
-  devDependencies: {[string]: string} | void,
-};
-*/
-const getLocalDependencies /*: GetLocalDependencies */ = async ({
-  dirs,
-  target,
-}) => {
+const read = promisify(readFile);
+
+module.exports.getLocalDependencies = async ({dirs, target}) => {
   const data = await Promise.all([
     ...dirs.map(async dir => {
       const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
@@ -30,7 +12,7 @@ const getLocalDependencies /*: GetLocalDependencies */ = async ({
     }),
   ]);
   return unique(findDependencies(data, target));
-};
+}
 
 function findDependencies(data, target) {
   const output = [];
@@ -41,9 +23,7 @@ function findDependencies(data, target) {
       const deps = item.meta[field] || {};
       Object.keys(deps).forEach(dep => {
         const found = data.find(item => {
-          return (
-            item.meta.name === dep && satisfies(item.meta.version, deps[dep])
-          );
+          return item.meta.name === dep && satisfies(item.meta.version, deps[dep])
         });
         if (found) output.push(...findDependencies(data, found.dir), found);
       });
@@ -60,5 +40,3 @@ function unique(data) {
   }
   return [...map.values()];
 }
-
-module.exports = {getLocalDependencies};

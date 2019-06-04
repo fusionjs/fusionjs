@@ -7,7 +7,7 @@ Incremental, cacheable builds for large Javascript monorepos. Uses [Bazel](https
 - Getting started
   - [Why use Jazelle](#why-use-jazelle)
   - [Setup a monorepo](#setup-a-monorepo)
-  - [Typical usage](#typical-usage)
+  - [Typical usage](#usage)
 
 - Reference
   - [CLI](#cli)
@@ -41,7 +41,7 @@ If you just have a library of decoupled components, Jazelle might be overkill. I
 
 - [Scaffold a workspace](#scaffold-a-workspace)
 - [Configure Bazel rules](#configure-bazel-rules)
-- [Edit manifest.json file](#edit-manifestjson-file)
+- [Create manifest.json file](#create-manifestjson-file)
 - [Setup .gitignore](#setup-gitignore)
 - [What to commit to version control](#what-to-commit-to-version-control)
 
@@ -71,8 +71,6 @@ http_archive(
   name = "jazelle",
   url = "https://registry.yarnpkg.com/jazelle/-/jazelle-[version].tgz",
   sha256 = "SHA 256 goes here",
-  strip_prefix = "package",
-  patch_cmds = ["npm install"],
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
@@ -131,11 +129,10 @@ The `projects` field in this file should list every project that you want Jazell
 
 ### Setup .gitignore
 
-Add the following entries to .gitignore
+Add the following entry to .gitignore
 
 ```
 third_party/jazelle/temp
-bazel-*
 ```
 
 ### What to commit to version control
@@ -155,7 +152,6 @@ bazel-*
 
 - `/third_party/jazelle/temp` folder
 - `node_modules` folders
-- `bazel-[*]` folders
 
 ---
 
@@ -291,7 +287,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
 - [`jazelle chunk`](#jazelle-chunk)
-- [`jazelle changes`](#jazelle-changes)
+- [`jazelle changed`](#jazelle-changed)
 - [`jazelle build`](#jazelle-build)
 - [`jazelle run`](#jazelle-run)
 - [`jazelle test`](#jazelle-test)
@@ -419,7 +415,7 @@ jest --testPathPattern=$(jazelle chunk --projects "tests/**/*|!tests/fixtures/**
 
 Prints a list of Bazel test targets that have changed since the last git commit.
 
-`jazelle changes`
+`jazelle changed`
 
 Targets can be tested via the `bazel test [target]` command.
 

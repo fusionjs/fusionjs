@@ -1,14 +1,4 @@
-// @flow
-/*::
-type TemplateArgs = {
-  name: string,
-  path: string,
-  label: string,
-  dependencies: Array<string>,
-}
-type Template = (TemplateArgs) => Promise<string>;
-*/
-const template /*: Template */ = async ({name, path, dependencies}) => `
+module.exports.template = async ({name, path, dependencies}) => `
 package(default_visibility = ["//visibility:public"])
 
 load("@jazelle//:build-rules.bzl", "web_library", "web_binary", "web_test", "flow_test")
@@ -53,5 +43,3 @@ flow_test(
         "//${path}:library",
     ],
 )`;
-
-module.exports = {template};

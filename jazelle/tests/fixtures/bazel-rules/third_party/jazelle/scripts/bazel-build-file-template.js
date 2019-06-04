@@ -1,4 +1,3 @@
-// @flow
 module.exports.template = async ({name, path, dependencies}) => `
 package(default_visibility = ["//visibility:public"])
 
