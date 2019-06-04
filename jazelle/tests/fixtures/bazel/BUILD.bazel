@@ -1,0 +1,6 @@
+load("//:rules.bzl", "foo_test")
+
+foo_test(
+  name = "target",
+  output = "target.sh",
+)

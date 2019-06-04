@@ -1,0 +1,6 @@
+{
+  "projects": [
+    {"projectFolder": "a", "packageName": "a"},
+    {"projectFolder": "b", "packageName": "b"}
+  ]
+}

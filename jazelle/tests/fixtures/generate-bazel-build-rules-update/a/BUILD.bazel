@@ -1,0 +1,12 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@jazelle//:build-rules.bzl", "web_library", "web_binary", "web_test")
+
+web_library(
+  name = "a",
+  deps = [
+    "//c:c",
+    "//external:external",
+  ],
+  dist = ["dist"],
+)
