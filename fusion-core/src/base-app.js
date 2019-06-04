@@ -146,7 +146,6 @@ class FusionApp {
     }
     this._register(RenderToken, this.renderer);
     const resolved = new Map(); // Token.ref || Token => Service
-    const nonPluginTokens = new Set(); // Token
     const resolving = new Set(); // Token.ref || Token
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
@@ -270,8 +269,6 @@ class FusionApp {
               : Promise.resolve();
           });
         }
-      } else {
-        nonPluginTokens.add(token);
       }
 
       if (enhancers && enhancers.length) {
@@ -279,8 +276,6 @@ class FusionApp {
           let nextProvides = e(provides);
           appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
-            // if the token has a plugin enhancer, allow it to be registered with no dependents
-            nonPluginTokens.delete(token);
             if (nextProvides.deps) {
               Object.values(nextProvides.deps).forEach(token =>
                 this._dependedOn.add(getTokenRef(token))
@@ -298,17 +293,6 @@ class FusionApp {
 
     for (let i = 0; i < this.plugins.length; i++) {
       resolveToken(this.plugins[i]);
-    }
-    for (const token of nonPluginTokens) {
-      if (
-        token !== ElementToken &&
-        token !== RenderToken &&
-        !this._dependedOn.has(getTokenRef(token))
-      ) {
-        throw new Error(
-          `Registered token without depending on it: "${token.name}"`
-        );
-      }
     }
 
     this.plugins = resolvedPlugins;

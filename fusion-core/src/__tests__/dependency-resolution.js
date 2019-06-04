@@ -610,30 +610,6 @@ tape('error message when dependent plugin does not have token', t => {
   t.end();
 });
 
-tape('Extraneous dependencies', t => {
-  const app = new App('el', el => el);
-  const TestToken = createToken('test');
-  app.register(TestToken, 'some-value');
-  t.throws(() => app.resolve());
-  t.end();
-});
-
-tape('Extraneous dependencies after re-registering', t => {
-  const app = new App('el', el => el);
-  const TokenA = createToken('A');
-  const TokenB = createToken('B');
-  app.register(
-    TokenA,
-    createPlugin({
-      deps: {b: TokenB},
-    })
-  );
-  app.register(TokenB, 'test');
-  app.register(TokenA, createPlugin({}));
-  t.doesNotThrow(() => app.resolve());
-  t.end();
-});
-
 tape('Missing token errors reasonably', t => {
   const app = new App('el', el => el);
   // $FlowFixMe
