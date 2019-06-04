@@ -15,9 +15,11 @@ import {Provider, connect} from 'react-redux';
 import {getSimulator} from 'fusion-test-utils';
 import {reactorEnhancer} from 'redux-reactors';
 import {FetchToken} from 'fusion-tokens';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {mock as RPCPluginMock, RPCHandlersToken} from '../index';
 import Plugin from '../plugin';
 import {withRPCRedux, withRPCReactor} from '../hoc';
+import createMockEmitter from './create-mock-emitter';
 
 const initActionPattern = /^@@redux\/INIT.*/;
 
@@ -60,6 +62,7 @@ test('browser plugin integration test withRPCRedux', async t => {
       )
     );
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [
     {type: initActionPattern},
@@ -99,6 +102,7 @@ test('browser plugin integration test withRPCRedux', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -132,6 +136,7 @@ test('browser plugin integration test withRPCRedux and options', async t => {
       )
     );
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [
     {type: initActionPattern},
@@ -176,6 +181,7 @@ test('browser plugin integration test withRPCRedux and options', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
 
@@ -207,6 +213,7 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
       )
     );
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [
     {type: initActionPattern},
@@ -256,6 +263,7 @@ test('browser plugin integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -276,6 +284,7 @@ test('browser mock integration test withRPCRedux', async t => {
       return Promise.resolve({a: 'b'});
     },
   };
+  const EventEmitter = createMockEmitter();
   const expectedActions = [
     {type: initActionPattern},
     {type: /TEST_START/, payload: {hello: 'world'}},
@@ -314,6 +323,7 @@ test('browser mock integration test withRPCRedux', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   teardown();
@@ -337,6 +347,7 @@ test('browser mock integration test withRPCRedux - failure', async t => {
       return Promise.reject(e);
     },
   };
+  const EventEmitter = createMockEmitter();
   const expectedActions = [
     {type: initActionPattern},
     {type: /TEST_START/, payload: {hello: 'world'}},
@@ -383,6 +394,7 @@ test('browser mock integration test withRPCRedux - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'message'));
@@ -413,6 +425,7 @@ test('browser plugin integration test withRPCReactor', async t => {
       )
     );
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -479,6 +492,7 @@ test('browser plugin integration test withRPCReactor', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -499,6 +513,7 @@ test('browser mock plugin integration test withRPCReactor', async t => {
       return Promise.resolve({a: 'b'});
     },
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -565,6 +580,7 @@ test('browser mock plugin integration test withRPCReactor', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app).render('/');
   t.equal(expectedActions.length, 0, 'dispatches all actions');
   t.equal(flags.start, true, 'dispatches start action');
@@ -590,6 +606,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
       return Promise.reject(e);
     },
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -663,6 +680,7 @@ test('browser plugin integration test withRPCReactor - failure', async t => {
   const app = new App(element);
   app.register(RPCPluginMock);
   app.register(RPCHandlersToken, handlers);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));
@@ -705,6 +723,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
       )
     );
   };
+  const EventEmitter = createMockEmitter();
 
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -778,6 +797,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async t => {
   const app = new App(element);
   app.register(Plugin);
   app.register(FetchToken, fetch);
+  app.register(UniversalEventsToken, EventEmitter);
   await getSimulator(app)
     .render('/')
     .catch(e => t.equal(e.message, 'Some failure'));

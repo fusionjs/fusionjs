@@ -19,26 +19,7 @@ import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import Plugin from '../plugin';
 import {mock, ResponseError} from '../index';
 import {withRPCRedux, withRPCReactor} from '../hoc';
-
-/* Test helpers */
-function createMockEmitter(props: mixed) {
-  const emitter = {
-    from: () => {
-      return emitter;
-    },
-    emit: () => {},
-    setFrequency: () => {},
-    teardown: () => {},
-    map: () => {},
-    on: () => {},
-    off: () => {},
-    mapEvent: () => {},
-    handleEvent: () => {},
-    flush: () => {},
-    ...props,
-  };
-  return emitter;
-}
+import createMockEmitter from './create-mock-emitter';
 
 test('plugin', t => {
   t.equals(typeof Plugin.provides, 'function');
@@ -61,10 +42,12 @@ test('plugin', t => {
 test('mock plugin', t => {
   t.equals(typeof mock.provides, 'function');
   const handlers = {test() {}};
+  const EventEmitter = createMockEmitter();
 
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(RPCHandlersToken, handlers);
+    app.register(UniversalEventsToken, EventEmitter);
     return app;
   };
 
