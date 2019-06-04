@@ -222,9 +222,10 @@ function getChunkGroupModules(dep) {
   const modulesSet = new Set();
   // For ConcatenatedModules in production build
   if (dep.module && dep.module.dependencies) {
+    modulesSet.add(dep.module.userRequest);
     dep.module.dependencies.forEach(dependency => {
-      if (dependency.originModule) {
-        modulesSet.add(dependency.originModule.userRequest);
+      if (dependency.module) {
+        modulesSet.add(dependency.module.userRequest);
       }
     });
   }
