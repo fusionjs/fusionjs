@@ -42,7 +42,6 @@
     "fusion-plugin-react-redux": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",
     "react": "^16.8.6",
