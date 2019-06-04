@@ -56,16 +56,16 @@ export function withRPCRedux<Props: {}>(
     class withRPCRedux extends React.Component<Props, *> {
       render() {
         const {rpc, store} = this.context;
-        if (mapStateToParams) {
-          const mapState = mapStateToParams;
-          mapStateToParams = (state, args) => mapState(state, args, this.props);
-        }
+
+        const wrappedMapStateToParams =
+          mapStateToParams &&
+          ((state, args) => mapStateToParams(state, args, this.props));
         const handler = createRPCHandler({
           rpcId,
           rpc,
           store,
           actions,
-          mapStateToParams,
+          mapStateToParams: wrappedMapStateToParams,
           transformParams,
         });
         const props = {
