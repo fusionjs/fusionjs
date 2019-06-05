@@ -45,7 +45,10 @@ const {
   removeCallArgItem,
 } = require('../utils/starlark.js');
 
-process.on('unhandledRejection', e => console.error(e.stack));
+process.on('unhandledRejection', e => {
+  console.error(e.stack);
+  process.exit(1);
+});
 
 runTests();
 
@@ -519,7 +522,7 @@ async function testGenerateDepLockfiles() {
   ]);
   assert(
     (await read(
-      `${__dirname}/generate-dep-lockfiles/a/yarn.lock`,
+      `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`,
       'utf8'
     )).includes('has@')
   );
