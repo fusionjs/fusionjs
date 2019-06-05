@@ -62,7 +62,7 @@ export function withRPCRedux<Props: {}>(
       const rpc = useService(RPCToken).from(ctx);
       const wrappedMapStateToParams =
         mapStateToParams &&
-        ((state, args) => mapStateToParams(state, args, this.props));
+        ((state, args) => mapStateToParams(state, args, props));
       const handler = createRPCHandler({
         rpcId,
         rpc,
