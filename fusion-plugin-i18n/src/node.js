@@ -87,7 +87,7 @@ const pluginFactory: () => PluginType = () =>
           }
           const localeCode =
             typeof i18n.locale === 'string' ? i18n.locale : i18n.locale.code;
-          const serialized = JSON.stringify({chunks, localeCode, translations});
+          const serialized = JSON.stringify({localeCode, translations});
           const script = html`
             <script type="application/json" id="__TRANSLATIONS__">
               ${serialized}
@@ -100,18 +100,11 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const ids = querystring.parse(ctx.querystring).ids || '';
-          const chunks = ids.split(',').map(id => {
-            const parsed = parseInt(id, 10);
-            return Number.isNaN(parsed) ? id : parsed;
-          });
-          const translations = {};
-          chunks.forEach(id => {
-            const keys = [...chunkTranslationMap.translationsForChunk(id)];
-            keys.forEach(key => {
-              translations[key] = i18n.translations && i18n.translations[key];
-            });
-          });
+          const keys = querystring.parse(ctx.querystring).keys || '';
+          const translations = keys.split(',').reduce((acc, key) => {
+            acc[key] = i18n.translations && i18n.translations[key];
+            return acc;
+          }, {});
           ctx.body = translations;
           return next();
         } else {
