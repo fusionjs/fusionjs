@@ -9,7 +9,13 @@ const {execSync: exec} = require('child_process');
 const {dirname} = require('path');
 
 const root = process.cwd();
-const [node, main, bin] = process.argv;
+const [
+  node,
+  // eslint-disable-next-line no-unused-vars
+  _,
+  main,
+  bin,
+] = process.argv;
 
 const files = exec(`find . -name output.tgz`, {cwd: bin, encoding: 'utf8'})
   .split('\n')
