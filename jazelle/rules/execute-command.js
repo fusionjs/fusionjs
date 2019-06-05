@@ -25,12 +25,22 @@ const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 const binPath = exists(`${main}/node_modules/.bin`)
   ? `:${main}/node_modules/.bin`
   : '';
+const payload = scripts[command] || ``;
 // prioritize hermetic Node version over system version
-const script = `export PATH=${dirname(node)}:$PATH${binPath}; ${scripts[
-  command
-] || ``}`;
+const script = `export PATH=${dirname(node)}:$PATH${binPath}; ${payload}`;
+
+// FIXME: this script allows babel to work, but it adds several seconds to the build
+exec(`
+  for f in $(find . -type l -path *.js -not -path "*node_modules*")
+  do
+    cp "$f" "$f.bak"
+    rm "$f"
+    mv "$f.bak" "$f"
+  done
+`, {cwd: main});
+
 if (out) {
-  exec(`mkdir -p ${dist}`, {cwd: main});
+  exec(`mkdir -p "${dist}"`, {cwd: main});
   exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   exec(`tar czf "${out}" "${dist}"`, {cwd: main});
 } else {
