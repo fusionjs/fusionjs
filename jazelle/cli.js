@@ -1,3 +1,4 @@
+// @flow
 process.on('unhandledRejection', e => {
   console.error(e.stack);
 });

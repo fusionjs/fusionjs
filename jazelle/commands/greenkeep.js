@@ -1,3 +1,4 @@
+// @flow
 const {upgrade: upgradeDep} = require('yarn-utilities');
 const {getManifest} = require('../utils/get-manifest.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
@@ -16,11 +17,19 @@ async function greenkeep({root, name, version}) {
     await Promise.all(
       roots.map(async cwd => {
         const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
-        if (meta.dependencies && meta.dependencies[name]) meta.dependencies[name] = local.meta.version;
-        if (meta.devDependencies && meta.devDependencies[name]) meta.devDependencies[name] = local.meta.version;
-        if (meta.peerDependencies && meta.peerDependencies[name]) meta.peerDependencies[name] = local.meta.version;
-        if (meta.optionalDependencies && meta.optionalDependencies[name]) meta.optionalDependencies[name] = local.meta.version;
-        await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+        if (meta.dependencies && meta.dependencies[name])
+          meta.dependencies[name] = local.meta.version;
+        if (meta.devDependencies && meta.devDependencies[name])
+          meta.devDependencies[name] = local.meta.version;
+        if (meta.peerDependencies && meta.peerDependencies[name])
+          meta.peerDependencies[name] = local.meta.version;
+        if (meta.optionalDependencies && meta.optionalDependencies[name])
+          meta.optionalDependencies[name] = local.meta.version;
+        await write(
+          `${cwd}/package.json`,
+          JSON.stringify(meta, null, 2),
+          'utf8'
+        );
       })
     );
   } else {

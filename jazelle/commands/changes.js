@@ -1,3 +1,4 @@
+// @flow
 const {findChangedTargets} = require('../utils/find-changed-targets.js');
 
 async function changes({root}) {
