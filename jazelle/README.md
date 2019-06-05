@@ -152,6 +152,7 @@ third_party/jazelle/temp
 
 - `/third_party/jazelle/temp` folder
 - `node_modules` folders
+- `bazel-[*]` folders
 
 ---
 
