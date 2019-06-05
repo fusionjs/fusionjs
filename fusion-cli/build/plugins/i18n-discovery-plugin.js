@@ -16,27 +16,30 @@ import type {TranslationsManifestState, TranslationsManifest} from "../types.js"
 
 class I18nDiscoveryPlugin {
   /*::
-  manifest: TranslationsManifestState;
-  discoveryState: TranslationsManifest;
+  manifestState: TranslationsManifestState;
+  manifest: TranslationsManifest;
   */
-  constructor(manifest /*: TranslationsManifestState*/) {
+  constructor(
+    manifestState /*: TranslationsManifestState*/,
+    manifest /*: TranslationsManifest*/
+  ) {
+    this.manifestState = manifestState;
     this.manifest = manifest;
-    this.discoveryState = new Map();
   }
   apply(compiler /*: any */) {
     const name = this.constructor.name;
     // "thisCompilation" is not run in child compilations
     compiler.hooks.thisCompilation.tap(name, compilation => {
       compilation.hooks.normalModuleLoader.tap(name, (context, module) => {
-        context[translationsDiscoveryKey] = this.discoveryState;
+        context[translationsDiscoveryKey] = this.manifest;
       });
     });
     compiler.hooks.done.tap(name, () => {
-      this.manifest.resolve(this.discoveryState);
+      this.manifestState.resolve(this.manifest);
     });
     compiler.hooks.invalid.tap(name, filename => {
-      this.manifest.reset();
-      this.discoveryState.delete(filename);
+      this.manifestState.reset();
+      this.manifest.delete(filename);
     });
   }
 }

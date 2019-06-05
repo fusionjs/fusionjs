@@ -114,7 +114,9 @@ test('`fusion dev` app with split translations integration', async () => {
       // eslint-disable-next-line
       window.__addHotStatusHandler(status => {
         if (status === 'idle') {
-          resolve();
+          setTimeout(() => {
+            resolve();
+          }, 100);
         }
       });
     });
