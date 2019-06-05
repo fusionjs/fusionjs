@@ -38,13 +38,10 @@
     "flow-bin": "^0.98.1",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-react-helmet-async": "0.0.0-monorepo",
     "fusion-plugin-react-router": "0.0.0-monorepo",
     "fusion-plugin-styletron-react": "0.0.0-monorepo",
-    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
     "get-port": "^5.0.0",
     "isomorphic-fetch": "^2.2.1",
     "nyc": "^14.1.0",
@@ -62,7 +59,6 @@
   "peerDependencies": {
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.8.6",
     "redux": "^4.0.1"
   },

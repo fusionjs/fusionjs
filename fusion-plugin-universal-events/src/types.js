@@ -41,7 +41,7 @@ export type BatchType = {|
 export interface BatchStorage {
   add(toBeAdded: BatchType): void;
   addToStart(toBeAdded: BatchType): void;
-  getAndClear(): BatchType[];
+  getAndClear(limit: number): BatchType[];
 }
 
 export type UniversalEventsPluginDepsType = {

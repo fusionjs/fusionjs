@@ -4,3 +4,5 @@ node_modules/
 .nyc_output/
 yarn-error.log
 coverage/
+package-deps.json
+*.build.log

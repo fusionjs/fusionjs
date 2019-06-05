@@ -37,7 +37,7 @@
     "flow": "flow check"
   },
   "dependencies": {
-    "react-helmet-async": "^0.2.0"
+    "react-helmet-async": "^1.0.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -55,7 +55,6 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",
     "react": "^16.8.6",
@@ -65,8 +64,7 @@
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo"
+    "fusion-core": "0.0.0-monorepo"
   },
   "engines": {
     "node": ">=8.9.0 <11",

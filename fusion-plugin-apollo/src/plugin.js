@@ -22,6 +22,7 @@ import compose from 'koa-compose';
 import {
   ApolloContextToken,
   ApolloCacheContext,
+  GetDataFromTreeToken,
   GraphQLSchemaToken,
   GraphQLEndpointToken,
   ApolloClientToken,
@@ -34,6 +35,7 @@ export type DepsType = {
   schema: typeof GraphQLSchemaToken.optional,
   endpoint: typeof GraphQLEndpointToken.optional,
   getApolloClient: typeof ApolloClientToken,
+  getDataFromTree: typeof GetDataFromTreeToken.optional,
   bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
 };
 
@@ -47,6 +49,7 @@ function getDeps(): DepsType {
       schema: GraphQLSchemaToken.optional,
       endpoint: GraphQLEndpointToken.optional,
       getApolloClient: ApolloClientToken,
+      getDataFromTree: GetDataFromTreeToken.optional,
       bodyParserConfig: ApolloBodyParserConfigToken.optional,
     };
   }
@@ -64,7 +67,7 @@ export default (renderFn: Render) =>
         return renderFn;
       }
       return (el, ctx) => {
-        return serverRender(el, deps.logger).then(() => {
+        return serverRender(el, deps.logger, deps.getDataFromTree).then(() => {
           return renderFn(el, ctx);
         });
       };
@@ -105,7 +108,11 @@ export default (renderFn: Render) =>
           const initialState = client.cache && client.cache.extract();
           const serialized = JSON.stringify(initialState);
           // eslint-disable-next-line prettier/prettier
-          const script = html`<script type="application/json" id="__APOLLO_STATE__">${String(serialized)}</script>`;
+          const script = html`
+            <script type="application/json" id="__APOLLO_STATE__">
+              ${String(serialized)}
+            </script>
+          `;
           ctx.template.body.push(script);
         }
       };

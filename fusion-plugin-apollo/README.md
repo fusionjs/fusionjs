@@ -23,6 +23,7 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`GetApolloClientCacheToken`](#GetApolloClientCacheToken)
     - [`ApolloClientCredentialsToken`](#apolloclientcredentialstoken)
     - [`GetApolloClientLinksToken`](#getapolloclientlinkstoken)
+    - [`GetDataFromTreeToken`](#getdatafromtreetoken)
     - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
     - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
   = [GQL Macro]($gql)
@@ -192,6 +193,15 @@ Optional - A configuration value that provides a array of [ApolloLinks](https://
 ```js
 type GetApolloClientLinks = (Array<ApolloLinkType>) => Array<ApolloLinkType>
 ```
+
+##### `GetDataFromTreeToken`
+
+```js
+import {GetDataFromTreeToken} from 'fusion-plugin-apollo';
+```
+
+Optional - A configuration value that provides an option to provide custom `getDataFromTree` function for server side rendering. Default value is [react-apollo](https://www.apollographql.com/docs/react/features/server-side-rendering#getDataFromTree) implementation but with this token you can provide proper server side rendering with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks#server-side-rendering).
+
 
 ##### `ApolloClientResolversToken`
 

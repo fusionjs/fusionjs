@@ -7,7 +7,7 @@
  */
 
 /* eslint-env node */
-import {getDataFromTree} from 'react-apollo';
+import {getDataFromTree as defaultGetDataFromTree} from 'react-apollo';
 import type {Logger} from 'fusion-tokens';
 
 import type {Element} from 'react';
@@ -17,8 +17,12 @@ import type {Element} from 'react';
 // fall back to a standard renderToString, which will set the `loading` props of all queries which failed to execute in the first pass to true.
 // This allows us to still render with data in the happy case, and defer to client side rendering if any queries fail. This also acts as a form
 // of retrying from the browser.
-export default (root: Element<*>, logger?: Logger) => {
-  return getDataFromTree(root).catch(e => {
+export default (
+  root: Element<*>,
+  logger?: Logger,
+  getDataFromTree?: typeof defaultGetDataFromTree
+) => {
+  return (getDataFromTree || defaultGetDataFromTree)(root).catch(e => {
     logger && logger.error('SSR Failed with Error', e);
   });
 };

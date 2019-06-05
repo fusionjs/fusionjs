@@ -1,9 +1,10 @@
 // @flow
 
 import type {BatchStorage, BatchType} from '../types';
+import {split} from './split';
 
 class InMemoryBatchStorage implements BatchStorage {
-  data = [];
+  data: BatchType[] = [];
 
   add = (...toBeAdded: BatchType[]) => {
     this.data.push(...toBeAdded);
@@ -13,10 +14,11 @@ class InMemoryBatchStorage implements BatchStorage {
     this.data.unshift(...toBeAdded);
   };
 
-  getAndClear = () => {
-    const events = this.data;
-    this.data = [];
-    return events;
+  getAndClear = (limit?: number = Infinity): BatchType[] => {
+    const allEvents = this.data;
+    const [eventsToSend, eventsToStore] = split(allEvents, limit);
+    this.data = eventsToStore;
+    return eventsToSend;
   };
 }
 

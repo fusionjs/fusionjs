@@ -38,8 +38,6 @@
     "express": "^4.16.4",
     "flow-bin": "^0.98.1",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-test-utils": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
     "get-port": "^5.0.0",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",

@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@apollographql/apollo-tools@^0.3.6-alpha.1":
+"@apollographql/apollo-tools@^0.3.6", "@apollographql/apollo-tools@^0.3.6-alpha.1":
   version "0.3.7"
   resolved "https://registry.npmjs.org/@apollographql/apollo-tools/-/apollo-tools-0.3.7.tgz#3bc9c35b9fff65febd4ddc0c1fc04677693a3d40"
   dependencies:
     apollo-env "0.5.1"
 
-"@apollographql/graphql-playground-html@^1.6.6":
-  version "1.6.18"
-  resolved "https://registry.npmjs.org/@apollographql/graphql-playground-html/-/graphql-playground-html-1.6.18.tgz#c0763b4b5a64d4a5316ae6adc2a3a61af58df402"
+"@apollographql/graphql-playground-html@1.6.20":
+  version "1.6.20"
+  resolved "https://registry.npmjs.org/@apollographql/graphql-playground-html/-/graphql-playground-html-1.6.20.tgz#bf9f2acdf319c0959fad8ec1239741dd2ead4e8d"
 
 "@babel/cli@^7.1.5":
   version "7.4.4"
@@ -1111,6 +1111,12 @@
     pirates "^4.0.0"
     source-map-support "^0.5.9"
 
+"@babel/runtime@7.3.4":
+  version "7.3.4"
+  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.3.4.tgz#73d12ba819e365fcf7fd152aed56d6df97d21c83"
+  dependencies:
+    regenerator-runtime "^0.12.0"
+
 "@babel/runtime@^7.1.2":
   version "7.4.5"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.4.5.tgz#582bb531f5f9dc67d2fcb682979894f75e253f12"
@@ -1216,8 +1222,8 @@
     minimist "^1.2.0"
 
 "@gfx/zopfli@^1.0.10":
-  version "1.0.12"
-  resolved "https://registry.npmjs.org/@gfx/zopfli/-/zopfli-1.0.12.tgz#32b20a96758a224f3a3756d72bbdaa0a4d69341c"
+  version "1.0.13"
+  resolved "https://registry.npmjs.org/@gfx/zopfli/-/zopfli-1.0.13.tgz#88ca5b15567e9c76be73e8d11e166273ce44e0b3"
   dependencies:
     base64-js "^1.3.0"
 
@@ -1948,7 +1954,7 @@
 
 "@rush-temp/fusion-plugin-react-helmet-async@file:./projects/fusion-plugin-react-helmet-async.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz#b0a70595d93f86f5720fa22aed083d610dc0311d"
+  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz#66289f627a849e0ba52de87d15e83138fc985f22"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1965,7 +1971,7 @@
     prettier "^1.17.0"
     react "^16.8.6"
     react-dom "^16.8.6"
-    react-helmet-async "^0.2.0"
+    react-helmet-async "^1.0.2"
     regenerator-runtime "^0.13.1"
     tape-cup "^4.7.1"
     unitest "^2.1.1"
@@ -2435,8 +2441,8 @@
   resolved "https://registry.npmjs.org/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
 
 "@types/express-serve-static-core@*":
-  version "4.16.4"
-  resolved "https://registry.npmjs.org/@types/express-serve-static-core/-/express-serve-static-core-4.16.4.tgz#56bb8be4559401d68af4a3624ae9dd3166103e60"
+  version "4.16.6"
+  resolved "https://registry.npmjs.org/@types/express-serve-static-core/-/express-serve-static-core-4.16.6.tgz#66d4b29ece3e2fb6e5aac2232723002426e651bd"
   dependencies:
     "@types/node" "*"
     "@types/range-parser" "*"
@@ -2475,14 +2481,14 @@
   resolved "https://registry.npmjs.org/@types/keygrip/-/keygrip-1.0.1.tgz#ff540462d2fb4d0a88441ceaf27d287b01c3d878"
 
 "@types/koa-bodyparser@^4.2.1":
-  version "4.2.2"
-  resolved "https://registry.npmjs.org/@types/koa-bodyparser/-/koa-bodyparser-4.2.2.tgz#7066e2871fbc4f15571c34e68ca587f5acc95d28"
+  version "4.3.0"
+  resolved "https://registry.npmjs.org/@types/koa-bodyparser/-/koa-bodyparser-4.3.0.tgz#54ecd662c45f3a4fa9de849528de5fc8ab269ba5"
   dependencies:
     "@types/koa" "*"
 
 "@types/koa-compose@*", "@types/koa-compose@^3.2.2":
-  version "3.2.3"
-  resolved "https://registry.npmjs.org/@types/koa-compose/-/koa-compose-3.2.3.tgz#4e2981f7bc4ce0f4797219516a91bf6ff3a70fa1"
+  version "3.2.4"
+  resolved "https://registry.npmjs.org/@types/koa-compose/-/koa-compose-3.2.4.tgz#76a461634a59c3e13449831708bb9b355fb1548e"
   dependencies:
     "@types/koa" "*"
 
@@ -2511,9 +2517,9 @@
   version "2.0.1"
   resolved "https://registry.npmjs.org/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
 
-"@types/node@*":
-  version "12.0.2"
-  resolved "https://registry.npmjs.org/@types/node/-/node-12.0.2.tgz#3452a24edf9fea138b48fad4a0a028a683da1e40"
+"@types/node@*", "@types/node@^12.0.2":
+  version "12.0.3"
+  resolved "https://registry.npmjs.org/@types/node/-/node-12.0.3.tgz#5d8d24e0033fc6393efadc85cb59c1f638095c9a"
 
 "@types/node@^10.1.0":
   version "10.14.7"
@@ -2679,9 +2685,10 @@
     "@xtuc/long" "4.2.1"
 
 "@wry/context@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/@wry/context/-/context-0.4.0.tgz#8a8718408e4dd0514a0f8f4231bb4b87130b34e3"
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/@wry/context/-/context-0.4.1.tgz#b3e23ca036035cbad0bd9711269352dd03a6fe3c"
   dependencies:
+    "@types/node" "^12.0.2"
     tslib "^1.9.3"
 
 "@xtuc/ieee754@^1.2.0":
@@ -2849,12 +2856,12 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
-apollo-cache-control@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/apollo-cache-control/-/apollo-cache-control-0.6.0.tgz#df22db28f850ea90a5722f5e92654d30c96e7f91"
+apollo-cache-control@0.6.1:
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/apollo-cache-control/-/apollo-cache-control-0.6.1.tgz#c73ff521fe606faf18edcbd3463c421a966f3e5d"
   dependencies:
     apollo-server-env "2.3.0"
-    graphql-extensions "0.6.0"
+    graphql-extensions "0.6.1"
 
 apollo-cache-inmemory@^1.3.12:
   version "1.6.0"
@@ -2899,16 +2906,16 @@ apollo-engine-reporting-protobuf@0.3.0:
   dependencies:
     protobufjs "^6.8.6"
 
-apollo-engine-reporting@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/apollo-engine-reporting/-/apollo-engine-reporting-1.1.0.tgz#10def3d3bf3f11ddb24765c19d9c81e30cb9d55c"
+apollo-engine-reporting@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/apollo-engine-reporting/-/apollo-engine-reporting-1.1.1.tgz#f5a3240bc5c5afb210ff8c45d72995de7b0d2a13"
   dependencies:
     apollo-engine-reporting-protobuf "0.3.0"
     apollo-graphql "^0.2.1-alpha.1"
-    apollo-server-core "2.5.0"
+    apollo-server-core "2.5.1"
     apollo-server-env "2.3.0"
     async-retry "^1.2.1"
-    graphql-extensions "0.6.0"
+    graphql-extensions "0.6.1"
 
 apollo-env@0.4.1-register.1:
   version "0.4.1-register.1"
@@ -2971,23 +2978,23 @@ apollo-server-caching@0.4.0:
   dependencies:
     lru-cache "^5.0.0"
 
-apollo-server-core@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-2.5.0.tgz#89fc28ba1018ebf9240bc3cc0c103fe705309023"
+apollo-server-core@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-2.5.1.tgz#0fdb6cfca56a0f5b5b3aecffb48db17b3c8e1d71"
   dependencies:
-    "@apollographql/apollo-tools" "^0.3.6-alpha.1"
-    "@apollographql/graphql-playground-html" "^1.6.6"
+    "@apollographql/apollo-tools" "^0.3.6"
+    "@apollographql/graphql-playground-html" "1.6.20"
     "@types/ws" "^6.0.0"
-    apollo-cache-control "0.6.0"
+    apollo-cache-control "0.6.1"
     apollo-datasource "0.4.0"
-    apollo-engine-reporting "1.1.0"
+    apollo-engine-reporting "1.1.1"
     apollo-server-caching "0.4.0"
     apollo-server-env "2.3.0"
     apollo-server-errors "2.3.0"
-    apollo-server-plugin-base "0.4.0"
-    apollo-tracing "0.6.0"
+    apollo-server-plugin-base "0.4.1"
+    apollo-tracing "0.6.1"
     fast-json-stable-stringify "^2.0.0"
-    graphql-extensions "0.6.0"
+    graphql-extensions "0.6.1"
     graphql-subscriptions "^1.0.0"
     graphql-tag "^2.9.2"
     graphql-tools "^4.0.0"
@@ -3008,10 +3015,10 @@ apollo-server-errors@2.3.0:
   resolved "https://registry.npmjs.org/apollo-server-errors/-/apollo-server-errors-2.3.0.tgz#700622b66a16dffcad3b017e4796749814edc061"
 
 apollo-server-koa@^2.4.8:
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/apollo-server-koa/-/apollo-server-koa-2.5.0.tgz#234fd200e5fd75f4c1c509fe48eea442e7a59f63"
+  version "2.5.1"
+  resolved "https://registry.npmjs.org/apollo-server-koa/-/apollo-server-koa-2.5.1.tgz#346588a7341f0355a67c6c07cb30c54191c48e7e"
   dependencies:
-    "@apollographql/graphql-playground-html" "^1.6.6"
+    "@apollographql/graphql-playground-html" "1.6.20"
     "@koa/cors" "^2.2.1"
     "@types/accepts" "^1.3.5"
     "@types/cors" "^2.8.4"
@@ -3020,7 +3027,7 @@ apollo-server-koa@^2.4.8:
     "@types/koa-compose" "^3.2.2"
     "@types/koa__cors" "^2.2.1"
     accepts "^1.3.5"
-    apollo-server-core "2.5.0"
+    apollo-server-core "2.5.1"
     graphql-subscriptions "^1.0.0"
     graphql-tools "^4.0.0"
     koa "2.7.0"
@@ -3028,16 +3035,16 @@ apollo-server-koa@^2.4.8:
     koa-router "^7.4.0"
     type-is "^1.6.16"
 
-apollo-server-plugin-base@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/apollo-server-plugin-base/-/apollo-server-plugin-base-0.4.0.tgz#38a3c37767043873dd1b07143d4e70eecbb09562"
+apollo-server-plugin-base@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/apollo-server-plugin-base/-/apollo-server-plugin-base-0.4.1.tgz#be380b28d71ad3b6b146d0d6a8f7ebf5675b07ff"
 
-apollo-tracing@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/apollo-tracing/-/apollo-tracing-0.6.0.tgz#afc2b9cbea173dc4c315a5d98053797469518083"
+apollo-tracing@0.6.1:
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/apollo-tracing/-/apollo-tracing-0.6.1.tgz#48a6d6040f9b2f2b4365a890c2e97cb763eb2392"
   dependencies:
     apollo-server-env "2.3.0"
-    graphql-extensions "0.6.0"
+    graphql-extensions "0.6.1"
 
 apollo-utilities@1.3.0, apollo-utilities@^1.0.1, apollo-utilities@^1.2.1, apollo-utilities@^1.3.0:
   version "1.3.0"
@@ -3170,11 +3177,11 @@ array-unique@^0.3.2:
   resolved "https://registry.npmjs.org/array-unique/-/array-unique-0.3.2.tgz#a894b75d4bc4f6cd679ef3244a9fd8f46ae2d428"
 
 array.prototype.find@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.npmjs.org/array.prototype.find/-/array.prototype.find-2.0.4.tgz#556a5c5362c08648323ddaeb9de9d14bc1864c90"
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/array.prototype.find/-/array.prototype.find-2.1.0.tgz#630f2eaf70a39e608ac3573e45cf8ccd0ede9ad7"
   dependencies:
-    define-properties "^1.1.2"
-    es-abstract "^1.7.0"
+    define-properties "^1.1.3"
+    es-abstract "^1.13.0"
 
 array.prototype.flat@^1.2.1:
   version "1.2.1"
@@ -3553,8 +3560,8 @@ bl@^1.0.0:
     safe-buffer "^5.1.1"
 
 bluebird@^3.5.0, bluebird@^3.5.3:
-  version "3.5.4"
-  resolved "https://registry.npmjs.org/bluebird/-/bluebird-3.5.4.tgz#d6cc661595de30d5b3af5fcedd3c0b3ef6ec5714"
+  version "3.5.5"
+  resolved "https://registry.npmjs.org/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -3696,12 +3703,12 @@ browserslist@^2.4.0:
     electron-to-chromium "^1.3.30"
 
 browserslist@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.6.0.tgz#5274028c26f4d933d5b1323307c1d1da5084c9ff"
+  version "4.6.1"
+  resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.6.1.tgz#ee5059b1aec18cbec9d055d6cb5e24ae50343a9b"
   dependencies:
-    caniuse-lite "^1.0.30000967"
-    electron-to-chromium "^1.3.133"
-    node-releases "^1.1.19"
+    caniuse-lite "^1.0.30000971"
+    electron-to-chromium "^1.3.137"
+    node-releases "^1.1.21"
 
 bser@^2.0.0:
   version "2.0.0"
@@ -3851,9 +3858,9 @@ camelcase@^5.0.0:
   version "5.3.1"
   resolved "https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
 
-caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000884, caniuse-lite@^1.0.30000967:
-  version "1.0.30000969"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000969.tgz#7664f571f2072657bde70b00a1fc1ba41f1942a9"
+caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000884, caniuse-lite@^1.0.30000971:
+  version "1.0.30000971"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000971.tgz#d1000e4546486a6977756547352bc96a4cfd2b13"
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -3978,8 +3985,8 @@ chrome-remote-interface@^0.27.0:
     ws "^6.1.0"
 
 chrome-trace-event@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/chrome-trace-event/-/chrome-trace-event-1.0.0.tgz#45a91bd2c20c9411f0963b5aaeb9a1b95e09cc48"
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/chrome-trace-event/-/chrome-trace-event-1.0.2.tgz#234090ee97c7d4ad1a2c4beae27505deffc608a4"
   dependencies:
     tslib "^1.9.0"
 
@@ -4266,16 +4273,16 @@ copy-to@^2.0.1:
   resolved "https://registry.npmjs.org/copy-to/-/copy-to-2.0.1.tgz#2680fbb8068a48d08656b6098092bdafc906f4a5"
 
 core-js-compat@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.1.1.tgz#a1ae7edd5b791066d6eaa969c1b62986b844fd42"
+  version "3.1.3"
+  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.1.3.tgz#0cc3ba4c7f62928c2837e1cffbe8dc78b4f1ae14"
   dependencies:
     browserslist "^4.6.0"
-    core-js-pure "3.1.1"
-    semver "^6.0.0"
+    core-js-pure "3.1.3"
+    semver "^6.1.0"
 
-core-js-pure@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.1.1.tgz#92494ab7bae22f156ae93973a5e2738814efa7f8"
+core-js-pure@3.1.3:
+  version "3.1.3"
+  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.1.3.tgz#4c90752d5b9471f641514f3728f51c1e0783d0b5"
 
 core-js@3.0.0-beta.13:
   version "3.0.0-beta.13"
@@ -4286,12 +4293,12 @@ core-js@^1.0.0:
   resolved "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
 core-js@^2.4.0, core-js@^2.5.0, core-js@^2.6.5:
-  version "2.6.7"
-  resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.7.tgz#c2b19af9b50ec49c356ee087d6155632a889e968"
+  version "2.6.9"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
 
 core-js@^3.0.0, core-js@^3.0.1:
-  version "3.1.1"
-  resolved "https://registry.npmjs.org/core-js/-/core-js-3.1.1.tgz#502ba6e7c15300de20a372b390f9fc9039db76f2"
+  version "3.1.3"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-3.1.3.tgz#95700bca5f248f5f78c0ec63e784eca663ec4138"
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4790,9 +4797,9 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
-electron-to-chromium@^1.3.133, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.62:
-  version "1.3.135"
-  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.135.tgz#f5799b95f2bcd8de17cde47d63392d83a4477041"
+electron-to-chromium@^1.3.137, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.62:
+  version "1.3.139"
+  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.139.tgz#17a149701d934bbb91d2aa4ae09e5270c38dc0ff"
 
 eliminate@^1.0.2:
   version "1.0.2"
@@ -4866,8 +4873,8 @@ env-variable@0.0.x:
   resolved "https://registry.npmjs.org/env-variable/-/env-variable-0.0.5.tgz#913dd830bef11e96a039c038d4130604eba37f88"
 
 enzyme-adapter-react-16@^1.12.1:
-  version "1.13.1"
-  resolved "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.13.1.tgz#2e8ee300e38674b9914ae52b04af9493050355e2"
+  version "1.13.2"
+  resolved "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.13.2.tgz#8a574d7cbbef7ef0cab2022e9bfc12aeaebb7ae5"
   dependencies:
     enzyme-adapter-utils "^1.12.0"
     has "^1.0.3"
@@ -4876,7 +4883,7 @@ enzyme-adapter-react-16@^1.12.1:
     prop-types "^15.7.2"
     react-is "^16.8.6"
     react-test-renderer "^16.0.0-0"
-    semver "^5.6.0"
+    semver "^5.7.0"
 
 enzyme-adapter-utils@^1.12.0:
   version "1.12.0"
@@ -4937,7 +4944,7 @@ error-inject@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/error-inject/-/error-inject-1.0.0.tgz#e2b3d91b54aed672f309d950d154850fa11d4f37"
 
-es-abstract@^1.10.0, es-abstract@^1.11.0, es-abstract@^1.12.0, es-abstract@^1.5.0, es-abstract@^1.5.1, es-abstract@^1.7.0:
+es-abstract@^1.10.0, es-abstract@^1.11.0, es-abstract@^1.12.0, es-abstract@^1.13.0, es-abstract@^1.5.0, es-abstract@^1.5.1, es-abstract@^1.7.0:
   version "1.13.0"
   resolved "https://registry.npmjs.org/es-abstract/-/es-abstract-1.13.0.tgz#ac86145fdd5099d8dd49558ccba2eaf9b88e24e9"
   dependencies:
@@ -5101,14 +5108,14 @@ eslint-plugin-cup@^2.0.1:
     globals "^11.5.0"
 
 eslint-plugin-flowtype@^3.8.1:
-  version "3.9.0"
-  resolved "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-3.9.0.tgz#031949e2685e9e8658a1166e1cac3163313c3e0d"
+  version "3.9.1"
+  resolved "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-3.9.1.tgz#6491d930e1f96d53c510e0393e635fddd4a4cac5"
   dependencies:
     lodash "^4.17.11"
 
 eslint-plugin-import@^2.17.2:
-  version "2.17.2"
-  resolved "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.17.2.tgz#d227d5c6dc67eca71eb590d2bb62fb38d86e9fcb"
+  version "2.17.3"
+  resolved "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.17.3.tgz#00548b4434c18faebaba04b24ae6198f280de189"
   dependencies:
     array-includes "^3.0.3"
     contains-path "^0.1.0"
@@ -5120,11 +5127,11 @@ eslint-plugin-import@^2.17.2:
     lodash "^4.17.11"
     minimatch "^3.0.4"
     read-pkg-up "^2.0.0"
-    resolve "^1.10.0"
+    resolve "^1.11.0"
 
 eslint-plugin-jest@^22.5.1:
-  version "22.5.1"
-  resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.5.1.tgz#a31dfe9f9513c6af7c17ece4c65535a1370f060b"
+  version "22.6.4"
+  resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.6.4.tgz#2895b047dd82f90f43a58a25cf136220a21c9104"
 
 eslint-plugin-prettier@^3.0.1:
   version "3.1.0"
@@ -5243,9 +5250,9 @@ estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1, estraverse@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz#0dee3fed31fcd469618ce7342099fc1afa0bdb13"
 
-estree-walker@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/estree-walker/-/estree-walker-0.6.0.tgz#5d865327c44a618dde5699f763891ae31f257dae"
+estree-walker@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/estree-walker/-/estree-walker-0.6.1.tgz#53049143f40c6eb918b23671d1fe3219f3a1b362"
 
 esutils@^2.0.0, esutils@^2.0.2:
   version "2.0.2"
@@ -5384,8 +5391,8 @@ expect@^24.8.0:
     jest-regex-util "^24.3.0"
 
 express@^4.16.2, express@^4.16.4:
-  version "4.17.0"
-  resolved "https://registry.npmjs.org/express/-/express-4.17.0.tgz#288af62228a73f4c8ea2990ba3b791bb87cd4438"
+  version "4.17.1"
+  resolved "https://registry.npmjs.org/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
   dependencies:
     accepts "~1.3.7"
     array-flatten "1.1.1"
@@ -5801,8 +5808,8 @@ gauge@~2.7.3:
     wide-align "^1.1.0"
 
 gc-stats@^1.2.1:
-  version "1.3.0"
-  resolved "https://registry.npmjs.org/gc-stats/-/gc-stats-1.3.0.tgz#28c6b6ef84f303943c490b2f2676b1d450554386"
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/gc-stats/-/gc-stats-1.4.0.tgz#66cd194c5a8eae1138407300bc6cb42c2f6f3cd6"
   dependencies:
     nan "^2.13.2"
     node-pre-gyp "^0.13.0"
@@ -5887,7 +5894,7 @@ glob-to-regexp@^0.3.0:
   version "0.3.0"
   resolved "https://registry.npmjs.org/glob-to-regexp/-/glob-to-regexp-0.3.0.tgz#8c5a1494d2066c570cc3bfe4496175acc4d502ab"
 
-glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@~7.1.3:
+glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@~7.1.4:
   version "7.1.4"
   resolved "https://registry.npmjs.org/glob/-/glob-7.1.4.tgz#aa608a2f6c577ad357e1ae5a5c26d9a8d1969255"
   dependencies:
@@ -5980,9 +5987,9 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2:
   version "4.1.15"
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
 
-graphql-extensions@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.6.0.tgz#3ee3aa57fe213f90aec5cd31275f6d04767c6a23"
+graphql-extensions@0.6.1:
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.6.1.tgz#e61c4cb901e336dc5993a61093a8678a021dda59"
   dependencies:
     "@apollographql/apollo-tools" "^0.3.6-alpha.1"
 
@@ -6016,8 +6023,8 @@ graphql-upload@^8.0.2:
     object-path "^0.11.4"
 
 graphql@^14.1.1:
-  version "14.3.0"
-  resolved "https://registry.npmjs.org/graphql/-/graphql-14.3.0.tgz#34dd36faa489ff642bcd25df6c3b4f988a1a2f3e"
+  version "14.3.1"
+  resolved "https://registry.npmjs.org/graphql/-/graphql-14.3.1.tgz#b3aa50e61a841ada3c1f9ccda101c483f8e8c807"
   dependencies:
     iterall "^1.2.2"
 
@@ -6463,7 +6470,7 @@ interpret@^1.0.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/interpret/-/interpret-1.2.0.tgz#d5061a6224be58e8083985f5014d844359576296"
 
-invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.0, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   dependencies:
@@ -7617,8 +7624,8 @@ json-stringify-safe@~5.0.1:
   resolved "https://registry.npmjs.org/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
 json3@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.npmjs.org/json3/-/json3-3.3.2.tgz#3c0434743df93e2f5c42aee7b19bcb483575f4e1"
+  version "3.3.3"
+  resolved "https://registry.npmjs.org/json3/-/json3-3.3.3.tgz#7fc10e375fc5ae42c4705a5cc0aa6f62be305b81"
 
 json5@^0.5.0, json5@^0.5.1:
   version "0.5.1"
@@ -7936,7 +7943,7 @@ loader-utils@1.1.0:
     emojis-list "^2.0.0"
     json5 "^0.5.0"
 
-loader-utils@^1.1.0:
+loader-utils@^1.1.0, loader-utils@^1.2.3:
   version "1.2.3"
   resolved "https://registry.npmjs.org/loader-utils/-/loader-utils-1.2.3.tgz#1ff5dc6911c9f0a062531a4c04b609406108c2c7"
   dependencies:
@@ -8591,9 +8598,9 @@ node-pre-gyp@^0.13.0:
     semver "^5.3.0"
     tar "^4"
 
-node-releases@^1.0.0-alpha.11, node-releases@^1.1.19:
-  version "1.1.19"
-  resolved "https://registry.npmjs.org/node-releases/-/node-releases-1.1.19.tgz#c492d1e381fea0350b338b646c27867e88e91b3d"
+node-releases@^1.0.0-alpha.11, node-releases@^1.1.21:
+  version "1.1.22"
+  resolved "https://registry.npmjs.org/node-releases/-/node-releases-1.1.22.tgz#d90cd5adc59ab9b0f377d4f532b09656399c88bf"
   dependencies:
     semver "^5.3.0"
 
@@ -9312,8 +9319,8 @@ prompts@^0.1.9:
     sisteransi "^0.1.1"
 
 prompts@^2.0.1:
-  version "2.0.4"
-  resolved "https://registry.npmjs.org/prompts/-/prompts-2.0.4.tgz#179f9d4db3128b9933aa35f93a800d8fce76a682"
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/prompts/-/prompts-2.1.0.tgz#bf90bc71f6065d255ea2bdc0fe6520485c1b45db"
   dependencies:
     kleur "^3.0.2"
     sisteransi "^1.0.0"
@@ -9326,7 +9333,7 @@ prop-types-exact@^1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.7.2, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   dependencies:
@@ -9372,8 +9379,8 @@ pseudomap@^1.0.1, pseudomap@^1.0.2:
   resolved "https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
 
 psl@^1.1.24, psl@^1.1.28:
-  version "1.1.31"
-  resolved "https://registry.npmjs.org/psl/-/psl-1.1.31.tgz#e9aa86d0101b5b105cbe93ac6b784cd547276184"
+  version "1.1.32"
+  resolved "https://registry.npmjs.org/psl/-/psl-1.1.32.tgz#3f132717cf2f9c169724b2b6caf373cf694198db"
 
 public-encrypt@^4.0.0:
   version "4.0.3"
@@ -9428,8 +9435,8 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
 
 puppeteer@^1.15.0:
-  version "1.16.0"
-  resolved "https://registry.npmjs.org/puppeteer/-/puppeteer-1.16.0.tgz#4b763d9ff4e69a4bb7a031c3393534214d54f27e"
+  version "1.17.0"
+  resolved "https://registry.npmjs.org/puppeteer/-/puppeteer-1.17.0.tgz#371957d227a2f450fa74b78e78a2dadb2be7f14f"
   dependencies:
     debug "^4.1.0"
     extract-zip "^1.6.6"
@@ -9537,14 +9544,14 @@ rc@^1.2.7:
     strip-json-comments "~2.0.1"
 
 react-apollo@^2.5.5:
-  version "2.5.5"
-  resolved "https://registry.npmjs.org/react-apollo/-/react-apollo-2.5.5.tgz#0f27079a8fa9d9ceea8b29a5977eb42885f88fb9"
+  version "2.5.6"
+  resolved "https://registry.npmjs.org/react-apollo/-/react-apollo-2.5.6.tgz#98a59d0eea31432ed001e6a033e11a58139ffc31"
   dependencies:
-    apollo-utilities "^1.2.1"
+    apollo-utilities "^1.3.0"
     hoist-non-react-statics "^3.3.0"
     lodash.isequal "^4.5.0"
     prop-types "^15.7.2"
-    ts-invariant "^0.4.0"
+    ts-invariant "^0.4.2"
     tslib "^1.9.3"
 
 react-dev-utils@^6.1.1:
@@ -9589,18 +9596,19 @@ react-error-overlay@^5.1.0:
   version "5.1.6"
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-5.1.6.tgz#0cd73407c5d141f9638ae1e0c63e7b2bf7e9929d"
 
-react-fast-compare@^2.0.2:
+react-fast-compare@2.0.4:
   version "2.0.4"
   resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
 
-react-helmet-async@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/react-helmet-async/-/react-helmet-async-0.2.0.tgz#d20d8725c1dcdcc95d54e281a1040af47c3abffa"
+react-helmet-async@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/react-helmet-async/-/react-helmet-async-1.0.2.tgz#bb55dd8268f7b15aac69c6b22e2f950abda8cc44"
   dependencies:
-    invariant "^2.2.4"
-    prop-types "^15.6.1"
-    react-fast-compare "^2.0.2"
-    shallowequal "^1.0.2"
+    "@babel/runtime" "7.3.4"
+    invariant "2.2.4"
+    prop-types "15.7.2"
+    react-fast-compare "2.0.4"
+    shallowequal "1.1.0"
 
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.8.6"
@@ -9725,8 +9733,8 @@ read-pkg@^3.0.0:
     util-deprecate "~1.0.1"
 
 readable-stream@^3.1.1:
-  version "3.3.0"
-  resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-3.3.0.tgz#cb8011aad002eb717bf040291feba8569c986fb9"
+  version "3.4.0"
+  resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-3.4.0.tgz#a51c26754658e0a3c21dbf59163bd45ba6f447fc"
   dependencies:
     inherits "^2.0.3"
     string_decoder "^1.1.1"
@@ -9787,6 +9795,10 @@ regenerate@^1.4.0:
 regenerator-runtime@^0.11.0:
   version "0.11.1"
   resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
+
+regenerator-runtime@^0.12.0:
+  version "0.12.1"
+  resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz#fa1a71544764c036f8c49b13a08b2594c9f8a0de"
 
 regenerator-runtime@^0.13.1, regenerator-runtime@^0.13.2:
   version "0.13.2"
@@ -9986,13 +9998,13 @@ resolve@1.1.7:
   version "1.1.7"
   resolved "https://registry.npmjs.org/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
-resolve@^1.10.0, resolve@^1.10.1, resolve@^1.3.2, resolve@^1.5.0:
+resolve@^1.10.0, resolve@^1.10.1, resolve@^1.11.0, resolve@^1.3.2, resolve@^1.5.0:
   version "1.11.0"
   resolved "https://registry.npmjs.org/resolve/-/resolve-1.11.0.tgz#4014870ba296176b86343d50b60f3b50609ce232"
   dependencies:
     path-parse "^1.0.6"
 
-resolve@~1.10.0:
+resolve@~1.10.1:
   version "1.10.1"
   resolved "https://registry.npmjs.org/resolve/-/resolve-1.10.1.tgz#664842ac960795bbe758221cdccda61fb64b5f18"
   dependencies:
@@ -10045,11 +10057,10 @@ rollup-plugin-multi-entry@^2.0.2:
     matched "^1.0.2"
 
 rollup-pluginutils@^2.0.1:
-  version "2.7.1"
-  resolved "https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.7.1.tgz#a7915ce8b12c177364784bf38a1590cc6c2c8250"
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-2.8.0.tgz#d7ece1502958a35748a74080c7ac5e95681bcbe9"
   dependencies:
-    estree-walker "^0.6.0"
-    micromatch "^3.1.10"
+    estree-walker "^0.6.1"
 
 rollup@^0.55.1:
   version "0.55.5"
@@ -10182,9 +10193,9 @@ seamless-immutable@^7.1.2, seamless-immutable@^7.1.3:
   version "5.7.0"
   resolved "https://registry.npmjs.org/semver/-/semver-5.7.0.tgz#790a7cf6fea5459bac96110b29b60412dc8ff96b"
 
-semver@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.npmjs.org/semver/-/semver-6.0.0.tgz#05e359ee571e5ad7ed641a6eec1e547ba52dea65"
+semver@^6.0.0, semver@^6.1.0:
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/semver/-/semver-6.1.1.tgz#53f53da9b30b2103cd4f15eab3a18ecbcb210c9b"
 
 send@0.17.1:
   version "0.17.1"
@@ -10264,7 +10275,7 @@ sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-shallowequal@^1.0.2:
+shallowequal@1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/shallowequal/-/shallowequal-1.1.0.tgz#188d521de95b9087404fd4dcb68b13df0ae4e7f8"
 
@@ -10645,8 +10656,8 @@ strip-json-comments@^2.0.1, strip-json-comments@~2.0.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
 styletron-engine-atomic@^1.0.13:
-  version "1.1.2"
-  resolved "https://registry.npmjs.org/styletron-engine-atomic/-/styletron-engine-atomic-1.1.2.tgz#b3cec962ab89fa133da0c87227f897350aeeef11"
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/styletron-engine-atomic/-/styletron-engine-atomic-1.2.0.tgz#d316001ced41352c8e8d71d17d5d280e3c40f056"
   dependencies:
     inline-style-prefixer "^4.0.0"
     styletron-standard "^2.0.3"
@@ -10731,8 +10742,8 @@ symbol-tree@^3.2.2:
   resolved "https://registry.npmjs.org/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
 
 table@^5.2.3:
-  version "5.3.3"
-  resolved "https://registry.npmjs.org/table/-/table-5.3.3.tgz#eae560c90437331b74200e011487a33442bd28b4"
+  version "5.4.0"
+  resolved "https://registry.npmjs.org/table/-/table-5.4.0.tgz#d772a3216e68829920a41a32c18eda286c95d780"
   dependencies:
     ajv "^6.9.1"
     lodash "^4.17.11"
@@ -10773,19 +10784,19 @@ tape-cup@^4.7.1:
     tape "^4.7.0"
 
 tape@^4.10.1, tape@^4.7.0:
-  version "4.10.1"
-  resolved "https://registry.npmjs.org/tape/-/tape-4.10.1.tgz#f73be60888dcb120f08b57f947af65a829506a5f"
+  version "4.10.2"
+  resolved "https://registry.npmjs.org/tape/-/tape-4.10.2.tgz#129fcf62f86df92687036a52cce7b8ddcaffd7a6"
   dependencies:
     deep-equal "~1.0.1"
     defined "~1.0.0"
     for-each "~0.3.3"
     function-bind "~1.1.1"
-    glob "~7.1.3"
+    glob "~7.1.4"
     has "~1.0.3"
     inherits "~2.0.3"
     minimist "~1.2.0"
     object-inspect "~1.6.0"
-    resolve "~1.10.0"
+    resolve "~1.10.1"
     resumer "~0.0.0"
     string.prototype.trim "~1.1.2"
     through "~2.3.8"
@@ -10824,22 +10835,23 @@ tar@^4:
     yallist "^3.0.2"
 
 terser-webpack-plugin@^1.1.0:
-  version "1.2.4"
-  resolved "https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-1.2.4.tgz#56f87540c28dd5265753431009388f473b5abba3"
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-1.3.0.tgz#69aa22426299f4b5b3775cbed8cb2c5d419aa1d4"
   dependencies:
     cacache "^11.3.2"
     find-cache-dir "^2.0.0"
     is-wsl "^1.1.0"
+    loader-utils "^1.2.3"
     schema-utils "^1.0.0"
     serialize-javascript "^1.7.0"
     source-map "^0.6.1"
-    terser "^3.17.0"
+    terser "^4.0.0"
     webpack-sources "^1.3.0"
     worker-farm "^1.7.0"
 
-terser@^3.17.0:
-  version "3.17.0"
-  resolved "https://registry.npmjs.org/terser/-/terser-3.17.0.tgz#f88ffbeda0deb5637f9d24b0da66f4e15ab10cb2"
+terser@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/terser/-/terser-4.0.0.tgz#ef356f6f359a963e2cc675517f21c1c382877374"
   dependencies:
     commander "^2.19.0"
     source-map "~0.6.1"
@@ -11014,7 +11026,7 @@ ts-invariant@^0.3.2:
   dependencies:
     tslib "^1.9.3"
 
-ts-invariant@^0.4.0:
+ts-invariant@^0.4.0, ts-invariant@^0.4.2:
   version "0.4.2"
   resolved "https://registry.npmjs.org/ts-invariant/-/ts-invariant-0.4.2.tgz#8685131b8083e67c66d602540e78763408be9113"
   dependencies:
@@ -11077,8 +11089,8 @@ uglify-js@^2.8.29:
     uglify-to-browserify "~1.0.0"
 
 uglify-js@^3.1.4:
-  version "3.5.15"
-  resolved "https://registry.npmjs.org/uglify-js/-/uglify-js-3.5.15.tgz#fe2b5378fd0b09e116864041437bff889105ce24"
+  version "3.6.0"
+  resolved "https://registry.npmjs.org/uglify-js/-/uglify-js-3.6.0.tgz#704681345c53a8b2079fb6cec294b05ead242ff5"
   dependencies:
     commander "~2.20.0"
     source-map "~0.6.1"
@@ -11521,8 +11533,8 @@ write-file-atomic@2.4.1:
     signal-exit "^3.0.2"
 
 write-file-atomic@^2.1.0, write-file-atomic@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-2.4.2.tgz#a7181706dfba17855d221140a9c06e15fcdd87b9"
+  version "2.4.3"
+  resolved "https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-2.4.3.tgz#1fd2e9ae1df3e75b8d8c367443c692d4ca81f481"
   dependencies:
     graceful-fs "^4.1.11"
     imurmurhash "^0.1.4"
