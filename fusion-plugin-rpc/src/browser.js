@@ -35,7 +35,7 @@ class RPC {
   request<TArgs, TResult>(
     rpcId: string,
     args: TArgs,
-    headers: ?{[string]: string},
+    headers: ?{[string]: string}
   ): Promise<TResult> {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');

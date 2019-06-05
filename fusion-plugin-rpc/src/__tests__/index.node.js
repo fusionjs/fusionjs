@@ -92,7 +92,7 @@ test('FusionApp - service resolved', t => {
         t.ok(rpcFactory);
         wasResolved = true;
       },
-    }),
+    })
   );
   t.true(wasResolved, 'service was resolved');
 
@@ -112,7 +112,7 @@ test('service - requires ctx', t => {
         t.throws(() => rpcFactory());
         wasResolved = true;
       },
-    }),
+    })
   );
   t.true(wasResolved, 'service was resolved');
 
@@ -296,7 +296,7 @@ test('middleware - invalid endpoint', async t => {
       t.equal(
         payload.error.message,
         'Missing RPC handler for valueOf',
-        'emits error in payload',
+        'emits error in payload'
       );
     },
   });
@@ -308,7 +308,7 @@ test('middleware - invalid endpoint', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -368,7 +368,7 @@ test('middleware - valid endpoint', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -432,7 +432,7 @@ test('middleware - valid endpoint (custom api path)', async t => {
           apiPath: 'test/api/long',
         },
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -491,7 +491,7 @@ test('middleware - valid endpoint with route prefix', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -551,7 +551,7 @@ test('middleware - valid endpoint failure with ResponseError', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -619,7 +619,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -632,7 +632,7 @@ test('middleware - valid endpoint failure with standard error', async t => {
     t.equal(
       // $FlowFixMe
       mockCtx.body.data.message,
-      'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages',
+      'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
     );
     // $FlowFixMe
     t.equal(mockCtx.body.data.code, undefined);
@@ -663,7 +663,7 @@ test('throws when not passed ctx', async t => {
         t.throws(() => rpcFactory.from(), 'missing context throws error');
         t.end();
       },
-    }),
+    })
   ).request('/');
 });
 
@@ -705,7 +705,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
         handlers: mockHandlers,
         bodyParserOptions: mockBodyParserOptions,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();
@@ -757,7 +757,7 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
-      mockService,
+      mockService
     );
   if (!middleware) {
     t.fail();

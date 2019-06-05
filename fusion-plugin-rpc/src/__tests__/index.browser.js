@@ -48,7 +48,7 @@ test('success status request', t => {
             t.equals(
               options.headers['Content-Type'],
               'application/json',
-              'has right content-type',
+              'has right content-type'
             );
             t.equals(options.body, '{}', 'has right body');
           })
@@ -58,7 +58,7 @@ test('success status request', t => {
 
         wasResolved = true;
       },
-    }),
+    })
   );
 
   t.true(wasResolved, 'plugin was resolved');
@@ -87,7 +87,7 @@ test('success status request (with custom api path)', t => {
             t.equals(
               options.headers['Content-Type'],
               'application/json',
-              'has right content-type',
+              'has right content-type'
             );
             t.equals(options.body, '{}', 'has right body');
           })
@@ -97,7 +97,7 @@ test('success status request (with custom api path)', t => {
 
         wasResolved = true;
       },
-    }),
+    })
   );
 
   t.true(wasResolved, 'plugin was resolved');
@@ -124,12 +124,12 @@ test('success status request w/args and header', t => {
             t.equals(
               options.headers['Content-Type'],
               'application/json',
-              'has right content-type',
+              'has right content-type'
             );
             t.equals(
               options.headers['test-header'],
               'header value',
-              'header is passed',
+              'header is passed'
             );
             t.equals(options.body, '{"args":1}', 'has right body');
           })
@@ -139,7 +139,7 @@ test('success status request w/args and header', t => {
 
         wasResolved = true;
       },
-    }),
+    })
   );
 
   t.true(wasResolved, 'plugin was resolved');
@@ -175,7 +175,7 @@ test('failure status request', t => {
 
         wasResolved = true;
       },
-    }),
+    })
   );
 
   t.true(wasResolved, 'plugin was resolved');
