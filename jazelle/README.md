@@ -7,7 +7,7 @@ Incremental, cacheable builds for large Javascript monorepos. Uses [Bazel](https
 - Getting started
   - [Why use Jazelle](#why-use-jazelle)
   - [Setup a monorepo](#setup-a-monorepo)
-  - [Typical usage](#usage)
+  - [Typical usage](#typical-usage)
 
 - Reference
   - [CLI](#cli)
@@ -41,7 +41,7 @@ If you just have a library of decoupled components, Jazelle might be overkill. I
 
 - [Scaffold a workspace](#scaffold-a-workspace)
 - [Configure Bazel rules](#configure-bazel-rules)
-- [Create manifest.json file](#create-manifestjson-file)
+- [Edit manifest.json file](#edit-manifestjson-file)
 - [Setup .gitignore](#setup-gitignore)
 - [What to commit to version control](#what-to-commit-to-version-control)
 
@@ -288,7 +288,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
 - [`jazelle chunk`](#jazelle-chunk)
-- [`jazelle changed`](#jazelle-changed)
+- [`jazelle changes`](#jazelle-changes)
 - [`jazelle build`](#jazelle-build)
 - [`jazelle run`](#jazelle-run)
 - [`jazelle test`](#jazelle-test)
@@ -416,7 +416,7 @@ jest --testPathPattern=$(jazelle chunk --projects "tests/**/*|!tests/fixtures/**
 
 Prints a list of Bazel test targets that have changed since the last git commit.
 
-`jazelle changed`
+`jazelle changes`
 
 Targets can be tested via the `bazel test [target]` command.
 
