@@ -13,7 +13,8 @@ import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 import type {Token} from 'fusion-core';
 
-import RPCPlugin from '../browser';
+import {RPCHandlersConfigToken} from '../tokens.js';
+import RPCPlugin from '../browser.js';
 
 const MockPluginToken: Token<any> = createToken('test-plugin-token');
 function createTestFixture() {
@@ -47,7 +48,7 @@ test('success status request', t => {
             t.equals(
               options.headers['Content-Type'],
               'application/json',
-              'has right content-type'
+              'has right content-type',
             );
             t.equals(options.body, '{}', 'has right body');
           })
@@ -57,7 +58,47 @@ test('success status request', t => {
 
         wasResolved = true;
       },
-    })
+    }),
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
+});
+
+test('success status request (with custom api path)', t => {
+  const app = createTestFixture();
+
+  app.register(RPCHandlersConfigToken, {apiPath: 'test/api/path'});
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        console.log(deps);
+        const rpc = deps.rpcFactory.from();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        rpc
+          .request('test')
+          .then(([url, options]) => {
+            t.equals(url, '/test/api/path/test', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              'application/json',
+              'has right content-type',
+            );
+            t.equals(options.body, '{}', 'has right body');
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    }),
   );
 
   t.true(wasResolved, 'plugin was resolved');
@@ -84,12 +125,12 @@ test('success status request w/args and header', t => {
             t.equals(
               options.headers['Content-Type'],
               'application/json',
-              'has right content-type'
+              'has right content-type',
             );
             t.equals(
               options.headers['test-header'],
               'header value',
-              'header is passed'
+              'header is passed',
             );
             t.equals(options.body, '{"args":1}', 'has right body');
           })
@@ -99,7 +140,7 @@ test('success status request w/args and header', t => {
 
         wasResolved = true;
       },
-    })
+    }),
   );
 
   t.true(wasResolved, 'plugin was resolved');
@@ -135,7 +176,7 @@ test('failure status request', t => {
 
         wasResolved = true;
       },
-    })
+    }),
   );
 
   t.true(wasResolved, 'plugin was resolved');
