@@ -129,10 +129,11 @@ The `projects` field in this file should list every project that you want Jazell
 
 ### Setup .gitignore
 
-Add the following entry to .gitignore
+Add the following entries to .gitignore
 
 ```
 third_party/jazelle/temp
+bazel-*
 ```
 
 ### What to commit to version control
