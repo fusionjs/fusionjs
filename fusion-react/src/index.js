@@ -28,7 +28,6 @@ import {
   FusionContext,
   ServiceConsumer,
   ServiceContext,
-  serviceContextPlugin,
   useService,
   withServices,
 } from './context.js';
@@ -39,10 +38,24 @@ declare var __NODE__: Boolean;
 
 export default class App extends FusionApp {
   constructor(root: React.Element<*>, render: ?Render) {
-    if (!React.isValidElement(root))
+    if (!React.isValidElement(root)) {
       throw new Error(
         'Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)'
       );
+    }
+    const getService = token => {
+      // $FlowFixMe
+      const provides = this.getService(token);
+      const isRequiredToken = Boolean(token.optional);
+      if (typeof provides === 'undefined' && isRequiredToken) {
+        throw new Error(
+          `Token ${
+            token.name
+          } not registered or registered plugin does not provide a service. To use an optional plugin, use \`Token.optional\`.`
+        );
+      }
+      return provides;
+    };
     const renderer = createPlugin({
       deps: {
         criticalChunkIds: CriticalChunkIdsToken.optional,
@@ -81,7 +94,11 @@ export default class App extends FusionApp {
             : noop;
           ctx.element = (
             <PrepareProvider markAsCritical={markAsCritical}>
-              {ctx.element}
+              <FusionContext.Provider value={ctx}>
+                <ServiceContext.Provider value={getService}>
+                  {ctx.element}
+                </ServiceContext.Provider>
+              </FusionContext.Provider>
             </PrepareProvider>
           );
           return next();
@@ -89,7 +106,6 @@ export default class App extends FusionApp {
       },
     });
     super(root, renderer);
-    this.register(serviceContextPlugin(this));
   }
 }
 
