@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "node tests/index.js",
-    "preinstall": "node utils/download-bazelisk.js 0.0.4"
+    "preinstall": "node utils/download-bazelisk.js 0.0.4",
+    "build": "yarn preinstall"
   },
   "dependencies": {
     "@yarnpkg/lockfile": "1.1.0",
