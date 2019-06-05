@@ -7,6 +7,7 @@
     "jazelle": "bin/cli.sh"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "node tests/index.js",
     "preinstall": "node utils/download-bazelisk.js 0.0.4",
     "build": "yarn preinstall"
@@ -18,6 +19,15 @@
     "yarn-utilities": "0.0.15"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0",
     "yarn": "^1.16.0"
   }
 }

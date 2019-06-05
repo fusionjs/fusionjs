@@ -1,3 +1,4 @@
+// @flow
 const {readFile} = require('fs');
 const {promisify} = require('util');
 const {satisfies} = require('semver');
@@ -12,7 +13,7 @@ module.exports.getLocalDependencies = async ({dirs, target}) => {
     }),
   ]);
   return unique(findDependencies(data, target));
-}
+};
 
 function findDependencies(data, target) {
   const output = [];
@@ -23,7 +24,9 @@ function findDependencies(data, target) {
       const deps = item.meta[field] || {};
       Object.keys(deps).forEach(dep => {
         const found = data.find(item => {
-          return item.meta.name === dep && satisfies(item.meta.version, deps[dep])
+          return (
+            item.meta.name === dep && satisfies(item.meta.version, deps[dep])
+          );
         });
         if (found) output.push(...findDependencies(data, found.dir), found);
       });

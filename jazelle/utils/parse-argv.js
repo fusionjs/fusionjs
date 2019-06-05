@@ -1,3 +1,4 @@
+// @flow
 function parse(args) {
   const params = {};
   for (let i = 0; i < args.length; i++) {

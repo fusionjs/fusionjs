@@ -1,6 +1,11 @@
+// @flow
 const {relative} = require('path');
-const {spawn, exists, read, write} = require('./node-helpers.js');
-const {getCallArgItems, addCallArgItem, removeCallArgItem} = require('./starlark.js');
+const {exists, read, write} = require('./node-helpers.js');
+const {
+  getCallArgItems,
+  addCallArgItem,
+  removeCallArgItem,
+} = require('./starlark.js');
 
 const generateBazelBuildRules = async (root, deps, projects) => {
   const depMap = deps.reduce((map, dep) => {
@@ -17,26 +22,36 @@ const generateBazelBuildRules = async (root, deps, projects) => {
           ...getDepLabels(root, depMap, dep.meta.devDependencies),
         ]),
       ];
-      if (!await exists(build)) {
+      if (!(await exists(build))) {
         // generate BUILD.bazel file
         const name = dep.meta.name;
         const path = relative(root, dep.dir);
-        const rules = await require(`${root}/third_party/jazelle/scripts/bazel-build-file-template.js`).template({
-          name,
-          path,
-          label: `//${path}:${name}`,
-          dependencies,
-        });
+        // eslint-disable-next-line
+        const rules = await require(`${root}/third_party/jazelle/scripts/bazel-build-file-template.js`).template(
+          {
+            name,
+            path,
+            label: `//${path}:${name}`,
+            dependencies,
+          }
+        );
         await write(build, rules.trim(), 'utf8');
       } else {
         // sync web_library deps list in BUILD.bazel with local dependencies in package.json
         let code = await read(build, 'utf8');
         const items = getCallArgItems(code, 'web_library', 'deps');
-        dependencies.map(d => `"${d}"`).forEach(dependency => {
-          if (!items.includes(dependency)) {
-            code = addCallArgItem(code, 'web_library', 'deps', `${dependency}`);
-          }
-        });
+        dependencies
+          .map(d => `"${d}"`)
+          .forEach(dependency => {
+            if (!items.includes(dependency)) {
+              code = addCallArgItem(
+                code,
+                'web_library',
+                'deps',
+                `${dependency}`
+              );
+            }
+          });
         items.forEach(item => {
           if (!dependencies.map(d => `"${d}"`).includes(item)) {
             const [, path] = item.match(/\/\/(.+?):/);
@@ -49,7 +64,7 @@ const generateBazelBuildRules = async (root, deps, projects) => {
       }
     })
   );
-}
+};
 
 const getDepLabels = (root, depMap, dependencies = {}) => {
   return Object.keys(dependencies)
@@ -58,6 +73,6 @@ const getDepLabels = (root, depMap, dependencies = {}) => {
       return dir ? `//${relative(root, dir)}:${name}` : null;
     })
     .filter(Boolean);
-}
+};
 
 module.exports = {generateBazelBuildRules};
