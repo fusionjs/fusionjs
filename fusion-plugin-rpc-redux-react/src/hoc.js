@@ -6,16 +6,19 @@
  * @flow
  */
 
-import PropTypes from 'prop-types';
 import * as React from 'react';
 import type {Reducer} from 'redux';
-import {createRPCHandler, createRPCReactors} from 'fusion-rpc-redux';
+import {RPCToken} from 'fusion-plugin-rpc';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {FusionContext, useService} from 'fusion-react';
+import {createRPCReactors, createRPCHandler} from 'fusion-rpc-redux';
 
 type RPCReducersType = {
   start?: Reducer<*, *>,
   success?: Reducer<*, *>,
   failure?: Reducer<*, *>,
 };
+
 export function withRPCReactor<Props: {}>(
   rpcId: string,
   reducers: RPCReducersType,
@@ -53,34 +56,25 @@ export function withRPCRedux<Props: {}>(
   } = {}
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   return (Component: React.ComponentType<Props>) => {
-    class withRPCRedux extends React.Component<Props, *> {
-      render() {
-        const {rpc, store} = this.context;
-
-        const wrappedMapStateToParams =
-          mapStateToParams &&
-          ((state, args) => mapStateToParams(state, args, this.props));
-        const handler = createRPCHandler({
-          rpcId,
-          rpc,
-          store,
-          actions,
-          mapStateToParams: wrappedMapStateToParams,
-          transformParams,
-        });
-        const props = {
-          ...this.props,
-          [propName]: handler,
-        };
-        return React.createElement(Component, props);
-      }
+    function WithRPCRedux(props: Props) {
+      const ctx = React.useContext(FusionContext);
+      const {store} = useService(ReduxToken).from(ctx);
+      const rpc = useService(RPCToken).from(ctx);
+      const wrappedMapStateToParams =
+        mapStateToParams &&
+        ((state, args) => mapStateToParams(state, args, this.props));
+      const handler = createRPCHandler({
+        rpcId,
+        rpc,
+        store,
+        actions,
+        mapStateToParams: wrappedMapStateToParams,
+        transformParams,
+      });
+      return React.createElement(Component, {...props, [propName]: handler});
     }
     const displayName = Component.displayName || Component.name || 'Anonymous';
-    withRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
-    withRPCRedux.contextTypes = {
-      rpc: PropTypes.object.isRequired,
-      store: PropTypes.object.isRequired,
-    };
-    return withRPCRedux;
+    WithRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
+    return WithRPCRedux;
   };
 }

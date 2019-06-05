@@ -1,9 +1,9 @@
 node_modules/
+dist-*/
 dist/
-dist-tests/
 coverage/
 .nyc_output/
-
+.fusion
 .DS_Store
 npm-debug.log
 yarn-error.log
