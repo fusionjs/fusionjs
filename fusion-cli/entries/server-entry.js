@@ -107,4 +107,6 @@ if (module.hot) {
   module.hot.accept('__SECRET_BUNDLE_MAP_LOADER__!');
   // $FlowFixMe
   module.hot.accept('__SECRET_SYNC_CHUNK_IDS_LOADER__!');
+  // $FlowFixMe
+  module.hot.accept('__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!');
 }

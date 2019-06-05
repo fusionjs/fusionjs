@@ -26,7 +26,7 @@ tape('Preparing an app with an async component', async t => {
 
   const ToTest = split({
     defer: false,
-    load: () => Promise.resolve({default: DeferredComponent}),
+    load: () => (Promise.resolve({default: DeferredComponent}): any),
     LoadingComponent,
     ErrorComponent,
   });
@@ -60,10 +60,7 @@ tape('Preparing an app with an errored async component', async t => {
 
   const ToTest = split({
     defer: false,
-    load: () =>
-      (Promise.reject(new Error('failed')): Promise<{
-        default: React.ComponentType<any>,
-      }>),
+    load: () => (Promise.reject(new Error('failed')): any),
     LoadingComponent,
     ErrorComponent,
   });
