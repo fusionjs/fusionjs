@@ -76,7 +76,6 @@ test('success status request (with custom api path)', t => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        console.log(deps);
         const rpc = deps.rpcFactory.from();
         t.equals(typeof rpc.request, 'function', 'has method');
         t.ok(rpc.request('test') instanceof Promise, 'has right return type');
