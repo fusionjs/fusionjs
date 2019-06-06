@@ -8,15 +8,15 @@ import {I18nContext} from '../plugin.js';
 
 test('useTranslations() hook', () => {
   function Foo() {
-    const translate = useTranslations('foo');
-    return <div>{translate()}</div>;
+    const translate = useTranslations();
+    return <div>{translate('foo')}</div>;
   }
 
   const mockI18n = {
     async load() {},
     localeCode: 'fr_CA',
-    translate() {
-      return 'foo bar baz';
+    translate(str) {
+      return `${str} bar baz`;
     },
   };
 
