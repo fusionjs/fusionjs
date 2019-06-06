@@ -21,16 +21,16 @@ export default function() {
     }
   );
   expect(translationIds).toMatchInlineSnapshot(`
-                Set {
-                  "test",
-                }
-        `);
+    Set {
+      "test",
+    }
+  `);
   expect(output.code).toMatchInlineSnapshot(`
-            "import { Translate } from 'fusion-plugin-i18n-react';
-            export default function () {
-              return <Translate random={'test'} id=\\"test\\" />;
-            }"
-      `);
+    "import { Translate } from 'fusion-plugin-i18n-react';
+    export default function () {
+      return <Translate random={'test'} id=\\"test\\" />;
+    }"
+  `);
 });
 
 test('babel-plugin-i18n - invalid usage of <Translate>', () => {
@@ -80,13 +80,13 @@ export default function() {
     }
   `);
   expect(output.code).toMatchInlineSnapshot(`
-        "import { useTranslations } from 'fusion-plugin-i18n-react';
-        export default function () {
-          const translate = useTranslations();
-          translate('static');
-          translate(\`dynamic.\${foo}\`);
-        }"
-    `);
+    "import { useTranslations } from 'fusion-plugin-i18n-react';
+    export default function () {
+      const translate = useTranslations();
+      translate('static');
+      translate(\`dynamic.\${foo}\`);
+    }"
+  `);
 });
 
 test('babel-plugin-i18n - invalid usage of useTranslations', () => {

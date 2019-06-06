@@ -96,7 +96,9 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.preloadChunks,
           ];
           const translations = {};
-          const possibleTranslations = i18n.translations ? Object.keys(i18n.translations) : [];
+          const possibleTranslations = i18n.translations
+            ? Object.keys(i18n.translations)
+            : [];
           chunks.forEach(id => {
             const keys = Array.from(
               chunkTranslationMap.translationsForChunk(id)
@@ -105,7 +107,8 @@ const pluginFactory: () => PluginType = () =>
               if (Array.isArray(key)) {
                 const matches = possibleTranslations.filter(matchesOrder(key));
                 for (const match of matches) {
-                  translations[match] = i18n.translations && i18n.translations[match];
+                  translations[match] =
+                    i18n.translations && i18n.translations[match];
                 }
               } else {
                 translations[key] = i18n.translations && i18n.translations[key];
@@ -134,7 +137,9 @@ const pluginFactory: () => PluginType = () =>
           const keys = JSON.parse(
             querystring.parse(ctx.querystring).keys || '[]'
           );
-          const possibleTranslations = i18n.translations ? Object.keys(i18n.translations) : [];
+          const possibleTranslations = i18n.translations
+            ? Object.keys(i18n.translations)
+            : [];
           const translations = keys.reduce((acc, key) => {
             if (Array.isArray(key)) {
               const matches = possibleTranslations.filter(matchesOrder(key));
