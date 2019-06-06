@@ -2,7 +2,13 @@
 const {resolve, dirname} = require('path');
 const {exists} = require('./node-helpers.js');
 
-async function getRootDir({dir}) {
+/*::
+export type GetRootDirArgs = {
+  dir: string
+}
+export type GetRootDir = (GetRootDirArgs) => Promise<string>
+*/
+const getRootDir /*: GetRootDir */ = async ({dir}) => {
   dir = resolve(dir);
   if (await exists(`${dir}/manifest.json`)) {
     return dir;
@@ -13,6 +19,6 @@ async function getRootDir({dir}) {
       'No root directory could be found. Make sure you have created a manifest.json file'
     );
   }
-}
+};
 
 module.exports.getRootDir = getRootDir;

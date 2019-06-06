@@ -1,5 +1,10 @@
 // @flow
-function parse(args) {
+
+/*::
+export type Parse = (Array<string>) => Args;
+export type Args = {[string]: string};
+*/
+const parse /*: Parse */ = args => {
   const params = {};
   for (let i = 0; i < args.length; i++) {
     if (args[i].startsWith('--')) {
@@ -13,6 +18,6 @@ function parse(args) {
     }
   }
   return params;
-}
+};
 
 module.exports = {parse};

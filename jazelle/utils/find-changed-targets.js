@@ -2,7 +2,13 @@
 const {exec} = require('../utils/node-helpers.js');
 const {bazel} = require('../utils/binary-paths.js');
 
-async function findChangedTargets({root}) {
+/*::
+export type FindChangedTargetsArgs = {
+  root: string,
+};
+export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
+*/
+const findChangedTargets /*: FindChangedTargets */ = async ({root}) => {
   const diff = await exec(`git diff-tree --no-commit-id --name-only -r HEAD`, {
     cwd: root,
   }).catch(() => null);
@@ -20,7 +26,7 @@ async function findChangedTargets({root}) {
     );
     return queried.trim().split('\n');
   }
-}
+};
 
 async function batch(items, fn) {
   const stdouts = await Promise.all(items.map(item => exec(fn(item))));

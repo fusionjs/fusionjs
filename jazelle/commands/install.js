@@ -15,27 +15,34 @@ const {
 const {downloadDeps} = require('../utils/download-deps.js');
 const {installDeps} = require('../utils/install-deps.js');
 
-async function install({root, cwd}) {
-  await assertProjectDir(cwd);
+/*::
+export type InstallArgs = {
+  root: string,
+  cwd: string,
+}
+export type Install = (InstallArgs) => Promise<void>
+*/
+const install /*: Install */ = async ({root, cwd}) => {
+  await assertProjectDir({dir: cwd});
 
-  const manifest = await getManifest(root);
+  const {projects, versionPolicy, hooks} = await getManifest({root});
   const deps = await getLocalDependencies({
-    dirs: manifest.projects.map(dir => `${root}/${dir}`),
+    dirs: projects.map(dir => `${root}/${dir}`),
     target: resolve(root, cwd),
   });
 
-  const result = await reportMismatchedTopLevelDeps(
+  const result = await reportMismatchedTopLevelDeps({
     root,
-    manifest.projects,
-    manifest.versionPolicy
-  );
+    projects,
+    versionPolicy,
+  });
   if (!result.valid) throw new Error(getErrorMessage(result));
 
-  await generateDepLockfiles(deps);
-  await generateBazelignore(root, manifest.projects);
-  await generateBazelBuildRules(root, deps, manifest.projects);
-  await downloadDeps(root, deps);
-  await installDeps(root, deps, manifest.hooks);
-}
+  await generateDepLockfiles({deps});
+  await generateBazelignore({root, projects: projects});
+  await generateBazelBuildRules({root, deps, projects});
+  await downloadDeps({root, deps});
+  await installDeps({root, deps, hooks});
+};
 
 module.exports = {install};

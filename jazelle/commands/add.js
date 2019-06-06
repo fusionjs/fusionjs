@@ -12,14 +12,24 @@ adding local dep should:
 - not add it to the project's yarn.lock
 */
 
-async function add({root, cwd, name, version, dev}) {
-  await assertProjectDir(cwd);
+/*::
+export type AddArgs = {
+  root: string,
+  cwd: string,
+  name: string,
+  version?: string,
+  dev?: boolean,
+};
+export type Add = (AddArgs) => Promise<void>;
+*/
+const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
+  await assertProjectDir({dir: cwd});
 
   const type = dev ? 'devDependencies' : 'dependencies';
-  const local = await findLocalDependency(root, name);
+  const local = await findLocalDependency({root, name});
   if (local) {
-    if (version && version !== local.version) {
-      throw new Error(`You must use version ${local.version}`);
+    if (version && version !== local.meta.version) {
+      throw new Error(`You must use version ${local.meta.version}`);
     }
 
     const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
@@ -43,6 +53,6 @@ async function add({root, cwd, name, version, dev}) {
     await addDep({roots: [cwd], dep: name, version, type});
   }
   await install({root, cwd});
-}
+};
 
 module.exports = {add};

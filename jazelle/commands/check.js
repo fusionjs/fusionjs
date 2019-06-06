@@ -5,14 +5,20 @@ const {
   getErrorMessage,
 } = require('../utils/report-mismatched-top-level-deps.js');
 
-async function check({root}) {
-  const manifest = await getManifest(root);
-  const result = await reportMismatchedTopLevelDeps(
+/*::
+export type CheckArgs = {
+  root: string,
+};
+export type Check = (CheckArgs) => Promise<void>;
+*/
+const check /*: Check */ = async ({root}) => {
+  const {projects, versionPolicy} = await getManifest({root});
+  const result = await reportMismatchedTopLevelDeps({
     root,
-    manifest.projects,
-    manifest.versionPolicy
-  );
+    projects,
+    versionPolicy,
+  });
   console.log(result.valid ? 'No problems found' : getErrorMessage(result));
-}
+};
 
 module.exports = {check};

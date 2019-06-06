@@ -1,11 +1,28 @@
 // @flow
-const {readFile} = require('fs');
-const {promisify} = require('util');
 const {satisfies} = require('semver');
+const {read} = require('./node-helpers.js');
 
-const read = promisify(readFile);
-
-module.exports.getLocalDependencies = async ({dirs, target}) => {
+/*::
+export type GetLocalDependenciesArgs = {
+  dirs: Array<string>,
+  target: string,
+};
+export type GetLocalDependencies = (GetLocalDependenciesArgs) => Promise<Array<Metadata>>;
+export type Metadata = {
+  dir: string,
+  meta: PackageJson,
+};
+export type PackageJson = {
+  name: string,
+  version: string,
+  dependencies: {[string]: string} | void,
+  devDependencies: {[string]: string} | void,
+};
+*/
+const getLocalDependencies /*: GetLocalDependencies */ = async ({
+  dirs,
+  target,
+}) => {
   const data = await Promise.all([
     ...dirs.map(async dir => {
       const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
@@ -43,3 +60,5 @@ function unique(data) {
   }
   return [...map.values()];
 }
+
+module.exports = {getLocalDependencies};
