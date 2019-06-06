@@ -2,6 +2,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
   name = "jazelle",
   url = "https://registry.yarnpkg.com/jazelle/-/jazelle-VERSION.tgz",
+  strip_prefix = "package",
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
