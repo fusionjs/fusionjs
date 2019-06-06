@@ -9,11 +9,7 @@ import {I18nContext} from '../plugin.js';
 test('useTranslations() hook', () => {
   function Foo() {
     const translate = useTranslations('foo');
-    return (
-      <div>
-        {translate()}
-      </div>
-    );
+    return <div>{translate()}</div>;
   }
 
   const mockI18n = {

@@ -1,9 +1,9 @@
 // @flow
-const { transformSync } = require("@babel/core");
+const {transformSync} = require('@babel/core');
 
-const plugin = require("../");
+const plugin = require('../');
 
-test("babel-plugin-i18n", () => {
+test('babel-plugin-i18n', () => {
   const translationIds = new Set();
   const output = transformSync(
     `
@@ -15,9 +15,9 @@ export default function() {
   `,
     {
       parserOpts: {
-        plugins: ["jsx"]
+        plugins: ['jsx'],
       },
-      plugins: [[plugin, { translationIds }]]
+      plugins: [[plugin, {translationIds}]],
     }
   );
   expect(translationIds).toMatchInlineSnapshot(`
@@ -33,7 +33,7 @@ export default function() {
       `);
 });
 
-test("babel-plugin-i18n - invalid usage of <Translate>", () => {
+test('babel-plugin-i18n - invalid usage of <Translate>', () => {
   const translationIds = new Set();
   expect(() =>
     transformSync(
@@ -46,15 +46,15 @@ export default function() {
   `,
       {
         parserOpts: {
-          plugins: ["jsx"]
+          plugins: ['jsx'],
         },
-        plugins: [[plugin, { translationIds }]]
+        plugins: [[plugin, {translationIds}]],
       }
     )
-  ).toThrow("The translate component must have props.id be a string literal.");
+  ).toThrow('The translate component must have props.id be a string literal.');
 });
 
-test("babel-plugin-i18n - valid usage of useTranslations", () => {
+test('babel-plugin-i18n - valid usage of useTranslations', () => {
   const translationIds = new Set();
   const output = transformSync(
     `
@@ -67,7 +67,7 @@ export default function() {
 }
   `,
     {
-      plugins: [[plugin, { translationIds }]]
+      plugins: [[plugin, {translationIds}]],
     }
   );
   expect(translationIds).toMatchInlineSnapshot(`
@@ -89,11 +89,11 @@ export default function() {
     `);
 });
 
-test("babel-plugin-i18n - invalid usage of useTranslations", () => {
+test('babel-plugin-i18n - invalid usage of useTranslations', () => {
   const translationIds = new Set();
   expect(() =>
     transformSync(
-    `
+      `
 import {useTranslations} from 'fusion-plugin-i18n-react'; 
 
 export default function() {
@@ -102,8 +102,10 @@ export default function() {
 }
   `,
       {
-        plugins: [[plugin, { translationIds }]]
+        plugins: [[plugin, {translationIds}]],
       }
     )
-  ).toThrow("useTranslations result function must be passed string literal or hinted template literal");
+  ).toThrow(
+    'useTranslations result function must be passed string literal or hinted template literal'
+  );
 });
