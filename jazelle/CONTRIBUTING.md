@@ -164,7 +164,10 @@ Open the generated `test-monorepo/WORKSPACE` file and change the jazelle `http_a
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
   name = "jazelle",
-  url = "https://registry.yarnpkg.com/jazelle/-/jazelle-VERSION.tgz",
+  url = "https://registry.yarnpkg.com/jazelle/-/jazelle-[version].tgz",
+  sha256 = "SHA 256 goes here",
+  strip_prefix = "package",
+  patch_cmds = ["npm install"],
 )
 
 # AFTER
