@@ -15,24 +15,32 @@ The functions below assume top-level function calls of the form:
   )
 
 */
+
 const getCallMatcher = caller => new RegExp(`${caller}\\s*\\([^\\)]*\\)`, 'gi');
 const getArgsMatcher = argName =>
   new RegExp(`${argName}\\s*=\\s*\\[(?:[^\\]]*)]`, 'im');
 const getListMatcher = () => /\[([^\]]*)\]/;
 
-function getCallArgItems(code, caller, argName) {
+/*::
+export type GetCallArgItems = (string, string, string) => Array<string>;
+*/
+const getCallArgItems /*: GetCallArgItems */ = (code, caller, argName) => {
   let items = [];
   code.replace(getCallMatcher(caller), args => {
-    args.replace(getArgsMatcher(argName), arg => {
-      arg.replace(getListMatcher(), (_, list) => {
+    return args.replace(getArgsMatcher(argName), arg => {
+      return arg.replace(getListMatcher(), (_, list) => {
         items = list.split(',').map(item => item.replace(/,\s*$/, '').trim());
+        return ''; // keep Flow happy
       });
     });
   });
   return items.filter(Boolean);
-}
+};
 
-function addCallArgItem(code, caller, argName, value) {
+/*::
+export type AddCallArgItem = (string, string, string, string) => string;
+*/
+const addCallArgItem /*: AddCallArgItem */ = (code, caller, argName, value) => {
   return code.replace(getCallMatcher(caller), args => {
     return args.replace(getArgsMatcher(argName), arg => {
       return arg.replace(getListMatcher(), (_, list) => {
@@ -44,9 +52,17 @@ function addCallArgItem(code, caller, argName, value) {
       });
     });
   });
-}
+};
 
-function removeCallArgItem(code, caller, argName, value) {
+/*::
+export type RemoveCallArgItem = (string, string, string, string) => string;
+*/
+const removeCallArgItem /*: RemoveCallArgItem */ = (
+  code,
+  caller,
+  argName,
+  value
+) => {
   return code.replace(getCallMatcher(caller), args => {
     return args.replace(getArgsMatcher(argName), arg => {
       return arg.replace(getListMatcher(), (_, list) => {
@@ -61,6 +77,6 @@ function removeCallArgItem(code, caller, argName, value) {
       });
     });
   });
-}
+};
 
 module.exports = {addCallArgItem, removeCallArgItem, getCallArgItems};

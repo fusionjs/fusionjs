@@ -14,14 +14,7 @@ const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {build, test, run} = require('../utils/bazel.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
 const {cli} = require('../utils/cli.js');
-const {
-  exec,
-  exists,
-  read,
-  write,
-  ls,
-  ensure,
-} = require('../utils/node-helpers.js');
+const {exec, exists, read, write, ls} = require('../utils/node-helpers.js');
 const {downloadDeps} = require('../utils/download-deps.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {
@@ -225,13 +218,13 @@ async function testPurge() {
 // utils
 async function testAssertProjectDir() {
   assert(
-    await assertProjectDir(`${__dirname}/fixtures/project-dir`).then(
+    await assertProjectDir({dir: `${__dirname}/fixtures/project-dir`}).then(
       () => true,
       () => false
     )
   );
   assert(
-    await assertProjectDir(`${__dirname}/fixtures/not-project-dir`).then(
+    await assertProjectDir({dir: `${__dirname}/fixtures/not-project-dir`}).then(
       () => false,
       () => true
     )
@@ -338,34 +331,40 @@ async function testBinaryPaths() {
 }
 
 async function testCLI() {
-  let called = 0;
+  let called = '0';
   cli(
     'foo',
-    {bar: 1},
+    {bar: '1'},
     {
       foo: [
         `Bar
 
       --bar [bar]     bar`,
-        ({bar}) => (called = bar),
+        async ({bar}) => {
+          called = bar;
+        },
       ],
-    }
+    },
+    []
   );
-  assert.equal(called, 1);
+  assert.equal(called, '1');
 }
 
 async function testDownloadDeps() {
   await exec(
     `cp -r ${__dirname}/fixtures/download-deps/ ${__dirname}/tmp/download-deps`
   );
-  await downloadDeps(`${__dirname}/tmp/download-deps`, [
-    {
-      meta: JSON.parse(
-        await read(`${__dirname}/tmp/download-deps/a/package.json`, 'utf8')
-      ),
-      dir: `${__dirname}/tmp/download-deps/a`,
-    },
-  ]);
+  await downloadDeps({
+    root: `${__dirname}/tmp/download-deps`,
+    deps: [
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/download-deps/a/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/download-deps/a`,
+      },
+    ],
+  });
   assert(
     await exists(
       `${__dirname}/tmp/download-deps/third_party/jazelle/temp/.yarn-cache/no-bugs-1.0.0.tgz`
@@ -374,10 +373,10 @@ async function testDownloadDeps() {
 }
 
 async function testFindLocalDependency() {
-  const found = await findLocalDependency(
-    `${__dirname}/fixtures/find-local-dependency`,
-    'a'
-  );
+  const found = await findLocalDependency({
+    root: `${__dirname}/fixtures/find-local-dependency`,
+    name: 'a',
+  });
   assert.deepEqual(
     found.meta,
     JSON.parse(
@@ -388,10 +387,10 @@ async function testFindLocalDependency() {
     )
   );
 
-  const notFound = await findLocalDependency(
-    `${__dirname}/fixtures/find-local-dependency`,
-    'non-existent'
-  );
+  const notFound = await findLocalDependency({
+    root: `${__dirname}/fixtures/find-local-dependency`,
+    name: 'non-existent',
+  });
   assert.deepEqual(notFound, undefined);
 }
 
@@ -399,10 +398,10 @@ async function testGenerateBazelignore() {
   await exec(
     `cp -r ${__dirname}/fixtures/generate-bazelignore/ ${__dirname}/tmp/generate-bazelignore`
   );
-  await generateBazelignore(`${__dirname}/tmp/generate-bazelignore`, [
-    'a',
-    'b',
-  ]);
+  await generateBazelignore({
+    root: `${__dirname}/tmp/generate-bazelignore`,
+    projects: ['a', 'b'],
+  });
   const bazelignore = await read(
     `${__dirname}/tmp/generate-bazelignore/.bazelignore`,
     'utf8'
@@ -415,9 +414,9 @@ async function testGenerateBazelBuildRules() {
   await exec(
     `cp -r ${__dirname}/fixtures/generate-bazel-build-rules/ ${__dirname}/tmp/generate-bazel-build-rules`
   );
-  await generateBazelBuildRules(
-    `${__dirname}/tmp/generate-bazel-build-rules`,
-    [
+  await generateBazelBuildRules({
+    root: `${__dirname}/tmp/generate-bazel-build-rules`,
+    deps: [
       {
         meta: JSON.parse(
           await read(
@@ -437,8 +436,8 @@ async function testGenerateBazelBuildRules() {
         dir: `${__dirname}/tmp/generate-bazel-build-rules/b`,
       },
     ],
-    ['a', 'b', 'c', 'd']
-  );
+    projects: ['a', 'b', 'c', 'd'],
+  });
   const code = await read(
     `${__dirname}/tmp/generate-bazel-build-rules/a/BUILD.bazel`,
     'utf8'
@@ -464,9 +463,9 @@ async function testGenerateBazelBuildRulesUpdate() {
   await exec(
     `cp -r ${__dirname}/fixtures/generate-bazel-build-rules-update/ ${__dirname}/tmp/generate-bazel-build-rules-update`
   );
-  await generateBazelBuildRules(
-    `${__dirname}/tmp/generate-bazel-build-rules-update`,
-    [
+  await generateBazelBuildRules({
+    root: `${__dirname}/tmp/generate-bazel-build-rules-update`,
+    deps: [
       {
         meta: JSON.parse(
           await read(
@@ -486,8 +485,8 @@ async function testGenerateBazelBuildRulesUpdate() {
         dir: `${__dirname}/tmp/generate-bazel-build-rules-update/b`,
       },
     ],
-    ['a', 'b', 'c']
-  );
+    projects: ['a', 'b', 'c'],
+  });
   assert(
     (await read(
       `${__dirname}/tmp/generate-bazel-build-rules-update/a/BUILD.bazel`
@@ -509,17 +508,19 @@ async function testGenerateDepLockfiles() {
   await exec(
     `cp -r ${__dirname}/fixtures/generate-dep-lockfiles/ ${__dirname}/tmp/generate-dep-lockfiles`
   );
-  await generateDepLockfiles([
-    {
-      meta: JSON.parse(
-        await read(
-          `${__dirname}/tmp/generate-dep-lockfiles/a/package.json`,
-          'utf8'
-        )
-      ),
-      dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
-    },
-  ]);
+  await generateDepLockfiles({
+    deps: [
+      {
+        meta: JSON.parse(
+          await read(
+            `${__dirname}/tmp/generate-dep-lockfiles/a/package.json`,
+            'utf8'
+          )
+        ),
+        dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
+      },
+    ],
+  });
   assert(
     (await read(
       `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`,
@@ -599,7 +600,7 @@ async function testGetLocalDependencies() {
 
 async function testGetManifest() {
   assert.deepEqual(
-    await getManifest(`${__dirname}/fixtures/get-all-project-paths`),
+    await getManifest({root: `${__dirname}/fixtures/get-all-project-paths`}),
     {
       projects: ['path/to/a', 'path/to/b'],
     }
@@ -619,20 +620,23 @@ async function testInstallDeps() {
   await exec(
     `cp -r ${__dirname}/fixtures/install-deps/ ${__dirname}/tmp/install-deps`
   );
-  await installDeps(`${__dirname}/tmp/install-deps`, [
-    {
-      meta: JSON.parse(
-        await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
-      ),
-      dir: `${__dirname}/tmp/install-deps/b`,
-    },
-    {
-      meta: JSON.parse(
-        await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
-      ),
-      dir: `${__dirname}/tmp/install-deps/a`,
-    },
-  ]);
+  await installDeps({
+    root: `${__dirname}/tmp/install-deps`,
+    deps: [
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/b`,
+      },
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/a`,
+      },
+    ],
+  });
   assert(await exists(`${__dirname}/tmp/install-deps/a/node_modules/b`));
 }
 
@@ -646,14 +650,9 @@ async function testNodeHelpers() {
     'file.txt',
   ]);
   await write(`${__dirname}/tmp/node-helpers/file.txt`, 'hello', 'utf8');
-  const text = readFileSync(`${__dirname}/tmp/node-helpers/file.txt`);
+  const text = readFileSync(`${__dirname}/tmp/node-helpers/file.txt`, 'utf8');
   assert(await read(`${__dirname}/tmp/node-helpers/file.txt`, 'utf8'), text);
   assert(text, 'hello');
-  assert(
-    await ensure(() => Promise.reject('rejected'))
-      .catch('died')
-      .then(() => false, () => true)
-  );
 }
 
 async function testParse() {
@@ -668,14 +667,14 @@ async function testReportMismatchedTopLevelDeps() {
   await exec(
     `cp -r ${__dirname}/fixtures/report-mismatched-top-level-deps/ ${__dirname}/tmp/report-mismatched-top-level-deps`
   );
-  const result = await reportMismatchedTopLevelDeps(
-    `${__dirname}/tmp/report-mismatched-top-level-deps`,
-    ['packages/a', 'packages/b', 'packages/c'],
-    {
+  const result = await reportMismatchedTopLevelDeps({
+    root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+    projects: ['packages/a', 'packages/b', 'packages/c'],
+    versionPolicy: {
       lockstep: false,
       exceptions: ['no-bugs'],
-    }
-  );
+    },
+  });
   assert.deepEqual(result, {
     valid: false,
     policy: {

@@ -14,7 +14,7 @@ files.map(f => {
   exec(`tar xzf "${f}" -C "${target}"`, {cwd: bin});
   if (!out) {
     // eslint-disable-next-line import/no-dynamic-require
-    const {name} = require(`${target}/package.json`);
+    const {name} = JSON.parse(read(`${target}/package.json`, 'utf8'));
     const label = basename(name);
     const dir = dirname(`node_modules/${name}`);
     exec(`mkdir -p ${dir}`, {cwd: main});
@@ -30,14 +30,15 @@ const payload = scripts[command] || ``;
 const script = `export PATH=${dirname(node)}:$PATH${binPath}; ${payload}`;
 
 // FIXME: this script allows babel to work, but it adds several seconds to the build
-exec(`
-  for f in $(find . -type l -path *.js -not -path "*node_modules*")
+exec(
+  `for f in $(find . -type l -path *.js -not -path "*node_modules*")
   do
     cp "$f" "$f.bak"
     rm "$f"
     mv "$f.bak" "$f"
-  done
-`, {cwd: main});
+  done`,
+  {cwd: main}
+);
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});

@@ -2,7 +2,14 @@
 const {spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 
-async function cli(command, args, options, rest) {
+/*::
+import type {Args} from './parse-argv.js';
+
+export type Cli = (string, Args, CliOptions, Array<string>) => Promise<void>;
+export type CliOptions = {[string]: [string, CliAction]};
+export type CliAction = (Args) => Promise<void>;
+*/
+const cli /*: Cli */ = async (command, args, options, rest) => {
   if (command == null || command === '--help') {
     const keys = Object.keys(options);
     const maxWidth = Math.max(...keys.map(key => key.length));
@@ -30,7 +37,7 @@ async function cli(command, args, options, rest) {
           .map(line => line.trim())
           .filter(Boolean);
         const args = lines
-          .map(line => line.trim().match(/(.+?)\s{2,}/)[1])
+          .map(line => (line.trim().match(/(.+?)\s{2,}/) || [])[1])
           .join(' ');
         const usage = `Usage: jazelle ${command} ${args}`;
         console.log(`\n${description}\n\n${usage}\n`);
@@ -41,6 +48,6 @@ async function cli(command, args, options, rest) {
       }
     }
   }
-}
+};
 
 module.exports = {cli};

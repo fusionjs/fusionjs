@@ -7,13 +7,34 @@ const {
   removeCallArgItem,
 } = require('./starlark.js');
 
-const generateBazelBuildRules = async (root, deps, projects) => {
+/*::
+import type {Metadata} from './get-local-dependencies.js';
+
+export type GenerateBazelBuildRulesArgs = {
+  root: string,
+  deps: Array<Metadata>,
+  projects: Array<string>,
+}
+export type GenerateBazelBuildRules = (GenerateBazelBuildRulesArgs) => Promise<void>
+export type TemplateArgs = {
+  name: string,
+  path: string,
+  label: string,
+  dependencies: Array<string>,
+}
+export type Template = (TemplateArgs) => Promise<string>;
+*/
+const generateBazelBuildRules /*: GenerateBazelBuildRules */ = async ({
+  root,
+  deps,
+  projects,
+}) => {
   const depMap = deps.reduce((map, dep) => {
     map[dep.meta.name] = dep;
     return map;
   }, {});
 
-  return Promise.all(
+  await Promise.all(
     deps.map(async dep => {
       const build = `${dep.dir}/BUILD.bazel`;
       const dependencies = [
@@ -26,15 +47,14 @@ const generateBazelBuildRules = async (root, deps, projects) => {
         // generate BUILD.bazel file
         const name = dep.meta.name;
         const path = relative(root, dep.dir);
-        // eslint-disable-next-line
-        const rules = await require(`${root}/third_party/jazelle/scripts/bazel-build-file-template.js`).template(
-          {
-            name,
-            path,
-            label: `//${path}:${name}`,
-            dependencies,
-          }
-        );
+        // $FlowFixMe
+        const template /*: Template */ = (await require(`${root}/third_party/jazelle/scripts/bazel-build-file-template.js`)).template; // eslint-disable-line
+        const rules = await template({
+          name,
+          path,
+          label: `//${path}:${name}`,
+          dependencies,
+        });
         await write(build, rules.trim(), 'utf8');
       } else {
         // sync web_library deps list in BUILD.bazel with local dependencies in package.json
@@ -54,7 +74,7 @@ const generateBazelBuildRules = async (root, deps, projects) => {
           });
         items.forEach(item => {
           if (!dependencies.map(d => `"${d}"`).includes(item)) {
-            const [, path] = item.match(/\/\/(.+?):/);
+            const [, path] = item.match(/\/\/(.+?):/) || [];
             if (projects.includes(path)) {
               code = removeCallArgItem(code, 'web_library', 'deps', item);
             }

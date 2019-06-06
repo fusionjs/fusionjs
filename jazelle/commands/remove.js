@@ -5,10 +5,18 @@ const {read, write, spawn} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {install} = require('./install.js');
 
-async function remove({root, cwd, name}) {
-  await assertProjectDir(cwd);
+/*::
+export type RemoveArgs = {
+  root: string,
+  cwd: string,
+  name: string,
+}
+export type Remove = (RemoveArgs) => Promise<void>
+*/
+const remove /*: Remove */ = async ({root, cwd, name}) => {
+  await assertProjectDir({dir: cwd});
 
-  const local = await findLocalDependency(root, name);
+  const local = await findLocalDependency({root, name});
   if (local) {
     const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
     if (meta.dependencies && meta.dependencies[name])
@@ -25,6 +33,6 @@ async function remove({root, cwd, name}) {
   }
   await spawn('rm', ['-rf', 'node_modules'], {cwd});
   await install({root, cwd});
-}
+};
 
 module.exports = {remove};

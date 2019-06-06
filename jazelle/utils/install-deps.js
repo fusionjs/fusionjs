@@ -5,11 +5,26 @@ const {createHash} = require('crypto');
 const {exists, exec, spawn, read, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 
-const installDeps = async (root, deps, hooks = {}) => {
+/*::
+import type {Metadata} from './get-local-dependencies.js';
+import type {Hooks} from './get-manifest.js';
+
+export type InstallDepsArgs = {
+  root: string,
+  deps?: Array<Metadata>,
+  hooks?: Hooks,
+}
+export type InstallDeps = (InstallDepsArgs) => Promise<void>
+*/
+const installDeps /*: InstallDeps */ = async ({
+  root,
+  deps = [],
+  hooks: {preinstall, postinstall} = {},
+}) => {
   // jazelle hook
-  if (hooks.preinstall) {
+  if (typeof preinstall === 'string') {
     // prioritize hermetic Node version over system version
-    await exec(`PATH=${dirname(node)}\\:$PATH ${hooks.preinstall}`, {
+    await exec(`PATH=${dirname(node)}\\:$PATH ${preinstall}`, {
       stdio: 'inherit',
     });
   }
@@ -57,8 +72,8 @@ const installDeps = async (root, deps, hooks = {}) => {
   );
 
   // jazelle hook
-  if (hooks.postinstall) {
-    await exec(`PATH=${dirname(node)}\\:$PATH ${hooks.postinstall}`, {
+  if (typeof postinstall === 'string') {
+    await exec(`PATH=${dirname(node)}\\:$PATH ${postinstall}`, {
       stdio: 'inherit',
     });
   }
@@ -85,39 +100,17 @@ async function getInstallationCache(bin) {
   };
 }
 
-async function extract(downloadDir, cacheDir) {
-  const tars = (await exec(`find . -type f -name "*.tgz"`, {cwd: downloadDir}))
-    .trim()
-    .split('\n')
-    .sort();
-  await Promise.all(
-    tars.map(async tar => {
-      const base = tar.slice(0, -4);
-      if (!(await exists(`${cacheDir}/${base}`))) {
-        await spawn('mkdir', ['-p', `${cacheDir}/${base}`]);
-        await spawn('tar', [
-          '-xf',
-          `${downloadDir}/${tar}`,
-          '-C',
-          `${cacheDir}/${base}`,
-          '--strip-components',
-          '1',
-        ]);
-      }
-    })
-  );
-}
-
 async function populate(cacheDir, deps, dep, type, lockfileObject, hoisted) {
+  const dependencies = dep.meta[type] || {};
   await Promise.all(
-    Object.keys(dep.meta[type] || {}).map(async name => {
-      const versionRange = dep.meta[type][name];
+    Object.keys(dependencies).map(async name => {
+      const versionRange = String(dependencies[name]); // coerce to string to make Flow happy
       const item =
         lockfileObject[`${name}@${versionRange}`] ||
         deps.map(d => d.meta).find(meta => meta.name === name);
       if (item && !hoisted[name]) {
         const aliased = versionRange.startsWith('npm:')
-          ? versionRange.match(/npm:(.[^@]*)/)[1]
+          ? (versionRange.match(/npm:(.[^@]*)/) || [])[1]
           : name;
         const {version} = item;
         const [ns, basename] = name.includes('@')
@@ -182,4 +175,4 @@ async function populateTransitive(root, dep, hoisted) {
   }
 }
 
-module.exports = {extract, installDeps};
+module.exports = {installDeps};

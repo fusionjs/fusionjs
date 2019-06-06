@@ -6,7 +6,16 @@ const {merge} = require('yarn-utilities');
 const lockfile = require('@yarnpkg/lockfile');
 const {read, write, spawn, exec, exists} = require('./node-helpers.js');
 
-const downloadDeps = async (root, deps) => {
+/*::
+import type {Metadata} from './get-local-dependencies.js';
+
+export type DownloadDepsArgs = {
+  root: string,
+  deps: Array<Metadata>,
+}
+export type DownloadDeps = (DownloadDepsArgs) => Promise<void>
+*/
+const downloadDeps /*: DownloadDeps */ = async ({root, deps}) => {
   const config = await readNpmrc(root);
   const auth = config._auth
     ? Buffer.from(config._auth, 'base64').toString('ascii') + '@'
@@ -59,9 +68,9 @@ const downloadDeps = async (root, deps) => {
 
   const commands = {};
   Object.keys(object).forEach(key => {
-    const [, alias] = key.match(/.+@(.+)/);
+    const [, alias] = key.match(/.+@(.+)/) || [];
     const actualName = alias.startsWith('npm:')
-      ? alias.match(/npm:(.[^@]*)/)[1]
+      ? (alias.match(/npm:(.[^@]*)/) || [])[1]
       : new URL(object[key].resolved).pathname.split('/')[1];
     const version = object[key].version;
     const filename = `${cache}/${actualName.replace(
