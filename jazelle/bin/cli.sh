@@ -11,7 +11,8 @@ else
   if grep -q 'name = "jazelle"' BUILD.bazel 2>/dev/null
   then
     # bazelisk is installed by preinstall hook in package.json
-    $BIN/bazelisk run //:jazelle -- $@
+    BAZELISK_PATH="${BAZELISK_PATH:-$BIN/bazelisk}"
+    $BAZELISK_PATH run //:jazelle -- $@
   else
     (>&2 echo "Error: This folder is not a jazelle workspace. Run \`jazelle init\`") # print to stderr
     exit 1
