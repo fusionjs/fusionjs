@@ -112,7 +112,7 @@ test('endpoint', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
     path: '/_translations',
-    querystring: 'keys=test,interpolated',
+    querystring: 'keys=["test","interpolated"]',
     memoized: new Map(),
     body: '',
   };

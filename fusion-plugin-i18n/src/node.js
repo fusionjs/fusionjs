@@ -22,6 +22,29 @@ import type {
   TranslationsObjectType,
 } from './types.js';
 
+function matchesOrder(key) {
+  return translation => {
+    let matchIndex = 0;
+
+    return key.every((part, i) => {
+      if (part === '') {
+        // part is result of two adjacent interpolations - skip
+        return true;
+      } else if (i === 0 && translation.startsWith(part)) {
+        matchIndex += part.length;
+        return true;
+      } else if (i === key.length - 1 && translation.endsWith(part)) {
+        return true;
+      } else if (translation.indexOf(part, matchIndex) !== -1) {
+        matchIndex += part;
+        return true;
+      }
+      // a part failed
+      return false;
+    });
+  };
+}
+
 type PluginType = FusionPlugin<I18nDepsType, I18nServiceType>;
 const pluginFactory: () => PluginType = () =>
   createPlugin({
@@ -38,7 +61,6 @@ const pluginFactory: () => PluginType = () =>
             loader = createLoader();
           }
           const {translations, locale} = loader.from(ctx);
-          // eslint-disable-next-line no-console
           this.translations = translations;
           this.locale = locale;
         }
@@ -63,8 +85,6 @@ const pluginFactory: () => PluginType = () =>
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
       const chunkTranslationMap = require('../chunk-translation-map');
 
-      // Need to load dynamic translations
-
       return async (ctx, next) => {
         if (ctx.element) {
           await next();
@@ -82,35 +102,16 @@ const pluginFactory: () => PluginType = () =>
               chunkTranslationMap.translationsForChunk(id)
             );
             keys.forEach(key => {
-              if (key.includes('*')) {
-                /*
-                const regex = new RegExp(
-                  key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-                    .replace('\\*', '.*')
-                );
-                const hits = possibleTranslations.forEach(str => {
-                  if (regex.test(str)) {
-                    console.log({str});
-                    translations[str] = i18n.translations && i18n.translations[str];
-                  }
-                });
-                */
-                const matcher = key.replace('*', '');
-                // should also consider if the string starts with *
-                // pattern.*
-                // other-pattern.* - should not be matched by first pattern
-                const hits = possibleTranslations.forEach(str => {
-                  if (str.includes(matcher)) {
-                    console.log({str});
-                    translations[str] = i18n.translations && i18n.translations[str];
-                  }
-                });
+              if (Array.isArray(key)) {
+                const matches = possibleTranslations.filter(matchesOrder(key));
+                for (const match of matches) {
+                  translations[match] = i18n.translations && i18n.translations[match];
+                }
               } else {
                 translations[key] = i18n.translations && i18n.translations[key];
               }
             });
           });
-          console.log({translations})
           // i18n.locale is actually a locale.Locale instance
           if (!i18n.locale) {
             throw new Error('i18n.locale was empty');
@@ -130,9 +131,19 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = querystring.parse(ctx.querystring).keys || '';
-          const translations = keys.split(',').reduce((acc, key) => {
-            acc[key] = i18n.translations && i18n.translations[key];
+          const keys = JSON.parse(
+            querystring.parse(ctx.querystring).keys || '[]'
+          );
+          const possibleTranslations = i18n.translations ? Object.keys(i18n.translations) : [];
+          const translations = keys.reduce((acc, key) => {
+            if (Array.isArray(key)) {
+              const matches = possibleTranslations.filter(matchesOrder(key));
+              for (const match of matches) {
+                acc[match] = i18n.translations && i18n.translations[match];
+              }
+            } else {
+              acc[key] = i18n.translations && i18n.translations[key];
+            }
             return acc;
           }, {});
           ctx.body = translations;
