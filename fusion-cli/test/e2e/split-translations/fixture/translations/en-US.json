@@ -6,6 +6,6 @@
   "unused": "__UNUSED_TRANSLATED__",
   "translations.hoc": "__HOC_TRANSLATED__",
   "translations.hook": "__HOOK_TRANSLATED__",
-  "pattern.abc": "__abc_TRANSLATED__",
-  "pattern.def": "__def_TRANSLATED__"
+  "pattern.abc": "__ABC_TRANSLATED__",
+  "pattern.def": "__DEF_TRANSLATED__"
 }
