@@ -46,14 +46,26 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
             translationIds.add(element.value);
           });
         } else if (specifierName === 'useTranslations') {
-          const errorMessage =
-            'The useTranslations hook must be called with an array of strings';
-          if (!t.isArrayExpression(firstArg)) {
-            throw new Error(errorMessage);
-          }
-          const elements = firstArg.elements;
-          elements.forEach(element => {
-            translationIds.add(element.value);
+          const localName = refPath.parentPath.parent.id.name;
+          const translationPaths = refPath.parentPath.scope.bindings[localName].referencePaths;
+          translationPaths.forEach(translationPath => {
+            if (t.isCallExpression(translationPath.parentPath)) {
+              const arg = translationPath.parentPath.node.arguments[0];
+              const errorMessage = 'useTranslations result function must be passed string literal or hinted template literal';
+              if (t.isStringLiteral(arg)) {
+                translationIds.add(arg.value);
+              } else if (t.isTemplateLiteral(arg)) {
+                const result = arg.quasis.map(q => q.value.raw);
+                if (result.join('') === '') {
+                  // template literal not hinted, i.e. translate(`${foo}`)
+                  throw new Error(errorMessage);
+                } else {
+                  translationIds.add(result);
+                }
+              } else {
+                throw new Error(errorMessage);
+              }
+            }
           });
         }
         return;
@@ -84,3 +96,4 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
 
   return {visitor};
 }
+

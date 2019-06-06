@@ -9,8 +9,7 @@
 import {useContext} from 'react';
 import {I18nContext} from './plugin.js';
 
-export function useTranslations(patterns) { // eslint-disable-line
-  // patterns is statically analyzed and not used here
+export function useTranslations() {
   const i18n = useContext(I18nContext);
 
   return i18n.translate.bind(i18n);
