@@ -61,7 +61,7 @@ const EXCLUDE_TRANSPILATION_PATTERNS = [
   /node_modules\/react\//,
   /node_modules\/core-js\//,
 ];
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
+const JS_EXT_PATTERN = /\.jsx?$/;
 
 /*::
 import type {
@@ -168,7 +168,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   const getTransformDefault = modulePath => {
     if (
-      modulePath.startsWith(getSrcPath(dir)) ||
+      modulePath.startsWith(path.join(dir, 'src')) ||
       /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
     ) {
       return 'all';
@@ -641,16 +641,4 @@ function getNodeConfig(runtime) {
     repl: emptyForWeb,
     tls: emptyForWeb,
   };
-}
-
-function getSrcPath(dir) {
-  // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
-  try {
-    const real = path.dirname(
-      fs.realpathSync(path.resolve(dir, 'package.json'))
-    );
-    return path.resolve(real, 'src');
-  } catch (e) {
-    return path.resolve(dir, 'src');
-  }
 }

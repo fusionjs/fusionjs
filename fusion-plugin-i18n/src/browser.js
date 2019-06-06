@@ -86,11 +86,9 @@ const pluginFactory: () => PluginType = () =>
             unloaded.forEach(key => {
               this.requestedKeys.add(key);
             });
+            const keys = unloaded.join(',');
             // TODO(#3) don't append prefix if injected fetch also injects prefix
-            return fetch(
-              `/_translations?keys=${JSON.stringify(unloaded)}`,
-              fetchOpts
-            )
+            return fetch(`/_translations?keys=${keys}`, fetchOpts)
               .then(r => r.json())
               .then((data: {[string]: string}) => {
                 for (const key in data) {
