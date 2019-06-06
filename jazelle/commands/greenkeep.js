@@ -5,10 +5,18 @@ const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {read, write} = require('../utils/node-helpers.js');
 
-async function greenkeep({root, name, version}) {
-  const manifest = await getManifest(root);
+/*::
+export type GreenkeepArgs = {
+  root: string,
+  name: string,
+  version?: string,
+};
+export type Greenkeep = (GreenkeepArgs) => Promise<void>;
+*/
+const greenkeep /*: Greenkeep */ = async ({root, name, version}) => {
+  const manifest = await getManifest({root});
   const roots = manifest.projects.map(dir => `${root}/${dir}`);
-  const local = await findLocalDependency(root, name);
+  const local = await findLocalDependency({root, name});
   if (local) {
     if (version && version !== local.meta.version) {
       throw new Error(`You must use version ${local.meta.version}`);
@@ -41,7 +49,7 @@ async function greenkeep({root, name, version}) {
       meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
     }))
   );
-  await generateDepLockfiles(deps);
-}
+  await generateDepLockfiles({deps});
+};
 
 module.exports = {greenkeep};

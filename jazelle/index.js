@@ -22,7 +22,10 @@ const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {scaffold} = require('./utils/scaffold.js');
 const {version} = require('./package.json');
 
-async function runCLI([command, ...rest]) {
+/*::
+export type RunCLI = (Array<string>) => Promise<void>;
+*/
+const runCLI /*: RunCLI */ = async ([command, ...rest]) => {
   const root =
     command === 'init' || command === 'version' || command === '--help'
       ? process.cwd()
@@ -34,16 +37,16 @@ async function runCLI([command, ...rest]) {
     command,
     args,
     {
-      version: [`Display the version number`, () => console.log(version)],
+      version: [`Display the version number`, async () => console.log(version)],
       init: [
         `Scaffolds a workspace`,
-        () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
+        async () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
       ],
       install: [
         `Install all dependencies for a project
 
       --cwd [cwd]             Project directory to use`,
-        ({cwd}) => install({root, cwd}),
+        async ({cwd}) => install({root, cwd}),
       ],
       add: [
         `Installs a package and any packages that it depends on
@@ -52,14 +55,15 @@ async function runCLI([command, ...rest]) {
       --version [version]     Version
       --dev                   Whether to install as devDependency
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name, version, dev}) => add({root, cwd, name, version, dev}),
+        async ({cwd, name, version, dev}) =>
+          add({root, cwd, name, version, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
       ],
       remove: [
         `Remove a package
 
       [name]                  Package to remove
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name}) => remove({root, cwd, name}),
+        async ({cwd, name}) => remove({root, cwd, name}),
       ],
       upgrade: [
         `Upgrade a package version
@@ -67,26 +71,26 @@ async function runCLI([command, ...rest]) {
       [name]                  Package to add
       --version [version]     Version
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name, version}) => upgrade({root, cwd, name, version}),
+        async ({cwd, name, version}) => upgrade({root, cwd, name, version}),
       ],
       greenkeep: [
         `Upgrade a package version across all projects
 
       [name]                  Package to add
       --version [version]     Version`,
-        ({name, version}) => greenkeep({root, name, version}),
+        async ({name, version}) => greenkeep({root, name, version}),
       ],
       dedupe: [
         `Dedupe transitive deps across all projects`,
-        () => dedupe({root}),
+        async () => dedupe({root}),
       ],
       purge: [
         `Removes generated files (i.e. node_modules folders and bazel output files)`,
-        () => purge({root}),
+        async () => purge({root}),
       ],
       check: [
         `Display deps w/ multiple versions installed across projects`,
-        () => check({root}),
+        async () => check({root}),
       ],
       chunk: [
         `Print a glob pattern representing a chunk of a set of files
@@ -94,7 +98,7 @@ async function runCLI([command, ...rest]) {
       --patterns [patterns]   Glob patterns, separated by |
       --jobs [count]          Total number of chunks to divide files into
       --index [index]         Which chunk to display`,
-        ({patterns, jobs, index}) => chunk({root, patterns, jobs, index}),
+        async ({patterns, jobs, index}) => chunk({root, patterns, jobs, index}),
       ],
       changes: [
         `Lists Bazel test targets that changed since the last git commit`,
@@ -105,26 +109,26 @@ async function runCLI([command, ...rest]) {
 
       [name]                  Bazel action name. Optional
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name}) => build({root, cwd, name}),
+        async ({cwd, name}) => build({root, cwd, name}),
       ],
       run: [
         `Run a project. Equivalent to \`bazel run\`
 
       [name]                  Bazel action name
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name}) => run({root, cwd, name}),
+        async ({cwd, name}) => run({root, cwd, name}),
       ],
       test: [
         `Test a project. Equivalent to \`bazel test\`
 
       [name]                  Bazel action name. Optional
       --cwd [cwd]             Project directory to use`,
-        ({cwd, name}) => test({root, cwd, name}),
+        async ({cwd, name}) => test({root, cwd, name}),
       ],
     },
     rest
   );
-}
+};
 
 module.exports = {
   runCLI,

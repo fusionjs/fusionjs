@@ -5,10 +5,19 @@ const {read, write, spawn} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {install} = require('./install.js');
 
-async function upgrade({root, cwd, name, version}) {
-  await assertProjectDir(cwd);
+/*::
+export type UpgradeArgs = {
+  root: string,
+  cwd: string,
+  name: string,
+  version?: string,
+}
+export type Upgrade = (UpgradeArgs) => Promise<void>
+*/
+const upgrade /*: Upgrade */ = async ({root, cwd, name, version}) => {
+  await assertProjectDir({dir: cwd});
 
-  const local = await findLocalDependency(root, name);
+  const local = await findLocalDependency({root, name});
   if (local) {
     if (version && version !== local.meta.version) {
       throw new Error(`You must use version ${local.meta.version}`);
@@ -29,6 +38,6 @@ async function upgrade({root, cwd, name, version}) {
   }
   await spawn('rm', ['-rf', 'node_modules'], {cwd});
   await install({root, cwd});
-}
+};
 
 module.exports = {upgrade};

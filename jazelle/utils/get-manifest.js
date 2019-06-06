@@ -1,14 +1,29 @@
 // @flow
-const {read, ensure} = require('./node-helpers.js');
+const {read} = require('./node-helpers.js');
 
-const getManifest = async root => {
+/*::
+export type GetManifestArgs = {
+  root: string,
+};
+export type GetManifest = (GetManifestArgs) => Promise<Manifest>
+export type Manifest = {
+  projects: Array<string>,
+  versionPolicy?: VersionPolicy,
+  hooks?: Hooks,
+}
+export type VersionPolicy = {
+  lockstep: boolean,
+  exceptions: Array<string>,
+}
+export type Hooks = {
+  preinstall: string | void,
+  postinstall: string | void,
+}
+*/
+const getManifest /*: GetManifest */ = async ({root}) => {
   const manifest = `${root}/manifest.json`;
-  return ensure(async () => {
-    const data = await read(manifest, 'utf8');
-    return JSON.parse(data || '{}');
-  }).catch(
-    `${manifest} is not valid JSON. Make sure file exists and syntax is valid`
-  );
+  const data = await read(manifest, 'utf8');
+  return JSON.parse(data || '{}');
 };
 
 module.exports = {getManifest};

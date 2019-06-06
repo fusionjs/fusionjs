@@ -2,8 +2,16 @@
 const {getManifest} = require('./get-manifest.js');
 const {read} = require('./node-helpers.js');
 
-async function findLocalDependency(root, name) {
-  const {projects: dirs} = await getManifest(root);
+/*::
+import type {Metadata} from './get-local-dependencies.js';
+export type FindLocalDependencyArgs = {
+  root: string,
+  name: string,
+};
+export type FindLocalDependency = (FindLocalDependencyArgs) => Promise<Metadata>
+*/
+const findLocalDependency /*: FindLocalDependency */ = async ({root, name}) => {
+  const {projects: dirs} = await await getManifest({root}); // FIXME: double await is due to Flow bug
   const deps = await Promise.all(
     dirs.map(async dir => ({
       dir,
@@ -11,6 +19,6 @@ async function findLocalDependency(root, name) {
     }))
   );
   return deps.find(dep => dep.meta.name === name);
-}
+};
 
 module.exports = {findLocalDependency};
