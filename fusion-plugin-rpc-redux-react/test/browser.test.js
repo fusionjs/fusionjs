@@ -293,7 +293,6 @@ test('browser mock integration test withRPCRedux', async done => {
       },
     })
   );
-  app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app).render('/');
   expect(expectedActions.length).toBe(0);
   teardown();
@@ -364,7 +363,6 @@ test('browser mock integration test withRPCRedux - failure', async done => {
       },
     })
   );
-  app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app)
     .render('/')
     .catch(e => expect(e.message).toBe('message'));
@@ -444,7 +442,6 @@ test('browser plugin integration test withRPCReactor', async done => {
       },
     })
   );
-  app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app).render('/');
   expect(expectedActions.length).toBe(0);
   expect(flags.start).toBe(true);
@@ -523,7 +520,6 @@ test('browser mock plugin integration test withRPCReactor', async done => {
       },
     })
   );
-  app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app).render('/');
   expect(expectedActions.length).toBe(0);
   expect(flags.start).toBe(true);
@@ -612,7 +608,6 @@ test('browser plugin integration test withRPCReactor - failure', async done => {
       },
     })
   );
-  app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app)
     .render('/')
     .catch(e => expect(e.message).toBe('Some failure'));

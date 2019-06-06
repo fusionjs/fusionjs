@@ -49,7 +49,9 @@ export default class App extends FusionApp {
       const isRequiredToken = Boolean(token.optional);
       if (typeof provides === 'undefined' && isRequiredToken) {
         throw new Error(
-          `Token ${token.name} not registered or registered plugin does not provide a service. To use an optional plugin, use \`Token.optional\`.`
+          `Token ${
+            token.name
+          } not registered or registered plugin does not provide a service. To use an optional plugin, use \`Token.optional\`.`
         );
       }
       return provides;

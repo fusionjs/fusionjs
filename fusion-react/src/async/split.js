@@ -10,8 +10,19 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
 
+export type InstrumentedPromise<T> = Promise<{
+  default: React.ComponentType<T>,
+}> & {
+  __MODULE_ID: string,
+  __CHUNK_IDS: Array<string>,
+  __I18N_KEYS: Array<string>,
+};
+
 declare var __webpack_modules__: {[string]: any};
 declare var __webpack_require__: any => any;
+
+const CHUNKS_KEY = '__CHUNK_IDS';
+const I18N_KEY = '__I18N_KEYS';
 
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
@@ -29,7 +40,7 @@ export default function withAsyncComponent<Config>({
   ErrorComponent,
 }: {
   defer?: boolean,
-  load: () => Promise<{default: React.ComponentType<Config>}>,
+  load: () => InstrumentedPromise<Config>,
   LoadingComponent: React.ComponentType<any>,
   ErrorComponent: React.ComponentType<any>,
 }): React.ComponentType<Config> {
@@ -46,10 +57,7 @@ export default function withAsyncComponent<Config>({
       // $FlowFixMe
       let id = promise.__MODULE_ID;
 
-      if (
-        typeof __webpack_modules__ !== 'undefined' &&
-        __webpack_modules__[id]
-      ) {
+      if (__webpack_modules__[id]) {
         // If module is already loaded, it can be synchronously imported
         AsyncComponent = __webpack_require__(id).default;
       }
@@ -82,10 +90,8 @@ export default function withAsyncComponent<Config>({
         componentPromise = (Promise.reject(e): any);
       }
 
-      // $FlowFixMe
-      metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
-      // $FlowFixMe
-      metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
+      metadata.chunkIds = componentPromise[CHUNKS_KEY] || [];
+      metadata.i18nKeys = componentPromise[I18N_KEY] || [];
 
       if (__NODE__ && context.markAsCritical) {
         metadata.chunkIds.forEach(chunkId => {
