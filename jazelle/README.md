@@ -71,6 +71,7 @@ http_archive(
   name = "jazelle",
   url = "https://registry.yarnpkg.com/jazelle/-/jazelle-[version].tgz",
   sha256 = "SHA 256 goes here",
+  strip_prefix = "package",
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
