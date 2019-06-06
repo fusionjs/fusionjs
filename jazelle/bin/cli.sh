@@ -1,4 +1,9 @@
-BIN=`dirname $0`
+if [ -L $0 ]
+then
+  BIN=$(dirname $0)/$(dirname $(readlink $0))
+else
+  BIN=$(dirname $0)
+fi
 
 # jazelle init is handled here outside of Bazel because scaffolding generates the Bazel files
 # build, test and run are also run here to avoid calling bazel twice
