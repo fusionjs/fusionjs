@@ -168,7 +168,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   const getTransformDefault = modulePath => {
     if (
-      modulePath.startsWith(path.join(dir, 'src')) ||
+      modulePath.startsWith(getSrcPath(dir)) ||
       /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
     ) {
       return 'all';
@@ -641,4 +641,10 @@ function getNodeConfig(runtime) {
     repl: emptyForWeb,
     tls: emptyForWeb,
   };
+}
+
+function getSrcPath(dir) {
+  // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
+  const real = path.dirname(fs.realpathSync(path.resolve(dir, 'package.json')));
+  return path.resolve(dir, 'src');
 }
