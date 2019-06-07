@@ -646,7 +646,9 @@ function getNodeConfig(runtime) {
 function getSrcPath(dir) {
   // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
   try {
-    const real = path.dirname(fs.realpathSync(path.resolve(dir, 'package.json')));
+    const real = path.dirname(
+      fs.realpathSync(path.resolve(dir, 'package.json'))
+    );
     return path.resolve(real, 'src');
   } catch (e) {
     return path.resolve(dir, 'src');
