@@ -51,13 +51,18 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
           });
         } else if (specifierName === 'useTranslations') {
           if (!t.isVariableDeclarator(refPath.parentPath.parent)) {
-            throw new Error('Unexpected assignment of useTranslations return function');
+            throw new Error(
+              'Unexpected assignment of useTranslations return function'
+            );
           }
           const localName = refPath.parentPath.parent.id.name;
           const translationPaths =
             refPath.parentPath.scope.bindings[localName].referencePaths;
           translationPaths.forEach(translationPath => {
-            if (t.isCallExpression(translationPath.parentPath) && translationPath.parentKey === 'callee') {
+            if (
+              t.isCallExpression(translationPath.parentPath) &&
+              translationPath.parentKey === 'callee'
+            ) {
               const arg = translationPath.parentPath.node.arguments[0];
               const errorMessage =
                 'useTranslations result function must be passed string literal or hinted template literal';
@@ -75,7 +80,9 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
                 throw new Error(errorMessage);
               }
             } else {
-              throw new Error('Unexpected usage of useTranslations return function');
+              throw new Error(
+                'Unexpected usage of useTranslations return function'
+              );
             }
           });
         }
