@@ -69,6 +69,9 @@ const spawn /*: Spawn */ = (cmd, argv, opts) => {
       reject(new Error(e));
     });
     child.on('close', code => {
+      if (code > 0) {
+        reject(new Error(`Process closed with exit code ${code}`));
+      }
       resolve();
     });
   });
