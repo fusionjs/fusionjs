@@ -50,6 +50,9 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
             translationIds.add(element.value);
           });
         } else if (specifierName === 'useTranslations') {
+          if (!t.isVariableDeclarator(refPath.parentPath.parent)) {
+            throw new Error('Unexpected assignment of useTranslations return function');
+          }
           const localName = refPath.parentPath.parent.id.name;
           const translationPaths =
             refPath.parentPath.scope.bindings[localName].referencePaths;
