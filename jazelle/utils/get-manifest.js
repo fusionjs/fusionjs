@@ -16,8 +16,8 @@ export type VersionPolicy = {
   exceptions: Array<string>,
 }
 export type Hooks = {
-  preinstall: string | void,
-  postinstall: string | void,
+  preinstall?: string,
+  postinstall?: string,
 }
 */
 const getManifest /*: GetManifest */ = async ({root}) => {
