@@ -57,7 +57,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
           const translationPaths =
             refPath.parentPath.scope.bindings[localName].referencePaths;
           translationPaths.forEach(translationPath => {
-            if (t.isCallExpression(translationPath.parentPath)) {
+            if (t.isCallExpression(translationPath.parentPath) && translationPath.parentKey === 'callee') {
               const arg = translationPath.parentPath.node.arguments[0];
               const errorMessage =
                 'useTranslations result function must be passed string literal or hinted template literal';
@@ -74,6 +74,8 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               } else {
                 throw new Error(errorMessage);
               }
+            } else {
+              throw new Error('Unexpected usage of useTranslations return function');
             }
           });
         }
