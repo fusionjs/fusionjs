@@ -47,6 +47,7 @@ test('mock plugin', () => {
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(RPCHandlersToken, handlers);
+    app.register(UniversalEventsToken, createMockEmitter());
     return app;
   };
 
@@ -106,6 +107,7 @@ test('withRPCRedux hoc', async done => {
       },
     })
   );
+  app.register(UniversalEventsToken, createMockEmitter());
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
@@ -168,6 +170,7 @@ test('withRPCReactor hoc', async done => {
       },
     })
   );
+  app.register(UniversalEventsToken, createMockEmitter());
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
   expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
