@@ -33,7 +33,7 @@ export type I18nServiceType = {
   ) => {
     +locale?: string | Locale,
     +translations?: TranslationsObjectType,
-    +load: (chunkIds: Array<number | string>) => Promise<void>,
+    +load: (Array<string>) => Promise<void>,
     +translate: TranslateFuncType,
   },
 };

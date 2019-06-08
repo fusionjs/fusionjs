@@ -9,6 +9,7 @@
 /* eslint-env browser */
 
 import {createPlugin, type Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 
@@ -20,16 +21,18 @@ type InitializationOpts = {
   rpcConfig?: RPCConfigType,
 };
 
+const statKey = 'rpc:method-client';
+
 class RPC {
   ctx: ?Context;
   emitter: ?IEmitter;
   handlers: ?HandlerType;
   fetch: ?Fetch;
   config: ?RPCConfigType;
-
-  constructor({fetch, rpcConfig}: InitializationOpts) {
+  constructor({fetch, emitter, rpcConfig}: InitializationOpts) {
     this.fetch = fetch;
     this.config = rpcConfig || {};
+    this.emitter = emitter;
   }
 
   request<TArgs, TResult>(
@@ -40,13 +43,18 @@ class RPC {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');
     }
+    if (!this.emitter) {
+      throw new Error('Missing emitter registered to UniversalEventsToken');
+    }
     const fetch = this.fetch;
     const config = this.config;
+    const emitter = this.emitter;
 
     let apiPath: string = 'api';
     if (config && config.apiPath) {
       apiPath = config.apiPath;
     }
+    const startTime = Date.now();
 
     // TODO(#3) handle args instanceof FormData
     return fetch(`/${apiPath}/${rpcId}`, {
@@ -61,8 +69,19 @@ class RPC {
       .then(args => {
         const {status, data} = args;
         if (status === 'success') {
+          emitter.emit(statKey, {
+            method: rpcId,
+            status: 'success',
+            timing: Date.now() - startTime,
+          });
           return data;
         } else {
+          emitter.emit(statKey, {
+            method: rpcId,
+            error: data,
+            status: 'failure',
+            timing: Date.now() - startTime,
+          });
           return Promise.reject(data);
         }
       });
@@ -73,12 +92,13 @@ const pluginFactory: () => RPCPluginType = () =>
   createPlugin({
     deps: {
       fetch: FetchToken,
+      emitter: UniversalEventsToken,
       rpcConfig: RPCHandlersConfigToken.optional,
     },
     provides: deps => {
-      const {fetch = window.fetch, rpcConfig} = deps;
+      const {fetch = window.fetch, emitter, rpcConfig} = deps;
 
-      return {from: () => new RPC({fetch, rpcConfig})};
+      return {from: () => new RPC({fetch, emitter, rpcConfig})};
     },
   });
 

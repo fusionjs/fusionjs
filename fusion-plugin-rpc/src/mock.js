@@ -9,6 +9,7 @@
 import {createPlugin} from 'fusion-core';
 import type {Context} from 'fusion-core';
 import type {Fetch} from 'fusion-tokens';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import MissingHandlerError from './missing-handler-error';
 import {RPCHandlersToken} from './tokens';
@@ -40,6 +41,7 @@ class RPC {
 const plugin: RPCPluginType = createPlugin({
   deps: {
     handlers: RPCHandlersToken,
+    emitter: UniversalEventsToken,
   },
   provides: ({handlers} = {}) => {
     return {from: () => new RPC(handlers)};

@@ -9,38 +9,35 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "files": [
-    "dist",
+    "dist-browser-cjs",
+    "dist-browser-esm",
+    "dist-node-cjs",
+    "dist-node-esm",
     "flow-typed",
     "src"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "fusion-plugin-rpc": "0.0.0-monorepo",
     "fusion-rpc-redux": "0.0.0-monorepo",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-rpc": "0.0.0-monorepo",
+    "fusion-plugin-react-redux": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-redux": "^5.1.1"
+    "redux": "^4.0.1"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "create-universal-package": "^3.4.7",
+    "@rtsao/create-universal-package-4": "^4.1.0",
     "eslint": "^5.16.0",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -50,32 +47,32 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.13.0",
     "flow-bin": "^0.98.1",
+    "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
+    "get-port": "^5.0.0",
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",
     "prop-types": "^15.7.2",
+    "puppeteer": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^5.1.1",
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "redux-reactors": "^1.0.3",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "request-promise": "^4.2.4"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup4 clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "cover": "npm run build-test && nyc npm run just-test",
+    "test": "jest",
+    "cover": "nyc jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
+    "build": "npm run clean && cup4 build",
     "flow": "flow check"
   },
   "engines": {
