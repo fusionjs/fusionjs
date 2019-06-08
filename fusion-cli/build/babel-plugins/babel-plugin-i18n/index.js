@@ -69,7 +69,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               if (t.isStringLiteral(arg)) {
                 translationIds.add(arg.value);
               } else if (t.isTemplateLiteral(arg)) {
-                const result = arg.quasis.map(q => q.value.raw);
+                const result = arg.quasis.map(q => q.value.cooked);
                 if (result.join('') === '') {
                   // template literal not hinted, i.e. translate(`${foo}`)
                   throw new Error(errorMessage);
