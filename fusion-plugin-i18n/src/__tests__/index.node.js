@@ -176,7 +176,7 @@ test('matchesOrder matches positionally', async t => {
     'cities.LosAngeles',
     'animals.Buffalo',
     'animals.Cat',
-    'test'
+    'test',
   ];
 
   // translate(`${}.Buffalo`);
@@ -206,21 +206,29 @@ test('matchesOrder matches positionally', async t => {
 
   // translate(`${}citi${}s.${}a${}o`);
   // handles multiple parts
-  const matches1 = translations.filter(matchesOrder(['', 'citi', 's.', 'a', 'o']));
+  const matches1 = translations.filter(
+    matchesOrder(['', 'citi', 's.', 'a', 'o'])
+  );
   t.deepEqual(matches1, ['cities.Buffalo', 'cities.Chicago']);
 
   // translate(`${}citi${}s.${}A${}o`);
   // confines match to later parts in the string
-  const matches2 = translations.filter(matchesOrder(['', 'citi', 's.', 'A', 'o']));
+  const matches2 = translations.filter(
+    matchesOrder(['', 'citi', 's.', 'A', 'o'])
+  );
   t.deepEqual(matches2, []);
 
   // translate(`${}citi${}s.${}A${}`);
-  const matches3 = translations.filter(matchesOrder(['', 'citi', 's.', 'A', '']));
+  const matches3 = translations.filter(
+    matchesOrder(['', 'citi', 's.', 'A', ''])
+  );
   t.deepEqual(matches3, ['cities.LosAngeles']);
 
   // translate(`${}ab${}bc${}`);
   // doesn't overlap matches
-  const matches4 = ['abc', 'abbc', 'ababc'].filter(matchesOrder(['', 'ab', 'bc', '']));
+  const matches4 = ['abc', 'abbc', 'ababc'].filter(
+    matchesOrder(['', 'ab', 'bc', ''])
+  );
   t.deepEqual(matches4, ['abbc', 'ababc']);
 
   t.end();
