@@ -22,7 +22,8 @@ import type {
   TranslationsObjectType,
 } from './types.js';
 
-function matchesOrder(key) {
+// exported for testing
+export function matchesOrder(key) {
   return translation => {
     let matchIndex = 0;
 
@@ -36,7 +37,8 @@ function matchesOrder(key) {
       } else if (i === key.length - 1 && translation.endsWith(part)) {
         return true;
       } else if (translation.indexOf(part, matchIndex) !== -1) {
-        matchIndex += part;
+        const offset = translation.indexOf(part, matchIndex);
+        matchIndex = offset + part.length;
         return true;
       }
       // a part failed

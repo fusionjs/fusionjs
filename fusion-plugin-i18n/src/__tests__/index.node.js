@@ -14,7 +14,7 @@ import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-import I18n from '../node';
+import I18n, {matchesOrder} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
@@ -166,5 +166,62 @@ test('non matched route', async t => {
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.notok(ctx.body, 'does not set ctx.body');
+  t.end();
+});
+
+test('matchesOrder matches positionally', async t => {
+  const translations = [
+    'cities.Buffalo',
+    'cities.Chicago',
+    'cities.LosAngeles',
+    'animals.Buffalo',
+    'animals.Cat',
+    'test'
+  ];
+
+  // translate(`${}.Buffalo`);
+  // handles ending matches
+  const buffaloMatches = translations.filter(matchesOrder(['', '.Buffalo']));
+  t.deepEqual(buffaloMatches, ['cities.Buffalo', 'animals.Buffalo']);
+
+  // translate(`animals.${}`);
+  // handles beginning matches'
+  const animalMatches = translations.filter(matchesOrder(['animals.', '']));
+  t.deepEqual(animalMatches, ['animals.Buffalo', 'animals.Cat']);
+
+  // translate(`${}.${}`);
+  const dotMatches = translations.filter(matchesOrder(['', '.', '']));
+  t.deepEqual(dotMatches, [
+    'cities.Buffalo',
+    'cities.Chicago',
+    'cities.LosAngeles',
+    'animals.Buffalo',
+    'animals.Cat',
+  ]);
+
+  // translate('test');
+  // handles static matches
+  const staticMatches = translations.filter(matchesOrder(['test']));
+  t.deepEqual(staticMatches, ['test']);
+
+  // translate(`${}citi${}s.${}a${}o`);
+  // handles multiple parts
+  const matches1 = translations.filter(matchesOrder(['', 'citi', 's.', 'a', 'o']));
+  t.deepEqual(matches1, ['cities.Buffalo', 'cities.Chicago']);
+
+  // translate(`${}citi${}s.${}A${}o`);
+  // confines match to later parts in the string
+  const matches2 = translations.filter(matchesOrder(['', 'citi', 's.', 'A', 'o']));
+  t.deepEqual(matches2, []);
+
+  // translate(`${}citi${}s.${}A${}`);
+  const matches3 = translations.filter(matchesOrder(['', 'citi', 's.', 'A', '']));
+  t.deepEqual(matches3, ['cities.LosAngeles']);
+
+  // translate(`${}ab${}bc${}`);
+  // doesn't overlap matches
+  const matches4 = ['abc', 'abbc', 'ababc'].filter(matchesOrder(['', 'ab', 'bc', '']));
+  t.deepEqual(matches4, ['abbc', 'ababc']);
+
   t.end();
 });
