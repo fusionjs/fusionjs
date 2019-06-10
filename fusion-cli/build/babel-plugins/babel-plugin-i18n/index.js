@@ -69,7 +69,20 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               if (t.isStringLiteral(arg)) {
                 translationIds.add(arg.value);
               } else if (t.isTemplateLiteral(arg)) {
-                const result = arg.quasis.map(q => q.value.cooked);
+                const result = arg.quasis
+                  .map(q => q.value.cooked)
+                  .filter((str, index) => {
+                    if (
+                      index !== 0 &&
+                      index !== arg.quasis.length - 1 &&
+                      str === ''
+                    ) {
+                      // interpolations in the middle of a string can be ignored
+                      // there is no guarantee that they will evaluate to a string of any length
+                      return false;
+                    }
+                    return true;
+                  });
                 if (result.join('') === '') {
                   // template literal not hinted, i.e. translate(`${foo}`)
                   throw new Error(errorMessage);
