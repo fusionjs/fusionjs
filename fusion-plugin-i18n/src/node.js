@@ -23,8 +23,8 @@ import type {
 } from './types.js';
 
 // exported for testing
-export function matchesOrder(key) {
-  return translation => {
+export function matchesOrder(key: Array<string>) {
+  return (translation: string) => {
     let matchIndex = 0;
 
     return key.every((part, i) => {
