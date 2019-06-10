@@ -7,27 +7,18 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import i18n from 'fusion-plugin-i18n';
+import {I18nContext} from './plugin.js';
 
 type TranslatePropsType = {
   id: string,
   data?: Object,
 };
 
-type TranslateContextType = {
-  i18n?: typeof i18n.provides,
-};
-
-function Translate(props: TranslatePropsType, context: TranslateContextType) {
-  const content =
-    (context.i18n && context.i18n.translate(props.id, props.data)) || props.id;
+function Translate(props: TranslatePropsType) {
+  const i18n = React.useContext(I18nContext);
+  const content = (i18n && i18n.translate(props.id, props.data)) || props.id;
   return React.Fragment ? <>{content}</> : <span>{content}</span>;
 }
-
-Translate.contextTypes = {
-  i18n: PropTypes.object,
-};
 
 export {Translate};
