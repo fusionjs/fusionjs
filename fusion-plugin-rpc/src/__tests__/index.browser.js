@@ -15,7 +15,7 @@ import {getSimulator} from 'fusion-test-utils';
 import type {Token} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import RPCPlugin from '../browser';
+import RPCPlugin from '../browser.js';
 import type {IEmitter} from '../types.js';
 import createMockEmitter from './create-mock-emitter';
 import {RPCHandlersConfigToken} from '../tokens.js';
