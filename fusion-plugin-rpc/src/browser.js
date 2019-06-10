@@ -18,7 +18,8 @@ import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
 
 type InitializationOpts = {
   fetch: Fetch,
-  rpcConfig?: RPCConfigType,
+  emitter: IEmitter,
+  rpcConfig: ?RPCConfigType,
 };
 
 const statKey = 'rpc:method-client';
