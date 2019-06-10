@@ -69,25 +69,12 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               if (t.isStringLiteral(arg)) {
                 translationIds.add(arg.value);
               } else if (t.isTemplateLiteral(arg)) {
-                const result = arg.quasis
-                  .map(q => q.value.cooked)
-                  .filter((str, index) => {
-                    if (
-                      index !== 0 &&
-                      index !== arg.quasis.length - 1 &&
-                      str === ''
-                    ) {
-                      // interpolations in the middle of a string can be ignored
-                      // there is no guarantee that they will evaluate to a string of any length
-                      return false;
-                    }
-                    return true;
-                  });
-                if (result.join('') === '') {
+                const literalSections = arg.quasis.map(q => q.value.cooked);
+                if (literalSections.join('') === '') {
                   // template literal not hinted, i.e. translate(`${foo}`)
                   throw new Error(errorMessage);
                 } else {
-                  translationIds.add(result);
+                  translationIds.add(literalSections);
                 }
               } else {
                 throw new Error(errorMessage);
