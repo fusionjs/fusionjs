@@ -170,7 +170,7 @@ test('non matched route', async t => {
 });
 
 test('matchesOrder matches positionally', async t => {
-  function literalSections(quasis) {
+  function literalSections(quasis, ...substitutions) {
     return quasis;
   }
 
