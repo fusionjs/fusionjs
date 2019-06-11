@@ -23,27 +23,33 @@ import type {
 } from './types.js';
 
 // exported for testing
-export function matchesOrder(key: Array<string>) {
+export function matchesLiteralSections(literalSections: Array<string>) {
   return (translation: string) => {
-    let matchIndex = 0;
+    let lastMatchIndex = 0;
 
-    return key.every((part, i) => {
-      if (part === '') {
-        // part is result of two adjacent interpolations - skip
+    return literalSections.every((literal, literalIndex) => {
+      if (literal === '') {
+        // literal section either:
+        // - starts/ends the literal
+        // - is the result of two adjacent interpolations
         return true;
-      } else if (i === 0 && translation.startsWith(part)) {
-        matchIndex += part.length;
+      } else if (literalIndex === 0 && translation.startsWith(literal)) {
+        lastMatchIndex += literal.length;
         return true;
-      } else if (i === key.length - 1 && translation.endsWith(part)) {
+      } else if (
+        literalIndex === literalSections.length - 1 &&
+        translation.endsWith(literal)
+      ) {
         return true;
       } else {
-        const offset = translation.indexOf(part, matchIndex);
-        if (offset !== -1) {
-          matchIndex = offset + part.length;
+        // start search from `lastMatchIndex`
+        const matchIndex = translation.indexOf(literal, lastMatchIndex);
+        if (matchIndex !== -1) {
+          lastMatchIndex = matchIndex + literal.length;
           return true;
         }
       }
-      // a part failed
+      // matching failed
       return false;
     });
   };
@@ -109,7 +115,9 @@ const pluginFactory: () => PluginType = () =>
             );
             keys.forEach(key => {
               if (Array.isArray(key)) {
-                const matches = possibleTranslations.filter(matchesOrder(key));
+                const matches = possibleTranslations.filter(
+                  matchesLiteralSections(key)
+                );
                 for (const match of matches) {
                   translations[match] =
                     i18n.translations && i18n.translations[match];
@@ -146,7 +154,9 @@ const pluginFactory: () => PluginType = () =>
             : [];
           const translations = keys.reduce((acc, key) => {
             if (Array.isArray(key)) {
-              const matches = possibleTranslations.filter(matchesOrder(key));
+              const matches = possibleTranslations.filter(
+                matchesLiteralSections(key)
+              );
               for (const match of matches) {
                 acc[match] = i18n.translations && i18n.translations[match];
               }

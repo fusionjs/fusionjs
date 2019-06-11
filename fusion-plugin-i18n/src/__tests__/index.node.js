@@ -14,7 +14,7 @@ import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-import I18n, {matchesOrder} from '../node';
+import I18n, {matchesLiteralSections} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
@@ -169,7 +169,7 @@ test('non matched route', async t => {
   t.end();
 });
 
-test('matchesOrder matches positionally', async t => {
+test('matchesLiteralSections matches positionally', async t => {
   function literalSections(quasis, ...substitutions) {
     return quasis;
   }
@@ -185,18 +185,18 @@ test('matchesOrder matches positionally', async t => {
 
   // handles ending matches
   const buffaloMatches = translations.filter(
-    matchesOrder(literalSections`${''}.Buffalo`)
+    matchesLiteralSections(literalSections`${''}.Buffalo`)
   );
   t.deepEqual(buffaloMatches, ['cities.Buffalo', 'animals.Buffalo']);
 
   // handles beginning matches'
   const animalMatches = translations.filter(
-    matchesOrder(literalSections`animals.${''}`)
+    matchesLiteralSections(literalSections`animals.${''}`)
   );
   t.deepEqual(animalMatches, ['animals.Buffalo', 'animals.Cat']);
 
   const dotMatches = translations.filter(
-    matchesOrder(literalSections`${''}.${''}`)
+    matchesLiteralSections(literalSections`${''}.${''}`)
   );
   t.deepEqual(dotMatches, [
     'cities.Buffalo',
@@ -208,30 +208,30 @@ test('matchesOrder matches positionally', async t => {
 
   // handles static matches
   const staticMatches = translations.filter(
-    matchesOrder(literalSections`test`)
+    matchesLiteralSections(literalSections`test`)
   );
   t.deepEqual(staticMatches, ['test']);
 
   // handles multiple parts
   const matches1 = translations.filter(
-    matchesOrder(literalSections`${''}citi${''}s.${''}a${''}o`)
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}a${''}o`)
   );
   t.deepEqual(matches1, ['cities.Buffalo', 'cities.Chicago']);
 
   // confines match to later parts in the string
   const matches2 = translations.filter(
-    matchesOrder(literalSections`${''}citi${''}s.${''}A${''}o`)
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}o`)
   );
   t.deepEqual(matches2, []);
 
   const matches3 = translations.filter(
-    matchesOrder(literalSections`${''}citi${''}s.${''}A${''}`)
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}`)
   );
   t.deepEqual(matches3, ['cities.LosAngeles']);
 
   // doesn't overlap matches
   const matches4 = ['abc', 'abbc', 'ababc'].filter(
-    matchesOrder(literalSections`${''}ab${''}bc${''}`)
+    matchesLiteralSections(literalSections`${''}ab${''}bc${''}`)
   );
   t.deepEqual(matches4, ['abbc', 'ababc']);
 
