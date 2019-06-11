@@ -126,7 +126,10 @@ const pluginFactory: () => RPCPluginType = () =>
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
-      let apiPath = 'api';
+      let apiPath = rpcConfig && rpcConfig.apiPath
+        ? rpcConfig.apiPath
+        : 'api';
+      apiPath = `/${apiPath}/`.replace(/\/+/, '/');
       if (rpcConfig && rpcConfig.apiPath) {
         apiPath = rpcConfig.apiPath;
       }
