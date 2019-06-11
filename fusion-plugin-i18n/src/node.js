@@ -27,6 +27,11 @@ export function matchesLiteralSections(literalSections: Array<string>) {
   return (translation: string) => {
     let lastMatchIndex = 0;
 
+    if (literalSections.length === 1) {
+      const literal = literalSections[0];
+      return literal !== '' && translation === literal;
+    }
+
     return literalSections.every((literal, literalIndex) => {
       if (literal === '') {
         // literal section either:

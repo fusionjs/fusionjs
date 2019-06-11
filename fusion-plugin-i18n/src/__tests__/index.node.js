@@ -181,6 +181,8 @@ test('matchesLiteralSections matches positionally', async t => {
     'animals.Buffalo',
     'animals.Cat',
     'test',
+    'testend',
+    'starttest',
   ];
 
   // handles ending matches
