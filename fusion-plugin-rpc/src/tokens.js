@@ -8,6 +8,7 @@
 
 import {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
+import type {Options} from 'koa-bodyparser';
 import type {RPCConfigType} from './types';
 
 export const RPCToken: Token<any> = createToken('RPCToken');
@@ -16,7 +17,7 @@ export type HandlerType = {[string]: (...args: any) => any};
 export const RPCHandlersToken: Token<HandlerType> = createToken(
   'RPCHandlersToken'
 );
-export const BodyParserOptionsToken: Token<mixed> = createToken(
+export const BodyParserOptionsToken: Token<Options> = createToken(
   'BodyParserOptionsToken'
 );
 export const RPCHandlersConfigToken: Token<RPCConfigType> = createToken(
