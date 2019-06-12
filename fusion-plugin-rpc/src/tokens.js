@@ -8,6 +8,7 @@
 
 import {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
+import type {RPCConfigType} from './types';
 
 export const RPCToken: Token<any> = createToken('RPCToken');
 
@@ -17,4 +18,7 @@ export const RPCHandlersToken: Token<HandlerType> = createToken(
 );
 export const BodyParserOptionsToken: Token<mixed> = createToken(
   'BodyParserOptionsToken'
+);
+export const RPCHandlersConfigToken: Token<RPCConfigType> = createToken(
+  'RPCHandlersConfigToken'
 );

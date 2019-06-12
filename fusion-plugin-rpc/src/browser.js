@@ -13,8 +13,15 @@ import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 
-import type {HandlerType} from './tokens.js';
-import type {RPCPluginType, IEmitter} from './types.js';
+import {type HandlerType, RPCHandlersConfigToken} from './tokens.js';
+import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
+import {formatApiPath} from './utils.js';
+
+type InitializationOpts = {
+  fetch: Fetch,
+  emitter: IEmitter,
+  rpcConfig: ?RPCConfigType,
+};
 
 const statKey = 'rpc:method-client';
 
@@ -23,10 +30,16 @@ class RPC {
   emitter: ?IEmitter;
   handlers: ?HandlerType;
   fetch: ?Fetch;
-
-  constructor(fetch: Fetch, emitter: IEmitter) {
+  config: ?RPCConfigType;
+  apiPath: string;
+  constructor({fetch, emitter, rpcConfig}: InitializationOpts) {
     this.fetch = fetch;
+    this.config = rpcConfig || {};
     this.emitter = emitter;
+
+    this.apiPath = formatApiPath(
+      rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+    );
   }
 
   request<TArgs, TResult>(
@@ -42,10 +55,12 @@ class RPC {
     }
     const fetch = this.fetch;
     const emitter = this.emitter;
+    const apiPath = this.apiPath;
+
     const startTime = Date.now();
 
     // TODO(#3) handle args instanceof FormData
-    return fetch(`/api/${rpcId}`, {
+    return fetch(`${apiPath}${rpcId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -81,11 +96,12 @@ const pluginFactory: () => RPCPluginType = () =>
     deps: {
       fetch: FetchToken,
       emitter: UniversalEventsToken,
+      rpcConfig: RPCHandlersConfigToken.optional,
     },
     provides: deps => {
-      const {fetch = window.fetch, emitter} = deps;
+      const {fetch = window.fetch, emitter, rpcConfig} = deps;
 
-      return {from: () => new RPC(fetch, emitter)};
+      return {from: () => new RPC({fetch, emitter, rpcConfig})};
     },
   });
 
