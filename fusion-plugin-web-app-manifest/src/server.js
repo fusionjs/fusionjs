@@ -12,20 +12,11 @@ import type {DepsType} from './types';
 
 const plugin =
   __NODE__ &&
-  createPlugin({
+  createPlugin<WebAppManifestToken, void>({
     deps: {
       manifest: WebAppManifestToken,
     },
-    provides({manifest}) {
-      if (manifest) {
-        return manifest;
-      } else {
-        throw new Error(
-          'fusion-plugin-web-app-manifest: No manifest object provided'
-        );
-      }
-    },
-    middleware(_, manifest) {
+    middleware({manifest}) {
       return (ctx, next) => {
         if (ctx.element) {
           ctx.template.head.push(
