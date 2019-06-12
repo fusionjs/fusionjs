@@ -12,7 +12,7 @@ import type {DepsType} from './types';
 
 const plugin =
   __NODE__ &&
-  createPlugin<WebAppManifestToken, void>({
+  createPlugin<DepsType, void>({
     deps: {
       manifest: WebAppManifestToken,
     },
