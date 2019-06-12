@@ -24,6 +24,7 @@ import {
 } from './tokens.js';
 import type {HandlerType} from './tokens.js';
 import type {RPCPluginType, IEmitter} from './types.js';
+import {formatApiPath} from './utils.js';
 
 const statKey = 'rpc:method';
 
@@ -126,8 +127,9 @@ const pluginFactory: () => RPCPluginType = () =>
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
-      let apiPath = rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api';
-      apiPath = `/${apiPath}/`.replace(/\/{2,}/g, '/');
+      const apiPath = formatApiPath(
+        rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+      );
 
       return async (ctx, next) => {
         await next();

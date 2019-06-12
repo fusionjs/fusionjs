@@ -15,6 +15,7 @@ import type {Fetch} from 'fusion-tokens';
 
 import {type HandlerType, RPCHandlersConfigToken} from './tokens.js';
 import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
+import {formatApiPath} from './utils.js';
 
 type InitializationOpts = {
   fetch: Fetch,
@@ -36,9 +37,9 @@ class RPC {
     this.config = rpcConfig || {};
     this.emitter = emitter;
 
-    const apiPath = rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api';
-
-    this.apiPath = `/${apiPath}/`.replace(/\/{2,}/g, '/');
+    this.apiPath = formatApiPath(
+      rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+    );
   }
 
   request<TArgs, TResult>(
