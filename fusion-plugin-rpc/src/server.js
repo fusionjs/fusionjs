@@ -126,21 +126,16 @@ const pluginFactory: () => RPCPluginType = () =>
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
-      let apiPath = rpcConfig && rpcConfig.apiPath
-        ? rpcConfig.apiPath
-        : 'api';
-      apiPath = `/${apiPath}/`.replace(/\/+/, '/');
-      if (rpcConfig && rpcConfig.apiPath) {
-        apiPath = rpcConfig.apiPath;
-      }
+      let apiPath = rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api';
+      apiPath = `/${apiPath}/`.replace(/\/{2,}/g, '/');
 
       return async (ctx, next) => {
         await next();
         const scopedEmitter = emitter.from(ctx);
-        if (ctx.method === 'POST' && ctx.path.startsWith(`/${apiPath}/`)) {
+        if (ctx.method === 'POST' && ctx.path.startsWith(apiPath)) {
           const startTime = ms();
           // eslint-disable-next-line no-useless-escape
-          const pathMatch = new RegExp(`\/${apiPath}\/([^/]+)`, 'i');
+          const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
           const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
             await parseBody(ctx, () => Promise.resolve());

@@ -30,10 +30,15 @@ class RPC {
   handlers: ?HandlerType;
   fetch: ?Fetch;
   config: ?RPCConfigType;
+  apiPath: string;
   constructor({fetch, emitter, rpcConfig}: InitializationOpts) {
     this.fetch = fetch;
     this.config = rpcConfig || {};
     this.emitter = emitter;
+
+    const apiPath = rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api';
+
+    this.apiPath = `/${apiPath}/`.replace(/\/{2,}/g, '/');
   }
 
   request<TArgs, TResult>(
@@ -48,17 +53,13 @@ class RPC {
       throw new Error('Missing emitter registered to UniversalEventsToken');
     }
     const fetch = this.fetch;
-    const config = this.config;
     const emitter = this.emitter;
+    const apiPath = this.apiPath;
 
-    let apiPath: string = 'api';
-    if (config && config.apiPath) {
-      apiPath = config.apiPath;
-    }
     const startTime = Date.now();
 
     // TODO(#3) handle args instanceof FormData
-    return fetch(`/${apiPath}/${rpcId}`, {
+    return fetch(`${apiPath}${rpcId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

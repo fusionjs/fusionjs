@@ -123,6 +123,45 @@ test('success status request (with custom api path)', t => {
   t.end();
 });
 
+test('success status request (with custom api path containing slashes)', t => {
+  const app = createTestFixture();
+
+  app.register(RPCHandlersConfigToken, {apiPath: '///test/api///path/'});
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        rpc
+          .request('test')
+          .then(([url, options]) => {
+            t.equals(url, '/test/api/path/test', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              'application/json',
+              'has right content-type'
+            );
+            t.equals(options.body, '{}', 'has right body');
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
+});
+
 test('success status request w/args and header', t => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
