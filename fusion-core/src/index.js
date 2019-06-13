@@ -19,7 +19,7 @@ import serverApp from './server-app';
 import clientApp from './client-app';
 import getEnv from './get-env.js';
 
-export default (__BROWSER__ ? clientApp() : serverApp());
+export default __BROWSER__ ? clientApp() : serverApp();
 
 export {compose} from './compose.js';
 export {memoize} from './memoize';

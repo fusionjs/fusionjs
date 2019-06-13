@@ -152,18 +152,14 @@ function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
 function getChunkScripts(ctx) {
   const sync = getUrls(ctx, ctx.syncChunks).map(
     ({url, crossOriginAttribute}) => {
-      return `<script nonce="${
-        ctx.nonce
-      }" defer${crossOriginAttribute} src="${url}"></script>`;
+      return `<script nonce="${ctx.nonce}" defer${crossOriginAttribute} src="${url}"></script>`;
     }
   );
   const preloaded = getUrls(
     ctx,
     ctx.preloadChunks.filter(item => !ctx.syncChunks.includes(item))
   ).map(({url, crossOriginAttribute}) => {
-    return `<script nonce="${
-      ctx.nonce
-    }" defer${crossOriginAttribute} src="${url}"></script>`;
+    return `<script nonce="${ctx.nonce}" defer${crossOriginAttribute} src="${url}"></script>`;
   });
   return [...preloaded, ...sync].join('');
 }
@@ -171,9 +167,7 @@ function getChunkScripts(ctx) {
 function getPreloadHintLinks(ctx) {
   const chunks = [...ctx.preloadChunks, ...ctx.syncChunks];
   const hints = getUrls(ctx, chunks).map(({url, crossOriginAttribute}) => {
-    return `<link rel="preload"${crossOriginAttribute} href="${url}" nonce="${
-      ctx.nonce
-    }" as="script" />`;
+    return `<link rel="preload"${crossOriginAttribute} href="${url}" nonce="${ctx.nonce}" as="script" />`;
   });
   return hints.join('');
 }

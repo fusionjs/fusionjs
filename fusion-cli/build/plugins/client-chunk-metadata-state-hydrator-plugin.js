@@ -98,9 +98,7 @@ function chunkMapFromWebpackChunks(chunks) {
 function getChunkInfo(compilation, chunks) {
   assert(
     compilation.entrypoints.size === 1,
-    `fusion-cli expects there to be a single entrypoint, but there was ${
-      compilation.entrypoints.size
-    }. This is a bug in fusion-cli.`
+    `fusion-cli expects there to be a single entrypoint, but there was ${compilation.entrypoints.size}. This is a bug in fusion-cli.`
   );
   const allChunks = new Map();
   const runtimeChunkIds = new Set();
@@ -117,9 +115,7 @@ function getChunkInfo(compilation, chunks) {
 
   assert(
     runtimeChunkIds.size === 1,
-    `fusion-cli expects there to be a single runtime chunk, but there was ${
-      runtimeChunkIds.size
-    }. This is a bug in fusion-cli.`
+    `fusion-cli expects there to be a single runtime chunk, but there was ${runtimeChunkIds.size}. This is a bug in fusion-cli.`
   );
 
   return {
