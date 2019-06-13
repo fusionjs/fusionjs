@@ -21,9 +21,7 @@ export default function generatePreloadLinks(
       // Others will fail silently and pick up the font a little later
       // via the style
       links.push(
-        `\n<link rel="preload" href="${
-          font.urls.woff2
-        }" as="font" type="font/woff2" crossorigin>`
+        `\n<link rel="preload" href="${font.urls.woff2}" as="font" type="font/woff2" crossorigin>`
       );
     }
   });
