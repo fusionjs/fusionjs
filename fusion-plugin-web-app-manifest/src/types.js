@@ -46,7 +46,8 @@ export type WebAppManifestType = {
   icons: Icon[],
   lang: string,
   name: string,
-  orientation: | 'any'
+  orientation:
+    | 'any'
     | 'natural'
     | 'landscape'
     | 'landscape-primary'
