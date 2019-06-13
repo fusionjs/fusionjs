@@ -26,7 +26,9 @@ tape('injects manifest', async t => {
   }
 
   // $FlowFixMe
-  await Plugin.middleware(TEST_MANIFEST)(setupContext, () => Promise.resolve());
+  await Plugin.middleware({manifest: TEST_MANIFEST})(setupContext, () =>
+    Promise.resolve()
+  );
   const manifestLink = '<link rel="manifest" href="/manifest.json" />';
   t.equals(
     // $FlowFixMe
@@ -50,7 +52,7 @@ tape('returns manifest', async t => {
     return;
   }
   // $FlowFixMe
-  await Plugin.middleware(TEST_MANIFEST)(requestContext, () =>
+  await Plugin.middleware({manifest: TEST_MANIFEST})(requestContext, () =>
     Promise.resolve()
   );
   // $FlowFixMe
