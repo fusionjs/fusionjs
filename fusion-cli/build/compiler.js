@@ -155,7 +155,8 @@ function Compiler(
     clientChunkMetadata,
     legacyClientChunkMetadata,
     mergedClientChunkMetadata,
-    i18nManifest: new DeferredState(),
+    i18nManifest: new Map(),
+    i18nDeferredManifest: new DeferredState(),
     legacyBuildEnabled,
   };
   const root = path.resolve(dir);

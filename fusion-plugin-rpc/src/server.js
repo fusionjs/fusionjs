@@ -17,9 +17,14 @@ import type {Fetch} from 'fusion-tokens';
 
 import MissingHandlerError from './missing-handler-error';
 import ResponseError from './response-error';
-import {BodyParserOptionsToken, RPCHandlersToken} from './tokens.js';
+import {
+  BodyParserOptionsToken,
+  RPCHandlersToken,
+  RPCHandlersConfigToken,
+} from './tokens.js';
 import type {HandlerType} from './tokens.js';
 import type {RPCPluginType, IEmitter} from './types.js';
+import {formatApiPath} from './utils.js';
 
 const statKey = 'rpc:method';
 
@@ -34,7 +39,7 @@ class RPC {
   handlers: ?HandlerType;
   fetch: ?Fetch;
 
-  constructor(emitter: any, handlers: any, ctx: Context): RPC {
+  constructor(emitter: IEmitter, handlers: any, ctx: Context): RPC {
     if (!ctx || !ctx.headers) {
       throw new Error('fusion-plugin-rpc requires `ctx`');
     }
@@ -102,6 +107,7 @@ const pluginFactory: () => RPCPluginType = () =>
       emitter: UniversalEventsToken,
       handlers: RPCHandlersToken,
       bodyParserOptions: BodyParserOptionsToken.optional,
+      rpcConfig: RPCHandlersConfigToken.optional,
     },
 
     provides: deps => {
@@ -114,19 +120,25 @@ const pluginFactory: () => RPCPluginType = () =>
     },
 
     middleware: deps => {
-      const {emitter, handlers, bodyParserOptions} = deps;
+      const {emitter, handlers, bodyParserOptions, rpcConfig} = deps;
       if (!handlers)
         throw new Error('Missing handlers registered to RPCHandlersToken');
       if (!emitter)
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
+      const apiPath = formatApiPath(
+        rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+      );
+
       return async (ctx, next) => {
         await next();
         const scopedEmitter = emitter.from(ctx);
-        if (ctx.method === 'POST' && ctx.path.startsWith('/api/')) {
+        if (ctx.method === 'POST' && ctx.path.startsWith(apiPath)) {
           const startTime = ms();
-          const [, method] = ctx.path.match(/\/api\/([^/]+)/i) || [];
+          // eslint-disable-next-line no-useless-escape
+          const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
+          const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
             await parseBody(ctx, () => Promise.resolve());
             try {

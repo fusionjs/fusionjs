@@ -21,6 +21,6 @@ import browser from './browser';
 
 declare var __NODE__: Boolean;
 
-export default (__NODE__ ? server : browser);
+export default __NODE__ ? server : browser;
 export {styled, withStyle, withStyleDeep, withTransform, withWrapper};
 export {AtomicPrefixToken};

@@ -7,8 +7,8 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import type {Context} from 'fusion-core';
+import {I18nContext} from './plugin.js';
 
 type TranslateType = (
   key: string,
@@ -40,7 +40,7 @@ export const withTranslations = (
 
       constructor(props: T, context: Context) {
         super(props, context);
-        const {i18n} = context;
+        const i18n = context;
         this.localeCode = i18n ? i18n.localeCode : 'en_US';
         this.translate = i18n
           ? (key: string, interpolations?: {[string]: string | number}) =>
@@ -61,9 +61,8 @@ export const withTranslations = (
 
     const displayName = Component.displayName || Component.name || 'Anonymous';
     WithTranslations.displayName = `withTranslations(${displayName})`;
-    WithTranslations.contextTypes = {
-      i18n: PropTypes.object.isRequired,
-    };
+    // $FlowFixMe
+    WithTranslations.contextType = I18nContext;
 
     return WithTranslations;
   };

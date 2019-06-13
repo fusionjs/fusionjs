@@ -7,9 +7,15 @@
  */
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {
+  UniversalEventsDepsType,
+  UniversalEventsType,
+} from 'fusion-plugin-universal-events';
+
 import plugin from './plugin';
 import withBatchEvents from './hoc';
 
 export default plugin;
 export {withBatchEvents};
 export {UniversalEventsToken};
+export type {UniversalEventsDepsType, UniversalEventsType};

@@ -10,6 +10,6 @@ import serverCsrf from './server.js';
 import clientCsrf from './browser.js';
 
 declare var __NODE__: Boolean;
-export default (__NODE__ ? serverCsrf : clientCsrf);
+export default __NODE__ ? serverCsrf : clientCsrf;
 
 export {CsrfIgnoreRoutesToken} from './shared';

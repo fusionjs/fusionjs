@@ -15,17 +15,25 @@ import type {Context, Token} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import {RPCHandlersToken} from '../tokens';
-import RPCPlugin from '../server';
+import {RPCHandlersToken} from '../tokens.js';
+import RPCPlugin from '../server.js';
 import type {IEmitter, RPCServiceType} from '../types.js';
 import MockRPCPlugin from '../mock.js';
 import ResponseError from '../response-error.js';
+import createMockEmitter from './create-mock-emitter';
 
 const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
 
 const mockService: RPCServiceType = getService(() => {
   const app = new App('content', el => el);
+  const mockEmitter: IEmitter = (new MockEmitter(): any);
+  // $FlowFixMe
+  mockEmitter.from = () => mockEmitter;
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
+  app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, {});
   return app;
 }, MockRPCPlugin);
@@ -45,25 +53,6 @@ function createTestFixture() {
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
-}
-
-function createMockEmitter<TProps>(props: TProps): IEmitter {
-  const emitter = {
-    from: () => {
-      return emitter;
-    },
-    emit: () => {},
-    setFrequency: () => {},
-    teardown: () => {},
-    map: () => {},
-    on: () => {},
-    off: () => {},
-    mapEvent: () => {},
-    handleEvent: () => {},
-    flush: () => undefined,
-    ...props,
-  };
-  return emitter;
 }
 
 function mockRequest() {
@@ -367,6 +356,134 @@ test('middleware - valid endpoint', async t => {
       {
         emitter: mockEmitter,
         handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
+  try {
+    await middleware(mockCtx, async () => {
+      t.equal(executedHandler, false, 'awaits next');
+      Promise.resolve();
+    });
+    t.equal(executedHandler, true);
+    // $FlowFixMe
+    t.equal(mockCtx.body.data, 1);
+    // $FlowFixMe
+    t.equal(mockCtx.body.status, 'success');
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
+});
+
+test('middleware - valid endpoint (custom api path)', async t => {
+  const mockCtx: Context = ({
+    headers: {},
+    prefix: '',
+    path: '/test/api/long/test',
+    method: 'POST',
+    body: {},
+    request: {
+      body: 'test-args',
+    },
+  }: any);
+  let executedHandler = false;
+  const mockHandlers = {
+    test(args, ctx) {
+      executedHandler = true;
+      t.equal(args, 'test-args');
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
+
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+        rpcConfig: {
+          apiPath: 'test/api/long',
+        },
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
+  try {
+    await middleware(mockCtx, async () => {
+      t.equal(executedHandler, false, 'awaits next');
+      Promise.resolve();
+    });
+    t.equal(executedHandler, true);
+    // $FlowFixMe
+    t.equal(mockCtx.body.data, 1);
+    // $FlowFixMe
+    t.equal(mockCtx.body.status, 'success');
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
+});
+
+test('middleware - valid endpoint (custom api path including slashes)', async t => {
+  const mockCtx: Context = ({
+    headers: {},
+    prefix: '',
+    path: '/test/api/long/test',
+    method: 'POST',
+    body: {},
+    request: {
+      body: 'test-args',
+    },
+  }: any);
+  let executedHandler = false;
+  const mockHandlers = {
+    test(args, ctx) {
+      executedHandler = true;
+      t.equal(args, 'test-args');
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
+
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+        rpcConfig: {
+          apiPath: '/test///api/long////',
+        },
       },
       mockService
     );
