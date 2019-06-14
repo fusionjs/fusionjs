@@ -178,8 +178,17 @@ function Compiler(
 
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
-    getWebpackConfig({id: serverless ? 'serverless' : 'server', ...sharedOpts}),
+    getWebpackConfig({
+      id: serverless ? 'serverless' : 'server',
+      ...sharedOpts,
+    }),
   ]);
+
+  compiler.hooks.done.tap('MyPlugin', stats => {
+    /* eslint-disable no-console */
+    console.log(`End time: ${stats.stats[0].endTime}`);
+    /* eslint-enable no-console */
+  });
 
   const statsLogger = getStatsLogger({dir, logger, env});
 
