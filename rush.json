@@ -388,5 +388,9 @@
       "packageName": "create-fusion-app",
       "projectFolder": "create-fusion-app"
     },
+    {
+      "packageName": "fusion-plugin-web-app-manifest",
+      "projectFolder": "fusion-plugin-web-app-manifest"
+    },
   ]
 }

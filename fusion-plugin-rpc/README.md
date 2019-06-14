@@ -26,6 +26,7 @@ instead of this package.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Setup](#setup)
+- [Customization](#customization)
 - [API](#api)
   - [Registration API](#registration-api)
   - [Dependencies](#dependencies)
@@ -108,6 +109,50 @@ export default () => {
 
 ---
 
+### Customization
+
+The plugin can accept an optional config token for modifying the default behavior.
+
+#### Modify RPC Routes
+
+```js
+// src/main.js
+import React from 'react';
+import App, {createPlugin} from 'fusion-core';
+import RPC, {
+  RPCToken,
+  RPCHandlersToken,
+  ResponseError,
+  RPCHandlersConfigToken,
+} from 'fusion-plugin-rpc';
+import UniversalEvents, {
+  UniversalEventsToken,
+} from 'fusion-plugin-universal-events';
+import {FetchToken} from 'fusion-tokens';
+import fetch from 'unfetch';
+
+import handlers from './redux/handlers';
+
+export default () => {
+  const app = new App(<div />);
+
+  app.register(RPCHandlersConfigToken, {
+    // Modify RPC endpoints to be accessible at /nested/api/rpcs/<RPC_ID>
+    apiPath: 'nested/api/rpcs',
+  });
+
+  app.register(RPCToken, RPC);
+  app.register(UniversalEventsToken, UniversalEvents);
+  __NODE__
+    ? app.register(RPCHandlersToken, handlers)
+    : app.register(FetchToken, fetch);
+
+  return app;
+};
+```
+
+---
+
 ### API
 
 #### Registration API
@@ -142,6 +187,12 @@ Required. See
 import {RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
 ```
 
+##### `RPCHandlersConfigToken`
+
+```js
+import {RPCHandlersConfigToken} from 'fusion-plugin-rpc';
+```
+
 Configures what RPC handlers exist. Required. Server-only.
 
 ###### Types
@@ -168,6 +219,16 @@ Required. See
 Required. See
 [https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-react-redux)
 
+##### `RPCHandlersConfigToken`
+
+Optional.
+
+```flow
+type RPCConfigType = {
+  apiPath?: string,
+}
+```
+
 ---
 
 #### Service API
@@ -184,10 +245,10 @@ const rpc: RPC = Rpc.from((ctx: Context));
     via an HTTP request. If on the server, this will directly call the `method`
     handler with `(args, ctx)`.
 
-    If on the browser, this will `POST` to `/api/${method}` endpoint with JSON
-    serialized args as the request body. The server will then deserialize the
-    args and call the rpc handler. The response will be serialized and send back
-    to the browser.
+    If on the browser, this will `POST` to `/api/${method}` (unless modified;
+    see [customization](#customization)) endpoint with JSON serialized args as the
+    request body. The server will then deserialize the args and call the rpc
+    handler. The response will be serialized and send back to the browser.
 
     - `method: string` - Required. The RPC method name
     - `args: any` - Optional. Arguments to pass to the server-side RPC handler.

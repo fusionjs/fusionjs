@@ -26,6 +26,7 @@ export type FusionRC = {
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
   nodeBuiltins?: {[string]: any},
+  jest?: {transformIgnorePatterns?: Array<string>}
 };
 */
 
@@ -69,6 +70,7 @@ function isValid(config) {
         'experimentalTransformTest',
         'experimentalBundleTest',
         'nodeBuiltins',
+        'jest',
       ].includes(key)
     )
   ) {
