@@ -46,7 +46,7 @@ module.exports = {
         type: 'boolean',
         default: false,
         describe:
-          'Build the application only for modern browsers, but default compiled in `build`',
+          'Build the application only for modern browsers. By default compiled in `build`.',
       },
     },
   },
