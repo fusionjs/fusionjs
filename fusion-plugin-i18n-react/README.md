@@ -16,6 +16,7 @@ For date I18n, consider using [date-fns](https://date-fns.org/).
 * [Usage](#usage)
   * [React component](#react-component)
   * [Higher order component](#higher-order-component)
+  * [React hook](#react-hook)
   * [Examples of translation files](#examples-of-translation-files)
 * [Setup](#setup)
 * [API](#api)
@@ -29,6 +30,7 @@ For date I18n, consider using [date-fns](https://date-fns.org/).
   * [Service API](#service-api)
   * [React component](#react-component-1)
   * [Higher order component](#higher-order-component-1)
+  * [React hook](#react-hook-1)
 * [Other examples](#other-examples)
   * [Custom translations loader example](#custom-translations-loader-example)
 
@@ -46,15 +48,15 @@ yarn add fusion-plugin-i18n-react
 
 #### React component
 
-If you are using React, we recommend using the supplied `Translate` component.
+We recommend using the supplied `Translate` component for static translations.
 
 ```js
 import React from 'react';
-import {Translate, withTranslations} from 'fusion-plugin-i18n-react';
+import {Translate} from 'fusion-plugin-i18n-react';
 
 export default () => {
-  return <Translate id="test" data={{name: 'world'}} />);
-});
+  return <Translate id="test" data={{name: 'world'}} />;
+};
 ```
 
 #### Higher order component
@@ -63,11 +65,25 @@ A higher order component is provided to allow passing translations to third-part
 
 ```js
 import React from 'react';
-import {Translate, withTranslations} from 'fusion-plugin-i18n-react';
+import {withTranslations} from 'fusion-plugin-i18n-react';
 
 export default withTranslations(['test'])(({translate}) => {
   return <input placeholder={translate('test', {name: 'world'})} />;
 });
+```
+
+#### React Hook
+
+The React hook is currently the only way that dynamic translations are supported. `useTranslations` returns a function that can be used to dynamically translate a template string. Be aware that fusion-cli with throw an error if you attempt to pass a variable or a template string that is not hinted (i.e. has some unchanging parts). Try to use dynamic translations only when completely necessary because all translations that match this dynamic template string will be transferred to the client, contributing to an increase in overall application size.
+
+```js
+import React from 'react';
+import {useTranslations} from 'fusion-plugin-i18n-react';
+
+export default (props) => {
+  const translate = useTranslations();
+  return <span>translate(`cities.${props.city}`)</span>;
+};
 ```
 
 #### Examples of translation files
@@ -274,6 +290,38 @@ type WithTranslations = (
 * `translationKeys: Array<string>` - list of keys with which to provide translations for.
 * `translate: (key: string, interpolations: Object) => string` - returns the translation for the given key, with the provided interpolations.
 * `localeCode: string = 'en_US'` - the current `localeCode` we are tranlating to. Defaults to `en_US`.
+
+#### React hook
+
+The React hook is currently the only way that dynamic translations are supported. `useTranslations` returns a function that can be used to dynamically translate a template string. Be aware that fusion-cli with throw an error if you attempt to pass a variable or a template string that is not hinted (i.e. has some unchanging parts). Try to use dynamic translations only when completely necessary because all translations that match this dynamic template string will be transferred to the client, contributing to an increase in overall application size.
+
+Given this usage of `useTranslations`:
+
+```js
+import {useTranslations} from 'fusion-plugin-i18n-react';
+
+export default () => {
+  const translate = useTranslations();
+  translate(`static.${dynamicValue}`);
+};
+```
+
+And given this translations json file:
+
+```json
+{
+  "static.foo": "foo",
+  "static.bar": "bar",
+  "static.baz": "baz"
+}
+```
+
+All 3 translations will be loaded on the client.
+
+The `translate` function returned from `useTranslations` has the same signature as the [service api](#service-api).
+
+* `key: string` - Required. May be a *hinted* template string or a hard-coded string literal. This plugin uses a babel transform to perform static analysis on this value.
+* `interpolations: Object` - Optional. Replaces `${value}` interpolation placeholders in a translation string with the property of the specified name.
 
 ---
 

@@ -9,6 +9,6 @@
 import ServerLogger from './server.js';
 import BrowserLogger from './browser.js';
 
-export default (__BROWSER__ ? BrowserLogger : ServerLogger);
+export default __BROWSER__ ? BrowserLogger : ServerLogger;
 
 export {UniversalLoggerConfigToken} from './tokens';
