@@ -121,7 +121,7 @@ type CompilerOpts = {
   preserveNames?: boolean,
   zopfli?: boolean,
   minify?: boolean,
-  chromeOnly?:boolean
+  preventLegacyBuild?:boolean
 };
 */
 
@@ -137,13 +137,13 @@ function Compiler(
     zopfli = true,
     minify = true,
     serverless = false,
-    chromeOnly = false,
+    preventLegacyBuild = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    forceLegacyBuild || !watch || env === 'production'
+    (forceLegacyBuild || !watch || env === 'production') && !preventLegacyBuild
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [
@@ -176,9 +176,7 @@ function Compiler(
     preserveNames,
     zopfli,
     minify,
-    chromeOnly,
   };
-
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
     getWebpackConfig({id: serverless ? 'serverless' : 'server', ...sharedOpts}),
