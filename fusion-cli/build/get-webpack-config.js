@@ -95,7 +95,8 @@ export type WebpackConfigOpts = {|
   fusionConfig: FusionRC,
   legacyPkgConfig?: {
     node?: Object
-  }
+  },
+  chromeOnly: boolean
 |};
 */
 
@@ -113,6 +114,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     zopfli,
     minify,
     legacyPkgConfig = {},
+    chromeOnly,
   } = opts;
   const main = 'src/main.js';
 
@@ -350,27 +352,28 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         /**
          * Global transforms (including ES2017+ transpilations)
          */
-        runtime === 'client' && {
-          compiler: id => id === 'client-legacy',
-          test: babelTester,
-          exclude: EXCLUDE_TRANSPILATION_PATTERNS,
-          use: [
-            {
-              loader: babelLoader.path,
-              options: {
-                ...legacyBabelConfig,
-                /**
-                 * Fusion-specific transforms (not applied to node_modules)
-                 */
-                overrides: [
-                  {
-                    ...legacyBabelOverrides,
-                  },
-                ],
+        runtime === 'client' &&
+          !chromeOnly && {
+            compiler: id => id === 'client-legacy',
+            test: babelTester,
+            exclude: EXCLUDE_TRANSPILATION_PATTERNS,
+            use: [
+              {
+                loader: babelLoader.path,
+                options: {
+                  ...legacyBabelConfig,
+                  /**
+                   * Fusion-specific transforms (not applied to node_modules)
+                   */
+                  overrides: [
+                    {
+                      ...legacyBabelOverrides,
+                    },
+                  ],
+                },
               },
-            },
-          ],
-        },
+            ],
+          },
         {
           test: /\.json$/,
           type: 'javascript/auto',
@@ -518,6 +521,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       id === 'client-modern' &&
         new ClientChunkMetadataStateHydratorPlugin(state.clientChunkMetadata),
       id === 'client-modern' &&
+        !chromeOnly &&
         new ChildCompilationPlugin({
           name: 'client-legacy',
           entry: [

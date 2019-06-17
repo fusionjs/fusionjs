@@ -120,7 +120,8 @@ type CompilerOpts = {
   logger?: any,
   preserveNames?: boolean,
   zopfli?: boolean,
-  minify?: boolean
+  minify?: boolean,
+  chromeOnly?:boolean
 };
 */
 
@@ -136,6 +137,7 @@ function Compiler(
     zopfli = true,
     minify = true,
     serverless = false,
+    chromeOnly = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
@@ -174,6 +176,7 @@ function Compiler(
     preserveNames,
     zopfli,
     minify,
+    chromeOnly,
   };
 
   const compiler = webpack([

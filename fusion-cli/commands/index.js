@@ -35,12 +35,17 @@ module.exports = {
       'log-level': {
         type: 'string',
         default: 'info',
-        describe: 'Log level to show',
+        describe: 'Log level to show sasadsad adsad ad ',
       },
       preserveNames: {
         type: 'boolean',
         default: false,
         describe: 'Disable name mangling during script minification',
+      },
+      chromeOnly: {
+        type: 'boolean',
+        default: false,
+        describe: 'Build the application only for modern browsers',
       },
     },
   },
