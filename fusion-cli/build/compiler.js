@@ -185,9 +185,13 @@ function Compiler(
   ]);
 
   compiler.hooks.done.tap('MyPlugin', stats => {
-    /* eslint-disable no-console */
-    console.log(`End time: ${stats.stats[0].endTime}`);
-    /* eslint-enable no-console */
+    if (
+      process.env.LOG_END_TIME != undefined &&
+      process.env.LOG_END_TIME == 'true'
+    ) {
+      /* eslint-disable-next-line no-console */
+      console.log(`End time: ${stats.stats[0].endTime}`);
+    }
   });
 
   const statsLogger = getStatsLogger({dir, logger, env});
