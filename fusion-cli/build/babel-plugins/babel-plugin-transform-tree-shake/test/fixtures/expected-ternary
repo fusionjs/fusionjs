@@ -1,4 +1,0 @@
-import { baz } from "bar";
-false ? foo : other;
-false ? bar : other;
-true ? baz : other;
