@@ -184,11 +184,10 @@ function Compiler(
     }),
   ]);
 
-  compiler.hooks.done.tap('MyPlugin', stats => {
-    if (
-      process.env.LOG_END_TIME != undefined &&
-      process.env.LOG_END_TIME == 'true'
-    ) {
+  compiler.hooks.done.tap('Done', stats => {
+    console.log(process.env.LOG_END_TIME);
+    console.log(process.env.LOG_END_TIME == 'true');
+    if (process.env.LOG_END_TIME == 'true') {
       /* eslint-disable-next-line no-console */
       console.log(`End time: ${stats.stats[0].endTime}`);
     }
