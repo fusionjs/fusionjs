@@ -121,7 +121,7 @@ type CompilerOpts = {
   preserveNames?: boolean,
   zopfli?: boolean,
   minify?: boolean,
-  preventLegacyBuild?:boolean
+  ignoreLegacy?:boolean
 };
 */
 
@@ -137,13 +137,13 @@ function Compiler(
     zopfli = true,
     minify = true,
     serverless = false,
-    preventLegacyBuild = false,
+    ignoreLegacy = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    (forceLegacyBuild || !watch || env === 'production') && !preventLegacyBuild
+    (forceLegacyBuild || !watch || env === 'production') && !ignoreLegacy
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [

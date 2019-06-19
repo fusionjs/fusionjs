@@ -42,7 +42,7 @@ module.exports = {
         default: false,
         describe: 'Disable name mangling during script minification',
       },
-      preventLegacyBuild: {
+      ignoreLegacy: {
         type: 'boolean',
         default: false,
         describe:
