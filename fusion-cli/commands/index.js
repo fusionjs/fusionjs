@@ -42,11 +42,11 @@ module.exports = {
         default: false,
         describe: 'Disable name mangling during script minification',
       },
-      ignoreLegacy: {
+      modernBuildOnly: {
         type: 'boolean',
         default: false,
         describe:
-          'Build the application only for modern browsers. By default compiled in `build`.',
+          'Build the application only for modern browsers. Will serve the modern bundles on legacy browsers.',
       },
     },
   },

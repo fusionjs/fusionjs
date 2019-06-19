@@ -16,7 +16,7 @@ test('`fusion build` app with split translations integration', async () => {
   var env = Object.create(process.env);
   env.NODE_ENV = 'production';
 
-  await cmd(`build --dir=${dir} --production --ignoreLegacy`, {env});
+  await cmd(`build --dir=${dir} --production --modernBuildOnly`, {env});
 
   const {proc, port} = await start(`--dir=${dir}`, {env, cwd: dir});
   const browser = await puppeteer.launch({
