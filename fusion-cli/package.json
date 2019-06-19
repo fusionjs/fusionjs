@@ -28,6 +28,7 @@
     "babel-jest": "^24.8.0",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-plugin-transform-cup-globals": "^1.0.1",
+    "babel-plugin-transform-prune-unused-imports": "^1.0.0",
     "babel-plugin-transform-styletron-display-name": "^1.1.0",
     "bundle-analyzer": "^0.0.6",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",

@@ -30,7 +30,7 @@ export default function(): typeof BaseApp {
       return () => {
         // TODO(#62): Create noop context object to match server api
         const ctx: any = {
-          url: window.location.path + window.location.search,
+          url: window.location.pathname + window.location.search,
           element: null,
           body: null,
         };

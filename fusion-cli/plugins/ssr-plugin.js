@@ -100,15 +100,18 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 <head>
 </head>
 <body style="padding:20vmin;font-family:sans-serif;font-size:16px;background:papayawhip">
-<p>You are using a legacy browser but only the modern bundle has been built (legacy bundles are skipped by default when using <code style="display:inline">fusion dev</code>).</p>
-<p>Please use a modern browser or <pre><code style="display:inline">fusion dev --forceLegacyBuild</code></pre> to build the legacy bundle.</p>
+<p>You are using a legacy browser but only the modern bundle has been built (legacy bundles are skipped by default when using <code style="display:inline">fusion dev</code>)
+ or when using using <code style="display:inline">fusion build</code> with the --modernBuildOnly flag.</p>
+<p>Please use a modern browser, <pre><code style="display:inline">fusion dev --forceLegacyBuild</code></pre> or
+<pre><code style="display:inline">fusion build</code></pre> with no --modernBuildOnly flag to build the legacy bundle.</p>
 <p>For more information, see the docs on <a href="https://github.com/fusionjs/fusion-cli/blob/master/docs/progressively-enhanced-bundles.md">progressively enhanced bundles</a>.</p>
 </body>
 </html>`;
           }
         }
 
-        const criticalChunkUrls = isModernBrowser ? modernUrls : legacyUrls;
+        const criticalChunkUrls =
+          isModernBrowser || legacyUrls.length === 0 ? modernUrls : legacyUrls;
         let criticalChunkScripts = [];
         let preloadHints = [];
 

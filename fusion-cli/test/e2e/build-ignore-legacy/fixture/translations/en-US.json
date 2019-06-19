@@ -1,0 +1,11 @@
+{
+  "main": "__MAIN_TRANSLATED__",
+  "split1": "__SPLIT1_TRANSLATED__",
+  "split2": "__SPLIT2_TRANSLATED__",
+  "hot": "__HOT_TRANSLATED__",
+  "unused": "__UNUSED_TRANSLATED__",
+  "translations.hoc": "__HOC_TRANSLATED__",
+  "translations.hook": "__HOOK_TRANSLATED__",
+  "pattern.abc": "__ABC_TRANSLATED__",
+  "pattern.def": "__DEF_TRANSLATED__"
+}

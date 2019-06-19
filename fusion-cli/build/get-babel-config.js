@@ -152,8 +152,11 @@ function fusionPreset(
         {target: targetEnv},
       ],
       assumeNoImportSideEffects && [
-        require.resolve('./babel-plugins/babel-plugin-transform-tree-shake'),
-        {target: targetEnv},
+        require.resolve('babel-plugin-transform-prune-unused-imports'),
+        {
+          falsyExpressions:
+            targetEnv === 'node' ? ['__BROWSER__'] : ['__NODE__'],
+        },
       ],
     ].filter(Boolean),
   };
