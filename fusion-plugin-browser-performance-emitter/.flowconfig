@@ -1,12 +1,11 @@
 [ignore]
-.*/node_modules/.*[^(package)]\.json$
 
 [include]
 ../common/temp/node_modules
 ./src/
 
 [libs]
-./node_modules/fusion-core/flow-typed
+../flow-typed/
 
 [lints]
 
