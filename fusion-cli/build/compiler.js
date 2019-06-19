@@ -121,7 +121,7 @@ type CompilerOpts = {
   preserveNames?: boolean,
   zopfli?: boolean,
   minify?: boolean,
-  modernBuildOnly?:boolean
+  modernBuildOnly?: boolean,
 };
 */
 
