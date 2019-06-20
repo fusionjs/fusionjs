@@ -1,9 +1,11 @@
 [ignore]
-.*/node_modules/.*[^(package)]\.json$
 
 [include]
+./src/
+../common/temp/node_modules
 
 [libs]
+../flow-typed/
 
 [lints]
 
