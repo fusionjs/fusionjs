@@ -187,7 +187,7 @@ function Compiler(
   if (process.env.LOG_END_TIME == 'true') {
     compiler.hooks.done.tap('BenchmarkTimingPlugin', stats => {
       /* eslint-disable-next-line no-console */
-      console.log(`End time: ${stats.stats[0].endTime}`);
+      console.log(`End time: ${Date.now()}`);
     });
   }
   const statsLogger = getStatsLogger({dir, logger, env});
