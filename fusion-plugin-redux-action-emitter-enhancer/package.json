@@ -44,7 +44,7 @@
     "nyc": "^14.1.0",
     "prettier": "^1.17.0",
     "react": "^16.8.6",
-    "react-redux": "^5.1.1",
+    "react-redux": "^7.1.0",
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
