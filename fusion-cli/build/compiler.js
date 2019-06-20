@@ -179,9 +179,17 @@ function Compiler(
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
-    getWebpackConfig({id: serverless ? 'serverless' : 'server', ...sharedOpts}),
+    getWebpackConfig({
+      id: serverless ? 'serverless' : 'server',
+      ...sharedOpts,
+    }),
   ]);
-
+  if (process.env.LOG_END_TIME == 'true') {
+    compiler.hooks.done.tap('BenchmarkTimingPlugin', stats => {
+      /* eslint-disable-next-line no-console */
+      console.log(`End time: ${stats.stats[0].endTime}`);
+    });
+  }
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
