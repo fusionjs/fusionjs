@@ -20,7 +20,6 @@ app.register(GetInitialStateToken, async (): Object => {
 app.register(GetInitialStateToken, () => {
   return {};
 });
-i;
 
 app.register(GetInitialStateToken, (ctx: Context) => {
   return {
