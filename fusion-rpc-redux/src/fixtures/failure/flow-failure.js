@@ -24,6 +24,7 @@ export type UserActionType = {|
   },
 |};
 
+// $FlowFixMe
 const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
   'getUser',
   {
