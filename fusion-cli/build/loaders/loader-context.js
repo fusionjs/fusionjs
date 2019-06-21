@@ -40,3 +40,8 @@ exports.translationsDiscoveryKey = Symbol(
 export type DevContext = boolean;
 */
 exports.devContextKey = Symbol('loader context key for __DEV__ state');
+
+/*::
+export type Worker = Object;
+*/
+exports.workerKey = Symbol('loader context key for jest worker farm');
