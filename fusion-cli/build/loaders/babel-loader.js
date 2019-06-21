@@ -16,8 +16,6 @@ const loaderUtils = require('loader-utils');
 const PersistentDiskCache = require('../persistent-disk-cache.js');
 const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 
-const {translationsDiscoveryKey} = require('./loader-context.js');
-
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
 */
@@ -28,7 +26,7 @@ class LoaderError extends Error {
   */
   constructor(err) {
     super();
-    const {name, message, codeFrame, hideStack} = formatError(err);
+    const { name, message, codeFrame, hideStack } = formatError(err);
     this.name = 'BabelLoaderError';
     this.message = `${name ? `${name}: ` : ''}${message}\n\n${codeFrame}\n`;
     this.hideStack = hideStack;
@@ -36,18 +34,9 @@ class LoaderError extends Error {
   }
 }
 
-module.exports = webpackLoader;
+module.exports = loader;
 
-const {version: fusionCLIVersion} = require('../../package.json');
-
-function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
-  // Make the loader async
-  const callback = this.async();
-
-  loader
-    .call(this, source, inputSourceMap, this[translationsDiscoveryKey])
-    .then(([code, map]) => callback(null, code, map), err => callback(err));
-}
+const { version: fusionCLIVersion } = require('../../package.json');
 
 let cache;
 
@@ -59,8 +48,8 @@ function getCache(cacheDir) {
 }
 
 async function loader(
-  source,
-  inputSourceMap,
+  source /*: string */,
+  inputSourceMap /*: Object */,
   discoveryState /*: TranslationsDiscoveryContext*/
 ) {
   const filename = this.resourcePath;
@@ -85,7 +74,7 @@ async function loader(
     // thus our hash should take into account them all
     .update(source)
     .update(filename) // Analysis/transforms might depend on filenames
-    .update(JSON.stringify(options))
+    //.update(JSON.stringify(options))
     .update(babel.version)
     .update(fusionCLIVersion)
     .digest('hex');
@@ -102,7 +91,7 @@ async function loader(
     // This only does side effects, so it is ok this doesn't affect cache key
     // This plugin is here because webpack config -> loader options
     // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+    options.plugins.unshift([TranslationsExtractor, { translationIds }]);
 
     const transformed = transform(source, options);
 
@@ -114,12 +103,12 @@ async function loader(
       return null;
     }
 
-    return {metadata, ...transformed};
+    return { metadata, ...transformed };
   });
 
   if (result) {
     // $FlowFixMe
-    const {code, map, metadata} = result;
+    const { code, map, metadata } = result;
 
     if (discoveryState && metadata.translationIds) {
       discoveryState.set(filename, new Set(metadata.translationIds));
@@ -147,13 +136,13 @@ function transform(source, options) {
   // https://github.com/babel/babel/blob/master/packages/babel-core/src/transformation/index.js
   // For discussion on this topic see here:
   // https://github.com/babel/babel-loader/pull/629
-  const {code, map, sourceType} = result;
+  const { code, map, sourceType } = result;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
   }
 
-  return {code, map, sourceType};
+  return { code, map, sourceType };
 }
 
 function relative(root, file) {
