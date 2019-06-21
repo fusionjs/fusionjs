@@ -46,6 +46,18 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
 
     return result;
   }
+
+  async put(cacheKey /*: string*/, cache /*:Object*/) {
+    const filepath = getFilePath(this.cacheDirectory, cacheKey);
+
+    try {
+      await makeDir(this.cacheDirectory);
+      await write(filepath, cache);
+    } catch (err) {
+      // If write fails, oh well
+    }
+    return cache;
+  }
 };
 
 async function read(path /*: string*/) {
