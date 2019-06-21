@@ -57,7 +57,10 @@ export default function withAsyncComponent<Config>({
       // $FlowFixMe
       let id = promise.__MODULE_ID;
 
-      if (typeof __webpack_modules__ !== "undefined" && __webpack_modules__[id]) {
+      if (
+        typeof __webpack_modules__ !== 'undefined' &&
+        __webpack_modules__[id]
+      ) {
         // If module is already loaded, it can be synchronously imported
         AsyncComponent = __webpack_require__(id).default;
       }
