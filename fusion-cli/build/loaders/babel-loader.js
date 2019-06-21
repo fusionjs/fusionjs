@@ -26,7 +26,7 @@ class LoaderError extends Error {
   */
   constructor(err) {
     super();
-    const { name, message, codeFrame, hideStack } = formatError(err);
+    const {name, message, codeFrame, hideStack} = formatError(err);
     this.name = 'BabelLoaderError';
     this.message = `${name ? `${name}: ` : ''}${message}\n\n${codeFrame}\n`;
     this.hideStack = hideStack;
@@ -34,9 +34,7 @@ class LoaderError extends Error {
   }
 }
 
-module.exports = loader;
-
-const { version: fusionCLIVersion } = require('../../package.json');
+const {version: fusionCLIVersion} = require('../../package.json');
 
 let cache;
 
@@ -47,11 +45,12 @@ function getCache(cacheDir) {
   return cache;
 }
 
-async function loader(
+exports.loader = async (
   source /*: string */,
   inputSourceMap /*: Object */,
   discoveryState /*: TranslationsDiscoveryContext*/
-) {
+) => {
+  console.log(this);
   const filename = this.resourcePath;
   const loaderOptions = loaderUtils.getOptions(this);
 
@@ -91,7 +90,7 @@ async function loader(
     // This only does side effects, so it is ok this doesn't affect cache key
     // This plugin is here because webpack config -> loader options
     // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, { translationIds }]);
+    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
 
     const transformed = transform(source, options);
 
@@ -103,12 +102,12 @@ async function loader(
       return null;
     }
 
-    return { metadata, ...transformed };
+    return {metadata, ...transformed};
   });
 
   if (result) {
     // $FlowFixMe
-    const { code, map, metadata } = result;
+    const {code, map, metadata} = result;
 
     if (discoveryState && metadata.translationIds) {
       discoveryState.set(filename, new Set(metadata.translationIds));
@@ -119,7 +118,7 @@ async function loader(
 
   // If the file was ignored, pass through the original content.
   return [source, inputSourceMap];
-}
+};
 
 function transform(source, options) {
   let result;
@@ -136,13 +135,13 @@ function transform(source, options) {
   // https://github.com/babel/babel/blob/master/packages/babel-core/src/transformation/index.js
   // For discussion on this topic see here:
   // https://github.com/babel/babel-loader/pull/629
-  const { code, map, sourceType } = result;
+  const {code, map, sourceType} = result;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
   }
 
-  return { code, map, sourceType };
+  return {code, map, sourceType};
 }
 
 function relative(root, file) {

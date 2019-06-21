@@ -7,17 +7,22 @@
  */
 /* eslint-env node */
 
-const Worker = require('jest-worker');
+const Worker = require('jest-worker').default;
 const {translationsDiscoveryKey} = require('./loader-context.js');
 
 function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
   const callback = this.async();
 
-  const worker = new Worker(require.resolve('./babel-loader'));
-  worker
-    .loader(this, source, inputSourceMap, this[translationsDiscoveryKey])
-    .then(([code, map]) => callback(null, code, map), err => callback(err));
+  const worker = new Worker(require.resolve('./babel-loader.js'));
+
+  require('./babel-loader.js').loader(
+    this,
+    source,
+    inputSourceMap,
+    this[translationsDiscoveryKey]
+  );
+  //   .then(([code, map]) => callback(null, code, map), err => callback(err));
 }
 
 module.exports = webpackLoader;
