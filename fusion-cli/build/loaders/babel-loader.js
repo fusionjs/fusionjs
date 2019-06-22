@@ -16,6 +16,8 @@ const loaderUtils = require('loader-utils');
 const PersistentDiskCache = require('../persistent-disk-cache.js');
 const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 
+const {translationsDiscoveryKey} = require('./loader-context.js');
+
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
 */
@@ -44,23 +46,28 @@ function getCache(cacheDir) {
   }
   return cache;
 }
+exports.loader = callLoader;
 
-exports.loader = async (
-  source /*: string */,
-  inputSourceMap /*: Object */,
-  discoveryState /*: TranslationsDiscoveryContext*/
-) => {
-  console.log(this);
-  const filename = this.resourcePath;
-  const loaderOptions = loaderUtils.getOptions(this);
+function callLoader() {
+  loader.call(this);
+}
+
+async function loader(
+  source /*: string */ = '',
+  inputSourceMap /*: Object */ = ''
+  // discoveryState /*: TranslationsDiscoveryContext*/
+) {
+  const context = this;
+  const filename = context.resourcePath;
+  const loaderOptions = loaderUtils.getOptions(context);
 
   const config = babel.loadPartialConfig({
     ...loaderOptions,
     filename,
-    sourceRoot: this.rootContext,
-    sourceMap: this.sourceMap,
+    sourceRoot: context.rootContext,
+    sourceMap: context.sourceMap,
     inputSourceMap: inputSourceMap || void 0,
-    sourceFileName: relative(this.rootContext, filename),
+    sourceFileName: relative(context.rootContext, filename),
   });
 
   const options = config.options;
@@ -118,7 +125,7 @@ exports.loader = async (
 
   // If the file was ignored, pass through the original content.
   return [source, inputSourceMap];
-};
+}
 
 function transform(source, options) {
   let result;

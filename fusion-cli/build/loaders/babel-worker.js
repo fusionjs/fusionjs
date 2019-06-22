@@ -14,14 +14,16 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
   const callback = this.async();
 
-  const worker = new Worker(require.resolve('./babel-loader.js'));
+  const worker = new Worker(require.resolve('./babel-loader.js'), {
+    exposedMethods: ['loader'],
+  });
 
-  require('./babel-loader.js').loader(
-    this,
-    source,
-    inputSourceMap,
-    this[translationsDiscoveryKey]
-  );
+  worker
+    .loader(source, inputSourceMap, this[translationsDiscoveryKey])
+    .then(([code, map]) => callback(null, code, map), err => callback(err));
+
+  // worker
+  //   .loader(this, source, inputSourceMap, this[translationsDiscoveryKey])
   //   .then(([code, map]) => callback(null, code, map), err => callback(err));
 }
 
