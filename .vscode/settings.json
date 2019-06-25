@@ -3,6 +3,7 @@
   "eslint.nodePath": "common/temp/node_modules",
   "eslint.options": {
     "ignorePattern": [
+      "dist",
       "node_modules",
       "templates",
     ],
