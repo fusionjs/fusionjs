@@ -56,11 +56,16 @@ const plugin =
           // addEventListener handlers, promise rejections, react render errors, etc),
           // ideally by calling `window.onerror` directly with an Error object
           // (which provides more robust stack traces across browsers), or via `throw`
+          //
+          // Specific error message strings should never be sent more than 3 times to avoid
+          // a single user spamming the client alert topic
           const script = html`
             <script nonce="${ctx.nonce}">
+              const messageCounts = {};
               onerror = function(m, s, l, c, e) {
                 var _e = e || {};
-                if (_e.__handled) return;
+                messageCounts[m] = (messageCounts[m] || 0) + 1;
+                if (_e.__handled || messageCounts[m] > 3) return;
                 var error = {};
                 Object.getOwnPropertyNames(_e).forEach(function(key) {
                   error[key] = e[key];
