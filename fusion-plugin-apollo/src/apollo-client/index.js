@@ -58,7 +58,7 @@ type ResolverMapType = {
 type ApolloClientDepsType = {
   getCache: typeof GetApolloClientCacheToken.optional,
   endpoint: typeof GraphQLEndpointToken.optional,
-  fetch: typeof FetchToken,
+  fetch: typeof FetchToken.optional,
   includeCredentials: typeof ApolloClientCredentialsToken.optional,
   apolloContext: typeof ApolloContextToken.optional,
   getApolloLinks: typeof GetApolloClientLinksToken.optional,
@@ -81,7 +81,7 @@ const ApolloClientPlugin: FusionPlugin<
   deps: {
     getCache: GetApolloClientCacheToken.optional,
     endpoint: GraphQLEndpointToken.optional,
-    fetch: FetchToken,
+    fetch: __NODE__ ? FetchToken.optional : FetchToken,
     includeCredentials: ApolloClientCredentialsToken.optional,
     apolloContext: ApolloContextToken.optional,
     getApolloLinks: GetApolloClientLinksToken.optional,
