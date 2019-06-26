@@ -7,7 +7,7 @@
  */
 
 import * as React from 'react';
-import ssrPrepass from 'react-ssr-prepass';
+import ssrPrepass from '@rtsao/react-ssr-prepass';
 
 class PrepareState {
   seen: Map<any, Set<string>>;

@@ -39,8 +39,8 @@
     "flow": "flow check"
   },
   "dependencies": {
-    "prop-types": "^15.7.2",
-    "react-ssr-prepass": "^1.0.5"
+    "@rtsao/react-ssr-prepass": "^1.0.5",
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
