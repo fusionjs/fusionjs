@@ -15,16 +15,15 @@ import {
   ApolloRenderEnhancer,
   GraphQLSchemaToken,
   ApolloClientToken,
+  ApolloClientPlugin,
+  GraphQLEndpointToken,
 } from '../index';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
 import {Query} from 'react-apollo';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
-import {ApolloClient} from 'apollo-client';
-import {InMemoryCache} from 'apollo-cache-inmemory';
-import {HttpLink} from 'apollo-link-http';
-import {SchemaLink} from 'apollo-link-schema';
+import {FetchToken} from 'fusion-tokens';
 import fetch from 'node-fetch';
 
 function testApp(el, {typeDefs, resolvers}) {
@@ -32,16 +31,7 @@ function testApp(el, {typeDefs, resolvers}) {
   const schema = makeExecutableSchema({typeDefs, resolvers});
   app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(GraphQLSchemaToken, schema);
-  app.register(ApolloClientToken, ctx => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new SchemaLink({
-        schema,
-        context: ctx,
-      }),
-    });
-  });
+  app.register(ApolloClientToken, ApolloClientPlugin);
   return app;
 }
 
@@ -49,16 +39,9 @@ test('Server renders without schema', async t => {
   const el = <div>Hello World</div>;
   const app = new App(el);
   app.enhance(RenderToken, ApolloRenderEnhancer);
-  app.register(ApolloClientToken, ctx => {
-    return new ApolloClient({
-      ssrMode: true,
-      cache: new InMemoryCache().restore({}),
-      link: new HttpLink({
-        uri: 'http://localhost:4000',
-        fetch,
-      }),
-    });
-  });
+  app.register(ApolloClientToken, ApolloClientPlugin);
+  app.register(GraphQLEndpointToken, 'http://localhost:4000');
+  app.register(FetchToken, fetch);
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
