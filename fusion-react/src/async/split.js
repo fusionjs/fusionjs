@@ -83,7 +83,7 @@ export default function withAsyncComponent<Config>({
       }
 
       // $FlowFixMe
-      metadata.chunkIds = componentPromise.__CHUNKS_IDS || [];
+      metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
       // $FlowFixMe
       metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
 
