@@ -12,12 +12,11 @@ const {translationsDiscoveryKey} = require('./loader-context.js');
 
 function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
-  const callback = this.async();
-
+  const {getCallback} = require('./babel-loader.js');
   const worker = new Worker(require.resolve('./babel-loader.js'), {
     exposedMethods: ['loader'],
   });
-
+  const callback = getCallback();
   worker
     .loader(source, inputSourceMap, this[translationsDiscoveryKey])
     .then(([code, map]) => callback(null, code, map), err => callback(err));

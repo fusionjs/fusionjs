@@ -18,10 +18,6 @@ const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 
 const {translationsDiscoveryKey} = require('./loader-context.js');
 
-/*::
-import type {TranslationsDiscoveryContext} from "./loader-context.js";
-*/
-
 class LoaderError extends Error {
   /*::
   hideStack: boolean
@@ -47,27 +43,37 @@ function getCache(cacheDir) {
   return cache;
 }
 exports.loader = callLoader;
+exports.getCallback = getCallback;
 
-function callLoader() {
-  loader.call(this);
+function getCallback() {
+  return this.async();
 }
+
+function callLoader(
+  source /*: string */ = '',
+  inputSourceMap /*: Object */ = ''
+) {
+  loader.call(this, source, inputSourceMap, this[translationsDiscoveryKey]);
+}
+/*::
+import type {TranslationsDiscoveryContext} from "./loader-context.js";
+*/
 
 async function loader(
   source /*: string */ = '',
-  inputSourceMap /*: Object */ = ''
-  // discoveryState /*: TranslationsDiscoveryContext*/
+  inputSourceMap /*: Object */ = '',
+  discoveryState /*: TranslationsDiscoveryContext*/
 ) {
-  const context = this;
-  const filename = context.resourcePath;
-  const loaderOptions = loaderUtils.getOptions(context);
+  const filename = this.resourcePath;
+  const loaderOptions = loaderUtils.getOptions(this);
 
   const config = babel.loadPartialConfig({
     ...loaderOptions,
     filename,
-    sourceRoot: context.rootContext,
-    sourceMap: context.sourceMap,
+    sourceRoot: this.rootContext,
+    sourceMap: this.sourceMap,
     inputSourceMap: inputSourceMap || void 0,
-    sourceFileName: relative(context.rootContext, filename),
+    sourceFileName: relative(this.rootContext, filename),
   });
 
   const options = config.options;
