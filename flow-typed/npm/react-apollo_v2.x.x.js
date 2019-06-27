@@ -1,10 +1,11 @@
-// flow-typed signature: 8d4451a176bcfc890fe040aa6b6b07b5
-// flow-typed version: 45acb9a3f7/react-apollo_v2.x.x/flow_>=v0.58.x
+// flow-typed signature: 4e760e5a25ec536edcb14318a00b1880
+// flow-typed version: 55d62acaa7/react-apollo_v2.x.x/flow_>=v0.58.x
 
 declare module "react-apollo" {
   import type { ComponentType, Element, Node } from "react";
 
   declare type MakeOptional = <V>(V) => ?V;
+  declare type MakeDataOptional<TData> = $ObjMap<TData, MakeOptional> | void;
   /**
    * Copied types from Apollo Client libdef
    * Please update apollo-client libdef as well if updating these types
@@ -443,6 +444,7 @@ declare module "react-apollo" {
     __actionHookForDevTools(cb: () => mixed): void;
     __requestRaw(payload: GraphQLRequest): Observable<ExecutionResult<>>;
     initQueryManager(): void;
+    clearStore(): Promise<void | null>;
     resetStore(): Promise<Array<ApolloQueryResult<any>> | null>;
     onResetStore(cb: () => Promise<any>): () => void;
     reFetchObservableQueries(
@@ -905,7 +907,7 @@ declare module "react-apollo" {
     TData = any,
     TVariables = OperationVariables
   > = {
-    data: $ObjMap<TData, MakeOptional> | void,
+    data: MakeDataOptional<TData>,
     loading: boolean,
     error?: ApolloError,
     variables: TVariables,
@@ -957,13 +959,18 @@ declare module "react-apollo" {
     TVariables = OperationVariables
   > = {
     loading: boolean,
-    data?: TData | {||} | void,
+    data?: MakeDataOptional<TData>,
     error?: ApolloError
   };
 
   declare export type SubscriptionRenderPropFunction<TData, TVariables> = (
     result: SubscriptionResult<TData, TVariables>
   ) => Node;
+
+  declare export type OnSubscriptionDataOptions<TData> = {
+    client: ApolloClient<any>,
+    subscriptionData: SubscriptionResult<TData>
+  };
 
   declare type SubscriptionProps<TData, TVariables = OperationVariables> = {
     subscription: DocumentNode,
@@ -974,7 +981,8 @@ declare module "react-apollo" {
           SubscriptionProps<TData, TVariables>,
           SubscriptionProps<TData, TVariables>
         ) => boolean),
-    children: SubscriptionRenderPropFunction<TData, TVariables>
+    onSubscriptionData?: (OnSubscriptionDataOptions<TData>) => any,
+    children?: SubscriptionRenderPropFunction<TData, TVariables>
   };
 
   declare export class Subscription<TData, TVariables> extends React$Component<

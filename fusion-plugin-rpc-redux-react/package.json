@@ -13,7 +13,6 @@
     "dist-browser-esm",
     "dist-node-cjs",
     "dist-node-esm",
-    "flow-typed",
     "src"
   ],
   "main": "./dist-node-cjs/index.js",

@@ -95,11 +95,12 @@ declare interface tape$Context {
 }
 
 declare module 'tape-cup' {
-  declare type tape$TestCb = tape$TestCb;
   declare type TestHarness = Tape;
   declare type StreamOpts = {
     objectMode?: boolean,
   };
+  declare type TestCb = tape$TestCb;
+  declare type tape$TestCb = tape$TestCb;
 
   declare type Tape = {
     (

@@ -5,4 +5,9 @@ declare module 'just-safe-get' {
     obj: mixed,
     key: string | Array<string>
   ): mixed;
+
+  declare export default function get<TReturn>(
+    obj: mixed,
+    key: string | Array<string>
+  ): TReturn;
 }

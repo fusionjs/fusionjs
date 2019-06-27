@@ -1,15 +1,13 @@
 [ignore]
-.*/node_modules/.*[^(package)]\.json$
+.*/common/temp/node_modules/@uber/node-rosetta/.*
 .*/templates/.*
-.*/test-artifacts/.*
 
 [include]
-./bin/
-./templates/
-./tests/
+../common/temp/node_modules
+../../common/temp/node_modules
 
 [libs]
-./templates/basic/content/flow-typed/globals.js
+../flow-typed/
 
 [lints]
 

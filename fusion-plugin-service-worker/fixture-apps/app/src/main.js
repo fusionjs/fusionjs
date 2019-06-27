@@ -5,7 +5,11 @@ import Styletron from 'fusion-plugin-styletron-react';
 // import {createToken} from 'fusion-core'
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
-import SwPlugin, {SWRegisterToken, SWTemplateFunctionToken, SWOptionsToken} from '../../../dist';
+import SwPlugin, {
+  SWRegisterToken,
+  SWTemplateFunctionToken,
+  SWOptionsToken,
+} from '../../../dist';
 
 import MockRedirectPlugin from './plugins/mock-redirect';
 import MockErrorPlugin from './plugins/mock-server-error';
@@ -28,10 +32,18 @@ export default () => {
       app.register(SWOptionsToken, {cacheDuration: expiry});
     }
     if (process.env.CACHE_BUSTING_PATTERNS) {
-      app.register(SWOptionsToken, {cacheBustingPatterns: [process.env.CACHE_BUSTING_PATTERNS]});
+      app.register(SWOptionsToken, {
+        // $FlowFixMe
+        cacheBustingPatterns: [(process.env.CACHE_BUSTING_PATTERNS)],
+      });
     }
     if (process.env.CACHEABLE_ROUTE_PATTERNS) {
-      app.register(SWOptionsToken, {cacheableRoutePatterns: [process.env.CACHEABLE_ROUTE_PATTERNS]});
+      app.register(SWOptionsToken, {
+        cacheableRoutePatterns: [
+          // $FlowFixMe
+          (process.env.CACHEABLE_ROUTE_PATTERNS),
+        ],
+      });
     }
   }
 
