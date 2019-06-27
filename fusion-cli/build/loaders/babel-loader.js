@@ -40,9 +40,13 @@ module.exports = {webpackLoader};
 
 const {version: fusionCLIVersion} = require('../../package.json');
 
-function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
+function webpackLoader(
+  source /*: string */,
+  inputSourceMap /*: Object */,
+  context /*:any*/
+) {
   // Make the loader async
-  const callback = this.async();
+  const callback = context.async();
 
   loader
     .call(this, source, inputSourceMap, this[translationsDiscoveryKey])

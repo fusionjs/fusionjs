@@ -13,7 +13,7 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   const worker = new Worker(require.resolve('./babel-loader.js'), {
     exposedMethods: ['webpackLoader'],
   });
-  worker.webpackLoader(source, inputSourceMap);
+  worker.webpackLoader(source, inputSourceMap, this);
 }
 
 module.exports = webpackLoader;
