@@ -18,6 +18,10 @@ const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 
 const {translationsDiscoveryKey} = require('./loader-context.js');
 
+/*::
+import type {TranslationsDiscoveryContext} from "./loader-context.js";
+*/
+
 class LoaderError extends Error {
   /*::
   hideStack: boolean
@@ -32,7 +36,18 @@ class LoaderError extends Error {
   }
 }
 
+module.exports = {webpackLoader};
+
 const {version: fusionCLIVersion} = require('../../package.json');
+
+function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
+  // Make the loader async
+  const callback = this.async();
+
+  loader
+    .call(this, source, inputSourceMap, this[translationsDiscoveryKey])
+    .then(([code, map]) => callback(null, code, map), err => callback(err));
+}
 
 let cache;
 
@@ -42,26 +57,10 @@ function getCache(cacheDir) {
   }
   return cache;
 }
-exports.loader = callLoader;
-exports.getCallback = getCallback;
-
-function getCallback() {
-  return this.async();
-}
-
-function callLoader(
-  source /*: string */ = '',
-  inputSourceMap /*: Object */ = ''
-) {
-  loader.call(this, source, inputSourceMap, this[translationsDiscoveryKey]);
-}
-/*::
-import type {TranslationsDiscoveryContext} from "./loader-context.js";
-*/
 
 async function loader(
-  source /*: string */ = '',
-  inputSourceMap /*: Object */ = '',
+  source,
+  inputSourceMap,
   discoveryState /*: TranslationsDiscoveryContext*/
 ) {
   const filename = this.resourcePath;
@@ -86,7 +85,7 @@ async function loader(
     // thus our hash should take into account them all
     .update(source)
     .update(filename) // Analysis/transforms might depend on filenames
-    //.update(JSON.stringify(options))
+    .update(JSON.stringify(options))
     .update(babel.version)
     .update(fusionCLIVersion)
     .digest('hex');

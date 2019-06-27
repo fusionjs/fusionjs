@@ -163,7 +163,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     return 'spec';
   };
 
-  const { experimentalBundleTest, experimentalTransformTest } = fusionConfig;
+  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
   const babelTester = experimentalTransformTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
@@ -206,7 +206,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   };
   return {
     name: runtime,
-    target: { server: 'node', client: 'web', sw: 'webworker' }[runtime],
+    target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
     entry: {
       main: [
         runtime === 'client' &&
@@ -458,7 +458,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         }),
       new webpack.optimize.SideEffectsFlagPlugin(),
       runtime === 'server' &&
-        new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+        new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
       new ProgressBarPlugin(),
       runtime === 'server' &&
         new LoaderContextProviderPlugin('optsContext', opts),
@@ -513,7 +513,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           // Enforce NODE_ENV at runtime
           banner: getEnvBanner(env),
         }),
-      new webpack.EnvironmentPlugin({ NODE_ENV: env }),
+      new webpack.EnvironmentPlugin({NODE_ENV: env}),
       id === 'client-modern' &&
         new ClientChunkMetadataStateHydratorPlugin(state.clientChunkMetadata),
       id === 'client-modern' &&
@@ -553,7 +553,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         }),
     ].filter(Boolean),
     optimization: {
-      runtimeChunk: runtime === 'client' && { name: 'runtime' },
+      runtimeChunk: runtime === 'client' && {name: 'runtime'},
       splitChunks: runtime === 'client' && {
         chunks: 'async',
         cacheGroups: {
