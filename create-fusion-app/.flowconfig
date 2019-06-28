@@ -1,6 +1,7 @@
 [ignore]
 .*/common/temp/node_modules/@uber/node-rosetta/.*
 .*/templates/.*
+.*/test-artifacts/.*
 
 [include]
 ../common/temp/node_modules
