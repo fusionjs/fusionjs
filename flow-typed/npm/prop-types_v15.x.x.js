@@ -1,6 +1,5 @@
-// @flow
-
-/* eslint-disable */
+// flow-typed signature: bfbfd99e158d6ba552a6d4d43e9ea945
+// flow-typed version: 84e615b60b/prop-types_v15.x.x/flow_>=v0.89.x
 
 type $npm$propTypes$ReactPropsCheckType = (
   props: any,
@@ -15,7 +14,7 @@ declare module 'prop-types' {
   declare var bool: React$PropType$Primitive<boolean>;
   declare var func: React$PropType$Primitive<(...a: Array<any>) => mixed>;
   declare var number: React$PropType$Primitive<number>;
-  declare var object: React$PropType$Primitive<{+[string]: mixed}>;
+  declare var object: React$PropType$Primitive<{ +[string]: mixed }>;
   declare var string: React$PropType$Primitive<string>;
   declare var symbol: React$PropType$Primitive<Symbol>;
   declare var any: React$PropType$Primitive<any>;
@@ -29,7 +28,7 @@ declare module 'prop-types' {
   declare var shape: React$PropType$Shape;
 
   declare function checkPropTypes<V>(
-    propTypes: {[key: $Keys<V>]: $npm$propTypes$ReactPropsCheckType},
+    propTypes: { [key: $Keys<V>]: $npm$propTypes$ReactPropsCheckType },
     values: V,
     location: string,
     componentName: string,
