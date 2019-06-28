@@ -35,6 +35,7 @@
    * Options that are only used when the PNPM package manager is selected
    */
   "pnpmOptions": {
+
     /**
      * If true, then Rush will add the "--strict-peer-dependencies" option when invoking PNPM.
      * This causes "rush install" to fail if there are unsatisfied peer dependencies, which is
@@ -69,7 +70,7 @@
    * version. In those cases, you will need to add an entry to the "allowedAlternateVersions"
    * section of the common-versions.json.
    */
-  // "ensureConsistentVersions": true,
+   // "ensureConsistentVersions": true,
 
   /**
    * Large monorepos can become intimidating for newcomers if project folder paths don't follow
@@ -153,6 +154,7 @@
     //   "[^@]+@users\\.noreply\\.github\\.com",
     //   "travis@example\\.org"
     // ],
+
     /**
      * When Rush reports that the address is malformed, the notice can include an example
      * of a recommended email.  Make sure it conforms to one of the allowedEmailRegExps
@@ -184,7 +186,9 @@
     /**
      * The list of shell commands to run after the Rush installation finishes
      */
-    "postRushInstall": ["node common/scripts/post-rush-install.js"],
+     "postRushInstall": [
+      "node common/scripts/post-rush-install.js",
+    ],
 
     /**
      * The list of shell commands to run before the Rush build command starts
@@ -385,8 +389,8 @@
       "projectFolder": "create-fusion-app"
     },
     {
-      "packageName": "jazelle",
-      "projectFolder": "jazelle"
-    }
+      "packageName": "fusion-plugin-web-app-manifest",
+      "projectFolder": "fusion-plugin-web-app-manifest"
+    },
   ]
 }

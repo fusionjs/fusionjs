@@ -1,4 +1,0 @@
-bin/bazelisk
-node_modules
-tests/tmp
-yarn-error.log
