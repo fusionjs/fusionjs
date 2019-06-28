@@ -3,6 +3,7 @@
 .*/common/temp/yarn-cache/.*
 .*/templates/.*
 .*/fixtures/failure/.*
+.*/test-artifacts/.*
 
 [include]
 ../common/temp/node_modules
