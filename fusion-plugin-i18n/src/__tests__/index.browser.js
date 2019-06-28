@@ -124,7 +124,7 @@ test('load', t => {
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   const fetch: any = (url, options) => {
-    t.equals(url, '/_translations?keys=["test-key"]', 'url is ok');
+    t.equals(url, '/_translations?keys=test-key', 'url is ok');
     t.equals(options && options.method, 'POST', 'method is ok');
     t.equals(
       options && options.headers && options.headers['X-Fusion-Locale-Code'],

@@ -41,7 +41,7 @@ yarn add fusion-plugin-rpc-redux-react
 // src/rpc/index.js
 export default {
   greet: async ({name}, ctx) => {
-    return {greeting: `hello ${name}`}
+    return {greeting: 'hello ${name}'}
   }
 }
 

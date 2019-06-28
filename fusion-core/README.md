@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
-The `fusion-core` package provides a generic entry point class for Fusion.js applications that is used by the Fusion.js runtime. It also provides primitives for implementing server-side code, and utilities for registering plugins into an application to augment its functionality.
+The `fusion-core` package provides a generic entry point class for FusionJS applications that is used by the FusionJS runtime. It also provides primitives for implementing server-side code, and utilities for assembling plugins into an application to augment its functionality.
 
 If you're using React, you should use the [`fusion-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-react) package instead of `fusion-core`.
 
@@ -19,7 +19,6 @@ If you're using React, you should use the [`fusion-react`](https://github.com/fu
   * [Memoization](#memoization)
   * [Middleware](#middleware)
   * [Sanitization](#sanitization)
-  * [Virtual modules](#virtual-modules)
 * [Examples](#examples)
 
 ---
@@ -55,7 +54,7 @@ export default function() {
 import App from 'fusion-core';
 ```
 
-A class that represents an application. An application is responsible for rendering (both virtual DOM and server-side rendering). The functionality of an application is extended via [plugins](#plugin).
+A class that represents an application. An application is responsible for rendering (both virtual dom and server-side rendering). The functionality of an application is extended via [plugins](#plugin).
 
 **Constructor**
 
@@ -126,7 +125,7 @@ import App, {ElementToken} from 'fusion-core';
 app.register(ElementToken, element);
 ```
 
-The element token is used to register the root element with the Fusion.js app. This is typically a React element.
+The element token is used to register the root element with the fusion app. This is typically a react/preact element.
 
 ##### RenderToken
 
@@ -142,8 +141,8 @@ const app = new App();
 app.register(RenderToken, render);
 ```
 
-The render token is used to register the render function with the Fusion.js app. This is a function that knows how to
-render your application on the server/browser, and allows `fusion-core` to remain agnostic of the virtual DOM library.
+The render token is used to register the render function with the fusion app. This is a function that knows how to
+render your application on the server/browser, and allows `fusion-core` to remain agnostic of the virtualdom library.
 
 ##### SSRDeciderToken
 
@@ -152,7 +151,7 @@ import App, {SSRDeciderToken} from 'fusion-core';
 app.enhance(SSRDeciderToken, SSRDeciderEnhancer);
 ```
 
-Ths `SSRDeciderToken` can be enhanced to control server rendering logic.
+Ths SSRDeciderToken can be enhanced to control server rendering logic.
 
 ##### HttpServerToken
 
@@ -161,7 +160,7 @@ import App, {HttpServerToken} from 'fusion-core';
 app.register(HttpServerToken, server);
 ```
 
-The `HttpServerToken` is used to register the current server as a dependency that can be utilized from plugins that require
+The HttpServerToken is used to register the current server as a dependency that can be utilized from plugins that require
 access to it. This is normally not required but is available for specific usage cases.
 
 ---
@@ -271,10 +270,10 @@ type Middleware = (ctx: Context, next: () => Promise) => Promise
 * `ctx: Context` - a [Context](#context)
 * `next: () => Promise` - An asynchronous function call that represents rendering
 
-A middleware function is essentially a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some Fusion.js-specific properties, and a `next` callback function.
+A middleware function is essentially a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some FusionJS-specific properties, and a `next` callback function.
 However, it has some additional properties on `ctx` and can run both on the `server` and the `browser`.
 
-In Fusion.js, the `next()` call represents the time when virtual DOM rendering happens. Typically, you'll want to run all your logic before that, and simply have a `return next()` statement at the end of the function. Even in cases where virtual DOM rendering is not applicable, this pattern is still the simplest way to write a middleware.
+In FusionJS, the `next()` call represents the time when virtual dom rendering happens. Typically, you'll want to run all your logic before that, and simply have a `return next()` statement at the end of the function. Even in cases where virtual DOM rendering is not applicable, this pattern is still the simplest way to write a middleware.
 
 In a few more advanced cases, however, you might want to do things _after_ virtual dom rendering. In that case, you can call `await next()` instead:
 
@@ -318,7 +317,7 @@ Middlewares receive a `ctx` object as their first argument. This object has a pr
 * `ctx: Object`
   * `element: Object`
 
-Additionally, when server-side rendering a page, Fusion.js sets `ctx.template` to an object with the following properties:
+Additionally, when server-side rendering a page, FusionJS sets `ctx.template` to an object with the following properties:
 
 * `ctx: Object`
   * `template: Object`
@@ -422,109 +421,59 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
 
 #### Sanitization
 
-* **html**
+**html**
 
-  ```js
-  import {html} from 'fusion-core';
-  ```
+```js
+import {html} from 'fusion-core';
+```
 
-  A template tag that creates safe HTML objects that are compatible with `ctx.template.head` and `ctx.template.body`. Template string interpolations are escaped. Use this function to prevent XSS attacks.
+A template tag that creates safe HTML objects that are compatible with `ctx.template.head` and `ctx.template.body`. Template string interpolations are escaped. Use this function to prevent XSS attacks.
 
-  ```flow
-  const sanitized: SanitizedHTML = html`<meta name="viewport" content="width=device-width, initial-scale=1">`
-  ```
+```flow
+const sanitized: SanitizedHTML = html`<meta name="viewport" content="width=device-width, initial-scale=1">`
+```
 
-* **escape**
+**escape**
 
-  ```js
-  import {escape} from 'fusion-core';
-  ```
+```js
+import {escape} from 'fusion-core';
+```
 
-  Escapes HTML
+Escapes HTML
 
-  ```flow
-  const escaped:string = escape(value: string)
-  ```
+```flow
+const escaped:string = escape(value: string)
+```
 
-  * `value: string` - the string to be escaped
+* `value: string` - the string to be escaped
 
-* **unescape**
+**unescape**
 
-  ```js
-  import {unescape} from 'fusion-core';
-  ```
+```js
+import {unescape} from 'fusion-core';
+```
 
-  Unescapes HTML
+Unescapes HTML
 
-  ```flow
-  const unescaped:string = unescape(value: string)
-  ```
+```flow
+const unescaped:string = unescape(value: string)
+```
 
-  * `value: string` - the string to be unescaped
+* `value: string` - the string to be unescaped
 
-* **dangerouslySetHTML**
+**dangerouslySetHTML**
 
-  ```js
-  import {dangerouslySetHTML} from 'fusion-core';
-  ```
+```js
+import {dangerouslySetHTML} from 'fusion-core';
+```
 
-  A function that blindly creates a trusted SanitizedHTML object without sanitizing against XSS. Do not use this function unless you have manually sanitized your input and written tests against XSS attacks.
+A function that blindly creates a trusted SanitizedHTML object without sanitizing against XSS. Do not use this function unless you have manually sanitized your input and written tests against XSS attacks.
 
-  ```flow
-  const trusted:string = dangerouslySetHTML(value: string)
-  ```
+```flow
+const trusted:string = dangerouslySetHTML(value: string)
+```
 
-  * `value: string` - the string to be trusted
-
-#### Virtual modules
-
-Virtual modules are the means for userland consumption of Fusion.js-owned static analysis and build artifacts in a way that:
-
-1. Does not expose any underlying implementation details, such as module bundlers or transpilers
-2. Provides a strong API contract with type safety with editor support
-3. Provides a high degree of robustness with build-time errors in cases where static analysis will fail, including user misuse like not providing statically analyzable arguments.
-
-In practice, a virtual module is implemented via a coupled agglomeration of babel plugin(s), webpack loader(s), and webpack plugin(s).
-
-Fusion.js currently provides the following virtual modules:
-
-* **assetUrl**
-
-  Converts asset relative paths (e.g. `./src/asset.js`) to the fully qualified URL (e.g. `/_static/asset.js`).
-
-  ```js
-  import {assetUrl} from 'fusion-core';
-
-  assetUrl('path/to/some/file');
-  // => Path to the asset
-  ```
-
-* **chunkId**
-
-  This is a useful building block for implementing things such as translations and module async/lazy loading.
-
-  ```js
-  import {chunkId} from 'fusion-core';
-
-  chunkId('path/to/some/module');
-  // => Array of client-side chunk ids for the module
-  ```
-
-* **syncChunkIds**
-
-* **syncChunkPaths**
-
-* **workerUrl**
-
-  The `workerUrl` virtual module allows transpiling and loading a web worker. The result of the virtual call should be passed into the `Worker` constructor.
-
-  ```js
-  import {workerUrl} from 'fusion-core';
-
-  // Path to the asset
-  const url = workerUrl('path/to/some/worker.js');
-  const myWorker = new Worker(url);
-  ```
+* `value: string` - the string to be trusted
 
 ---
 
@@ -684,7 +633,7 @@ Also note that only template strings can have template tags (i.e. <code>html&#x6
 
 If you get an <code>Unsanitized html. You must use html&#x60;[your html here]&#x60;</code> error, remember to prepend the `html` template tag to your template string.
 
-If you have already taken steps to sanitize your input against XSS and don't wish to re-sanitize it, you can use `dangerouslySetHTML(string)` to let Fusion.js render the unescaped dynamic string.
+If you have already taken steps to sanitize your input against XSS and don't wish to re-sanitize it, you can use `dangerouslySetHTML(string)` to let Fusion render the unescaped dynamic string.
 
 #### Enhancing a dependency
 
@@ -764,7 +713,7 @@ You can see that this error prevents accidentally leaking configuration to the
 client.
 
 This error could also be thrown if no plugins in either environment depend on
-the token, but you need to use Fusion.js' DI system to store a value for use in
+the token, but you need to use Fusion's DI system to store a value for use in
 your application. In most cases, you should not need to do this, however if you
 are sure you want to, you can get around this by wrapping the value in a plugin
 to prevent the exception from being thrown.
@@ -776,6 +725,6 @@ app.register(ValueToken, createPlugin({
 ```
 
 If you do not need to access the value by associating it with a token, there
-should be no reason to use the Fusion.js DI system for it. It is recommended to
+should be no reason to use the Fusion DI system for it. It is recommended to
 import and use the value directly in your application.
 

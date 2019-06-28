@@ -1,0 +1,3 @@
+load("@jazelle//:build-rules.bzl", "jazelle")
+
+jazelle(name = "jazelle", manifest = "manifest.json")

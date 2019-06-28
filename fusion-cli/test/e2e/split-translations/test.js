@@ -30,18 +30,6 @@ test('`fusion build` app with split translations integration', async () => {
     'app content contains translated main chunk'
   );
   t.ok(
-    content.includes('__HOC_TRANSLATED__'),
-    'app content contains translated hoc chunk'
-  );
-  t.ok(
-    content.includes('__HOOK_TRANSLATED__'),
-    'app content contains translated static hook chunk'
-  );
-  t.ok(
-    content.includes('__ABC_TRANSLATED__'),
-    'app content contains translated dynamic hook chunk'
-  );
-  t.ok(
     !content.includes('__SPLIT1_TRANSLATED__'),
     'split translation not inlined'
   );
