@@ -30,9 +30,9 @@ All requested fonts should be defined in src/fonts/fontConfig.js
 
 const withFontLoading = (fontName: string) => {
   return (OriginalComponent: ComponentType<*>): ComponentType<*> => {
-    return FontLoader;
+    return React.forwardRef(FontLoader);
 
-    function FontLoader(props: any) {
+    function FontLoader(props: any, ref: any) {
       const mounted: {current: ?boolean} = useRef(null);
       const getFontDetails = useService(FontLoaderReactToken);
       if (typeof getFontDetails !== 'function') {
@@ -63,7 +63,9 @@ const withFontLoading = (fontName: string) => {
         };
       });
 
-      return <OriginalComponent $fontStyles={fontStyles} {...props} />;
+      return (
+        <OriginalComponent $fontStyles={fontStyles} {...props} ref={ref} />
+      );
     }
   };
 };
