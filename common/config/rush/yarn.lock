@@ -1492,6 +1492,12 @@
     "@babel/helper-replace-supers" "^7.0.0"
     "@babel/plugin-syntax-class-properties" "^7.0.0"
 
+"@rtsao/react-ssr-prepass@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@rtsao/react-ssr-prepass/-/react-ssr-prepass-1.0.5.tgz#3e8904cc7bdcfee6f5b657681226d2e1e63f699d"
+  dependencies:
+    object-is "^1.0.1"
+
 "@rush-temp/create-fusion-app@file:./projects/create-fusion-app.tgz":
   version "0.0.0"
   resolved "file:./projects/create-fusion-app.tgz#3e4b87baaa08effcbc6e2c73442a5e2aa34b33cc"
@@ -2248,9 +2254,10 @@
 
 "@rush-temp/fusion-react@file:./projects/fusion-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-react.tgz#87dfde3e62c3269fcc0b7904054e7342673e39cf"
+  resolved "file:./projects/fusion-react.tgz#17513c32019b69995c4198a64906bd960443679b"
   dependencies:
     "@babel/preset-react" "^7.0.0"
+    "@rtsao/react-ssr-prepass" "^1.0.5"
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
     enzyme "^3.9.0"
@@ -2269,7 +2276,6 @@
     prop-types "^15.7.2"
     react "^16.8.6"
     react-dom "^16.8.6"
-    react-ssr-prepass "^1.0.5"
     tape-cup "^4.7.1"
     unitest "^2.1.1"
 
@@ -9697,12 +9703,6 @@ react-router@^4.3.1:
     path-to-regexp "^1.7.0"
     prop-types "^15.6.1"
     warning "^4.0.1"
-
-react-ssr-prepass@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.npmjs.org/react-ssr-prepass/-/react-ssr-prepass-1.0.5.tgz#63ce763b2deb81949b20ccb2c64503ca53c562ba"
-  dependencies:
-    object-is "^1.0.1"
 
 react-test-renderer@^16.0.0-0, react-test-renderer@^16.8.6:
   version "16.8.6"
