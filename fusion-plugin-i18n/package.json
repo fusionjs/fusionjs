@@ -10,7 +10,8 @@
   "files": [
     "dist",
     "chunk-translation-map.js",
-    "src"
+    "src",
+    "flow-typed"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
