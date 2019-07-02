@@ -41,11 +41,12 @@ export const withTranslations = (
       constructor(props: T, context: Context) {
         super(props, context);
         const i18n = context;
-        this.localeCode = i18n ? i18n.localeCode : 'en_US';
-        this.translate = i18n
-          ? (key: string, interpolations?: {[string]: string | number}) =>
-              i18n.translate(key, interpolations)
-          : (key: string) => key;
+        this.localeCode = i18n && i18n.localeCode ? i18n.localeCode : 'en_US';
+        this.translate =
+          i18n && i18n.translate
+            ? (key: string, interpolations?: {[string]: string | number}) =>
+                i18n.translate(key, interpolations)
+            : (key: string) => key;
       }
 
       render() {
