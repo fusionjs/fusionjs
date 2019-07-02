@@ -39,16 +39,12 @@ export default function start() {
   app.register(RouterProviderToken, ConnectedRouter);
   app.register(ConnectedRouterEnhancerToken, ConnectedRouterEnhancer);
 
-  // app.register(EnhancerToken, ConnectedRouterEnhancer);
   app.register(
     EnhancerToken,
     createPlugin({
       deps: {connectedRouterEnhancer: ConnectedRouterEnhancerToken},
       provides: ({connectedRouterEnhancer}) => {
-        return compose(
-          connectedRouterEnhancer
-          // myCustomEnhancer
-        );
+        return compose(connectedRouterEnhancer);
       },
     })
   );
