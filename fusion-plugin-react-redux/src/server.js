@@ -57,7 +57,7 @@ const plugin =
               await getInitialState(this.ctx)
             );
           }
-          const enhancers = [enhancer && (createStore => enhancer(createStore, this.ctx)), ctxEnhancer(this.ctx)].filter(Boolean);
+          const enhancers = [enhancer, ctxEnhancer(this.ctx)].filter(Boolean);
           // $FlowFixMe
           this.store = createStore(
             reducer,

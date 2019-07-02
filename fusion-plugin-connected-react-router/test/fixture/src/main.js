@@ -11,7 +11,10 @@ import {createPlugin} from 'fusion-core';
 import {compose} from 'redux';
 import App from 'fusion-react';
 import Root from './root.js';
-import Router, {RouterToken, RouterProviderToken} from 'fusion-plugin-react-router';
+import Router, {
+  RouterToken,
+  RouterProviderToken,
+} from 'fusion-plugin-react-router';
 import Redux, {
   ReduxToken,
   ReducerToken,
@@ -27,26 +30,28 @@ export default function start() {
 
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
-  __NODE__ && app.register(GetInitialStateToken, async ctx => ({
-    user: {},
-  }));
+  __NODE__ &&
+    app.register(GetInitialStateToken, async ctx => ({
+      user: {},
+    }));
 
   app.register(RouterToken, Router);
   app.register(RouterProviderToken, ConnectedRouter);
   app.register(ConnectedRouterEnhancerToken, ConnectedRouterEnhancer);
 
-  app.register(EnhancerToken, ConnectedRouterEnhancer);
-  /*
-  app.register(EnhancerToken, createPlugin({
-    deps: {connectedRouterEnhancer: ConnectedRouterEnhancerToken},
-    provides: ({connectedRouterEnhancer}) => {
-      return compose(
-        connectedRouterEnhancer,
-        // myCustomEnhancer
-      );
-    }
-  }));
-  */
+  // app.register(EnhancerToken, ConnectedRouterEnhancer);
+  app.register(
+    EnhancerToken,
+    createPlugin({
+      deps: {connectedRouterEnhancer: ConnectedRouterEnhancerToken},
+      provides: ({connectedRouterEnhancer}) => {
+        return compose(
+          connectedRouterEnhancer
+          // myCustomEnhancer
+        );
+      },
+    })
+  );
 
   return app;
 }

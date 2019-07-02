@@ -7,8 +7,7 @@
  */
 
 import {createPlugin} from 'fusion-core';
-import {applyMiddleware, compose, combineReducers} from 'redux';
-import reduceReducers from 'reduce-reducers';
+import {applyMiddleware, compose} from 'redux';
 
 import {
   routerMiddleware as createRouterMiddleware,
@@ -23,11 +22,16 @@ const plugin: ConnectedRouterPluginType = createPlugin({
     router: RouterToken,
   },
   provides: ({router}) => {
-    const enhancer = (createStore, ctx) => {
+    const enhancer = createStore => {
       return function _createStore(reducer, initialState, middlewares) {
-        const {history} = router.from(ctx);
+        const store = createStore(reducer, initialState);
+        // $FlowFixMe - We enhance the store to add ctx onto it, which doesn't exist in the redux libdef
+        const {history} = router.from(store.ctx);
         const routerReducer = connectRouter(history);
-        const combinedReducer = ({ router: routerState, ...restState } = {}, action) => {
+        const combinedReducer = (
+          {router: routerState, ...restState} = {},
+          action
+        ) => {
           /**
            * `reducer` is likely the result of `combineReducers`, which
            * warns if you pass it more state than it expects
@@ -37,16 +41,12 @@ const plugin: ConnectedRouterPluginType = createPlugin({
             router: routerReducer(routerState, action),
           };
         };
-        const store = createStore(
+        const newStore = createStore(
           combinedReducer,
           initialState,
-           compose(
-             applyMiddleware(
-               createRouterMiddleware(history),
-             ),
-           ),
+          compose(applyMiddleware(createRouterMiddleware(history)))
         );
-        return store;
+        return newStore;
       };
     };
     return enhancer;

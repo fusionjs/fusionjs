@@ -7,18 +7,9 @@
  */
 
 import React from 'react';
-import {compose} from 'redux';
 import {connect} from 'react-redux';
 
-
-import {
-  Router,
-  Route,
-  Link,
-  Switch,
-  NotFound,
-} from 'fusion-plugin-react-router';
-
+import {Link} from 'fusion-plugin-react-router';
 
 function Root(props) {
   return (
@@ -33,5 +24,4 @@ function Root(props) {
   );
 }
 
-// export default Root;
 export default connect(({router}) => ({router}))(Root);

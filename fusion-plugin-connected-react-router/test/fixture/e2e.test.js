@@ -24,10 +24,7 @@ test('browser plugin integration test', async done => {
   await runtime.page.click('#go-to-test');
   await runtime.page.waitForSelector('[data-testid="path"]');
 
-  path = await runtime.page.$eval(
-    '[data-testid="path"]',
-    el => el.textContent
-  );
+  path = await runtime.page.$eval('[data-testid="path"]', el => el.textContent);
   expect(path).toEqual('/test');
 
   await runtime.end();

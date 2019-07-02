@@ -7,7 +7,7 @@
  * @flow
  */
 
-const { default: App } = require('fusion-react');
+const {default: App} = require('fusion-react');
 const {RenderToken, createPlugin} = require('fusion-core');
 const React = require('react');
 const {renderToString} = require('react-dom/server');
