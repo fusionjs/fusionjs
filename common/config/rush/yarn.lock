@@ -1548,10 +1548,10 @@
     eslint-plugin-cup "^2.0.1"
     eslint-plugin-flowtype "^3.8.1"
     eslint-plugin-import "^2.17.2"
-    eslint-plugin-jest "^22.5.1"
+    eslint-plugin-jest "^22.7.1"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.13.0"
-    eslint-plugin-react-hooks "^1.6.0"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.98.1"
     prettier "^1.17.0"
 
@@ -2275,6 +2275,7 @@
     prop-types "^15.7.2"
     react "^16.8.6"
     react-dom "^16.8.6"
+    react-is "^16.8.0"
     tape-cup "^4.7.1"
     unitest "^2.1.1"
 
@@ -9636,7 +9637,7 @@ react-helmet-async@^1.0.2:
     react-fast-compare "2.0.4"
     shallowequal "1.1.0"
 
-react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
+react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.8.6"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
@@ -9682,12 +9683,6 @@ react-router@^4.3.1:
     path-to-regexp "^1.7.0"
     prop-types "^15.6.1"
     warning "^4.0.1"
-
-react-ssr-prepass@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.npmjs.org/react-ssr-prepass/-/react-ssr-prepass-1.0.5.tgz#63ce763b2deb81949b20ccb2c64503ca53c562ba"
-  dependencies:
-    object-is "^1.0.1"
 
 react-test-renderer@^16.0.0-0, react-test-renderer@^16.8.6:
   version "16.8.6"
