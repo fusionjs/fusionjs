@@ -18,7 +18,7 @@ export type TranslationsObjectType = {[string]: string};
 
 export type TranslateFuncType = (
   key: string,
-  interpolations?: TranslationsObjectType
+  interpolations?: {[string]: string | number}
 ) => string;
 
 export type I18nDepsType = {
