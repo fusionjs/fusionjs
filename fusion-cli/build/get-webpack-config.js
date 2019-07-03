@@ -28,7 +28,7 @@ const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const {
   chunkIdsLoader,
   fileLoader,
-  babelWorker,
+  babelLoader,
   i18nManifestLoader,
   chunkUrlMapLoader,
   syncChunkIdsLoader,
@@ -295,7 +295,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
-              loader: babelWorker.path,
+              loader: babelLoader.path,
               options: {
                 ...babelConfig,
                 /**
@@ -319,7 +319,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
-              loader: babelWorker.path,
+              loader: babelLoader.path,
               options: {
                 ...babelConfig,
                 /**
@@ -343,7 +343,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
             {
-              loader: babelWorker.path,
+              loader: babelLoader.path,
               options: {
                 ...getBabelConfig({
                   target:

@@ -16,8 +16,8 @@ const loaderIndex = {
     alias: '__SECRET_FILE_LOADER__',
     path: require.resolve('./file-loader.js'),
   },
-  babelWorker: {
-    path: require.resolve('./babel-worker.js'),
+  babelLoader: {
+    path: require.resolve('./babel-loader.js'),
   },
   i18nManifestLoader: {
     alias: '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__',
