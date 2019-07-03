@@ -109,13 +109,13 @@ const pluginFactory: () => PluginType = () =>
               });
           }
         }
-        translate(key: string, interpolations: TranslationsObjectType = {}) {
+        translate(key, interpolations = {}) {
           const template = this.translations[key];
           return template
             ? template.replace(/\${(.*?)}/g, (_, k) =>
                 interpolations[k] === void 0
                   ? '${' + k + '}'
-                  : interpolations[k]
+                  : String(interpolations[k])
               )
             : key;
         }
