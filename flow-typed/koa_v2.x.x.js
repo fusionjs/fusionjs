@@ -303,5 +303,4 @@ declare module 'koa' {
     use(fn: Middleware): this,
   }
 
-  declare module.exports: Class<Application>;
-}
+  declare module.exports: Class<Application>}
