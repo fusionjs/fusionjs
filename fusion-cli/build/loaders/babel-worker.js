@@ -17,7 +17,7 @@ import type {TranslationsDiscoveryContext} from "./loader-context.js";
 */
 
 module.exports = {
-  doTheSteps,
+  runTransformation,
 };
 
 let cache;
@@ -28,14 +28,14 @@ function getCache(cacheDir) {
   }
   return cache;
 }
-// eslint-ignore-next-line
-async function doTheSteps(
-  source,
-  options,
-  inputSourceMap,
-  discoveryState,
-  cacheKey,
-  filename
+
+async function runTransformation(
+  source /*: string */,
+  options /*: Object */,
+  inputSourceMap /*: Object */,
+  discoveryState /*: TranslationsDiscoveryContext*/,
+  cacheKey /*: string */,
+  filename /*: string */
 ) {
   const cacheDir = path.join(process.cwd(), 'node_modules/.fusion_babel-cache');
 
@@ -51,6 +51,7 @@ async function doTheSteps(
     // requires serialization. But we want to pass translationsIds directly.
     options.plugins.unshift([TranslationsExtractor, {translationIds}]);
 
+    // make the ast
     const transformed = transform(source, options);
 
     if (translationIds.size > 0) {

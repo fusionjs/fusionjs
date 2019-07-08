@@ -15,8 +15,6 @@ const loaderUtils = require('loader-utils');
 
 const {translationsDiscoveryKey} = require('./loader-context.js');
 
-const Worker = require('jest-worker').default;
-
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
 */
@@ -40,7 +38,6 @@ async function loader(
 ) {
   const filename = this.resourcePath;
   const loaderOptions = loaderUtils.getOptions(this);
-
   const config = babel.loadPartialConfig({
     ...loaderOptions,
     filename,
@@ -65,11 +62,8 @@ async function loader(
     .update(fusionCLIVersion)
     .digest('hex');
 
-  //call do the stuff
-  const worker = new Worker(require.resolve('./babel-worker.js'), {
-    computeWorkerKey: (method, filename) => filename,
-  });
-  const res = await worker.doTheSteps(
+  const worker = require('./worker_singleton.js').worker;
+  const res = await worker.runTransformation(
     source,
     options,
     inputSourceMap,
@@ -77,7 +71,7 @@ async function loader(
     cacheKey,
     filename
   );
-  worker.end();
+
   return res;
 }
 

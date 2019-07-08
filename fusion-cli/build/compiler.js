@@ -190,6 +190,9 @@ function Compiler(
       console.log(`End time: ${Date.now()}`);
     });
   }
+  compiler.hooks.done.tap('KillWorkers', stats => {
+    require('./loaders/worker_singleton.js').killWorker();
+  });
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
