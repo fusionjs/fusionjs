@@ -28,6 +28,7 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
   }
   async get(cacheKey /*: string*/, thunk /*: () => T */) {
     const filepath = getFilePath(this.cacheDirectory, cacheKey);
+
     try {
       return await read(filepath);
     } catch (err) {
