@@ -10,6 +10,7 @@
   },
   "files": [
     "dist",
+    "flow-typed",
     "src"
   ],
   "main": "./dist/index.js",
