@@ -86,7 +86,7 @@ const pluginFactory: () => PluginType = () =>
             ? template.replace(/\${(.*?)}/g, (_, k) =>
                 interpolations[k] === void 0
                   ? '${' + k + '}'
-                  : interpolations[k]
+                  : String(interpolations[k])
               )
             : key;
         }
