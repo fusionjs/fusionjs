@@ -27,7 +27,7 @@
     "react-redux": "^7.1.0"
   },
   "peerDependencies": {
-    "connected-react-router": "v6.5.0",
+    "connected-react-router": "^6.5.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-router": "0.0.0-monorepo",
     "react": "^16.8.6",
