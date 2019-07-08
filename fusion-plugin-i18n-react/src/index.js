@@ -24,5 +24,6 @@ export type {
 export {withTranslations} from './with-translations';
 export {useTranslations} from './use-translations';
 export {Translate} from './translate';
+export {I18nContext} from './plugin';
 
 export default I18n;
