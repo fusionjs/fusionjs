@@ -35,7 +35,7 @@
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "styletron-react": "^4.3.0"
+    "styletron-react": "^5.2.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -49,7 +49,7 @@
     "eslint-plugin-jest": "^22.5.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.13.0",
-    "flow-bin": "^0.98.1",
+    "flow-bin": "^0.102.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
@@ -59,7 +59,7 @@
     "puppeteer": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "styletron-react": "^4.4.5"
+    "styletron-react": "^5.2.0"
   },
   "engines": {
     "node": ">=8.9.0 <11",

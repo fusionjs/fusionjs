@@ -10,10 +10,10 @@ import {createToken, type Context, type Token} from 'fusion-core';
 import type {ApolloClient} from 'apollo-client';
 import {getDataFromTree} from 'react-apollo';
 
-export type InitApolloClientType<TInitialState> = (
-  ctx: Context,
-  initialState: TInitialState
-) => ApolloClient<TInitialState>;
+export type InitApolloClientType<TInitialState> = {
+  (ctx: Context, initialState: TInitialState): ApolloClient<TInitialState>,
+  cache: *,
+};
 
 // We should have better flow types for the schema
 export const GraphQLSchemaToken: Token<any> = createToken('GraphQlSchemaToken');
