@@ -35,7 +35,7 @@
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "styletron-react": "^5.2.0"
+    "styletron-react": "^4.3.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -59,7 +59,7 @@
     "puppeteer": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "styletron-react": "^5.2.0"
+    "styletron-react": "^4.4.5"
   },
   "engines": {
     "node": ">=8.9.0 <11",

@@ -52,7 +52,7 @@
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "redux": "^4.0.1",
-    "styletron-react": "^5.2.0",
+    "styletron-react": "^4.3.6",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
   },
