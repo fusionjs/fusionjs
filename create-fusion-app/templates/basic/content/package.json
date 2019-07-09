@@ -14,7 +14,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "styletron-react": "^4.4.6"
+    "styletron-react": "^5.2.0"
   },
   "scripts": {
     "dev": "fusion dev",
