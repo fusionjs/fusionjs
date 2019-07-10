@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://buildkite.com/uberopensource/fusionjs"><img alt="Build status" src="https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master"></a>
+  <a href="https://buildkite.com/uberopensource/fusionjs"><img alt="Build status" src="https://badge.buildkite.com/7a82192275779f6a8ba81f7d4a1b0d294256838faa1dfdf080.svg?branch=master"></a>
   <a href="https://www.npmjs.com/package/fusion-core"><img alt="fusion-core Downloads" src="https://img.shields.io/npm/dm/fusion-core.svg?maxAge=43200&label=downloads"></a>
 </p>
 
