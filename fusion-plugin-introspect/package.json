@@ -30,11 +30,11 @@
   ],
   "dependencies": {
     "koa-bodyparser": "^4.2.1",
-    "sade": "^1.4.1"
+    "sade": "^1.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/plugin-transform-modules-commonjs": "^7.2.0",
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
@@ -43,19 +43,19 @@
     "create-universal-package": "^3.4.7",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.8.1",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-flowtype": "^3.11.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jest": "^22.7.2",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "jest": "^24.8.0",
-    "prettier": "^1.17.0"
+    "prettier": "^1.18.2"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo"
