@@ -11,6 +11,7 @@ const PersistentDiskCache = require('../persistent-disk-cache.js');
 const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 const path = require('path');
 const babel = require('@babel/core');
+const getBabelConfig = require('../get-babel-config.js');
 
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
@@ -31,16 +32,43 @@ function getCache(cacheDir) {
 
 async function runTransformation(
   source /*: string */,
-  options /*: Object */,
   inputSourceMap /*: Object */,
   discoveryState /*: TranslationsDiscoveryContext*/,
   cacheKey /*: string */,
-  filename /*: string */
+  filename /*: string */,
+  loaderOptions /*: Object*/,
+  rootContext /*: Object*/,
+  sourceMap /*: Object*/
 ) {
+  let newOptions = {
+    ...getBabelConfig(loaderOptions.babelConfigData),
+    overrides: [],
+  };
+  let overrides = [];
+
+  if (loaderOptions.overrides != undefined) {
+    for (let i = 0; i < loaderOptions.overrides.length; i++) {
+      overrides[i] = {
+        ...getBabelConfig(loaderOptions.overrides[i]),
+      };
+    }
+  }
+  newOptions.overrides = overrides;
+
+  const config = babel.loadPartialConfig({
+    ...newOptions,
+    filename,
+    sourceRoot: rootContext,
+    sourceMap: sourceMap,
+    inputSourceMap: inputSourceMap || void 0,
+    sourceFileName: relative(rootContext, filename),
+  });
+
+  const options = config.options;
+
   const cacheDir = path.join(process.cwd(), 'node_modules/.fusion_babel-cache');
 
   const diskCache = getCache(cacheDir);
-
   const result = await diskCache.get(cacheKey, () => {
     let metadata = {};
 
@@ -131,4 +159,15 @@ function formatError(err) {
     err.hideStack = true;
   }
   return err;
+}
+
+function relative(root, file) {
+  const rootPath = root.replace(/\\/g, '/').split('/')[1];
+  const filePath = file.replace(/\\/g, '/').split('/')[1];
+  // If the file is in a completely different root folder
+  // use the absolute path of the file
+  if (rootPath && rootPath !== filePath) {
+    return file;
+  }
+  return path.relative(root, file);
 }

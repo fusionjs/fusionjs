@@ -37,18 +37,7 @@ async function loader(
   discoveryState /*: TranslationsDiscoveryContext*/
 ) {
   const filename = this.resourcePath;
-  const loaderOptions = loaderUtils.getOptions(this);
-  const config = babel.loadPartialConfig({
-    ...loaderOptions,
-    filename,
-    sourceRoot: this.rootContext,
-    sourceMap: this.sourceMap,
-    inputSourceMap: inputSourceMap || void 0,
-    sourceFileName: relative(this.rootContext, filename),
-  });
-
-  const options = config.options;
-
+  let loaderOptions = loaderUtils.getOptions(this);
   const cacheKey = crypto
     // non-cryptographic purposes
     // md4 is the fastest built-in algorithm
@@ -57,31 +46,23 @@ async function loader(
     // thus our hash should take into account them all
     .update(source)
     .update(filename) // Analysis/transforms might depend on filenames
-    .update(JSON.stringify(options))
+    .update(JSON.stringify(loaderOptions))
     .update(babel.version)
     .update(fusionCLIVersion)
     .digest('hex');
 
   const worker = require('./worker_singleton.js').worker;
+
   const res = await worker.runTransformation(
     source,
-    options,
     inputSourceMap,
     discoveryState,
     cacheKey,
-    filename
+    filename,
+    loaderOptions,
+    this.rootContext,
+    this.sourceMap
   );
 
   return res;
-}
-
-function relative(root, file) {
-  const rootPath = root.replace(/\\/g, '/').split('/')[1];
-  const filePath = file.replace(/\\/g, '/').split('/')[1];
-  // If the file is in a completely different root folder
-  // use the absolute path of the file
-  if (rootPath && rootPath !== filePath) {
-    return file;
-  }
-  return path.relative(root, file);
 }
