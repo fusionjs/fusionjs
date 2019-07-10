@@ -58,7 +58,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "unitest": "^2.1.1",
+    "eslint-plugin-react-hooks": "^1.6.1"
   },
   "scripts": {
     "clean": "rm -rf dist",

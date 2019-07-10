@@ -39,6 +39,7 @@
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react-hooks": "^1.6.1",
     "execa": "^1.0.0",
     "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
@@ -50,7 +51,8 @@
     "react-redux": "^7.1.0",
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "unitest": "^2.1.1",
+    "eslint-plugin-jest": "^22.7.2"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",

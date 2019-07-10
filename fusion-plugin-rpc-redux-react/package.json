@@ -64,7 +64,8 @@
     "react-test-renderer": "^16.8.6",
     "redux": "^4.0.1",
     "redux-reactors": "^1.0.3",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "eslint-plugin-react-hooks": "^1.6.1"
   },
   "scripts": {
     "clean": "cup4 clean",

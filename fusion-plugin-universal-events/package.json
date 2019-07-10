@@ -47,7 +47,8 @@
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "unitest": "^2.1.1",
+    "eslint-plugin-react-hooks": "^1.6.1"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
