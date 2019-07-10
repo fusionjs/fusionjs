@@ -13,10 +13,6 @@ const path = require('path');
 const babel = require('@babel/core');
 const getBabelConfig = require('../get-babel-config.js');
 
-/*::
-import type {TranslationsDiscoveryContext} from "./loader-context.js";
-*/
-
 module.exports = {
   runTransformation,
 };
@@ -33,7 +29,6 @@ function getCache(cacheDir) {
 async function runTransformation(
   source /*: string */,
   inputSourceMap /*: Object */,
-  discoveryState /*: TranslationsDiscoveryContext*/,
   cacheKey /*: string */,
   filename /*: string */,
   loaderOptions /*: Object*/,
@@ -93,19 +88,7 @@ async function runTransformation(
     return {metadata, ...transformed};
   });
 
-  if (result) {
-    // $FlowFixMe
-    const {code, map, metadata} = result;
-
-    if (discoveryState && metadata.translationIds) {
-      discoveryState.set(filename, new Set(metadata.translationIds));
-    }
-
-    return [code, map];
-  }
-
-  // If the file was ignored, pass through the original content.
-  return [source, inputSourceMap];
+  return result;
 }
 
 function transform(source, options) {

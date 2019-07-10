@@ -95,7 +95,8 @@ export type WebpackConfigOpts = {|
   fusionConfig: FusionRC,
   legacyPkgConfig?: {
     node?: Object
-  }
+  },
+  worker: Object
 |};
 */
 

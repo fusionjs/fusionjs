@@ -52,10 +52,9 @@ async function loader(
 
   const worker = this[workerKey];
 
-  const res = await worker.runTransformation(
+  const result = await worker.runTransformation(
     source,
     inputSourceMap,
-    discoveryState,
     cacheKey,
     filename,
     loaderOptions,
@@ -63,5 +62,17 @@ async function loader(
     this.sourceMap
   );
 
-  return res;
+  if (result) {
+    // $FlowFixMe
+    const {code, map, metadata} = result;
+
+    if (discoveryState && metadata.translationIds) {
+      discoveryState.set(filename, new Set(metadata.translationIds));
+    }
+
+    return [code, map];
+  }
+
+  // If the file was ignored, pass through the original content.
+  return [source, inputSourceMap];
 }
