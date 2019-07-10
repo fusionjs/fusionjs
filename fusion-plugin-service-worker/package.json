@@ -36,7 +36,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.13.0",
     "flow-bin": "^0.102.0",
-    "fusion-cli": "0.0.0-monorepo",
+    "fusion-cli": "0.0.0-canary.fd5a750.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-router": "0.0.0-monorepo",
     "fusion-plugin-styletron-react": "0.0.0-monorepo",
@@ -57,7 +57,7 @@
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-cli": "0.0.0-monorepo",
+    "fusion-cli": "0.0.0-canary.fd5a750.0",
     "fusion-core": "0.0.0-monorepo",
     "react": "^16.8.6",
     "redux": "^4.0.1"
