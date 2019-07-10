@@ -39,6 +39,7 @@ const {
   translationsManifestContextKey,
   clientChunkMetadataContextKey,
   devContextKey,
+  workerKey,
 } = require('./loaders/loader-context.js');
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
@@ -112,8 +113,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     zopfli,
     minify,
     legacyPkgConfig = {},
+    worker,
   } = opts;
   const main = 'src/main.js';
+  this.worker = worker;
 
   if (!fs.existsSync(path.join(dir, main))) {
     throw new Error(`Project directory must contain a ${main} file`);
@@ -476,6 +479,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             translationsManifestContextKey,
             state.i18nDeferredManifest
           ),
+      new LoaderContextProviderPlugin(workerKey, worker),
       !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,

@@ -8,12 +8,11 @@
 /* eslint-env node */
 
 const crypto = require('crypto');
-const path = require('path');
 
 const babel = require('@babel/core');
 const loaderUtils = require('loader-utils');
 
-const {translationsDiscoveryKey} = require('./loader-context.js');
+const {translationsDiscoveryKey, workerKey} = require('./loader-context.js');
 
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
@@ -51,7 +50,7 @@ async function loader(
     .update(fusionCLIVersion)
     .digest('hex');
 
-  const worker = require('./worker_singleton.js').worker;
+  const worker = this[workerKey];
 
   const res = await worker.runTransformation(
     source,
