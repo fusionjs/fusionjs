@@ -410,6 +410,7 @@ test('`fusion test --debug --env=jsdom,node`', async () => {
 
   // Poll until we get a listener message.
   async function checkStartedMessageCount(count) {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async resolve => {
       while (Object.keys(listenAddresses).length < count) {
         await new Promise(r => setTimeout(r, 100));
