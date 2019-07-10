@@ -1527,7 +1527,7 @@
 
 "@rush-temp/create-fusion-plugin@file:./projects/create-fusion-plugin.tgz":
   version "0.0.0"
-  resolved "file:./projects/create-fusion-plugin.tgz#74ec20b815a8be6a4bfbb52b8e8a25d10d49a847"
+  resolved "file:./projects/create-fusion-plugin.tgz#9ad2e9525da4b35b4eb36f1d14bae48f3902852b"
   dependencies:
     babel-eslint "^10.0.1"
     babel-jest "^24.8.0"
@@ -1539,6 +1539,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     jest-cli "^24.8.0"
     prettier "^1.18.2"
@@ -1562,7 +1563,7 @@
 
 "@rush-temp/fusion-cli@file:./projects/fusion-cli.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-cli.tgz#c6fd61f7d9c5a400cda4c8869a571dfddf5602f5"
+  resolved "file:./projects/fusion-cli.tgz#cadb24782ce27f22629d3bc15fc4890616d778fb"
   dependencies:
     "@babel/core" "^7.5.4"
     "@babel/plugin-syntax-dynamic-import" "7.2.0"
@@ -1594,6 +1595,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     globby "^8.0.1"
@@ -1637,7 +1639,7 @@
 
 "@rush-temp/fusion-core@file:./projects/fusion-core.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-core.tgz#f634961ca4b1a5d0f5bf2999c025e234a6a40179"
+  resolved "file:./projects/fusion-core.tgz#eee374dea2aabf52e25f7c886f5105b6cb11222f"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1649,6 +1651,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     koa "^2.7.0"
     koa-compose "^4.1.0"
@@ -1664,7 +1667,7 @@
 
 "@rush-temp/fusion-plugin-apollo@file:./projects/fusion-plugin-apollo.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-apollo.tgz#22d05c4d85ca0426848111c5f0557eacec8a8cfa"
+  resolved "file:./projects/fusion-plugin-apollo.tgz#60788032e6d19e41573720386a78c3bcf5d5d327"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     apollo-cache-inmemory "^1.3.12"
@@ -1682,6 +1685,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     graphql "^14.4.2"
@@ -1701,7 +1705,7 @@
 
 "@rush-temp/fusion-plugin-browser-performance-emitter@file:./projects/fusion-plugin-browser-performance-emitter.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-browser-performance-emitter.tgz#87fee1d5c90e02173ad2b4e5ee8c2649b223871b"
+  resolved "file:./projects/fusion-plugin-browser-performance-emitter.tgz#f907b22dac20e4a319471cd057ab9faf7c6e1b36"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1713,6 +1717,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -1721,7 +1726,7 @@
 
 "@rush-temp/fusion-plugin-connected-react-router@file:./projects/fusion-plugin-connected-react-router.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-connected-react-router.tgz#c0dc5cf7f9bdc1b28d24ccf134cc8e7130a7cfbf"
+  resolved "file:./projects/fusion-plugin-connected-react-router.tgz#15de12b2f07c4b9ae5bfd647609a272c4099de6c"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -1734,6 +1739,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     nyc "^14.1.0"
@@ -1747,7 +1753,7 @@
 
 "@rush-temp/fusion-plugin-csrf-protection@file:./projects/fusion-plugin-csrf-protection.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-csrf-protection.tgz#fbfc2afd88f326ec6effe5e955b2b14cb3bcc30d"
+  resolved "file:./projects/fusion-plugin-csrf-protection.tgz#fafa8ea166ee1d1d9649ab060d4c98b026d924bd"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1761,6 +1767,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     express "^4.16.4"
     flow-bin "^0.102.0"
     generic-session "0.1.2"
@@ -1773,7 +1780,7 @@
 
 "@rush-temp/fusion-plugin-error-handling@file:./projects/fusion-plugin-error-handling.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-error-handling.tgz#173393128ac7ce88641525f5cf2607ae80cd5d20"
+  resolved "file:./projects/fusion-plugin-error-handling.tgz#929d5faa4ee5857e66a32040fea6941c2f1b063f"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1785,6 +1792,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     koa-bodyparser "^4.2.1"
     nyc "^14.1.0"
@@ -1794,7 +1802,7 @@
 
 "@rush-temp/fusion-plugin-font-loader-react@file:./projects/fusion-plugin-font-loader-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-font-loader-react.tgz#9b02e037bdceccb0977a870c33b74c601cdeeedd"
+  resolved "file:./projects/fusion-plugin-font-loader-react.tgz#f2dd1310c7779e744d7753b5c1d7eb791ef32dde"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1808,6 +1816,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     just-kebab-case "^1.1.0"
     nyc "^14.1.0"
@@ -1820,7 +1829,7 @@
 
 "@rush-temp/fusion-plugin-http-handler@file:./projects/fusion-plugin-http-handler.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-http-handler.tgz#c71859cbaeb25020fa7decfb54c53dbbbe7582fd"
+  resolved "file:./projects/fusion-plugin-http-handler.tgz#d17aaa3eb9ca364f79baf9faad3c709bbb660d91"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -1828,8 +1837,10 @@
     eslint-plugin-cup "^2.0.1"
     eslint-plugin-flowtype "^3.11.1"
     eslint-plugin-import "^2.18.0"
+    eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     express "^4.16.4"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
@@ -1872,7 +1883,7 @@
 
 "@rush-temp/fusion-plugin-i18n@file:./projects/fusion-plugin-i18n.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-i18n.tgz#3a6f4c2266c5153fb9d14a03621386dffdc8f2d3"
+  resolved "file:./projects/fusion-plugin-i18n.tgz#5ac294d3af56dc5f31934f0419b905b0d3365662"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -1883,6 +1894,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     locale "^0.1.0"
     nyc "^14.1.0"
@@ -2287,7 +2299,7 @@
 
 "@rush-temp/fusion-rpc-redux@file:./projects/fusion-rpc-redux.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-rpc-redux.tgz#3a7797f495386fe90bd5b86381754d174b528c71"
+  resolved "file:./projects/fusion-rpc-redux.tgz#99f70058f4170a18c6fbe0883ccf9af8e5add45e"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -2299,6 +2311,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     execa "^1.0.0"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
@@ -2310,7 +2323,7 @@
 
 "@rush-temp/fusion-scaffolder@file:./projects/fusion-scaffolder.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-scaffolder.tgz#6d764f78d89b467b30e8b42a6ddc03b627472e59"
+  resolved "file:./projects/fusion-scaffolder.tgz#548ab30d2c61102f3649cd0e8951fb24e0dec4b4"
   dependencies:
     "@babel/cli" "^7.5.0"
     "@babel/core" "^7.5.4"
@@ -2326,6 +2339,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     minimist "^1.2.0"
     mkdirp "^0.5.1"
@@ -2338,7 +2352,7 @@
 
 "@rush-temp/fusion-test-utils@file:./projects/fusion-test-utils.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-test-utils.tgz#754b7de9833a405a5cb8e8c9fdb07f31514458b4"
+  resolved "file:./projects/fusion-test-utils.tgz#c1d7c6c10c0f5de1dc612144f19c01031b88d5ce"
   dependencies:
     "@babel/plugin-transform-flow-strip-types" "^7.4.4"
     "@babel/preset-env" "^7.5.4"
@@ -2353,6 +2367,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     jest "^24.8.0"
     koa "^2.7.0"
