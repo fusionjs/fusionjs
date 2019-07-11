@@ -199,10 +199,6 @@ function Compiler(
       console.log(`End time: ${Date.now()}`);
     });
   }
-  compiler.hooks.done.tap('KillWorkers', stats => {
-    if (worker != undefined) worker.end();
-    worker = void 0;
-  });
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
@@ -211,6 +207,15 @@ function Compiler(
         exposedMethods: ['runTransformation'],
         forkOptions: {stdio: 'inherit'},
       });
+    });
+    compiler.hooks.watchClose.tap('KillWorkers', stats => {
+      if (worker != undefined) worker.end();
+      worker = void 0;
+    });
+  } else {
+    compiler.hooks.done.tap('KillWorkers', stats => {
+      if (worker != undefined) worker.end();
+      worker = void 0;
     });
   }
   const statsLogger = getStatsLogger({dir, logger, env});
