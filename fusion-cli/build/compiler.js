@@ -167,11 +167,20 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  const worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-    computeWorkerKey: filename => filename,
-    exposedMethods: ['runTransformation'],
-    forkOptions: {stdio: 'inherit'},
-  });
+  function getWorker() {
+    const worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+      computeWorkerKey: filename => filename,
+      exposedMethods: ['runTransformation'],
+      forkOptions: {stdio: 'inherit'},
+    });
+
+    //if (!watch) {
+    compiler.hooks.done.tap('KillWorkers', stats => {
+      worker.end();
+    });
+    // }
+    return worker;
+  }
 
   const sharedOpts = {
     dir: root,
@@ -184,7 +193,7 @@ function Compiler(
     preserveNames,
     zopfli,
     minify,
-    worker,
+    getWorker,
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
@@ -199,11 +208,7 @@ function Compiler(
       console.log(`End time: ${Date.now()}`);
     });
   }
-  if (!watch) {
-    compiler.hooks.done.tap('KillWorkers', stats => {
-      worker.end();
-    });
-  }
+
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);

@@ -96,7 +96,7 @@ export type WebpackConfigOpts = {|
   legacyPkgConfig?: {
     node?: Object
   },
-  worker: Object
+  getWorker: Function
 |};
 */
 
@@ -114,10 +114,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     zopfli,
     minify,
     legacyPkgConfig = {},
-    worker,
+    getWorker,
   } = opts;
   const main = 'src/main.js';
-  this.worker = worker;
 
   if (!fs.existsSync(path.join(dir, main))) {
     throw new Error(`Project directory must contain a ${main} file`);
@@ -480,7 +479,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             translationsManifestContextKey,
             state.i18nDeferredManifest
           ),
-      new LoaderContextProviderPlugin(workerKey, worker),
+      new LoaderContextProviderPlugin(workerKey, getWorker()),
       !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
