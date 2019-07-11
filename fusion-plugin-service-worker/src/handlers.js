@@ -2,7 +2,6 @@
 // @flow
 
 /* eslint-env serviceworker */
-/* globals URL, fetch,  */
 
 import type {AssetInfo} from './types';
 

@@ -30,7 +30,7 @@ const statKey = 'rpc:method';
 
 /* Helper function */
 function hasHandler(handlers: HandlerType, method: string): boolean {
-  return handlers.hasOwnProperty(method);
+  return Object.prototype.hasOwnProperty.call(handlers, method);
 }
 
 class RPC {

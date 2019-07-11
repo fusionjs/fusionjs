@@ -1,7 +1,7 @@
 // @flow
 /* eslint-env jest, node */
 /* eslint-disable no-console */
-/* globals window, console */
+/* globals window */
 
 import getPort from 'get-port';
 import fetch from 'isomorphic-fetch';
