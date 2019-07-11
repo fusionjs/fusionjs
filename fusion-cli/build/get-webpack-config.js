@@ -96,7 +96,7 @@ export type WebpackConfigOpts = {|
   legacyPkgConfig?: {
     node?: Object
   },
-  getWorker: Function
+  worker: Object
 |};
 */
 
@@ -114,7 +114,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     zopfli,
     minify,
     legacyPkgConfig = {},
-    getWorker,
+    worker,
   } = opts;
   const main = 'src/main.js';
 
@@ -479,7 +479,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             translationsManifestContextKey,
             state.i18nDeferredManifest
           ),
-      new LoaderContextProviderPlugin(workerKey, getWorker()),
+      new LoaderContextProviderPlugin(workerKey, worker),
       !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
