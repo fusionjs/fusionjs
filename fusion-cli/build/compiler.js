@@ -167,6 +167,12 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
+  const worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+    computeWorkerKey: filename => filename,
+    exposedMethods: ['runTransformation'],
+    forkOptions: {stdio: 'inherit'},
+  });
+
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -194,12 +200,6 @@ function Compiler(
     });
   }
   if (!watch) {
-    const worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-      computeWorkerKey: filename => filename,
-      exposedMethods: ['runTransformation'],
-      forkOptions: {stdio: 'inherit'},
-    });
-
     compiler.hooks.done.tap('KillWorkers', stats => {
       worker.end();
     });
