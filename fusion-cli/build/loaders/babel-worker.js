@@ -74,7 +74,6 @@ async function runTransformation(
     // requires serialization. But we want to pass translationsIds directly.
     options.plugins.unshift([TranslationsExtractor, {translationIds}]);
 
-    // make the ast
     const transformed = transform(source, options);
 
     if (translationIds.size > 0) {
