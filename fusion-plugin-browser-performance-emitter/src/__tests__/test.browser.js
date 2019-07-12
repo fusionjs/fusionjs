@@ -121,7 +121,10 @@ test('Emits correct event', t => {
       'event was emitted with the correct type'
     );
     ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
-      t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
+      t.ok(
+        Object.prototype.hasOwnProperty.call(event.payload, item),
+        'passed correct payload data'
+      );
     });
 
     /* Revert window overrides */
@@ -173,7 +176,10 @@ test('Does not fail when window.performance is null', t => {
       'event was emitted with the correct type'
     );
     ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
-      t.ok(event.payload.hasOwnProperty(item), 'passed correct payload data');
+      t.ok(
+        Object.prototype.hasOwnProperty.call(event.payload, item),
+        'passed correct payload data'
+      );
     });
 
     /* Revert window overrides */
