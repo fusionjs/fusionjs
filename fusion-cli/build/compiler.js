@@ -202,11 +202,12 @@ function Compiler(
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-        computeWorkerKey: filename => filename,
-        exposedMethods: ['runTransformation'],
-        forkOptions: {stdio: 'inherit'},
-      });
+      if (worker == undefined)
+        worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+          computeWorkerKey: filename => filename,
+          exposedMethods: ['runTransformation'],
+          forkOptions: {stdio: 'inherit'},
+        });
     });
     compiler.hooks.watchClose.tap('KillWorkers', stats => {
       if (worker != undefined) worker.end();
