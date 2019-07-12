@@ -8,6 +8,24 @@
 
 import * as React from 'react';
 
+/* Custom types */
+export type RouterPropsType = {
+  context?: any,
+  onRoute?: Function,
+  history: RouterHistoryType,
+  Provider?: BaseRouterType,
+  basename?: string,
+  children?: React.Node,
+};
+
+export type RouterType = React.ComponentType<RouterPropsType>;
+
+/* Types below adapted from flow-typed's libdef for react-router-dom
+ * (https://github.com/flow-typed/flow-typed/blob/master/definitions/npm/react-router-dom_v4.x.x/flow_v0.63.x-/react-router-dom_v4.x.x.js)
+ *
+ * Note that these must be redefined here in order to export them, as you cannot export types
+ * directly from a libdef for consumers.
+ */
 export type LocationType = {
   pathname: string,
   search: string,
@@ -22,10 +40,6 @@ export type LocationShapeType = {
   hash?: string,
   state?: any,
 };
-
-/* Types below adapted from flow-typed's libdef for react-router-dom
- * (https://github.com/flow-typed/flow-typed/blob/master/definitions/npm/react-router-dom_v4.x.x/flow_v0.63.x-/react-router-dom_v4.x.x.js)
- */
 export type BrowserRouterType = React.ComponentType<{|
   basename?: string,
   forceRefresh?: boolean,
@@ -77,7 +91,8 @@ export type RouterHistoryType = {
   goForward(): void,
   canGo?: (n: number) => boolean,
   block(
-      callback: | string // eslint-disable-line
+    callback:
+      | string
       | ((location: LocationType, action: HistoryActionType) => ?string)
   ): () => void,
   // createMemoryHistory
@@ -130,11 +145,10 @@ export type MemoryRouterType = React.ComponentType<{|
   children?: React.Node,
 |}>;
 
-export type RouterType = React.ComponentType<{
+type BaseRouterType = React.ComponentType<{|
   history: RouterHistoryType,
-  basename?: string,
   children?: React.Node,
-}>;
+|}>;
 
 export type PromptType = React.ComponentType<{|
   message: string | ((location: LocationType) => string | boolean),
@@ -147,8 +161,6 @@ export type RedirectType = React.ComponentType<{|
   from?: string,
   exact?: boolean,
   strict?: boolean,
-  code?: number | string,
-  children?: React.Node,
 |}>;
 
 export type RouteType = React.ComponentType<{|
