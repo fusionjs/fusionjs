@@ -4,6 +4,8 @@
 .*/templates/.*
 .*/fixtures/failure/.*
 .*/test-artifacts/.*
+.*/jazelle/tests/fixtures/.*
+.*/jazelle/tests/tmp/.*
 
 [include]
 ../common/temp/node_modules

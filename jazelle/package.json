@@ -1,0 +1,32 @@
+{
+  "name": "jazelle",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "bin": {
+    "jazelle": "bin/cli.sh"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node tests/index.js",
+    "preinstall": "node utils/download-bazelisk.js && node utils/download-yarn.js",
+    "build": "yarn preinstall"
+  },
+  "dependencies": {
+    "@yarnpkg/lockfile": "1.1.0",
+    "globby": "9.2.0",
+    "semver": "6.1.1",
+    "yarn-utilities": "0.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-plugin-cup": "^2.0.1",
+    "eslint-plugin-flowtype": "^3.8.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.13.0"
+  }
+}
