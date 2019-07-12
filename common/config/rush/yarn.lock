@@ -8,9 +8,9 @@
   dependencies:
     apollo-env "0.5.1"
 
-"@apollographql/graphql-playground-html@1.6.20":
-  version "1.6.20"
-  resolved "https://registry.npmjs.org/@apollographql/graphql-playground-html/-/graphql-playground-html-1.6.20.tgz#bf9f2acdf319c0959fad8ec1239741dd2ead4e8d"
+"@apollographql/graphql-playground-html@1.6.24":
+  version "1.6.24"
+  resolved "https://registry.npmjs.org/@apollographql/graphql-playground-html/-/graphql-playground-html-1.6.24.tgz#3ce939cb127fb8aaa3ffc1e90dff9b8af9f2e3dc"
 
 "@babel/cli@^7.5.0":
   version "7.5.0"
@@ -1726,7 +1726,7 @@
 
 "@rush-temp/fusion-plugin-connected-react-router@file:./projects/fusion-plugin-connected-react-router.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-connected-react-router.tgz#15de12b2f07c4b9ae5bfd647609a272c4099de6c"
+  resolved "file:./projects/fusion-plugin-connected-react-router.tgz#79daec78e94c72da275cb8cc985a784703eec96b"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -1742,6 +1742,7 @@
     eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
+    jest "^24.8.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
     puppeteer "^1.15.0"
@@ -1853,7 +1854,7 @@
 
 "@rush-temp/fusion-plugin-i18n-react@file:./projects/fusion-plugin-i18n-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-i18n-react.tgz#c8edcd0eaef80bb69e7309a7bb6c27b705d09acb"
+  resolved "file:./projects/fusion-plugin-i18n-react.tgz#a4e3d078d787f9bc54b1326732c28dd71478f4e5"
   dependencies:
     "@babel/plugin-transform-modules-commonjs" "^7.5.0"
     "@babel/preset-flow" "^7.0.0"
@@ -1870,6 +1871,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     jest "^24.8.0"
     locale "^0.1.0"
@@ -1905,7 +1907,7 @@
 
 "@rush-temp/fusion-plugin-introspect@file:./projects/fusion-plugin-introspect.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-introspect.tgz#9fb35b2b62b21c75fe21cad664cae85811ba87c5"
+  resolved "file:./projects/fusion-plugin-introspect.tgz#2e73ba1acb61c2f55a67a08809c4618e7d37f4fa"
   dependencies:
     "@babel/core" "^7.5.4"
     "@babel/plugin-transform-modules-commonjs" "^7.5.0"
@@ -1924,6 +1926,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     jest "^24.8.0"
     koa-bodyparser "^4.2.1"
@@ -1932,7 +1935,7 @@
 
 "@rush-temp/fusion-plugin-jwt@file:./projects/fusion-plugin-jwt.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-jwt.tgz#db41fda7dee8610631a2e55bd88b3e8668efd1f1"
+  resolved "file:./projects/fusion-plugin-jwt.tgz#35b6874198b0514ea0d2db5ec8739e2f42ce0c4e"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1944,6 +1947,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     jsonwebtoken "^8.4.0"
     just-safe-get "^1.3.0"
@@ -1956,7 +1960,7 @@
 
 "@rush-temp/fusion-plugin-node-performance-emitter@file:./projects/fusion-plugin-node-performance-emitter.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-node-performance-emitter.tgz#3b96140f307ae37b3898c5fc39db120330938d3c"
+  resolved "file:./projects/fusion-plugin-node-performance-emitter.tgz#a4ecbc1401b6287b48e8859ba584e612a642f8c9"
   dependencies:
     assert "^1.4.1"
     babel-eslint "^10.0.1"
@@ -1969,6 +1973,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     gc-stats "^1.2.1"
     nyc "^14.1.0"
@@ -1979,7 +1984,7 @@
 
 "@rush-temp/fusion-plugin-react-helmet-async@file:./projects/fusion-plugin-react-helmet-async.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz#f9445fdce4131588f9bbfe19b57e4c0f053c94a0"
+  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz#d31141d3304997a94f8bf828a9a6e8ec09178a87"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1991,6 +1996,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -2003,7 +2009,7 @@
 
 "@rush-temp/fusion-plugin-react-redux@file:./projects/fusion-plugin-react-redux.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-redux.tgz#be3c9d0e4fc2b6f5b4ee9ba807a0a97633c5adeb"
+  resolved "file:./projects/fusion-plugin-react-redux.tgz#d9fde6286d24c25d5a192ef2e6e5ee1a44b5ef12"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2017,6 +2023,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     execa "^1.0.0"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
@@ -2030,7 +2037,7 @@
 
 "@rush-temp/fusion-plugin-react-router@file:./projects/fusion-plugin-react-router.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-router.tgz#afe9dc310acc350826ad845f445e2cd72167c5de"
+  resolved "file:./projects/fusion-plugin-react-router.tgz#c7ada705ee98e3ec34ab5151943b77180eb76f23"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2042,6 +2049,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     history "^4.7.2"
     nyc "^14.1.0"
@@ -2055,7 +2063,7 @@
 
 "@rush-temp/fusion-plugin-redux-action-emitter-enhancer@file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz#e855b5ea0b8e39368b0609841e61a7d09499ed5f"
+  resolved "file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz#d2cc68f6974142adfb99d8fc045905402d8eb875"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -2067,6 +2075,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -2078,7 +2087,7 @@
 
 "@rush-temp/fusion-plugin-rpc-redux-react@file:./projects/fusion-plugin-rpc-redux-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-rpc-redux-react.tgz#2972bd4fe13f62de305a15365d1d0b19ca09e35b"
+  resolved "file:./projects/fusion-plugin-rpc-redux-react.tgz#1cb465c54653eb930df65624d9e6790b73afc8c5"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -2091,6 +2100,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     nyc "^14.1.0"
@@ -2107,7 +2117,7 @@
 
 "@rush-temp/fusion-plugin-rpc@file:./projects/fusion-plugin-rpc.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-rpc.tgz#0e6566c7fe85586c2788f18b47af6a3b896d5882"
+  resolved "file:./projects/fusion-plugin-rpc.tgz#f37e352f2d8df8f654c5b7e5b88f847fbed316aa"
   dependencies:
     babel-eslint "^10.0.1"
     body-parser "^1.18.3"
@@ -2119,6 +2129,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     just-compare "^1.3.0"
     just-map-object "^1.2.0"
@@ -2133,7 +2144,7 @@
 
 "@rush-temp/fusion-plugin-service-worker@file:./projects/fusion-plugin-service-worker.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-service-worker.tgz#5b6dd83a7eca4d9e85b3fea5a1b756b629a03ad3"
+  resolved "file:./projects/fusion-plugin-service-worker.tgz#2a72da70eb5e88b0ab6cf3080fb37ad9a13277bc"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2147,6 +2158,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     isomorphic-fetch "^2.2.1"
@@ -2164,7 +2176,7 @@
 
 "@rush-temp/fusion-plugin-styletron-react@file:./projects/fusion-plugin-styletron-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-styletron-react.tgz#d406a7650d378d7dcd14f92e849d9d5fbfa0ab13"
+  resolved "file:./projects/fusion-plugin-styletron-react.tgz#cc5f56ddd829b2a37d3deed044a9dd93ac57d8c5"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -2177,6 +2189,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     get-port "^5.0.0"
     jest "^24.8.0"
@@ -2189,7 +2202,7 @@
 
 "@rush-temp/fusion-plugin-universal-events-react@file:./projects/fusion-plugin-universal-events-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-events-react.tgz#1aa407330f29ce4f1291737bfe8709437fa34122"
+  resolved "file:./projects/fusion-plugin-universal-events-react.tgz#d422f93d3580fd2590e0ca9dd266a1ef43beed1b"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2200,6 +2213,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -2209,7 +2223,7 @@
 
 "@rush-temp/fusion-plugin-universal-events@file:./projects/fusion-plugin-universal-events.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-events.tgz#b62eb4be0fb15b4d600854877fcc3e7d5f841330"
+  resolved "file:./projects/fusion-plugin-universal-events.tgz#86e55ed27c85a6278dc123d97b6c7742db5ecc82"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2220,6 +2234,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     koa-bodyparser "^4.2.1"
     nyc "^14.1.0"
@@ -2229,7 +2244,7 @@
 
 "@rush-temp/fusion-plugin-universal-logger@file:./projects/fusion-plugin-universal-logger.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-logger.tgz#00a55af3d7409c53ee97743933cd37ca73edfa29"
+  resolved "file:./projects/fusion-plugin-universal-logger.tgz#7636655ce91680e66b4e8f631d712fba329e4685"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2240,6 +2255,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -2250,7 +2266,7 @@
 
 "@rush-temp/fusion-plugin-web-app-manifest@file:./projects/fusion-plugin-web-app-manifest.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-web-app-manifest.tgz#b69fd7e79912054077cb53b42838d198dbe7e32c"
+  resolved "file:./projects/fusion-plugin-web-app-manifest.tgz#dd429de544e586340e68221c1d2e923d0a1e5ae4"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2259,8 +2275,10 @@
     eslint-plugin-cup "^2.0.1"
     eslint-plugin-flowtype "^3.11.1"
     eslint-plugin-import "^2.18.0"
+    eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
@@ -2271,7 +2289,7 @@
 
 "@rush-temp/fusion-react@file:./projects/fusion-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-react.tgz#7f0efaf3e9f3fea75efad371cc87d7313515d9f8"
+  resolved "file:./projects/fusion-react.tgz#ceead1ca535078ec936992629b792086b2825560"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/react-ssr-prepass" "^1.0.5"
@@ -2286,6 +2304,7 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     just-compose "^1.1.0"
     nyc "^14.1.0"
@@ -2379,7 +2398,7 @@
 
 "@rush-temp/fusion-tokens@file:./projects/fusion-tokens.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-tokens.tgz#f05f63ab0d920cd8c62b9e86b86f9c61294b1bae"
+  resolved "file:./projects/fusion-tokens.tgz#5cd7f48a59a711af247f62decdbd88d4185a9c63"
   dependencies:
     "@babel/plugin-transform-flow-strip-types" "^7.4.4"
     babel-eslint "^10.0.1"
@@ -2391,11 +2410,29 @@
     eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
     eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
     tape-cup "^4.7.1"
     unitest "^2.1.1"
+
+"@rush-temp/jazelle@file:./projects/jazelle.tgz":
+  version "0.0.0"
+  resolved "file:./projects/jazelle.tgz#fc95fbbe2fb8d3b7423a6a5077b442f8552b7513"
+  dependencies:
+    "@yarnpkg/lockfile" "1.1.0"
+    babel-eslint "^10.0.1"
+    eslint "^5.16.0"
+    eslint-plugin-cup "^2.0.1"
+    eslint-plugin-flowtype "^3.8.1"
+    eslint-plugin-import "^2.17.2"
+    eslint-plugin-jest "^22.5.1"
+    eslint-plugin-prettier "^3.0.1"
+    eslint-plugin-react "^7.13.0"
+    globby "9.2.0"
+    semver "6.1.1"
+    yarn-utilities "0.1.1"
 
 "@sinonjs/commons@^1", "@sinonjs/commons@^1.0.2", "@sinonjs/commons@^1.4.0":
   version "1.4.0"
@@ -2508,6 +2545,14 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
+"@types/glob@^7.1.1":
+  version "7.1.1"
+  resolved "https://registry.npmjs.org/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
+  dependencies:
+    "@types/events" "*"
+    "@types/minimatch" "*"
+    "@types/node" "*"
+
 "@types/http-assert@*":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@types/http-assert/-/http-assert-1.5.0.tgz#56c95c69b51e7168b0d6727005d1fb2a00aaef94"
@@ -2569,6 +2614,10 @@
 "@types/mime@*":
   version "2.0.1"
   resolved "https://registry.npmjs.org/@types/mime/-/mime-2.0.1.tgz#dc488842312a7f075149312905b5e3c0b054c79d"
+
+"@types/minimatch@*":
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*", "@types/node@>=6":
   version "12.6.2"
@@ -2758,6 +2807,10 @@
   version "4.2.1"
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.1.tgz#5c85d662f76fa1d34575766c5dcd6615abcd30d8"
 
+"@yarnpkg/lockfile@1.1.0", "@yarnpkg/lockfile@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
+
 a-sync-waterfall@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/a-sync-waterfall/-/a-sync-waterfall-1.0.1.tgz#75b6b6aa72598b497a125e7a2770f14f4c8a1fa7"
@@ -2915,12 +2968,12 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
-apollo-cache-control@0.7.4:
-  version "0.7.4"
-  resolved "https://registry.npmjs.org/apollo-cache-control/-/apollo-cache-control-0.7.4.tgz#0cb5c7be0e0dd0c44b1257144cd7f9f2a3c374e6"
+apollo-cache-control@0.7.5:
+  version "0.7.5"
+  resolved "https://registry.npmjs.org/apollo-cache-control/-/apollo-cache-control-0.7.5.tgz#5d8b949bd9b4f03ca32c7d7e429f509c6881eefc"
   dependencies:
     apollo-server-env "2.4.0"
-    graphql-extensions "0.7.4"
+    graphql-extensions "0.7.7"
 
 apollo-cache-inmemory@^1.3.12:
   version "1.6.2"
@@ -2965,16 +3018,16 @@ apollo-engine-reporting-protobuf@0.3.1:
   dependencies:
     protobufjs "^6.8.6"
 
-apollo-engine-reporting@1.3.5:
-  version "1.3.5"
-  resolved "https://registry.npmjs.org/apollo-engine-reporting/-/apollo-engine-reporting-1.3.5.tgz#075424d39dfe77a20f96e8e33b7ae52d58c38e1e"
+apollo-engine-reporting@1.3.6:
+  version "1.3.6"
+  resolved "https://registry.npmjs.org/apollo-engine-reporting/-/apollo-engine-reporting-1.3.6.tgz#579ba2da85ff848bd92be1b0f1ad61f0c57e3585"
   dependencies:
     apollo-engine-reporting-protobuf "0.3.1"
     apollo-graphql "^0.3.3"
-    apollo-server-core "2.6.7"
+    apollo-server-core "2.6.9"
     apollo-server-env "2.4.0"
     async-retry "^1.2.1"
-    graphql-extensions "0.7.6"
+    graphql-extensions "0.7.7"
 
 apollo-env@0.5.1:
   version "0.5.1"
@@ -3029,48 +3082,23 @@ apollo-server-caching@0.4.0:
   dependencies:
     lru-cache "^5.0.0"
 
-apollo-server-core@2.6.7:
-  version "2.6.7"
-  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-2.6.7.tgz#85b0310f40cfec43a702569c73af16d88776a6f0"
+apollo-server-core@2.6.9:
+  version "2.6.9"
+  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-2.6.9.tgz#75542ad206782e5c31a023b54962e9fdc6404a91"
   dependencies:
     "@apollographql/apollo-tools" "^0.3.6"
-    "@apollographql/graphql-playground-html" "1.6.20"
+    "@apollographql/graphql-playground-html" "1.6.24"
     "@types/ws" "^6.0.0"
-    apollo-cache-control "0.7.4"
+    apollo-cache-control "0.7.5"
     apollo-datasource "0.5.0"
-    apollo-engine-reporting "1.3.5"
+    apollo-engine-reporting "1.3.6"
     apollo-server-caching "0.4.0"
     apollo-server-env "2.4.0"
-    apollo-server-errors "2.3.0"
-    apollo-server-plugin-base "0.5.6"
-    apollo-tracing "0.7.3"
+    apollo-server-errors "2.3.1"
+    apollo-server-plugin-base "0.5.8"
+    apollo-tracing "0.7.4"
     fast-json-stable-stringify "^2.0.0"
-    graphql-extensions "0.7.6"
-    graphql-subscriptions "^1.0.0"
-    graphql-tag "^2.9.2"
-    graphql-tools "^4.0.0"
-    graphql-upload "^8.0.2"
-    sha.js "^2.4.11"
-    subscriptions-transport-ws "^0.9.11"
-    ws "^6.0.0"
-
-apollo-server-core@2.6.8:
-  version "2.6.8"
-  resolved "https://registry.npmjs.org/apollo-server-core/-/apollo-server-core-2.6.8.tgz#c8758b5f26b5f3b9fef51b911265b80a9ce5251d"
-  dependencies:
-    "@apollographql/apollo-tools" "^0.3.6"
-    "@apollographql/graphql-playground-html" "1.6.20"
-    "@types/ws" "^6.0.0"
-    apollo-cache-control "0.7.4"
-    apollo-datasource "0.5.0"
-    apollo-engine-reporting "1.3.5"
-    apollo-server-caching "0.4.0"
-    apollo-server-env "2.4.0"
-    apollo-server-errors "2.3.0"
-    apollo-server-plugin-base "0.5.7"
-    apollo-tracing "0.7.3"
-    fast-json-stable-stringify "^2.0.0"
-    graphql-extensions "0.7.6"
+    graphql-extensions "0.7.7"
     graphql-subscriptions "^1.0.0"
     graphql-tag "^2.9.2"
     graphql-tools "^4.0.0"
@@ -3086,15 +3114,15 @@ apollo-server-env@2.4.0:
     node-fetch "^2.1.2"
     util.promisify "^1.0.0"
 
-apollo-server-errors@2.3.0:
-  version "2.3.0"
-  resolved "https://registry.npmjs.org/apollo-server-errors/-/apollo-server-errors-2.3.0.tgz#700622b66a16dffcad3b017e4796749814edc061"
+apollo-server-errors@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.npmjs.org/apollo-server-errors/-/apollo-server-errors-2.3.1.tgz#033cf331463ebb99a563f8354180b41ac6714eb6"
 
 apollo-server-koa@^2.4.8:
-  version "2.6.8"
-  resolved "https://registry.npmjs.org/apollo-server-koa/-/apollo-server-koa-2.6.8.tgz#016b8b841fec01e9762e592155800d1a939456ce"
+  version "2.6.9"
+  resolved "https://registry.npmjs.org/apollo-server-koa/-/apollo-server-koa-2.6.9.tgz#3b9e8f3682cbb682f12e70062536c46fc79d5985"
   dependencies:
-    "@apollographql/graphql-playground-html" "1.6.20"
+    "@apollographql/graphql-playground-html" "1.6.24"
     "@koa/cors" "^2.2.1"
     "@types/accepts" "^1.3.5"
     "@types/cors" "^2.8.4"
@@ -3103,7 +3131,7 @@ apollo-server-koa@^2.4.8:
     "@types/koa-compose" "^3.2.2"
     "@types/koa__cors" "^2.2.1"
     accepts "^1.3.5"
-    apollo-server-core "2.6.8"
+    apollo-server-core "2.6.9"
     graphql-subscriptions "^1.0.0"
     graphql-tools "^4.0.0"
     koa "2.7.0"
@@ -3111,20 +3139,16 @@ apollo-server-koa@^2.4.8:
     koa-router "^7.4.0"
     type-is "^1.6.16"
 
-apollo-server-plugin-base@0.5.6:
-  version "0.5.6"
-  resolved "https://registry.npmjs.org/apollo-server-plugin-base/-/apollo-server-plugin-base-0.5.6.tgz#3a7128437a0f845e7d873fa43ef091ff7bf27975"
+apollo-server-plugin-base@0.5.8:
+  version "0.5.8"
+  resolved "https://registry.npmjs.org/apollo-server-plugin-base/-/apollo-server-plugin-base-0.5.8.tgz#77b4127aff4e3514a9d49e3cc61256aee4d9422e"
 
-apollo-server-plugin-base@0.5.7:
-  version "0.5.7"
-  resolved "https://registry.npmjs.org/apollo-server-plugin-base/-/apollo-server-plugin-base-0.5.7.tgz#267faeb5c2de7fa8d3be469cb99f82f601be7aed"
-
-apollo-tracing@0.7.3:
-  version "0.7.3"
-  resolved "https://registry.npmjs.org/apollo-tracing/-/apollo-tracing-0.7.3.tgz#8533e3e2dca2d5a25e8439ce498ea33ff4d159ee"
+apollo-tracing@0.7.4:
+  version "0.7.4"
+  resolved "https://registry.npmjs.org/apollo-tracing/-/apollo-tracing-0.7.4.tgz#f24d1065100b6d8bf581202859ea0e85ba7bf30d"
   dependencies:
     apollo-server-env "2.4.0"
-    graphql-extensions "0.7.4"
+    graphql-extensions "0.7.7"
 
 apollo-utilities@1.3.2, apollo-utilities@^1.0.1, apollo-utilities@^1.3.0, apollo-utilities@^1.3.2:
   version "1.3.2"
@@ -3227,7 +3251,7 @@ array-reduce@~0.0.0:
   version "0.0.0"
   resolved "https://registry.npmjs.org/array-reduce/-/array-reduce-0.0.0.tgz#173899d3ffd1c7d9383e4479525dbe278cab5f2b"
 
-array-union@^1.0.1:
+array-union@^1.0.1, array-union@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/array-union/-/array-union-1.0.2.tgz#9a34410e4f4e3da23dea375be5be70f24778ec39"
   dependencies:
@@ -4572,7 +4596,7 @@ dir-glob@2.0.0:
     arrify "^1.0.1"
     path-type "^3.0.0"
 
-dir-glob@^2.0.0:
+dir-glob@^2.0.0, dir-glob@^2.2.2:
   version "2.2.2"
   resolved "https://registry.npmjs.org/dir-glob/-/dir-glob-2.2.2.tgz#fa09f0694153c8918b18ba0deafae94769fc50c4"
   dependencies:
@@ -4677,8 +4701,8 @@ ee-first@1.1.1:
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.188, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.62:
-  version "1.3.188"
-  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.188.tgz#e28e1afe4bb229989e280bfd3b395c7ec03c8b7a"
+  version "1.3.191"
+  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.191.tgz#c451b422cd8b2eab84dedabab5abcae1eaefb6f0"
 
 eliminate@^1.0.2:
   version "1.0.2"
@@ -4986,13 +5010,13 @@ eslint-plugin-cup@^2.0.1:
   dependencies:
     globals "^11.5.0"
 
-eslint-plugin-flowtype@^3.11.1:
+eslint-plugin-flowtype@^3.11.1, eslint-plugin-flowtype@^3.8.1:
   version "3.11.1"
   resolved "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-3.11.1.tgz#1aae15a10dbcd5aecc89897f810f2e9fcc18a5e3"
   dependencies:
     lodash "^4.17.11"
 
-eslint-plugin-import@^2.18.0:
+eslint-plugin-import@^2.17.2, eslint-plugin-import@^2.18.0:
   version "2.18.0"
   resolved "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.18.0.tgz#7a5ba8d32622fb35eb9c8db195c2090bd18a3678"
   dependencies:
@@ -5008,7 +5032,7 @@ eslint-plugin-import@^2.18.0:
     read-pkg-up "^2.0.0"
     resolve "^1.11.0"
 
-eslint-plugin-jest@^22.7.2:
+eslint-plugin-jest@^22.5.1, eslint-plugin-jest@^22.7.2:
   version "22.7.2"
   resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.7.2.tgz#7ab118a66a34e46ae5e16a128b5d24fd28b43dca"
 
@@ -5022,7 +5046,7 @@ eslint-plugin-react-hooks@^1.6.1:
   version "1.6.1"
   resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.6.1.tgz#3c66a5515ea3e0a221ffc5d4e75c971c217b1a4c"
 
-eslint-plugin-react@^7.14.2:
+eslint-plugin-react@^7.13.0, eslint-plugin-react@^7.14.2:
   version "7.14.2"
   resolved "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.14.2.tgz#94c193cc77a899ac0ecbb2766fbef88685b7ecc1"
   dependencies:
@@ -5057,6 +5081,47 @@ eslint-utils@^1.3.1:
 eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
+
+eslint@^5.16.0:
+  version "5.16.0"
+  resolved "https://registry.npmjs.org/eslint/-/eslint-5.16.0.tgz#a1e3ac1aae4a3fbd8296fcf8f7ab7314cbb6abea"
+  dependencies:
+    "@babel/code-frame" "^7.0.0"
+    ajv "^6.9.1"
+    chalk "^2.1.0"
+    cross-spawn "^6.0.5"
+    debug "^4.0.1"
+    doctrine "^3.0.0"
+    eslint-scope "^4.0.3"
+    eslint-utils "^1.3.1"
+    eslint-visitor-keys "^1.0.0"
+    espree "^5.0.1"
+    esquery "^1.0.1"
+    esutils "^2.0.2"
+    file-entry-cache "^5.0.1"
+    functional-red-black-tree "^1.0.1"
+    glob "^7.1.2"
+    globals "^11.7.0"
+    ignore "^4.0.6"
+    import-fresh "^3.0.0"
+    imurmurhash "^0.1.4"
+    inquirer "^6.2.2"
+    js-yaml "^3.13.0"
+    json-stable-stringify-without-jsonify "^1.0.1"
+    levn "^0.3.0"
+    lodash "^4.17.11"
+    minimatch "^3.0.4"
+    mkdirp "^0.5.1"
+    natural-compare "^1.4.0"
+    optionator "^0.8.2"
+    path-is-inside "^1.0.2"
+    progress "^2.0.0"
+    regexpp "^2.0.1"
+    semver "^5.5.1"
+    strip-ansi "^4.0.0"
+    strip-json-comments "^2.0.1"
+    table "^5.2.3"
+    text-table "^0.2.0"
 
 eslint@^6.0.1:
   version "6.0.1"
@@ -5098,6 +5163,14 @@ eslint@^6.0.1:
     strip-json-comments "^2.0.1"
     table "^5.2.3"
     text-table "^0.2.0"
+
+espree@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/espree/-/espree-5.0.1.tgz#5d6526fa4fc7f0788a5cf75b15f30323e2f81f7a"
+  dependencies:
+    acorn "^6.0.7"
+    acorn-jsx "^5.0.0"
+    eslint-visitor-keys "^1.0.0"
 
 espree@^6.0.0:
   version "6.0.0"
@@ -5347,7 +5420,7 @@ fast-diff@^1.1.2:
   version "1.2.0"
   resolved "https://registry.npmjs.org/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
 
-fast-glob@^2.0.2:
+fast-glob@^2.0.2, fast-glob@^2.2.6:
   version "2.2.7"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-2.2.7.tgz#6953857c3afa475fff92ee6015d52da70a4cd39d"
   dependencies:
@@ -5757,6 +5830,19 @@ globby@8.0.1:
     pify "^3.0.0"
     slash "^1.0.0"
 
+globby@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.npmjs.org/globby/-/globby-9.2.0.tgz#fd029a706c703d29bdd170f4b6db3a3f7a7cb63d"
+  dependencies:
+    "@types/glob" "^7.1.1"
+    array-union "^1.0.2"
+    dir-glob "^2.2.2"
+    fast-glob "^2.2.6"
+    glob "^7.1.3"
+    ignore "^4.0.3"
+    pify "^4.0.1"
+    slash "^2.0.0"
+
 globby@^8.0.1:
   version "8.0.2"
   resolved "https://registry.npmjs.org/globby/-/globby-8.0.2.tgz#5697619ccd95c5275dbb2d6faa42087c1a941d8d"
@@ -5777,17 +5863,12 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2:
   version "4.2.0"
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.0.tgz#8d8fdc73977cb04104721cb53666c1ca64cd328b"
 
-graphql-extensions@0.7.4:
-  version "0.7.4"
-  resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.7.4.tgz#78327712822281d5778b9210a55dc59c93a9c184"
+graphql-extensions@0.7.7:
+  version "0.7.7"
+  resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.7.7.tgz#19f4dea35391065de72b25def98f8396887bdf43"
   dependencies:
     "@apollographql/apollo-tools" "^0.3.6"
-
-graphql-extensions@0.7.6:
-  version "0.7.6"
-  resolved "https://registry.npmjs.org/graphql-extensions/-/graphql-extensions-0.7.6.tgz#80cdddf08b0af12525529d1922ee2ea0d0cc8ecf"
-  dependencies:
-    "@apollographql/apollo-tools" "^0.3.6"
+    apollo-server-env "2.4.0"
 
 graphql-subscriptions@^1.0.0:
   version "1.1.0"
@@ -6118,7 +6199,7 @@ ignore@^3.3.5:
   version "3.3.10"
   resolved "https://registry.npmjs.org/ignore/-/ignore-3.3.10.tgz#0a97fb876986e8081c631160f8f9f389157f0043"
 
-ignore@^4.0.6:
+ignore@^4.0.3, ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.npmjs.org/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
 
@@ -6232,8 +6313,8 @@ inquirer@6.2.0:
     through "^2.3.6"
 
 inquirer@^6.2.2:
-  version "6.4.1"
-  resolved "https://registry.npmjs.org/inquirer/-/inquirer-6.4.1.tgz#7bd9e5ab0567cd23b41b0180b68e0cfa82fc3c0b"
+  version "6.5.0"
+  resolved "https://registry.npmjs.org/inquirer/-/inquirer-6.5.0.tgz#2303317efc9a4ea7ec2e2df6f86569b734accf42"
   dependencies:
     ansi-escapes "^3.2.0"
     chalk "^2.4.2"
@@ -6241,7 +6322,7 @@ inquirer@^6.2.2:
     cli-width "^2.0.0"
     external-editor "^3.0.3"
     figures "^2.0.0"
-    lodash "^4.17.11"
+    lodash "^4.17.12"
     mute-stream "0.0.7"
     run-async "^2.2.0"
     rxjs "^6.4.0"
@@ -6938,7 +7019,7 @@ js-tokens@^3.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
 
-js-yaml@^3.13.1:
+js-yaml@^3.13.0, js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.npmjs.org/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
   dependencies:
@@ -7389,7 +7470,7 @@ lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.npmjs.org/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
 
-lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.2.0:
+lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.4, lodash@^4.2.0:
   version "4.17.14"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
 
@@ -8432,6 +8513,10 @@ path-is-absolute@1.0.1, path-is-absolute@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz#174b9268735534ffbc7ace6bf53a5a9e1b5c5f5f"
 
+path-is-inside@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/path-is-inside/-/path-is-inside-1.0.2.tgz#365417dede44430d1c11af61027facf074bdfc53"
+
 path-key@^2.0.0, path-key@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/path-key/-/path-key-2.0.1.tgz#411cadb574c5a140d3a4b1910d40d80cc9f40b40"
@@ -9413,6 +9498,10 @@ seamless-immutable@^7.1.3:
   version "5.7.0"
   resolved "https://registry.npmjs.org/semver/-/semver-5.7.0.tgz#790a7cf6fea5459bac96110b29b60412dc8ff96b"
 
+semver@6.1.1:
+  version "6.1.1"
+  resolved "https://registry.npmjs.org/semver/-/semver-6.1.1.tgz#53f53da9b30b2103cd4f15eab3a18ecbcb210c9b"
+
 semver@^6.0.0, semver@^6.1.1:
   version "6.2.0"
   resolved "https://registry.npmjs.org/semver/-/semver-6.2.0.tgz#4d813d9590aaf8a9192693d6c85b9344de5901db"
@@ -9672,8 +9761,8 @@ spdx-expression-parse@^3.0.0:
     spdx-license-ids "^3.0.0"
 
 spdx-license-ids@^3.0.0:
-  version "3.0.4"
-  resolved "https://registry.npmjs.org/spdx-license-ids/-/spdx-license-ids-3.0.4.tgz#75ecd1a88de8c184ef015eafb51b5b48bfd11bb1"
+  version "3.0.5"
+  resolved "https://registry.npmjs.org/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
 
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
@@ -10846,6 +10935,13 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yarn-utilities@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/yarn-utilities/-/yarn-utilities-0.1.1.tgz#1e303287479370cada976028a31998780d0f4e8d"
+  dependencies:
+    "@yarnpkg/lockfile" "^1.1.0"
+    semver "^6.0.0"
 
 yauzl@2.4.1:
   version "2.4.1"

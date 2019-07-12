@@ -1,0 +1,10 @@
+{
+  "workspace": "sandbox",
+  "projects": [
+    "a",
+    "b",
+    "c",
+    "downstream",
+    "not-downstream"
+  ]
+}
