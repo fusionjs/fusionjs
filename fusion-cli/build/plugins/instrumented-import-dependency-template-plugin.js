@@ -193,12 +193,16 @@ class InstrumentedImportDependencyTemplatePlugin {
                     let moduleId = dep.module.id;
                     if (dep.module.id === null && dep.module.libIdent) {
                       moduleId = dep.module.libIdent({
-                        context: compiler.options.context
+                        context: compiler.options.context,
                       });
                     }
                     block.dependencies[
                       index
-                    ] = new InstrumentedImportDependency(dep, this.opts, moduleId);
+                    ] = new InstrumentedImportDependency(
+                      dep,
+                      this.opts,
+                      moduleId
+                    );
                   }
                 });
               });
@@ -219,7 +223,7 @@ class InstrumentedImportDependencyTemplatePlugin {
             // Some modules lose their id by this point
             // Reassign the cached module id so it matches the id used in the instrumentation
             const id = module.libIdent({
-              context: compiler.options.context
+              context: compiler.options.context,
             });
             const moduleId = getCachedModuleId(id);
             if (moduleId) {
