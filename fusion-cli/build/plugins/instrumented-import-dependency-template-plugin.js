@@ -35,7 +35,7 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
   .Template;
 
 class InstrumentedImportDependency extends ImportDependency {
-  constructor(dep, opts, moduleId) {
+  constructor(dep, opts, moduleIdent) {
     super(dep.request, dep.originModule, dep.block);
     this.module = dep.module;
     this.loc = dep.loc;
@@ -47,7 +47,7 @@ class InstrumentedImportDependency extends ImportDependency {
      * This compilation phase is earlier than moduleIds, so
      *  we must create our own and cache it based on the module identifier
      */
-    dep.module.id = createCachedModuleId(moduleId);
+    dep.module.id = createCachedModuleId(moduleIdent);
   }
   getInstrumentation() {
     // client-side, use built-in values
