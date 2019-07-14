@@ -35,13 +35,19 @@ const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDepende
   .Template;
 
 class InstrumentedImportDependency extends ImportDependency {
-  constructor(dep, opts) {
+  constructor(dep, opts, moduleId) {
     super(dep.request, dep.originModule, dep.block);
     this.module = dep.module;
     this.loc = dep.loc;
     if (opts.compilation === 'client') {
       this.translationsManifest = opts.i18nManifest;
     }
+    /**
+     * Production builds may have no id at this point
+     * This compilation phase is earlier than moduleIds, so
+     *  we must create our own and cache it based on the module identifier
+     */
+    dep.module.id = createCachedModuleId(moduleId);
   }
   getInstrumentation() {
     // client-side, use built-in values
@@ -116,11 +122,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
       chunkIds = getChunkGroupIds(dep.block.chunkGroup);
     }
 
-    // This is a hack. Some production builds had undefined for the module.id
-    // which broke the build.
-    dep.module.id =
-      dep.module.id || (dep.module.identifier && dep.module.identifier());
-
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
       module: dep.module,
@@ -189,9 +190,15 @@ class InstrumentedImportDependencyTemplatePlugin {
               module.blocks.forEach(block => {
                 block.dependencies.forEach((dep, index) => {
                   if (dep instanceof ImportDependency) {
+                    let moduleId = dep.module.id;
+                    if (dep.module.id === null && dep.module.libIdent) {
+                      moduleId = dep.module.libIdent({
+                        context: compiler.options.context
+                      });
+                    }
                     block.dependencies[
                       index
-                    ] = new InstrumentedImportDependency(dep, this.opts);
+                    ] = new InstrumentedImportDependency(dep, this.opts, moduleId);
                   }
                 });
               });
@@ -200,10 +207,52 @@ class InstrumentedImportDependencyTemplatePlugin {
         });
       });
     }
+    /**
+     * server and client
+     * Ensure custom module ids are used instead of hashed module ids
+     * Based on https://github.com/gogoair/custom-module-ids-webpack-plugin
+     */
+    compiler.hooks.compilation.tap(name, (compilation, params) => {
+      compilation.hooks.beforeModuleIds.tap(name, modules => {
+        for (const module of modules) {
+          if (module.id === null && module.libIdent) {
+            // Some modules lose their id by this point
+            // Reassign the cached module id so it matches the id used in the instrumentation
+            const id = module.libIdent({
+              context: compiler.options.context
+            });
+            const moduleId = getCachedModuleId(id);
+            if (moduleId) {
+              module.id = moduleId;
+            }
+          }
+        }
+      });
+    });
   }
 }
 
 module.exports = InstrumentedImportDependencyTemplatePlugin;
+
+const customModuleIds = new Map();
+let moduleCounter = 0;
+
+/**
+ * Create custom module id, cached based on the module identifier
+ * id format: `__fusion__0`
+ */
+function createCachedModuleId(ident) {
+  if (customModuleIds.has(ident)) {
+    return customModuleIds.get(ident);
+  }
+  const moduleId = `__fusion__${(moduleCounter++).toString()}`;
+  customModuleIds.set(ident, moduleId);
+  return moduleId;
+}
+
+function getCachedModuleId(ident) {
+  return customModuleIds.get(ident);
+}
 
 /**
  * Adapted from
