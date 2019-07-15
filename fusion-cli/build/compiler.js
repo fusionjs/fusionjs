@@ -202,7 +202,7 @@ function Compiler(
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      if (worker == undefined)
+      if (worker === void 0)
         worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
           computeWorkerKey: filename => filename,
           exposedMethods: ['runTransformation'],
