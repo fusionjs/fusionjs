@@ -140,7 +140,30 @@ const pluginFactory: () => RPCPluginType = () =>
           const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
           const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
-            await parseBody(ctx, () => Promise.resolve());
+            try {
+              await parseBody(ctx, () => Promise.resolve());
+            } catch (e) {
+              ctx.body = {
+                status: 'failure',
+                data: {
+                  message: e.message,
+                  code: e.type || 'ERR_BAD_BODY',
+                  meta: e.meta,
+                },
+              };
+              if (scopedEmitter) {
+                scopedEmitter.emit(statKey, {
+                  method,
+                  error: e,
+                  status: 'failure',
+                  origin: 'browser',
+                  timing: ms() - startTime,
+                });
+              }
+              // don't try to call handler
+              return;
+            }
+
             try {
               const result = await handlers[method](ctx.request.body, ctx);
               ctx.body = {
