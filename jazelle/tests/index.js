@@ -56,7 +56,7 @@ async function t(test) {
   const match = (process.argv[2] || '').toLowerCase();
   if (test.name.toLowerCase().indexOf(match) > -1) {
     if (match) console.log(`Testing ${test.name}`);
-    return test();
+    return test().catch(test);
   }
 }
 
@@ -111,13 +111,10 @@ async function testInstallAddUpgradeRemove() {
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
   });
-  const binCmd = `${__dirname}/tmp/commands/node_modules/.bin/a`;
-  const binScript = await read(binCmd, 'utf8');
   const bDep = `${__dirname}/tmp/commands/node_modules/b`;
   const bindDep = `${__dirname}/tmp/commands/node_modules/function-bind`;
   const downstreamLockfile = `${__dirname}/tmp/commands/downstream/yarn.lock`;
   const notDownstreamLockfile = `${__dirname}/tmp/commands/not-downstream/yarn.lock`;
-  assert.equal(binScript, 'echo 1');
   assert(await exists(bDep));
   assert(await exists(bindDep));
   assert(await exists(downstreamLockfile));

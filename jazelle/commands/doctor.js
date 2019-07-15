@@ -3,7 +3,7 @@ const semver = require('semver');
 const {resolve} = require('path');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
-const {read, exists} = require('../utils/node-helpers.js');
+const {read} = require('../utils/node-helpers.js');
 
 /*::
 export type DoctorArgs = {
@@ -23,7 +23,11 @@ const doctor /*: Doctor */ = async ({root, cwd}) => {
     ...(await detectHoistMismatch({root, deps})),
     ...(await detectCyclicalDeps({deps})),
   ];
-  errors.forEach(e => console.log(`${e}\n`));
+  if (errors.length > 0) {
+    errors.forEach(e => console.log(`${e}\n`));
+  } else {
+    console.log(`No problems found in ${cwd}`);
+  }
 };
 
 const detectDanglingPeerDeps = async ({deps}) => {
@@ -52,9 +56,6 @@ const detectHoistMismatch = async ({root, deps}) => {
   await withDeps(deps, async (dep, dependencies, key) => {
     const range = dependencies[key];
     const file = `${root}/node_modules/${key}/package.json`;
-    if (!(await exists(file))) {
-      throw new Error(`File ${file} not found. Run \`jazelle install\``);
-    }
     const {version} = JSON.parse(await read(file, 'utf8'));
     if (!semver.satisfies(version, range)) {
       const error =

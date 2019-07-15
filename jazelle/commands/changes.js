@@ -7,8 +7,8 @@ type ChangesArgs = {
 };
 type Changes = (ChangesArgs) => Promise<void>;
 */
-const changes /*: Changes */ = async ({root}) => {
-  const targets = await findChangedTargets({root});
+const changes /*: Changes */ = async ({root, type}) => {
+  const targets = await findChangedTargets({root, type});
   console.log(targets.join('\n'));
 };
 
