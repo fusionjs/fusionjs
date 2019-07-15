@@ -11,6 +11,7 @@ import {
   ApolloRenderEnhancer,
   GraphQLSchemaToken,
   ApolloClientToken,
+  ApolloClientPlugin,
   ApolloBodyParserConfigToken,
 } from '../index';
 import gql from 'graphql-tag';
@@ -43,10 +44,7 @@ async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   });
   app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(GraphQLSchemaToken, schema);
-  app.register(ApolloClientToken, ctx => {
-    // $FlowFixMe
-    return {}; // should hit server
-  });
+  app.register(ApolloClientToken, ApolloClientPlugin);
   if (enhanceApp) {
     enhanceApp(app);
   }
