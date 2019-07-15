@@ -16,6 +16,7 @@ export type Metadata = {
 export type PackageJson = {
   name: string,
   version: string,
+  bin?: string | {[string]: string},
   scripts?: {[string]: string},
   dependencies?: {[string]: string},
   devDependencies?: {[string]: string},
