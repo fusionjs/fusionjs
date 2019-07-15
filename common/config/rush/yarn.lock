@@ -48,7 +48,7 @@
   dependencies:
     "@babel/highlight" "7.0.0-beta.55"
 
-"@babel/core@^7.0.0-beta.55", "@babel/core@^7.1.0", "@babel/core@^7.2.2", "@babel/core@^7.4.4", "@babel/core@^7.5.4":
+"@babel/core@^7.0.0-beta.55", "@babel/core@^7.1.0", "@babel/core@^7.2.2", "@babel/core@^7.5.4":
   version "7.5.4"
   resolved "https://registry.npmjs.org/@babel/core/-/core-7.5.4.tgz#4c32df7ad5a58e9ea27ad025c11276324e0b4ddd"
   dependencies:
@@ -747,13 +747,6 @@
     "@babel/helper-builder-binary-assignment-operator-visitor" "^7.1.0"
     "@babel/helper-plugin-utils" "^7.0.0"
 
-"@babel/plugin-transform-flow-strip-types@7.2.3":
-  version "7.2.3"
-  resolved "https://registry.npmjs.org/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.2.3.tgz#e3ac2a594948454e7431c7db33e1d02d51b5cd69"
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.0.0"
-    "@babel/plugin-syntax-flow" "^7.2.0"
-
 "@babel/plugin-transform-flow-strip-types@^7.0.0", "@babel/plugin-transform-flow-strip-types@^7.0.0-beta.55", "@babel/plugin-transform-flow-strip-types@^7.2.3", "@babel/plugin-transform-flow-strip-types@^7.4.4":
   version "7.4.4"
   resolved "https://registry.npmjs.org/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.4.4.tgz#d267a081f49a8705fc9146de0768c6b58dccd8f7"
@@ -1040,7 +1033,7 @@
     core-js "^2.6.5"
     regenerator-runtime "^0.13.2"
 
-"@babel/preset-env@^7.4.4", "@babel/preset-env@^7.5.4":
+"@babel/preset-env@^7.5.4":
   version "7.5.4"
   resolved "https://registry.npmjs.org/@babel/preset-env/-/preset-env-7.5.4.tgz#64bc15041a3cbb0798930319917e70fcca57713d"
   dependencies:
@@ -1570,12 +1563,12 @@
 
 "@rush-temp/fusion-cli@file:./projects/fusion-cli.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-cli.tgz#25cb112c59c2a6b846fc4f7694e7c97ee8e411e1"
+  resolved "file:./projects/fusion-cli.tgz#ad76fd9ffffdda2fe227ad5613f761f06fea7809"
   dependencies:
-    "@babel/core" "^7.4.4"
+    "@babel/core" "^7.5.4"
     "@babel/plugin-syntax-dynamic-import" "7.2.0"
-    "@babel/plugin-transform-flow-strip-types" "7.2.3"
-    "@babel/preset-env" "^7.4.4"
+    "@babel/plugin-transform-flow-strip-types" "^7.4.4"
+    "@babel/preset-env" "^7.5.4"
     "@babel/preset-react" "^7.0.0"
     "@gfx/zopfli" "^1.0.10"
     "@rtsao/plugin-proposal-class-properties" "7.0.1-patch.1"
@@ -1595,17 +1588,18 @@
     enzyme "^3.9.0"
     enzyme-adapter-react-16 "^1.12.1"
     enzyme-to-json "^3.3.4"
-    eslint "^5.16.0"
+    eslint "^6.0.1"
     eslint-plugin-cup "^2.0.1"
-    eslint-plugin-flowtype "^3.8.1"
-    eslint-plugin-import "^2.17.2"
-    eslint-plugin-jest "^22.5.1"
+    eslint-plugin-flowtype "^3.11.1"
+    eslint-plugin-import "^2.18.0"
+    eslint-plugin-jest "^22.7.2"
     eslint-plugin-prettier "^3.0.1"
-    eslint-plugin-react "^7.13.0"
-    flow-bin "^0.98.1"
+    eslint-plugin-react "^7.14.2"
+    eslint-plugin-react-hooks "^1.6.1"
+    flow-bin "^0.102.0"
     get-port "^5.0.0"
     globby "^8.0.1"
-    graphql "^14.1.1"
+    graphql "^14.4.2"
     graphql-tag "^2.10.1"
     http-proxy "^1.17.0"
     iltorb "^2.4.1"
@@ -1623,7 +1617,7 @@
     locale "^0.1.0"
     make-dir "^1.3.0"
     memory-fs "^0.4.1"
-    prettier "^1.17.0"
+    prettier "^1.18.2"
     progress-bar-webpack-plugin "^1.11.0"
     puppeteer "^1.15.0"
     react "^16.8.6"
@@ -1635,11 +1629,11 @@
     request-promise "^4.2.4"
     resolve-from "^4.0.0"
     rimraf "^2.6.2"
-    sade "^1.4.1"
+    sade "^1.6.0"
     source-map-support "^0.5.9"
     tape "^4.10.1"
     terser-webpack-plugin "^1.1.0"
-    unfetch "^4.0.1"
+    unfetch "^4.1.0"
     webpack "4.26.1"
     webpack-hot-middleware "^2.24.3"
     winston "^3.1.0"
@@ -5559,10 +5553,6 @@ flow-bin@^0.102.0:
   version "0.102.0"
   resolved "https://registry.npmjs.org/flow-bin/-/flow-bin-0.102.0.tgz#3d5de44bcc26d26585e932b3201988b766f9b380"
 
-flow-bin@^0.98.1:
-  version "0.98.1"
-  resolved "https://registry.npmjs.org/flow-bin/-/flow-bin-0.98.1.tgz#a8d781621c91703df69928acc83c9777e2fcbb49"
-
 flush-write-stream@^1.0.0:
   version "1.1.1"
   resolved "https://registry.npmjs.org/flush-write-stream/-/flush-write-stream-1.1.1.tgz#8dd7d873a1babc207d94ead0c2e0e44276ebf2e8"
@@ -5909,7 +5899,7 @@ graphql-upload@^8.0.2:
     http-errors "^1.7.2"
     object-path "^0.11.4"
 
-graphql@^14.1.1, graphql@^14.4.2:
+graphql@^14.4.2:
   version "14.4.2"
   resolved "https://registry.npmjs.org/graphql/-/graphql-14.4.2.tgz#553a7d546d524663eda49ed6df77577be3203ae3"
   dependencies:
@@ -8353,7 +8343,7 @@ os-locale@^2.0.0:
     lcid "^1.0.0"
     mem "^1.1.0"
 
-os-locale@^3.0.0, os-locale@^3.1.0:
+os-locale@^3.0.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/os-locale/-/os-locale-3.1.0.tgz#a802a6ee17f24c10483ab9935719cef4ed16bf1a"
   dependencies:
@@ -8654,7 +8644,7 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@^1.17.0, prettier@^1.18.2:
+prettier@^1.18.2:
   version "1.18.2"
   resolved "https://registry.npmjs.org/prettier/-/prettier-1.18.2.tgz#6823e7c5900017b4bd3acf46fe9ac4b4d7bda9ea"
 
@@ -9440,7 +9430,7 @@ rxjs@^6.1.0, rxjs@^6.4.0:
   dependencies:
     tslib "^1.9.0"
 
-sade@^1.4.1, sade@^1.6.0:
+sade@^1.6.0:
   version "1.6.0"
   resolved "https://registry.npmjs.org/sade/-/sade-1.6.0.tgz#b865b18113a73291f2a480f2e911ad5e975923e6"
   dependencies:
@@ -10386,7 +10376,7 @@ ultron@~1.1.0:
   version "1.1.1"
   resolved "https://registry.npmjs.org/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
 
-unfetch@^4.0.1, unfetch@^4.1.0:
+unfetch@^4.1.0:
   version "4.1.0"
   resolved "https://registry.npmjs.org/unfetch/-/unfetch-4.1.0.tgz#6ec2dd0de887e58a4dee83a050ded80ffc4137db"
 
@@ -10864,7 +10854,7 @@ yargs-parser@^11.1.1:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
-yargs-parser@^13.0.0, yargs-parser@^13.1.0:
+yargs-parser@^13.0.0, yargs-parser@^13.1.1:
   version "13.1.1"
   resolved "https://registry.npmjs.org/yargs-parser/-/yargs-parser-13.1.1.tgz#d26058532aa06d365fe091f6a1fc06b2f7e5eca0"
   dependencies:
@@ -10895,20 +10885,19 @@ yargs@^12.0.2:
     yargs-parser "^11.1.1"
 
 yargs@^13.2.2:
-  version "13.2.4"
-  resolved "https://registry.npmjs.org/yargs/-/yargs-13.2.4.tgz#0b562b794016eb9651b98bd37acf364aa5d6dc83"
+  version "13.3.0"
+  resolved "https://registry.npmjs.org/yargs/-/yargs-13.3.0.tgz#4c657a55e07e5f2cf947f8a366567c04a0dedc83"
   dependencies:
     cliui "^5.0.0"
     find-up "^3.0.0"
     get-caller-file "^2.0.1"
-    os-locale "^3.1.0"
     require-directory "^2.1.1"
     require-main-filename "^2.0.0"
     set-blocking "^2.0.0"
     string-width "^3.0.0"
     which-module "^2.0.0"
     y18n "^4.0.0"
-    yargs-parser "^13.1.0"
+    yargs-parser "^13.1.1"
 
 yargs@^3.32.0:
   version "3.32.0"
