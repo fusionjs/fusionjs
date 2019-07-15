@@ -167,7 +167,7 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  var worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+  let worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
     computeWorkerKey: filename => filename,
     exposedMethods: ['runTransformation'],
     forkOptions: {stdio: 'inherit'},
@@ -210,12 +210,12 @@ function Compiler(
         });
     });
     compiler.hooks.watchClose.tap('KillWorkers', stats => {
-      if (worker != undefined) worker.end();
+      if (worker !== void 0) worker.end();
       worker = void 0;
     });
   } else {
     compiler.hooks.done.tap('KillWorkers', stats => {
-      if (worker != undefined) worker.end();
+      if (worker !== void 0) worker.end();
       worker = void 0;
     });
   }
