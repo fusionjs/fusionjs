@@ -338,6 +338,11 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle test`](#jazelle-test)
 - [`jazelle lint`](#jazelle-lint)
 - [`jazelle flow`](#jazelle-flow)
+- [`jazelle start`](#jazelle-start)
+- [`jazelle bazel`](#jazelle-bazel)
+- [`jazelle yarn`](#jazelle-yarn)
+- [`jazelle bump`](#jazelle-bump)
+- [`jazelle doctor`](#jazelle-doctor)
 - [Running NPM scripts](#running-npm-scripts)
 - [Colorized errors](#colorized-errors)
 
@@ -553,6 +558,18 @@ Runs a Yarn command
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of Yarn arguments
 
+### `jazelle bump`
+
+Bumps a package and its dependencies to the next version. It also updates all matching local packages to match
+
+`jazelle bump [type] [--frozePackageJson] --cwd [cwd]`
+
+- `type` - Must be one of `major`, `premajor`, `minor`, `preminor`, `patch`, `prepatch`, `prerelease` or `none`
+- `frozenPackageJson` - If this flag is present, throws if changes to package.json are required. Useful for warning users to commit version bumps before publishing
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+
+The bump command is idempotent, i.e. running it twice without publishing results in the same versions.
+
 ### `jazelle doctor`
 
 Suggests fixes for some types of issues
@@ -595,6 +612,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [flow](#flow)
 - [bazel](#bazel)
 - [yarn](#yarn)
+- [bump](#bump)
 - [doctor](#doctor)
 - [getRootDir](#getRootDir)
 
@@ -840,6 +858,19 @@ Runs a Yarn command
 - `cwd` - Project folder (absolute path)
 - `command`- A Yarn command (e.g. `add`)
 - `args` - List of Yarn args
+
+### `bump`
+
+Bumps a package and its dependencies to the next version. It also updates all matching local packages to match
+
+`let bump = ({root: string, cwd: string, type: string, frozenPackageJson?: boolean})`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
+- `type` - Must be one of `major`, `premajor`, `minor`, `preminor`, `patch`, `prepatch`, `prerelease` or `none`
+- `frozenPackageJson` - If true, throws if changes to package.json are required. Useful for warning users to commit version bumps before publishing. Defaults to false.
+
+The bump command is idempotent, i.e. running it twice without publishing results in the same versions.
 
 ### `doctor`
 
