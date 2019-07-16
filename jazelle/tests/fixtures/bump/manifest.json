@@ -1,5 +1,6 @@
 {
   "projects": [
+    "not-a-real-downstream",
     "not-a-real-project",
     "not-a-real-dep"
   ]

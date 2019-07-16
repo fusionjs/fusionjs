@@ -192,7 +192,7 @@ const runCLI /*: RunCLI */ = async argv => {
         async ({cwd}) => doctor({root, cwd}),
       ],
     },
-    async ({cwd}) => yarn({cwd, args: [command, ...rest]})
+    async () => {}
   );
 };
 
