@@ -22,7 +22,6 @@ const {
   svgoWebpackPlugin,
 } = require('../lib/compression');
 const resolveFrom = require('resolve-from');
-const getBabelConfig = require('./get-babel-config.js');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const {
@@ -40,10 +39,12 @@ const {
   translationsManifestContextKey,
   clientChunkMetadataContextKey,
   devContextKey,
+  workerKey,
 } = require('./loaders/loader-context.js');
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
+const getBabelConfig = require('./get-babel-config.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -95,7 +96,8 @@ export type WebpackConfigOpts = {|
   fusionConfig: FusionRC,
   legacyPkgConfig?: {
     node?: Object
-  }
+  },
+  worker: Object
 |};
 */
 
@@ -113,6 +115,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     zopfli,
     minify,
     legacyPkgConfig = {},
+    worker,
   } = opts;
   const main = 'src/main.js';
 
@@ -124,7 +127,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
 
-  const babelConfig = getBabelConfig({
+  const babelConfigData = {
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: true,
     plugins:
@@ -135,36 +138,23 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       fusionConfig.babel && fusionConfig.babel.presets
         ? fusionConfig.babel.presets
         : [],
-  });
+  };
 
-  const babelOverrides = getBabelConfig({
+  const babelOverridesData = {
     dev: dev,
     fusionTransforms: true,
     assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: false,
-  });
+  };
 
-  const legacyBabelConfig = getBabelConfig({
-    target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-    specOnly: true,
-    plugins:
-      fusionConfig.babel && fusionConfig.babel.plugins
-        ? fusionConfig.babel.plugins
-        : [],
-    presets:
-      fusionConfig.babel && fusionConfig.babel.presets
-        ? fusionConfig.babel.presets
-        : [],
-  });
-
-  const legacyBabelOverrides = getBabelConfig({
+  const legacyBabelOverridesData = {
     dev: dev,
     fusionTransforms: true,
     assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
     specOnly: false,
-  });
+  };
 
   const getTransformDefault = modulePath => {
     if (
@@ -199,7 +189,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     : JS_EXT_PATTERN;
 
   // $FlowFixMe
-  babelOverrides.test = legacyBabelOverrides.test = modulePath => {
+  getBabelConfig(babelOverridesData).test = getBabelConfig(
+    legacyBabelOverridesData
+  ).test = modulePath => {
     if (!JS_EXT_PATTERN.test(modulePath)) {
       return false;
     }
@@ -310,13 +302,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
-                ...babelConfig,
+                babelConfigData: {...babelConfigData},
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */
                 overrides: [
                   {
-                    ...babelOverrides,
+                    ...babelOverridesData,
                   },
                 ],
               },
@@ -334,13 +326,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
-                ...babelConfig,
+                babelConfigData: {...babelConfigData},
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */
                 overrides: [
                   {
-                    ...babelOverrides,
+                    ...babelOverridesData,
                   },
                 ],
               },
@@ -358,13 +350,25 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
-                ...legacyBabelConfig,
+                babelConfigData: {
+                  target:
+                    runtime === 'server' ? 'node-bundled' : 'browser-legacy',
+                  specOnly: true,
+                  plugins:
+                    fusionConfig.babel && fusionConfig.babel.plugins
+                      ? fusionConfig.babel.plugins
+                      : [],
+                  presets:
+                    fusionConfig.babel && fusionConfig.babel.presets
+                      ? fusionConfig.babel.presets
+                      : [],
+                },
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */
                 overrides: [
                   {
-                    ...legacyBabelOverrides,
+                    ...legacyBabelOverridesData,
                   },
                 ],
               },
@@ -478,6 +482,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             translationsManifestContextKey,
             state.i18nDeferredManifest
           ),
+      new LoaderContextProviderPlugin(workerKey, worker),
       !dev && zopfli && zopfliWebpackPlugin,
       !dev && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
