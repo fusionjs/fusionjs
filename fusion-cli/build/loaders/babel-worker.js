@@ -7,11 +7,12 @@
  */
 /* eslint-env node */
 
-const PersistentDiskCache = require('../persistent-disk-cache.js');
-const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
-const path = require('path');
-const babel = require('@babel/core');
-const getBabelConfig = require('../get-babel-config.js');
+const PersistentDiskCache = require("../persistent-disk-cache.js");
+const TranslationsExtractor = require("../babel-plugins/babel-plugin-i18n");
+const path = require("path");
+const babel = require("@babel/core");
+const getBabelConfig = require("../get-babel-config.js");
+const v8 = require("v8");
 
 module.exports = {
   runTransformation,
@@ -61,7 +62,7 @@ async function runTransformation(
 
   const options = config.options;
 
-  const cacheDir = path.join(process.cwd(), 'node_modules/.fusion_babel-cache');
+  const cacheDir = path.join(process.cwd(), "node_modules/.fusion_babel-cache");
 
   const diskCache = getCache(cacheDir);
   const result = await diskCache.get(cacheKey, () => {
@@ -72,7 +73,7 @@ async function runTransformation(
     // This only does side effects, so it is ok this doesn't affect cache key
     // This plugin is here because webpack config -> loader options
     // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+    options.plugins.unshift([TranslationsExtractor, { translationIds }]);
 
     // make the ast
     const ast = babel.parseSync(source, options);
@@ -86,18 +87,18 @@ async function runTransformation(
       return null;
     }
     let transformations = [];
-    transformations[loaderOptions.babelConfigData.target + 'asd'] = {
+    transformations[loaderOptions.babelConfigData.target] = {
       metadata,
       ...transformed,
     };
-    return {
+    return v8.serialize({
       ast,
       transformations,
-    };
+    });
   });
 
   if (result != null) {
-    const {ast, transformations} = result;
+    const { ast, transformations } = v8.deserialize(result);
     if (transformations[loaderOptions.babelConfigData.target] != undefined) {
       return transformations[loaderOptions.babelConfigData.target];
     } else {
@@ -109,7 +110,7 @@ async function runTransformation(
       // This only does side effects, so it is ok this doesn't affect cache key
       // This plugin is here because webpack config -> loader options
       // requires serialization. But we want to pass translationsIds directly.
-      options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+      options.plugins.unshift([TranslationsExtractor, { translationIds }]);
 
       if (translationIds.size > 0) {
         metadata.translationIds = Array.from(translationIds.values());
@@ -117,22 +118,16 @@ async function runTransformation(
       if (!transformed) {
         return null;
       }
-      transformations[loaderOptions.babelConfigData.target + 'ASD'] = {
+      transformations[loaderOptions.babelConfigData.target] = {
         metadata,
         ...transformed,
       };
 
-      let cacheObj = {
-        ast,
-        transformations,
-      };
-
-      diskCache.put(cacheKey, cacheObj);
+      diskCache.put(cacheKey, v8.serialize({ ast, transformations }));
       return {
         metadata,
         ...transformed,
       };
-      //return transformations[loaderOptions.babelConfigData.target];
     }
   }
   return result;
@@ -153,13 +148,13 @@ function transform(ast, source, options) {
   // https://github.com/babel/babel/blob/master/packages/babel-core/src/transformation/index.js
   // For discussion on this topic see here:
   // https://github.com/babel/babel-loader/pull/629
-  const {code, map, sourceType} = result;
+  const { code, map, sourceType } = result;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
   }
 
-  return {code, map, sourceType};
+  return { code, map, sourceType };
 }
 
 class LoaderError extends Error {
@@ -168,9 +163,9 @@ class LoaderError extends Error {
   */
   constructor(err) {
     super();
-    const {name, message, codeFrame, hideStack} = formatError(err);
-    this.name = 'BabelLoaderError';
-    this.message = `${name ? `${name}: ` : ''}${message}\n\n${codeFrame}\n`;
+    const { name, message, codeFrame, hideStack } = formatError(err);
+    this.name = "BabelLoaderError";
+    this.message = `${name ? `${name}: ` : ""}${message}\n\n${codeFrame}\n`;
     this.hideStack = hideStack;
     Error.captureStackTrace(this, this.constructor);
   }
@@ -180,20 +175,20 @@ const STRIP_FILENAME_RE = /^[^:]+: /;
 
 function formatError(err) {
   if (err instanceof SyntaxError) {
-    err.name = 'SyntaxError';
-    err.message = err.message.replace(STRIP_FILENAME_RE, '');
+    err.name = "SyntaxError";
+    err.message = err.message.replace(STRIP_FILENAME_RE, "");
     err.hideStack = true;
   } else if (err instanceof TypeError) {
     err.name = null;
-    err.message = err.message.replace(STRIP_FILENAME_RE, '');
+    err.message = err.message.replace(STRIP_FILENAME_RE, "");
     err.hideStack = true;
   }
   return err;
 }
 
 function relative(root, file) {
-  const rootPath = root.replace(/\\/g, '/').split('/')[1];
-  const filePath = file.replace(/\\/g, '/').split('/')[1];
+  const rootPath = root.replace(/\\/g, "/").split("/")[1];
+  const filePath = file.replace(/\\/g, "/").split("/")[1];
   // If the file is in a completely different root folder
   // use the absolute path of the file
   if (rootPath && rootPath !== filePath) {
