@@ -56,7 +56,7 @@ async function t(test) {
   const match = (process.argv[2] || '').toLowerCase();
   if (test.name.toLowerCase().indexOf(match) > -1) {
     if (match) console.log(`Testing ${test.name}`);
-    return test();
+    return test().catch(test);
   }
 }
 

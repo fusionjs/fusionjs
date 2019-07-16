@@ -478,11 +478,13 @@ jest --testPathPattern=$(jazelle chunk --projects "tests/**/*|!tests/fixtures/**
 ```
 ### `jazelle changes`
 
-Prints a list of Bazel test targets that have changed since the last git commit.
+List projects that have changed since the last git commit.
 
 `jazelle changes`
 
-Targets can be tested via the `bazel test [target]` command.
+- `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
+
+Bazel targets can be tested via the `bazel test [target]` command.
 
 ### `jazelle build`
 
@@ -755,13 +757,14 @@ jest --testPathPattern=$(node -e "console.log(require('jazelle').chunk({projects
 
 ### `changes`
 
-Returns a list of Bazel test targets that have changed since the last git commit.
+List projects that have changed since the last git commit.
 
-`let changed: ({root: string}) => Promise<Array<string>>`
+`let changed: ({root: string, type: string}) => Promise<Array<string>>`
 
 - `root` - Monorepo root folder (absolute path)
+- `type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
-Targets can be tested via the `bazel test [target]` command.
+Bazel targets can be tested via the `bazel test [target]` command.
 
 ### `build`
 

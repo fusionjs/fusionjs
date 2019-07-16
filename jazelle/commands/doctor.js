@@ -23,7 +23,11 @@ const doctor /*: Doctor */ = async ({root, cwd}) => {
     ...(await detectHoistMismatch({root, deps})),
     ...(await detectCyclicalDeps({deps})),
   ];
-  errors.forEach(e => console.log(`${e}\n`));
+  if (errors.length > 0) {
+    errors.forEach(e => console.log(`${e}\n`));
+  } else {
+    console.log(`No problems found in ${cwd}`);
+  }
 };
 
 const detectDanglingPeerDeps = async ({deps}) => {

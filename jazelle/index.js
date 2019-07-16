@@ -120,8 +120,10 @@ const runCLI /*: RunCLI */ = async argv => {
         async ({patterns, jobs, index}) => chunk({root, patterns, jobs, index}),
       ],
       changes: [
-        `Lists Bazel test targets that changed since the last git commit`,
-        () => changes({root}),
+        `Lists Bazel test targets that changed since the last git commit
+
+        --type [type]           'bazel' or 'dirs'`,
+        ({type}) => changes({root, type}),
       ],
       build: [
         `Build a project
