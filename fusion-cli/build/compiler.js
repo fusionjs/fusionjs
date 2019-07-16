@@ -26,8 +26,6 @@ const {
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
 
-const Worker = require('jest-worker').default;
-
 function getErrors(info) {
   let errors = [].concat(info.errors);
   if (info.children.length) {
@@ -167,12 +165,6 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  let worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-    computeWorkerKey: filename => filename,
-    exposedMethods: ['runTransformation'],
-    forkOptions: {stdio: 'inherit'},
-  });
-
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -184,7 +176,6 @@ function Compiler(
     preserveNames,
     zopfli,
     minify,
-    worker,
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
@@ -199,26 +190,6 @@ function Compiler(
       console.log(`End time: ${Date.now()}`);
     });
   }
-
-  if (watch) {
-    compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      if (worker === void 0)
-        worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-          computeWorkerKey: filename => filename,
-          exposedMethods: ['runTransformation'],
-          forkOptions: {stdio: 'inherit'},
-        });
-    });
-    compiler.hooks.watchClose.tap('KillWorkers', stats => {
-      if (worker !== void 0) worker.end();
-      worker = void 0;
-    });
-  } else
-    compiler.hooks.done.tap('KillWorkers', stats => {
-      if (worker !== void 0) worker.end();
-      worker = void 0;
-    });
-
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
