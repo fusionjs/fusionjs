@@ -22,6 +22,7 @@ const {flow} = require('./commands/flow.js');
 const {start} = require('./commands/start.js');
 const {yarn} = require('./commands/yarn.js');
 const {bazel} = require('./commands/bazel.js');
+const {bump} = require('./commands/bump.js');
 const {doctor} = require('./commands/doctor.js');
 const {
   reportMismatchedTopLevelDeps,
@@ -173,7 +174,16 @@ const runCLI /*: RunCLI */ = async argv => {
         [name]                  A yarn command name
         [args...]               A space separated list of arguments
         --cwd [cwd]             Project directory to use`,
-        async ({cwd, name}) => yarn({cwd, args: rest}),
+        async ({cwd}) => yarn({cwd, args: rest}),
+      ],
+      bump: [
+        `Bump version for the specified package, plus changed dependencies
+
+        [type]                  major, premajor, minor, preminor, patch, prepatch, prerelease or none
+        --frozenPackageJson     If true, throws if changes to package.json are required
+        --cwd [cwd]             Project directory to use`,
+        async ({cwd, name: type, frozenPackageJson: frozen}) =>
+          bump({root, cwd, type, frozenPackageJson: Boolean(frozen)}),
       ],
       doctor: [
         `Provides advice for some types of issues
@@ -209,6 +219,7 @@ module.exports = {
   start,
   bazel,
   yarn,
+  bump,
   doctor,
   getRootDir,
 };
