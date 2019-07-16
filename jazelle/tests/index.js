@@ -8,6 +8,7 @@ const {remove} = require('../commands/remove.js');
 const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
+const {bump} = require('../commands/bump.js');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const bazelCmds = require('../utils/bazel-commands.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
@@ -69,6 +70,7 @@ async function runTests() {
     t(testGreenkeep),
     t(testPurge),
     t(testYarn),
+    t(testBump),
     t(testBazelDummy),
     t(testBazelBuild),
     t(testAssertProjectDir),
@@ -235,6 +237,38 @@ async function testYarn() {
     stdio: ['ignore', stream, stream],
   }).catch(() => {});
   assert((await read(streamFile, 'utf8')).includes('Usage:'));
+}
+
+async function testBump() {
+  await exec(`cp -r ${__dirname}/fixtures/bump/ ${__dirname}/tmp/bump`);
+
+  const root = `${__dirname}/tmp/bump`;
+  const cwd = `${__dirname}/tmp/bump/not-a-real-project`;
+
+  const pkgMeta = `${__dirname}/tmp/bump/not-a-real-project/package.json`;
+  const depMeta = `${__dirname}/tmp/bump/not-a-real-dep/package.json`;
+  const downstreamMeta = `${__dirname}/tmp/bump/not-a-real-downstream/package.json`;
+
+  // do not update package.json files in CI
+  // $FlowFixMe `assert` typedef is missing `rejects` method
+  await assert.rejects(
+    bump({root, cwd, type: 'preminor', frozenPackageJson: true})
+  );
+  assert(JSON.parse(await read(pkgMeta)).version, '0.0.0');
+  assert(JSON.parse(await read(depMeta)).version, '0.0.0');
+
+  await bump({root, cwd, type: 'preminor'});
+  assert(JSON.parse(await read(pkgMeta)).version, '0.1.0-0');
+  assert(JSON.parse(await read(depMeta)).version, '0.1.0-0');
+
+  // command should be idempotent
+  await bump({root, cwd, type: 'preminor'});
+  assert(JSON.parse(await read(pkgMeta)).version, '0.1.0-0');
+  assert(JSON.parse(await read(depMeta)).version, '0.1.0-0');
+
+  // downstream is greenkept
+  const meta = JSON.parse(await read(downstreamMeta));
+  assert(meta.dependencies['not-a-real-project'], '0.1.0-0');
 }
 
 // utils
