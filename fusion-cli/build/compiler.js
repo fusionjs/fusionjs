@@ -167,7 +167,11 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
+<<<<<<< HEAD
   var worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+=======
+  let worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+>>>>>>> master
     computeWorkerKey: filename => filename,
     exposedMethods: ['runTransformation'],
     forkOptions: {stdio: 'inherit'},
@@ -202,7 +206,7 @@ function Compiler(
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      if (worker == undefined)
+      if (worker === void 0)
         worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
           computeWorkerKey: filename => filename,
           exposedMethods: ['runTransformation'],
@@ -210,15 +214,15 @@ function Compiler(
         });
     });
     compiler.hooks.watchClose.tap('KillWorkers', stats => {
-      if (worker != undefined) worker.end();
+      if (worker !== void 0) worker.end();
       worker = void 0;
     });
-  } else {
+  } else
     compiler.hooks.done.tap('KillWorkers', stats => {
-      if (worker != undefined) worker.end();
+      if (worker !== void 0) worker.end();
       worker = void 0;
     });
-  }
+
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
