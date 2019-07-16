@@ -4,6 +4,7 @@ const {findChangedTargets} = require('../utils/find-changed-targets.js');
 /*::
 type ChangesArgs = {
   root: string,
+  type: string,
 };
 type Changes = (ChangesArgs) => Promise<void>;
 */

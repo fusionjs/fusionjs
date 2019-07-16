@@ -6,7 +6,7 @@ const {bazel} = require('./binary-paths.js');
 /*::
 export type FindChangedTargetsArgs = {
   root: string,
-  type: 'bazel' | 'dirs',
+  type: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
 */
@@ -67,7 +67,7 @@ const findChangedBazelTargets = async ({root}) => {
     }
     return targets;
   }
-}
+};
 
 async function batch(items, fn) {
   const stdouts = await Promise.all(
