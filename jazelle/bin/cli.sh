@@ -10,7 +10,7 @@ fi
 findroot() {
   if [ -f "WORKSPACE" ]
   then
-    echo "$PWD/WORKSPACE"
+    echo "$PWD/"
   elif [ "$PWD" = "/" ]
   then
     echo ""
@@ -28,13 +28,7 @@ then
 fi
 
 # setup other binaries
-if [ -d "$ROOT" ] && [ ! -d "$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies" ]
-then
-  echo "Setting up Bazel, Node and Yarn"
-  # trigger Bazel repository rules to download node and yarn
-  # then print bazel version info
-  "$BIN/bazelisk" run //:jazelle bazel version
-fi
+"$BIN/bazelisk" run //:jazelle -- noop 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
@@ -43,6 +37,7 @@ JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle"
 # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
 if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -d "$JAZELLE" ]
 then
+  echo "Warning: using global Jazelle. Builds may not be reproducible."
   if [ ! -f "$BIN/yarn.js" ]
   then
     "$NODE" "$BIN/../utils/download-yarn.js"
