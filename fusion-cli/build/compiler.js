@@ -167,11 +167,8 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-<<<<<<< HEAD
-  var worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-=======
   let worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
->>>>>>> master
+
     computeWorkerKey: filename => filename,
     exposedMethods: ['runTransformation'],
     forkOptions: {stdio: 'inherit'},
