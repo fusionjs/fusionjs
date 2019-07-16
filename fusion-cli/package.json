@@ -47,7 +47,6 @@
     "istanbul-lib-coverage": "^2.0.1",
     "jest": "^24.8.0",
     "jest-environment-jsdom-global": "^1.2.0",
-    "jest-worker": "^24.6.0",
     "just-snake-case": "^1.1.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
