@@ -47,18 +47,18 @@ export type Middleware = (
 ) => Promise<*>;
 
 export type MiddlewareWithDeps<Deps> = (
-  Deps: $ObjMap<Deps, ExtractReturnType>
+  Deps: $ObjMap<Deps, ExtractTokenType>
 ) => Middleware;
 
-export type ExtractReturnType = <V>(() => V) => V;
+export type ExtractTokenType = <V>(() => V) => V;
 
 export type FusionPlugin<Deps, Service> = {|
   __plugin__: boolean,
   stack: string,
   deps?: Deps,
-  provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
+  provides?: (Deps: $ObjMap<Deps & {}, ExtractTokenType>) => Service,
   middleware?: (
-    Deps: $ObjMap<Deps & {}, ExtractReturnType>,
+    Deps: $ObjMap<Deps & {}, ExtractTokenType>,
     Service: Service
   ) => Middleware,
   cleanup?: (service: Service) => Promise<void>,
