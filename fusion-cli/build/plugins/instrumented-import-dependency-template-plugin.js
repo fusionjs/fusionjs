@@ -30,6 +30,7 @@ type ClientPluginOpts = {
 };
 */
 
+const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule.js');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
@@ -114,12 +115,17 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
     } else if (this.clientChunkIndex) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      let ids = this.clientChunkIndex.get(
-        (dep.module && dep.module.resource) || dep.originModule.resource
+      const ids = this.clientChunkIndex.get(
+        dep.module instanceof ConcatenatedModule
+          ? dep.module.rootModule.resource
+          : dep.module.resource
       );
       chunkIds = ids ? Array.from(ids) : [];
     } else {
-      chunkIds = getChunkGroupIds(dep.block.chunkGroup);
+      // Prevent future developers from creating a broken webpack state
+      throw new Error(
+        'Dependency is not Instrumented and lacks a clientChunkIndex'
+      );
     }
 
     const content = runtime.moduleNamespacePromise({
@@ -275,10 +281,14 @@ function getChunkGroupModules(dep) {
   const modulesSet = new Set();
   // For ConcatenatedModules in production build
   if (dep.module && dep.module.dependencies) {
-    modulesSet.add(dep.module.userRequest);
+    modulesSet.add(dep.module.resource);
     dep.module.dependencies.forEach(dependency => {
       if (dependency.module) {
-        modulesSet.add(dependency.module.userRequest);
+        if (dependency.module instanceof ConcatenatedModule) {
+          modulesSet.add(dependency.module.rootModule.resource);
+        } else {
+          modulesSet.add(dependency.module.resource);
+        }
       }
     });
   }
