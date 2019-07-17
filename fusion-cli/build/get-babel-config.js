@@ -44,6 +44,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   // Shared base configuration
   let config = {
     plugins: [
+      require.resolve('@babel/plugin-transform-flow-strip-types'),
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       [
         require.resolve('@rtsao/plugin-proposal-class-properties'),
@@ -51,6 +52,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       ],
       opts.dev &&
         require.resolve('babel-plugin-transform-styletron-display-name'),
+      require.resolve('./babel-plugins/babel-plugin-gql'),
     ].filter(Boolean),
     presets: [[require.resolve('@babel/preset-env'), envPresetOpts]],
     babelrc: false,
@@ -69,13 +71,8 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
         development: dev,
       },
     ]);
-    config.plugins.unshift(
-      require.resolve('@babel/plugin-transform-flow-strip-types')
-    );
     if (fusionTransforms) {
       config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
-    } else {
-      config.plugins.push(require.resolve('./babel-plugins/babel-plugin-gql'));
     }
   }
 
@@ -139,7 +136,6 @@ function fusionPreset(
 
   return {
     plugins: [
-      require.resolve('./babel-plugins/babel-plugin-gql'),
       require.resolve('./babel-plugins/babel-plugin-asseturl'),
       require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
