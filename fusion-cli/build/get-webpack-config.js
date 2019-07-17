@@ -174,7 +174,25 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     return 'spec';
   };
 
-  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
+  const {
+    experimentalBundleTest,
+    experimentalTransformTest,
+    experimentalSideEffectsFalse,
+  } = fusionConfig;
+  const experimentalSideEffectsFalseDefault = modulePath => false;
+
+  const sideEffectsTester = experimentalSideEffectsFalse
+    ? modulePath => {
+        if (
+          modulePath.includes('core-js/modules') ||
+          modulePath.includes('regenerator-runtime/runtime')
+        ) {
+          return false;
+        }
+        return experimentalSideEffectsFalse(modulePath);
+      }
+    : experimentalSideEffectsFalseDefault;
+
   const babelTester = experimentalTransformTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
@@ -378,18 +396,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },
-        fusionConfig.assumeNoImportSideEffects && {
+        {
           sideEffects: false,
-          test: modulePath => {
-            if (
-              modulePath.includes('core-js/modules') ||
-              modulePath.includes('regenerator-runtime/runtime')
-            ) {
-              return false;
-            }
-
-            return true;
-          },
+          test: sideEffectsTester,
         },
       ].filter(Boolean),
     },
