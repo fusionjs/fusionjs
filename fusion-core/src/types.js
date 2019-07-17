@@ -50,7 +50,7 @@ export type MiddlewareWithDeps<Deps> = (
   Deps: $ObjMap<Deps, ExtractTokenType>
 ) => Middleware;
 
-export type ExtractTokenType = <V>(() => V) => V;
+export type ExtractTokenType = <V>(Token<V>) => V;
 
 export type FusionPlugin<Deps, Service> = {|
   __plugin__: boolean,
