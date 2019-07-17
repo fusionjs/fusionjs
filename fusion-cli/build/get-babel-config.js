@@ -27,7 +27,6 @@ type BabelConfigOpts =
     plugins?: Array<any>,
     presets?: Array<any>,
     jsx?: JSXTransformOpts,
-    assumeNoImportSideEffects?: boolean,
     fusionTransforms: boolean
   |};
 */
@@ -59,7 +58,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   };
 
   if (opts.specOnly === false) {
-    let {jsx, assumeNoImportSideEffects, dev, fusionTransforms} = opts;
+    let {jsx, dev, fusionTransforms} = opts;
     if (!jsx) {
       jsx = {};
     }
@@ -72,7 +71,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       },
     ]);
     if (fusionTransforms) {
-      config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
+      config.presets.push([fusionPreset, {target}]);
     }
   }
 
@@ -116,7 +115,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
 /*::
 type FusionPresetOpts = {
   target: Target,
-  assumeNoImportSideEffects: boolean,
 };
 */
 
@@ -127,10 +125,7 @@ type FusionPresetOpts = {
  * Because plugins run before presets, the tree shake plugin
  * must also live in a preset.
  */
-function fusionPreset(
-  context /*: any */,
-  {target, assumeNoImportSideEffects} /*: FusionPresetOpts */
-) {
+function fusionPreset(context /*: any */, {target} /*: FusionPresetOpts */) {
   const targetEnv =
     target === 'node-native' || target === 'node-bundled' ? 'node' : 'browser';
 
@@ -146,13 +141,6 @@ function fusionPreset(
       [
         require.resolve('babel-plugin-transform-cup-globals'),
         {target: targetEnv},
-      ],
-      assumeNoImportSideEffects && [
-        require.resolve('babel-plugin-transform-prune-unused-imports'),
-        {
-          falsyExpressions:
-            targetEnv === 'node' ? ['__BROWSER__'] : ['__NODE__'],
-        },
       ],
     ].filter(Boolean),
   };

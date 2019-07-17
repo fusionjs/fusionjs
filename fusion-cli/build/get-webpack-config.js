@@ -140,7 +140,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const babelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: false,
   });
@@ -161,7 +160,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const legacyBabelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
     specOnly: false,
   });
