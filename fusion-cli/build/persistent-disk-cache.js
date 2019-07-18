@@ -34,7 +34,7 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
     } catch (err) {
       // Simply ignore cache if read fails
     }
-
+    if (thunk == undefined) return null;
     const result = thunk();
 
     try {
