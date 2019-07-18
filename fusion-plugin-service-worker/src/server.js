@@ -54,8 +54,11 @@ export default ((__NODE__ &&
                   : [],
                 cacheDuration,
               });
-            } catch (e) {
-              console.log('Error in Service Worker endpoint:', e); // eslint-disable-line
+            } catch (err) {
+              ctx.status = 500;
+              ctx.body = {error: err.message};
+              // log here because `sw.register` will not report the err object back to the client
+              console.log('Error in Service Worker endpoint:', err); // eslint-disable-line
             }
           }
           return next();
