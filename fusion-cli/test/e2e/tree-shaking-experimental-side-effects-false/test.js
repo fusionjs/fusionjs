@@ -12,7 +12,7 @@ const dir = path.resolve(__dirname, './fixture');
 
 const {cmd} = require('../utils.js');
 
-test('`fusion build` tree shaking w/experimentalSideEffectsFalse', async () => {
+test('`fusion build` tree shaking w/experimentalSideEffectsTest', async () => {
   await cmd(`build --dir=${dir}`);
 
   const distFolder = path.resolve(dir, '.fusion/dist/development/client');
@@ -29,7 +29,7 @@ test('`fusion build` tree shaking w/experimentalSideEffectsFalse', async () => {
     });
 }, 100000);
 
-test('`fusion build` polyfills w/experimentalSideEffectsFalse', async () => {
+test('`fusion build` polyfills w/experimentalSideEffectsTest', async () => {
   var env = Object.create(process.env);
   env.NODE_ENV = 'production';
 

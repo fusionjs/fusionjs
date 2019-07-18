@@ -177,11 +177,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const {
     experimentalBundleTest,
     experimentalTransformTest,
-    experimentalSideEffectsFalse,
+    experimentalSideEffectsTest,
   } = fusionConfig;
-  const experimentalSideEffectsFalseDefault = modulePath => false;
+  const experimentalSideEffectsTestDefault = modulePath => false;
 
-  const sideEffectsTester = experimentalSideEffectsFalse
+  const sideEffectsTester = experimentalSideEffectsTest
     ? modulePath => {
         if (
           modulePath.includes('core-js/modules') ||
@@ -189,9 +189,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         ) {
           return false;
         }
-        return experimentalSideEffectsFalse(modulePath);
+        return experimentalSideEffectsTest(modulePath);
       }
-    : experimentalSideEffectsFalseDefault;
+    : experimentalSideEffectsTestDefault;
 
   const babelTester = experimentalTransformTest
     ? modulePath => {

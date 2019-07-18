@@ -22,7 +22,7 @@ type TransformResult = 'all' | 'spec' | 'none';
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
-  experimentalSideEffectsFalse?: (modulePath: string) => Boolean,
+  experimentalSideEffectsTest?: (modulePath: string) => Boolean,
   experimentalCompile?: boolean,
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
@@ -67,7 +67,7 @@ function isValid(config) {
       [
         'babel',
         'assumeNoImportSideEffects',
-        'experimentalSideEffectsFalse',
+        'experimentalSideEffectsTest',
         'experimentalCompile',
         'experimentalTransformTest',
         'experimentalBundleTest',
@@ -79,17 +79,17 @@ function isValid(config) {
     throw new Error(`Invalid property in .fusionrc.js`);
   }
 
-  if (config.assumeNoImportSideEffects && config.experimentalSideEffectsFalse) {
+  if (config.assumeNoImportSideEffects && config.experimentalSideEffectsTest) {
     throw new Error(
-      `Cannot use both assumeNoImportSideEffects and experimentalSideEffectsFalse in .fusionrc.js`
+      `Cannot use both assumeNoImportSideEffects and experimentalSideEffectsTest in .fusionrc.js`
     );
   }
 
   if (config.assumeNoImportSideEffects) {
     console.log(
-      'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsFalse instead.'
+      'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsTest instead.'
     );
-    config.experimentalSideEffectsFalse = file => true;
+    config.experimentalSideEffectsTest = file => true;
     delete config.assumeNoImportSideEffects;
   }
 

@@ -1,3 +1,3 @@
 module.exports = {
-  experimentalSideEffectsFalse: request => true
+  experimentalSideEffectsTest: request => true
 };
