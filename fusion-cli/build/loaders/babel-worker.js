@@ -29,7 +29,7 @@ async function runTransformation(
   let ast = void 0;
   let transformations = {};
 
-  for (var property in babelOptions) {
+  for (var property of ['client','server','legacy']) {
     let newOptions = {
       ...getBabelConfig(babelOptions[property]),
       overrides: [],
@@ -74,14 +74,11 @@ async function runTransformation(
       metadata.translationIds = Array.from(translationIds.values());
     }
 
-    transformations[optionsName] = {
+    transformations[property] = {
       metadata,
       ...transformed,
     };
   } // END LOOP
-  if (0 == Object.keys(transformations).length) {
-    return null;
-  }
   return transformations;
 }
 

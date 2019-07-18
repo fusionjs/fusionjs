@@ -35,7 +35,7 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
       // Simply ignore cache if read fails
     }
     if (thunk == undefined) return null;
-    const result = thunk();
+    const result = await thunk();
 
     try {
       await makeDir(this.cacheDirectory);
