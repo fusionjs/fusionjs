@@ -61,7 +61,7 @@ export default ((__NODE__ &&
             } catch (err) {
               ctx.status = 500;
               ctx.body = {error: err.message};
-              // logger.error('Error in Service Worker endpoint:', err);
+              logger.error('Error in Service Worker endpoint:', err);
             }
           }
           return next();
