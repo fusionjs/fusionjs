@@ -7,6 +7,7 @@
  */
 import type {
   Context,
+  ExtractTokenType,
   FusionPlugin,
   Middleware,
   Token,
@@ -59,6 +60,7 @@ type FusionApp = typeof BaseApp;
 declare export default typeof BaseApp;
 export type {
   Context,
+  ExtractTokenType,
   FusionApp,
   FusionPlugin,
   Middleware,
