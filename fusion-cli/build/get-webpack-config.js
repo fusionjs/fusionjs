@@ -44,7 +44,7 @@ const {
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
-//const getBabelConfig = require('./get-babel-config.js');
+const getBabelConfig = require('./get-babel-config.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -260,27 +260,26 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       }
     : JS_EXT_PATTERN;
 
-  // $FlowFixMe
-  // getBabelConfig(babelOverridesData).test = getBabelConfig(
-  //   legacyBabelOverridesData
-  // ).test = modulePath => {
-  //   if (!JS_EXT_PATTERN.test(modulePath)) {
-  //     return false;
-  //   }
-  //   const defaultTransform = getTransformDefault(modulePath);
-  //   const transform = experimentalTransformTest
-  //     ? experimentalTransformTest(modulePath, defaultTransform)
-  //     : defaultTransform;
-  //   if (transform === 'none' || transform === 'spec') {
-  //     return false;
-  //   } else if (transform === 'all') {
-  //     return true;
-  //   } else {
-  //     throw new Error(
-  //       `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
-  //     );
-  //   }
-  // };
+  getBabelConfig(babelOverridesDataBrowserModern).test = getBabelConfig(
+    legacyBabelOverridesDataBrowserLegacy
+  ).test = modulePath => {
+    if (!JS_EXT_PATTERN.test(modulePath)) {
+      return false;
+    }
+    const defaultTransform = getTransformDefault(modulePath);
+    const transform = experimentalTransformTest
+      ? experimentalTransformTest(modulePath, defaultTransform)
+      : defaultTransform;
+    if (transform === 'none' || transform === 'spec') {
+      return false;
+    } else if (transform === 'all') {
+      return true;
+    } else {
+      throw new Error(
+        `Unexpected value from experimentalTransformTest ${transform}. Expected 'spec' | 'all' | 'none'`
+      );
+    }
+  };
   return {
     name: runtime,
     target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],

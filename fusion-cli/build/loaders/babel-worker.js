@@ -31,7 +31,7 @@ async function runTransformation(
 
   for (var property of ['client','server','legacy']) {
     let newOptions = {
-      ...getBabelConfig(babelOptions[property]),
+      ...getBabelConfig(babelOptions[property].babelConfigData),
       overrides: [],
     };
     let overrides = [];

@@ -60,7 +60,7 @@ async function loader(
   const diskCache = getCache(cacheDir);
   //$FlowFixMe
   const result = await diskCache.get(cacheKey, async () => {
-    return worker.runTransformation(
+    return require('./babel-worker.js').runTransformation(
       source,
       inputSourceMap,
       cacheKey,
