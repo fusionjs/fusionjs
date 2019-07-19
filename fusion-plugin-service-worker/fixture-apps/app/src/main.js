@@ -2,7 +2,8 @@
 import App from 'fusion-react';
 import Router from 'fusion-plugin-react-router';
 import Styletron from 'fusion-plugin-styletron-react';
-// import {createToken} from 'fusion-core'
+
+import {LoggerToken} from 'fusion-tokens';
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
 import SwPlugin, {
@@ -26,6 +27,7 @@ export default () => {
     app.register(SWRegisterToken, true);
   }
   if (__NODE__) {
+    app.register(LoggerToken, {error: err => console.log(err)});
     app.register(SWTemplateFunctionToken, swTemplateFunction);
     const expiry = parseInt(process.env.EXPIRY, 0);
     if (expiry) {

@@ -5,6 +5,7 @@ import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
 import ServiceWorker from '../index';
+import {LoggerToken} from 'fusion-tokens';
 import {SWTemplateFunctionToken} from '../tokens';
 import swTemplateFunction from './fixtures/swTemplate.js';
 
@@ -12,6 +13,7 @@ test('/health request', async t => {
   t.plan(2);
   const app = new App('el', el => el);
   app.register(SWTemplateFunctionToken, swTemplateFunction);
+  app.register(LoggerToken, {error: err => console.log(err)});
   app.register(ServiceWorker);
   const sim = getSimulator(app);
   // Basic /health request

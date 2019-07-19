@@ -4,6 +4,7 @@
 
 import url from 'url';
 import {createPlugin} from 'fusion-core';
+import {LoggerToken} from 'fusion-tokens';
 import type {FusionPlugin} from 'fusion-core';
 
 import {SWTemplateFunctionToken, SWOptionsToken} from './tokens';
@@ -19,10 +20,12 @@ function hasSameHostName(url1, url2) {
 export default ((__NODE__ &&
   createPlugin({
     deps: {
+      logger: LoggerToken,
       templateFn: SWTemplateFunctionToken,
       options: SWOptionsToken.optional,
     },
     middleware: ({
+      logger,
       templateFn,
       options: {
         cacheBustingPatterns,
@@ -33,6 +36,7 @@ export default ((__NODE__ &&
       return async (ctx, next) => {
         if (__NODE__) {
           if (ctx.method === 'GET' && ctx.url === '/sw.js') {
+            console.log('ctx.url...', ctx.url);
             const chunkUrls = Array.from(ctx.chunkUrlMap).map(value =>
               value[1].get('es5')
             );
@@ -57,8 +61,7 @@ export default ((__NODE__ &&
             } catch (err) {
               ctx.status = 500;
               ctx.body = {error: err.message};
-              // log here because `sw.register` will not report the err object back to the client
-              console.log('Error in Service Worker endpoint:', err); // eslint-disable-line
+              // logger.error('Error in Service Worker endpoint:', err);
             }
           }
           return next();
