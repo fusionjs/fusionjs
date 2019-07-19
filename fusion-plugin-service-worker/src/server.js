@@ -36,7 +36,6 @@ export default ((__NODE__ &&
       return async (ctx, next) => {
         if (__NODE__) {
           if (ctx.method === 'GET' && ctx.url === '/sw.js') {
-            console.log('ctx.url...', ctx.url);
             const chunkUrls = Array.from(ctx.chunkUrlMap).map(value =>
               value[1].get('es5')
             );

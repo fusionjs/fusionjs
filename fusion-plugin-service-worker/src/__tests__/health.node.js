@@ -8,12 +8,13 @@ import ServiceWorker from '../index';
 import {LoggerToken} from 'fusion-tokens';
 import {SWTemplateFunctionToken} from '../tokens';
 import swTemplateFunction from './fixtures/swTemplate.js';
+import {createMockLogger} from './utils.node.js';
 
 test('/health request', async t => {
   t.plan(2);
   const app = new App('el', el => el);
   app.register(SWTemplateFunctionToken, swTemplateFunction);
-  app.register(LoggerToken, {error: err => console.log(err)});
+  app.register(LoggerToken, createMockLogger());
   app.register(ServiceWorker);
   const sim = getSimulator(app);
   // Basic /health request

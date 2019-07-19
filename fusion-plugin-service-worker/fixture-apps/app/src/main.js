@@ -2,8 +2,9 @@
 import App from 'fusion-react';
 import Router from 'fusion-plugin-react-router';
 import Styletron from 'fusion-plugin-styletron-react';
-
 import {LoggerToken} from 'fusion-tokens';
+
+import {createMockLogger} from '../../../src/__tests__/utils.node.js';
 
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
 import SwPlugin, {
@@ -27,7 +28,7 @@ export default () => {
     app.register(SWRegisterToken, true);
   }
   if (__NODE__) {
-    app.register(LoggerToken, {error: err => console.log(err)});
+    app.register(LoggerToken, createMockLogger());
     app.register(SWTemplateFunctionToken, swTemplateFunction);
     const expiry = parseInt(process.env.EXPIRY, 0);
     if (expiry) {
