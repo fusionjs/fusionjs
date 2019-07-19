@@ -4,8 +4,6 @@ import Router from 'fusion-plugin-react-router';
 import Styletron from 'fusion-plugin-styletron-react';
 import {LoggerToken} from 'fusion-tokens';
 
-import {createMockLogger} from '../../../src/__tests__/utils.node.js';
-
 import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
 import SwPlugin, {
   SWRegisterToken,
@@ -17,6 +15,16 @@ import MockRedirectPlugin from './plugins/mock-redirect';
 import MockErrorPlugin from './plugins/mock-server-error';
 
 import root from './root.js';
+
+const createMockLogger = () => ({
+  log: () => createMockLogger(),
+  error: () => createMockLogger(),
+  warn: () => createMockLogger(),
+  info: () => createMockLogger(),
+  verbose: () => createMockLogger(),
+  debug: () => createMockLogger(),
+  silly: () => createMockLogger(),
+});
 
 export default () => {
   const app = new App(root);
