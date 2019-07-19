@@ -9,7 +9,7 @@
 import type {
   aliaser,
   cleanupFn,
-  ExtractReturnType,
+  ExtractTokenType,
   FusionPlugin,
   Middleware,
   Token,
@@ -33,7 +33,7 @@ declare class FusionApp {
   register<TVal>(token: Token<TVal>, val: TVal): aliaser<Token<*>>;
   middleware<TDeps>(
     deps: TDeps,
-    middleware: (Deps: $ObjMap<TDeps, ExtractReturnType>) => Middleware
+    middleware: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
   ): void;
   middleware(middleware: Middleware): void;
   callback(): (...Array<*>) => Promise<void> | any;
