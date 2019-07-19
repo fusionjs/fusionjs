@@ -7,15 +7,16 @@
  */
 /* eslint-env node */
 
-const crypto = require('crypto');
+const crypto = require("crypto");
 
-const babel = require('@babel/core');
-const loaderUtils = require('loader-utils');
+const babel = require("@babel/core");
+const loaderUtils = require("loader-utils");
 
-const {translationsDiscoveryKey, workerKey} = require('./loader-context.js');
-const PersistentDiskCache = require('../persistent-disk-cache.js');
-const path = require('path');
-const getBabelConfig = require('../get-babel-config.js');
+const { translationsDiscoveryKey, workerKey } = require("./loader-context.js");
+const PersistentDiskCache = require("../persistent-disk-cache.js");
+const path = require("path");
+const getBabelConfig = require("../get-babel-config.js");
+const v8 = require("v8");
 
 /*::
 import type {TranslationsDiscoveryContext} from "./loader-context.js";
@@ -23,7 +24,7 @@ import type {TranslationsDiscoveryContext} from "./loader-context.js";
 
 module.exports = webpackLoader;
 
-const {version: fusionCLIVersion} = require('../../package.json');
+const { version: fusionCLIVersion } = require("../../package.json");
 
 function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
@@ -43,7 +44,7 @@ async function loader(
   const cacheKey = crypto
     // non-cryptographic purposes
     // md4 is the fastest built-in algorithm
-    .createHash('md4')
+    .createHash("md4")
     // Changing any of the following values should yield a new cache key,
     // thus our hash should take into account them all
     .update(source)
@@ -51,28 +52,25 @@ async function loader(
     //  .update(JSON.stringify(loaderOptions))
     .update(babel.version)
     .update(fusionCLIVersion)
-    .digest('hex');
+    .digest("hex");
 
   const worker = this[workerKey];
-  const buildOptions = this['SomeKey'];
+  const buildOptions = this["SomeKey"];
 
-  const cacheDir = path.join(process.cwd(), 'node_modules/.fusion_babel-cache');
+  const cacheDir = path.join(process.cwd(), "node_modules/.fusion_babel-cache");
   const diskCache = getCache(cacheDir);
-  //$FlowFixMe
-  const result = await diskCache.get(cacheKey, async () => {
-    return require('./babel-worker.js').runTransformation(
-      source,
-      inputSourceMap,
-      cacheKey,
-      filename,
-      this.rootContext,
-      this.sourceMap,
-      buildOptions,
-      loaderOptions.name
-    );
-  });
+  const result = await worker.runTransformation(
+    source,
+    inputSourceMap,
+    cacheKey,
+    filename,
+    this.rootContext,
+    this.sourceMap,
+    buildOptions
+  );
+
   if (result[loaderOptions.name]) {
-    const {code, map, metadata} = result[loaderOptions.name];
+    const { code, map, metadata } = result[loaderOptions.name];
     if (discoveryState && metadata != undefined && metadata.translationIds) {
       discoveryState.set(filename, new Set(metadata.translationIds));
     }

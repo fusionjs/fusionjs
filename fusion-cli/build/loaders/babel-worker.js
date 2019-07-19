@@ -7,10 +7,12 @@
  */
 /* eslint-env node */
 
-const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
-const path = require('path');
-const babel = require('@babel/core');
-const getBabelConfig = require('../get-babel-config.js');
+const TranslationsExtractor = require("../babel-plugins/babel-plugin-i18n");
+const path = require("path");
+const babel = require("@babel/core");
+const getBabelConfig = require("../get-babel-config.js");
+const PersistentDiskCache = require("../persistent-disk-cache.js");
+const v8 = require("v8");
 
 module.exports = {
   runTransformation,
@@ -23,13 +25,37 @@ async function runTransformation(
   filename /*: string */,
   rootContext /*: Object*/,
   sourceMap /*: Object*/,
-  babelOptions /*: Object*/,
-  optionsName /*: String*/
+  babelOptions /*: Object*/
+) {
+  const cacheDir = path.join(process.cwd(), "node_modules/.fusion_babel-cache");
+  const diskCache = getCache(cacheDir);
+  const result = await diskCache.get(cacheKey, () => {
+    return doTransform(
+      source,
+      inputSourceMap,
+      cacheKey,
+      filename,
+      rootContext,
+      sourceMap,
+      babelOptions
+    );
+  });
+  return result;
+}
+
+function doTransform(
+  source /*: string */,
+  inputSourceMap /*: Object */,
+  cacheKey /*: string */,
+  filename /*: string */,
+  rootContext /*: Object*/,
+  sourceMap /*: Object*/,
+  babelOptions /*: Object*/
 ) {
   let ast = void 0;
   let transformations = {};
 
-  for (var property of ['client','server','legacy']) {
+  for (var property of Object.keys(babelOptions)) {
     let newOptions = {
       ...getBabelConfig(babelOptions[property].babelConfigData),
       overrides: [],
@@ -66,7 +92,7 @@ async function runTransformation(
     // This only does side effects, so it is ok this doesn't affect cache key
     // This plugin is here because webpack config -> loader options
     // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+    options.plugins.unshift([TranslationsExtractor, { translationIds }]);
 
     let transformed = transform(ast, source, options);
 
@@ -79,6 +105,7 @@ async function runTransformation(
       ...transformed,
     };
   } // END LOOP
+
   return transformations;
 }
 
@@ -97,13 +124,13 @@ function transform(ast, source, options) {
   // https://github.com/babel/babel/blob/master/packages/babel-core/src/transformation/index.js
   // For discussion on this topic see here:
   // https://github.com/babel/babel-loader/pull/629
-  const {code, map, sourceType} = result;
+  const { code, map, sourceType } = result;
 
   if (map && (!map.sourcesContent || !map.sourcesContent.length)) {
     map.sourcesContent = [source];
   }
 
-  return {code, map, sourceType};
+  return { code, map, sourceType };
 }
 
 class LoaderError extends Error {
@@ -112,9 +139,9 @@ class LoaderError extends Error {
   */
   constructor(err) {
     super();
-    const {name, message, codeFrame, hideStack} = formatError(err);
-    this.name = 'BabelLoaderError';
-    this.message = `${name ? `${name}: ` : ''}${message}\n\n${codeFrame}\n`;
+    const { name, message, codeFrame, hideStack } = formatError(err);
+    this.name = "BabelLoaderError";
+    this.message = `${name ? `${name}: ` : ""}${message}\n\n${codeFrame}\n`;
     this.hideStack = hideStack;
     Error.captureStackTrace(this, this.constructor);
   }
@@ -124,24 +151,32 @@ const STRIP_FILENAME_RE = /^[^:]+: /;
 
 function formatError(err) {
   if (err instanceof SyntaxError) {
-    err.name = 'SyntaxError';
-    err.message = err.message.replace(STRIP_FILENAME_RE, '');
+    err.name = "SyntaxError";
+    err.message = err.message.replace(STRIP_FILENAME_RE, "");
     err.hideStack = true;
   } else if (err instanceof TypeError) {
     err.name = null;
-    err.message = err.message.replace(STRIP_FILENAME_RE, '');
+    err.message = err.message.replace(STRIP_FILENAME_RE, "");
     err.hideStack = true;
   }
   return err;
 }
 
 function relative(root, file) {
-  const rootPath = root.replace(/\\/g, '/').split('/')[1];
-  const filePath = file.replace(/\\/g, '/').split('/')[1];
+  const rootPath = root.replace(/\\/g, "/").split("/")[1];
+  const filePath = file.replace(/\\/g, "/").split("/")[1];
   // If the file is in a completely different root folder
   // use the absolute path of the file
   if (rootPath && rootPath !== filePath) {
     return file;
   }
   return path.relative(root, file);
+}
+let cache;
+
+function getCache(cacheDir) {
+  if (!cache) {
+    cache = new PersistentDiskCache(cacheDir);
+  }
+  return cache;
 }
