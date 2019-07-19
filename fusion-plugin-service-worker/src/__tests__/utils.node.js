@@ -101,13 +101,3 @@ export async function logCacheDates(page: Page, label: string) {
     );
   }, label);
 }
-
-export const createMockLogger = () => ({
-  log: () => createMockLogger(),
-  error: () => createMockLogger(),
-  warn: () => createMockLogger(),
-  info: () => createMockLogger(),
-  verbose: () => createMockLogger(),
-  debug: () => createMockLogger(),
-  silly: () => createMockLogger(),
-});
