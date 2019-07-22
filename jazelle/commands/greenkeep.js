@@ -1,8 +1,8 @@
 // @flow
 const {minVersion, satisfies} = require('semver');
-const {upgrade: upgradeDep} = require('yarn-utilities');
 const {getManifest} = require('../utils/get-manifest.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
+const {upgrade: upgradeDep} = require('../utils/lockfile.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {read, write} = require('../utils/node-helpers.js');
 
@@ -39,8 +39,19 @@ const greenkeep /*: Greenkeep */ = async ({root, name, version, from}) => {
       })
     );
   } else {
+    const upgrades = [{name, range: version, from}];
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-    await upgradeDep({roots, dep: name, version, from, tmp});
+    await upgradeDep({
+      roots,
+      upgrades,
+      ignore: await Promise.all(
+        projects.map(async project => {
+          const data = await read(`${root}/${project}/package.json`, 'utf8');
+          return JSON.parse(data).name;
+        })
+      ),
+      tmp,
+    });
   }
   const deps = await Promise.all(
     roots.map(async dir => ({
