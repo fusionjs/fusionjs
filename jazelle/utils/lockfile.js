@@ -133,7 +133,7 @@ const merge /*: Merge */ = async ({
       Object.assign(merged.lockfile, lockfile);
     }
   }
-  if (!frozenLockfile) await writeMetadata({metas: [merged]});
+  await writeMetadata({metas: [merged]});
 };
 
 /*::
@@ -333,6 +333,8 @@ const update /*: Update */ = async ({
       const data = JSON.stringify(missing, null, 2);
       await exec(`mkdir -p ${cwd}`);
       await write(`${cwd}/package.json`, data, 'utf8');
+      const yarnrc = '"--install.frozen-lockfile" false';
+      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
       const install = `yarn install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
@@ -421,9 +423,9 @@ const isBetterVersion = (version, range, graph, key) => {
 const enumerationChanged = (a, b) => {
   const aKeys = Object.keys(a);
   const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return false;
-  if (aKeys.sort().join() !== bKeys.sort().join()) return false;
-  return true;
+  if (aKeys.length !== bKeys.length) return true;
+  if (aKeys.sort().join() !== bKeys.sort().join()) return true;
+  return false;
 };
 
 const throwEditError = reason => {
