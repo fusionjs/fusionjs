@@ -392,16 +392,14 @@ const populateGraph = ({graph, name, range, index, ref}) => {
   const key = `${name}@${range}`;
   if (key in graph) return;
 
-  const ptr = index[name][0];
-  graph[key] = ptr.lockfile[ptr.key];
-  for (const ptr of index[name].slice(1)) {
+  for (const ptr of index[name]) {
     const version = ptr.lockfile[ptr.key].version;
-    const curr = graph[key].version;
-    if (ptr.isAlias || (satisfies(version, range) && gt(version, curr))) {
+    if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
       graph[key] = ptr.lockfile[ptr.key];
       break;
     }
   }
+  if (!graph[key]) return;
   if (ref !== null && ref[key] !== graph[key]) throwEditError('Version synced');
   populateDeps({graph, deps: graph[key].dependencies || {}, index, ref});
 };
@@ -411,6 +409,13 @@ const populateDeps = ({graph, deps, index, ref}) => {
     const range = deps[name];
     populateGraph({graph, name, range, index, ref});
   }
+};
+
+const isBetterVersion = (version, range, graph, key) => {
+  return (
+    satisfies(version, range) &&
+    (!graph[key] || gt(version, graph[key].version))
+  );
 };
 
 const enumerationChanged = (a, b) => {
