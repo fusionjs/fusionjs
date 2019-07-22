@@ -189,7 +189,19 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         ) {
           return false;
         }
-        return experimentalSideEffectsTest(modulePath);
+        const sideEffects = experimentalSideEffectsTest(
+          modulePath,
+          getTransformDefault(modulePath)
+        );
+        if (sideEffects === 'all') {
+          return true;
+        } else if (sideEffects === 'spec') {
+          return false;
+        } else {
+          throw new Error(
+            `Unexpected value from experimentalSideEffectsTest ${sideEffects}. Expected 'all' | 'spec'`
+          );
+        }
       }
     : experimentalSideEffectsTestDefault;
 

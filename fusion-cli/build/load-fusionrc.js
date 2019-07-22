@@ -19,10 +19,11 @@ let loggedNotice = false;
 
 type BundleResult =  'universal' | 'browser-only';
 type TransformResult = 'all' | 'spec' | 'none';
+type SideEffectsResult = 'all' | 'spec';
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   assumeNoImportSideEffects?: boolean,
-  experimentalSideEffectsTest?: (modulePath: string) => Boolean,
+  experimentalSideEffectsTest?: (modulePath: string, defaults: SideEffectsResult) => SideEffectsResult,
   experimentalCompile?: boolean,
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
@@ -89,7 +90,7 @@ function isValid(config) {
     console.log(
       'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsTest instead.'
     );
-    config.experimentalSideEffectsTest = file => true;
+    config.experimentalSideEffectsTest = (file, defaults) => 'all';
     delete config.assumeNoImportSideEffects;
   }
 
