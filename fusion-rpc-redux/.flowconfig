@@ -3,7 +3,6 @@
 .*/fixtures/failure/.*
 
 [include]
-../common/temp/node_modules
 ../../common/temp/node_modules
 
 [libs]
