@@ -46,7 +46,9 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const resA = await request(`http://localhost:${port}/test-a`);
   const resB = await request(`http://localhost:${port}/test-b`);
   const resCombined = await request(`http://localhost:${port}/test-combined`);
-  const resTransitive = await request(`http://localhost:${port}/test-transitive`);
+  const resTransitive = await request(
+    `http://localhost:${port}/test-transitive`
+  );
   t.deepEqual(JSON.parse(resA), [10003, 10004, 3, 4]);
   t.deepEqual(JSON.parse(resB), [10003, 10005, 3, 5]);
   t.deepEqual(JSON.parse(resCombined), [10003, 3]);
