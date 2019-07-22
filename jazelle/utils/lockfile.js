@@ -1,5 +1,5 @@
 // @flow
-const {satisfies, minVersion, validRange, compare} = require('semver');
+const {satisfies, minVersion, validRange, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 
@@ -396,7 +396,8 @@ const populateGraph = ({graph, name, range, index, ref}) => {
   graph[key] = ptr.lockfile[ptr.key];
   for (const ptr of index[name].slice(1)) {
     const version = ptr.lockfile[ptr.key].version;
-    if (ptr.isAlias || satisfies(version, range)) {
+    const curr = graph[key].version;
+    if (ptr.isAlias || (satisfies(version, range) && gt(version, curr))) {
       graph[key] = ptr.lockfile[ptr.key];
       break;
     }
