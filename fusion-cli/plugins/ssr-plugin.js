@@ -173,5 +173,10 @@ function checkModuleSupport({name, version}) {
 }
 
 function majorVersion(version) {
-  return parseInt(version.split('.')[0], 10);
+  // version can be undefined, see https://jeng.uberinternal.com/browse/WPT-3893
+  if (typeof version === 'string') {
+    return parseInt(version.split('.')[0], 10);
+  } else {
+    return 0; // not sure if this is optimal but better than erroring
+  }
 }
