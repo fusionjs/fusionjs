@@ -260,6 +260,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       }
     : JS_EXT_PATTERN;
 
+  //$FlowFixMe
   getBabelConfig(babelOverridesDataBrowserModern).test = getBabelConfig(
     legacyBabelOverridesDataBrowserLegacy
   ).test = modulePath => {

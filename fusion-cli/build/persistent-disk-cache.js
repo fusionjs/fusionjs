@@ -7,17 +7,18 @@
  */
 /* eslint-env node */
 
-const fs = require('fs');
-const path = require('path');
-const zlib = require('zlib');
-const {promisify} = require('util');
+const fs = require("fs");
+const path = require("path");
+const zlib = require("zlib");
+const { promisify } = require("util");
 
-const makeDir = require('make-dir');
+const makeDir = require("make-dir");
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const gunzip = promisify(zlib.gunzip);
 const gzip = promisify(zlib.gzip);
+const v8 = require("v8");
 
 module.exports = class PersistentDiskCache /*::<T>*/ {
   /*::
@@ -27,7 +28,7 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
     this.cacheDirectory = cacheDirectory;
   }
   async get(cacheKey /*: string*/, thunk /*: () => T */) {
-    const filepath = getFilePath(this.cacheDirectory, cacheKey);
+    const filepath = this.getFilePath(this.cacheDirectory, cacheKey);
 
     try {
       return await read(filepath);
@@ -35,43 +36,34 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
       // Simply ignore cache if read fails
     }
     if (thunk == undefined) return null;
-    const result = await thunk();
 
-    try {
-      await makeDir(this.cacheDirectory);
-      await write(filepath, result);
-    } catch (err) {
-      // If write fails, oh well
-    }
-
-    return result;
+    return thunk();
   }
 
   async put(cacheKey /*: string*/, cache /*:Object*/) {
-    const filepath = getFilePath(this.cacheDirectory, cacheKey);
+    const filepath = this.getFilePath(this.cacheDirectory, cacheKey);
 
     try {
       await makeDir(this.cacheDirectory);
-      await write(filepath, cache);
+      write(filepath, cache);
     } catch (err) {
       // If write fails, oh well
     }
-    return cache;
+  }
+
+  getFilePath(dirname /*: string*/, cacheKey /*: string*/) {
+    return path.join(dirname, `${cacheKey}.json.gz`);
   }
 };
 
 async function read(path /*: string*/) {
   const data = await readFile(path);
   const content = await gunzip(data);
-  return JSON.parse(content);
+  return v8.deserialize(content);
 }
 
 async function write(path /*: string*/, result) {
-  const content = JSON.stringify(result);
+  const content = v8.serialize(result);
   const data = await gzip(content);
-  return await writeFile(path, data);
-}
-
-function getFilePath(dirname, cacheKey) {
-  return path.join(dirname, `${cacheKey}.json.gz`);
+  return writeFile(path, data);
 }

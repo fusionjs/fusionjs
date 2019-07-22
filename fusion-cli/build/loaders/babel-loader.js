@@ -49,16 +49,25 @@ async function loader(
     // thus our hash should take into account them all
     .update(source)
     .update(filename) // Analysis/transforms might depend on filenames
-    //  .update(JSON.stringify(loaderOptions))
     .update(babel.version)
     .update(fusionCLIVersion)
     .digest("hex");
 
   const worker = this[workerKey];
   const buildOptions = this["SomeKey"];
+  // let map = require("./singleton.js");
+  // if (map[filename] == undefined) {
+  //   map[filename] = [loaderOptions.name];
+  // } else {
+  //   map[filename].push(loaderOptions.name);
+  // }
 
-  const cacheDir = path.join(process.cwd(), "node_modules/.fusion_babel-cache");
-  const diskCache = getCache(cacheDir);
+  if (
+    buildOptions["server"] != undefined &&
+    filename.includes("node_modules")
+  ) {
+    delete buildOptions["server"];
+  }
   const result = await worker.runTransformation(
     source,
     inputSourceMap,

@@ -12,7 +12,7 @@ const path = require("path");
 const babel = require("@babel/core");
 const getBabelConfig = require("../get-babel-config.js");
 const PersistentDiskCache = require("../persistent-disk-cache.js");
-const v8 = require("v8");
+const fs = require("fs");
 
 module.exports = {
   runTransformation,
@@ -29,8 +29,8 @@ async function runTransformation(
 ) {
   const cacheDir = path.join(process.cwd(), "node_modules/.fusion_babel-cache");
   const diskCache = getCache(cacheDir);
-  const result = await diskCache.get(cacheKey, () => {
-    return doTransform(
+  const result = diskCache.get(cacheKey, () => {
+    let res = doTransform(
       source,
       inputSourceMap,
       cacheKey,
@@ -39,6 +39,12 @@ async function runTransformation(
       sourceMap,
       babelOptions
     );
+
+    fs.exists(diskCache.getFilePath(cacheDir, cacheKey), exists => {
+      !exists && diskCache.put(cacheKey, res);
+    });
+
+    return res;
   });
   return result;
 }
@@ -99,7 +105,6 @@ function doTransform(
     if (translationIds.size > 0) {
       metadata.translationIds = Array.from(translationIds.values());
     }
-
     transformations[property] = {
       metadata,
       ...transformed,

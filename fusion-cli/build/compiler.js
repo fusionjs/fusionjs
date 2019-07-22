@@ -8,25 +8,25 @@
 
 /* eslint-env node */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const webpack = require('webpack');
-const chalk = require('chalk');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const rimraf = require('rimraf');
+const webpack = require("webpack");
+const chalk = require("chalk");
+const webpackHotMiddleware = require("webpack-hot-middleware");
+const rimraf = require("rimraf");
 
-const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
-const getWebpackConfig = require('./get-webpack-config.js');
+const webpackDevMiddleware = require("../lib/simple-webpack-dev-middleware");
+const getWebpackConfig = require("./get-webpack-config.js");
 const {
   DeferredState,
   SyncState,
   MergedDeferredState,
-} = require('./shared-state-containers.js');
-const mergeChunkMetadata = require('./merge-chunk-metadata');
-const loadFusionRC = require('./load-fusionrc.js');
+} = require("./shared-state-containers.js");
+const mergeChunkMetadata = require("./merge-chunk-metadata");
+const loadFusionRC = require("./load-fusionrc.js");
 
-const Worker = require('jest-worker').default;
+const Worker = require("jest-worker").default;
 
 function getErrors(info) {
   let errors = [].concat(info.errors);
@@ -54,14 +54,14 @@ function getWarnings(info) {
 
 function dedupeErrors(items) {
   const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  return items.map(item => item.replace(re, '$2'));
+  return items.map(item => item.replace(re, "$2"));
 }
 
-function getStatsLogger({dir, logger, env}) {
+function getStatsLogger({ dir, logger, env }) {
   return (err, stats) => {
     // syntax errors are logged 4 times (once by webpack, once by babel, once on server and once on client)
     // we only want to log each syntax error once
-    const isProd = env === 'production';
+    const isProd = env === "production";
 
     if (err) {
       logger.error(err.stack || err);
@@ -71,8 +71,8 @@ function getStatsLogger({dir, logger, env}) {
       return;
     }
 
-    const file = path.resolve(dir, '.fusion/stats.json');
-    const info = stats.toJson({context: path.resolve(dir)});
+    const file = path.resolve(dir, ".fusion/stats.json");
+    const info = stats.toJson({ context: path.resolve(dir) });
     fs.writeFile(file, JSON.stringify(info, null, 2), () => {});
 
     if (stats.hasErrors()) {
@@ -84,7 +84,7 @@ function getStatsLogger({dir, logger, env}) {
         child.assets
           .slice()
           .filter(asset => {
-            return !asset.name.endsWith('.map');
+            return !asset.name.endsWith(".map");
           })
           .sort((a, b) => {
             return b.size - a.size;
@@ -129,7 +129,7 @@ type CompilerOpts = {
 
 function Compiler(
   {
-    dir = '.',
+    dir = ".",
     env,
     hmr = true,
     forceLegacyBuild,
@@ -145,12 +145,12 @@ function Compiler(
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    (forceLegacyBuild || !watch || env === 'production') && !modernBuildOnly
+    (forceLegacyBuild || !watch || env === "production") && !modernBuildOnly
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [
-      {deferred: clientChunkMetadata, enabled: new SyncState(true)},
-      {deferred: legacyClientChunkMetadata, enabled: legacyBuildEnabled},
+      { deferred: clientChunkMetadata, enabled: new SyncState(true) },
+      { deferred: legacyClientChunkMetadata, enabled: legacyBuildEnabled },
     ],
     mergeChunkMetadata
   );
@@ -167,16 +167,15 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  let worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
-
+  let worker = new Worker(require.resolve("./loaders/babel-worker.js"), {
     computeWorkerKey: filename => filename,
-    exposedMethods: ['runTransformation'],
-    forkOptions: {stdio: 'inherit'},
+    exposedMethods: ["runTransformation"],
+    forkOptions: { stdio: "inherit" },
   });
 
   const sharedOpts = {
     dir: root,
-    dev: env === 'development',
+    dev: env === "development",
     hmr,
     watch,
     state,
@@ -188,41 +187,41 @@ function Compiler(
     worker,
   };
   const compiler = webpack([
-    getWebpackConfig({id: 'client-modern', ...sharedOpts}),
+    getWebpackConfig({ id: "client-modern", ...sharedOpts }),
     getWebpackConfig({
-      id: serverless ? 'serverless' : 'server',
+      id: serverless ? "serverless" : "server",
       ...sharedOpts,
     }),
   ]);
-  if (process.env.LOG_END_TIME == 'true') {
-    compiler.hooks.done.tap('BenchmarkTimingPlugin', stats => {
+  if (process.env.LOG_END_TIME == "true") {
+    compiler.hooks.done.tap("BenchmarkTimingPlugin", stats => {
       /* eslint-disable-next-line no-console */
       console.log(`End time: ${Date.now()}`);
     });
   }
 
   if (watch) {
-    compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
+    compiler.hooks.watchRun.tap("StartWorkersAgain", () => {
       if (worker === void 0)
-        worker = new Worker(require.resolve('./loaders/babel-worker.js'), {
+        worker = new Worker(require.resolve("./loaders/babel-worker.js"), {
           computeWorkerKey: filename => filename,
-          exposedMethods: ['runTransformation'],
-          forkOptions: {stdio: 'inherit'},
+          exposedMethods: ["runTransformation"],
+          forkOptions: { stdio: "inherit" },
         });
     });
-    compiler.hooks.watchClose.tap('KillWorkers', stats => {
+    compiler.hooks.watchClose.tap("KillWorkers", stats => {
       if (worker !== void 0) worker.end();
       worker = void 0;
     });
   } else
-    compiler.hooks.done.tap('KillWorkers', stats => {
+    compiler.hooks.done.tap("KillWorkers", stats => {
       if (worker !== void 0) worker.end();
       worker = void 0;
     });
 
-  const statsLogger = getStatsLogger({dir, logger, env});
+  const statsLogger = getStatsLogger({ dir, logger, env });
 
-  this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
+  this.on = (type, callback) => compiler.hooks[type].tap("compiler", callback);
   this.start = cb => {
     cb = cb || function noop(err, stats) {};
     // Handler may be called multiple times by `watch`
@@ -250,7 +249,7 @@ function Compiler(
 
   this.getMiddleware = () => {
     const dev = webpackDevMiddleware(compiler);
-    const hot = webpackHotMiddleware(compiler, {log: false});
+    const hot = webpackHotMiddleware(compiler, { log: false });
     return (req, res, next) => {
       dev(req, res, err => {
         if (err) return next(err);
@@ -269,19 +268,19 @@ function Compiler(
 }
 
 function loadLegacyPkgConfig(dir) {
-  const appPkgJsonPath = path.join(dir, 'package.json');
+  const appPkgJsonPath = path.join(dir, "package.json");
   const legacyPkgConfig = {};
   if (fs.existsSync(appPkgJsonPath)) {
     // $FlowFixMe
     const appPkg = require(appPkgJsonPath);
-    if (typeof appPkg.node !== 'undefined') {
+    if (typeof appPkg.node !== "undefined") {
       // eslint-disable-next-line no-console
       console.warn(
         [
           `Warning: using a top-level "node" field in your app package.json to override node built-in shimming is deprecated.`,
           `Please use the "nodeBuiltins" field in .fusionrc.js instead.`,
           `See: https://github.com/fusionjs/fusion-cli/blob/master/docs/fusionrc.md#nodebuiltins`,
-        ].join(' ')
+        ].join(" ")
       );
     }
     legacyPkgConfig.node = appPkg.node;
