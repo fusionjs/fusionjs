@@ -94,6 +94,12 @@ const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
               data.browser = [ctx.request.body]; // as array, to avoid schema break if we ever need to log per-browser graphs
               await store.store(data, deps);
             }
+          } else if (
+            ctx.method === 'POST' &&
+            ctx.path.startsWith('/_diagnostics')
+          ) {
+            ctx.status = 200;
+            ctx.body = 'OK';
           }
           return next();
         };
