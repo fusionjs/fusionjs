@@ -1,5 +1,5 @@
 // @flow
-const {check: checkDeps} = require('yarn-utilities');
+const {check: checkDeps} = require('./lockfile.js');
 
 /*::
 import type {VersionPolicy} from './get-manifest.js';

@@ -5,6 +5,7 @@ const {install} = require('../commands/install.js');
 const {add} = require('../commands/add.js');
 const {upgrade} = require('../commands/upgrade.js');
 const {remove} = require('../commands/remove.js');
+const {dedupe} = require('../commands/dedupe.js');
 const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
@@ -67,6 +68,7 @@ async function runTests() {
 
   await Promise.all([
     t(testInstallAddUpgradeRemove),
+    t(testDedupe),
     t(testGreenkeep),
     t(testPurge),
     t(testYarn),
@@ -180,6 +182,17 @@ async function testInstallAddUpgradeRemove() {
     name: 'has',
   });
   assert(!(await exists(`${__dirname}/tmp/commands/node_modules/has`)));
+}
+
+async function testDedupe() {
+  const lockfile = `${__dirname}/tmp/dedupe/a/yarn.lock`;
+  const cmd = `cp -r ${__dirname}/fixtures/dedupe/ ${__dirname}/tmp/dedupe`;
+  await exec(cmd);
+
+  await dedupe({
+    root: `${__dirname}/tmp/dedupe`,
+  });
+  assert((await read(lockfile, 'utf8')).includes('version "1.0.3"'));
 }
 
 async function testGreenkeep() {

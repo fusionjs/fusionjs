@@ -1,8 +1,11 @@
 // @flow
-const {remove: removeDep} = require('yarn-utilities');
+const {resolve} = require('path');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
+const {getManifest} = require('../utils/get-manifest.js');
+const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {read, write, spawn} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
+const {remove: removeDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
 
 /*::
@@ -29,7 +32,18 @@ const remove /*: Remove */ = async ({root, cwd, name}) => {
       delete meta.optionalDependencies[name];
     await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
   } else {
-    await removeDep({roots: [cwd], dep: name});
+    const {projects} = await getManifest({root});
+    const deps = await getLocalDependencies({
+      dirs: projects.map(dir => `${root}/${dir}`),
+      target: resolve(root, cwd),
+    });
+    const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
+    await removeDep({
+      roots: [cwd],
+      removals: [name],
+      ignore: deps.map(d => d.meta.name),
+      tmp,
+    });
   }
   await spawn('rm', ['-rf', 'node_modules'], {cwd});
   await spawn('rm', ['-rf', 'node_modules'], {cwd: root});

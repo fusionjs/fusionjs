@@ -1,7 +1,7 @@
 // @flow
 const lockfile = require('@yarnpkg/lockfile');
 const {dirname} = require('path');
-const {merge} = require('yarn-utilities');
+const {merge} = require('./lockfile.js');
 const {exists, exec, read, write, spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 
@@ -24,9 +24,18 @@ const installDeps /*: InstallDeps */ = async ({
   hooks: {preinstall, postinstall} = {},
 }) => {
   const bin = `${root}/third_party/jazelle/temp`;
+
+  // generate global lock file
+  const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
   await spawn('rm', ['-f', `${bin}/yarn.lock`]);
   await spawn('rm', ['-f', `${bin}/package.json`]);
-  await merge({roots: deps.map(dep => dep.dir), out: bin, frozenLockfile}); // generate global lock file
+  await merge({
+    roots: deps.map(dep => dep.dir),
+    out: bin,
+    ignore: deps.map(dep => dep.meta.name),
+    frozenLockfile,
+    tmp,
+  });
 
   // delete local packages out of package.json
   const meta = JSON.parse(await read(`${bin}/package.json`, 'utf8'));

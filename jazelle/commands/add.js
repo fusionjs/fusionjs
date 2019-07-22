@@ -1,9 +1,12 @@
 // @flow
+const {resolve} = require('path');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
-const {add: addDep} = require('yarn-utilities');
+const {getManifest} = require('../utils/get-manifest.js');
+const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {node, yarn} = require('../utils/binary-paths.js');
 const {exec, read, write} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
+const {add: addDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
 
 /*
@@ -34,17 +37,16 @@ const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
 
     const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
     if (!meta[type]) meta[type] = {};
-    if (meta.dependencies && meta.dependencies[name]) {
-      meta.dependencies[name] = local.meta.version;
-    }
-    if (meta.devDependencies && meta.devDependencies[name]) {
-      meta.devDependencies[name] = local.meta.version;
-    }
-    if (meta.peerDependencies && meta.peerDependencies[name]) {
-      meta.peerDependencies[name] = local.meta.version;
-    }
-    if (meta.optionalDependencies && meta.optionalDependencies[name]) {
-      meta.optionalDependencies[name] = local.meta.version;
+    const types = [
+      'dependencies',
+      'devDependencies',
+      'peerDependencies',
+      'optionalDependencies',
+    ];
+    for (const t of types) {
+      if (meta[t] && meta[t][name]) {
+        meta[t][name] = local.meta.version;
+      }
     }
     meta[type][name] = local.meta.version;
     await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
@@ -55,8 +57,19 @@ const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
         await exec(`${node} ${yarn} info ${name} version --json 2>/dev/null`)
       ).data;
     }
+    const additions = [{name, range: version, type}];
+    const {projects} = await getManifest({root});
+    const deps = await getLocalDependencies({
+      dirs: projects.map(dir => `${root}/${dir}`),
+      target: resolve(root, cwd),
+    });
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-    await addDep({roots: [cwd], dep: name, version, type, tmp});
+    await addDep({
+      roots: [cwd],
+      additions,
+      ignore: deps.map(d => d.meta.name),
+      tmp,
+    });
   }
   await install({root, cwd});
 };
