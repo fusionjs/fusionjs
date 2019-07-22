@@ -18,7 +18,7 @@ as verbs (e.g. `returnProduct(id)`) rather than object-orientation (e.g.
 If you're using React/Redux, you should use
 [`fusion-plugin-rpc-redux-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-rpc-redux-react)
 instead of this package.
-
+asdfasdf
 ---
 
 ### Table of contents
