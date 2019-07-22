@@ -1,5 +1,5 @@
 // @flow
-const {sync} = require('yarn-utilities');
+const {sync} = require('./lockfile.js');
 
 /*::
 import type {Metadata} from './get-local-dependencies.js';

@@ -13,10 +13,9 @@
     "build": "yarn preinstall"
   },
   "dependencies": {
-    "@yarnpkg/lockfile": "1.1.0",
-    "globby": "9.2.0",
-    "semver": "6.1.1",
-    "yarn-utilities": "0.1.1"
+    "@yarnpkg/lockfile": "^1.1.0",
+    "globby": "^10.0.1",
+    "semver": "^6.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

@@ -1,8 +1,11 @@
 // @flow
-const {upgrade: upgradeDep} = require('yarn-utilities');
+const {resolve} = require('path');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
-const {read, write, spawn} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
+const {getManifest} = require('../utils/get-manifest.js');
+const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
+const {read, write, spawn} = require('../utils/node-helpers.js');
+const {upgrade: upgradeDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
 
 /*::
@@ -34,8 +37,19 @@ const upgrade /*: Upgrade */ = async ({root, cwd, name, version}) => {
       meta.optionalDependencies[name] = local.meta.version;
     await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
   } else {
+    const additions = [{name, range: version}];
+    const {projects} = await getManifest({root});
+    const deps = await getLocalDependencies({
+      dirs: projects.map(dir => `${root}/${dir}`),
+      target: resolve(root, cwd),
+    });
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-    await upgradeDep({roots: [cwd], dep: name, version, tmp});
+    await upgradeDep({
+      roots: [cwd],
+      additions,
+      ignore: deps.map(d => d.meta.name),
+      tmp,
+    });
   }
   await spawn('rm', ['-rf', 'node_modules'], {cwd});
   await install({root, cwd});
