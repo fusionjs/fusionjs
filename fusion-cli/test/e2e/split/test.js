@@ -32,6 +32,7 @@ test('`fusion dev` CHUNK_ID instrumentation', async () => {
   const csrContent = await page.content();
   t.ok(csrContent.includes('<div id="csr">1</div>'));
 
+  browser.close();
   app.teardown();
 }, 100000);
 
@@ -62,5 +63,6 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const csrContent = await page.content();
   t.ok(csrContent.includes('<div id="csr">6</div>'));
 
+  browser.close();
   proc.kill();
 }, 100000);
