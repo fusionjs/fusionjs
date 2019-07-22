@@ -30,7 +30,6 @@ test('`fusion dev` CHUNK_ID instrumentation', async () => {
   const page = await browser.newPage();
   await page.goto(`${url}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  console.log({csrContent});
   t.ok(csrContent.includes('<div id="csr">1</div>'));
 
   app.teardown();
@@ -59,7 +58,6 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  console.log({csrContent});
   t.ok(csrContent.includes('<div id="csr">6</div>'));
 
   proc.kill();
