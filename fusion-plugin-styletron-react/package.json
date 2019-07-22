@@ -33,7 +33,7 @@
     "styletron-engine-atomic": "^1.0.13"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "react": "^16.8.6",
     "styletron-react": "^5.2.0"
   },
@@ -51,7 +51,7 @@
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
     "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-react": "0.0.0-monorepo",
     "get-port": "^5.0.0",
     "jest": "^24.8.0",

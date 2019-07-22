@@ -37,7 +37,7 @@
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
     "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-plugin-react-router": "0.0.0-monorepo",
     "fusion-plugin-styletron-react": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
@@ -60,7 +60,7 @@
   },
   "peerDependencies": {
     "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.8.6",
     "redux": "^4.0.1"

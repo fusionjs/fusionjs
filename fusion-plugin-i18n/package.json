@@ -54,7 +54,7 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "flow-bin": "^0.102.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "nyc": "^14.1.0",
@@ -63,7 +63,7 @@
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "engines": {

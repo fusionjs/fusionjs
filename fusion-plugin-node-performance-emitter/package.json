@@ -43,7 +43,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
@@ -55,7 +55,7 @@
     "eslint-plugin-react-hooks": "^1.6.1"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-plugin-universal-events": "0.0.0-monorepo"
   },
   "scripts": {

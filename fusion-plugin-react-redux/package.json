@@ -42,7 +42,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "execa": "^1.0.0",
     "flow-bin": "^0.102.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "fusion-test-utils": "0.0.0-monorepo",
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
@@ -55,7 +55,7 @@
     "eslint-plugin-jest": "^22.7.2"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.fd5a750.0",
     "react": "^16.8.6",
     "react-redux": "^7.1.0",
     "redux": "^4.0.1"
