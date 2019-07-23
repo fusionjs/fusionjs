@@ -70,6 +70,7 @@ async function runTests() {
   await Promise.all([
     t(testInstallAddUpgradeRemove),
     t(testCi),
+    t(testDedupe),
     t(testGreenkeep),
     t(testPurge),
     t(testYarn),
