@@ -487,6 +487,8 @@ List projects that have changed since the last git commit.
 
 `jazelle changes`
 
+- `--sha1` - The commit SHA-1 to get the list of changes from. Defaults to `HEAD` of the current branch.
+- `--sha2` - If populated, will get the list of changes between `sha1` and `sha2`. Defaults to an empty string.
 - `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 Bazel targets can be tested via the `bazel test [target]` command.

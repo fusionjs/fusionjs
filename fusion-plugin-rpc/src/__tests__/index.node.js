@@ -731,9 +731,10 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
       is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
     },
   }: any);
-
+  let executedHandler = false;
   const mockHandlers = {
     test(args, ctx) {
+      executedHandler = true;
       t.deepEqual(args, MOCK_JSON_PARAMS);
       t.equal(ctx, mockCtx);
       return 1;
@@ -744,7 +745,7 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
       t.equal(type, 'rpc:method');
       t.equal(payload.method, 'test');
       t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
+      t.equal(payload.status, 'failure');
       t.equal(typeof payload.timing, 'number');
     },
   });
@@ -767,9 +768,17 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
+    await middleware(mockCtx, async () => {
+      t.equal(executedHandler, false, 'awaits next');
+      Promise.resolve();
+    });
+    t.equal(executedHandler, false);
+    // $FlowFixMe
+    t.equal(mockCtx.body.status, 'failure');
+    // $FlowFixMe
+    t.equal(mockCtx.body.data.code, 'entity.too.large');
   } catch (e) {
-    t.equal(e.type, 'entity.too.large');
+    t.fail(e);
   }
   t.end();
 });
