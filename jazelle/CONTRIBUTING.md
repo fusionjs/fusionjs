@@ -139,25 +139,18 @@ If you are fixing bugs, you can run `yarn test [theTestYouWant]` to selectively 
 
 If you're adding tests, prefer to add tests in the `Promise.all` of `runTests` in `tests/index.js`. Using the `t(testFoo)` call instead of a plain `testFoo()` call ensures the test can be run in isolation, as described above.
 
-### Running Bazel rules
+### Using bleeding-edge Jazelle for troubleshooting in a monorepo
 
-Create a test workspace folder as a sibling to the cloned fusionjs repo:
+Clone the fusionjs repo as a sibling folder to your monorepo:
 
 ```
 # development folder structure
 - my-projects
   - fusionjs/jazelle
-  - test-monorepo
+  - my-monorepo
 ```
 
-You can then scaffold a development workspace using the `init` command:
-
-```
-cd test-monorepo
-../fusionjs/jazelle/bin/cli.sh init
-```
-
-Open the generated `test-monorepo/WORKSPACE` file and change the jazelle `http_archive` declaration to a `local_repository` declaration:
+Open `my-monorepo/WORKSPACE` file and change the jazelle `http_archive` declaration to a `local_repository` declaration:
 
 ```python
 # BEFORE
@@ -182,7 +175,8 @@ This tells Bazel to use the Bazel files in your cloned repo instead of pulling t
 Verify that you can run commands from your development workspace:
 
 ```sh
+cd my-monorepo
 ../jazelle/bin/cli.sh version
 ```
 
-Now you can run `../jazelle/bin/cli.sh [command]` to run Jazelle commands from your development workspace.
+Now you can run `../fusionjs/jazelle/bin/cli.sh [command]` to run Jazelle commands from your development workspace.
