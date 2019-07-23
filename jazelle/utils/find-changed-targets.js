@@ -6,12 +6,19 @@ const {bazel} = require('./binary-paths.js');
 /*::
 export type FindChangedTargetsArgs = {
   root: string,
-  type: string,
+  sha1?: string,
+  sha2?: string,
+  type?: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
 */
-const findChangedTargets /*: FindChangedTargets */ = async ({root, type}) => {
-  const targets = await findChangedBazelTargets({root});
+const findChangedTargets /*: FindChangedTargets */ = async ({
+  root,
+  sha1,
+  sha2,
+  type,
+}) => {
+  const targets = await findChangedBazelTargets({root, sha1, sha2});
   switch (type) {
     case 'bazel':
       return targets;
@@ -26,10 +33,13 @@ const findChangedTargets /*: FindChangedTargets */ = async ({root, type}) => {
   }
 };
 
-const findChangedBazelTargets = async ({root}) => {
-  const diff = await exec(`git diff-tree --no-commit-id --name-only -r HEAD`, {
-    cwd: root,
-  }).catch(() => null);
+const findChangedBazelTargets = async ({root, sha1 = 'HEAD', sha2 = ''}) => {
+  const diff = await exec(
+    `git diff-tree --no-commit-id --name-only -r ${sha1} ${sha2}`,
+    {
+      cwd: root,
+    }
+  ).catch(() => null);
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
     if (diff !== null) {
