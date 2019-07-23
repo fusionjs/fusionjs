@@ -22,7 +22,6 @@ import type {RouterHistoryType} from './types.js';
 
 type ProviderPropsType = {
   history: RouterHistoryType,
-  basename?: string,
   children?: React.Node,
 };
 

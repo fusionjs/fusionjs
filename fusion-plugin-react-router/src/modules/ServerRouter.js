@@ -8,20 +8,9 @@
 
 import * as React from 'react';
 
-import {Router as RouterUntyped} from 'react-router-dom';
+import {Router as BaseRouter} from 'react-router-dom';
 
-import type {RouterType, RouterHistoryType} from '../types.js';
-
-const BaseRouter: RouterType = (RouterUntyped: any);
-
-type PropsType = {
-  context?: any,
-  onRoute?: Function,
-  history: RouterHistoryType,
-  Provider?: RouterType,
-  basename?: string,
-  children?: React.Node,
-};
+import type {RouterPropsType as PropsType, RouterType} from '../types.js';
 
 /**
  * The public top-level API for a "static" <Router>, so-called because it
@@ -51,6 +40,7 @@ class ServerRouter extends React.Component<PropsType> {
     const {Provider, history, basename, children} = this.props;
     if (!Provider) throw new Error('Missing Provider for Server Router');
     return (
+      // $FlowFixMe
       <Provider basename={basename} history={history}>
         {children}
       </Provider>
@@ -63,5 +53,5 @@ ServerRouter.childContextTypes = {
   onRoute: () => {},
 };
 
-const ServerRouterTyped: React.ComponentType<PropsType> = ServerRouter;
+const ServerRouterTyped: RouterType = ServerRouter;
 export {ServerRouterTyped as ServerRouter};
