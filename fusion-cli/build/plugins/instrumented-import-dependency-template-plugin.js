@@ -292,10 +292,15 @@ function getChunkGroupModules(dep) {
       }
     });
   }
+
   // For NormalModules
   dep.block.chunkGroup.chunks.forEach(chunk => {
     for (const module of chunk._modules) {
-      modulesSet.add(module.resource);
+      if (module instanceof ConcatenatedModule) {
+        modulesSet.add(module.rootModule.resource);
+      } else {
+        modulesSet.add(module.resource);
+      }
     }
   });
   return modulesSet;
