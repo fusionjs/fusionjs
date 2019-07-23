@@ -1,5 +1,5 @@
 // @flow
-const semver = require('semver');
+const {satisfies} = require('semver');
 const {resolve} = require('path');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
@@ -53,64 +53,73 @@ const detectDanglingPeerDeps = async ({deps}) => {
 
 const detectHoistMismatch = async ({root, deps}) => {
   const errors = [];
-  await withDeps(deps, async (dep, dependencies, key) => {
-    const range = dependencies[key];
-    const file = `${root}/node_modules/${key}/package.json`;
-    if (!(await exists(file))) {
-      throw new Error(`File ${file} not found. Run \`jazelle install\``);
+  for (const dep of deps) {
+    for (const {name, range} of getDepEntries(dep)) {
+      const file = `${root}/node_modules/${name}/package.json`;
+      if (!(await exists(file))) continue;
+      const {version} = JSON.parse(await read(file, 'utf8'));
+      if (!satisfies(version, range)) {
+        const error =
+          `Hoisted dep version ${name}@${range} does not match ` +
+          `range specified in ${dep.dir}/package.json for ${range}. ` +
+          `This can happen if you depend on an older version of ${name} than your dependencies do. ` +
+          `Change your range to include ${version}`;
+        errors.push(error);
+      }
     }
-    const {version} = JSON.parse(await read(file, 'utf8'));
-    if (!semver.satisfies(version, range)) {
-      const error =
-        `Hoisted dep version ${key}@${version} does not match ` +
-        `range specified in ${dep.dir}/package.json for ${range}. ` +
-        `This can happen if you depend on an older version of ${key} than your dependencies do. ` +
-        `Change your range to include ${version}`;
-      errors.push(error);
-    }
-  });
+  }
   return errors;
 };
 
 const detectCyclicalDeps = async ({deps}) => {
   const errors = [];
+  const index = {};
   for (const dep of deps) {
-    const cyclical = [];
-    collect(deps, dep, cyclical);
-    for (const chain of cyclical) {
-      const names = chain.map(dep => `- ${dep.meta.name}`).join('\n');
-      errors.push(`Cyclical dependency chain:\n${names}`);
-    }
+    const {name} = dep.meta;
+    index[name] = dep;
+  }
+
+  // detect
+  const cycles = [];
+  for (const dep of deps) {
+    collect(index, dep, cycles);
+  }
+  // dedupe
+  const map = {};
+  for (const cycle of cycles) {
+    const key = cycle.sort().join();
+    map[key] = cycle;
+  }
+  for (const key in map) {
+    const names = map[key].map(dep => `- ${dep.meta.name}`).join('\n');
+    errors.push(`Cyclical dependency chain detected containing:\n${names}`);
   }
   return errors;
 };
-const collect = (deps, dep, cyclical, parents = new Set()) => {
-  if (parents.has(dep)) {
-    const list = [...parents, dep];
-    cyclical.push(list.slice(list.indexOf(dep)));
+const collect = (index, dep, cycles, set = new Set()) => {
+  if (set.has(dep)) {
+    const list = [...set];
+    cycles.push(list.slice(list.indexOf(dep)));
   } else {
-    parents.add(dep);
-    for (const key in dep.meta.dependencies) {
-      const target = deps.find(d => {
-        return (
-          d.meta.name === key &&
-          semver.satisfies(d.meta.version, dep.meta.dependencies[key])
-        );
-      });
-      if (target) collect(deps, target, cyclical, parents);
+    set.add(dep);
+    for (const {name, range} of getDepEntries(dep.meta)) {
+      const target = index[name];
+      if (target && satisfies(target.meta.version, range)) {
+        collect(index, target, cycles, set);
+      }
     }
   }
 };
 
-const withDeps = async (deps, fn) => {
+const getDepEntries = meta => {
   const types = ['dependencies', 'devDependencies'];
+  const entries = [];
   for (const type of types) {
-    for (const dep of deps) {
-      for (const key in dep.meta[type] || {}) {
-        await fn(dep, dep.meta[type], key);
-      }
+    for (const name in meta[type]) {
+      entries.push({name, range: meta[type][name], type});
     }
   }
+  return entries;
 };
 
 module.exports = {doctor};
