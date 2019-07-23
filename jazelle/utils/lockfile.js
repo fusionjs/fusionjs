@@ -429,7 +429,9 @@ const populateGraph = ({graph, name, range, index, ref}) => {
     }
   }
   if (!graph[key]) return;
-  if (ref !== null && ref[key] !== graph[key]) throwEditError('Version synced');
+  if (ref !== null && ref[key].version !== graph[key].version) {
+    throwEditError('Version synced');
+  }
   populateDeps({graph, deps: graph[key].dependencies || {}, index, ref});
 };
 

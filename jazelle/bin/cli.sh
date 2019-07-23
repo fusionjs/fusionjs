@@ -28,24 +28,29 @@ then
 fi
 
 # setup other binaries
-"$BIN/bazelisk" run //:jazelle -- noop 2>/dev/null
+"$BIN/bazelisk" run //:jazelle -- noop #2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
-JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle"
+JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
 
 # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
-if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -d "$JAZELLE" ]
+if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
 then
-  echo "Warning: using global Jazelle. Builds may not be reproducible."
+  # if we're in a repo, jazelle declaration in WORKSPACE is wrong, so we should error out
+  if [ -f "$ROOT/WORKSPACE" ]
+  then
+    echo "Error: Invalid \`jazelle\` declaration in WORKSPACE file"
+    exit 1
+  fi
   if [ ! -f "$BIN/yarn.js" ]
   then
     "$NODE" "$BIN/../utils/download-yarn.js"
   fi
   NODE="$(which node)"
-  YARN="" # see utils/binary-paths.js for fallback path, see also package.json
-  JAZELLE="$BIN/.."
+  YARN="$BIN/yarn.js"
+  JAZELLE="$BIN/../cli.js"
 fi
 
-"$NODE" "$JAZELLE/cli.js" $@
+"$NODE" "$JAZELLE" $@
 
