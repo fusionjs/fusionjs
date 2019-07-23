@@ -123,8 +123,10 @@ const runCLI /*: RunCLI */ = async argv => {
       changes: [
         `Lists Bazel test targets that changed since the last git commit
 
+        --sha1 [sha1]           List changes since this commit (default is HEAD)
+        --sha2 [sha2]           List changes between sha1 and this commit
         --type [type]           'bazel' or 'dirs'`,
-        ({type}) => changes({root, type}),
+        ({sha1, sha2, type}) => changes({root, sha1, sha2, type}),
       ],
       build: [
         `Build a project
