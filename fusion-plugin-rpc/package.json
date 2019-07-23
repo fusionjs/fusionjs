@@ -77,5 +77,6 @@
     "yarn": ">=1.0.0"
   },
   "license": "MIT",
-  "homepage": "https://fusionjs.com/api/fusion-plugin-rpc"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-rpc",
+  "sideEffects": false
 }

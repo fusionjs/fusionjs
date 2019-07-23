@@ -72,5 +72,6 @@
     "yarn": ">=1.0.0"
   },
   "license": "MIT",
-  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n",
+  "sideEffects": false
 }
