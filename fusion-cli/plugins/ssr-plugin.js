@@ -162,6 +162,9 @@ Rather than enable terser workarounds that reduces minification for compliant br
 Safari 10.1 and 11 should be treated as legacy.
 */
 function checkModuleSupport({name, version}) {
+  if (typeof version !== 'string') {
+    return false;
+  }
   if (name === 'Chrome' || name === 'Chrome Headless' || name === 'Chromium') {
     if (majorVersion(version) >= 61) return true;
   } else if (name === 'Mobile Safari' || name === 'Safari') {

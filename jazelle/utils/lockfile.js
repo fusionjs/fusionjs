@@ -133,7 +133,7 @@ const merge /*: Merge */ = async ({
       Object.assign(merged.lockfile, lockfile);
     }
   }
-  if (!frozenLockfile) await writeMetadata({metas: [merged]});
+  await writeMetadata({metas: [merged]});
 };
 
 /*::
@@ -156,16 +156,15 @@ const diff /*: Diff */ = async ({
   tmp = '/tmp',
 }) => {
   const metas = await getMetadata({roots});
-  await writeMetadata({
-    metas: /*:: await */ await update({
-      metas,
-      additions,
-      removals,
-      upgrades,
-      ignore,
-      tmp,
-    }),
+  const updated = /*:: await */ await update({
+    metas,
+    additions,
+    removals,
+    upgrades,
+    ignore,
+    tmp,
   });
+  await writeMetadata({metas: updated});
 };
 
 const getMetadata = async ({roots}) => {
@@ -335,7 +334,7 @@ const update /*: Update */ = async ({
       await write(`${cwd}/package.json`, data, 'utf8');
       const yarnrc = '"--install.frozen-lockfile" false';
       await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-      const install = `yarn install --ignore-engines`;
+      const install = `yarn install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original package.json/yarn.lock
@@ -344,6 +343,34 @@ const update /*: Update */ = async ({
         if (!meta[type]) meta[type] = {};
         if (meta[type]) meta[type][name] = range;
       }
+      Object.assign(lockfile, added.lockfile);
+    }
+
+    // install missing transitives
+    const missingTransitives = [];
+    for (const key in lockfile) {
+      if (lockfile[key].dependencies) {
+        for (const name in lockfile[key].dependencies) {
+          const range = lockfile[key].dependencies[name];
+          if (!lockfile[`${name}@${range}`]) {
+            missingTransitives.push(`${name}@${range}`);
+          }
+        }
+      }
+    }
+    if (missingTransitives.length > 0) {
+      if (frozenLockfile) throwEditError('Installing dep');
+      const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+      await exec(`mkdir -p ${cwd}`);
+      const yarnrc = '"--add.frozen-lockfile" false';
+      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+      await write(`${cwd}/package.json`, '{}', 'utf8');
+      const deps = missingTransitives.join(' ');
+      const add = `yarn add ${deps} --ignore-engines`;
+      await exec(add, {cwd}, [process.stdout, process.stderr]);
+
+      // copy newly installed deps back to original yarn.lock
+      const [added] = await getMetadata({roots: [cwd]});
       Object.assign(lockfile, added.lockfile);
     }
   }
@@ -423,9 +450,9 @@ const isBetterVersion = (version, range, graph, key) => {
 const enumerationChanged = (a, b) => {
   const aKeys = Object.keys(a);
   const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return false;
-  if (aKeys.sort().join() !== bKeys.sort().join()) return false;
-  return true;
+  if (aKeys.length !== bKeys.length) return true;
+  if (aKeys.sort().join() !== bKeys.sort().join()) return true;
+  return false;
 };
 
 const throwEditError = reason => {
