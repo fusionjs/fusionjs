@@ -88,6 +88,8 @@ The default loader expects translation files to live in `./translations/{locale}
 
 ### Setup
 
+#### Quick Example
+
 ```js
 // src/main.js
 import App from 'fusion-core';
@@ -110,6 +112,87 @@ export default () => {
   return app;
 };
 ```
+
+
+#### Detailed Guide
+
+In order to add translations to an existing FusionJS application, you will
+need 3 things:
+
+1. Install `fusion-plugin-i18n`
+
+  1a. Register the I18n plugin
+
+```js
+import I18n, {I18nToken} from 'fusion-plugin-i18n';
+
+// ...
+
+app.register(I18nToken, I18n);
+```
+  1b. Register a `FetchToken`, if you don't already have one (browser only)
+
+```js
+import {FetchToken} from 'fusion-tokens';
+import fetch from 'unfetch';
+
+// ...
+
+if (__BROWSER__) {
+  app.register(FetchToken, fetch);
+}
+```
+
+  1c. Optional. A translations loader (node only)
+
+```js
+import {I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n';
+
+// ...
+
+if (__NODE__) {
+  app.register(I18nLoaderToken, createI18nLoader());
+}
+```
+
+  1d. Optional. If you're creating a React application, replace
+  `fusion-plugin-i18n` in this guide with `fusion-plugin-i18n-react`. It will
+  have all the same exports.
+
+
+2. Test utilities
+
+Testing your application in a browser-like setting will require mocking the
+i18n hydration state. In your test app setup, add the following:
+
+```js
+import {HydrationStateToken} from 'fusion-plugin-i18n';
+
+// ...
+
+if (__BROWSER__) {
+  app.register(HydrationStateToken, {chunks: [], translations: {}});
+}
+```
+
+
+3. A `translations` directory
+
+The `translations` directory contains all the translations for the application.
+If you're using a loader, you will be getting translation data from another
+source, but it can still be useful to bootstrap your dev environment with local
+translations.
+
+```
+ | -- src/
+      | -- main.js
+ | -- translations/
+      | -- en-US.json
+      | -- fr-CA.json
+```
+
+See [API](#api) for more detailed information.
+
 
 ---
 
