@@ -1025,10 +1025,7 @@ async function testBin() {
   const streamFile = `${__dirname}/tmp/bin/stream.txt`;
   const stream = createWriteStream(streamFile);
   await new Promise(resolve => stream.on('open', resolve));
-  await exec(`${jazelle}`, {cwd}, [stream, stream]).catch(async (e) => {
-    console.log(e)
-    console.log(await read(streamFile, 'utf8'))
-  });
+  await exec(`${jazelle}`, {cwd}, [stream, stream]);
   assert((await read(streamFile, 'utf8')).includes('Usage: jazelle [command]'));
 
   const yarnStreamFile = `${__dirname}/tmp/bin/yarn-stream.txt`;
