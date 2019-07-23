@@ -69,5 +69,6 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-universal-events"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-universal-events",
+  "sideEffects": false
 }
