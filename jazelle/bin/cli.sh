@@ -37,7 +37,12 @@ JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
 # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
 if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
 then
-  echo "Warning: Invalid `jazelle` declaration in WORKSPACE file"
+  # if we're in a repo, jazelle declaration in WORKSPACE is wrong, so we should error out
+  if [ -f "$ROOT/WORKSPACE" ]
+  then
+    echo "Error: Invalid \`jazelle\` declaration in WORKSPACE file"
+    exit 1
+  fi
   if [ ! -f "$BIN/yarn.js" ]
   then
     "$NODE" "$BIN/../utils/download-yarn.js"

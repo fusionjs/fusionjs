@@ -3,6 +3,7 @@ const {satisfies} = require('semver');
 const {resolve} = require('path');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
+const {ci} = require('../commands/ci.js');
 const {read, exists} = require('../utils/node-helpers.js');
 
 /*::
@@ -22,9 +23,11 @@ const doctor /*: Doctor */ = async ({root, cwd}) => {
     ...(await detectDanglingPeerDeps({deps})),
     ...(await detectHoistMismatch({root, deps})),
     ...(await detectCyclicalDeps({deps})),
+    ...(await detectOutdatedLockfiles({root, cwd})),
   ];
   if (errors.length > 0) {
     errors.forEach(e => console.log(`${e}\n`));
+    process.exit(1);
   } else {
     console.log(`No problems found in ${cwd}`);
   }
@@ -109,6 +112,14 @@ const collect = (index, dep, cycles, set = new Set()) => {
       }
     }
   }
+};
+
+const detectOutdatedLockfiles = async ({root, cwd}) => {
+  const errors = [];
+  await ci({root, cwd}).catch(() => {
+    errors.push(`A lockfile is outdated. Run \`jazelle install\``);
+  });
+  return errors;
 };
 
 const getDepEntries = meta => {
