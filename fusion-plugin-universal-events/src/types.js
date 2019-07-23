@@ -10,7 +10,10 @@ import type {Context} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
-type HandlerFnType<TInput> = (payload: TInput, ctx?: Context) => void | Promise<void>;
+type HandlerFnType<TInput> = (
+  payload: TInput,
+  ctx?: Context
+) => void | Promise<void>;
 
 export interface IEmitter {
   from(ctx: Context): IEmitter;
