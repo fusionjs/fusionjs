@@ -164,46 +164,38 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     specOnly: false,
   });
 
-  const getTransformDefault = modulePath => {
-    if (
-      modulePath.startsWith(getSrcPath(dir)) ||
-      /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
-    ) {
-      return 'all';
-    }
-    return 'spec';
-  };
+  const isProjectCode = modulePath =>
+    modulePath.startsWith(getSrcPath(dir)) ||
+    /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath);
+
+  const getTransformDefault = modulePath =>
+    isProjectCode(modulePath) ? 'all' : 'spec';
 
   const {
     experimentalBundleTest,
     experimentalTransformTest,
     experimentalSideEffectsTest,
   } = fusionConfig;
-  const experimentalSideEffectsTestDefault = modulePath => false;
 
+  const getDefaultSideEffects = modulePath => isProjectCode(modulePath)
+    ? false // enable tree-shaking for project code
+    : true; // disable tree-shaking for non-project code
+
+  // Note: package.json `sideEffects` field takes precedence over what is returned from test function
   const sideEffectsTester = experimentalSideEffectsTest
     ? modulePath => {
-        if (
-          modulePath.includes('core-js/modules') ||
-          modulePath.includes('regenerator-runtime/runtime')
-        ) {
-          return false;
-        }
-        const sideEffects = experimentalSideEffectsTest(
-          modulePath,
-          getTransformDefault(modulePath)
-        );
-        if (sideEffects === 'all') {
-          return true;
-        } else if (sideEffects === 'spec') {
-          return false;
-        } else {
-          throw new Error(
-            `Unexpected value from experimentalSideEffectsTest ${sideEffects}. Expected 'all' | 'spec'`
-          );
-        }
+      if (
+        modulePath.includes('core-js/modules') ||
+        modulePath.includes('regenerator-runtime/runtime')
+      ) {
+        return false; // disable tree-shaking for core-js and regenerator-runtime modules
       }
-    : experimentalSideEffectsTestDefault;
+      return !experimentalSideEffectsTest(
+        modulePath,
+        getDefaultSideEffects(modulePath)
+      )
+    } 
+    : modulePath => false;
 
   const babelTester = experimentalTransformTest
     ? modulePath => {
