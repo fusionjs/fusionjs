@@ -60,7 +60,7 @@ The `jazelle init` command generates Bazel `WORKSPACE`, `BUILD.bazel` and `.baze
 Check that the `.bazelversion` file at the root of your repo contains your desired Bazel version. For example:
 
 ```
-0.25.2
+0.27.0
 ```
 
 Check that the `WORKSPACE` file at the root of your repo is using the desired versions of Jazelle, Node and Yarn:
@@ -1362,9 +1362,7 @@ Note that updating `buildFileTemplate` does not change existing BUILD.bazel file
 
 ## TODOS
 
+- change add args to `jazelle add foo@0.0.0 --dev`
 - detect WORKSPACE changes in `jazelle changes`
-- warn on transitive range conflicts
-- support github references in dependencies
 - watch library -> service
 - hermetic install / refresh roots
-- self upgrade

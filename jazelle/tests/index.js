@@ -5,6 +5,7 @@ const {install} = require('../commands/install.js');
 const {add} = require('../commands/add.js');
 const {upgrade} = require('../commands/upgrade.js');
 const {remove} = require('../commands/remove.js');
+const {ci} = require('../commands/ci.js');
 const {dedupe} = require('../commands/dedupe.js');
 const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
@@ -68,6 +69,7 @@ async function runTests() {
 
   await Promise.all([
     t(testInstallAddUpgradeRemove),
+    t(testCi),
     t(testDedupe),
     t(testGreenkeep),
     t(testPurge),
@@ -182,6 +184,17 @@ async function testInstallAddUpgradeRemove() {
     name: 'has',
   });
   assert(!(await exists(`${__dirname}/tmp/commands/node_modules/has`)));
+}
+
+async function testCi() {
+  const cmd = `cp -r ${__dirname}/fixtures/ci/ ${__dirname}/tmp/ci`;
+  await exec(cmd);
+
+  await ci({
+    root: `${__dirname}/tmp/ci`,
+    cwd: `${__dirname}/tmp/ci/b`,
+  });
+  assert(true); // did not throw
 }
 
 async function testDedupe() {
