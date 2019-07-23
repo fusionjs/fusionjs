@@ -120,8 +120,7 @@ In order to add translations to an existing FusionJS application, you will
 need 3 things:
 
 1. Install `fusion-plugin-i18n`
-
-  1a. Register the I18n plugin
+  * 1a. Register the I18n plugin
 
 ```js
 import I18n, {I18nToken} from 'fusion-plugin-i18n';
@@ -130,7 +129,7 @@ import I18n, {I18nToken} from 'fusion-plugin-i18n';
 
 app.register(I18nToken, I18n);
 ```
-  1b. Register a `FetchToken`, if you don't already have one (browser only)
+  * 1b. Register a `FetchToken`, if you don't already have one (browser only)
 
 ```js
 import {FetchToken} from 'fusion-tokens';
@@ -142,28 +141,26 @@ if (__BROWSER__) {
   app.register(FetchToken, fetch);
 }
 ```
-
-  1c. Optional. A translations loader (node only)
+  * 1c. Optional. A custom translations loader (node only)
 
 ```js
-import {I18nLoaderToken, createI18nLoader} from 'fusion-plugin-i18n';
+import {I18nLoaderToken} from 'fusion-plugin-i18n';
 
 // ...
 
 if (__NODE__) {
-  app.register(I18nLoaderToken, createI18nLoader());
+  app.register(I18nLoaderToken, customLoader);
 }
 ```
-
-  1d. Optional. If you're creating a React application, replace
+  * 1d. Optional. If you're creating a React application, replace
   `fusion-plugin-i18n` in this guide with `fusion-plugin-i18n-react`. It will
   have all the same exports.
 
 
 2. Test utilities
 
-Testing your application in a browser-like setting will require mocking the
-i18n hydration state. In your test app setup, add the following:
+Testing your application in a browser-like setting (without running the server)
+will require mocking the i18n hydration state. In your test app setup, add the following:
 
 ```js
 import {HydrationStateToken} from 'fusion-plugin-i18n';
