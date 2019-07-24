@@ -36,19 +36,7 @@ function getReactSetup() {
 
 const reactSetup = getReactSetup();
 
-function getTransformIgnorePatterns() {
-  const defaults = ['/node_modules/(?!(fusion-cli.*build))'];
-  try {
-    const path = require('path');
-    // $FlowFixMe
-    const fusionrc = require(path.resolve(process.cwd(), '.fusionrc.js'));
-    return fusionrc.jest.transformIgnorePatterns;
-  } catch (e) {
-    return defaults;
-  }
-}
-
-const transformIgnorePatterns = getTransformIgnorePatterns();
+const fusionConfig = require('../load-fusionrc.js')(process.cwd());
 
 module.exports = {
   coverageDirectory: `${process.cwd()}/coverage`,
@@ -58,7 +46,10 @@ module.exports = {
     '\\.js$': require.resolve('./jest-transformer.js'),
     '\\.(gql|graphql)$': require.resolve('./graphql-jest-transformer.js'),
   },
-  transformIgnorePatterns,
+  transformIgnorePatterns: (fusionConfig.jest &&
+    fusionConfig.jest.transformIgnorePatterns) || [
+    '/node_modules/(?!(fusion-cli.*build))',
+  ],
   setupFiles: [require.resolve('./jest-framework-shims.js'), ...reactSetup],
   snapshotSerializers:
     reactSetup.length > 0 ? [require.resolve('enzyme-to-json/serializer')] : [],
