@@ -123,7 +123,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
         'Dependency is not Instrumented and lacks a clientChunkIndex'
       );
     }
-
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
       module: dep.module,
@@ -131,7 +130,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
       strict: dep.originModule.buildMeta.strictHarmonyModule,
       message: 'import()',
     });
-
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
     // - `__MODULE_ID`: the webpack module id of the dynamically imported module. Equivalent to require.resolveWeak(path)
@@ -143,7 +141,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
         "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
       : content;
-
     // replace with `customContent` instead of `content`
     source.replace(depBlock.range[0], depBlock.range[1] - 1, customContent);
   }
