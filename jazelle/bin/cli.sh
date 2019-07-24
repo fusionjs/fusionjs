@@ -28,7 +28,7 @@ then
 fi
 
 # setup other binaries
-"$BIN/bazelisk" run //:jazelle -- noop #2>/dev/null
+"$BIN/bazelisk" run //:jazelle -- noop 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
