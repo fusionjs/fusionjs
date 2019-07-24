@@ -72,7 +72,7 @@
     "fusion-react": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.5",
+    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6"
   },
   "scripts": {
