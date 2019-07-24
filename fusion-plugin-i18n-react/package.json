@@ -96,5 +96,6 @@
     ]
   },
   "license": "MIT",
-  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n-react"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n-react",
+  "sideEffects": false
 }

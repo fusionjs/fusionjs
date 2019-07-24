@@ -80,5 +80,6 @@
   "dependencies": {
     "eslint-plugin-jest": "^22.7.2"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-react-redux"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-react-redux",
+  "sideEffects": false
 }

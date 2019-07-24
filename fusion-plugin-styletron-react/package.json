@@ -68,5 +68,6 @@
     "yarn": ">=1.0.0"
   },
   "license": "MIT",
-  "homepage": "https://fusionjs.com/api/fusion-plugin-styletron-react"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-styletron-react",
+  "sideEffects": false
 }

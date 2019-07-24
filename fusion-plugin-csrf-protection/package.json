@@ -74,5 +74,6 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-csrf-protection"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-csrf-protection",
+  "sideEffects": false
 }
