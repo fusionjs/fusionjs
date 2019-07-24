@@ -177,24 +177,25 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     experimentalSideEffectsTest,
   } = fusionConfig;
 
-  const getDefaultSideEffects = modulePath => isProjectCode(modulePath)
-    ? false // enable tree-shaking for project code
-    : true; // disable tree-shaking for non-project code
+  const getDefaultSideEffects = modulePath =>
+    isProjectCode(modulePath)
+      ? false // enable tree-shaking for project code
+      : true; // disable tree-shaking for non-project code
 
   // Note: package.json `sideEffects` field takes precedence over what is returned from test function
   const sideEffectsTester = experimentalSideEffectsTest
     ? modulePath => {
-      if (
-        modulePath.includes('core-js/modules') ||
-        modulePath.includes('regenerator-runtime/runtime')
-      ) {
-        return false; // disable tree-shaking for core-js and regenerator-runtime modules
+        if (
+          modulePath.includes('core-js/modules') ||
+          modulePath.includes('regenerator-runtime/runtime')
+        ) {
+          return false; // disable tree-shaking for core-js and regenerator-runtime modules
+        }
+        return !experimentalSideEffectsTest(
+          modulePath,
+          getDefaultSideEffects(modulePath)
+        );
       }
-      return !experimentalSideEffectsTest(
-        modulePath,
-        getDefaultSideEffects(modulePath)
-      )
-    } 
     : modulePath => false;
 
   const babelTester = experimentalTransformTest
