@@ -115,11 +115,7 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
     } else if (this.clientChunkIndex) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      const ids = this.clientChunkIndex.get(
-        dep.module instanceof ConcatenatedModule
-          ? dep.module.rootModule.resource
-          : dep.module.resource
-      );
+      const ids = this.clientChunkIndex.get(getModuleResource(dep.module));
       chunkIds = ids ? Array.from(ids) : [];
     } else {
       // Prevent future developers from creating a broken webpack state
@@ -277,29 +273,31 @@ function getChunkGroupIds(chunkGroup) {
   }
 }
 
+function getModuleResource(module) {
+  if (module instanceof ConcatenatedModule) {
+    return module.rootModule.resource;
+  } else {
+    return module.resource;
+  }
+}
+
 function getChunkGroupModules(dep) {
   const modulesSet = new Set();
-  // For ConcatenatedModules in production build
   if (dep.module && dep.module.dependencies) {
-    modulesSet.add(dep.module.resource);
+    modulesSet.add(getModuleResource(dep.module));
     dep.module.dependencies.forEach(dependency => {
       if (dependency.module) {
-        if (dependency.module instanceof ConcatenatedModule) {
-          modulesSet.add(dependency.module.rootModule.resource);
-        } else {
-          modulesSet.add(dependency.module.resource);
-        }
+        modulesSet.add(getModuleResource(dependency.module));
       }
     });
   }
-
-  // For NormalModules
   dep.block.chunkGroup.chunks.forEach(chunk => {
-    for (const module of chunk._modules) {
+    for (const module of chunk.getModules()) {
+      modulesSet.add(getModuleResource(module));
       if (module instanceof ConcatenatedModule) {
-        modulesSet.add(module.rootModule.resource);
-      } else {
-        modulesSet.add(module.resource);
+        module.buildInfo.fileDependencies.forEach(fileDep => {
+          modulesSet.add(fileDep);
+        });
       }
     }
   });
