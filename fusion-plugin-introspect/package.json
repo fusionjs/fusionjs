@@ -116,5 +116,6 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-introspect"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-introspect",
+  "sideEffects": false
 }

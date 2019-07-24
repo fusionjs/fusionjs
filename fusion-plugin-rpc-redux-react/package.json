@@ -84,5 +84,6 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-rpc-redux-react"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-rpc-redux-react",
+  "sideEffects": false
 }

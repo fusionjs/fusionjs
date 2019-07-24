@@ -87,5 +87,6 @@
     "src"
   ],
   "dependencies": {},
-  "homepage": "https://fusionjs.com/api/fusion-plugin-service-worker"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-service-worker",
+  "sideEffects": false
 }

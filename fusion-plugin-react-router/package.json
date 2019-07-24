@@ -77,5 +77,6 @@
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-react-router"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-react-router",
+  "sideEffects": false
 }
