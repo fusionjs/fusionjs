@@ -28,7 +28,7 @@
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^6.0.1",
-    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-config-fusion": "0.0.0-canary.fc2bf62.0",
     "eslint-plugin-cup": "^2.0.1",
     "eslint-plugin-flowtype": "^3.11.1",
     "eslint-plugin-import": "^2.18.0",
