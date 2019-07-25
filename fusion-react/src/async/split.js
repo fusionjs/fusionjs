@@ -13,8 +13,6 @@ import prepared from './prepared.js';
 declare var __webpack_modules__: {[string]: any};
 declare var __webpack_require__: any => any;
 
-const CHUNKS_KEY = '__CHUNK_IDS';
-
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
 };
@@ -37,7 +35,10 @@ export default function withAsyncComponent<Config>({
 }): React.ComponentType<Config> {
   let AsyncComponent = null;
   let error = null;
-  let chunkIds = [];
+  const metadata = {
+    chunkIds: [],
+    i18nKeys: [],
+  };
 
   function WithAsyncComponent(props) {
     if (__BROWSER__) {
@@ -45,7 +46,10 @@ export default function withAsyncComponent<Config>({
       // $FlowFixMe
       let id = promise.__MODULE_ID;
 
-      if (__webpack_modules__[id]) {
+      if (
+        typeof __webpack_modules__ !== 'undefined' &&
+        __webpack_modules__[id]
+      ) {
         // If module is already loaded, it can be synchronously imported
         AsyncComponent = __webpack_require__(id).default;
       }
@@ -64,7 +68,7 @@ export default function withAsyncComponent<Config>({
     (props, context) => {
       if (AsyncComponent) {
         if (__NODE__ && context.markAsCritical) {
-          chunkIds.forEach(chunkId => {
+          metadata.chunkIds.forEach(chunkId => {
             context.markAsCritical(chunkId);
           });
         }
@@ -75,21 +79,25 @@ export default function withAsyncComponent<Config>({
       try {
         componentPromise = load();
       } catch (e) {
-        componentPromise = Promise.reject(e);
+        componentPromise = (Promise.reject(e): any);
       }
 
       // $FlowFixMe
-      chunkIds = componentPromise[CHUNKS_KEY] || [];
+      metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
+      // $FlowFixMe
+      metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
 
       if (__NODE__ && context.markAsCritical) {
-        chunkIds.forEach(chunkId => {
+        metadata.chunkIds.forEach(chunkId => {
           context.markAsCritical(chunkId);
         });
       }
 
       const loadPromises = [
         componentPromise,
-        ...context.splitComponentLoaders.map(loader => loader(chunkIds)),
+        ...context.splitComponentLoaders.map(loader =>
+          loader(metadata.chunkIds, metadata)
+        ),
       ];
 
       return Promise.all(loadPromises)

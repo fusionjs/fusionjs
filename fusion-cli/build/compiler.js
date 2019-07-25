@@ -120,7 +120,8 @@ type CompilerOpts = {
   logger?: any,
   preserveNames?: boolean,
   zopfli?: boolean,
-  minify?: boolean
+  minify?: boolean,
+  modernBuildOnly?: boolean,
 };
 */
 
@@ -136,12 +137,13 @@ function Compiler(
     zopfli = true,
     minify = true,
     serverless = false,
+    modernBuildOnly = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    forceLegacyBuild || !watch || env === 'production'
+    (forceLegacyBuild || !watch || env === 'production') && !modernBuildOnly
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [
@@ -155,7 +157,8 @@ function Compiler(
     clientChunkMetadata,
     legacyClientChunkMetadata,
     mergedClientChunkMetadata,
-    i18nManifest: new DeferredState(),
+    i18nManifest: new Map(),
+    i18nDeferredManifest: new DeferredState(),
     legacyBuildEnabled,
   };
   const root = path.resolve(dir);
@@ -174,12 +177,19 @@ function Compiler(
     zopfli,
     minify,
   };
-
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
-    getWebpackConfig({id: serverless ? 'serverless' : 'server', ...sharedOpts}),
+    getWebpackConfig({
+      id: serverless ? 'serverless' : 'server',
+      ...sharedOpts,
+    }),
   ]);
-
+  if (process.env.LOG_END_TIME == 'true') {
+    compiler.hooks.done.tap('BenchmarkTimingPlugin', stats => {
+      /* eslint-disable-next-line no-console */
+      console.log(`End time: ${Date.now()}`);
+    });
+  }
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);

@@ -306,7 +306,7 @@ class FusionApp {
         !this._dependedOn.has(getTokenRef(token))
       ) {
         throw new Error(
-          `Registered token without depending on it: "${token.name}"`
+          `Registered token without depending on it: "${token.name}". See https://github.com/fusionjs/fusionjs/tree/master/fusion-core#registered-without-depending.`
         );
       }
     }

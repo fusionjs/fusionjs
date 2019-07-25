@@ -7,6 +7,7 @@
  */
 
 import test from 'tape-cup';
+import MockEmitter from 'events';
 
 import App, {
   createPlugin,
@@ -15,17 +16,25 @@ import App, {
   type Context,
 } from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {RPCHandlersToken} from '../tokens';
 import RPCPlugin from '../mock';
-import type {RPCServiceType} from '../types.js';
+import type {RPCServiceType, IEmitter} from '../types.js';
 
 const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const mockCtx = (({}: any): Context);
 function createTestFixture() {
   const mockHandlers = {};
+  const mockEmitter: IEmitter = (new MockEmitter(): any);
+  // $FlowFixMe
+  mockEmitter.from = () => mockEmitter;
+  const mockEmitterPlugin = createPlugin({
+    provides: () => mockEmitter,
+  });
 
   const app = new App('content', el => el);
+  app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;

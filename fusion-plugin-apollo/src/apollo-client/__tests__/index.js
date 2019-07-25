@@ -20,7 +20,9 @@ import {ApolloClientPlugin, GetApolloClientLinksToken} from '../index.js';
 test('ApolloUniveralClient', async t => {
   const app = new App('el', el => el);
   app.register(GetApolloClientLinksToken, links => [
-    new ApolloLink(),
+    new ApolloLink((op, forward) => {
+      return forward(op);
+    }),
     ...links,
   ]);
   app.register(ApolloClientToken, ApolloClientPlugin);

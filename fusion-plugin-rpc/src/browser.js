@@ -9,20 +9,37 @@
 /* eslint-env browser */
 
 import {createPlugin, type Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 
-import type {HandlerType} from './tokens.js';
-import type {RPCPluginType, IEmitter} from './types.js';
+import {type HandlerType, RPCHandlersConfigToken} from './tokens.js';
+import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
+import {formatApiPath} from './utils.js';
+
+type InitializationOpts = {
+  fetch: Fetch,
+  emitter: IEmitter,
+  rpcConfig: ?RPCConfigType,
+};
+
+const statKey = 'rpc:method-client';
 
 class RPC {
   ctx: ?Context;
   emitter: ?IEmitter;
   handlers: ?HandlerType;
   fetch: ?Fetch;
-
-  constructor(fetch: Fetch) {
+  config: ?RPCConfigType;
+  apiPath: string;
+  constructor({fetch, emitter, rpcConfig}: InitializationOpts) {
     this.fetch = fetch;
+    this.config = rpcConfig || {};
+    this.emitter = emitter;
+
+    this.apiPath = formatApiPath(
+      rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+    );
   }
 
   request<TArgs, TResult>(
@@ -33,10 +50,17 @@ class RPC {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');
     }
+    if (!this.emitter) {
+      throw new Error('Missing emitter registered to UniversalEventsToken');
+    }
     const fetch = this.fetch;
+    const emitter = this.emitter;
+    const apiPath = this.apiPath;
+
+    const startTime = Date.now();
 
     // TODO(#3) handle args instanceof FormData
-    return fetch(`/api/${rpcId}`, {
+    return fetch(`${apiPath}${rpcId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,8 +72,19 @@ class RPC {
       .then(args => {
         const {status, data} = args;
         if (status === 'success') {
+          emitter.emit(statKey, {
+            method: rpcId,
+            status: 'success',
+            timing: Date.now() - startTime,
+          });
           return data;
         } else {
+          emitter.emit(statKey, {
+            method: rpcId,
+            error: data,
+            status: 'failure',
+            timing: Date.now() - startTime,
+          });
           return Promise.reject(data);
         }
       });
@@ -60,11 +95,13 @@ const pluginFactory: () => RPCPluginType = () =>
   createPlugin({
     deps: {
       fetch: FetchToken,
+      emitter: UniversalEventsToken,
+      rpcConfig: RPCHandlersConfigToken.optional,
     },
     provides: deps => {
-      const {fetch = window.fetch} = deps;
+      const {fetch = window.fetch, emitter, rpcConfig} = deps;
 
-      return {from: () => new RPC(fetch)};
+      return {from: () => new RPC({fetch, emitter, rpcConfig})};
     },
   });
 

@@ -1,11 +1,12 @@
 [ignore]
-.*/node_modules/.*[^(package)]\.json$
+.*/common/temp/node_modules/@uber/node-rosetta/.*
 
 [include]
-./src/
+../common/temp/node_modules
+../../common/temp/node_modules
 
 [libs]
-./flow-typed/npm/koa_v2.x.x.js
+../flow-typed/
 
 [lints]
 

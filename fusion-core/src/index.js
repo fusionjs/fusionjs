@@ -7,6 +7,7 @@
  */
 import type {
   Context,
+  ExtractTokenType,
   FusionPlugin,
   Middleware,
   Token,
@@ -19,7 +20,7 @@ import serverApp from './server-app';
 import clientApp from './client-app';
 import getEnv from './get-env.js';
 
-export default (__BROWSER__ ? clientApp() : serverApp());
+export default __BROWSER__ ? clientApp() : serverApp();
 
 export {compose} from './compose.js';
 export {memoize} from './memoize';
@@ -59,6 +60,7 @@ type FusionApp = typeof BaseApp;
 declare export default typeof BaseApp;
 export type {
   Context,
+  ExtractTokenType,
   FusionApp,
   FusionPlugin,
   Middleware,

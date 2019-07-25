@@ -47,7 +47,7 @@ tape('JWTServer', async t => {
   t.equal(res.status, 200);
   res = await fetch('http://localhost:3000/', {
     headers: {
-      Cookie: res.headers.get('set-cookie'),
+      Cookie: res.headers.get('set-cookie') || '',
     },
   });
   t.equal(res.status, 200);
@@ -89,7 +89,7 @@ tape('JWTServer with expired token', async t => {
 
   res = await fetch('http://localhost:3000/', {
     headers: {
-      Cookie: res.headers.get('set-cookie'),
+      Cookie: res.headers.get('set-cookie') || '',
     },
   });
   t.equal(res.status, 200);

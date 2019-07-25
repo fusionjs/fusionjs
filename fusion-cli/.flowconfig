@@ -1,13 +1,12 @@
 [ignore]
-.*/node_modules/.*[^(package)]\.json$
-<PROJECT_ROOT>/dist/.*
+.*/common/temp/node_modules/@uber/node-rosetta/.*
 
 [include]
-../common/temp/node_module
+../common/temp/node_modules
 ../../common/temp/node_modules
 
 [libs]
-./node_modules/fusion-core/flow-typed
+../flow-typed/
 
 [lints]
 

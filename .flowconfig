@@ -1,15 +1,16 @@
 [ignore]
+.*/common/temp/node_modules/@uber/node-rosetta/.*
 .*/common/temp/yarn-cache/.*
-.*/__fixtures__/.*
-.*/fixtures/failure/.*
 .*/templates/.*
+.*/fixtures/failure/.*
 .*/test-artifacts/.*
-.*/fixture-apps/.*
+.*/jazelle/tests/fixtures/.*
+.*/jazelle/tests/tmp/.*
 
 [include]
+../common/temp/node_modules
 
 [libs]
-fusion-core/flow-typed
 
 [lints]
 

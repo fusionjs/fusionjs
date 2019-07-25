@@ -13,16 +13,18 @@ import {type Fetch, FetchToken} from 'fusion-tokens';
 import {
   RPCHandlersToken,
   BodyParserOptionsToken,
+  RPCHandlersConfigToken,
   type HandlerType,
 } from './tokens.js';
 
 type ExtractReturnType = <V>(() => V) => V;
 
 export type RPCDepsType = {
-  emitter?: typeof UniversalEventsToken,
+  emitter: typeof UniversalEventsToken,
   handlers?: typeof RPCHandlersToken,
   bodyParserOptions?: typeof BodyParserOptionsToken.optional,
   fetch?: typeof FetchToken,
+  rpcConfig?: typeof RPCHandlersConfigToken.optional,
 };
 
 export type RPCScopedServiceType = {
@@ -41,3 +43,7 @@ export type RPCServiceType = {
 export type RPCPluginType = FusionPlugin<RPCDepsType, RPCServiceType>;
 
 export type IEmitter = $Call<ExtractReturnType, typeof UniversalEventsToken>;
+
+export type RPCConfigType = {
+  apiPath?: string,
+};

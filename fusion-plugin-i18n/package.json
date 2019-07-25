@@ -10,8 +10,8 @@
   "files": [
     "dist",
     "chunk-translation-map.js",
-    "flow-typed",
-    "src"
+    "src",
+    "flow-typed"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
@@ -44,20 +44,21 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "create-universal-package": "^3.4.7",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.8.1",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-flowtype": "^3.11.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jest": "^22.7.2",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.13.0",
-    "flow-bin": "^0.98.1",
+    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "nyc": "^14.1.0",
-    "prettier": "^1.17.0",
+    "prettier": "^1.18.2",
     "tape-cup": "^4.7.1",
     "unitest": "^2.1.1"
   },
@@ -71,5 +72,6 @@
     "yarn": ">=1.0.0"
   },
   "license": "MIT",
-  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-i18n",
+  "sideEffects": false
 }

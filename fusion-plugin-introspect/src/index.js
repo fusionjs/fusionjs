@@ -16,6 +16,6 @@ export type {
   Metadata,
 } from './server.js';
 
-export default (__NODE__ ? server : browser);
+export default __NODE__ ? server : browser;
 // $FlowFixMe
 export const fsStore = __NODE__ ? fs : undefined;

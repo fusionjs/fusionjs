@@ -18,7 +18,7 @@ export type TranslationsObjectType = {[string]: string};
 
 export type TranslateFuncType = (
   key: string,
-  interpolations?: TranslationsObjectType
+  interpolations?: {[string]: string | number}
 ) => string;
 
 export type I18nDepsType = {
@@ -33,7 +33,7 @@ export type I18nServiceType = {
   ) => {
     +locale?: string | Locale,
     +translations?: TranslationsObjectType,
-    +load: (chunkIds: Array<number | string>) => Promise<void>,
+    +load: (Array<string>) => Promise<void>,
     +translate: TranslateFuncType,
   },
 };

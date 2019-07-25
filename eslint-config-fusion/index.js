@@ -30,6 +30,12 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     // https://github.com/facebook/react/issues/14920
     'react-hooks/exhaustive-deps': 'warn',
+
+    // Fix inconsistency between Flow (inherited rule from flowtype/recommended) and Prettier
+    // https://jeng.uberinternal.com/browse/WPT-3404
+    'flowtype/space-after-type-colon': 'off',
+
+    'require-atomic-updates': 0,
   },
   settings: {
     react: {
