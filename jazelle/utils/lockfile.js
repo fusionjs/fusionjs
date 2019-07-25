@@ -108,22 +108,14 @@ export type MergeArgs = {
   roots: Array<string>,
   out: string,
   ignore?: Array<string>,
-  frozenLockfile?: boolean,
   tmp?: string,
 }
 export type Merge = (MergeArgs) => Promise<void>;
 */
-const merge /*: Merge */ = async ({
-  roots,
-  out,
-  ignore = [],
-  frozenLockfile = false,
-  tmp = '/tmp',
-}) => {
+const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
   const metas = await getMetadata({roots});
-  const updated = await update({metas, ignore, tmp, frozenLockfile});
   const merged = {dir: out, meta: {}, lockfile: {}};
-  for (const {meta, lockfile} of updated) {
+  for (const {meta, lockfile} of metas) {
     for (const {name, range, type} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (ignored) continue;
@@ -237,7 +229,6 @@ export type UpdateArgs = {
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
-  frozenLockfile?: boolean,
   tmp?: string,
 };
 export type Update = (UpdateArgs) => Promise<Array<Metadata>>;
@@ -248,13 +239,11 @@ const update /*: Update */ = async ({
   removals = [],
   upgrades = [],
   ignore = [],
-  frozenLockfile = false,
   tmp = '/tmp',
 }) => {
   // populate missing ranges w/ latest
   const insertions = [...additions, ...upgrades];
   if (insertions.length > 0) {
-    if (frozenLockfile) throwEditError('Checking version to add');
     await Promise.all(
       insertions.map(async insertion => {
         if (!insertion.range) {
@@ -270,7 +259,6 @@ const update /*: Update */ = async ({
   for (const {meta, lockfile} of metas) {
     // handle removals
     if (removals.length > 0) {
-      if (frozenLockfile) throwEditError('Removing dep');
       for (const name of removals) {
         const types = [
           'dependencies',
@@ -290,7 +278,6 @@ const update /*: Update */ = async ({
 
     // list additions in package.json
     if (additions.length > 0) {
-      if (frozenLockfile) throwEditError('Adding dep');
       for (const {name, range, type} of additions) {
         if (!meta[type]) meta[type] = {};
         meta[type][name] = range;
@@ -299,7 +286,6 @@ const update /*: Update */ = async ({
 
     // handle upgrades
     if (upgrades.length > 0) {
-      if (frozenLockfile) throwEditError('Upgrading dep');
       for (const {name, range, from} of upgrades) {
         const types = [
           'dependencies',
@@ -327,7 +313,6 @@ const update /*: Update */ = async ({
       }
     }
     if (Object.keys(missing).length > 0) {
-      if (frozenLockfile) throwEditError('Installing dep');
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
       const data = JSON.stringify(missing, null, 2);
       await exec(`mkdir -p ${cwd}`);
@@ -359,7 +344,6 @@ const update /*: Update */ = async ({
       }
     }
     if (missingTransitives.length > 0) {
-      if (frozenLockfile) throwEditError('Installing dep');
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
       await exec(`mkdir -p ${cwd}`);
       const yarnrc = '"--add.frozen-lockfile" false';
@@ -400,16 +384,12 @@ const update /*: Update */ = async ({
 
   // sync
   for (const item of metas) {
-    const {meta, lockfile} = item;
+    const {meta} = item;
     const graph = {};
-    const ref = frozenLockfile ? lockfile : null;
     for (const {name, range, type} of getDepEntries(meta)) {
       if (type === 'resolutions') continue;
       const ignored = ignore.find(dep => dep === name);
-      if (!ignored) populateGraph({graph, name, range, index, ref});
-    }
-    if (frozenLockfile && enumerationChanged(lockfile, graph)) {
-      throwEditError('Enumeration changed');
+      if (!ignored) populateGraph({graph, name, range, index});
     }
     item.lockfile = graph;
   }
@@ -417,7 +397,7 @@ const update /*: Update */ = async ({
   return metas;
 };
 
-const populateGraph = ({graph, name, range, index, ref}) => {
+const populateGraph = ({graph, name, range, index}) => {
   const key = `${name}@${range}`;
   if (key in graph) return;
 
@@ -429,16 +409,13 @@ const populateGraph = ({graph, name, range, index, ref}) => {
     }
   }
   if (!graph[key]) return;
-  if (ref !== null && ref[key].version !== graph[key].version) {
-    throwEditError('Version synced');
-  }
-  populateDeps({graph, deps: graph[key].dependencies || {}, index, ref});
+  populateDeps({graph, deps: graph[key].dependencies || {}, index});
 };
 
-const populateDeps = ({graph, deps, index, ref}) => {
+const populateDeps = ({graph, deps, index}) => {
   for (const name in deps) {
     const range = deps[name];
-    populateGraph({graph, name, range, index, ref});
+    populateGraph({graph, name, range, index});
   }
 };
 
@@ -446,23 +423,6 @@ const isBetterVersion = (version, range, graph, key) => {
   return (
     satisfies(version, range) &&
     (!graph[key] || gt(version, graph[key].version))
-  );
-};
-
-const enumerationChanged = (a, b) => {
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return true;
-  if (aKeys.sort().join() !== bKeys.sort().join()) return true;
-  return false;
-};
-
-const throwEditError = reason => {
-  throw new Error(
-    `Updating lockfile is not allowed with frozenLockfile. ` +
-      `This error is most likely happening if you have committed ` +
-      `out-of-date lockfiles and tried to install deps in CI. ` +
-      `Install your deps again locally. ${reason}`
   );
 };
 
