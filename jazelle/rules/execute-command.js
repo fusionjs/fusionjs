@@ -24,8 +24,9 @@ const binPath = exists(`${main}/node_modules/.bin`)
   ? `:${main}/node_modules/.bin`
   : '';
 const payload = scripts[command] || ``;
+const nodeDir = dirname(node);
 // prioritize hermetic Node version over system version
-const script = `export PATH=${dirname(node)}:$PATH${binPath}; ${payload}`;
+const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload}`;
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});
