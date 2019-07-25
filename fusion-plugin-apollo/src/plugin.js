@@ -128,6 +128,7 @@ export default (renderFn: Render) =>
           },
           executor: async requestContext => {
             const client = getApolloClient(requestContext.context, {});
+            // $FlowFixMe
             const queryObservable = client.queryManager.getObservableFromLink(
               requestContext.document,
               requestContext.context,
