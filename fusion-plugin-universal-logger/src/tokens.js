@@ -6,11 +6,11 @@
  * @flow
  */
 
-import type {$winstonLoggerConfig} from 'winston';
+import type {LoggerConfig} from 'winston';
 
 import {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
 
-export const UniversalLoggerConfigToken: Token<
-  $winstonLoggerConfig<*>
-> = createToken('UniversalLoggerConfigToken');
+export const UniversalLoggerConfigToken: Token<LoggerConfig<*>> = createToken(
+  'UniversalLoggerConfigToken'
+);

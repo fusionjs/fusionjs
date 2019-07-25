@@ -61,7 +61,7 @@ const EXCLUDE_TRANSPILATION_PATTERNS = [
   /node_modules\/react\//,
   /node_modules\/core-js\//,
 ];
-const JS_EXT_PATTERN = /\.jsx?$/;
+const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
 
 /*::
 import type {
@@ -140,7 +140,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const babelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: false,
   });
@@ -161,22 +160,44 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const legacyBabelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
     specOnly: false,
   });
 
-  const getTransformDefault = modulePath => {
-    if (
-      modulePath.startsWith(path.join(dir, 'src')) ||
-      /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
-    ) {
-      return 'all';
-    }
-    return 'spec';
-  };
+  const isProjectCode = modulePath =>
+    modulePath.startsWith(getSrcPath(dir)) ||
+    /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath);
 
-  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
+  const getTransformDefault = modulePath =>
+    isProjectCode(modulePath) ? 'all' : 'spec';
+
+  const {
+    experimentalBundleTest,
+    experimentalTransformTest,
+    experimentalSideEffectsTest,
+  } = fusionConfig;
+
+  const getDefaultSideEffects = modulePath =>
+    isProjectCode(modulePath)
+      ? false // enable tree-shaking for project code
+      : true; // disable tree-shaking for non-project code
+
+  // Note: package.json `sideEffects` field takes precedence over what is returned from test function
+  const sideEffectsTester = experimentalSideEffectsTest
+    ? modulePath => {
+        if (
+          modulePath.includes('core-js/modules') ||
+          modulePath.includes('regenerator-runtime/runtime')
+        ) {
+          return false; // disable tree-shaking for core-js and regenerator-runtime modules
+        }
+        return !experimentalSideEffectsTest(
+          modulePath,
+          getDefaultSideEffects(modulePath)
+        );
+      }
+    : modulePath => false;
+
   const babelTester = experimentalTransformTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
@@ -380,18 +401,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },
-        fusionConfig.assumeNoImportSideEffects && {
+        {
           sideEffects: false,
-          test: modulePath => {
-            if (
-              modulePath.includes('core-js/modules') ||
-              modulePath.includes('regenerator-runtime/runtime')
-            ) {
-              return false;
-            }
-
-            return true;
-          },
+          test: sideEffectsTester,
         },
       ].filter(Boolean),
     },
@@ -641,4 +653,16 @@ function getNodeConfig(runtime) {
     repl: emptyForWeb,
     tls: emptyForWeb,
   };
+}
+
+function getSrcPath(dir) {
+  // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
+  try {
+    const real = path.dirname(
+      fs.realpathSync(path.resolve(dir, 'package.json'))
+    );
+    return path.resolve(real, 'src');
+  } catch (e) {
+    return path.resolve(dir, 'src');
+  }
 }

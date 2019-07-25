@@ -8,7 +8,7 @@
 /* eslint-env node */
 import assert from 'assert';
 
-export default (__BROWSER__ ? () => {} : loadEnv());
+export default __BROWSER__ ? () => {} : loadEnv();
 
 function load(key, value) {
   return process.env[key] || value;

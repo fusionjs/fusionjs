@@ -14,7 +14,7 @@ import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-import I18n from '../node';
+import I18n, {matchesLiteralSections} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
@@ -112,7 +112,7 @@ test('endpoint', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
     path: '/_translations',
-    querystring: 'keys=test,interpolated',
+    querystring: 'keys=["test","interpolated"]',
     memoized: new Map(),
     body: '',
   };
@@ -166,5 +166,76 @@ test('non matched route', async t => {
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.notok(ctx.body, 'does not set ctx.body');
+  t.end();
+});
+
+test('matchesLiteralSections matches positionally', async t => {
+  function literalSections(quasis, ...substitutions) {
+    return quasis;
+  }
+
+  const translations = [
+    'cities.Buffalo',
+    'cities.Chicago',
+    'cities.LosAngeles',
+    'animals.Buffalo',
+    'animals.Cat',
+    'test',
+    'testend',
+    'starttest',
+  ];
+
+  // handles ending matches
+  const buffaloMatches = translations.filter(
+    matchesLiteralSections(literalSections`${''}.Buffalo`)
+  );
+  t.deepEqual(buffaloMatches, ['cities.Buffalo', 'animals.Buffalo']);
+
+  // handles beginning matches'
+  const animalMatches = translations.filter(
+    matchesLiteralSections(literalSections`animals.${''}`)
+  );
+  t.deepEqual(animalMatches, ['animals.Buffalo', 'animals.Cat']);
+
+  const dotMatches = translations.filter(
+    matchesLiteralSections(literalSections`${''}.${''}`)
+  );
+  t.deepEqual(dotMatches, [
+    'cities.Buffalo',
+    'cities.Chicago',
+    'cities.LosAngeles',
+    'animals.Buffalo',
+    'animals.Cat',
+  ]);
+
+  // handles static matches
+  const staticMatches = translations.filter(
+    matchesLiteralSections(literalSections`test`)
+  );
+  t.deepEqual(staticMatches, ['test']);
+
+  // handles multiple parts
+  const matches1 = translations.filter(
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}a${''}o`)
+  );
+  t.deepEqual(matches1, ['cities.Buffalo', 'cities.Chicago']);
+
+  // confines match to later parts in the string
+  const matches2 = translations.filter(
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}o`)
+  );
+  t.deepEqual(matches2, []);
+
+  const matches3 = translations.filter(
+    matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}`)
+  );
+  t.deepEqual(matches3, ['cities.LosAngeles']);
+
+  // doesn't overlap matches
+  const matches4 = ['abc', 'abbc', 'ababc'].filter(
+    matchesLiteralSections(literalSections`${''}ab${''}bc${''}`)
+  );
+  t.deepEqual(matches4, ['abbc', 'ababc']);
+
   t.end();
 });

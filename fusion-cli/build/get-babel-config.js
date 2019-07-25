@@ -27,7 +27,6 @@ type BabelConfigOpts =
     plugins?: Array<any>,
     presets?: Array<any>,
     jsx?: JSXTransformOpts,
-    assumeNoImportSideEffects?: boolean,
     fusionTransforms: boolean
   |};
 */
@@ -44,6 +43,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   // Shared base configuration
   let config = {
     plugins: [
+      require.resolve('@babel/plugin-transform-flow-strip-types'),
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       [
         require.resolve('@rtsao/plugin-proposal-class-properties'),
@@ -51,13 +51,14 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       ],
       opts.dev &&
         require.resolve('babel-plugin-transform-styletron-display-name'),
+      require.resolve('./babel-plugins/babel-plugin-gql'),
     ].filter(Boolean),
     presets: [[require.resolve('@babel/preset-env'), envPresetOpts]],
     babelrc: false,
   };
 
   if (opts.specOnly === false) {
-    let {jsx, assumeNoImportSideEffects, dev, fusionTransforms} = opts;
+    let {jsx, dev, fusionTransforms} = opts;
     if (!jsx) {
       jsx = {};
     }
@@ -69,13 +70,8 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
         development: dev,
       },
     ]);
-    config.plugins.unshift(
-      require.resolve('@babel/plugin-transform-flow-strip-types')
-    );
     if (fusionTransforms) {
-      config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
-    } else {
-      config.plugins.push(require.resolve('./babel-plugins/babel-plugin-gql'));
+      config.presets.push([fusionPreset, {target}]);
     }
   }
 
@@ -119,7 +115,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
 /*::
 type FusionPresetOpts = {
   target: Target,
-  assumeNoImportSideEffects: boolean,
 };
 */
 
@@ -130,16 +125,12 @@ type FusionPresetOpts = {
  * Because plugins run before presets, the tree shake plugin
  * must also live in a preset.
  */
-function fusionPreset(
-  context /*: any */,
-  {target, assumeNoImportSideEffects} /*: FusionPresetOpts */
-) {
+function fusionPreset(context /*: any */, {target} /*: FusionPresetOpts */) {
   const targetEnv =
     target === 'node-native' || target === 'node-bundled' ? 'node' : 'browser';
 
   return {
     plugins: [
-      require.resolve('./babel-plugins/babel-plugin-gql'),
       require.resolve('./babel-plugins/babel-plugin-asseturl'),
       require.resolve('./babel-plugins/babel-plugin-pure-create-plugin'),
       require.resolve('./babel-plugins/babel-plugin-sync-chunk-ids'),
@@ -149,10 +140,6 @@ function fusionPreset(
       require.resolve('./babel-plugins/babel-plugin-workerurl'),
       [
         require.resolve('babel-plugin-transform-cup-globals'),
-        {target: targetEnv},
-      ],
-      assumeNoImportSideEffects && [
-        require.resolve('./babel-plugins/babel-plugin-transform-tree-shake'),
         {target: targetEnv},
       ],
     ].filter(Boolean),

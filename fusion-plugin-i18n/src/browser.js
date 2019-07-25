@@ -86,9 +86,11 @@ const pluginFactory: () => PluginType = () =>
             unloaded.forEach(key => {
               this.requestedKeys.add(key);
             });
-            const keys = unloaded.join(',');
             // TODO(#3) don't append prefix if injected fetch also injects prefix
-            return fetch(`/_translations?keys=${keys}`, fetchOpts)
+            return fetch(
+              `/_translations?keys=${JSON.stringify(unloaded)}`,
+              fetchOpts
+            )
               .then(r => r.json())
               .then((data: {[string]: string}) => {
                 for (const key in data) {
@@ -107,13 +109,13 @@ const pluginFactory: () => PluginType = () =>
               });
           }
         }
-        translate(key: string, interpolations: TranslationsObjectType = {}) {
+        translate(key, interpolations = {}) {
           const template = this.translations[key];
           return template
             ? template.replace(/\${(.*?)}/g, (_, k) =>
                 interpolations[k] === void 0
                   ? '${' + k + '}'
-                  : interpolations[k]
+                  : String(interpolations[k])
               )
             : key;
         }

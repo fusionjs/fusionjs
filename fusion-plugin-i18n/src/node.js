@@ -22,6 +22,44 @@ import type {
   TranslationsObjectType,
 } from './types.js';
 
+// exported for testing
+export function matchesLiteralSections(literalSections: Array<string>) {
+  return (translation: string) => {
+    let lastMatchIndex = 0;
+
+    if (literalSections.length === 1) {
+      const literal = literalSections[0];
+      return literal !== '' && translation === literal;
+    }
+
+    return literalSections.every((literal, literalIndex) => {
+      if (literal === '') {
+        // literal section either:
+        // - starts/ends the literal
+        // - is the result of two adjacent interpolations
+        return true;
+      } else if (literalIndex === 0 && translation.startsWith(literal)) {
+        lastMatchIndex += literal.length;
+        return true;
+      } else if (
+        literalIndex === literalSections.length - 1 &&
+        translation.endsWith(literal)
+      ) {
+        return true;
+      } else {
+        // start search from `lastMatchIndex`
+        const matchIndex = translation.indexOf(literal, lastMatchIndex);
+        if (matchIndex !== -1) {
+          lastMatchIndex = matchIndex + literal.length;
+          return true;
+        }
+      }
+      // matching failed
+      return false;
+    });
+  };
+}
+
 type PluginType = FusionPlugin<I18nDepsType, I18nServiceType>;
 const pluginFactory: () => PluginType = () =>
   createPlugin({
@@ -38,7 +76,6 @@ const pluginFactory: () => PluginType = () =>
             loader = createLoader();
           }
           const {translations, locale} = loader.from(ctx);
-          // eslint-disable-next-line no-console
           this.translations = translations;
           this.locale = locale;
         }
@@ -49,7 +86,7 @@ const pluginFactory: () => PluginType = () =>
             ? template.replace(/\${(.*?)}/g, (_, k) =>
                 interpolations[k] === void 0
                   ? '${' + k + '}'
-                  : interpolations[k]
+                  : String(interpolations[k])
               )
             : key;
         }
@@ -62,6 +99,7 @@ const pluginFactory: () => PluginType = () =>
       // TODO(#4) refactor: this currently depends on babel plugins in framework's webpack config.
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
       const chunkTranslationMap = require('../chunk-translation-map');
+
       return async (ctx, next) => {
         if (ctx.element) {
           await next();
@@ -73,12 +111,25 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.preloadChunks,
           ];
           const translations = {};
+          const possibleTranslations = i18n.translations
+            ? Object.keys(i18n.translations)
+            : [];
           chunks.forEach(id => {
             const keys = Array.from(
               chunkTranslationMap.translationsForChunk(id)
             );
             keys.forEach(key => {
-              translations[key] = i18n.translations && i18n.translations[key];
+              if (Array.isArray(key)) {
+                const matches = possibleTranslations.filter(
+                  matchesLiteralSections(key)
+                );
+                for (const match of matches) {
+                  translations[match] =
+                    i18n.translations && i18n.translations[match];
+                }
+              } else {
+                translations[key] = i18n.translations && i18n.translations[key];
+              }
             });
           });
           // i18n.locale is actually a locale.Locale instance
@@ -100,9 +151,23 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = querystring.parse(ctx.querystring).keys || '';
-          const translations = keys.split(',').reduce((acc, key) => {
-            acc[key] = i18n.translations && i18n.translations[key];
+          const keys = JSON.parse(
+            querystring.parse(ctx.querystring).keys || '[]'
+          );
+          const possibleTranslations = i18n.translations
+            ? Object.keys(i18n.translations)
+            : [];
+          const translations = keys.reduce((acc, key) => {
+            if (Array.isArray(key)) {
+              const matches = possibleTranslations.filter(
+                matchesLiteralSections(key)
+              );
+              for (const match of matches) {
+                acc[match] = i18n.translations && i18n.translations[match];
+              }
+            } else {
+              acc[key] = i18n.translations && i18n.translations[key];
+            }
             return acc;
           }, {});
           ctx.body = translations;

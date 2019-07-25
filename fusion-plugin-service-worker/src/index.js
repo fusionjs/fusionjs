@@ -11,7 +11,7 @@ import {
 } from './tokens';
 import type {AssetInfo} from './types';
 
-export default (__NODE__ ? serverPlugin : browserPlugin);
+export default __NODE__ ? serverPlugin : browserPlugin;
 export {
   getHandlers,
   SWTemplateFunctionToken,

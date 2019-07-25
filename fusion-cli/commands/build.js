@@ -21,6 +21,7 @@ exports.run = async function(
     zopfli,
     minify,
     experimentalServerless,
+    modernBuildOnly,
   } /*: {
     experimentalServerless: boolean,
     dir: string,
@@ -28,7 +29,8 @@ exports.run = async function(
     preserveNames: boolean,
     logLevel: string,
     zopfli: boolean,
-    minify: boolean
+    minify: boolean,
+    modernBuildOnly: boolean,
   }*/
 ) {
   const logger = winston.createLogger({
@@ -49,6 +51,7 @@ exports.run = async function(
     zopfli,
     minify,
     serverless: experimentalServerless,
+    modernBuildOnly,
   });
 
   await compiler.clean();

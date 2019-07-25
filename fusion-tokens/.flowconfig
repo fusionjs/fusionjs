@@ -1,11 +1,12 @@
 [ignore]
+.*/common/temp/node_modules/@uber/node-rosetta/.*
 
 [include]
 ../common/temp/node_modules
-./flow-typed/*
+../../common/temp/node_modules
 
 [libs]
-./node_modules/fusion-core/flow-typed
+../flow-typed/
 
 [lints]
 
