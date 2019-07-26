@@ -10,8 +10,8 @@
 module.exports = function stripPrefix(req /*: any */, prefix /*: string */) {
   if (req.url.indexOf(prefix) === 0) {
     req.url = req.url.slice(prefix.length);
-    if (req.url === '') {
-      req.url = '/';
+    if (req.url === '' || req.url.indexOf('?') === 0) {
+      req.url = `/${req.url}`;
     }
   }
 };
