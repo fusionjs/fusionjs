@@ -166,6 +166,94 @@ tape('enhancement with a plugin with deps', t => {
   app.resolve();
 });
 
+// TODO(#573) This is a regression test which hasn't been fixed yet
+tape.skip('Plugin enhancer on unregistered token with no dependencies', t => {
+  let app = new App('el', el => el);
+  type FnType = string => string;
+  const FnToken: Token<FnType> = createToken('FnType');
+  let BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
+    return createPlugin({
+      provides: () => {
+        return arg => {
+          return fn(arg) + ' enhanced';
+        };
+      },
+    });
+  };
+  app.enhance(FnToken, BaseFnEnhancer);
+  t.throws(() => {
+    app.resolve();
+  });
+  t.end();
+});
+
+// TODO(#573) This is a regression test which hasn't been fixed yet
+tape.skip(
+  'Plugin enhancer on unregistered token with optional dependency',
+  t => {
+    let app = new App('el', el => el);
+    type FnType = string => string;
+    const FnToken: Token<FnType> = createToken('FnType');
+    let BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
+      return createPlugin({
+        provides: () => {
+          return arg => {
+            return fn(arg) + ' enhanced';
+          };
+        },
+      });
+    };
+    app.register(
+      createPlugin({
+        deps: {
+          fn: FnToken.optional,
+        },
+      })
+    );
+    app.enhance(FnToken, BaseFnEnhancer);
+    t.throws(() => {
+      app.resolve();
+    });
+    t.end();
+  }
+);
+
+// TODO(#573) This is a regression test which hasn't been fixed yet
+tape.skip('regular enhancer on unregistered token with no dependencies', t => {
+  let app = new App('el', el => el);
+  type FnType = string => string;
+  const FnToken: Token<FnType> = createToken('FnType');
+  let BaseFnEnhancer = (fn: FnType): FnType => {
+    return fn;
+  };
+  app.enhance(FnToken, BaseFnEnhancer);
+  t.throws(() => {
+    app.resolve();
+  });
+  t.end();
+});
+
+tape('regular enhancer on unregistered token with optional dependencies', t => {
+  let app = new App('el', el => el);
+  type FnType = string => string;
+  const FnToken: Token<FnType> = createToken('FnType');
+  let BaseFnEnhancer = (fn: FnType): FnType => {
+    return fn;
+  };
+  app.register(
+    createPlugin({
+      deps: {
+        fn: FnToken.optional,
+      },
+    })
+  );
+  app.enhance(FnToken, BaseFnEnhancer);
+  t.throws(() => {
+    app.resolve();
+  });
+  t.end();
+});
+
 tape('enhancement with a plugin with missing deps', t => {
   const app = new App('el', el => el);
 
