@@ -142,6 +142,13 @@ function fusionPreset(context /*: any */, {target} /*: FusionPresetOpts */) {
         require.resolve('babel-plugin-transform-cup-globals'),
         {target: targetEnv},
       ],
+      [
+        require.resolve('babel-plugin-transform-prune-unused-imports'),
+        {
+          falsyExpressions:
+            targetEnv === 'node' ? ['__BROWSER__'] : ['__NODE__'],
+        },
+      ],
     ].filter(Boolean),
   };
 }
