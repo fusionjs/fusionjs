@@ -37,11 +37,10 @@ const collect = (deps, dep, cycles, set = new Set()) => {
   if (parent) {
     if (set.has(dep)) {
       cycles.push([...set]);
-    } else {
-      set.add(dep);
-      collect(deps, parent, cycles, set);
     }
+    set.add(dep);
+    collect(deps, parent, cycles, set);
   }
 };
 
-module.exports = {detectCyclicDeps};
+module.exports = {detectCyclicDeps}
