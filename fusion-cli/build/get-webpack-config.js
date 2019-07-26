@@ -246,21 +246,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     mode: dev ? 'development' : 'production',
     // TODO(#47): Do we need to do something different here for production?
     stats: 'minimal',
-    /**
-     * `cheap-module-source-map` is best supported by Chrome DevTools
-     * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
-     *
-     * We use `hidden-source-map` in production to produce a source map but
-     * omit the source map comment in the source file.
-     *
-     * Chrome DevTools support doesn't matter in these case.
-     * We only use it for generating nice stack traces
-     */
     // TODO(#6): what about node v8 inspector?
-    devtool:
-      (runtime === 'client' && !dev) || runtime === 'sw'
-        ? 'hidden-source-map'
-        : 'cheap-module-source-map',
+    devtool: getDevtoolOption(runtime, dev),
     output: {
       path: path.join(dir, `.fusion/dist/${env}/${runtime}`),
       filename:
@@ -653,4 +640,25 @@ function getSrcPath(dir) {
   } catch (e) {
     return path.resolve(dir, 'src');
   }
+}
+
+/**
+ * `cheap-module-source-map` is best supported by Chrome DevTools
+ * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
+ *
+ * We use `source-map` in production to produce a source map and
+ * show sourceMappingURL comment at the end of the source files for client build.
+ * Chrome DevTools support doesn't matter in these case.
+ * We only use it for generating nice stack traces.
+ * 
+ * We use `none` for sw build since sw-loader doesn't produce the source map.
+ */
+function getDevtoolOption(runtime, dev) {
+  if (runtime === 'client' && !dev) {
+    return 'source-map';
+  }
+  if (runtime === 'sw') {
+    return 'none';
+  }
+  return 'cheap-module-source-map';
 }
