@@ -15,6 +15,7 @@ const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const bazelCmds = require('../utils/bazel-commands.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
 const {cli} = require('../utils/cli.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {
   exec,
   exists,
@@ -80,6 +81,7 @@ async function runTests() {
     t(testAssertProjectDir),
     t(testBinaryPaths),
     t(testCLI),
+    t(testDetectCyclicDeps),
     t(testFindLocalDependency),
     t(testGenerateBazelignore),
     t(testGenerateBazelBuildRules),
@@ -438,6 +440,89 @@ async function testCLI() {
   };
   cli('foo', {bar: '1'}, cmds, async () => {});
   assert.equal(called, '1');
+}
+
+async function testDetectCyclicDeps() {
+  const cycles = detectCyclicDeps({
+    deps: [
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        meta: {
+          name: 'a',
+          version: '0.0.0',
+          dependencies: {
+            c: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 1,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        meta: {
+          name: 'b',
+          version: '0.0.0',
+          dependencies: {
+            a: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 2,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        meta: {
+          name: 'c',
+          version: '0.0.0',
+          dependencies: {
+            b: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 3,
+      },
+    ],
+  });
+  assert.equal(cycles.length, 1);
+
+  const ok = detectCyclicDeps({
+    deps: [
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        meta: {
+          name: 'a',
+          version: '0.0.0',
+        },
+        lockfile: {},
+        depth: 1,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        meta: {
+          name: 'b',
+          version: '0.0.0',
+          dependencies: {
+            a: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 2,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        meta: {
+          name: 'c',
+          version: '0.0.0',
+          dependencies: {
+            b: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 3,
+      },
+    ],
+  });
+  assert.equal(ok.length, 0);
 }
 
 async function testFindLocalDependency() {

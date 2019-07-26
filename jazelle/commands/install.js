@@ -7,6 +7,7 @@ const {
   reportMismatchedTopLevelDeps,
   getErrorMessage,
 } = require('../utils/report-mismatched-top-level-deps.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {generateBazelignore} = require('../utils/generate-bazelignore.js');
 const {
@@ -48,6 +49,13 @@ const install /*: Install */ = async ({root, cwd}) => {
     versionPolicy,
   });
   if (!result.valid) throw new Error(getErrorMessage(result));
+
+  const cycles = detectCyclicDeps({deps});
+  if (cycles.length > 0) {
+    throw new Error(
+      'Cyclic local dependencies detected. Run `jazelle doctor` for more info'
+    );
+  }
 
   const downstreams = await findDownstreams({root, deps, projects});
   const map = {};
