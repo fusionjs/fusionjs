@@ -323,6 +323,7 @@ async function testBazelDummy() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel`,
     cwd: `${__dirname}/tmp/bazel`,
+    args: [],
     name: 'target',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -365,6 +366,7 @@ async function testBazelBuild() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     name: 'test',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -978,6 +980,7 @@ async function testYarnCommands() {
   await yarnCmds.test({
     root,
     deps,
+    args: [],
     stdio: ['ignore', testStream, 'ignore'],
   });
   assert((await read(testStreamFile, 'utf8')).includes('\n444\n'));
