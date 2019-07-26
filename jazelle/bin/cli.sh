@@ -8,7 +8,7 @@ fi
 
 # find project root
 findroot() {
-  if [ -f "WORKSPACE" ]
+  if [ -f "WORKSPACE" ] && grep -s -v "\"name\": \"jazelle\"" "$PWD/package.json"
   then
     echo "$PWD/"
   elif [ "$PWD" = "/" ]

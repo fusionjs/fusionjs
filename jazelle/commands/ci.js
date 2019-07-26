@@ -32,7 +32,7 @@ const ci /*: Ci */ = async ({root, cwd}) => {
   });
   if (!result.valid) throw new Error(getErrorMessage(result));
 
-  await installDeps({root, deps, frozenLockfile: true, hooks});
+  await installDeps({root, deps, hooks});
 };
 
 module.exports = {ci};
