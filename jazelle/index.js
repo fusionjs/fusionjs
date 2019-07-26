@@ -144,7 +144,7 @@ const runCLI /*: RunCLI */ = async argv => {
         `Test a project
 
         --cwd [cwd]             Project directory to use`,
-        async ({cwd}) => test({root, cwd}),
+        async ({cwd}) => test({root, cwd, args: rest}),
       ],
       lint: [
         `Lint a project

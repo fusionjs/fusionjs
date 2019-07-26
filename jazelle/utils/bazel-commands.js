@@ -32,6 +32,7 @@ const build /*: Build */ = async ({
 export type TestArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   name?: string,
   stdio?: Stdio,
 };
@@ -40,6 +41,7 @@ type Test = (TestArgs) => Promise<void>;
 const test /*: Test */ = async ({
   root,
   cwd,
+  args,
   name = 'test',
   stdio = 'inherit',
 }) => {
