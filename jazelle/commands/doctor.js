@@ -76,41 +76,39 @@ const detectHoistMismatch = async ({root, deps}) => {
 
 const detectCyclicalDeps = async ({deps}) => {
   const errors = [];
-  const index = {};
-  for (const dep of deps) {
-    const {name} = dep.meta;
-    index[name] = dep;
-  }
-
-  // detect
   const cycles = [];
   for (const dep of deps) {
-    collect(index, dep, cycles);
+    collect(deps, dep, cycles);
   }
-  // dedupe
   const map = {};
   for (const cycle of cycles) {
-    const key = cycle.sort().join();
-    map[key] = cycle;
+    map[cycle.sort().join()] = cycle;
   }
+
   for (const key in map) {
     const names = map[key].map(dep => `- ${dep.meta.name}`).join('\n');
     errors.push(`Cyclical dependency chain detected containing:\n${names}`);
   }
   return errors;
 };
-const collect = (index, dep, cycles, set = new Set()) => {
-  if (set.has(dep)) {
-    const list = [...set];
-    cycles.push(list.slice(list.indexOf(dep)));
-  } else {
-    set.add(dep);
-    for (const {name, range} of getDepEntries(dep.meta)) {
-      const target = index[name];
-      if (target && satisfies(target.meta.version, range)) {
-        collect(index, target, cycles, set);
+const collect = (deps, dep, cycles, set = new Set()) => {
+  const parent = deps.find(d => {
+    const types = ['dependencies', 'devDependencies'];
+    for (const type of types) {
+      if (!d.meta[type]) continue;
+      const range = d.meta[type][dep.meta.name];
+      if (range && satisfies(dep.meta.version, range)) {
+        return true;
       }
     }
+    return false;
+  });
+  if (parent) {
+    if (set.has(dep)) {
+      cycles.push([...set]);
+    }
+    set.add(dep);
+    collect(deps, parent, cycles, set);
   }
 };
 

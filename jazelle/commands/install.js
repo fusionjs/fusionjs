@@ -50,9 +50,13 @@ const install /*: Install */ = async ({root, cwd}) => {
   if (!result.valid) throw new Error(getErrorMessage(result));
 
   const downstreams = await findDownstreams({root, deps, projects});
+  const map = {};
+  for (const dep of [...deps, ...downstreams]) {
+    map[dep.meta.name] = dep;
+  }
   await generateDepLockfiles({
     root,
-    deps: [...new Set([...deps, ...downstreams])],
+    deps: Object.keys(map).map(key => map[key]),
   });
   if (workspace === 'sandbox') {
     await generateBazelignore({root, projects: projects});

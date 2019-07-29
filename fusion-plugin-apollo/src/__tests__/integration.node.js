@@ -31,8 +31,9 @@ async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   const app = new App(el);
   const schema = makeExecutableSchema({typeDefs, resolvers});
   const client = new ApolloClient({
-    ssrMode: true,
-    cache: new InMemoryCache().restore({}),
+    cache: new InMemoryCache({
+      addTypename: false,
+    }).restore({}),
     link: new HttpLink({
       endpoint,
       fetch: async (url, options) => {
@@ -56,9 +57,10 @@ async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
       return resolve();
     })
   );
-  return {app, server, client};
+  return {app, server, client, endpoint};
 }
-test('SSR with <Query>', async t => {
+
+test('Query request', async t => {
   const query = gql`
     query Test {
       test
@@ -86,6 +88,142 @@ test('SSR with <Query>', async t => {
     networkStatus: 7,
     stale: false,
   });
+  server.close();
+  t.end();
+});
+
+test('Mutation request', async t => {
+  const mutation = gql`
+    mutation Test($arg: String) {
+      testMutation(arg: $arg) {
+        result
+      }
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+    type Mutation {
+      testMutation(arg: String): MutationResult
+    }
+    type MutationResult {
+      result: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        return 'test';
+      },
+    },
+    Mutation: {
+      testMutation(parent, args, ctx) {
+        t.equal(args.arg, 'test');
+        return {
+          result: 'pass',
+        };
+      },
+    },
+  };
+  const {server, client} = await testApp(el, {typeDefs, resolvers});
+  const result = await client.mutate({mutation, variables: {arg: 'test'}});
+  t.deepEqual(result.data, {
+    testMutation: {
+      result: 'pass',
+    },
+  });
+  server.close();
+  t.end();
+});
+
+test('Mutation request with error', async t => {
+  const mutation = gql`
+    mutation Test($arg: String) {
+      testMutation(arg: $arg) {
+        result
+      }
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+    type Mutation {
+      testMutation(arg: String): MutationResult
+    }
+    type MutationResult {
+      result: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        return 'test';
+      },
+    },
+    Mutation: {
+      testMutation(parent, args, ctx) {
+        t.equal(args.arg, 'test');
+        throw new Error('FAIL');
+      },
+    },
+  };
+  const {server, client} = await testApp(el, {typeDefs, resolvers});
+  try {
+    await client.mutate({mutation, variables: {arg: 'test'}});
+    t.fail('should throw');
+  } catch (e) {
+    t.equal(e.message, 'GraphQL error: FAIL');
+  }
+  server.close();
+  t.end();
+});
+
+test('Query request with error', async t => {
+  const query = gql`
+    query Test {
+      test
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        throw new Error('FAIL');
+      },
+    },
+  };
+  const {server, endpoint} = await testApp(el, {typeDefs, resolvers});
+  const client = new ApolloClient({
+    cache: new InMemoryCache().restore({}),
+    link: new HttpLink({
+      endpoint,
+      fetch: async (url, options) => {
+        // required since the url here is only the path
+        const result = await fetch(endpoint, options);
+        t.equal(result.ok, true, 'responds with 2XX status code');
+        const json = await result.json();
+        t.equal(json.errors[0].message, 'FAIL');
+        t.deepEqual(json.data, {test: null});
+        // duplicate fetch so we can assert on json, but also return to client
+        return fetch(endpoint, options);
+      },
+    }),
+  });
+  try {
+    await client.query({query});
+    t.fail('should throw');
+  } catch (e) {
+    t.equal(e.message, 'GraphQL error: FAIL');
+  }
   server.close();
   t.end();
 });
