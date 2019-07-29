@@ -17,7 +17,7 @@ const stripRoutePrefix = require('./strip-prefix.js');
 
 test('route prefix stripping', async () => {
   const port = await getPort();
-  const expectedUrls = ['/test', '/', '/', '/', '/'];
+  const expectedUrls = ['/test', '/', '/', '/', '/', '/?a=b', '/?a=b'];
   const server = http.createServer((req, res) => {
     stripRoutePrefix(req, '/prefix');
     t.equal(req.url, expectedUrls.shift());
@@ -29,5 +29,7 @@ test('route prefix stripping', async () => {
   await request(`http://localhost:${port}/prefix`);
   await request(`http://localhost:${port}/`);
   await request(`http://localhost:${port}`);
+  await request(`http://localhost:${port}/prefix?a=b`);
+  await request(`http://localhost:${port}?a=b`);
   connection.close();
 });
