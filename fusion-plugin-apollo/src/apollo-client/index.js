@@ -90,7 +90,11 @@ const ApolloClientPlugin: FusionPlugin<
     defaultOptions: ApolloClientDefaultOptionsToken.optional,
   },
   provides({
-    getCache = ctx => new InMemoryCache(),
+    getCache = ctx =>
+      // don't automatically add typename when handling POST requests via the executor. This saves size on the response
+      new InMemoryCache({
+        addTypename: ctx.method === 'POST' ? false : true,
+      }),
     endpoint = '/graphql',
     fetch,
     includeCredentials = 'same-origin',
