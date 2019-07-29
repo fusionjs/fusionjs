@@ -7,7 +7,6 @@
  *
  * @flow
  */
-
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
 import {ElementToken, RenderToken, SSRDeciderToken} from './tokens';
