@@ -44,4 +44,4 @@ const collect = (deps, dep, cycles, set = new Set()) => {
   }
 };
 
-module.exports = {detectCyclicDeps}
+module.exports = {detectCyclicDeps};
