@@ -60,6 +60,13 @@ const installDeps /*: InstallDeps */ = async ({
     );
   }
 
+  // package preinstall hook
+  for (const dep of deps) {
+    if (dep.meta.scripts && dep.meta.scripts.preinstall) {
+      await spawn(node, [yarn, 'preinstall'], {cwd: dep.dir});
+    }
+  }
+
   // install external deps
   const modulesDir = `${root}/node_modules`;
   if (await exists(modulesDir)) {
@@ -88,6 +95,13 @@ const installDeps /*: InstallDeps */ = async ({
   await spawn('mv', [`${bin}/node_modules`, 'node_modules'], {
     cwd: root,
   });
+
+  // package postinstall hook
+  for (const dep of deps) {
+    if (dep.meta.scripts && dep.meta.scripts.postinstall) {
+      await spawn(node, [yarn, 'postinstall'], {cwd: dep.dir});
+    }
+  }
 
   // symlink local deps
   await Promise.all(

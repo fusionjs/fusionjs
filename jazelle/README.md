@@ -1362,6 +1362,7 @@ Note that updating `buildFileTemplate` does not change existing BUILD.bazel file
 
 ## TODOS
 
+- add cli test args support to sandbox mode
 - add command to import projects (add them to manifest.json)
 - add command to detect non-imported projects
 - change `add` args to `jazelle add foo@0.0.0 --dev`
