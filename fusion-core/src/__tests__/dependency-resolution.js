@@ -435,6 +435,38 @@ tape('dependency registration with missing dependency', t => {
   t.end();
 });
 
+tape(
+  'dependency registration with missing dependency and multiple dependent plugins',
+  t => {
+    const app = new App('el', el => el);
+    const PluginA = createPlugin({
+      provides: () => {
+        return {
+          a: 'PluginA',
+        };
+      },
+    });
+    const OtherPlugin = createPlugin({
+      deps: {
+        b: TokenB.optional,
+      },
+    });
+    const PluginC = createPlugin({
+      deps: {a: TokenA, b: TokenB},
+      provides: () => {
+        return {
+          c: 'PluginC',
+        };
+      },
+    });
+    app.register(OtherPlugin);
+    app.register(TokenA, PluginA);
+    app.register(TokenC, PluginC);
+    t.throws(() => app.resolve(), 'Catches missing dependencies');
+    t.end();
+  }
+);
+
 tape('dependency registration with null value', t => {
   const app = new App('el', el => el);
 

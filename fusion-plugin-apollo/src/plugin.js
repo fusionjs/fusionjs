@@ -126,25 +126,24 @@ export default (renderFn: Render) =>
             }
             return apolloContext;
           },
-          executor: requestContext => {
+          executor: async requestContext => {
             const client = getApolloClient(requestContext.context, {});
-            const args = {
-              variables: requestContext.request.variables,
-              context: requestContext.context,
-            };
-            if (requestContext.operation.operation === 'query') {
-              return client.query({
-                query: requestContext.document,
-                ...args,
+            // $FlowFixMe
+            const queryObservable = client.queryManager.getObservableFromLink(
+              requestContext.document,
+              requestContext.context,
+              requestContext.request.variables
+            );
+            return new Promise((resolve, reject) => {
+              queryObservable.subscribe({
+                next(x) {
+                  resolve(x);
+                },
+                error(err) {
+                  reject(err);
+                },
               });
-            } else if (requestContext.operation.operation === 'mutation') {
-              return client.mutate({
-                mutation: requestContext.document,
-                ...args,
-              });
-            } else {
-              throw new Error('Subscriptions not supported yet');
-            }
+            });
           },
         });
         let serverMiddleware = [];

@@ -1,5 +1,6 @@
 // @flow
 const assert = require('assert');
+const rewire = require('rewire');
 const {readFileSync, createWriteStream} = require('fs');
 const {install} = require('../commands/install.js');
 const {add} = require('../commands/add.js');
@@ -11,6 +12,8 @@ const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
+
+const changesModule = rewire('../commands/changes.js');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const bazelCmds = require('../utils/bazel-commands.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
@@ -99,6 +102,7 @@ async function runTests() {
     t(testStarlark),
     t(testYarnCommands),
     t(testBin),
+    t(testChanges),
   ]);
 
   await exec(`rm -rf ${__dirname}/tmp`);
@@ -1054,4 +1058,54 @@ async function testBin() {
   await new Promise(resolve => startStream.on('open', resolve));
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
+}
+
+async function testChanges() {
+  let buffer = '';
+  let revertSet = null;
+
+  // Install
+  await exec(`cp -r ${__dirname}/fixtures/commands/ ${__dirname}/tmp/commands`);
+  const revertConsoleLog = changesModule.__set__('console', {
+    ...console,
+    log: str => (buffer += str),
+  });
+
+  // Test no changes
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return [''];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === '');
+  revertSet();
+
+  // Test a module that is not a dependency of any other module
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['not-downstream'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'not-downstream');
+  buffer = '';
+  revertSet();
+
+  // Test a module that is a dependency of other module
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['a'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'a\ndownstream');
+  buffer = '';
+  revertSet();
+
+  // Test a module that is a dependency of other modules that themselves are dependencies
+  // e.g. b changed, a depends on b, downstream depends on a
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['b'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'b\na\ndownstream');
+  buffer = '';
+  revertSet();
+
+  revertConsoleLog();
 }
