@@ -23,7 +23,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "fusion-plugin-react-redux": "0.0.0-monorepo",
+    "fusion-plugin-react-redux": "0.0.0-canary.fd5a750.0",
     "react-redux": "^7.1.0"
   },
   "peerDependencies": {
