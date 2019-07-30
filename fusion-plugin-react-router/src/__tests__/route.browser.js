@@ -11,7 +11,7 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from '../browser';
-import createBrowserHistory from 'history/createBrowserHistory';
+import {createBrowserHistory} from 'history';
 
 test('matches as expected', t => {
   const root = document.createElement('div');
