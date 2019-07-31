@@ -13,6 +13,7 @@ import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import I18n, {matchesLiteralSections} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
@@ -25,10 +26,32 @@ test('translate', async t => {
   app.register(I18nLoaderToken, {
     from: () => ({translations: data, locale: 'en_US'}),
   });
+  // $FlowFixMe
+  app.register(UniversalEventsToken, {
+    from: () => ({
+      emit: (name, payload) => {
+        t.equals(
+          name,
+          'i18n-translate-miss',
+          'emits event when translate key missing'
+        );
+        t.equals(
+          payload.key,
+          'missing-translation',
+          'payload contains key for missing translation'
+        );
+      },
+    }),
+  });
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
       t.equals(translator.translate('test'), 'hello');
+      t.equals(
+        translator.translate('missing-translation'),
+        'missing-translation',
+        'fallsback to key'
+      );
       t.equals(
         translator.translate('interpolated', {adjective: 'big', noun: 'world'}),
         'hi big world'

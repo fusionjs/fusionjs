@@ -64,6 +64,7 @@
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "engines": {
