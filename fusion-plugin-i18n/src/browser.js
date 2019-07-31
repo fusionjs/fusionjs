@@ -54,7 +54,7 @@ const pluginFactory: () => PluginType = () =>
     },
     provides: ({fetch = window.fetch, hydrationState} = {}) => {
       class I18n {
-        localeCode: ?string;
+        locale: string;
         translations: TranslationsObjectType;
         requestedKeys: Set<string>;
 
@@ -62,8 +62,10 @@ const pluginFactory: () => PluginType = () =>
           const {localeCode, translations} =
             hydrationState || loadTranslations();
           this.requestedKeys = new Set();
-          this.localeCode = localeCode;
           this.translations = translations || {};
+          if (localeCode) {
+            this.locale = localeCode;
+          }
         }
         async load(translationKeys) {
           const loadedKeys = Object.keys(this.translations);
@@ -74,11 +76,9 @@ const pluginFactory: () => PluginType = () =>
             method: 'POST',
             headers: {
               Accept: '*/*',
-              ...(this.localeCode
-                ? {'X-Fusion-Locale-Code': this.localeCode}
-                : {}),
             },
           };
+          const localeParam = this.locale ? `&localeCode=${this.locale}` : '';
           if (unloaded.length > 0) {
             // Don't try to load translations again if a request is already in
             // flight. This means that we need to add unloaded chunks to
@@ -88,7 +88,7 @@ const pluginFactory: () => PluginType = () =>
             });
             // TODO(#3) don't append prefix if injected fetch also injects prefix
             return fetch(
-              `/_translations?keys=${JSON.stringify(unloaded)}`,
+              `/_translations?keys=${JSON.stringify(unloaded)}${localeParam}`,
               fetchOpts
             )
               .then(r => r.json())

@@ -171,6 +171,7 @@ const pluginFactory: () => PluginType = () =>
             return acc;
           }, {});
           ctx.body = translations;
+          ctx.set('cache-control', 'public, max-age=3600'); // cache translations for up to 1 hour
           return next();
         } else {
           return next();
