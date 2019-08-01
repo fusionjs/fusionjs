@@ -18,7 +18,6 @@ exports.run = async function(
     production,
     preserveNames,
     logLevel,
-    zopfli,
     minify,
     experimentalServerless,
     modernBuildOnly,
@@ -28,7 +27,6 @@ exports.run = async function(
     production: boolean,
     preserveNames: boolean,
     logLevel: string,
-    zopfli: boolean,
     minify: boolean,
     modernBuildOnly: boolean,
   }*/
@@ -48,7 +46,6 @@ exports.run = async function(
     dir,
     logger,
     preserveNames,
-    zopfli,
     minify,
     serverless: experimentalServerless,
     modernBuildOnly,

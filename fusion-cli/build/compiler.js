@@ -119,7 +119,6 @@ type CompilerOpts = {
   forceLegacyBuild?: boolean,
   logger?: any,
   preserveNames?: boolean,
-  zopfli?: boolean,
   minify?: boolean,
   modernBuildOnly?: boolean,
 };
@@ -134,7 +133,6 @@ function Compiler(
     preserveNames,
     watch = false,
     logger = console,
-    zopfli = true,
     minify = true,
     serverless = false,
     modernBuildOnly = false,
@@ -164,7 +162,6 @@ function Compiler(
   const root = path.resolve(dir);
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
-
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -174,7 +171,8 @@ function Compiler(
     fusionConfig,
     legacyPkgConfig,
     preserveNames,
-    zopfli,
+    zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
+    brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
     minify,
   };
   const compiler = webpack([
