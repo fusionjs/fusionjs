@@ -29,7 +29,7 @@
   "peerDependencies": {
     "connected-react-router": "^6.5.0",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-react-router": "0.0.0-monorepo",
+    "fusion-plugin-react-router": "0.0.0-canary.fd5a750.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "redux": "^4.0.1"
@@ -51,7 +51,7 @@
     "flow-bin": "^0.102.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-react-router": "0.0.0-monorepo",
+    "fusion-plugin-react-router": "0.0.0-canary.fd5a750.0",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "get-port": "^5.0.0",
