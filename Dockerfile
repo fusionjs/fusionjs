@@ -4,5 +4,4 @@ RUN mkdir /monorepo
 WORKDIR /monorepo
 COPY . /monorepo/
 
-RUN node common/scripts/install-run-rush install && \
-  node common/scripts/install-run-rush build
+RUN yarn global add jazelle@0.0.0-canary.a8af54e.0

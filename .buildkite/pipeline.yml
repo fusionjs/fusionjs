@@ -7,8 +7,18 @@ steps:
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
       queue: builders
+  - wait
   - label: ':pipeline:'
-    timeout_in_minutes: 1
+    timeout_in_minutes: 5
     command: .buildkite/bootstrap.sh | buildkite-agent pipeline upload
+    plugins:
+      'docker-compose#v3.0.0':
+        run: ci
+        env:
+          - BUILDKITE_AGENT_ACCESS_TOKEN
+          - BUILDKITE_BUILD_ID
+          - BUILDKITE_JOB_ID
+        volumes:
+          - ${BUILDKITE_AGENT_BINARY_PATH:-/usr/bin/buildkite-agent}:/usr/bin/buildkite-agent
     agents:
       queue: workers
