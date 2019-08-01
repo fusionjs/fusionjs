@@ -319,7 +319,7 @@ const update /*: Update */ = async ({
       await write(`${cwd}/package.json`, data, 'utf8');
       const yarnrc = '"--install.frozen-lockfile" false';
       await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-      const install = `yarn install --ignore-scripts --ignore-engines`;
+      const install = `yarn install --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original package.json/yarn.lock
