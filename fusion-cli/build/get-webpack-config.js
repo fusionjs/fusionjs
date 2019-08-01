@@ -142,6 +142,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const babelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: false,
   });
@@ -162,44 +163,22 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const legacyBabelOverrides = getBabelConfig({
     dev: dev,
     fusionTransforms: true,
+    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
     target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
     specOnly: false,
   });
 
-  const isProjectCode = modulePath =>
-    modulePath.startsWith(getSrcPath(dir)) ||
-    /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath);
+  const getTransformDefault = modulePath => {
+    if (
+      modulePath.startsWith(getSrcPath(dir)) ||
+      /fusion-cli(\/|\\)(entries|plugins)/.test(modulePath)
+    ) {
+      return 'all';
+    }
+    return 'spec';
+  };
 
-  const getTransformDefault = modulePath =>
-    isProjectCode(modulePath) ? 'all' : 'spec';
-
-  const {
-    experimentalBundleTest,
-    experimentalTransformTest,
-    experimentalSideEffectsTest,
-  } = fusionConfig;
-
-  const getDefaultSideEffects = modulePath =>
-    isProjectCode(modulePath)
-      ? false // enable tree-shaking for project code
-      : true; // disable tree-shaking for non-project code
-
-  // Note: package.json `sideEffects` field takes precedence over what is returned from test function
-  const sideEffectsTester = experimentalSideEffectsTest
-    ? modulePath => {
-        if (
-          modulePath.includes('core-js/modules') ||
-          modulePath.includes('regenerator-runtime/runtime')
-        ) {
-          return false; // disable tree-shaking for core-js and regenerator-runtime modules
-        }
-        return !experimentalSideEffectsTest(
-          modulePath,
-          getDefaultSideEffects(modulePath)
-        );
-      }
-    : modulePath => false;
-
+  const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
   const babelTester = experimentalTransformTest
     ? modulePath => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
@@ -403,9 +382,18 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },
-        {
+        fusionConfig.assumeNoImportSideEffects && {
           sideEffects: false,
-          test: sideEffectsTester,
+          test: modulePath => {
+            if (
+              modulePath.includes('core-js/modules') ||
+              modulePath.includes('regenerator-runtime/runtime')
+            ) {
+              return false;
+            }
+
+            return true;
+          },
         },
       ].filter(Boolean),
     },
