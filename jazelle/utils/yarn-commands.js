@@ -75,12 +75,12 @@ const dev /*: Dev */ = async ({root, deps, stdio = 'inherit'}) => {
 export type TestArgs = {
   root: string,
   deps: Array<Metadata>,
-  args: Array<string>,
+  args?: Array<string>,
   stdio?: Stdio,
 };
 export type Test = (TestArgs) => Promise<void>;
 */
-const test /*: Test */ = async ({root, deps, args, stdio = 'inherit'}) => {
+const test /*: Test */ = async ({root, deps, args = [], stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
   await spawn(node, [yarn, 'test', ...args], {
