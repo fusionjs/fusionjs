@@ -21,7 +21,9 @@ const changes /*: Changes */ = async ({root, sha1, sha2, type}) => {
   const {projects} = await getManifest({root});
   const allProjects = await Promise.all([
     ...projects.map(async dir => {
-      const meta = JSON.parse(await read(`${root}/${dir}/package.json`, 'utf8'));
+      const meta = JSON.parse(
+        await read(`${root}/${dir}/package.json`, 'utf8')
+      );
       return {dir, meta, depth: 1};
     }),
   ]);
