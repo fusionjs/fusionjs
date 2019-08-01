@@ -63,7 +63,10 @@ const installDeps /*: InstallDeps */ = async ({
   // package preinstall hook
   for (const dep of deps) {
     if (dep.meta.scripts && dep.meta.scripts.preinstall) {
-      await spawn(node, [yarn, 'preinstall'], {cwd: dep.dir});
+      await exec(dep.meta.scripts.preinstall, {
+        env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
+        cwd: dep.dir,
+      });
     }
   }
 
@@ -95,13 +98,6 @@ const installDeps /*: InstallDeps */ = async ({
   await spawn('mv', [`${bin}/node_modules`, 'node_modules'], {
     cwd: root,
   });
-
-  // package postinstall hook
-  for (const dep of deps) {
-    if (dep.meta.scripts && dep.meta.scripts.postinstall) {
-      await spawn(node, [yarn, 'postinstall'], {cwd: dep.dir});
-    }
-  }
 
   // symlink local deps
   await Promise.all(
@@ -142,6 +138,16 @@ const installDeps /*: InstallDeps */ = async ({
       }
     })
   );
+
+  // package postinstall hook
+  for (const dep of deps) {
+    if (dep.meta.scripts && dep.meta.scripts.postinstall) {
+      await exec(dep.meta.scripts.postinstall, {
+        env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
+        cwd: dep.dir,
+      });
+    }
+  }
 
   // jazelle hook
   if (typeof postinstall === 'string') {
