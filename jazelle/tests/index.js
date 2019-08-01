@@ -12,6 +12,7 @@ const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
+
 const changesModule = rewire('../commands/changes.js');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const bazelCmds = require('../utils/bazel-commands.js');
@@ -328,6 +329,7 @@ async function testBazelDummy() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel`,
     cwd: `${__dirname}/tmp/bazel`,
+    args: [],
     name: 'target',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -370,6 +372,7 @@ async function testBazelBuild() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     name: 'test',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -1066,6 +1069,7 @@ async function testYarnCommands() {
   await yarnCmds.test({
     root,
     deps,
+    args: [],
     stdio: ['ignore', testStream, 'ignore'],
   });
   assert((await read(testStreamFile, 'utf8')).includes('\n444\n'));
@@ -1149,24 +1153,30 @@ async function testChanges() {
   await exec(`cp -r ${__dirname}/fixtures/commands/ ${__dirname}/tmp/commands`);
   const revertConsoleLog = changesModule.__set__('console', {
     ...console,
-    log: str => buffer += str,
+    log: str => (buffer += str),
   });
 
   // Test no changes
-  revertSet = changesModule.__set__('findChangedTargets', async () => { return [''] });
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return [''];
+  });
   await changesModule.changes({root: `${__dirname}/tmp/commands`});
   assert(buffer === '');
   revertSet();
 
   // Test a module that is not a dependency of any other module
-  revertSet = changesModule.__set__('findChangedTargets', async () => { return ['not-downstream'] });
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['not-downstream'];
+  });
   await changesModule.changes({root: `${__dirname}/tmp/commands`});
   assert(buffer === 'not-downstream');
   buffer = '';
   revertSet();
 
   // Test a module that is a dependency of other module
-  revertSet = changesModule.__set__('findChangedTargets', async () => { return ['a'] });
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['a'];
+  });
   await changesModule.changes({root: `${__dirname}/tmp/commands`});
   assert(buffer === 'a\ndownstream');
   buffer = '';
@@ -1174,7 +1184,9 @@ async function testChanges() {
 
   // Test a module that is a dependency of other modules that themselves are dependencies
   // e.g. b changed, a depends on b, downstream depends on a
-  revertSet = changesModule.__set__('findChangedTargets', async () => { return ['b'] });
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['b'];
+  });
   await changesModule.changes({root: `${__dirname}/tmp/commands`});
   assert(buffer === 'b\na\ndownstream');
   buffer = '';
