@@ -7,6 +7,7 @@ const {
   reportMismatchedTopLevelDeps,
   getErrorMessage,
 } = require('../utils/report-mismatched-top-level-deps.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {installDeps} = require('../utils/install-deps.js');
 
 /*::
@@ -31,6 +32,13 @@ const ci /*: Ci */ = async ({root, cwd}) => {
     versionPolicy,
   });
   if (!result.valid) throw new Error(getErrorMessage(result));
+
+  const cycles = detectCyclicDeps({deps});
+  if (cycles.length > 0) {
+    throw new Error(
+      'Cyclic local dependencies detected. Run `jazelle doctor` for more info'
+    );
+  }
 
   await installDeps({root, deps, hooks});
 };
