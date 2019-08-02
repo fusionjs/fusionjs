@@ -121,7 +121,13 @@ test('endpoint', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(1);
+  t.plan(3);
+
+  ctx.set = (key, value) => {
+    t.equals(key, 'cache-control', 'cache header set');
+    t.equals(value, 'public, max-age=3600', 'cache translations for 1 hour');
+  };
+
   if (!I18n.provides) {
     t.end();
     return;
