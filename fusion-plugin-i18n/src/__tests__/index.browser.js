@@ -19,36 +19,15 @@ test('hydration', t => {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${adjective} ${noun}'},
   };
-  t.plan(8);
+  t.plan(5);
   if (!I18n.provides) {
     t.end();
     return;
   }
 
   const mockContext: Context = ({}: any);
-  // $FlowFixMe
-  const events = {
-    emit: (name, payload) => {
-      t.equals(
-        name,
-        'i18n-translate-miss',
-        'emits event when translate key missing'
-      );
-      const key = payload && typeof payload === 'object' && payload.key;
-      t.equals(
-        key,
-        'missing-browser-translation',
-        'payload contains key for missing translation'
-      );
-    },
-  };
-
-  const i18n = I18n.provides({hydrationState, events}).from(mockContext);
+  const i18n = I18n.provides({hydrationState}).from(mockContext);
   t.equals(i18n.translate('test'), 'hello');
-  t.equals(
-    i18n.translate('missing-browser-translation'),
-    'missing-browser-translation'
-  );
   t.equals(
     i18n.translate('interpolated', {adjective: 'big', noun: 'world'}),
     'hi big world'

@@ -13,7 +13,6 @@ import {Locale} from 'locale';
 
 import {createPlugin, memoize, html} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {I18nLoaderToken} from './tokens.js';
 import createLoader from './loader.js';
@@ -21,7 +20,6 @@ import type {
   I18nDepsType,
   I18nServiceType,
   TranslationsObjectType,
-  IEmitter,
 } from './types.js';
 
 // exported for testing
@@ -67,37 +65,30 @@ const pluginFactory: () => PluginType = () =>
   createPlugin({
     deps: {
       loader: I18nLoaderToken.optional,
-      events: UniversalEventsToken.optional,
     },
-    provides: ({loader, events}) => {
+    provides: ({loader}) => {
       class I18n {
         translations: TranslationsObjectType;
         locale: string | Locale;
-        emitter: ?IEmitter;
 
         constructor(ctx) {
           if (!loader) {
             loader = createLoader();
           }
           const {translations, locale} = loader.from(ctx);
-          this.emitter = events && events.from(ctx);
           this.translations = translations;
           this.locale = locale;
         }
         async load() {} //mirror client API
         translate(key, interpolations = {}) {
           const template = this.translations[key];
-
-          if (typeof template !== 'string') {
-            this.emitter && this.emitter.emit('i18n-translate-miss', {key});
-            return key;
-          }
-
-          return template.replace(/\${(.*?)}/g, (_, k) =>
-            interpolations[k] === void 0
-              ? '${' + k + '}'
-              : String(interpolations[k])
-          );
+          return template != null
+            ? template.replace(/\${(.*?)}/g, (_, k) =>
+                interpolations[k] === void 0
+                  ? '${' + k + '}'
+                  : String(interpolations[k])
+              )
+            : key;
         }
       }
 
