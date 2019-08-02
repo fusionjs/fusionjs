@@ -10,6 +10,7 @@
 import {FetchToken} from 'fusion-tokens';
 import {createPlugin, unescape, createToken} from 'fusion-core';
 import type {FusionPlugin, Token} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import type {
   I18nDepsType,
@@ -51,8 +52,9 @@ const pluginFactory: () => PluginType = () =>
     deps: {
       fetch: FetchToken.optional,
       hydrationState: HydrationStateToken.optional,
+      events: UniversalEventsToken.optional,
     },
-    provides: ({fetch = window.fetch, hydrationState} = {}) => {
+    provides: ({fetch = window.fetch, hydrationState, events} = {}) => {
       class I18n {
         locale: string;
         translations: TranslationsObjectType;
@@ -112,13 +114,17 @@ const pluginFactory: () => PluginType = () =>
         }
         translate(key, interpolations = {}) {
           const template = this.translations[key];
-          return template
-            ? template.replace(/\${(.*?)}/g, (_, k) =>
-                interpolations[k] === void 0
-                  ? '${' + k + '}'
-                  : String(interpolations[k])
-              )
-            : key;
+
+          if (typeof template !== 'string') {
+            events && events.emit('i18n-translate-miss', {key});
+            return key;
+          }
+
+          return template.replace(/\${(.*?)}/g, (_, k) =>
+            interpolations[k] === void 0
+              ? '${' + k + '}'
+              : String(interpolations[k])
+          );
         }
       }
       const i18n = new I18n();
