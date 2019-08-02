@@ -27,7 +27,7 @@
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
-    "fusion-plugin-rpc": "0.0.0-monorepo",
+    "fusion-plugin-rpc": "0.0.0-canary.fd5a750.0",
     "fusion-plugin-react-redux": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6",
@@ -50,7 +50,7 @@
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-redux": "0.0.0-monorepo",
-    "fusion-plugin-rpc": "0.0.0-monorepo",
+    "fusion-plugin-rpc": "0.0.0-canary.fd5a750.0",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
