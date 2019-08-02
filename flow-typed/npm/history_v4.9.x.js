@@ -26,10 +26,10 @@ declare module 'history' {
     go(n: number): void;
     goBack(): void;
     goForward(): void;
-    listen((location: $Shape<BrowserLocation>, action: Action) => void): () => void;
+    listen((location: BrowserLocation, action: Action) => void): () => void;
     block(message: string): typeof Unblock;
     block(
-      (location: $Shape<BrowserLocation>, action: Action) => ?string
+      (location: BrowserLocation, action: Action) => ?string
     ): typeof Unblock;
   }
 
@@ -72,9 +72,9 @@ declare module 'history' {
     goForward(): void;
     // Memory only
     canGo(n: number): boolean;
-    listen((location: $Shape<MemoryLocation>, action: Action) => void): () => void;
+    listen((location: MemoryLocation, action: Action) => void): () => void;
     block(message: string): typeof Unblock;
-    block((location: $Shape<MemoryLocation>, action: Action) => ?string): typeof Unblock;
+    block((location: MemoryLocation, action: Action) => ?string): typeof Unblock;
   }
 
   declare export type MemoryHistory = IMemoryHistory;
@@ -108,9 +108,9 @@ declare module 'history' {
     go(n: number): void;
     goBack(): void;
     goForward(): void;
-    listen((location: $Shape<HashLocation>, action: Action) => void): () => void;
+    listen((location: HashLocation, action: Action) => void): () => void;
     block(message: string): typeof Unblock;
-    block((location: $Shape<HashLocation>, action: Action) => ?string): typeof Unblock;
+    block((location: HashLocation, action: Action) => ?string): typeof Unblock;
     push(path: string): void;
   }
 
