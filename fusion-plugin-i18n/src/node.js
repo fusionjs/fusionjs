@@ -67,7 +67,7 @@ const pluginFactory: () => PluginType = () =>
   createPlugin({
     deps: {
       loader: I18nLoaderToken.optional,
-      events: UniversalEventsToken,
+      events: UniversalEventsToken.optional,
     },
     provides: ({loader, events}) => {
       class I18n {

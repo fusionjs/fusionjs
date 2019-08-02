@@ -52,7 +52,7 @@ const pluginFactory: () => PluginType = () =>
     deps: {
       fetch: FetchToken.optional,
       hydrationState: HydrationStateToken.optional,
-      events: UniversalEventsToken,
+      events: UniversalEventsToken.optional,
     },
     provides: ({fetch = window.fetch, hydrationState, events} = {}) => {
       class I18n {
@@ -78,6 +78,7 @@ const pluginFactory: () => PluginType = () =>
             method: 'POST',
             headers: {
               Accept: '*/*',
+              ...(this.locale ? {'X-Fusion-Locale-Code': this.locale} : {}),
             },
           };
           const localeParam = this.locale ? `&localeCode=${this.locale}` : '';

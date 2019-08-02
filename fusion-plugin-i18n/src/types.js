@@ -28,7 +28,7 @@ export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
   loader?: typeof I18nLoaderToken.optional,
-  events?: typeof UniversalEventsToken,
+  events?: typeof UniversalEventsToken.optional,
 };
 
 export type IEmitter = $Call<ExtractReturnType, typeof UniversalEventsToken>;
