@@ -10,6 +10,7 @@
 import {FetchToken} from 'fusion-tokens';
 import {createPlugin, unescape, createToken} from 'fusion-core';
 import type {FusionPlugin, Token} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import type {
   I18nDepsType,
@@ -51,10 +52,11 @@ const pluginFactory: () => PluginType = () =>
     deps: {
       fetch: FetchToken.optional,
       hydrationState: HydrationStateToken.optional,
+      events: UniversalEventsToken.optional,
     },
-    provides: ({fetch = window.fetch, hydrationState} = {}) => {
+    provides: ({fetch = window.fetch, hydrationState, events} = {}) => {
       class I18n {
-        localeCode: ?string;
+        locale: string;
         translations: TranslationsObjectType;
         requestedKeys: Set<string>;
 
@@ -62,8 +64,10 @@ const pluginFactory: () => PluginType = () =>
           const {localeCode, translations} =
             hydrationState || loadTranslations();
           this.requestedKeys = new Set();
-          this.localeCode = localeCode;
           this.translations = translations || {};
+          if (localeCode) {
+            this.locale = localeCode;
+          }
         }
         async load(translationKeys) {
           const loadedKeys = Object.keys(this.translations);
@@ -74,11 +78,10 @@ const pluginFactory: () => PluginType = () =>
             method: 'POST',
             headers: {
               Accept: '*/*',
-              ...(this.localeCode
-                ? {'X-Fusion-Locale-Code': this.localeCode}
-                : {}),
+              ...(this.locale ? {'X-Fusion-Locale-Code': this.locale} : {}),
             },
           };
+          const localeParam = this.locale ? `&localeCode=${this.locale}` : '';
           if (unloaded.length > 0) {
             // Don't try to load translations again if a request is already in
             // flight. This means that we need to add unloaded chunks to
@@ -88,7 +91,7 @@ const pluginFactory: () => PluginType = () =>
             });
             // TODO(#3) don't append prefix if injected fetch also injects prefix
             return fetch(
-              `/_translations?keys=${JSON.stringify(unloaded)}`,
+              `/_translations?keys=${JSON.stringify(unloaded)}${localeParam}`,
               fetchOpts
             )
               .then(r => r.json())
@@ -111,13 +114,17 @@ const pluginFactory: () => PluginType = () =>
         }
         translate(key, interpolations = {}) {
           const template = this.translations[key];
-          return template
-            ? template.replace(/\${(.*?)}/g, (_, k) =>
-                interpolations[k] === void 0
-                  ? '${' + k + '}'
-                  : String(interpolations[k])
-              )
-            : key;
+
+          if (typeof template !== 'string') {
+            events && events.emit('i18n-translate-miss', {key});
+            return key;
+          }
+
+          return template.replace(/\${(.*?)}/g, (_, k) =>
+            interpolations[k] === void 0
+              ? '${' + k + '}'
+              : String(interpolations[k])
+          );
         }
       }
       const i18n = new I18n();

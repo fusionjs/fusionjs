@@ -13,6 +13,7 @@ import test from 'tape-cup';
 
 import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import I18n from '../node';
 import createLoader from '../loader';
@@ -24,6 +25,10 @@ test('loader', async t => {
 
   const app = new App('el', el => el);
   app.register(I18nToken, I18n);
+  // $FlowFixMe
+  app.register(UniversalEventsToken, {
+    from: () => ({emit: () => {}}),
+  });
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
@@ -46,6 +51,10 @@ test('custom locale resolver', async t => {
   const app = new App('el', el => el);
   app.register(I18nLoaderToken, createI18nLoader(ctx => 'custom_US'));
   app.register(I18nToken, I18n);
+  // $FlowFixMe
+  app.register(UniversalEventsToken, {
+    from: () => ({emit: () => {}}),
+  });
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);

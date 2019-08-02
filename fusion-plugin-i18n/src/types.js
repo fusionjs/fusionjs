@@ -10,11 +10,14 @@ import {Locale} from 'locale';
 
 import {FetchToken} from 'fusion-tokens';
 import type {Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {HydrationStateToken} from './browser';
 import {I18nLoaderToken} from './tokens.js';
 
 export type TranslationsObjectType = {[string]: string};
+
+type ExtractReturnType = <V>(() => V) => V;
 
 export type TranslateFuncType = (
   key: string,
@@ -25,7 +28,10 @@ export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
   loader?: typeof I18nLoaderToken.optional,
+  events?: typeof UniversalEventsToken.optional,
 };
+
+export type IEmitter = $Call<ExtractReturnType, typeof UniversalEventsToken>;
 
 export type I18nServiceType = {
   from: (

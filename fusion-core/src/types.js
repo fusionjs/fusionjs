@@ -10,7 +10,7 @@ import type {Context as KoaContext} from 'koa';
 
 export type Token<T> = {
   (): T,
-  optional: () => void | T,
+  optional: Token<void | T>,
   stacks: Array<{
     // eslint-disable-next-line
     type:

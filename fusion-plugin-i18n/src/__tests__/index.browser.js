@@ -19,15 +19,36 @@ test('hydration', t => {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${adjective} ${noun}'},
   };
-  t.plan(5);
+  t.plan(8);
   if (!I18n.provides) {
     t.end();
     return;
   }
 
   const mockContext: Context = ({}: any);
-  const i18n = I18n.provides({hydrationState}).from(mockContext);
+  // $FlowFixMe
+  const events = {
+    emit: (name, payload) => {
+      t.equals(
+        name,
+        'i18n-translate-miss',
+        'emits event when translate key missing'
+      );
+      const key = payload && typeof payload === 'object' && payload.key;
+      t.equals(
+        key,
+        'missing-browser-translation',
+        'payload contains key for missing translation'
+      );
+    },
+  };
+
+  const i18n = I18n.provides({hydrationState, events}).from(mockContext);
   t.equals(i18n.translate('test'), 'hello');
+  t.equals(
+    i18n.translate('missing-browser-translation'),
+    'missing-browser-translation'
+  );
   t.equals(
     i18n.translate('interpolated', {adjective: 'big', noun: 'world'}),
     'hi big world'
@@ -124,13 +145,18 @@ test('load', t => {
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   const fetch: any = (url, options) => {
-    t.equals(url, '/_translations?keys=["test-key"]', 'url is ok');
+    t.equals(
+      url,
+      '/_translations?keys=["test-key"]&localeCode=es-MX',
+      'url is ok'
+    );
     t.equals(options && options.method, 'POST', 'method is ok');
     t.equals(
       options && options.headers && options.headers['X-Fusion-Locale-Code'],
       'es-MX',
       'locale code header is ok'
     );
+    t.equals(options && options.method, 'POST', 'method is ok');
     called = true;
     return Promise.resolve({json: () => data});
   };
