@@ -151,6 +151,12 @@ test('load', t => {
       'url is ok'
     );
     t.equals(options && options.method, 'POST', 'method is ok');
+    t.equals(
+      options && options.headers && options.headers['X-Fusion-Locale-Code'],
+      'es-MX',
+      'locale code header is ok'
+    );
+    t.equals(options && options.method, 'POST', 'method is ok');
     called = true;
     return Promise.resolve({json: () => data});
   };
