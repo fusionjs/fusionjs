@@ -3,14 +3,12 @@
 
 const path = require('path');
 const fs = require('fs');
-const babel = require('@babel/core');
-const { promisify } = require('util');
+const {promisify} = require('util');
 const t = require('assert');
 
 const exists = promisify(fs.exists);
-const readFile = promisify(fs.readFile);
 
-const { cmd } = require('../utils.js');
+const {cmd} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
 const dir2 = path.resolve(__dirname, './fixture2');
@@ -20,7 +18,7 @@ test('respects .fusionrc for zopfli and brotli', async () => {
 
   const clientMainPathGZ = path.resolve(
     dir,
-    `.fusion/dist/production/client/client-main-2150cf6df94047b24401.js.gz`
+    `.fusion/dist/production/client/client-main-c9d5e15139c37dc8d00d.js.gz`
   );
 
   t.ok(
@@ -30,7 +28,7 @@ test('respects .fusionrc for zopfli and brotli', async () => {
 
   const clientMainPathBR = path.resolve(
     dir,
-    `.fusion/dist/production/client/client-main-2150cf6df94047b24401.js.br`
+    `.fusion/dist/production/client/client-main-c9d5e15139c37dc8d00d.js.br`
   );
 
   t.ok(
@@ -42,14 +40,14 @@ test('respects .fusionrc for zopfli and brotli', async () => {
 
   const clientMainPathGZ2 = path.resolve(
     dir2,
-    `.fusion/dist/production/client/client-main-2150cf6df94047b24401.js.gz`
+    `.fusion/dist/production/client/client-main-69fef501aaf7ef73ab62.js.gz`
   );
 
   t.ok(await exists(clientMainPathGZ2), "Zopfli Wasn't Made, but should have");
 
   const clientMainPathBR2 = path.resolve(
     dir2,
-    `.fusion/dist/production/client/client-main-2150cf6df94047b24401.js.br`
+    `.fusion/dist/production/client/client-main-69fef501aaf7ef73ab62.js.br`
   );
 
   t.ok(await exists(clientMainPathBR2), "Brotli Wasn't Made, but should have");
