@@ -15,18 +15,23 @@ const createLocation = (
   path: string | LocationType,
   prefix: string
 ): LocationType => {
-  const unprefixedPath = removeRoutePrefix(path, prefix);
-  return parsePath(unprefixedPath);
+  const unprefixed = removeRoutePrefix(path, prefix);
+  if (typeof unprefixed === 'string') {
+    return ((parsePath(unprefixed): any): LocationType);
+  } else {
+    return unprefixed;
+  }
 };
 
 const createPrefixedURL = (
   location: string | LocationType,
   prefix: string
 ): string | LocationType => {
-  if (typeof location === 'string') {
-    return addRoutePrefix(location, prefix);
+  const prefixed = addRoutePrefix(location, prefix);
+  if (typeof prefixed === 'string') {
+    return prefixed;
   } else {
-    return createPath(addRoutePrefix(location, prefix));
+    return createPath(prefixed);
   }
 };
 
@@ -34,10 +39,11 @@ const createURL = (
   location: string | LocationType,
   prefix: string
 ): string | LocationType => {
-  if (typeof location === 'string') {
-    return removeRoutePrefix(location, prefix);
+  const unprefixed = removeRoutePrefix(location, prefix);
+  if (typeof unprefixed === 'string') {
+    return unprefixed;
   } else {
-    return createPath(removeRoutePrefix(location, prefix));
+    return createPath(unprefixed);
   }
 };
 
