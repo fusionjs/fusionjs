@@ -1,2 +1,2 @@
-test/e2e/*/fixture
+test/e2e/*/fixture*
 flow-typed

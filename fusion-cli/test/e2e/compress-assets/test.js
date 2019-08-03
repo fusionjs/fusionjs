@@ -8,9 +8,11 @@ const fs = require('fs');
 const {cmd} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
+const dir2 = path.resolve(__dirname, './fixture2');
 
 test('`fusion build` compresses assets for production', async () => {
   await cmd(`build --dir=${dir} --production`);
+  await cmd(`build --dir=${dir2} --production`);
 
   const fusion_folder = '.fusion/dist/production/client/';
   fs.readdir(path.resolve(dir, fusion_folder), (err, files) => {
@@ -31,5 +33,11 @@ test('`fusion build` compresses assets for production', async () => {
         .readFileSync(path.resolve(dir, 'src/assets/SVG_logo.svg'), 'utf8')
         .includes('shouldNotBeRemoved')
     );
+  });
+
+  fs.readdir(path.resolve(dir2, fusion_folder), (err, files) => {
+    if (err) throw err;
+    t.ok(!files.some(file => path.extname(file) === '.gz'), 'gzip works');
+    t.ok(!files.some(file => path.extname(file) === '.br'), 'brotli works');
   });
 }, 100000);
