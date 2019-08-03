@@ -39,7 +39,7 @@
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-router": "0.0.0-monorepo",
-    "fusion-plugin-styletron-react": "0.0.0-monorepo",
+    "fusion-plugin-styletron-react": "0.0.0-canary.fd5a750.0",
     "fusion-react": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
