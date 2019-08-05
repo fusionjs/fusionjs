@@ -365,7 +365,10 @@ const update /*: Update */ = async ({
   for (const {lockfile} of metas) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-      const isAlias = range.includes(':') || !validRange(range);
+      const isAlias =
+        range.includes(':') ||
+        !validRange(range) ||
+        !satisfies(lockfile[key].version, range);
       const id = `${key}|${lockfile[key].version}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
@@ -391,7 +394,18 @@ const update /*: Update */ = async ({
       const ignored = ignore.find(dep => dep === name);
       if (!ignored) populateGraph({graph, name, range, index});
     }
-    item.lockfile = graph;
+
+    const map = {};
+    const lockfile = {};
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      map[`${name}@${graph[key].version}`] = graph[key];
+    }
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      lockfile[key] = map[`${name}@${graph[key].version}`];
+    }
+    item.lockfile = lockfile;
   }
 
   return metas;
