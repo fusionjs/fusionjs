@@ -343,6 +343,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle yarn`](#jazelle-yarn)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
+- [`jazelle setup`](#jazelle-setup)
 - [Running NPM scripts](#running-npm-scripts)
 - [Colorized errors](#colorized-errors)
 
@@ -579,6 +580,12 @@ Suggests fixes for some types of issues
 `jazelle doctor --cwd [cwd]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+
+### `jazelle setup`
+
+Installs Jazelle hermetically. Useful for priming CI.
+
+`jazelle setup`
 
 ### Running NPM scripts
 
