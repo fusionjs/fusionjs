@@ -10,7 +10,7 @@ fi
 findroot() {
   if [ -f "manifest.json" ]
   then
-    echo "$PWD/"
+    echo "$PWD"
   elif [ "$PWD" = "/" ]
   then
     echo ""
@@ -28,7 +28,7 @@ then
 fi
 
 # setup other binaries
-"$BIN/bazelisk" run //:jazelle -- noop 2>/dev/null
+"$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
@@ -53,4 +53,3 @@ then
 fi
 
 "$NODE" "$JAZELLE" $@
-
