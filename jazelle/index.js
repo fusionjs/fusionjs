@@ -55,6 +55,10 @@ const runCLI /*: RunCLI */ = async argv => {
         `Scaffolds a workspace`,
         async () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
       ],
+      setup: [
+        `Installs Jazelle hermetically`, // installation happens in bin/cli.sh, nothing to do here
+        async () => {},
+      ],
       install: [
         `Install all dependencies for a project, modifying lockfiles and Bazel BUILD files if necessary
 

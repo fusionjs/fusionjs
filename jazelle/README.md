@@ -343,6 +343,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle yarn`](#jazelle-yarn)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
+- [`jazelle setup`](#jazelle-setup)
 - [Running NPM scripts](#running-npm-scripts)
 - [Colorized errors](#colorized-errors)
 
@@ -580,6 +581,12 @@ Suggests fixes for some types of issues
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
+### `jazelle setup`
+
+Installs Jazelle hermetically. Useful for priming CI.
+
+`jazelle setup`
+
 ### Running NPM scripts
 
 You can run NPM scripts via `jazelle yarn`. For example, if you have a script called `upload-files`, you can call it by running `jazelle yarn upload-files`.
@@ -646,10 +653,11 @@ Generates Bazel files required to make Jazelle run in a workspace
 - Generates [Bazel](https://bazel.build/) BUILD files if they don't exist for the relevant projects.
 - Updates yarn.lock files if needed.
 
-`let install: ({root: string, cwd: string}) => Promise<void>`
+`let install: ({root: string, cwd: string, frozenLockfile?: boolean}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `frozenLockfile` - If true, behaves the same way as `ci`. Defaults to `false`
 
 ### `ci`
 

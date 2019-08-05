@@ -95,12 +95,18 @@ const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
 export type SyncArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
+  frozenLockfile?: boolean,
   tmp?: string,
 };
 export type Sync = (SyncArgs) => Promise<void>;
 */
-const sync /*: Sync */ = async ({roots, ignore, tmp}) => {
-  await diff({roots, ignore, tmp});
+const sync /*: Sync */ = async ({
+  roots,
+  ignore,
+  tmp,
+  frozenLockfile = false,
+}) => {
+  await diff({roots, ignore, tmp, frozenLockfile});
 };
 
 /*::
@@ -122,8 +128,8 @@ const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
 
       if (!merged.meta[type]) merged.meta[type] = {};
       merged.meta[type][name] = range;
-      Object.assign(merged.lockfile, lockfile);
     }
+    Object.assign(merged.lockfile, lockfile);
   }
   await writeMetadata({metas: [merged]});
 };
@@ -135,6 +141,7 @@ type DiffArgs = {
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
+  frozenLockfile?: boolean,
   tmp?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
@@ -145,6 +152,7 @@ const diff /*: Diff */ = async ({
   removals = [],
   upgrades = [],
   ignore = [],
+  frozenLockfile = false,
   tmp = '/tmp',
 }) => {
   const metas = await getMetadata({roots});
@@ -154,6 +162,7 @@ const diff /*: Diff */ = async ({
     removals,
     upgrades,
     ignore,
+    frozenLockfile,
     tmp,
   });
   await writeMetadata({metas: updated});
@@ -194,7 +203,11 @@ const getDepEntries = meta => {
   ];
   for (const type of types) {
     for (const name in meta[type]) {
-      entries.push({name, range: meta[type][name], type});
+      const realName =
+        type === 'resolutions'
+          ? (name.match(/(@[^@/]+?\/)?[^@/]+$/) || [])[0]
+          : name;
+      entries.push({name: realName, range: meta[type][name], type});
     }
   }
   return entries;
@@ -229,6 +242,7 @@ export type UpdateArgs = {
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
+  frozenLockfile?: boolean,
   tmp?: string,
 };
 export type Update = (UpdateArgs) => Promise<Array<Metadata>>;
@@ -239,6 +253,7 @@ const update /*: Update */ = async ({
   removals = [],
   upgrades = [],
   ignore = [],
+  frozenLockfile = false,
   tmp = '/tmp',
 }) => {
   // populate missing ranges w/ latest
@@ -365,7 +380,10 @@ const update /*: Update */ = async ({
   for (const {lockfile} of metas) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-      const isAlias = range.includes(':') || !validRange(range);
+      const isAlias =
+        range.includes(':') ||
+        !validRange(range) ||
+        !satisfies(lockfile[key].version, range);
       const id = `${key}|${lockfile[key].version}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
@@ -386,12 +404,38 @@ const update /*: Update */ = async ({
   for (const item of metas) {
     const {meta} = item;
     const graph = {};
-    for (const {name, range, type} of getDepEntries(meta)) {
-      if (type === 'resolutions') continue;
+    for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (!ignored) populateGraph({graph, name, range, index});
     }
-    item.lockfile = graph;
+
+    // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
+    // so we need to ensure that they are
+    const map = {};
+    const lockfile = {};
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      map[`${name}@${graph[key].version}`] = graph[key];
+    }
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      lockfile[key] = map[`${name}@${graph[key].version}`];
+    }
+
+    if (frozenLockfile) {
+      const oldKeys = Object.keys(item.lockfile);
+      const newKeys = Object.keys(lockfile);
+      if (oldKeys.sort().join() !== newKeys.sort().join()) {
+        throw new Error(
+          `Updating lockfile is not allowed with frozenLockfile. ` +
+            `This error is most likely happening if you have committed ` +
+            `out-of-date lockfiles and tried to install deps in CI. ` +
+            `Install your deps again locally.`
+        );
+      }
+    } else {
+      item.lockfile = lockfile;
+    }
   }
 
   return metas;

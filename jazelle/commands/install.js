@@ -21,10 +21,11 @@ const {read} = require('../utils/node-helpers.js');
 export type InstallArgs = {
   root: string,
   cwd: string,
+  frozenLockfile?: boolean
 }
 export type Install = (InstallArgs) => Promise<void>
 */
-const install /*: Install */ = async ({root, cwd}) => {
+const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
   await assertProjectDir({dir: cwd});
 
   const {
@@ -65,8 +66,9 @@ const install /*: Install */ = async ({root, cwd}) => {
   await generateDepLockfiles({
     root,
     deps: Object.keys(map).map(key => map[key]),
+    frozenLockfile,
   });
-  if (workspace === 'sandbox') {
+  if (workspace === 'sandbox' && frozenLockfile === false) {
     await generateBazelignore({root, projects: projects});
     await generateBazelBuildRules({root, deps, projects});
   }
