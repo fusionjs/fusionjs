@@ -12,7 +12,6 @@ import type {Hooks} from './get-manifest.js';
 export type InstallDepsArgs = {
   root: string,
   deps?: Array<Metadata>,
-  frozenLockfile?: boolean,
   hooks?: Hooks,
 }
 export type InstallDeps = (InstallDepsArgs) => Promise<void>
@@ -20,7 +19,6 @@ export type InstallDeps = (InstallDepsArgs) => Promise<void>
 const installDeps /*: InstallDeps */ = async ({
   root,
   deps = [],
-  frozenLockfile = false,
   hooks: {preinstall, postinstall} = {},
 }) => {
   const bin = `${root}/third_party/jazelle/temp`;
@@ -33,7 +31,6 @@ const installDeps /*: InstallDeps */ = async ({
     roots: deps.map(dep => dep.dir),
     out: bin,
     ignore: deps.map(dep => dep.meta.name),
-    frozenLockfile,
     tmp,
   });
 

@@ -653,10 +653,11 @@ Generates Bazel files required to make Jazelle run in a workspace
 - Generates [Bazel](https://bazel.build/) BUILD files if they don't exist for the relevant projects.
 - Updates yarn.lock files if needed.
 
-`let install: ({root: string, cwd: string}) => Promise<void>`
+`let install: ({root: string, cwd: string, frozenLockfile?: boolean}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `frozenLockfile` - If true, behaves the same way as `ci`. Defaults to `false`
 
 ### `ci`
 
