@@ -3,6 +3,7 @@ const {minVersion, satisfies} = require('semver');
 const {getManifest} = require('../utils/get-manifest.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {upgrade: upgradeDep} = require('../utils/lockfile.js');
+const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {read, write} = require('../utils/node-helpers.js');
 
@@ -53,13 +54,14 @@ const greenkeep /*: Greenkeep */ = async ({root, name, version, from}) => {
       tmp,
     });
   }
+  const ignore = await getAllDependencies({root, projects});
   const deps = await Promise.all(
     roots.map(async dir => ({
       dir,
       meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
     }))
   );
-  await generateDepLockfiles({root, deps});
+  await generateDepLockfiles({root, deps, ignore});
 };
 
 const update = (meta, type, name, version, from) => {

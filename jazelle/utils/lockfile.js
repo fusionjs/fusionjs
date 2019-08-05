@@ -2,6 +2,7 @@
 const {satisfies, minVersion, validRange, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
+const {node, yarn} = require('./binary-paths.js');
 
 /*::
 export type Report = {
@@ -334,7 +335,7 @@ const update /*: Update */ = async ({
       await write(`${cwd}/package.json`, data, 'utf8');
       const yarnrc = '"--install.frozen-lockfile" false';
       await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-      const install = `yarn install --ignore-scripts --ignore-engines`;
+      const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original package.json/yarn.lock
