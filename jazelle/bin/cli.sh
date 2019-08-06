@@ -24,7 +24,7 @@ ROOT=$(findroot)
 # setup bazelisk
 if [ ! -f "$BIN/bazelisk" ]
 then
-  $ROOT/download-bazelisk.sh
+  "$BIN/download-bazelisk.sh"
 fi
 
 # setup other binaries
@@ -45,7 +45,7 @@ then
   fi
   if [ ! -f "$BIN/yarn.js" ]
   then
-    "$NODE" "$BIN/../utils/download-yarn.js"
+    "$BIN/download-yarn.sh"
   fi
   NODE="$(which node)"
   YARN="$BIN/yarn.js"
