@@ -4,7 +4,7 @@
 findroot() {
   if [ -f "manifest.json" ]
   then
-    echo "$PWD/"
+    echo "$PWD"
   elif [ "$PWD" = "/" ]
   then
     echo ""
