@@ -46,14 +46,22 @@ module.exports = class PersistentDiskCache /*::<T>*/ {
 
     return result;
   }
-};
 
+  async read(cacheKey /*: string*/) {
+    const path = getFilePath(this.cacheDirectory, cacheKey);
+    return await read(path);
+  }
+
+  exists(cacheKey /*: string*/) {
+    const filepath = getFilePath(this.cacheDirectory, cacheKey);
+    return fs.existsSync(filepath);
+  }
+};
 async function read(path /*: string*/) {
   const data = await readFile(path);
   const content = await gunzip(data);
   return JSON.parse(content);
 }
-
 async function write(path /*: string*/, result) {
   const content = JSON.stringify(result);
   const data = await gzip(content);
