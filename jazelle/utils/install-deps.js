@@ -1,8 +1,7 @@
 // @flow
-const lockfile = require('@yarnpkg/lockfile');
 const {dirname} = require('path');
 const {merge} = require('./lockfile.js');
-const {exists, exec, read, write, spawn} = require('./node-helpers.js');
+const {exists, exec, spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 
 /*::
@@ -12,6 +11,7 @@ import type {Hooks} from './get-manifest.js';
 export type InstallDepsArgs = {
   root: string,
   deps?: Array<Metadata>,
+  ignore?: Array<Metadata>,
   hooks?: Hooks,
 }
 export type InstallDeps = (InstallDepsArgs) => Promise<void>
@@ -19,6 +19,7 @@ export type InstallDeps = (InstallDepsArgs) => Promise<void>
 const installDeps /*: InstallDeps */ = async ({
   root,
   deps = [],
+  ignore = [],
   hooks: {preinstall, postinstall} = {},
 }) => {
   const bin = `${root}/third_party/jazelle/temp`;
@@ -30,18 +31,9 @@ const installDeps /*: InstallDeps */ = async ({
   await merge({
     roots: deps.map(dep => dep.dir),
     out: bin,
-    ignore: deps.map(dep => dep.meta.name),
+    ignore: ignore.map(dep => dep.meta.name),
     tmp,
   });
-
-  // delete local packages out of package.json
-  const meta = JSON.parse(await read(`${bin}/package.json`, 'utf8'));
-  deleteLocalPackages(meta, deps);
-  await write(`${bin}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
-
-  const {object} = lockfile.parse(await read(`${bin}/yarn.lock`, 'utf8'));
-  normalizeLockfileEntries(object);
-  await write(`${bin}/yarn.lock`, lockfile.stringify(object), 'utf8');
 
   // jazelle hook
   const nodePath = dirname(node);
@@ -157,32 +149,6 @@ const installDeps /*: InstallDeps */ = async ({
       [process.stdout, process.stderr]
     );
   }
-};
-
-const deleteLocalPackages = (meta, deps) => {
-  for (const key in meta.dependencies || {}) {
-    const found = deps.find(({meta: {name, version}}) => {
-      return name === key && version === meta.dependencies[key];
-    });
-    if (found) {
-      delete meta.dependencies[key];
-    }
-  }
-  for (const key in meta.devDependencies || {}) {
-    const found = deps.find(({meta: {name, version}}) => {
-      return name === key && version === meta.devDependencies[key];
-    });
-    if (found) {
-      delete meta.devDependencies[key];
-    }
-  }
-};
-
-const normalizeLockfileEntries = object => {
-  Object.keys(object).forEach(key => {
-    // remove optionalDependencies, to avoid buggy yarn nag later
-    delete object[key].optionalDependencies;
-  });
 };
 
 module.exports = {installDeps};

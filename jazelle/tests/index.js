@@ -655,6 +655,18 @@ async function testGenerateDepLockfiles() {
         depth: 1,
       },
     ],
+    ignore: [
+      {
+        meta: JSON.parse(
+          await read(
+            `${__dirname}/tmp/generate-dep-lockfiles/a/package.json`,
+            'utf8'
+          )
+        ),
+        dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
+        depth: 1,
+      },
+    ],
   });
   const lockfile = `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`;
   assert((await read(lockfile, 'utf8')).includes('has@'));
@@ -784,6 +796,22 @@ async function testInstallDeps() {
   const deps = {
     root: `${__dirname}/tmp/install-deps`,
     deps: [
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/b`,
+        depth: 2,
+      },
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/a`,
+        depth: 1,
+      },
+    ],
+    ignore: [
       {
         meta: JSON.parse(
           await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')

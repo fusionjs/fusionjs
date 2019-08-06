@@ -3,6 +3,7 @@ const {sync} = require('../utils/lockfile.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {installDeps} = require('../utils/install-deps.js');
 const {read} = require('../utils/node-helpers.js');
+const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 
 /*::
 export type DedupeArgs = {
@@ -23,7 +24,8 @@ const dedupe /*: Dedupe */ = async ({root}) => {
     ),
     tmp,
   });
-  await installDeps({root});
+  const all = await getAllDependencies({root, projects});
+  await installDeps({root, ignore: all});
 };
 
 module.exports = {dedupe};
