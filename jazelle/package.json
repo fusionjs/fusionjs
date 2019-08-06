@@ -9,12 +9,13 @@
   "scripts": {
     "lint": "eslint .",
     "test": "node tests/index.js",
-    "preinstall": "bin/download-bazelisk.sh && bin/download-yarn.sh",
+    "preinstall": "bin/download-bazelisk.sh && node utils/download-yarn.js",
     "build": "yarn preinstall"
   },
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
     "globby": "^10.0.1",
+    "rewire": "^4.0.1",
     "semver": "^6.2.0"
   },
   "devDependencies": {
@@ -26,7 +27,6 @@
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jest": "^22.5.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.13.0",
-    "rewire": "^4.0.1"
+    "eslint-plugin-react": "^7.13.0"
   }
 }
