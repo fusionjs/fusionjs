@@ -24,7 +24,7 @@ ROOT=$(findroot)
 # setup bazelisk
 if [ ! -f "$BIN/bazelisk" ]
 then
-  "$NODE" "$BIN/../utils/download-bazelisk.js"
+  $ROOT/download-bazelisk.sh
 fi
 
 # setup other binaries

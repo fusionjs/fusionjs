@@ -17,13 +17,20 @@ ROOT=$(findroot)
 
 VERSION=$(grep -E -o "jazelle-(.+).tgz" "$ROOT/WORKSPACE")
 VERSION=${VERSION:8:${#VERSION}-12}
-if ! hash jazelle 2>/dev/null
+BOOTSTRAP_DIR=$ROOT/third_party/jazelle/temp/jazelle
+JAZELLE=$BOOTSTRAP_DIR/node_modules/.bin/jazelle
+mkdir -p $BOOTSTRAP_DIR
+if [ ! -f $BOOTSTRAP_DIR/package.json ]
 then
-  yarn global add "jazelle@$VERSION" --ignore-engines
+  echo '{}' > $BOOTSTRAP_DIR/package.json
+fi
+if [ ! -f $JAZELLE ]
+then
+  (cd $BOOTSTRAP_DIR && npm install "jazelle@$VERSION")
 else
-  if [ $(jazelle version) != "$VERSION" ]
+  if [ $($JAZELLE version) != "$VERSION" ]
   then
-    yarn global upgrade "jazelle@$VERSION" --ignore-engines
+    (cd $BOOTSTRAP_DIR && npm install "jazelle@$VERSION")
   fi
 fi
-jazelle $@
+$JAZELLE $@
