@@ -1,7 +1,8 @@
 case $OSTYPE in
+  msys*) FILE=bazelisk-windows-amd64.exe ;;
   darwin*) FILE=bazelisk-darwin-amd64 ;;
   linux*) FILE=bazelisk-linux-amd64 ;;
-  msys*) FILE=bazelisk-windows-amd64.exe ;;
+  *) FILE=bazelisk-linux-amd64 ;;
 esac
 
 VERSION=0.0.8
