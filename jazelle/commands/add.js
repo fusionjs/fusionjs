@@ -25,9 +25,14 @@ export type AddArgs = {
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
+const add /*: Add */ = async ({root, cwd, name: nameWithVersion, version: explicitVersion, dev = false}) => {
   await assertProjectDir({dir: cwd});
 
+  const [name, versionInName] = nameWithVersion.split('@');
+  if (typeof versionInName === 'string' && typeof explicitVersion === 'string') {
+    throw new Error(`Ambiguous versions provided. Either provide the version using the form \`foo@1.2.3\` or with \`--version\` but not both.`);
+  }
+  let version /* : string | void */ = versionInName || explicitVersion;
   const type = dev ? 'devDependencies' : 'dependencies';
   const local = await findLocalDependency({root, name});
   if (local) {
