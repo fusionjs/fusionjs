@@ -17,20 +17,12 @@ ROOT=$(findroot)
 
 VERSION=$(grep -E -o "jazelle-(.+).tgz" "$ROOT/WORKSPACE")
 VERSION=${VERSION:8:${#VERSION}-12}
-BOOTSTRAP_DIR=$ROOT/third_party/jazelle/temp/jazelle
-JAZELLE=$BOOTSTRAP_DIR/node_modules/.bin/jazelle
-mkdir -p $BOOTSTRAP_DIR
-if [ ! -f $BOOTSTRAP_DIR/package.json ]
-then
-  echo '{}' > $BOOTSTRAP_DIR/package.json
-fi
+TARBALL=$ROOT/third_party/jazelle/temp/jazelle.tgz
+BIN=$ROOT/third_party/jazelle/temp
+JAZELLE=$BIN/package/bin/cli.sh
 if [ ! -f $JAZELLE ]
 then
-  (cd $BOOTSTRAP_DIR && npm install "jazelle@$VERSION")
-else
-  if [ $($JAZELLE version) != "$VERSION" ]
-  then
-    (cd $BOOTSTRAP_DIR && npm install "jazelle@$VERSION")
-  fi
+  curl -L "https://registry.yarnpkg.com/jazelle/-/jazelle-$VERSION.tgz" -o $TARBALL 2>/dev/null
+  tar xzf $TARBALL -C $BIN
 fi
 $JAZELLE $@
