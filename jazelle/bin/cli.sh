@@ -1,7 +1,7 @@
 # find dirname of cli.sh file
 if [ -L "$0" ]
 then
-  BIN=$(dirname $(node -e "console.log(fs.realpathSync('$0'))"))
+  BIN=$(dirname $(node -e "console.log(require('fs').realpathSync('$0'))"))
 else
   BIN=$(dirname "$0")
 fi
