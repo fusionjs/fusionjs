@@ -69,7 +69,7 @@ test(`${name} side render`, async t => {
   let root;
   if (__BROWSER__) {
     root = document.createElement('div');
-    root.setAttribute('id', 'root');
+    root.setAttribute('id', 'root2');
     if (document.body) {
       document.body.appendChild(root);
     }
@@ -107,54 +107,6 @@ test(`${name} side render`, async t => {
     if (document.body && root instanceof HTMLElement) {
       document.body.removeChild(root);
     }
-  }
-  t.end();
-});
-
-test(`${name} side render - default title escaping`, async t => {
-  const TestA = () => {
-    return (
-      <div>
-        <Helmet defaultTitle="My Default Title's </title>" />
-      </div>
-    );
-  };
-
-  const Root = (
-    <div>
-      <TestA />
-    </div>
-  );
-
-  let app;
-  let root;
-  if (__BROWSER__) {
-    root = document.createElement('div');
-    root.setAttribute('id', 'root');
-    if (document.body) {
-      document.body.appendChild(root);
-    }
-    app = new App(Root, el => render(el, root));
-  } else {
-    app = new App(Root);
-  }
-  app.register(HelmetPlugin);
-  app.middleware((ctx, next) => {
-    ctx.nonce = 'test-nonce';
-    return next();
-  });
-  const sim = getSimulator(app);
-  const ctx = await sim.render('/');
-
-  if (__NODE__) {
-    const fixtureFile = './src/__fixtures__/ssr2.html';
-    // Uncomment to regenerate fixture
-    // fs.writeFileSync(fixtureFile, ctx.body);
-    t.equal(ctx.body, fs.readFileSync(fixtureFile).toString());
-  } else if (__BROWSER__) {
-    // need to wait until next tick for dom changes
-    await new Promise(resolve => setTimeout(resolve, 10));
-    t.equal(document.title, "My Default Title's </title>");
   }
   t.end();
 });
