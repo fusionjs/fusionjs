@@ -13,14 +13,13 @@ For example, to add your own Babel plugins/preset:
 ```js
 module.exports = {
   babel: {
-    presets: ["some-babel-preset"],
-    plugins: ["some-babel-plugin"]
-  }
+    presets: ['some-babel-preset'],
+    plugins: ['some-babel-plugin'],
+  },
 };
 ```
 
 **Please note that custom Babel config is an unstable API and may not be supported in future releases.**
-
 
 ## `assumeNoImportSideEffects`
 
@@ -31,9 +30,10 @@ Setting this to `true` enables the assumption that modules in your code do not h
 This option may be useful if you import modules that use Node.js built-ins. This option makes it easier to avoid unintentionally including server-specific code in the browser bundle.
 
 For specifics regarding implementation details, see:
- - https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free
- - https://github.com/webpack/webpack/tree/master/examples/side-effects
- - https://stackoverflow.com/questions/49160752/what-does-webpack-4-expect-from-a-package-with-sideeffects-false/49203452#49203452
+
+- https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free
+- https://github.com/webpack/webpack/tree/master/examples/side-effects
+- https://stackoverflow.com/questions/49160752/what-does-webpack-4-expect-from-a-package-with-sideeffects-false/49203452#49203452
 
 In the future, it is possible that some form of this behavior may be turned on by default (with ways to opt-out instead).
 
@@ -44,7 +44,29 @@ This is an optional property that can be used to override the Fusion.js defaults
 ```js
 module.exports = {
   nodeBuiltins: {
-    Buffer: true
-  }
+    Buffer: true,
+  },
+};
+```
+
+## `zopfli`
+
+This is an optional property that can be used to override the Fusion.js defaults for compressing projects using zopfli in production builds.
+If left undefined, this property will default to true.
+
+```js
+module.exports = {
+  zopfli: false,
+};
+```
+
+## `brotli`
+
+This is an optional property that can be used to override the Fusion.js defaults for compressing projects using brotli in production builds.
+If left undefined, this property will default to true.
+
+```js
+module.exports = {
+  brotli: false,
 };
 ```

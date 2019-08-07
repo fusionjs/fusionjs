@@ -17,8 +17,14 @@ test('`fusion build` compresses assets for production', async () => {
   const fusion_folder = '.fusion/dist/production/client/';
   fs.readdir(path.resolve(dir, fusion_folder), (err, files) => {
     if (err) throw err;
-    t.ok(files.some(file => path.extname(file) === '.gz'), 'gzip works');
-    t.ok(files.some(file => path.extname(file) === '.br'), 'brotli works');
+    t.ok(
+      files.some(file => path.extname(file) === '.gz'),
+      'zopfli=true zips assets'
+    );
+    t.ok(
+      files.some(file => path.extname(file) === '.br'),
+      'brotli=true prevents zips assets'
+    );
     t.ok(
       files.some(
         file =>
@@ -37,7 +43,13 @@ test('`fusion build` compresses assets for production', async () => {
 
   fs.readdir(path.resolve(dir2, fusion_folder), (err, files) => {
     if (err) throw err;
-    t.ok(!files.some(file => path.extname(file) === '.gz'), 'gzip works');
-    t.ok(!files.some(file => path.extname(file) === '.br'), 'brotli works');
+    t.ok(
+      !files.some(file => path.extname(file) === '.gz'),
+      'zopfli=false prevents zipping assets'
+    );
+    t.ok(
+      !files.some(file => path.extname(file) === '.br'),
+      'brotli=false prevents zipping assets'
+    );
   });
 }, 100000);
