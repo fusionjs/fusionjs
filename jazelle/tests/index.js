@@ -1187,4 +1187,3 @@ async function testBin() {
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
 }
-
