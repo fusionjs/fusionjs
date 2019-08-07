@@ -276,7 +276,7 @@ jazelle run lint
 jazelle run flow
 
 # add dependency
-jazelle add react@16.8.2
+jazelle add react
 ```
 
 ### Using Bazel
@@ -392,10 +392,11 @@ Downloads external dependencies and links local dependencies. Does not create or
 
 Adds a dependency to the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`jazelle add --name [name] --dev --cwd [cwd]`
-`jazelle add [name] --dev --cwd [cwd]`
+`jazelle add --name [name] --version [version] --dev --cwd [cwd]`
+`jazelle add [name] --version [version] --dev --cwd [cwd]`
 
-- `--name` - Name of dependency and it's version to add. ie., `foo@1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
+- `--name` - Name of dependency to add
+- `--version` - Version of dependency to add. Defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages
 - `--dev` - Whether to install as a devDependency. Default to `false`
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
@@ -1378,6 +1379,7 @@ Note that updating `buildFileTemplate` does not change existing BUILD.bazel file
 - add cli test args support to sandbox mode
 - add command to import projects (add them to manifest.json)
 - add command to detect non-imported projects
+- change `add` args to `jazelle add foo@0.0.0 --dev`
 - detect WORKSPACE changes in `jazelle changes`
 - watch library -> service
 - hermetic install / refresh roots
