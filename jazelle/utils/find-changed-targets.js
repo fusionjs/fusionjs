@@ -2,23 +2,23 @@
 const {getManifest} = require('./get-manifest.js');
 const {exec} = require('./node-helpers.js');
 const {bazel} = require('./binary-paths.js');
+const {getDownstreams} = require('../utils/get-downstreams.js');
+const {read} = require('../utils/node-helpers.js');
 
 /*::
 export type FindChangedTargetsArgs = {
   root: string,
-  sha1?: string,
-  sha2?: string,
+  files: string,
   type?: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
 */
 const findChangedTargets /*: FindChangedTargets */ = async ({
   root,
-  sha1,
-  sha2,
+  files,
   type,
 }) => {
-  const targets = await findChangedBazelTargets({root, sha1, sha2});
+  const targets = await findChangedBazelTargets({root, files});
   switch (type) {
     case 'bazel':
       return targets;
@@ -33,18 +33,12 @@ const findChangedTargets /*: FindChangedTargets */ = async ({
   }
 };
 
-const findChangedBazelTargets = async ({root, sha1 = 'HEAD', sha2 = ''}) => {
-  const diff = await exec(
-    `git diff-tree --no-commit-id --name-only -r ${sha1} ${sha2}`,
-    {
-      cwd: root,
-    }
-  ).catch(() => null);
+const findChangedBazelTargets = async ({root, files}) => {
+  const lines = (await read(files, 'utf8')).split('\n').filter(Boolean);
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
-    if (diff !== null) {
-      const files = diff.split('\n').filter(Boolean);
-      const projects = await batch(files, file => {
+    if (lines.length > 0) {
+      const projects = await batch(lines, file => {
         return `FILE=$(${bazel} query "${file}") && bazel query "attr('srcs', '$FILE', '\${FILE//:*/}:*')"`;
       });
       return batch(projects, project => {
@@ -57,18 +51,40 @@ const findChangedBazelTargets = async ({root, sha1 = 'HEAD', sha2 = ''}) => {
       return queried.trim().split('\n');
     }
   } else {
+    const allProjects = await Promise.all([
+      ...projects.map(async dir => {
+        const meta = JSON.parse(
+          await read(`${root}/${dir}/package.json`, 'utf8')
+        );
+        return {dir, meta, depth: 1};
+      }),
+    ]);
+
     const set = new Set();
-    if (diff !== null) {
+    if (lines.length > 0) {
       for (const project of projects) {
-        for (const line of diff.split('\n').filter(Boolean)) {
+        for (const line of lines) {
           if (line.startsWith(project)) set.add(project);
         }
       }
     } else {
       for (const project of projects) set.add(project);
     }
+
+    // Add to the changeSet all downstream packages that have a dependency
+    const changeSet = new Set(set);
+    for (const target of set) {
+      const dep = allProjects.find(project => project.dir === target);
+      if (dep) {
+        const downstreamDeps = getDownstreams(allProjects, dep);
+        for (const downstreamDep of downstreamDeps) {
+          changeSet.add(downstreamDep.dir);
+        }
+      }
+    }
+
     const targets = [];
-    for (const project of set) {
+    for (const project of changeSet) {
       targets.push(
         `//${project}:test`,
         `//${project}:lint`,
