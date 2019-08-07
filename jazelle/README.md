@@ -493,9 +493,15 @@ List projects that have changed since the last git commit.
 
 `jazelle changes`
 
-- `--sha1` - The commit SHA-1 to get the list of changes from. Defaults to `HEAD` of the current branch.
-- `--sha2` - If populated, will get the list of changes between `sha1` and `sha2`. Defaults to an empty string.
+- `--files` - A file containing a list of changed files, one per line
 - `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
+
+The `files` file can be generated via git:
+
+```sh
+git diff-tree --no-commit-id --name-only -r HEAD origin/master > files.txt
+jazelle changes files.txt
+```
 
 Bazel targets can be tested via the `bazel test [target]` command.
 
@@ -792,10 +798,17 @@ jest --testPathPattern=$(node -e "console.log(require('jazelle').chunk({projects
 
 List projects that have changed since the last git commit.
 
-`let changed: ({root: string, type: string}) => Promise<Array<string>>`
+`let changed: ({root: string, files: string, type: string}) => Promise<Array<string>>`
 
 - `root` - Monorepo root folder (absolute path)
+- `files` - The path to a file containing a list of changed files, one per line
 - `type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
+
+The `files` file can be generated via git:
+
+```sh
+git diff-tree --no-commit-id --name-only -r HEAD origin/master > files.txt
+```
 
 Bazel targets can be tested via the `bazel test [target]` command.
 

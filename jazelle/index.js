@@ -123,12 +123,11 @@ const runCLI /*: RunCLI */ = async argv => {
         async ({patterns, jobs, index}) => chunk({root, patterns, jobs, index}),
       ],
       changes: [
-        `Lists Bazel test targets that changed since the last git commit
+        `Lists Bazel test targets that changed given a list of changed files
 
-        --sha1 [sha1]           List changes since this commit (default is HEAD)
-        --sha2 [sha2]           List changes between sha1 and this commit
+        [files]                 A file containing a list of changed files (one per line)
         --type [type]           'bazel' or 'dirs'`,
-        ({sha1, sha2, type}) => changes({root, sha1, sha2, type}),
+        ({name, type}) => changes({root, files: name, type}),
       ],
       build: [
         `Build a project
