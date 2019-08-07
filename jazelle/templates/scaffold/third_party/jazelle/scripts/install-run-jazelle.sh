@@ -17,12 +17,12 @@ ROOT=$(findroot)
 
 VERSION=$(grep -E -o "jazelle-(.+).tgz" "$ROOT/WORKSPACE")
 VERSION=${VERSION:8:${#VERSION}-12}
-TARBALL=$ROOT/third_party/jazelle/temp/jazelle.tgz
 BIN=$ROOT/third_party/jazelle/temp
+TARBALL=$BIN/jazelle.tgz
 JAZELLE=$BIN/package/bin/cli.sh
 if [ ! -f $JAZELLE ]
 then
-  curl -L "https://registry.yarnpkg.com/jazelle/-/jazelle-$VERSION.tgz" -o $TARBALL 2>/dev/null
+  curl -L "https://registry.yarnpkg.com/jazelle/-/jazelle-$VERSION.tgz" -o $TARBALL
   tar xzf $TARBALL -C $BIN
 fi
 $JAZELLE $@
