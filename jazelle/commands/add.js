@@ -25,9 +25,14 @@ export type AddArgs = {
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
+const add /*: Add */ = async ({
+  root,
+  cwd,
+  name: nameWithVersion,
+  dev = false,
+}) => {
   await assertProjectDir({dir: cwd});
-
+  let [, name, version] = nameWithVersion.match(/(@?[^@]*)@?(.*)/) || [];
   const type = dev ? 'devDependencies' : 'dependencies';
   const local = await findLocalDependency({root, name});
   if (local) {

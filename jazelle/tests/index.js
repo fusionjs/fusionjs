@@ -148,8 +148,7 @@ async function testInstallAddUpgradeRemove() {
   await add({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
