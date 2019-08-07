@@ -1,3 +1,6 @@
 [ignore]
 .*/tests/fixtures/.*
 .*/tests/tmp/.*
+
+[libs]
+../flow-typed/

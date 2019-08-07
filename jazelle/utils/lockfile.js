@@ -1,10 +1,12 @@
 // @flow
 const {satisfies, minVersion, validRange, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
+/* :: import type { Lockfile as YarnLockfile } from '@yarnpkg/lockfile' */
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 
 /*::
+
 export type Report = {
   [string]: {
     [string]: Array<string>
@@ -16,10 +18,14 @@ export type CheckArgs = {
 export type Check = (CheckArgs) => Promise<Report>;
 */
 const check /*: Check */ = async ({roots}) => {
-  const versions = {};
-  function collectVersions(meta, type) {
-    Object.keys(meta[type] || {}).forEach(name => {
-      const version = meta[type][name];
+  const versions /*: { [name: string]: {[version: string]: Array<string>} } */ = {};
+  function collectVersions(
+    meta /* : PackageJson */ ,
+    type /*: 'dependencies' | 'devDependencies' | 'peerDependencies' | 'optionalDependencies' */
+  ) {
+    Object.keys(meta[type] || {}).forEach((name: string) => {
+      const depType /*: { [key: string]: string } */ = meta[type] || {};
+      const version /*: string */ = depType[name];
       if (!versions[name]) versions[name] = {};
       if (!versions[name][version]) versions[name][version] = [];
       versions[name][version].push(meta.name);
@@ -29,14 +35,14 @@ const check /*: Check */ = async ({roots}) => {
 
   await Promise.all(
     roots.map(async dir => {
-      const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
+      const meta /*: PackageJson */ = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
       collectVersions(meta, 'dependencies');
       collectVersions(meta, 'devDependencies');
       collectVersions(meta, 'peerDependencies');
       collectVersions(meta, 'optionalDependencies');
     })
   );
-  Object.keys(versions).forEach(name => {
+  Object.keys(versions).forEach((name /* : string */) => {
     if (Object.keys(versions[name]).length === 1) delete versions[name];
   });
 
@@ -121,14 +127,15 @@ export type Merge = (MergeArgs) => Promise<void>;
 */
 const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
   const metas = await getMetadata({roots});
-  const merged = {dir: out, meta: {}, lockfile: {}};
+  const merged /*: Metadata */ = {dir: out, meta: {}, lockfile: {}};
   for (const {meta, lockfile} of metas) {
     for (const {name, range, type} of getDepEntries(meta)) {
-      const ignored = ignore.find(dep => dep === name);
+      const ignored /*: string | void */ = ignore.find(dep => dep === name);
       if (ignored) continue;
 
-      if (!merged.meta[type]) merged.meta[type] = {};
-      merged.meta[type][name] = range;
+      const depTypeGroup = merged.meta[type] || {};
+      depTypeGroup[name] = range;
+      merged.meta[type] = depTypeGroup;
     }
     Object.assign(merged.lockfile, lockfile);
   }
@@ -173,10 +180,10 @@ const getMetadata = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
-      const meta = JSON.parse(await read(metaFile, 'utf8').catch(() => '{}'));
+      const meta /*: PackageJson */ = JSON.parse(await read(metaFile, 'utf8').catch(() => '{}'));
 
       const yarnLock = `${dir}/yarn.lock`;
-      const {object} = parse(await read(yarnLock, 'utf8').catch(() => ''));
+      const {object} /*: {| object: Lockfile, type: 'success' |} */ = parse(await read(yarnLock, 'utf8').catch(() => ''));
 
       return {dir, meta, lockfile: object};
     })
@@ -193,16 +200,22 @@ const writeMetadata = async ({metas}) => {
   );
 };
 
-const getDepEntries = meta => {
+/* :: type DepType = 'dependencies' | 'devDependencies' | 'peerDependencies' | 'optionalDependencies' | 'resolutions'; */
+
+const getDepEntries = (meta /*: PackageJson */) /*: Array<{|
+  name: string,
+  range: string,
+  type: DepType
+|}> */ => {
   const entries = [];
-  const types = [
+  const types /* : Array<DepType> */ = [
     'dependencies',
     'devDependencies',
     'peerDependencies',
     'optionalDependencies',
     'resolutions',
   ];
-  for (const type of types) {
+  for (const type /* : DepType */ of types) {
     for (const name in meta[type]) {
       const realName =
         type === 'resolutions'
@@ -224,19 +237,13 @@ export type PackageJson = {
   peerDependencies?: {[string]: string},
   resolutions?: {[string]: string},
 };
-export type Lockfile = {
-  [string]: {
-    version: string,
-    dependencies?: {
-      [string]: string,
-    }
-  }
-}
-export type Metadata = {
+export type Lockfile = YarnLockfile;
+export type Metadata = {|
   dir: string,
   meta: PackageJson,
   lockfile: Lockfile,
-};
+|};
+
 export type UpdateArgs = {
   metas: Array<Metadata>,
   additions?: Array<Addition>,
@@ -265,7 +272,7 @@ const update /*: Update */ = async ({
         if (!insertion.range) {
           const cmd = `yarn info ${insertion.name} version --json`;
           const info = await exec(cmd, {env: process.env});
-          const {data} = JSON.parse(info);
+          const {data} /*: {| data: string |} */ = JSON.parse(info);
           insertion.range = `^${data}`; // eslint-disable-line require-atomic-updates
         }
       })
@@ -276,7 +283,7 @@ const update /*: Update */ = async ({
     // handle removals
     if (removals.length > 0) {
       for (const name of removals) {
-        const types = [
+        const types /* : Array<DepType> */ = [
           'dependencies',
           'devDependencies',
           'peerDependencies',
@@ -413,7 +420,7 @@ const update /*: Update */ = async ({
     // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
     // so we need to ensure that they are
     const map = {};
-    const lockfile = {};
+    const lockfile /* : Lockfile */ = {...null};
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
       map[`${name}@${graph[key].version}`] = graph[key];
