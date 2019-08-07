@@ -1,7 +1,7 @@
 # find dirname of cli.sh file
 if [ -L "$0" ]
 then
-  BIN=$(dirname $(node -e "console.log(fs.realpathSync('$0'))"))
+  BIN=$(dirname $(node -e "console.log(require('fs').realpathSync('$0'))"))
 else
   BIN=$(dirname "$0")
 fi
@@ -24,7 +24,7 @@ ROOT=$(findroot)
 # setup bazelisk
 if [ ! -f "$BIN/bazelisk" ]
 then
-  "$NODE" "$BIN/../utils/download-bazelisk.js"
+  "$BIN/download-bazelisk.sh"
 fi
 
 # setup other binaries
@@ -45,7 +45,7 @@ then
   fi
   if [ ! -f "$BIN/yarn.js" ]
   then
-    "$NODE" "$BIN/../utils/download-yarn.js"
+    "$BIN/download-yarn.sh"
   fi
   NODE="$(which node)"
   YARN="$BIN/yarn.js"

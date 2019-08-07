@@ -74,12 +74,10 @@ const runCLI /*: RunCLI */ = async argv => {
       add: [
         `Install a package and any packages that it depends on
 
-        [name]                  Package to add
-        --version [version]     Version
+        [name]                  Package to add at a specific version. ie., foo@1.2.3
         --dev                   Whether to install as devDependency
         --cwd [cwd]             Project directory to use`,
-        async ({cwd, name, version, dev}) =>
-          add({root, cwd, name, version, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
+        async ({cwd, name, dev}) => add({root, cwd, name, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
       ],
       remove: [
         `Remove a package
