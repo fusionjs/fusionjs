@@ -181,6 +181,12 @@ yarn global add jazelle
 jazelle version
 ```
 
+If the repo is already scaffolded, you can use the script in it:
+
+```
+third_party/jazelle/scripts/install-run-jazelle.sh version
+```
+
 #### Upgrading
 
 ```sh
