@@ -181,6 +181,12 @@ yarn global add jazelle
 jazelle version
 ```
 
+If the repo is already scaffolded, you can use the script in it:
+
+```
+third_party/jazelle/scripts/install-run-jazelle.sh version
+```
+
 #### Upgrading
 
 ```sh
@@ -270,7 +276,7 @@ jazelle run lint
 jazelle run flow
 
 # add dependency
-jazelle add react
+jazelle add react@16.8.2
 ```
 
 ### Using Bazel
@@ -343,6 +349,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle yarn`](#jazelle-yarn)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
+- [`jazelle setup`](#jazelle-setup)
 - [Running NPM scripts](#running-npm-scripts)
 - [Colorized errors](#colorized-errors)
 
@@ -385,11 +392,10 @@ Downloads external dependencies and links local dependencies. Does not create or
 
 Adds a dependency to the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`jazelle add --name [name] --version [version] --dev --cwd [cwd]`
-`jazelle add [name] --version [version] --dev --cwd [cwd]`
+`jazelle add --name [name] --dev --cwd [cwd]`
+`jazelle add [name] --dev --cwd [cwd]`
 
-- `--name` - Name of dependency to add
-- `--version` - Version of dependency to add. Defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages
+- `--name` - Name of dependency and it's version to add. ie., `foo@1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
 - `--dev` - Whether to install as a devDependency. Default to `false`
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
@@ -487,9 +493,15 @@ List projects that have changed since the last git commit.
 
 `jazelle changes`
 
-- `--sha1` - The commit SHA-1 to get the list of changes from. Defaults to `HEAD` of the current branch.
-- `--sha2` - If populated, will get the list of changes between `sha1` and `sha2`. Defaults to an empty string.
+- `--files` - A file containing a list of changed files, one per line
 - `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
+
+The `files` file can be generated via git:
+
+```sh
+git diff-tree --no-commit-id --name-only -r HEAD origin/master > files.txt
+jazelle changes files.txt
+```
 
 Bazel targets can be tested via the `bazel test [target]` command.
 
@@ -580,6 +592,12 @@ Suggests fixes for some types of issues
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
+### `jazelle setup`
+
+Installs Jazelle hermetically. Useful for priming CI.
+
+`jazelle setup`
+
 ### Running NPM scripts
 
 You can run NPM scripts via `jazelle yarn`. For example, if you have a script called `upload-files`, you can call it by running `jazelle yarn upload-files`.
@@ -646,10 +664,11 @@ Generates Bazel files required to make Jazelle run in a workspace
 - Generates [Bazel](https://bazel.build/) BUILD files if they don't exist for the relevant projects.
 - Updates yarn.lock files if needed.
 
-`let install: ({root: string, cwd: string}) => Promise<void>`
+`let install: ({root: string, cwd: string, frozenLockfile?: boolean}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `frozenLockfile` - If true, behaves the same way as `ci`. Defaults to `false`
 
 ### `ci`
 
@@ -779,10 +798,17 @@ jest --testPathPattern=$(node -e "console.log(require('jazelle').chunk({projects
 
 List projects that have changed since the last git commit.
 
-`let changed: ({root: string, type: string}) => Promise<Array<string>>`
+`let changed: ({root: string, files: string, type: string}) => Promise<Array<string>>`
 
 - `root` - Monorepo root folder (absolute path)
+- `files` - The path to a file containing a list of changed files, one per line
 - `type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
+
+The `files` file can be generated via git:
+
+```sh
+git diff-tree --no-commit-id --name-only -r HEAD origin/master > files.txt
+```
 
 Bazel targets can be tested via the `bazel test [target]` command.
 
@@ -1365,7 +1391,6 @@ Note that updating `buildFileTemplate` does not change existing BUILD.bazel file
 - add cli test args support to sandbox mode
 - add command to import projects (add them to manifest.json)
 - add command to detect non-imported projects
-- change `add` args to `jazelle add foo@0.0.0 --dev`
 - detect WORKSPACE changes in `jazelle changes`
 - watch library -> service
 - hermetic install / refresh roots

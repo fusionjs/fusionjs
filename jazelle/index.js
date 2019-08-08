@@ -55,6 +55,10 @@ const runCLI /*: RunCLI */ = async argv => {
         `Scaffolds a workspace`,
         async () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
       ],
+      setup: [
+        `Installs Jazelle hermetically`, // installation happens in bin/cli.sh, nothing to do here
+        async () => {},
+      ],
       install: [
         `Install all dependencies for a project, modifying lockfiles and Bazel BUILD files if necessary
 
@@ -70,12 +74,10 @@ const runCLI /*: RunCLI */ = async argv => {
       add: [
         `Install a package and any packages that it depends on
 
-        [name]                  Package to add
-        --version [version]     Version
+        [name]                  Package to add at a specific version. ie., foo@1.2.3
         --dev                   Whether to install as devDependency
         --cwd [cwd]             Project directory to use`,
-        async ({cwd, name, version, dev}) =>
-          add({root, cwd, name, version, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
+        async ({cwd, name, dev}) => add({root, cwd, name, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
       ],
       remove: [
         `Remove a package
@@ -121,12 +123,11 @@ const runCLI /*: RunCLI */ = async argv => {
         async ({patterns, jobs, index}) => chunk({root, patterns, jobs, index}),
       ],
       changes: [
-        `Lists Bazel test targets that changed since the last git commit
+        `Lists Bazel test targets that changed given a list of changed files
 
-        --sha1 [sha1]           List changes since this commit (default is HEAD)
-        --sha2 [sha2]           List changes between sha1 and this commit
+        [files]                 A file containing a list of changed files (one per line)
         --type [type]           'bazel' or 'dirs'`,
-        ({sha1, sha2, type}) => changes({root, sha1, sha2, type}),
+        ({name, type}) => changes({root, files: name, type}),
       ],
       build: [
         `Build a project

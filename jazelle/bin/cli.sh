@@ -1,7 +1,7 @@
 # find dirname of cli.sh file
 if [ -L "$0" ]
 then
-  BIN=$(dirname $(node -e "console.log(fs.realpathSync('$0'))"))
+  BIN=$(dirname $(node -e "console.log(require('fs').realpathSync('$0'))"))
 else
   BIN=$(dirname "$0")
 fi
@@ -10,7 +10,7 @@ fi
 findroot() {
   if [ -f "manifest.json" ]
   then
-    echo "$PWD/"
+    echo "$PWD"
   elif [ "$PWD" = "/" ]
   then
     echo ""
@@ -24,11 +24,11 @@ ROOT=$(findroot)
 # setup bazelisk
 if [ ! -f "$BIN/bazelisk" ]
 then
-  "$NODE" "$BIN/../utils/download-bazelisk.js"
+  "$BIN/download-bazelisk.sh"
 fi
 
 # setup other binaries
-"$BIN/bazelisk" run //:jazelle -- noop 2>/dev/null
+"$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
@@ -45,7 +45,7 @@ then
   fi
   if [ ! -f "$BIN/yarn.js" ]
   then
-    "$NODE" "$BIN/../utils/download-yarn.js"
+    "$BIN/download-yarn.sh"
   fi
   NODE="$(which node)"
   YARN="$BIN/yarn.js"
@@ -53,4 +53,3 @@ then
 fi
 
 "$NODE" "$JAZELLE" $@
-

@@ -4,7 +4,7 @@
 findroot() {
   if [ -f "manifest.json" ]
   then
-    echo "$PWD/"
+    echo "$PWD"
   elif [ "$PWD" = "/" ]
   then
     echo ""
@@ -17,13 +17,12 @@ ROOT=$(findroot)
 
 VERSION=$(grep -E -o "jazelle-(.+).tgz" "$ROOT/WORKSPACE")
 VERSION=${VERSION:8:${#VERSION}-12}
-if ! hash jazelle 2>/dev/null
+BIN=$ROOT/third_party/jazelle/temp
+TARBALL=$BIN/jazelle.tgz
+JAZELLE=$BIN/package/bin/cli.sh
+if [ ! -f $JAZELLE ]
 then
-  yarn global add "jazelle@$VERSION" --ignore-engines
-else
-  if [ $(jazelle version) != "$VERSION" ]
-  then
-    yarn global upgrade "jazelle@$VERSION" --ignore-engines
-  fi
+  curl -L "https://registry.yarnpkg.com/jazelle/-/jazelle-$VERSION.tgz" -o $TARBALL
+  tar xzf $TARBALL -C $BIN
 fi
-jazelle $@
+$JAZELLE $@
