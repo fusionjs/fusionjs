@@ -288,15 +288,18 @@ function getChunkGroupModules(dep) {
       }
     });
   }
-  dep.block.chunkGroup.chunks.forEach(chunk => {
-    for (const module of chunk.getModules()) {
-      modulesSet.add(getModuleResource(module));
-      if (module instanceof ConcatenatedModule) {
-        module.buildInfo.fileDependencies.forEach(fileDep => {
-          modulesSet.add(fileDep);
-        });
+  const {chunkGroup} = dep.block;
+  if (chunkGroup && Array.isArray(chunkGroup.chunks)) {
+    chunkGroup.chunks.forEach(chunk => {
+      for (const module of chunk.getModules()) {
+        modulesSet.add(getModuleResource(module));
+        if (module instanceof ConcatenatedModule) {
+          module.buildInfo.fileDependencies.forEach(fileDep => {
+            modulesSet.add(fileDep);
+          });
+        }
       }
-    }
-  });
+    });
+  }
   return modulesSet;
 }
