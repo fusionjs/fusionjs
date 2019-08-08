@@ -23,7 +23,7 @@ test('`fusion build` compresses assets for production', async () => {
     );
     t.ok(
       files.some(file => path.extname(file) === '.br'),
-      'brotli=true prevents zips assets'
+      'brotli=true zips assets'
     );
     t.ok(
       files.some(
