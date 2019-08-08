@@ -5,7 +5,7 @@ const t = require('assert');
 const path = require('path');
 const fs = require('fs');
 
-const { cmd } = require('../utils.js');
+const {cmd} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
 const dir2 = path.resolve(__dirname, './fixture2');
