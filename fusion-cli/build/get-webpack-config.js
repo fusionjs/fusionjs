@@ -83,6 +83,7 @@ export type WebpackConfigOpts = {|
   watch: boolean,
   preserveNames: boolean,
   zopfli: boolean,
+  brotli: boolean,
   minify: boolean,
   state: {
     clientChunkMetadata: ClientChunkMetadataState,
@@ -111,6 +112,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     state,
     fusionConfig,
     zopfli,
+    brotli,
     minify,
     legacyPkgConfig = {},
   } = opts;
@@ -491,7 +493,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             state.i18nDeferredManifest
           ),
       !dev && zopfli && zopfliWebpackPlugin,
-      !dev && brotliWebpackPlugin,
+      !dev && brotli && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
       // In development, skip the emitting phase on errors to ensure there are
       // no assets emitted that include errors. This fixes an issue with hot reloading

@@ -27,7 +27,9 @@ export type FusionRC = {
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
   nodeBuiltins?: {[string]: any},
-  jest?: {transformIgnorePatterns?: Array<string>}
+  jest?: {transformIgnorePatterns?: Array<string>},
+  zopfli?: boolean,
+  brotli?:boolean,
 };
 */
 
@@ -73,6 +75,8 @@ function isValid(config) {
         'experimentalBundleTest',
         'nodeBuiltins',
         'jest',
+        'brotli',
+        'zopfli',
       ].includes(key)
     )
   ) {
@@ -135,5 +139,24 @@ function isValid(config) {
     );
   }
 
+  if (
+    !(
+      config.zopfli === false ||
+      config.zopfli === true ||
+      config.zopfli === void 0
+    )
+  ) {
+    throw new Error('zopfli must be true, false, or undefined in fusionrc.js');
+  }
+
+  if (
+    !(
+      config.brotli === false ||
+      config.brotli === true ||
+      config.brotli === void 0
+    )
+  ) {
+    throw new Error('brotli must be true, false, or undefined in fusionrc.js');
+  }
   return true;
 }
