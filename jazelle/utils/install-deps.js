@@ -97,7 +97,7 @@ const installDeps /*: InstallDeps */ = async ({
       // symlink from global node_modules to local package folders
       if (!(await exists(`${modulesDir}/${dep.meta.name}`))) {
         await spawn('mkdir', ['-p', `${modulesDir}/${ns}`], {cwd: root});
-        await spawn('ln', ['-sf', dep.dir, basename], {
+        await spawn('ln', ['-sf', dep.distDir || dep.dir, basename], {
           cwd: `${modulesDir}/${ns}`,
         });
       }

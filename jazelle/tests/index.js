@@ -1,5 +1,6 @@
 // @flow
 const assert = require('assert');
+const rewire = require('rewire');
 const {readFileSync, createWriteStream} = require('fs');
 const {install} = require('../commands/install.js');
 const {add} = require('../commands/add.js');
@@ -12,6 +13,7 @@ const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
 
+const changesModule = rewire('../commands/changes.js');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const bazelCmds = require('../utils/bazel-commands.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
@@ -25,7 +27,6 @@ const {
   ls,
   lstat,
 } = require('../utils/node-helpers.js');
-const {findChangedTargets} = require('../utils/find-changed-targets.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {
   generateBazelBuildRules,
@@ -84,7 +85,6 @@ async function runTests() {
     t(testBinaryPaths),
     t(testCLI),
     t(testDetectCyclicDeps),
-    t(testFindChangedTargets),
     t(testFindLocalDependency),
     t(testGenerateBazelignore),
     t(testGenerateBazelBuildRules),
@@ -104,6 +104,7 @@ async function runTests() {
     t(testStarlark),
     t(testYarnCommands),
     t(testBin),
+    t(testChanges),
   ]);
 
   await exec(`rm -rf ${__dirname}/tmp`);
@@ -449,6 +450,7 @@ async function testDetectCyclicDeps() {
     deps: [
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        distDir: undefined,
         meta: {
           name: 'a',
           version: '0.0.0',
@@ -461,6 +463,7 @@ async function testDetectCyclicDeps() {
       },
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        distDir: undefined,
         meta: {
           name: 'b',
           version: '0.0.0',
@@ -473,6 +476,7 @@ async function testDetectCyclicDeps() {
       },
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        distDir: undefined,
         meta: {
           name: 'c',
           version: '0.0.0',
@@ -491,6 +495,7 @@ async function testDetectCyclicDeps() {
     deps: [
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        distDir: undefined,
         meta: {
           name: 'a',
           version: '0.0.0',
@@ -500,6 +505,7 @@ async function testDetectCyclicDeps() {
       },
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        distDir: undefined,
         meta: {
           name: 'b',
           version: '0.0.0',
@@ -512,6 +518,7 @@ async function testDetectCyclicDeps() {
       },
       {
         dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        distDir: undefined,
         meta: {
           name: 'c',
           version: '0.0.0',
@@ -525,23 +532,6 @@ async function testDetectCyclicDeps() {
     ],
   });
   assert.equal(ok.length, 0);
-}
-
-async function testFindChangedTargets() {
-  const root = `${__dirname}/fixtures/find-changed-targets`;
-  const files = `${__dirname}/fixtures/find-changed-targets/changes.txt`;
-  const dirs = await findChangedTargets({root, files, type: 'dirs'});
-  assert.deepEqual(dirs, ['b', 'a']);
-
-  const targets = await findChangedTargets({root, files, type: 'bazel'});
-  assert.deepEqual(targets, [
-    '//b:test',
-    '//b:lint',
-    '//b:flow',
-    '//a:test',
-    '//a:lint',
-    '//a:flow',
-  ]);
 }
 
 async function testFindLocalDependency() {
@@ -586,6 +576,7 @@ async function testGenerateBazelBuildRules() {
           )
         ),
         dir: `${__dirname}/tmp/generate-bazel-build-rules/a`,
+        distDir: undefined,
         depth: 2,
       },
       {
@@ -596,6 +587,7 @@ async function testGenerateBazelBuildRules() {
           )
         ),
         dir: `${__dirname}/tmp/generate-bazel-build-rules/b`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -631,6 +623,7 @@ async function testGenerateBazelBuildRulesUpdate() {
           )
         ),
         dir: `${__dirname}/tmp/generate-bazel-build-rules-update/a`,
+        distDir: undefined,
         depth: 2,
       },
       {
@@ -641,6 +634,7 @@ async function testGenerateBazelBuildRulesUpdate() {
           )
         ),
         dir: `${__dirname}/tmp/generate-bazel-build-rules-update/b`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -667,6 +661,7 @@ async function testGenerateDepLockfiles() {
           )
         ),
         dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -679,6 +674,7 @@ async function testGenerateDepLockfiles() {
           )
         ),
         dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -725,6 +721,7 @@ async function testGetDownstreams() {
   const deps = [
     {
       dir: `${__dirname}/tmp/get-downstreams/a`,
+      distDir: undefined,
       meta: {
         name: 'a',
         version: '0.0.0',
@@ -734,6 +731,7 @@ async function testGetDownstreams() {
     },
     {
       dir: `${__dirname}/tmp/get-downstreams/b`,
+      distDir: undefined,
       meta: {
         name: 'b',
         version: '0.0.0',
@@ -743,6 +741,7 @@ async function testGetDownstreams() {
     },
     {
       dir: `${__dirname}/tmp/get-downstreams/c`,
+      distDir: undefined,
       meta: {
         name: 'c',
         version: '0.0.0',
@@ -775,6 +774,7 @@ async function testGetLocalDependencies() {
         )
       ),
       dir: `${__dirname}/tmp/get-local-dependencies/b`,
+      distDir: undefined,
       depth: 2,
     },
     {
@@ -785,6 +785,7 @@ async function testGetLocalDependencies() {
         )
       ),
       dir: `${__dirname}/tmp/get-local-dependencies/a`,
+      distDir: undefined,
       depth: 1,
     },
   ]);
@@ -816,6 +817,7 @@ async function testInstallDeps() {
           await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
         ),
         dir: `${__dirname}/tmp/install-deps/b`,
+        distDir: undefined,
         depth: 2,
       },
       {
@@ -823,6 +825,7 @@ async function testInstallDeps() {
           await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
         ),
         dir: `${__dirname}/tmp/install-deps/a`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -832,6 +835,7 @@ async function testInstallDeps() {
           await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
         ),
         dir: `${__dirname}/tmp/install-deps/b`,
+        distDir: undefined,
         depth: 2,
       },
       {
@@ -839,6 +843,7 @@ async function testInstallDeps() {
           await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
         ),
         dir: `${__dirname}/tmp/install-deps/a`,
+        distDir: undefined,
         depth: 1,
       },
     ],
@@ -1069,6 +1074,7 @@ async function testYarnCommands() {
   const deps = [
     {
       dir: `${__dirname}/tmp/yarn-commands/a`,
+      distDir: undefined,
       meta: JSON.parse(
         await read(`${__dirname}/tmp/yarn-commands/a/package.json`, 'utf8')
       ),
@@ -1186,4 +1192,54 @@ async function testBin() {
   await new Promise(resolve => startStream.on('open', resolve));
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
+}
+
+async function testChanges() {
+  let buffer = '';
+  let revertSet = null;
+
+  // Install
+  await exec(`cp -r ${__dirname}/fixtures/commands/ ${__dirname}/tmp/commands`);
+  const revertConsoleLog = changesModule.__set__('console', {
+    ...console,
+    log: str => (buffer += str),
+  });
+
+  // Test no changes
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return [''];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === '');
+  revertSet();
+
+  // Test a module that is not a dependency of any other module
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['not-downstream'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'not-downstream');
+  buffer = '';
+  revertSet();
+
+  // Test a module that is a dependency of other module
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['a'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'a\ndownstream');
+  buffer = '';
+  revertSet();
+
+  // Test a module that is a dependency of other modules that themselves are dependencies
+  // e.g. b changed, a depends on b, downstream depends on a
+  revertSet = changesModule.__set__('findChangedTargets', async () => {
+    return ['b'];
+  });
+  await changesModule.changes({root: `${__dirname}/tmp/commands`});
+  assert(buffer === 'b\na\ndownstream');
+  buffer = '';
+  revertSet();
+
+  revertConsoleLog();
 }

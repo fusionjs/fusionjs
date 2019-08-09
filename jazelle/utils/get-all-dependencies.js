@@ -20,6 +20,7 @@ const getAllDependencies /*: GetAllDependencies */ = async ({
     roots.map(async dir => ({
       depth: 0,
       dir,
+      distDir: undefined,
       meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
     }))
   );

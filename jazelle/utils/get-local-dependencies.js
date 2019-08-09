@@ -1,6 +1,6 @@
 // @flow
 const {satisfies} = require('semver');
-const {read} = require('./node-helpers.js');
+const {read, exists} = require('../utils/node-helpers.js');
 
 /*::
 export type GetLocalDependenciesArgs = {
@@ -10,6 +10,7 @@ export type GetLocalDependenciesArgs = {
 export type GetLocalDependencies = (GetLocalDependenciesArgs) => Promise<Array<Metadata>>;
 export type Metadata = {
   dir: string,
+  distDir: string | void,
   meta: PackageJson,
   depth: number,
 };
@@ -31,7 +32,11 @@ const getLocalDependencies /*: GetLocalDependencies */ = async ({
   const data = await Promise.all([
     ...dirs.map(async dir => {
       const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
-      return {dir, meta, depth: 1};
+      let distDir = undefined;
+      if (await exists(`${dir}/.dist`)) {
+        distDir = `${dir}/.dist`;
+      }
+      return {dir, meta, depth: 1, distDir};
     }),
   ]);
   return unique(findDependencies(data, target));
