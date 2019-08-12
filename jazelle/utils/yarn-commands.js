@@ -3,6 +3,7 @@ const {checksumCache} = require('./checksum-cache.js');
 const {getDownstreams} = require('./get-downstreams.js');
 const {spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
+const generateFlowConfig = require('./generate-flow-config.js');
 
 const errorsOnly = ['ignore', 'ignore', 'inherit'];
 
@@ -114,8 +115,13 @@ export type Flow = (FlowArgs) => Promise<void>;
 */
 const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
+  const configPath = await generateFlowConfig(main.dir);
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'flow'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'flow', `--flowconfig-name=${configPath}`], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
