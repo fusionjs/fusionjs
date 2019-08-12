@@ -1587,7 +1587,7 @@
 
 "@rush-temp/fusion-cli@file:./projects/fusion-cli.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-cli.tgz#cadb24782ce27f22629d3bc15fc4890616d778fb"
+  resolved "file:./projects/fusion-cli.tgz#bb6d5de1a80366909ddccb464d8581f02fd532cc"
   dependencies:
     "@babel/core" "^7.5.4"
     "@babel/plugin-syntax-dynamic-import" "7.2.0"
@@ -1660,6 +1660,7 @@
     webpack "4.26.1"
     webpack-hot-middleware "^2.24.3"
     winston "^3.1.0"
+    ws "^7.1.1"
 
 "@rush-temp/fusion-core@file:./projects/fusion-core.tgz":
   version "0.0.0"
@@ -3400,7 +3401,7 @@ async-each@^1.0.1:
   version "1.0.3"
   resolved "https://registry.npmjs.org/async-each/-/async-each-1.0.3.tgz#b727dbf87d7651602f06f4d4ac387f47d91b0cbf"
 
-async-limiter@~1.0.0:
+async-limiter@^1.0.0, async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
 
@@ -3719,7 +3720,7 @@ browserslist@^2.4.0:
     caniuse-lite "^1.0.30000792"
     electron-to-chromium "^1.3.30"
 
-browserslist@^4.6.0, browserslist@^4.6.2:
+browserslist@^4.6.0, browserslist@^4.6.6:
   version "4.6.6"
   resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.6.6.tgz#6e4bf467cde520bc9dbdf3747dafa03531cec453"
   dependencies:
@@ -4296,24 +4297,19 @@ copy-to@^2.0.1:
   resolved "https://registry.npmjs.org/copy-to/-/copy-to-2.0.1.tgz#2680fbb8068a48d08656b6098092bdafc906f4a5"
 
 core-js-compat@^3.1.1:
-  version "3.1.4"
-  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.1.4.tgz#e4d0c40fbd01e65b1d457980fe4112d4358a7408"
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.2.0.tgz#d7fcc4d695d66b069437bd9d9f411274ceb196d3"
   dependencies:
-    browserslist "^4.6.2"
-    core-js-pure "3.1.4"
-    semver "^6.1.1"
-
-core-js-pure@3.1.4:
-  version "3.1.4"
-  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.1.4.tgz#5fa17dc77002a169a3566cc48dc774d2e13e3769"
+    browserslist "^4.6.6"
+    semver "^6.3.0"
 
 core-js@^2.4.0, core-js@^2.6.5:
   version "2.6.9"
   resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
 
 core-js@^3.0.0, core-js@^3.0.1:
-  version "3.1.4"
-  resolved "https://registry.npmjs.org/core-js/-/core-js-3.1.4.tgz#3a2837fc48e582e1ae25907afcd6cf03b0cc7a07"
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-3.2.0.tgz#0a835fdf6aa677fff83a823a7b5276c9e7cebb76"
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4812,8 +4808,8 @@ ee-first@1.1.1:
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.191, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.62:
-  version "1.3.219"
-  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.219.tgz#b8bc7c72fc6d5d5eeee57288eba4bfec5f070fa8"
+  version "1.3.220"
+  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.220.tgz#632fbf125fca4d69d7a140a66fe98572f67c0778"
 
 eliminate@^1.0.2:
   version "1.0.3"
@@ -5160,8 +5156,8 @@ eslint-plugin-prettier@^3.0.1:
     prettier-linter-helpers "^1.0.0"
 
 eslint-plugin-react-hooks@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.6.1.tgz#3c66a5515ea3e0a221ffc5d4e75c971c217b1a4c"
+  version "1.7.0"
+  resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.7.0.tgz#6210b6d5a37205f0b92858f895a4e827020a7d04"
 
 eslint-plugin-react@^7.13.0, eslint-plugin-react@^7.14.2:
   version "7.14.3"
@@ -9160,13 +9156,13 @@ react-dev-utils@^6.1.1:
     text-table "0.2.0"
 
 react-dom@^16.8.6:
-  version "16.8.6"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
+  version "16.9.0"
+  resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.9.0.tgz#5e65527a5e26f22ae3701131bcccaee9fb0d3962"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    scheduler "^0.13.6"
+    scheduler "^0.15.0"
 
 react-error-overlay@^5.1.0:
   version "5.1.6"
@@ -9186,9 +9182,9 @@ react-helmet-async@^1.0.2:
     react-fast-compare "2.0.4"
     shallowequal "1.1.0"
 
-react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
-  version "16.8.6"
-  resolved "https://registry.npmjs.org/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
+react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is@^16.9.0:
+  version "16.9.0"
+  resolved "https://registry.npmjs.org/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
 
 react-redux@^7.1.0:
   version "7.1.0"
@@ -9225,22 +9221,21 @@ react-router@^4.3.1:
     warning "^4.0.1"
 
 react-test-renderer@^16.0.0-0, react-test-renderer@^16.8.6:
-  version "16.8.6"
-  resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.8.6.tgz#188d8029b8c39c786f998aa3efd3ffe7642d5ba1"
+  version "16.9.0"
+  resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.9.0.tgz#7ed657a374af47af88f66f33a3ef99c9610c8ae9"
   dependencies:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    react-is "^16.8.6"
-    scheduler "^0.13.6"
+    react-is "^16.9.0"
+    scheduler "^0.15.0"
 
 react@^16.8.6:
-  version "16.8.6"
-  resolved "https://registry.npmjs.org/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
+  version "16.9.0"
+  resolved "https://registry.npmjs.org/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    scheduler "^0.13.6"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -9685,9 +9680,9 @@ sax@^1.2.4, sax@~1.2.4:
   version "1.2.4"
   resolved "https://registry.npmjs.org/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
-scheduler@^0.13.6:
-  version "0.13.6"
-  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.13.6.tgz#466a4ec332467b31a91b9bf74e5347072e4cd889"
+scheduler@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -9719,7 +9714,7 @@ semver@5.5.0:
   version "5.5.0"
   resolved "https://registry.npmjs.org/semver/-/semver-5.5.0.tgz#dc4bbc7a6ca9d916dee5d43516f0092b58f7b8ab"
 
-semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.2.0:
+semver@^6.0.0, semver@^6.1.2, semver@^6.2.0, semver@^6.3.0:
   version "6.3.0"
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
 
@@ -11060,6 +11055,12 @@ ws@^6.0.0, ws@^6.1.0:
   resolved "https://registry.npmjs.org/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.npmjs.org/ws/-/ws-7.1.1.tgz#f9942dc868b6dffb72c14fd8f2ba05f77a4d5983"
+  dependencies:
+    async-limiter "^1.0.0"
 
 xml-name-validator@^3.0.0:
   version "3.0.0"

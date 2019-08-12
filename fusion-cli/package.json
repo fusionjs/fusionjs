@@ -98,6 +98,7 @@
     "react-test-renderer": "^16.8.6",
     "request-promise": "^4.2.4",
     "tape": "^4.10.1",
+    "ws": "^7.1.1",
     "unfetch": "^4.1.0"
   },
   "peerDependencies": {
