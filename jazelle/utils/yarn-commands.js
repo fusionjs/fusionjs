@@ -117,11 +117,17 @@ const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   const configPath = (await generateFlowConfig(main.dir)) || '.flowconfig';
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, configPath ? [yarn, 'flow'] : [yarn, 'flow', `--flowconfig-name=${configPath}`], {
-    stdio,
-    env: process.env,
-    cwd: main.dir,
-  });
+  await spawn(
+    node,
+    configPath
+      ? [yarn, 'flow']
+      : [yarn, 'flow', `--flowconfig-name=${configPath}`],
+    {
+      stdio,
+      env: process.env,
+      cwd: main.dir,
+    }
+  );
 };
 
 /*::
