@@ -25,7 +25,7 @@ export type RPCDepsType = {
   handlers?: typeof RPCHandlersToken,
   bodyParserOptions?: typeof BodyParserOptionsToken.optional,
   fetch?: typeof FetchToken,
-  i18n?: typeof I18nToken,
+  i18n?: typeof I18nToken.optional,
   rpcConfig?: typeof RPCHandlersConfigToken.optional,
 };
 

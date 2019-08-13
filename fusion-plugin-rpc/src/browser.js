@@ -101,7 +101,7 @@ const pluginFactory: () => RPCPluginType = () =>
     deps: {
       fetch: FetchToken,
       emitter: UniversalEventsToken,
-      i18n: I18nToken,
+      i18n: I18nToken.optional,
       rpcConfig: RPCHandlersConfigToken.optional,
     },
     provides: deps => {
@@ -113,8 +113,7 @@ const pluginFactory: () => RPCPluginType = () =>
             fetch,
             emitter,
             rpcConfig,
-            // $FlowFixMe
-            localeCode: i18n.from().locale,
+            localeCode: i18n && i18n.from().locale,
           }),
       };
     },
