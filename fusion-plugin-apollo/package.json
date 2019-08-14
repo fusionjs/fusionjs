@@ -26,6 +26,7 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
+    "@apollo/react-common": "3.0.0",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.12",
@@ -35,6 +36,8 @@
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
+    "@apollo/react-components": "3.0.0",
+    "@apollo/react-ssr": "3.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "create-universal-package": "^3.4.7",
@@ -60,7 +63,6 @@
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
@@ -68,11 +70,11 @@
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
+    "@apollo/react-ssr": "^3.0.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6"
   },
   "scripts": {

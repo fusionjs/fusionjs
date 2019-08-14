@@ -11,7 +11,7 @@ import React from 'react';
 
 import {createPlugin, html, unescape} from 'fusion-core';
 
-import {ApolloProvider} from 'react-apollo';
+import {ApolloProvider} from '@apollo/react-common';
 
 import type {Context, Render} from 'fusion-core';
 
