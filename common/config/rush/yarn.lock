@@ -1529,7 +1529,7 @@
 
 "@rush-temp/create-fusion-app@file:./projects/create-fusion-app.tgz":
   version "0.0.0"
-  resolved "file:./projects/create-fusion-app.tgz#63fdd98f624e53cde28f523d31fb3023964232c2"
+  resolved "file:./projects/create-fusion-app.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-jest "^24.8.0"
@@ -1551,7 +1551,7 @@
 
 "@rush-temp/create-fusion-plugin@file:./projects/create-fusion-plugin.tgz":
   version "0.0.0"
-  resolved "file:./projects/create-fusion-plugin.tgz#9ad2e9525da4b35b4eb36f1d14bae48f3902852b"
+  resolved "file:./projects/create-fusion-plugin.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-jest "^24.8.0"
@@ -1570,7 +1570,7 @@
 
 "@rush-temp/eslint-config-fusion@file:./projects/eslint-config-fusion.tgz":
   version "0.0.0"
-  resolved "file:./projects/eslint-config-fusion.tgz#c2d946d7461801f7d1a6b7bef6524837af79fca5"
+  resolved "file:./projects/eslint-config-fusion.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     eslint "^6.0.1"
@@ -1587,7 +1587,7 @@
 
 "@rush-temp/fusion-cli@file:./projects/fusion-cli.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-cli.tgz#82fda41134b34de1f2ebf4af8133ebce508c3ba7"
+  resolved "file:./projects/fusion-cli.tgz"
   dependencies:
     "@babel/core" "^7.5.4"
     "@babel/plugin-syntax-dynamic-import" "7.2.0"
@@ -1633,7 +1633,6 @@
     istanbul-lib-coverage "^2.0.1"
     jest "^24.8.0"
     jest-environment-jsdom-global "^1.2.0"
-    jest-worker "^24.6.0"
     just-snake-case "^1.1.0"
     koa-mount "^4.0.0"
     koa-static "^5.0.0"
@@ -1665,7 +1664,7 @@
 
 "@rush-temp/fusion-core@file:./projects/fusion-core.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-core.tgz#eee374dea2aabf52e25f7c886f5105b6cb11222f"
+  resolved "file:./projects/fusion-core.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1693,7 +1692,7 @@
 
 "@rush-temp/fusion-plugin-apollo@file:./projects/fusion-plugin-apollo.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-apollo.tgz#d715d5eaa5cfcd3196ae365b0bef4edaed1f3bca"
+  resolved "file:./projects/fusion-plugin-apollo.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     apollo-cache-inmemory "^1.6.2"
@@ -1731,7 +1730,7 @@
 
 "@rush-temp/fusion-plugin-browser-performance-emitter@file:./projects/fusion-plugin-browser-performance-emitter.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-browser-performance-emitter.tgz#f907b22dac20e4a319471cd057ab9faf7c6e1b36"
+  resolved "file:./projects/fusion-plugin-browser-performance-emitter.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1752,7 +1751,7 @@
 
 "@rush-temp/fusion-plugin-connected-react-router@file:./projects/fusion-plugin-connected-react-router.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-connected-react-router.tgz#a17d3aad64a1dbfa5c91a63732cc38d735758374"
+  resolved "file:./projects/fusion-plugin-connected-react-router.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -1780,7 +1779,7 @@
 
 "@rush-temp/fusion-plugin-csrf-protection@file:./projects/fusion-plugin-csrf-protection.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-csrf-protection.tgz#fafa8ea166ee1d1d9649ab060d4c98b026d924bd"
+  resolved "file:./projects/fusion-plugin-csrf-protection.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1807,7 +1806,7 @@
 
 "@rush-temp/fusion-plugin-error-handling@file:./projects/fusion-plugin-error-handling.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-error-handling.tgz#929d5faa4ee5857e66a32040fea6941c2f1b063f"
+  resolved "file:./projects/fusion-plugin-error-handling.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1829,7 +1828,7 @@
 
 "@rush-temp/fusion-plugin-font-loader-react@file:./projects/fusion-plugin-font-loader-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-font-loader-react.tgz#f2dd1310c7779e744d7753b5c1d7eb791ef32dde"
+  resolved "file:./projects/fusion-plugin-font-loader-react.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -1856,7 +1855,7 @@
 
 "@rush-temp/fusion-plugin-http-handler@file:./projects/fusion-plugin-http-handler.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-http-handler.tgz#d17aaa3eb9ca364f79baf9faad3c709bbb660d91"
+  resolved "file:./projects/fusion-plugin-http-handler.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -1880,7 +1879,7 @@
 
 "@rush-temp/fusion-plugin-i18n-react@file:./projects/fusion-plugin-i18n-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-i18n-react.tgz#a4e3d078d787f9bc54b1326732c28dd71478f4e5"
+  resolved "file:./projects/fusion-plugin-i18n-react.tgz"
   dependencies:
     "@babel/plugin-transform-modules-commonjs" "^7.5.0"
     "@babel/preset-flow" "^7.0.0"
@@ -1911,7 +1910,7 @@
 
 "@rush-temp/fusion-plugin-i18n@file:./projects/fusion-plugin-i18n.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-i18n.tgz#8ad3cca7674a0013a141bad5b1ad0541207e0674"
+  resolved "file:./projects/fusion-plugin-i18n.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -1933,7 +1932,7 @@
 
 "@rush-temp/fusion-plugin-introspect@file:./projects/fusion-plugin-introspect.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-introspect.tgz#2e73ba1acb61c2f55a67a08809c4618e7d37f4fa"
+  resolved "file:./projects/fusion-plugin-introspect.tgz"
   dependencies:
     "@babel/core" "^7.5.4"
     "@babel/plugin-transform-modules-commonjs" "^7.5.0"
@@ -1961,7 +1960,7 @@
 
 "@rush-temp/fusion-plugin-jwt@file:./projects/fusion-plugin-jwt.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-jwt.tgz#35b6874198b0514ea0d2db5ec8739e2f42ce0c4e"
+  resolved "file:./projects/fusion-plugin-jwt.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -1986,7 +1985,7 @@
 
 "@rush-temp/fusion-plugin-node-performance-emitter@file:./projects/fusion-plugin-node-performance-emitter.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-node-performance-emitter.tgz#a4ecbc1401b6287b48e8859ba584e612a642f8c9"
+  resolved "file:./projects/fusion-plugin-node-performance-emitter.tgz"
   dependencies:
     assert "^1.4.1"
     babel-eslint "^10.0.1"
@@ -2010,7 +2009,7 @@
 
 "@rush-temp/fusion-plugin-react-helmet-async@file:./projects/fusion-plugin-react-helmet-async.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz#d31141d3304997a94f8bf828a9a6e8ec09178a87"
+  resolved "file:./projects/fusion-plugin-react-helmet-async.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2035,7 +2034,7 @@
 
 "@rush-temp/fusion-plugin-react-redux@file:./projects/fusion-plugin-react-redux.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-redux.tgz#d9fde6286d24c25d5a192ef2e6e5ee1a44b5ef12"
+  resolved "file:./projects/fusion-plugin-react-redux.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2063,7 +2062,7 @@
 
 "@rush-temp/fusion-plugin-react-router@file:./projects/fusion-plugin-react-router.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-react-router.tgz#c7ada705ee98e3ec34ab5151943b77180eb76f23"
+  resolved "file:./projects/fusion-plugin-react-router.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2089,7 +2088,7 @@
 
 "@rush-temp/fusion-plugin-redux-action-emitter-enhancer@file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz#d2cc68f6974142adfb99d8fc045905402d8eb875"
+  resolved "file:./projects/fusion-plugin-redux-action-emitter-enhancer.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -2113,7 +2112,7 @@
 
 "@rush-temp/fusion-plugin-rpc-redux-react@file:./projects/fusion-plugin-rpc-redux-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-rpc-redux-react.tgz#e10748531f658be1f3d0a8dd3a3f9c5505726bf9"
+  resolved "file:./projects/fusion-plugin-rpc-redux-react.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -2144,7 +2143,7 @@
 
 "@rush-temp/fusion-plugin-rpc@file:./projects/fusion-plugin-rpc.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-rpc.tgz#86992b58b3084d6568b0c62b8e1de2786f9787e8"
+  resolved "file:./projects/fusion-plugin-rpc.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     body-parser "^1.18.3"
@@ -2171,7 +2170,7 @@
 
 "@rush-temp/fusion-plugin-service-worker@file:./projects/fusion-plugin-service-worker.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-service-worker.tgz#4f63870e53ab31d820f802bb77ec337bc8446b0a"
+  resolved "file:./projects/fusion-plugin-service-worker.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2203,7 +2202,7 @@
 
 "@rush-temp/fusion-plugin-styletron-react@file:./projects/fusion-plugin-styletron-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-styletron-react.tgz#cc5f56ddd829b2a37d3deed044a9dd93ac57d8c5"
+  resolved "file:./projects/fusion-plugin-styletron-react.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/create-universal-package-4" "^4.1.0"
@@ -2229,7 +2228,7 @@
 
 "@rush-temp/fusion-plugin-universal-events-react@file:./projects/fusion-plugin-universal-events-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-events-react.tgz#d422f93d3580fd2590e0ca9dd266a1ef43beed1b"
+  resolved "file:./projects/fusion-plugin-universal-events-react.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2250,7 +2249,7 @@
 
 "@rush-temp/fusion-plugin-universal-events@file:./projects/fusion-plugin-universal-events.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-events.tgz#86e55ed27c85a6278dc123d97b6c7742db5ecc82"
+  resolved "file:./projects/fusion-plugin-universal-events.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2271,7 +2270,7 @@
 
 "@rush-temp/fusion-plugin-universal-logger@file:./projects/fusion-plugin-universal-logger.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-universal-logger.tgz#7636655ce91680e66b4e8f631d712fba329e4685"
+  resolved "file:./projects/fusion-plugin-universal-logger.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     create-universal-package "^3.4.7"
@@ -2293,7 +2292,7 @@
 
 "@rush-temp/fusion-plugin-web-app-manifest@file:./projects/fusion-plugin-web-app-manifest.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-plugin-web-app-manifest.tgz#dd429de544e586340e68221c1d2e923d0a1e5ae4"
+  resolved "file:./projects/fusion-plugin-web-app-manifest.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     babel-eslint "^10.0.1"
@@ -2316,7 +2315,7 @@
 
 "@rush-temp/fusion-react@file:./projects/fusion-react.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-react.tgz#ceead1ca535078ec936992629b792086b2825560"
+  resolved "file:./projects/fusion-react.tgz"
   dependencies:
     "@babel/preset-react" "^7.0.0"
     "@rtsao/react-ssr-prepass" "^1.0.5"
@@ -2345,7 +2344,7 @@
 
 "@rush-temp/fusion-rpc-redux@file:./projects/fusion-rpc-redux.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-rpc-redux.tgz#99f70058f4170a18c6fbe0883ccf9af8e5add45e"
+  resolved "file:./projects/fusion-rpc-redux.tgz"
   dependencies:
     babel-eslint "^10.0.1"
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -2369,7 +2368,7 @@
 
 "@rush-temp/fusion-scaffolder@file:./projects/fusion-scaffolder.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-scaffolder.tgz#548ab30d2c61102f3649cd0e8951fb24e0dec4b4"
+  resolved "file:./projects/fusion-scaffolder.tgz"
   dependencies:
     "@babel/cli" "^7.5.0"
     "@babel/core" "^7.5.4"
@@ -2398,7 +2397,7 @@
 
 "@rush-temp/fusion-test-utils@file:./projects/fusion-test-utils.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-test-utils.tgz#c1d7c6c10c0f5de1dc612144f19c01031b88d5ce"
+  resolved "file:./projects/fusion-test-utils.tgz"
   dependencies:
     "@babel/plugin-transform-flow-strip-types" "^7.4.4"
     "@babel/preset-env" "^7.5.4"
@@ -2425,7 +2424,7 @@
 
 "@rush-temp/fusion-tokens@file:./projects/fusion-tokens.tgz":
   version "0.0.0"
-  resolved "file:./projects/fusion-tokens.tgz#5cd7f48a59a711af247f62decdbd88d4185a9c63"
+  resolved "file:./projects/fusion-tokens.tgz"
   dependencies:
     "@babel/plugin-transform-flow-strip-types" "^7.4.4"
     babel-eslint "^10.0.1"
@@ -2446,7 +2445,7 @@
 
 "@rush-temp/jazelle@file:./projects/jazelle.tgz":
   version "0.0.0"
-  resolved "file:./projects/jazelle.tgz#ca3548ae50f3624da81708dd85459f287160ef57"
+  resolved "file:./projects/jazelle.tgz"
   dependencies:
     "@yarnpkg/lockfile" "^1.1.0"
     babel-eslint "^10.0.1"
@@ -2571,12 +2570,6 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
-"@types/fs-capacitor@*":
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/@types/fs-capacitor/-/fs-capacitor-2.0.0.tgz#17113e25817f584f58100fb7a08eed288b81956e"
-  dependencies:
-    "@types/node" "*"
-
 "@types/glob@^7.1.1":
   version "7.1.1"
   resolved "https://registry.npmjs.org/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
@@ -2586,11 +2579,10 @@
     "@types/node" "*"
 
 "@types/graphql-upload@^8.0.0":
-  version "8.0.1"
-  resolved "https://registry.npmjs.org/@types/graphql-upload/-/graphql-upload-8.0.1.tgz#12c804255c681fd06a904b67bde7506f2484f1a8"
+  version "8.0.0"
+  resolved "https://registry.npmjs.org/@types/graphql-upload/-/graphql-upload-8.0.0.tgz#cf1a464e1ad3d185d6e1d77b5df0ca26057a572c"
   dependencies:
     "@types/express" "*"
-    "@types/fs-capacitor" "*"
     "@types/graphql" "*"
     "@types/koa" "*"
 
@@ -2669,8 +2661,8 @@
   resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*", "@types/node@>=6":
-  version "12.7.2"
-  resolved "https://registry.npmjs.org/@types/node/-/node-12.7.2.tgz#c4e63af5e8823ce9cc3f0b34f7b998c2171f0c44"
+  version "12.7.1"
+  resolved "https://registry.npmjs.org/@types/node/-/node-12.7.1.tgz#3b5c3a26393c19b400844ac422bd0f631a94d69d"
 
 "@types/node@^10.1.0":
   version "10.14.15"
@@ -2933,8 +2925,8 @@ acorn@^4.0.3:
   resolved "https://registry.npmjs.org/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
 acorn@^6.0.1, acorn@^6.0.7:
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/acorn/-/acorn-6.3.0.tgz#0087509119ffa4fc0a0041d1e93a417e68cb856e"
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/acorn/-/acorn-6.2.1.tgz#3ed8422d6dec09e6121cc7a843ca86a330a86b51"
 
 address@1.0.3:
   version "1.0.3"
@@ -2951,8 +2943,8 @@ agent-base@^4.3.0:
     es6-promisify "^5.0.0"
 
 airbnb-prop-types@^2.13.2:
-  version "2.15.0"
-  resolved "https://registry.npmjs.org/airbnb-prop-types/-/airbnb-prop-types-2.15.0.tgz#5287820043af1eb469f5b0af0d6f70da6c52aaef"
+  version "2.14.0"
+  resolved "https://registry.npmjs.org/airbnb-prop-types/-/airbnb-prop-types-2.14.0.tgz#3d45cb1459f4ce78fdf1240563d1aa2315391168"
   dependencies:
     array.prototype.find "^2.1.0"
     function.prototype.name "^1.1.1"
@@ -2963,7 +2955,7 @@ airbnb-prop-types@^2.13.2:
     object.entries "^1.1.0"
     prop-types "^15.7.2"
     prop-types-exact "^1.2.0"
-    react-is "^16.9.0"
+    react-is "^16.8.6"
 
 ajv-errors@^1.0.0:
   version "1.0.1"
@@ -2990,15 +2982,9 @@ align-text@^0.1.1, align-text@^0.1.3:
     longest "^1.0.1"
     repeat-string "^1.5.2"
 
-ansi-escapes@^3.0.0:
+ansi-escapes@^3.0.0, ansi-escapes@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"
-
-ansi-escapes@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-4.2.1.tgz#4dccdb846c3eee10f6d64dea66273eab90c37228"
-  dependencies:
-    type-fest "^0.5.2"
 
 ansi-html@0.0.7:
   version "0.0.7"
@@ -3045,12 +3031,12 @@ apollo-cache-control@0.8.1:
     graphql-extensions "0.8.1"
 
 apollo-cache-inmemory@^1.6.2:
-  version "1.6.3"
-  resolved "https://registry.npmjs.org/apollo-cache-inmemory/-/apollo-cache-inmemory-1.6.3.tgz#826861d20baca4abc45f7ca7a874105905b8525d"
+  version "1.6.2"
+  resolved "https://registry.npmjs.org/apollo-cache-inmemory/-/apollo-cache-inmemory-1.6.2.tgz#bbf2e4e1eacdf82b2d526f5c2f3b37e5acee3c5e"
   dependencies:
     apollo-cache "^1.3.2"
     apollo-utilities "^1.3.2"
-    optimism "^0.10.0"
+    optimism "^0.9.0"
     ts-invariant "^0.4.0"
     tslib "^1.9.3"
 
@@ -3062,8 +3048,8 @@ apollo-cache@1.3.2, apollo-cache@^1.3.2:
     tslib "^1.9.3"
 
 apollo-client@^2.6.3:
-  version "2.6.4"
-  resolved "https://registry.npmjs.org/apollo-client/-/apollo-client-2.6.4.tgz#872c32927263a0d34655c5ef8a8949fbb20b6140"
+  version "2.6.3"
+  resolved "https://registry.npmjs.org/apollo-client/-/apollo-client-2.6.3.tgz#9bb2d42fb59f1572e51417f341c5f743798d22db"
   dependencies:
     "@types/zen-observable" "^0.8.0"
     apollo-cache "1.3.2"
@@ -3734,7 +3720,7 @@ browserslist@^2.4.0:
     caniuse-lite "^1.0.30000792"
     electron-to-chromium "^1.3.30"
 
-browserslist@^4.6.0, browserslist@^4.6.6:
+browserslist@^4.6.0, browserslist@^4.6.2:
   version "4.6.6"
   resolved "https://registry.npmjs.org/browserslist/-/browserslist-4.6.6.tgz#6e4bf467cde520bc9dbdf3747dafa03531cec453"
   dependencies:
@@ -4058,12 +4044,6 @@ cli-cursor@^2.1.0:
   dependencies:
     restore-cursor "^2.0.0"
 
-cli-cursor@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/cli-cursor/-/cli-cursor-3.1.0.tgz#264305a7ae490d1d03bf0c9ba7c925d1753af307"
-  dependencies:
-    restore-cursor "^3.1.0"
-
 cli-width@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
@@ -4317,19 +4297,24 @@ copy-to@^2.0.1:
   resolved "https://registry.npmjs.org/copy-to/-/copy-to-2.0.1.tgz#2680fbb8068a48d08656b6098092bdafc906f4a5"
 
 core-js-compat@^3.1.1:
-  version "3.2.1"
-  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.2.1.tgz#0cbdbc2e386e8e00d3b85dc81c848effec5b8150"
+  version "3.1.4"
+  resolved "https://registry.npmjs.org/core-js-compat/-/core-js-compat-3.1.4.tgz#e4d0c40fbd01e65b1d457980fe4112d4358a7408"
   dependencies:
-    browserslist "^4.6.6"
-    semver "^6.3.0"
+    browserslist "^4.6.2"
+    core-js-pure "3.1.4"
+    semver "^6.1.1"
+
+core-js-pure@3.1.4:
+  version "3.1.4"
+  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.1.4.tgz#5fa17dc77002a169a3566cc48dc774d2e13e3769"
 
 core-js@^2.4.0, core-js@^2.6.5:
   version "2.6.9"
   resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
 
 core-js@^3.0.0, core-js@^3.0.1:
-  version "3.2.1"
-  resolved "https://registry.npmjs.org/core-js/-/core-js-3.2.1.tgz#cd41f38534da6cc59f7db050fe67307de9868b09"
+  version "3.1.4"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-3.1.4.tgz#3a2837fc48e582e1ae25907afcd6cf03b0cc7a07"
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4828,12 +4813,12 @@ ee-first@1.1.1:
   resolved "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.191, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.62:
-  version "1.3.229"
-  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.229.tgz#accc9a08dd07d0a4d6c76937821bc94eb2e49eae"
+  version "1.3.219"
+  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.219.tgz#b8bc7c72fc6d5d5eeee57288eba4bfec5f070fa8"
 
 eliminate@^1.0.2:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/eliminate/-/eliminate-1.1.0.tgz#d92610aa797f01fea2f4e1128f2f07029fabce65"
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/eliminate/-/eliminate-1.0.3.tgz#30307d9a9e73db5158588234a6526f7c87fc7d07"
 
 elliptic@^6.0.0:
   version "6.5.0"
@@ -4850,10 +4835,6 @@ elliptic@^6.0.0:
 emoji-regex@^7.0.1:
   version "7.0.3"
   resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
-
-emoji-regex@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
 
 emojis-list@^2.0.0:
   version "2.1.0"
@@ -5077,8 +5058,8 @@ escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1
   resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
 escodegen@^1.9.1:
-  version "1.12.0"
-  resolved "https://registry.npmjs.org/escodegen/-/escodegen-1.12.0.tgz#f763daf840af172bb3a2b6dd7219c0e17f7ff541"
+  version "1.11.1"
+  resolved "https://registry.npmjs.org/escodegen/-/escodegen-1.11.1.tgz#c485ff8d6b4cdb89e27f4a856e91f118401ca510"
   dependencies:
     esprima "^3.1.3"
     estraverse "^4.2.0"
@@ -5168,8 +5149,8 @@ eslint-plugin-import@^2.17.2, eslint-plugin-import@^2.18.0:
     resolve "^1.11.0"
 
 eslint-plugin-jest@^22.5.1, eslint-plugin-jest@^22.7.2:
-  version "22.15.1"
-  resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.15.1.tgz#54c4a752a44c4bc5a564ecc22b32e1cd16a2961a"
+  version "22.15.0"
+  resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-22.15.0.tgz#fe70bfff7eeb47ca0ab229588a867f82bb8592c5"
   dependencies:
     "@typescript-eslint/experimental-utils" "^1.13.0"
 
@@ -5180,8 +5161,8 @@ eslint-plugin-prettier@^3.0.1:
     prettier-linter-helpers "^1.0.0"
 
 eslint-plugin-react-hooks@^1.6.1:
-  version "1.7.0"
-  resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.7.0.tgz#6210b6d5a37205f0b92858f895a4e827020a7d04"
+  version "1.6.1"
+  resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.6.1.tgz#3c66a5515ea3e0a221ffc5d4e75c971c217b1a4c"
 
 eslint-plugin-react@^7.13.0, eslint-plugin-react@^7.14.2:
   version "7.14.3"
@@ -5225,8 +5206,8 @@ eslint-utils@^1.3.1:
     eslint-visitor-keys "^1.0.0"
 
 eslint-visitor-keys@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.1.0.tgz#e2a82cea84ff246ad6fb57f9bde5b46621459ec2"
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
 eslint@^5.16.0:
   version "5.16.0"
@@ -5348,8 +5329,8 @@ esrecurse@^4.1.0:
     estraverse "^4.1.0"
 
 estraverse@^4.0.0, estraverse@^4.1.0, estraverse@^4.1.1, estraverse@^4.2.0:
-  version "4.3.0"
-  resolved "https://registry.npmjs.org/estraverse/-/estraverse-4.3.0.tgz#398ad3f3c5a24948be7725e83d11a7de28cdbd1d"
+  version "4.2.0"
+  resolved "https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz#0dee3fed31fcd469618ce7342099fc1afa0bdb13"
 
 estree-walker@^0.6.1:
   version "0.6.1"
@@ -5636,12 +5617,6 @@ figgy-pudding@^3.5.1:
 figures@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/figures/-/figures-2.0.0.tgz#3ab1a2d2a62c8bfb431a0c94cb797a2fce27c962"
-  dependencies:
-    escape-string-regexp "^1.0.5"
-
-figures@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/figures/-/figures-3.0.0.tgz#756275c964646163cc6f9197c7a0295dbfd04de9"
   dependencies:
     escape-string-regexp "^1.0.5"
 
@@ -6047,8 +6022,8 @@ globrex@^0.1.1:
   resolved "https://registry.npmjs.org/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2:
-  version "4.2.2"
-  resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.2.tgz#6f0952605d0140c1cfdb138ed005775b92d67b02"
+  version "4.2.1"
+  resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.1.tgz#1c1f0c364882c868f5bff6512146328336a11b1d"
 
 graphql-extensions@0.8.1:
   version "0.8.1"
@@ -6262,8 +6237,10 @@ homedir-polyfill@^1.0.0, homedir-polyfill@^1.0.1:
     parse-passwd "^1.0.0"
 
 hosted-git-info@^2.1.4:
-  version "2.8.4"
-  resolved "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.4.tgz#44119abaf4bc64692a16ace34700fed9c03e2546"
+  version "2.8.2"
+  resolved "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.2.tgz#a35c3f355ac1249f1093c0c2a542ace8818c171a"
+  dependencies:
+    lru-cache "^5.1.1"
 
 html-comment-regex@^1.1.0:
   version "1.1.2"
@@ -6400,8 +6377,8 @@ ignore@^4.0.6:
   resolved "https://registry.npmjs.org/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
 
 ignore@^5.1.1:
-  version "5.1.4"
-  resolved "https://registry.npmjs.org/ignore/-/ignore-5.1.4.tgz#84b7b3dbe64552b6ef0eca99f6743dbec6d97adf"
+  version "5.1.2"
+  resolved "https://registry.npmjs.org/ignore/-/ignore-5.1.2.tgz#e28e584d43ad7e92f96995019cc43b9e1ac49558"
 
 iltorb@^2.4.1:
   version "2.4.3"
@@ -6517,20 +6494,20 @@ inquirer@6.2.0:
     through "^2.3.6"
 
 inquirer@^6.2.2, inquirer@^6.4.1:
-  version "6.5.1"
-  resolved "https://registry.npmjs.org/inquirer/-/inquirer-6.5.1.tgz#8bfb7a5ac02dac6ff641ac4c5ff17da112fcdb42"
+  version "6.5.0"
+  resolved "https://registry.npmjs.org/inquirer/-/inquirer-6.5.0.tgz#2303317efc9a4ea7ec2e2df6f86569b734accf42"
   dependencies:
-    ansi-escapes "^4.2.1"
+    ansi-escapes "^3.2.0"
     chalk "^2.4.2"
-    cli-cursor "^3.1.0"
+    cli-cursor "^2.1.0"
     cli-width "^2.0.0"
     external-editor "^3.0.3"
-    figures "^3.0.0"
-    lodash "^4.17.15"
-    mute-stream "0.0.8"
+    figures "^2.0.0"
+    lodash "^4.17.12"
+    mute-stream "0.0.7"
     run-async "^2.2.0"
     rxjs "^6.4.0"
-    string-width "^4.1.0"
+    string-width "^2.1.0"
     strip-ansi "^5.1.0"
     through "^2.3.6"
 
@@ -6663,10 +6640,6 @@ is-fullwidth-code-point@^1.0.0:
 is-fullwidth-code-point@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz#a3b30a5c4f199183167aaab93beefae3ddfb654f"
-
-is-fullwidth-code-point@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz#f116f8064fe90b3f7844a38997c0b75051269f1d"
 
 is-generator-fn@^2.0.0:
   version "2.1.0"
@@ -7381,8 +7354,8 @@ just-map-object@^1.2.0:
   resolved "https://registry.npmjs.org/just-map-object/-/just-map-object-1.2.0.tgz#2e523497bf95ac5c00ea620bb462446bdb721a81"
 
 just-safe-get@^1.3.0:
-  version "1.3.2"
-  resolved "https://registry.npmjs.org/just-safe-get/-/just-safe-get-1.3.2.tgz#9f4a060627e689867d8fe223bb0c48a5e69af964"
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/just-safe-get/-/just-safe-get-1.3.0.tgz#d886967178bf1533c5118267ad0a8dc0df7ce7f6"
 
 just-safe-set@^2.1.0:
   version "2.1.0"
@@ -7925,7 +7898,7 @@ mimic-fn@^1.0.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-1.2.0.tgz#820c86a39334640e99516928bd03fca88057d022"
 
-mimic-fn@^2.0.0, mimic-fn@^2.1.0:
+mimic-fn@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
 
@@ -8058,10 +8031,6 @@ mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-mute-stream@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
-
 mz@^2.7.0:
   version "2.7.0"
   resolved "https://registry.npmjs.org/mz/-/mz-2.7.0.tgz#95008057a56cafadc2bc63dde7f9ff6955948e32"
@@ -8147,8 +8116,8 @@ nise@^1.5.1:
     path-to-regexp "^1.7.0"
 
 node-abi@^2.7.0:
-  version "2.11.0"
-  resolved "https://registry.npmjs.org/node-abi/-/node-abi-2.11.0.tgz#b7dce18815057544a049be5ae75cd1fdc2e9ea59"
+  version "2.10.0"
+  resolved "https://registry.npmjs.org/node-abi/-/node-abi-2.10.0.tgz#894bc6625ee042627ed9b5e9270d80bb63ef5045"
   dependencies:
     semver "^5.4.1"
 
@@ -8261,8 +8230,8 @@ node-pre-gyp@^0.13.0:
     tar "^4"
 
 node-releases@^1.0.0-alpha.11, node-releases@^1.1.25:
-  version "1.1.27"
-  resolved "https://registry.npmjs.org/node-releases/-/node-releases-1.1.27.tgz#b19ec8add2afe9a826a99dceccc516104c1edaf4"
+  version "1.1.26"
+  resolved "https://registry.npmjs.org/node-releases/-/node-releases-1.1.26.tgz#f30563edc5c7dc20cf524cc8652ffa7be0762937"
   dependencies:
     semver "^5.3.0"
 
@@ -8502,12 +8471,6 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-onetime@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/onetime/-/onetime-5.1.0.tgz#fff0f3c91617fe62bb50189636e99ac8a6df7be5"
-  dependencies:
-    mimic-fn "^2.1.0"
-
 only@~0.0.2:
   version "0.0.2"
   resolved "https://registry.npmjs.org/only/-/only-0.0.2.tgz#2afde84d03e50b9a8edc444e30610a70295edfb4"
@@ -8524,9 +8487,9 @@ opn@^5.2.0:
   dependencies:
     is-wsl "^1.1.0"
 
-optimism@^0.10.0:
-  version "0.10.2"
-  resolved "https://registry.npmjs.org/optimism/-/optimism-0.10.2.tgz#626b6fd28b0923de98ecb36a3fd2d3d4e5632dd9"
+optimism@^0.9.0:
+  version "0.9.6"
+  resolved "https://registry.npmjs.org/optimism/-/optimism-0.9.6.tgz#5621195486b294c3bfc518d17ac47767234b029f"
   dependencies:
     "@wry/context" "^0.4.0"
 
@@ -9198,13 +9161,13 @@ react-dev-utils@^6.1.1:
     text-table "0.2.0"
 
 react-dom@^16.8.6:
-  version "16.9.0"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.9.0.tgz#5e65527a5e26f22ae3701131bcccaee9fb0d3962"
+  version "16.8.6"
+  resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    scheduler "^0.15.0"
+    scheduler "^0.13.6"
 
 react-error-overlay@^5.1.0:
   version "5.1.6"
@@ -9224,9 +9187,9 @@ react-helmet-async@^1.0.2:
     react-fast-compare "2.0.4"
     shallowequal "1.1.0"
 
-react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is@^16.9.0:
-  version "16.9.0"
-  resolved "https://registry.npmjs.org/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
+react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
+  version "16.8.6"
+  resolved "https://registry.npmjs.org/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
 react-redux@^7.1.0:
   version "7.1.0"
@@ -9263,21 +9226,22 @@ react-router@^4.3.1:
     warning "^4.0.1"
 
 react-test-renderer@^16.0.0-0, react-test-renderer@^16.8.6:
-  version "16.9.0"
-  resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.9.0.tgz#7ed657a374af47af88f66f33a3ef99c9610c8ae9"
+  version "16.8.6"
+  resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.8.6.tgz#188d8029b8c39c786f998aa3efd3ffe7642d5ba1"
   dependencies:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    react-is "^16.9.0"
-    scheduler "^0.15.0"
+    react-is "^16.8.6"
+    scheduler "^0.13.6"
 
 react@^16.8.6:
-  version "16.9.0"
-  resolved "https://registry.npmjs.org/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
+  version "16.8.6"
+  resolved "https://registry.npmjs.org/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
+    scheduler "^0.13.6"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -9364,7 +9328,7 @@ reflect.ownkeys@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/reflect.ownkeys/-/reflect.ownkeys-0.2.0.tgz#749aceec7f3fdf8b63f927a04809e90c5c0b3460"
 
-regenerate-unicode-properties@^8.1.0:
+regenerate-unicode-properties@^8.0.2:
   version "8.1.0"
   resolved "https://registry.npmjs.org/regenerate-unicode-properties/-/regenerate-unicode-properties-8.1.0.tgz#ef51e0f0ea4ad424b77bf7cb41f3e015c70a3f0e"
   dependencies:
@@ -9415,11 +9379,11 @@ regexpp@^2.0.1:
   resolved "https://registry.npmjs.org/regexpp/-/regexpp-2.0.1.tgz#8d19d31cf632482b589049f8281f93dbcba4d07f"
 
 regexpu-core@^4.1.3, regexpu-core@^4.5.4:
-  version "4.5.5"
-  resolved "https://registry.npmjs.org/regexpu-core/-/regexpu-core-4.5.5.tgz#aaffe61c2af58269b3e516b61a73790376326411"
+  version "4.5.4"
+  resolved "https://registry.npmjs.org/regexpu-core/-/regexpu-core-4.5.4.tgz#080d9d02289aa87fe1667a4f5136bc98a6aebaae"
   dependencies:
     regenerate "^1.4.0"
-    regenerate-unicode-properties "^8.1.0"
+    regenerate-unicode-properties "^8.0.2"
     regjsgen "^0.5.0"
     regjsparser "^0.6.0"
     unicode-match-property-ecmascript "^1.0.4"
@@ -9587,13 +9551,6 @@ restore-cursor@^2.0.0:
     onetime "^2.0.0"
     signal-exit "^3.0.2"
 
-restore-cursor@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/restore-cursor/-/restore-cursor-3.1.0.tgz#39f67c54b3a7a58cea5236d95cf0034239631f7e"
-  dependencies:
-    onetime "^5.1.0"
-    signal-exit "^3.0.2"
-
 resumer@~0.0.0:
   version "0.0.0"
   resolved "https://registry.npmjs.org/resumer/-/resumer-0.0.0.tgz#f1e8f461e4064ba39e82af3cdc2a8c893d076759"
@@ -9618,15 +9575,9 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@2.6.3:
+rimraf@2.6.3, rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2, rimraf@^2.6.3:
   version "2.6.3"
   resolved "https://registry.npmjs.org/rimraf/-/rimraf-2.6.3.tgz#b2d104fe0d8fb27cf9e0a1cda8262dd3833c6cab"
-  dependencies:
-    glob "^7.1.3"
-
-rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2, rimraf@^2.6.3:
-  version "2.7.1"
-  resolved "https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz#35797f13a7fdadc566142c29d4f07ccad483e3ec"
   dependencies:
     glob "^7.1.3"
 
@@ -9735,9 +9686,9 @@ sax@^1.2.4, sax@~1.2.4:
   version "1.2.4"
   resolved "https://registry.npmjs.org/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
-scheduler@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
+scheduler@^0.13.6:
+  version "0.13.6"
+  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.13.6.tgz#466a4ec332467b31a91b9bf74e5347072e4cd889"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -9762,14 +9713,14 @@ seamless-immutable@^7.1.3:
   resolved "https://registry.npmjs.org/seamless-immutable/-/seamless-immutable-7.1.4.tgz#6e9536def083ddc4dea0207d722e0e80d0f372f8"
 
 "semver@2 || 3 || 4 || 5", semver@^5.3.0, semver@^5.4.1, semver@^5.5.0, semver@^5.5.1, semver@^5.6.0, semver@^5.7.0:
-  version "5.7.1"
-  resolved "https://registry.npmjs.org/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
+  version "5.7.0"
+  resolved "https://registry.npmjs.org/semver/-/semver-5.7.0.tgz#790a7cf6fea5459bac96110b29b60412dc8ff96b"
 
 semver@5.5.0:
   version "5.5.0"
   resolved "https://registry.npmjs.org/semver/-/semver-5.5.0.tgz#dc4bbc7a6ca9d916dee5d43516f0092b58f7b8ab"
 
-semver@^6.0.0, semver@^6.1.2, semver@^6.2.0, semver@^6.3.0:
+semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.2.0:
   version "6.3.0"
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
 
@@ -10160,14 +10111,6 @@ string-width@^3.0.0, string-width@^3.1.0:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^5.1.0"
 
-string-width@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.1.0.tgz#ba846d1daa97c3c596155308063e075ed1c99aff"
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^5.2.0"
-
 string.prototype.trim@^1.1.2:
   version "1.2.0"
   resolved "https://registry.npmjs.org/string.prototype.trim/-/string.prototype.trim-1.2.0.tgz#75a729b10cfc1be439543dae442129459ce61e3d"
@@ -10310,8 +10253,8 @@ symbol-tree@^3.2.2:
   resolved "https://registry.npmjs.org/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
 
 table@^5.2.3:
-  version "5.4.6"
-  resolved "https://registry.npmjs.org/table/-/table-5.4.6.tgz#1292d19500ce3f86053b05f0e8e7e4a3bb21079e"
+  version "5.4.5"
+  resolved "https://registry.npmjs.org/table/-/table-5.4.5.tgz#c8f4ea2d8fee08c0027fac27b0ec0a4fe01dfa42"
   dependencies:
     ajv "^6.10.2"
     lodash "^4.17.14"
@@ -10417,8 +10360,8 @@ terser-webpack-plugin@^1.1.0:
     worker-farm "^1.7.0"
 
 terser@^4.1.2:
-  version "4.1.4"
-  resolved "https://registry.npmjs.org/terser/-/terser-4.1.4.tgz#4478b6a08bb096a61e793fea1a4434408bab936c"
+  version "4.1.3"
+  resolved "https://registry.npmjs.org/terser/-/terser-4.1.3.tgz#6074fbcf3517561c3272ea885f422c7a8c32d689"
   dependencies:
     commander "^2.20.0"
     source-map "~0.6.1"
@@ -10473,8 +10416,8 @@ through@^2.3.6, through@~2.3.4, through@~2.3.8:
   resolved "https://registry.npmjs.org/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
 timers-browserify@^2.0.4:
-  version "2.0.11"
-  resolved "https://registry.npmjs.org/timers-browserify/-/timers-browserify-2.0.11.tgz#800b1f3eee272e5bc53ee465a04d0e804c31211f"
+  version "2.0.10"
+  resolved "https://registry.npmjs.org/timers-browserify/-/timers-browserify-2.0.10.tgz#1d28e3d2aadf1d5a5996c4e9f95601cd053480ae"
   dependencies:
     setimmediate "^1.0.4"
 
@@ -10616,10 +10559,6 @@ type-detect@4.0.8:
 type-fest@^0.3.0:
   version "0.3.1"
   resolved "https://registry.npmjs.org/type-fest/-/type-fest-0.3.1.tgz#63d00d204e059474fe5e1b7c011112bbd1dc29e1"
-
-type-fest@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.npmjs.org/type-fest/-/type-fest-0.5.2.tgz#d6ef42a0356c6cd45f49485c3b6281fc148e48a2"
 
 type-is@^1.6.16, type-is@^1.6.18, type-is@~1.6.17, type-is@~1.6.18, type-is@~1.6.6:
   version "1.6.18"
