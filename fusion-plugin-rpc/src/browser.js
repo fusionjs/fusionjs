@@ -108,13 +108,16 @@ const pluginFactory: () => RPCPluginType = () =>
       const {fetch = window.fetch, emitter, rpcConfig, i18n} = deps;
 
       return {
-        from: () =>
-          new RPC({
+        from: ctx => {
+          const locale = (i18n && i18n.from(ctx).locale) || '';
+          const localeCode = typeof locale === 'string' ? locale : locale.code;
+          return new RPC({
             fetch,
             emitter,
             rpcConfig,
-            localeCode: i18n && i18n.from().locale,
-          }),
+            localeCode,
+          });
+        },
       };
     },
   });
