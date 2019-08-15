@@ -101,21 +101,23 @@ const pluginFactory: () => RPCPluginType = () =>
     deps: {
       fetch: FetchToken,
       emitter: UniversalEventsToken,
-      i18n: I18nToken,
+      i18n: I18nToken.optional,
       rpcConfig: RPCHandlersConfigToken.optional,
     },
     provides: deps => {
       const {fetch = window.fetch, emitter, rpcConfig, i18n} = deps;
 
       return {
-        from: () =>
-          new RPC({
+        from: ctx => {
+          const locale = (i18n && i18n.from(ctx).locale) || '';
+          const localeCode = typeof locale === 'string' ? locale : locale.code;
+          return new RPC({
             fetch,
             emitter,
             rpcConfig,
-            // $FlowFixMe
-            localeCode: i18n.from().locale,
-          }),
+            localeCode,
+          });
+        },
       };
     },
   });
