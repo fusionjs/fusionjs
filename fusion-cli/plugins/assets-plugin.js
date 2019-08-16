@@ -26,7 +26,7 @@ export default function(dir /*: string */) {
       middleware: () => {
         const {baseAssetPath, env} = getEnv();
 
-        const denyList = new Set();
+        let denyList = new Set();
 
         if (!__DEV__) {
           // Add sourcemaps to static asset denylist in production
