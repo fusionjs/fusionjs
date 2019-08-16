@@ -7,10 +7,6 @@ const path = require('path');
 const request = require('request-promise');
 const {promisify} = require('util');
 
-const exists = promisify(fs.exists);
-
-const dev = require('../setup.js');
-
 const {cmd, start} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
@@ -58,7 +54,6 @@ test('source maps for JS static assets are not served in production', async () =
         Accept: 'text/html',
       },
     });
-    console.log(assetPath);
     const asset = await request(`http://localhost:${port}${assetPath}`, {
       resolveWithFullResponse: true,
       simple: false,
