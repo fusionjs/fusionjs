@@ -5,7 +5,6 @@ const t = require('assert');
 const fs = require('fs');
 const path = require('path');
 const request = require('request-promise');
-const {promisify} = require('util');
 
 const {cmd, start} = require('../utils.js');
 
