@@ -3,6 +3,7 @@ const {satisfies, minVersion, validRange, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
+const {isYarnResolution} = require('./is-yarn-resolution.js');
 
 /*::
 export type Report = {
@@ -120,9 +121,9 @@ export type MergeArgs = {
 export type Merge = (MergeArgs) => Promise<void>;
 */
 const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
-  const metas = await getMetadata({roots});
+  const sets = await getVersionSets({roots});
   const merged = {dir: out, meta: {}, lockfile: {}};
-  for (const {meta, lockfile} of metas) {
+  for (const {meta, lockfile} of sets) {
     for (const {name, range, type} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (ignored) continue;
@@ -132,7 +133,7 @@ const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
     }
     Object.assign(merged.lockfile, lockfile);
   }
-  await writeMetadata({metas: [merged]});
+  await writeVersionSets({sets: [merged]});
 };
 
 /*::
@@ -156,9 +157,9 @@ const diff /*: Diff */ = async ({
   frozenLockfile = false,
   tmp = '/tmp',
 }) => {
-  const metas = await getMetadata({roots});
+  const sets = await getVersionSets({roots});
   const updated = /*:: await */ await update({
-    metas,
+    sets,
     additions,
     removals,
     upgrades,
@@ -166,10 +167,10 @@ const diff /*: Diff */ = async ({
     frozenLockfile,
     tmp,
   });
-  await writeMetadata({metas: updated});
+  await writeVersionSets({sets: updated});
 };
 
-const getMetadata = async ({roots}) => {
+const getVersionSets = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
@@ -183,9 +184,9 @@ const getMetadata = async ({roots}) => {
   );
 };
 
-const writeMetadata = async ({metas}) => {
+const writeVersionSets = async ({sets}) => {
   await Promise.all(
-    metas.map(async ({dir, meta, lockfile}) => {
+    sets.map(async ({dir, meta, lockfile}) => {
       await exec(`mkdir -p ${dir}`);
       await write(`${dir}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
@@ -215,15 +216,8 @@ const getDepEntries = meta => {
 };
 
 /*::
-export type PackageJson = {
-  name: string,
-  version: string,
-  dependencies?: {[string]: string},
-  devDependencies?: {[string]: string},
-  optionalDependencies?: {[string]: string},
-  peerDependencies?: {[string]: string},
-  resolutions?: {[string]: string},
-};
+import type {PackageJson} from './get-local-dependencies.js';
+
 export type Lockfile = {
   [string]: {
     version: string,
@@ -232,13 +226,13 @@ export type Lockfile = {
     }
   }
 }
-export type Metadata = {
+export type VersionSet = {
   dir: string,
   meta: PackageJson,
   lockfile: Lockfile,
 };
 export type UpdateArgs = {
-  metas: Array<Metadata>,
+  sets: Array<VersionSet>,
   additions?: Array<Addition>,
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
@@ -246,10 +240,10 @@ export type UpdateArgs = {
   frozenLockfile?: boolean,
   tmp?: string,
 };
-export type Update = (UpdateArgs) => Promise<Array<Metadata>>;
+export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
 */
 const update /*: Update */ = async ({
-  metas,
+  sets,
   additions = [],
   removals = [],
   upgrades = [],
@@ -272,7 +266,7 @@ const update /*: Update */ = async ({
     );
   }
 
-  for (const {meta, lockfile} of metas) {
+  for (const {meta, lockfile} of sets) {
     // handle removals
     if (removals.length > 0) {
       for (const name of removals) {
@@ -339,7 +333,7 @@ const update /*: Update */ = async ({
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original package.json/yarn.lock
-      const [added] = await getMetadata({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cwd]});
       for (const {name, range, type} of getDepEntries(added.meta)) {
         if (!meta[type]) meta[type] = {};
         if (meta[type]) meta[type][name] = range;
@@ -370,7 +364,7 @@ const update /*: Update */ = async ({
       await exec(add, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original yarn.lock
-      const [added] = await getMetadata({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cwd]});
       Object.assign(lockfile, added.lockfile);
     }
   }
@@ -378,13 +372,13 @@ const update /*: Update */ = async ({
   // index lockfiles
   const ids = new Set(); // for deduping
   const index = {};
-  for (const {lockfile} of metas) {
+  for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
       const isAlias =
         range.includes(':') ||
         !validRange(range) ||
-        !satisfies(lockfile[key].version, range);
+        isYarnResolution({meta, name});
       const id = `${key}|${lockfile[key].version}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
@@ -402,7 +396,7 @@ const update /*: Update */ = async ({
   }
 
   // sync
-  for (const item of metas) {
+  for (const item of sets) {
     const {meta} = item;
     const graph = {};
     for (const {name, range} of getDepEntries(meta)) {
@@ -439,7 +433,7 @@ const update /*: Update */ = async ({
     }
   }
 
-  return metas;
+  return sets;
 };
 
 const populateGraph = ({graph, name, range, index}) => {
