@@ -15,7 +15,7 @@ const {cmd, start} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
 
-test('source map static assets are not served in production', async () => {
+test('source maps for JS static assets are not served in production', async () => {
   const env = {...process.env, NODE_ENV: 'production'};
   await cmd(`build --dir=${dir} --production`, {env});
 
@@ -52,6 +52,18 @@ test('source map static assets are not served in production', async () => {
       );
       t.equal(assetMap.body, 'Not Found');
     }
+
+    const assetPath = await request(`http://localhost:${port}/asset-url`, {
+      headers: {
+        Accept: 'text/html',
+      },
+    });
+    console.log(assetPath);
+    const asset = await request(`http://localhost:${port}${assetPath}`, {
+      resolveWithFullResponse: true,
+      simple: false,
+    });
+    t.equal(asset.statusCode, 200, 'Request for sourcemap via assetUrl works');
 
     proc.kill();
   } catch (e) {
