@@ -32,7 +32,7 @@ See: [rush install](https://rushjs.io/pages/commands/rush_install/), [rush build
 rush install && rush build
 ```
 
-### Add new
+#### Add new
 
 Equivalent: `yarn add lodash`
 
