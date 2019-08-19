@@ -36,13 +36,11 @@ rush install && rush build
 
 Equivalent: `yarn add lodash`
 
-See: [rush add](https://rushjs.io/pages/commands/rush_add/)
+Currently, using `rush add` is broken with the following error:
 
-```sh
-# --caret: prepend with ^
-# -m: update other packages with this dep
-rush add --caret -m -p lodash
-```
+    ERROR: The Yarn package manager is not currently supported by the "rush add" command.
+
+To work around this, manually update the dependency in the projects `package.json`. Then run `rush update --full --purge`. This may take some time.
 
 ### Upgrade
 
