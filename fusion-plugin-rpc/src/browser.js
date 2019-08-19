@@ -92,6 +92,15 @@ class RPC {
           });
           return Promise.reject(data);
         }
+      }).catch(e => {
+        emitter.emit(statKey, {
+          method: rpcId,
+          error: e,
+          status: 'failure',
+          timing: Date.now() - startTime
+        });
+
+        throw e;
       });
   }
 }
