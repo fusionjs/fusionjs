@@ -38,6 +38,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {getRootDir} = require('../utils/get-root-dir.js');
 const {installDeps} = require('../utils/install-deps.js');
+const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
 
 const {
@@ -96,6 +97,7 @@ async function runTests() {
     t(testGetLocalDependencies),
     t(testGetRootDir),
     t(testInstallDeps),
+    t(testIsYarnResolution),
     t(testNodeHelpers),
     t(testParse),
     t(testGetPassThroughArgs),
@@ -846,6 +848,104 @@ async function testInstallDeps() {
   await installDeps(deps);
   assert(await exists(`${__dirname}/tmp/install-deps/node_modules/b`));
   assert(await exists(`${__dirname}/tmp/install-deps/node_modules/noop`));
+}
+
+async function testIsYarnResolution() {
+  const exact = isYarnResolution({
+    meta: {resolutions: {a: '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(exact, true);
+
+  const namespaced = isYarnResolution({
+    meta: {resolutions: {'@a/b': '0.0.0'}, name: '', version: ''},
+    name: '@a/b',
+  });
+  assert.equal(namespaced, true);
+
+  const globbed = isYarnResolution({
+    meta: {resolutions: {'**/a': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(globbed, true);
+
+  const globbedNs = isYarnResolution({
+    meta: {resolutions: {'**/@a/b': '0.0.0'}, name: '', version: ''},
+    name: '@a/b',
+  });
+  assert.equal(globbedNs, true);
+
+  const direct = isYarnResolution({
+    meta: {resolutions: {'a/b': '0.0.0'}, name: '', version: ''},
+    name: 'b',
+  });
+  assert.equal(direct, true);
+
+  const directNs = isYarnResolution({
+    meta: {resolutions: {'a/@b/c': '0.0.0'}, name: '', version: ''},
+    name: '@b/c',
+  });
+  assert.equal(directNs, true);
+
+  const directOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(directOfNs, true);
+
+  const directNsOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/@c/d': '0.0.0'}, name: '', version: ''},
+    name: '@c/d',
+  });
+  assert.equal(directNsOfNs, true);
+
+  const transitive = isYarnResolution({
+    meta: {resolutions: {'a/**/b': '0.0.0'}, name: '', version: ''},
+    name: 'b',
+  });
+  assert.equal(transitive, true);
+
+  const transitiveNs = isYarnResolution({
+    meta: {resolutions: {'a/**/@b/c': '0.0.0'}, name: '', version: ''},
+    name: '@b/c',
+  });
+  assert.equal(transitiveNs, true);
+
+  const transitiveOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/**/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(transitiveOfNs, true);
+
+  const transitiveNsOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/**/@c/d': '0.0.0'}, name: '', version: ''},
+    name: '@c/d',
+  });
+  assert.equal(transitiveNsOfNs, true);
+
+  const nested = isYarnResolution({
+    meta: {resolutions: {'a/b/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(nested, true);
+
+  const nestedOfNs = isYarnResolution({
+    meta: {resolutions: {'a/@b/c/d': '0.0.0'}, name: '', version: ''},
+    name: 'd',
+  });
+  assert.equal(nestedOfNs, true);
+
+  const positional = isYarnResolution({
+    meta: {resolutions: {'a/b': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(positional, false);
+
+  const positionalNs = isYarnResolution({
+    meta: {resolutions: {'@a/a/b': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(positionalNs, false);
 }
 
 async function testNodeHelpers() {
