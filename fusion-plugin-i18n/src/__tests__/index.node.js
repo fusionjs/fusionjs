@@ -135,9 +135,9 @@ test('endpoint', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
     path: '/_translations',
-    querystring: 'keys=["test","interpolated"]',
+    querystring: '',
     memoized: new Map(),
-    body: '',
+    body: JSON.stringify(['test', 'interpolated']),
   };
 
   const deps = {

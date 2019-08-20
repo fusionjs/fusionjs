@@ -74,14 +74,6 @@ const pluginFactory: () => PluginType = () =>
           const unloaded = translationKeys.filter(key => {
             return loadedKeys.indexOf(key) < 0 && !this.requestedKeys.has(key);
           });
-          const fetchOpts = {
-            method: 'POST',
-            headers: {
-              Accept: '*/*',
-              ...(this.locale ? {'X-Fusion-Locale-Code': this.locale} : {}),
-            },
-          };
-          const localeParam = this.locale ? `&localeCode=${this.locale}` : '';
           if (unloaded.length > 0) {
             // Don't try to load translations again if a request is already in
             // flight. This means that we need to add unloaded chunks to
@@ -89,9 +81,19 @@ const pluginFactory: () => PluginType = () =>
             unloaded.forEach(key => {
               this.requestedKeys.add(key);
             });
+            const fetchOpts = {
+              method: 'POST',
+              headers: {
+                Accept: '*/*',
+                ...(this.locale ? {'X-Fusion-Locale-Code': this.locale} : {}),
+              },
+              body: JSON.stringify(unloaded),
+            };
             // TODO(#3) don't append prefix if injected fetch also injects prefix
             return fetch(
-              `/_translations?keys=${JSON.stringify(unloaded)}${localeParam}`,
+              `/_translations${
+                this.locale ? `?localeCode=${this.locale}` : ''
+              }`,
               fetchOpts
             )
               .then(r => r.json())

@@ -8,7 +8,6 @@
 
 /* eslint-env node */
 
-import querystring from 'querystring';
 import {Locale} from 'locale';
 
 import {createPlugin, memoize, html} from 'fusion-core';
@@ -160,9 +159,7 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = JSON.parse(
-            querystring.parse(ctx.querystring).keys || '[]'
-          );
+          const keys = JSON.parse(ctx.body) || [];
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
