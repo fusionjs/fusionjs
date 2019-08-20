@@ -169,6 +169,43 @@ test('endpoint', async t => {
   t.end();
 });
 
+test('endpoint request handles empty body', async t => {
+  const data = {test: 'hello', interpolated: 'hi ${value}'};
+
+  const ctx: Context = {
+    set: () => {},
+    syncChunks: [],
+    preloadChunks: [],
+    headers: {'accept-language': 'en_US'},
+    path: '/_translations',
+    querystring: '',
+    memoized: new Map(),
+    body: void 0,
+  };
+
+  const deps = {
+    loader: {from: () => ({translations: data, locale: 'en-US'})},
+  };
+
+  t.plan(1);
+
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
+  const i18n = I18n.provides(deps);
+
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
+  t.pass("doesn't throw");
+  t.equals(ctx.body, {}, 'defaults to an empty set of translations');
+
+  t.end();
+});
+
 test('non matched route', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context

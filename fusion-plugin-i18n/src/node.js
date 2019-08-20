@@ -159,7 +159,7 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = JSON.parse(ctx.body) || [];
+          const keys = JSON.parse(ctx.body || '[]');
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
