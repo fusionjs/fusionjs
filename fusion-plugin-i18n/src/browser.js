@@ -85,6 +85,7 @@ const pluginFactory: () => PluginType = () =>
               method: 'POST',
               headers: {
                 Accept: '*/*',
+                'Content-Type': 'application/json',
                 ...(this.locale ? {'X-Fusion-Locale-Code': this.locale} : {}),
               },
               body: JSON.stringify(unloaded),

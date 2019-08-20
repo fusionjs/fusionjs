@@ -137,7 +137,8 @@ test('endpoint', async t => {
     path: '/_translations',
     querystring: '',
     memoized: new Map(),
-    body: JSON.stringify(['test', 'interpolated']),
+    request: {body: ['test', 'interpolated']},
+    body: '',
   };
 
   const deps = {
@@ -171,7 +172,7 @@ test('endpoint', async t => {
 
 test('endpoint request handles empty body', async t => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
-
+  // $FlowFixMe - Invalid context
   const ctx: Context = {
     set: () => {},
     syncChunks: [],
@@ -180,7 +181,8 @@ test('endpoint request handles empty body', async t => {
     path: '/_translations',
     querystring: '',
     memoized: new Map(),
-    body: void 0,
+    request: {body: void 0},
+    body: '',
   };
 
   const deps = {
