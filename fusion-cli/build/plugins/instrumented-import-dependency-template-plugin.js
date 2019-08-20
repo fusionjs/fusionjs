@@ -53,19 +53,21 @@ class InstrumentedImportDependency extends ImportDependency {
   getInstrumentation() {
     // client-side, use built-in values
     this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
-    this.translationKeys = [];
+    this.translationKeys = new Set();
     if (this.translationsManifest) {
       const modules = getChunkGroupModules(this);
       for (const module of modules) {
         if (this.translationsManifest.has(module)) {
-          const keys = this.translationsManifest.get(module).keys();
-          this.translationKeys.push(...keys);
+          const keys = this.translationsManifest.get(module);
+          for (const key of keys) {
+            this.translationKeys.add(key);
+          }
         }
       }
     }
     return {
       chunkIds: this.chunkIds,
-      translationKeys: this.translationKeys,
+      translationKeys: Array.from(this.translationKeys),
     };
   }
   updateHash(hash) {
