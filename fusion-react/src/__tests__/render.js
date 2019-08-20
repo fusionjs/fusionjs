@@ -9,7 +9,8 @@
 import test from 'tape-cup';
 import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
-import App from '../index';
+import App, {SkipPrepareToken} from '../index';
+import prepared from '../async/prepared';
 
 test('custom render function', async t => {
   let didRender = false;
@@ -25,4 +26,35 @@ test('custom render function', async t => {
   t.equal(ctx.rendered, 10);
   t.ok(didRender);
   t.end();
+});
+
+test('runs prepare', async t => {
+  let called = false;
+  const Root = prepared(() => {
+    called = true;
+    return Promise.resolve();
+  })(() => {
+    return React.createElement('span', null, 'hello');
+  });
+  const app = new App(React.createElement(Root), () => {
+    t.equal(called, true, 'calls prepass by default');
+    t.end();
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+});
+
+test('skip prepare', async t => {
+  const Root = prepared(() => {
+    t.fail('Should not call this');
+    return Promise.resolve();
+  })(() => {
+    return React.createElement('span', null, 'hello');
+  });
+  const app = new App(React.createElement(Root), () => {
+    t.end();
+  });
+  app.register(SkipPrepareToken, true);
+  const simulator = getSimulator(app);
+  await simulator.render('/');
 });
