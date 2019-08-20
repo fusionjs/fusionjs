@@ -187,7 +187,7 @@ test('endpoint request handles empty body', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(1);
+  t.plan(2);
 
   if (!I18n.provides) {
     t.end();
@@ -201,7 +201,7 @@ test('endpoint request handles empty body', async t => {
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   t.pass("doesn't throw");
-  t.equals(ctx.body, {}, 'defaults to an empty set of translations');
+  t.deepEquals(ctx.body, {}, 'defaults to an empty set of translations');
 
   t.end();
 });
