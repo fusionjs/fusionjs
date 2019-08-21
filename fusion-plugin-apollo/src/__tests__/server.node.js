@@ -20,7 +20,7 @@ import {
 } from '../index';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
-import {Query} from 'react-apollo';
+import {Query} from '@apollo/react-components';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 import {FetchToken, type Fetch} from 'fusion-tokens';
