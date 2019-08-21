@@ -12,6 +12,7 @@ import {
   GraphQLSchemaToken,
   ApolloContextToken,
   GraphQLEndpointToken,
+  type InitApolloClientType,
 } from '../tokens';
 import {ApolloClient} from 'apollo-client';
 import {HttpLink} from 'apollo-link-http';
@@ -67,16 +68,11 @@ type ApolloClientDepsType = {
   defaultOptions: typeof ApolloClientDefaultOptionsToken.optional,
 };
 
-type InitApolloClientType = (
-  ctx: Context,
-  initialState: mixed
-) => ApolloClient<mixed>;
-
 function Container() {}
 
 const ApolloClientPlugin: FusionPlugin<
   ApolloClientDepsType,
-  InitApolloClientType
+  InitApolloClientType<*>
 > = createPlugin({
   deps: {
     getCache: GetApolloClientCacheToken.optional,
