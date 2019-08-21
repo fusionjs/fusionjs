@@ -4,4 +4,4 @@ RUN mkdir /monorepo
 WORKDIR /monorepo
 COPY . /monorepo/
 
-RUN yarn global add jazelle@0.0.0-canary.a8af54e.0
+RUN yarn global add jazelle@0.0.0-canary.2a2b83b.0
