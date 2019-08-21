@@ -1,4 +1,4 @@
-// @flow
+/any/ @flow
 /* eslint-env node */
 
 const t = require('assert');
@@ -31,7 +31,7 @@ test('`fusion dev --dir` works w/ relative dir', async () => {
   });
   await new Promise(resolve => setTimeout(resolve, 1000));
   t.ok(await exists(entry), 'Entry file gets compiled');
-  promise.then(({stderr}) => {
+  await promise.then(({stderr}) => {
     t.ok(!stderr.match(/Error/), 'does not error');
   });
   proc.stderr.destroy(); // disconnect the piped socket to prevent the Node process from hanging
