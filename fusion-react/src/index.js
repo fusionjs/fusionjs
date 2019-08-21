@@ -10,6 +10,7 @@
 import * as React from 'react';
 
 import FusionApp, {
+  createToken,
   createPlugin,
   CriticalChunkIdsToken,
   type Context,
@@ -31,6 +32,8 @@ import {
   useService,
   withServices,
 } from './context.js';
+
+export const SkipPrepareToken = createToken<boolean>('SkipPrepareToken');
 
 export type Render = (el: React.Element<*>, context: Context) => any;
 
@@ -57,10 +60,11 @@ export default class App extends FusionApp {
     const renderer = createPlugin({
       deps: {
         criticalChunkIds: CriticalChunkIdsToken.optional,
+        skipPrepare: SkipPrepareToken.optional,
       },
-      provides() {
+      provides({skipPrepare}) {
         return (el: React.Element<*>, ctx) => {
-          return prepare(el).then(() => {
+          return (skipPrepare ? Promise.resolve() : prepare(el)).then(() => {
             if (render) {
               return render(el, ctx);
             }

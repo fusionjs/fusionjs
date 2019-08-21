@@ -33,6 +33,7 @@ as bundle splitting and `fusion-react` provides tools to do it easily.
   - [prepare](#prepare)
   - [prepared](#prepared)
   - [exclude](#exclude)
+  - [SkipPrepareToken](#skippreparetoken)
   - [Provider - DEPRECATED](#provider)
   - [ProviderPlugin - DEPRECATED](#providerplugin)
   - [ProvidedHOC - DEPRECATED](#providedhoc)
@@ -319,6 +320,16 @@ const NewComponent = exclude(Component);
 - `NewComponent: React.Component` - A component that is excluded from `prepare` traversal.
 
 Stops `prepare` traversal at `Component`. Useful for optimizing the `prepare` traversal to visit the minimum number of nodes.
+
+#### SkipPrepareToken
+
+```js
+import {SkipPrepareToken} from 'fusion-react';
+
+app.register(SkipPrepareToken, true);
+```
+
+Skips the prepare render of the application, which is responsible for running side effects in `prepared` statements.
 
 #### Provider
 
