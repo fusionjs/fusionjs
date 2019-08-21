@@ -36,6 +36,9 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
+    "@apollo/react-common": "^3.0.1",
+    "@apollo/react-components": "^3.0.1",
+    "@apollo/react-ssr": "^3.0.1",
     "babel-eslint": "^10.0.1",
     "create-universal-package": "^3.4.7",
     "eslint": "^6.0.1",
@@ -60,7 +63,6 @@
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
     "redux": "^4.0.1",
     "tape-cup": "^4.7.1",
@@ -72,8 +74,10 @@
     "fusion-react": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "@apollo/react-common": "^3.0.1",
+    "@apollo/react-components": "^3.0.1",
+    "@apollo/react-ssr": "^3.0.1"
   },
   "scripts": {
     "clean": "rm -rf dist",

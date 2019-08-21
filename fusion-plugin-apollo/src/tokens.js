@@ -8,7 +8,6 @@
 import React from 'react';
 import {createToken, type Context, type Token} from 'fusion-core';
 import type {ApolloClient} from 'apollo-client';
-import {getDataFromTree} from 'react-apollo';
 
 export type InitApolloClientType<TInitialState> = (
   ctx: Context,
@@ -34,7 +33,7 @@ export const ApolloClientToken: Token<
   InitApolloClientType<mixed>
 > = createToken('ApolloClientToken');
 
-export const GetDataFromTreeToken: Token<typeof getDataFromTree> = createToken(
+export const GetDataFromTreeToken: Token<any> = createToken(
   'GetDataFromTreeToken'
 );
 
