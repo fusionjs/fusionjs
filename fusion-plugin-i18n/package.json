@@ -38,6 +38,7 @@
     "flow": "flow check"
   },
   "dependencies": {
+    "koa-bodyparser": "^4.2.1",
     "locale": "^0.1.0",
     "rollup": "^0.67.3"
   },
