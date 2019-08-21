@@ -1,4 +1,4 @@
-/any/ @flow
+// @flow
 /* eslint-env node */
 
 const t = require('assert');
