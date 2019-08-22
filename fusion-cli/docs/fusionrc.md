@@ -8,7 +8,7 @@ This configuration object supports the following fields:
 
 ### Adding plugins/presets
 
-For example, to add your own Babel plugins/preset:
+For example, to add your own Babel [plugins/preset](https://babeljs.io/docs/en/plugins):
 
 ```js
 module.exports = {
@@ -19,8 +19,24 @@ module.exports = {
 };
 ```
 
-**Please note that custom Babel config is an unstable API and may not be supported in future releases.**
+### Excluding modules from babel compilation
 
+<<<<<<< HEAD
+=======
+Fusion-cli is configured to transform almost all node_modules using babel. To customize what modules fusion-cli should exclude from transpilation, you can use [`babel-loader`](https://webpack.js.org/loaders/babel-loader/#root)'s [`exclude`](https://webpack.js.org/configuration/module/#condition) option:
+
+```js
+module.exports = {
+  babel: {
+    exclude: moduleName => 
+      /\/node_modules\//.test(moduleName) && !/fusion-cli\//.test(moduleName)
+  }
+};
+```
+
+***Important Note***: If you exclude certain modules that always require babel transpilation, such as `fusion-cli` and its entrypoints, your project might not start, so excercise judgement when customizing exclusion rules.  
+
+>>>>>>> c8dd0621... Add brotli and svgo flags; allow babel excludes; overrideWebpackConfig option in .fusionrc.js; remove scary messages
 ## `assumeNoImportSideEffects`
 
 By default this is `false`.
@@ -68,5 +84,40 @@ If left undefined, this property will default to true.
 ```js
 module.exports = {
   brotli: false,
+};
+```
+
+## `overrideWebpackConfig`
+
+Allows to customize [webpack configuration](https://webpack.js.org/concepts).
+
+Pass a function that takes a [`webpackConfig`](https://webpack.js.org/configuration/) object created by fusion and return a config with any modifi
+
+Example:
+
+```js
+const SimpleProgressPlugin = require('simple-progress-webpack-plugin');
+
+module.exports = {
+  overrideWebpackConfig: (webpackConfig) => {
+    // Debug things:
+    console.log(webpackConfig);
+
+    // Pass your own plugins:
+    webpackConfig.plugins = webpackConfig.plugins.map(plugin => {
+      // console.log(plugin.constructor.name);
+
+      if (plugin.constructor.name === 'ProgressPlugin') {
+        return new SimpleProgressPlugin({
+          format: 'expanded'
+        })
+      }
+
+      return plugin;
+    });
+
+    // Don't forget to return it
+    return webpackConfig;
+  }
 };
 ```

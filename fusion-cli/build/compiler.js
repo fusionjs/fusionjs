@@ -65,8 +65,8 @@ function getStatsLogger({dir, logger, env}) {
 
     if (err) {
       logger.error(err.stack || err);
-      if (err.details) {
-        logger.error(err.details);
+      if ((err /*: any */).details) {
+        logger.error((err /*: any */).details);
       }
       return;
     }
@@ -178,6 +178,7 @@ function Compiler(
     preserveNames,
     zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
     brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
+    svgo: fusionConfig.svgo != undefined ? fusionConfig.svgo : true,
     minify,
     worker,
   };
@@ -211,7 +212,9 @@ function Compiler(
 
   const statsLogger = getStatsLogger({dir, logger, env});
 
-  this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
+  this.on = (type, callback) =>
+    (compiler /*: any */).hooks[type]
+      .tap('compiler', callback);
   this.start = cb => {
     cb = cb || function noop(err, stats) {};
     // Handler may be called multiple times by `watch`
