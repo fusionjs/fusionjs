@@ -1,3 +1,5 @@
+// flow-typed signature: 854b74c35e693069a02ebea2f9e88342
+// flow-typed version: 7ba325dd95/history_v4.9.x/flow_>=v0.25.x <=v0.103.x
 
 declare module 'history' {
   declare function Unblock(): void;
