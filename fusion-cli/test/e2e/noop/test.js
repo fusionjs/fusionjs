@@ -26,7 +26,7 @@ test('`fusion dev --dir` works w/ relative dir', async () => {
   const entry = path.resolve(dir, entryPath);
 
   // $FlowFixMe
-  const {proc, promise} = await dev(`--dir=${dir}`, {
+  const {proc} = await dev(`--dir=${dir}`, {
     stdio: ['inherit', 'inherit', 'pipe'],
   });
   await new Promise(resolve => setTimeout(resolve, 1000));
