@@ -41,7 +41,7 @@ test('Server renders without schema', async t => {
   app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(ApolloClientToken, ApolloClientPlugin);
   app.register(GraphQLEndpointToken, 'http://localhost:4000');
-  app.register(FetchToken, ((fetch:any): Fetch));
+  app.register(FetchToken, ((fetch: any): Fetch));
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
