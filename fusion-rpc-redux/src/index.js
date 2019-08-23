@@ -7,7 +7,7 @@
  */
 
 import {createReactor} from 'redux-reactors';
-import type {Reactor} from 'redux-reactors';
+import type {ReactorAction} from 'redux-reactors';
 import type {Reducer, Store} from 'redux';
 
 export type ActionType = {
@@ -16,9 +16,9 @@ export type ActionType = {
 };
 
 type RPCReactorsType<TType, TPayload> = {
-  start: Reactor<TType, TPayload>,
-  success: Reactor<TType, TPayload>,
-  failure: Reactor<TType, TPayload>,
+  start: ReactorAction<TType, TPayload>,
+  success: ReactorAction<TType, TPayload>,
+  failure: ReactorAction<TType, TPayload>,
 };
 
 type RPCReducersType<S, A: ActionType> = {
@@ -113,15 +113,14 @@ export function createRPCReactors<S, A: ActionType>(
     if (!normalizedReducers[type]) {
       throw new Error(`Missing reducer for type ${type}`);
     }
-    const reactor: Reactor<*, *> = createReactor(
-      // $FlowFixMe
+    const reactor: () => ReactorAction<*, *> = createReactor(
       actionNames[type],
-      normalizedReducers[type]
+      (normalizedReducers[type]: any)
     );
     obj[type] = reactor;
     return obj;
   }, {});
-  return reactors;
+  return ((reactors: any): RPCReactorsType<*,*>);
 }
 
 // FYI 2018-05-10 - Improve type definition for RPCHandlerType

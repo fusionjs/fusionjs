@@ -327,6 +327,7 @@ test('createRPCReactors', t => {
     t.end();
     return;
   }
+  // $FlowFixMe
   const {type, payload} = reactors.start('test-payload');
   t.equal(type, 'GET_COUNT_START');
   t.equal(payload, 'test-payload');
@@ -343,6 +344,7 @@ test('createRPCReactors optional reducers', t => {
     t.end();
     return;
   }
+  // $FlowFixMe
   const {type, payload} = reactors.start('test-payload');
   t.equal(type, 'GET_COUNT_START');
   t.equal(payload, 'test-payload');
@@ -363,21 +365,18 @@ test('createRPCReducer', t => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_START');
       t.equal(action.payload, 'test-action');
-      // $FlowFixMe
       return 'test-start';
     },
     success: (state, action) => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_SUCCESS');
       t.equal(action.payload, 'test-action');
-      // $FlowFixMe
       return 'test-success';
     },
     failure: (state, action) => {
       t.equal(state, 'test-state');
       t.equal(action.type, 'GET_COUNT_FAILURE');
       t.equal(action.payload, 'test-action');
-      // $FlowFixMe
       return 'test-failure';
     },
   });
