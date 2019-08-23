@@ -23,7 +23,7 @@ import {makeExecutableSchema} from 'graphql-tools';
 import {Query} from 'react-apollo';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
-import {FetchToken} from 'fusion-tokens';
+import {FetchToken, type Fetch} from 'fusion-tokens';
 import fetch from 'node-fetch';
 
 function testApp(el, {typeDefs, resolvers}) {
@@ -41,7 +41,7 @@ test('Server renders without schema', async t => {
   app.enhance(RenderToken, ApolloRenderEnhancer);
   app.register(ApolloClientToken, ApolloClientPlugin);
   app.register(GraphQLEndpointToken, 'http://localhost:4000');
-  app.register(FetchToken, fetch);
+  app.register(FetchToken, ((fetch: any): Fetch));
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
