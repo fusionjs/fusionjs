@@ -45,7 +45,7 @@
     "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-i18n": "0.0.0-monorepo",
-    "fusion-plugin-universal-events": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-canary.ffb0ab3.0",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "mock-req": "^0.2.0",
@@ -59,7 +59,7 @@
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-i18n": "0.0.0-monorepo",
-    "fusion-plugin-universal-events": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-canary.ffb0ab3.0",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "scripts": {
