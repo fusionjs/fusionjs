@@ -28,6 +28,10 @@ then
 fi
 
 # setup other binaries
+if [ ! -f $ROOT/.bazelversion ]
+then
+  USE_BAZEL_VERSION=$(cat $BIN/../templates/scaffold/.bazelversion)
+fi
 "$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
