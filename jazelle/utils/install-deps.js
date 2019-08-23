@@ -1,5 +1,5 @@
 // @flow
-const {dirname} = require('path');
+const {dirname, relative} = require('path');
 const {merge} = require('./lockfile.js');
 const {exists, exec, spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
@@ -10,6 +10,8 @@ import type {Hooks} from './get-manifest.js';
 
 export type InstallDepsArgs = {
   root: string,
+  cwd: string,
+  modulesDir?: string,
   deps?: Array<Metadata>,
   ignore?: Array<Metadata>,
   hooks?: Hooks,
@@ -18,16 +20,20 @@ export type InstallDeps = (InstallDepsArgs) => Promise<void>
 */
 const installDeps /*: InstallDeps */ = async ({
   root,
+  cwd,
+  modulesDir,
   deps = [],
   ignore = [],
   hooks: {preinstall, postinstall} = {},
 }) => {
-  const bin = `${root}/third_party/jazelle/temp`;
+  const sandbox = relative(root, cwd);
+  const bin = `${root}/third_party/jazelle/temp/${sandbox}`;
+  await spawn('mkdir', ['-p', bin], {cwd: root});
 
   // generate global lock file
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-  await spawn('rm', ['-f', `${bin}/yarn.lock`]);
-  await spawn('rm', ['-f', `${bin}/package.json`]);
+  await spawn('rm', ['-f', `${bin}/yarn.lock`], {cwd: root});
+  await spawn('rm', ['-f', `${bin}/package.json`], {cwd: root});
   await merge({
     roots: deps.map(dep => dep.dir),
     out: bin,
@@ -60,12 +66,6 @@ const installDeps /*: InstallDeps */ = async ({
   }
 
   // install external deps
-  const modulesDir = `${root}/node_modules`;
-  if (await exists(modulesDir)) {
-    await spawn('mv', ['node_modules', `${bin}/node_modules`], {
-      cwd: root,
-    });
-  }
   await spawn(
     node,
     [
@@ -84,9 +84,11 @@ const installDeps /*: InstallDeps */ = async ({
       stdio: 'inherit',
     }
   );
-  await spawn('mv', [`${bin}/node_modules`, 'node_modules'], {
-    cwd: root,
-  });
+
+  if (modulesDir) {
+    await spawn('rm', ['-rf', modulesDir], {cwd: root});
+    await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
+  }
 
   // symlink local deps
   await Promise.all(

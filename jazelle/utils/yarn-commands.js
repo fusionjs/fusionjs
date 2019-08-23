@@ -3,7 +3,7 @@ const {checksumCache} = require('./checksum-cache.js');
 const {getDownstreams} = require('./get-downstreams.js');
 const {spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
-const generateFlowConfig = require('./generate-flow-config.js');
+const {generateFlowConfig} = require('./generate-flow-config.js');
 
 const errorsOnly = ['ignore', 'ignore', 'inherit'];
 
@@ -32,6 +32,7 @@ const buildCacheable = async ({root, dep, deps, stdio}) => {
   const {dir, meta} = dep;
   const cache = await checksumCache(root);
   if (!(await cache.isCached(dir))) {
+    console.log(`Building ${meta.name}`);
     await spawn(node, [yarn, 'build'], {stdio, env: process.env, cwd: dir});
 
     getDownstreams(deps, dep).forEach(d => {
@@ -40,7 +41,6 @@ const buildCacheable = async ({root, dep, deps, stdio}) => {
     });
     await cache.update(dir);
     await cache.save();
-    console.log(`Building ${meta.name}`);
   }
 };
 
@@ -115,19 +115,13 @@ export type Flow = (FlowArgs) => Promise<void>;
 */
 const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
-  const configPath = (await generateFlowConfig(main.dir)) || '.flowconfig';
+  const configArgs = await generateFlowConfig({root, dir: main.dir});
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(
-    node,
-    configPath
-      ? [yarn, 'flow']
-      : [yarn, 'flow', `--flowconfig-name=${configPath}`],
-    {
-      stdio,
-      env: process.env,
-      cwd: main.dir,
-    }
-  );
+  await spawn(node, [yarn, 'flow', ...configArgs], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
