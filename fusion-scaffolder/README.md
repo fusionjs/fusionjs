@@ -1,4 +1,4 @@
-[![Build status](https://badge.buildkite.com/563f51722957765c351dcfc3980a0dc0e96a674cc3b6afcd41.svg?branch=master)](https://buildkite.com/uberopensource/fusion-scaffolder)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 # fusion-scaffolder
 

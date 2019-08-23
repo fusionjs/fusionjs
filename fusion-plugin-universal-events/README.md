@@ -1,6 +1,6 @@
  # fusion-plugin-universal-events
 
-[![Build status](https://badge.buildkite.com/de4e30ddb9d019f5a8e3a2519bc0a5cccab25247809cd10c99.svg?branch=master)](https://buildkite.com/uberopensource/fusion-plugin-universal-events)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 The `fusion-plugin-universal-events` is commonly required by other Fusion.js plugins and is used as an event emitter for data such as statistics and analytics. This plugin captures events emitted from the client, sends them in batches to the server periodically, and allows the server to handle them. Note that due to the batched and fire-and-forget nature of the client-to-server event emission, this library is not suitable for timing-sensitive requests such as error logging or RPC calls.
 
@@ -116,7 +116,7 @@ import {UniversalEventsBatchStorageToken, localBatchStorage} from 'fusion-plugin
 __BROWSER__ && app.register(UniversalEventsBatchStorageToken, inMemoryBatchStorage);
 ```
 
-**Optional. Browser-only.** 
+**Optional. Browser-only.**
 
 By default events will be stored in browser local storage before they are sent to the server.
 If you wish to override this behavior you can supply your own batch storage providing it complies with the `BatchStorage` interface type.

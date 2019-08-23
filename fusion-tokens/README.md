@@ -1,4 +1,4 @@
-[![Build status](https://badge.buildkite.com/51c7145b44d8842a8b71bb446614e49c8be0721f91633d11d8.svg?branch=master)](https://buildkite.com/uberopensource/fusion-tokens)
+[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 # fusion-tokens
 
