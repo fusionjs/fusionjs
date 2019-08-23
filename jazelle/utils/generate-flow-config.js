@@ -1,40 +1,39 @@
 // @flow
+const {relative} = require('path');
+const {read, exists, write} = require('./node-helpers.js');
 
-const {readFile, exists, writeFile} = require('fs');
-const {promisify} = require('util');
-
-const readAsync = promisify(readFile);
-const existsAsync = promisify(exists);
-const writeAsync = promisify(writeFile);
-
-const CUSTOM_CONFIG_NAME = '.flowconfig_monorepo';
+const customConfigName = '.flowconfig_monorepo';
 
 /**
  * Generates a new .flowconfig file based upon an existing one found in
  * the provided directory path.  Returns the name of the new file.
  *
  * Changes include:
- *   - Updating [include] to point to ../../third_party/jazelle/temp/node_modules/
+ *   - Updating [include] to point to ${root}/node_modules/
  */
-async function generate(dir /*: string */) /*: Promise<?string> */ {
+/*::
+type GenerateFlowConfigArgs = {
+  root: string,
+  dir: string
+}
+type GenerateFlowConfig = (GenerateFlowConfigArgs) => Promise<Array<string>>;
+*/
+const generateFlowConfig /*: GenerateFlowConfig */ = async ({root, dir}) => {
   const configFile = `${dir}/.flowconfig`;
-  if (await existsAsync(configFile)) {
-    const flowconfig = await readAsync(configFile, 'utf-8');
+  if (await exists(configFile)) {
+    const flowconfig = await read(configFile, 'utf-8');
 
     // Parse .flowconfig custom format and append additional entry to [include]
     const lines = flowconfig.split('\n');
     const includesHeaderIndex = lines.indexOf('[include]');
     const headerIndex =
       includesHeaderIndex > -1 ? includesHeaderIndex : lines.push('[include]');
-    lines.splice(
-      headerIndex + 1,
-      0,
-      '../../third_party/jazelle/temp/node_modules/'
-    );
+    lines.splice(headerIndex + 1, 0, relative(root, `${dir}/node_modules`));
 
-    await writeAsync(`${dir}/${CUSTOM_CONFIG_NAME}`, lines.join('\n'), 'utf8');
-    return CUSTOM_CONFIG_NAME;
+    await write(`${dir}/${customConfigName}`, lines.join('\n'), 'utf8');
+    return ['--flowconfig-name', customConfigName];
   }
-}
+  return [];
+};
 
-module.exports = generate;
+module.exports = {generateFlowConfig};
