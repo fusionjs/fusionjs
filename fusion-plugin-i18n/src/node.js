@@ -8,12 +8,12 @@
 
 /* eslint-env node */
 
-import querystring from 'querystring';
 import {Locale} from 'locale';
 
 import {createPlugin, memoize, html} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import bodyparser from 'koa-bodyparser';
 
 import {I18nLoaderToken} from './tokens.js';
 import createLoader from './loader.js';
@@ -108,6 +108,7 @@ const pluginFactory: () => PluginType = () =>
       // TODO(#4) refactor: this currently depends on babel plugins in framework's webpack config.
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
       const chunkTranslationMap = require('../chunk-translation-map');
+      const parseBody = bodyparser();
 
       return async (ctx, next) => {
         if (ctx.element) {
@@ -160,9 +161,12 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = JSON.parse(
-            querystring.parse(ctx.querystring).keys || '[]'
-          );
+          try {
+            await parseBody(ctx, () => Promise.resolve());
+          } catch (e) {
+            ctx.request.body = [];
+          }
+          const keys = ctx.request.body || [];
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];

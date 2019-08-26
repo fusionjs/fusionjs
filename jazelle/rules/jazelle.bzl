@@ -5,7 +5,7 @@ def _jazelle_impl(ctx):
     export YARN=$(cd `dirname "{yarn}"` && pwd)/$(basename {yarn})
     NODE=$(cd `dirname "{node}"` && pwd)/$(basename {node})
     CLI=$(cd `dirname "{cli}"` && pwd)/$(basename {cli})
-    CWD=`{node} -e "console.log(require('path').dirname(require('fs').realpathSync('{manifest}')))"`
+    CWD=`$NODE -e "console.log(require('path').dirname(require('fs').realpathSync('{manifest}')))"`
     cd $CWD && $NODE $CLI $@
     """.format(
       node = ctx.files._node[0].path,

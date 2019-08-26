@@ -1,5 +1,5 @@
-// flow-typed signature: 3321ad5fc4fe34d7901d44e1d4cb6a2c
-// flow-typed version: e12ae322cb/winston_v3.x.x/flow_>=v0.34.x
+// flow-typed signature: 4b7441b9c6a157b08d52afa006d713d4
+// flow-typed version: c6154227d1/winston_v3.x.x/flow_>=v0.34.x <=v0.103.x
 
 declare type $winstonLevels = {
   [string]: number
@@ -114,7 +114,8 @@ declare module "winston" {
   declare export type DefaultLogger = $winstonDefaultLogger;
   declare export type Container<T: Levels> = $winstonContainer<T>;
 
-  declare type WinstonExport = $winstonDefaultLogger & {
+  declare module.exports: {
+    ...$Exact<$winstonDefaultLogger>,
     format: $winstonFormatSubModule,
     transports: {
       Console: typeof $winstonConsoleTransport,
@@ -124,6 +125,4 @@ declare module "winston" {
     Container: typeof $winstonContainer,
     loggers: $winstonContainer<*>
   };
-
-  declare module.exports: {...WinstonExport};
 }
