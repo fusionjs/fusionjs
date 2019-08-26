@@ -812,6 +812,8 @@ async function testInstallDeps() {
   await exec(cmd);
   const deps = {
     root: `${__dirname}/tmp/install-deps`,
+    cwd: `${__dirname}/tmp/install-deps/a`,
+    modulesDir: `${__dirname}/tmp/install-deps/node_modules`,
     deps: [
       {
         meta: JSON.parse(
