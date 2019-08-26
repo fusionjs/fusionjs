@@ -18,7 +18,6 @@ ROOT=$(findroot)
 VERSION=$(grep -E -o "jazelle-(.+).tgz" "$ROOT/WORKSPACE")
 VERSION=${VERSION:8:${#VERSION}-12}
 BIN=$ROOT/third_party/jazelle/temp
-mkdir -p $ROOT/third_party/jazelle/temp
 TARBALL=$BIN/jazelle.tgz
 JAZELLE=$BIN/package/bin/cli.sh
 if [ ! -f $JAZELLE ]
