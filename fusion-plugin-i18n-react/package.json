@@ -38,7 +38,7 @@
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.ffb0ab3.0",
     "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6"
   },
@@ -60,7 +60,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.ffb0ab3.0",
     "fusion-react": "0.0.0-monorepo",
     "jest": "^24.8.0",
     "locale": "^0.1.0",

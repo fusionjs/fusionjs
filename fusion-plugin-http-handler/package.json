@@ -39,7 +39,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "express": "^4.16.4",
     "flow-bin": "^0.102.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.ffb0ab3.0",
     "get-port": "^5.0.0",
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
@@ -49,7 +49,7 @@
     "unitest": "^2.1.1"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "0.0.0-canary.ffb0ab3.0"
   },
   "scripts": {
     "clean": "rm -rf dist",

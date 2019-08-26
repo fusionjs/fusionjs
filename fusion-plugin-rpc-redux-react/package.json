@@ -48,7 +48,7 @@
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.102.0",
     "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-canary.ffb0ab3.0",
     "fusion-plugin-react-redux": "0.0.0-monorepo",
     "fusion-plugin-rpc": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
