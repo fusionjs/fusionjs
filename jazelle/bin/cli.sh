@@ -28,6 +28,10 @@ then
 fi
 
 # setup other binaries
+if [ ! -f $ROOT/.bazelversion ]
+then
+  USE_BAZEL_VERSION=$(cat $BIN/../templates/scaffold/.bazelversion)
+fi
 "$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
@@ -40,7 +44,7 @@ then
   # if we're in a repo, jazelle declaration in WORKSPACE is wrong, so we should error out
   if [ -f "$ROOT/WORKSPACE" ]
   then
-    echo "Error: Invalid \`jazelle\` declaration in WORKSPACE file"
+    echo "Error: Invalid \`jazelle\` configuration in WORKSPACE file. Check the Jazelle download URL and the checksums for Node and Yarn"
     exit 1
   fi
   if [ ! -f "$BIN/yarn.js" ]

@@ -1,5 +1,5 @@
 // @flow
-const {dirname} = require('path');
+const {dirname, relative} = require('path');
 const {merge} = require('./lockfile.js');
 const {exists, exec, spawn} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
@@ -10,6 +10,8 @@ import type {Hooks} from './get-manifest.js';
 
 export type InstallDepsArgs = {
   root: string,
+  cwd: string,
+  modulesDir?: string,
   deps?: Array<Metadata>,
   ignore?: Array<Metadata>,
   hooks?: Hooks,
@@ -18,16 +20,20 @@ export type InstallDeps = (InstallDepsArgs) => Promise<void>
 */
 const installDeps /*: InstallDeps */ = async ({
   root,
+  cwd,
+  modulesDir,
   deps = [],
   ignore = [],
   hooks: {preinstall, postinstall} = {},
 }) => {
-  const bin = `${root}/third_party/jazelle/temp`;
+  const sandbox = relative(root, cwd);
+  const bin = `${root}/third_party/jazelle/temp/${sandbox}`;
+  await spawn('mkdir', ['-p', bin], {cwd: root});
 
   // generate global lock file
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-  await spawn('rm', ['-f', `${bin}/yarn.lock`]);
-  await spawn('rm', ['-f', `${bin}/package.json`]);
+  await spawn('rm', ['-f', `${bin}/yarn.lock`], {cwd: root});
+  await spawn('rm', ['-f', `${bin}/package.json`], {cwd: root});
   await merge({
     roots: deps.map(dep => dep.dir),
     out: bin,
@@ -60,12 +66,6 @@ const installDeps /*: InstallDeps */ = async ({
   }
 
   // install external deps
-  const modulesDir = `${root}/node_modules`;
-  if (await exists(modulesDir)) {
-    await spawn('mv', ['node_modules', `${bin}/node_modules`], {
-      cwd: root,
-    });
-  }
   await spawn(
     node,
     [
@@ -84,49 +84,51 @@ const installDeps /*: InstallDeps */ = async ({
       stdio: 'inherit',
     }
   );
-  await spawn('mv', [`${bin}/node_modules`, 'node_modules'], {
-    cwd: root,
-  });
 
-  // symlink local deps
-  await Promise.all(
-    deps.map(async dep => {
-      const [ns, basename] = dep.meta.name.startsWith('@')
-        ? dep.meta.name.split('/')
-        : ['.', dep.meta.name];
-      // symlink from global node_modules to local package folders
-      if (!(await exists(`${modulesDir}/${dep.meta.name}`))) {
-        await spawn('mkdir', ['-p', `${modulesDir}/${ns}`], {cwd: root});
-        await spawn('ln', ['-sf', dep.dir, basename], {
-          cwd: `${modulesDir}/${ns}`,
-        });
-      }
+  if (modulesDir) {
+    await spawn('rm', ['-rf', modulesDir], {cwd: root});
+    await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
 
-      // symlink node_modules/.bin from local packages to global .bin
-      if (!(await exists(`${dep.dir}/node_modules/.bin`))) {
-        await spawn('mkdir', ['-p', 'node_modules'], {cwd: dep.dir});
-        await spawn('ln', ['-sf', `${modulesDir}/.bin`, '.bin'], {
-          cwd: `${dep.dir}/node_modules`,
-        });
-      }
-
-      // symlink from global node_modules/.bin to local bin scripts
-      const bin =
-        typeof dep.meta.bin === 'string'
-          ? {[dep.meta.name]: dep.meta.bin}
-          : dep.meta.bin;
-      if (!(await exists(`${modulesDir}/.bin`))) {
-        await spawn('mkdir', ['-p', `${modulesDir}/.bin`], {cwd: root});
-      }
-      for (const cmd in bin) {
-        if (!(await exists(`${modulesDir}/.bin/${cmd}`))) {
-          await spawn('ln', ['-sf', `${dep.dir}/${bin[cmd]}`, cmd], {
-            cwd: `${modulesDir}/.bin`,
+    // symlink local deps
+    await Promise.all(
+      deps.map(async dep => {
+        const [ns, basename] = dep.meta.name.startsWith('@')
+          ? dep.meta.name.split('/')
+          : ['.', dep.meta.name];
+        // symlink from global node_modules to local package folders
+        if (!(await exists(`${modulesDir}/${dep.meta.name}`))) {
+          await spawn('mkdir', ['-p', `${modulesDir}/${ns}`], {cwd: root});
+          await spawn('ln', ['-sf', dep.dir, basename], {
+            cwd: `${modulesDir}/${ns}`,
           });
         }
-      }
-    })
-  );
+
+        // symlink node_modules/.bin from local packages to global .bin
+        if (!(await exists(`${dep.dir}/node_modules/.bin`))) {
+          await spawn('mkdir', ['-p', 'node_modules'], {cwd: dep.dir});
+          await spawn('ln', ['-sf', `${modulesDir}/.bin`, '.bin'], {
+            cwd: `${dep.dir}/node_modules`,
+          });
+        }
+
+        // symlink from global node_modules/.bin to local bin scripts
+        const bin =
+          typeof dep.meta.bin === 'string'
+            ? {[dep.meta.name]: dep.meta.bin}
+            : dep.meta.bin;
+        if (!(await exists(`${modulesDir}/.bin`))) {
+          await spawn('mkdir', ['-p', `${modulesDir}/.bin`], {cwd: root});
+        }
+        for (const cmd in bin) {
+          if (!(await exists(`${modulesDir}/.bin/${cmd}`))) {
+            await spawn('ln', ['-sf', `${dep.dir}/${bin[cmd]}`, cmd], {
+              cwd: `${modulesDir}/.bin`,
+            });
+          }
+        }
+      })
+    );
+  }
 
   // package postinstall hook
   for (const dep of deps) {

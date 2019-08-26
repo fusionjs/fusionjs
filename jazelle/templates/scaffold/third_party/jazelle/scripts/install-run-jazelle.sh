@@ -22,6 +22,7 @@ TARBALL=$BIN/jazelle.tgz
 JAZELLE=$BIN/package/bin/cli.sh
 if [ ! -f $JAZELLE ]
 then
+  mkdir -p $BIN
   curl -L "https://registry.yarnpkg.com/jazelle/-/jazelle-$VERSION.tgz" -o $TARBALL
   tar xzf $TARBALL -C $BIN
 fi

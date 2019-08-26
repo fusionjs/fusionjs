@@ -35,7 +35,7 @@ type JWTConfig = {
 
 class JWTSession {
   cookie: string | void;
-  token: ?Object | string;
+  token: ?Object;
   config: JWTConfig;
 
   constructor(ctx: Context, config: JWTConfig) {
@@ -64,7 +64,9 @@ class JWTSession {
       this.token,
       "Cannot access token before loaded, please use this plugin before any of it's dependencies"
     );
-    return set(this.token, getFullPath(keyPath), val);
+    if (this.token) {
+      return set(this.token, getFullPath(keyPath), val);
+    } else return false;
   }
 }
 

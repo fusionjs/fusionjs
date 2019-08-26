@@ -1,5 +1,5 @@
-// flow-typed signature: 2f74d7a92ea1e01e4ee797c15673b1b1
-// flow-typed version: 14fe0603a9/koa_v2.x.x/flow_>=v0.94.x
+// flow-typed signature: 2fa3e44ff5e433212886fef4b19bee29
+// flow-typed version: c6154227d1/koa_v2.x.x/flow_>=v0.94.x <=v0.103.x
 
 /*
  * Type def from from source code of koa.
@@ -11,7 +11,7 @@
  * breaking: ctx.throw([status], [msg], [properties]) (caused by http-errors (#957) )
 **/
 declare module 'koa' {
-  declare type JSON = | string | number | boolean | null | typeof undefined | JSONObject | JSONArray;
+  declare type JSON = | string | number | boolean | null | void | JSONObject | JSONArray;
   declare type JSONObject = { [key: string]: JSON };
   declare type JSONArray = Array<JSON>;
 
@@ -19,7 +19,6 @@ declare module 'koa' {
     'set-cookie'?: Array<string>,
     [key: string]: string,
   };
-
 
   declare type RequestJSON = {
     'method': string,
@@ -303,4 +302,5 @@ declare module 'koa' {
     use(fn: Middleware): this,
   }
 
-  declare module.exports: Class<Application>}
+  declare module.exports: Class<Application>;
+}

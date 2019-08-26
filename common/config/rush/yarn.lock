@@ -2076,7 +2076,7 @@
     eslint-plugin-react "^7.14.2"
     eslint-plugin-react-hooks "^1.6.1"
     flow-bin "^0.102.0"
-    history "^4.7.2"
+    history "^4.9.0"
     nyc "^14.1.0"
     prettier "^1.18.2"
     prop-types "^15.7.2"
@@ -6201,7 +6201,7 @@ highland@^2.5.1:
   dependencies:
     util-deprecate "^1.0.2"
 
-history@^4.7.2:
+history@^4.7.2, history@^4.9.0:
   version "4.9.0"
   resolved "https://registry.npmjs.org/history/-/history-4.9.0.tgz#84587c2068039ead8af769e9d6a6860a14fa1bca"
   dependencies:
