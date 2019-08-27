@@ -6,6 +6,11 @@ def _jazelle_impl(ctx):
     NODE=$(cd `dirname "{node}"` && pwd)/$(basename {node})
     CLI=$(cd `dirname "{cli}"` && pwd)/$(basename {cli})
     CWD=`$NODE -e "console.log(require('path').dirname(require('fs').realpathSync('{manifest}')))"`
+    ROOT=`$NODE -e "console.log(require('path').dirname(require('fs').realpathSync('{cli}')))"`
+    if [ ! -d $ROOT/node_modules ]
+    then
+      $NODE $YARN --cwd $ROOT
+    fi
     cd $CWD && $NODE $CLI $@
     """.format(
       node = ctx.files._node[0].path,

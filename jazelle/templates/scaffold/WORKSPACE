@@ -3,7 +3,6 @@ http_archive(
   name = "jazelle",
   url = "https://registry.yarnpkg.com/jazelle/-/jazelle-VERSION.tgz",
   strip_prefix = "package",
-  patch_cmds = ["npm install"],
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
