@@ -559,21 +559,24 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     ].filter(Boolean),
     optimization: {
       runtimeChunk: runtime === 'client' && {name: 'runtime'},
-      splitChunks: runtime === 'client' && {
-        chunks: 'async',
-        cacheGroups: {
-          default: {
-            minChunks: 2,
-            reuseExistingChunk: true,
+      splitChunks:
+        runtime === 'client' &&
+        ((fusionConfig.optimization &&
+          fusionConfig.optimization.splitChunks) || {
+          chunks: 'async',
+          cacheGroups: {
+            default: {
+              minChunks: 2,
+              reuseExistingChunk: true,
+            },
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendor',
+              chunks: 'initial',
+              enforce: true,
+            },
           },
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendor',
-            chunks: 'initial',
-            enforce: true,
-          },
-        },
-      },
+        }),
       minimize: shouldMinify,
       minimizer: shouldMinify
         ? [
