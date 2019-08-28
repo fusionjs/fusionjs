@@ -26,7 +26,7 @@ function testSetup(dir /*: string */, ...rest /*: any */) {
     browser: () => browser,
     url: () => url,
     teardown: () => {
-      proc.kill();
+      proc.kill('SIGKILL');
       browser.close();
     },
   };

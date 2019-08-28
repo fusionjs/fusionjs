@@ -64,5 +64,5 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   t.ok(csrContent.includes('<div id="csr">6</div>'));
 
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

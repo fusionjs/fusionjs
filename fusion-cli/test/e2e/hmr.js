@@ -49,5 +49,5 @@ module.exports = async function testHmr(dir /*: any */) {
   fs.writeFileSync(path.resolve(dir, 'src/home.js'), fixtureContent);
 
   await browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 };

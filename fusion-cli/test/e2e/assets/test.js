@@ -29,7 +29,7 @@ test('`fusion build` with assets', async () => {
     t.equal(res.headers['cache-control'], 'public, max-age=31536000');
     t.equal(res.body, contents);
     t.equal(res.headers['x-test'], 'test');
-    proc.kill();
+    proc.kill('SIGKILL');
   } catch (e) {
     t.ifError(e);
   }
@@ -53,7 +53,7 @@ test('`fusion build` with assets', async () => {
       .toString();
     t.equal(res.body, contents);
     t.equal(res.headers['x-test'], 'test');
-    proc.kill();
+    proc.kill('SIGKILL');
   } catch (e) {
     t.ifError(e);
   }

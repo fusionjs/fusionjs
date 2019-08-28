@@ -34,5 +34,5 @@ test('promise instrumentation deduplicates translations', async () => {
     'translation keys within the same chunk are de-duped'
   );
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

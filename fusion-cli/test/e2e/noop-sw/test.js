@@ -25,5 +25,5 @@ test('sw bundle works with serialized/deserialized arguments', async () => {
     'arguments serialized/deserialized correctly'
   );
 
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

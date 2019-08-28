@@ -430,5 +430,5 @@ test('`fusion test --debug --env=jsdom,node`', async () => {
     'found a remote debug connection'
   );
 
-  child.kill();
+  child.kill('SIGKILL');
 }, 100000);

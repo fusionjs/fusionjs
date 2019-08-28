@@ -59,7 +59,7 @@ test('source maps for JS static assets are not served in production', async () =
     });
     t.equal(asset.statusCode, 200, 'Request for sourcemap via assetUrl works');
 
-    proc.kill();
+    proc.kill('SIGKILL');
   } catch (e) {
     t.ifError(e);
   }

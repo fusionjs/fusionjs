@@ -30,7 +30,7 @@ test('preserves function names', async () => {
   const className = await page.evaluate(() => window.__my_class_name__);
   /* eslint-enable */
 
-  proc.kill();
+  proc.kill('SIGKILL');
   browser.close();
 
   t.equal(functionName, 'myCoolFunction');

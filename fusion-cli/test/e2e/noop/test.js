@@ -35,7 +35,7 @@ test('`fusion dev --dir` works w/ relative dir', async () => {
     t.ok(!stderr.match(/Error/), 'does not error');
   });
   proc.stderr.destroy(); // disconnect the piped socket to prevent the Node process from hanging
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion dev` works', async () => {
@@ -46,7 +46,7 @@ test('`fusion dev` works', async () => {
   const resp = await request(`http://localhost:${port}/_static/client-main.js`);
   expect(resp.includes(`longVariableNameForElement`)).toEqual(true);
   t.ok(await exists(entry), 'Entry file gets compiled');
-  proc.kill();
+  proc.kill('SIGKILL');
 });
 
 test('`fusion build` works', async () => {
@@ -248,7 +248,7 @@ test('`fusion build` works in production with a CDN_URL', async () => {
     res.includes('https://cdn.com/test/client-legacy-vendor'),
     'includes a reference to client-legacy-vendor'
   );
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion build` works in production with default asset path and supplied ROUTE_PREFIX', async () => {
@@ -291,7 +291,7 @@ test('`fusion build` works in production with default asset path and supplied RO
     res.includes('/test-prefix/_static/client-legacy-vendor'),
     'includes a reference to client-legacy-vendor'
   );
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion start` does not throw error on client when using route prefix', async () => {
@@ -324,7 +324,7 @@ test('`fusion start` does not throw error on client when using route prefix', as
 
   t.ok('did not error');
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion build` works in production', async () => {
@@ -375,7 +375,7 @@ test('`fusion build` works in production', async () => {
       );
     }
   });
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('production works', async () => {
