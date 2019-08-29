@@ -106,6 +106,7 @@ async function runTests() {
     t(testStarlark),
     t(testYarnCommands),
     t(testBin),
+    t(testLockfileRegistryResolution),
   ]);
 
   await exec(`rm -rf ${__dirname}/tmp`);
@@ -1288,4 +1289,26 @@ async function testBin() {
   await new Promise(resolve => startStream.on('open', resolve));
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
+}
+
+async function testLockfileRegistryResolution() {
+  await exec(
+    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`
+  );
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+  });
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.yarnpkg.com')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
 }
