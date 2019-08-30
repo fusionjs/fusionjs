@@ -1,0 +1,8 @@
+{
+  "workspace": "sandbox",
+  "projects": [
+    "a",
+    "b",
+    "c"
+  ]
+}
