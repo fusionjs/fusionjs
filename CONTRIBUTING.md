@@ -14,6 +14,7 @@ This repo is maintained using [rushjs](https://rushjs.io). This doc will detail 
   - [Upgrade](#upgrade)
   - [node_modules/yarn.lock](#node_modulesyarnlock)
 - [Workflow](#workflow)
+- [Landing changes](#landing-changes)
 
 ---
 
@@ -60,3 +61,8 @@ Instead of `yarn.lock` being in the repository root or in individual packages, t
 ## Workflow
 
 For linting, testing, and type checking individual packages, there isn't much of a difference. Each package still has its own `flow`, `lint` and `test` scripts, so running `yarn test`, for example, still works as expected.
+
+
+## Landing changes
+
+If you're a member of the `fusionjs` org, or have write permissions to this repo, you can comment `!import` on a pull request, which will import the change to our parent monorepo for final review.
