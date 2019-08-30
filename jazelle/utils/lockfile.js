@@ -4,6 +4,10 @@ const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
+const {absoluteUrlToRelative} = require('./absolute-url-to-relative.js');
+const {
+  prependRegistryToLockfileEntry,
+} = require('./prepend-registry-to-lockfile-entry.js');
 
 /*::
 export type Report = {
@@ -218,15 +222,16 @@ const getDepEntries = meta => {
 /*::
 import type {PackageJson} from './get-local-dependencies.js';
 
-export type Lockfile = {
-  [string]: {
-    version: string,
-    resolved: string,
-    dependencies?: {
-      [string]: string,
-    }
+export type LockfileEntry = {
+  version: string,
+  resolved: string,
+  dependencies?: {
+    [string]: string,
   }
-}
+};
+export type Lockfile = {
+  [string]: LockfileEntry,
+};
 export type VersionSet = {
   dir: string,
   meta: PackageJson,
@@ -420,7 +425,7 @@ const update /*: Update */ = async ({
     }
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = prependRegistry(
+      lockfile[key] = prependRegistryToLockfileEntry(
         map[`${name}@${graph[key].version}`],
         registry
       );
@@ -476,8 +481,9 @@ const isBetterVersion = (version, range, graph, key) => {
   );
 };
 
-const getRegistry = async dir => {
-  const registry = await exec('yarn config get registry', {cwd: dir});
+const getRegistry = async cwd => {
+  const getRegistry = `${node} ${yarn} config get registry`;
+  const registry = await exec(getRegistry, {cwd});
   return registry ? registry.trim() : '';
 };
 
@@ -495,26 +501,10 @@ const convertToRelativeDomain = lockfile => {
   for (const key of Object.keys(lockfile)) {
     converted[key] = {
       ...lockfile[key],
-      resolved: lockfile[key].resolved.replace(/^https:\/\/.*?\/(.+)$/, '/$1'),
+      resolved: absoluteUrlToRelative(lockfile[key].resolved),
     };
   }
   return converted;
-};
-
-const prependRegistry = (lockfile, registry) => {
-  if (!lockfile || !registry) {
-    return lockfile;
-  }
-  const cleanRegistry =
-    registry[registry.length - 1] === '/' ? registry : registry + '/';
-  const cleanResolved =
-    lockfile.resolved[0] === '/'
-      ? lockfile.resolved.slice(1)
-      : lockfile.resolved;
-  return {
-    ...lockfile,
-    resolved: cleanRegistry + cleanResolved,
-  };
 };
 
 module.exports = {check, add, remove, upgrade, sync, merge};

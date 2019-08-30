@@ -40,6 +40,10 @@ const {getRootDir} = require('../utils/get-root-dir.js');
 const {installDeps} = require('../utils/install-deps.js');
 const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
+const {absoluteUrlToRelative} = require('../utils/absolute-url-to-relative.js');
+const {
+  prependRegistryToLockfileEntry,
+} = require('../utils/prepend-registry-to-lockfile-entry.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -107,6 +111,8 @@ async function runTests() {
     t(testYarnCommands),
     t(testBin),
     t(testLockfileRegistryResolution),
+    t(testAbsoluteUrlToRelative),
+    t(testPrependRegistryToLockfileEntry),
   ]);
 
   await exec(`rm -rf ${__dirname}/tmp`);
@@ -1310,5 +1316,79 @@ async function testLockfileRegistryResolution() {
       `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
       'utf8'
     )).includes('registry.npmjs.org')
+  );
+}
+
+async function testAbsoluteUrlToRelative() {
+  assert(
+    absoluteUrlToRelative(
+      'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  assert(
+    absoluteUrlToRelative(
+      'http://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  assert(
+    absoluteUrlToRelative(
+      'https://singledomain.com/@babel/cli/-/cli-7.5.5.tgz'
+    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  assert(
+    absoluteUrlToRelative(
+      'https://many.more.domains.so.crazy.com/@babel/cli/-/cli-7.5.5.tgz'
+    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+  );
+}
+/*
+export type LockfileEntry = {
+  version: string,
+  resolved: string,
+  dependencies?: {
+    [string]: string,
+  }
+};
+*/
+async function testPrependRegistryToLockfileEntry() {
+  // Test resolved has prefixed /
+  assert(
+    prependRegistryToLockfileEntry(
+      {
+        version: '1.0.0',
+        resolved: '/@babel/cli/-/cli-7.5.5.tgz',
+      },
+      'https://registry.npmjs.org'
+    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  // Test registery has suffix /
+  assert(
+    prependRegistryToLockfileEntry(
+      {
+        version: '1.0.0',
+        resolved: '@babel/cli/-/cli-7.5.5.tgz',
+      },
+      'https://registry.npmjs.org/'
+    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  // Test none have /
+  assert(
+    prependRegistryToLockfileEntry(
+      {
+        version: '1.0.0',
+        resolved: '@babel/cli/-/cli-7.5.5.tgz',
+      },
+      'https://registry.npmjs.org'
+    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+  );
+  // Test invalid registry input
+  assert(
+    prependRegistryToLockfileEntry(
+      {
+        version: '1.0.0',
+        resolved: '@babel/cli/-/cli-7.5.5.tgz',
+      },
+      ''
+    ).resolved === '@babel/cli/-/cli-7.5.5.tgz'
   );
 }
