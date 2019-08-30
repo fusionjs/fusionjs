@@ -4,10 +4,6 @@ const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
-const {absoluteUrlToRelative} = require('./absolute-url-to-relative.js');
-const {
-  prependRegistryToLockfileEntry,
-} = require('./prepend-registry-to-lockfile-entry.js');
 
 /*::
 export type Report = {
@@ -222,16 +218,14 @@ const getDepEntries = meta => {
 /*::
 import type {PackageJson} from './get-local-dependencies.js';
 
-export type LockfileEntry = {
-  version: string,
-  resolved: string,
-  dependencies?: {
-    [string]: string,
-  }
-};
 export type Lockfile = {
-  [string]: LockfileEntry,
-};
+  [string]: {
+    version: string,
+    dependencies?: {
+      [string]: string,
+    }
+  }
+}
 export type VersionSet = {
   dir: string,
   meta: PackageJson,
@@ -272,7 +266,7 @@ const update /*: Update */ = async ({
     );
   }
 
-  for (const {dir, meta, lockfile} of sets) {
+  for (const {meta, lockfile} of sets) {
     // handle removals
     if (removals.length > 0) {
       for (const name of removals) {
@@ -333,7 +327,8 @@ const update /*: Update */ = async ({
       const data = JSON.stringify(missing, null, 2);
       await exec(`mkdir -p ${cwd}`);
       await write(`${cwd}/package.json`, data, 'utf8');
-      await writeYarnRc(cwd, dir);
+      const yarnrc = '"--install.frozen-lockfile" false';
+      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
       const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
@@ -361,7 +356,8 @@ const update /*: Update */ = async ({
     if (missingTransitives.length > 0) {
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
       await exec(`mkdir -p ${cwd}`);
-      await writeYarnRc(cwd, dir);
+      const yarnrc = '"--add.frozen-lockfile" false';
+      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
       await write(`${cwd}/package.json`, '{}', 'utf8');
       const deps = missingTransitives.join(' ');
       const add = `yarn add ${deps} --ignore-engines`;
@@ -386,13 +382,7 @@ const update /*: Update */ = async ({
       const id = `${key}|${lockfile[key].version}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
-        // Before pushing the lockfile to the index, convert the registry to a relative path
-        // When we sync the dependencies later, we'll add them back
-        index[name].push({
-          lockfile: convertToRelativeDomain(lockfile),
-          key,
-          isAlias,
-        });
+        index[name].push({lockfile, key, isAlias});
         ids.add(id);
       }
     }
@@ -407,8 +397,7 @@ const update /*: Update */ = async ({
 
   // sync
   for (const item of sets) {
-    const {dir, meta} = item;
-    const registry = await getRegistry(dir);
+    const {meta} = item;
     const graph = {};
     for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
@@ -425,10 +414,7 @@ const update /*: Update */ = async ({
     }
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = prependRegistryToLockfileEntry(
-        map[`${name}@${graph[key].version}`],
-        registry
-      );
+      lockfile[key] = map[`${name}@${graph[key].version}`];
     }
 
     if (frozenLockfile) {
@@ -479,32 +465,6 @@ const isBetterVersion = (version, range, graph, key) => {
     satisfies(version, range) &&
     (!graph[key] || gt(version, graph[key].version))
   );
-};
-
-const getRegistry = async cwd => {
-  const getRegistry = `${node} ${yarn} config get registry`;
-  const registry = await exec(getRegistry, {cwd});
-  return registry ? registry.trim() : '';
-};
-
-const writeYarnRc = async (cwd, packageDir) => {
-  const yarnrc = ['"--install.frozen-lockfile" false'];
-  const registry = await getRegistry(packageDir);
-  if (registry) {
-    yarnrc.push(`--registry "${registry}"`);
-  }
-  await write(`${cwd}/.yarnrc`, yarnrc.join('\n'), 'utf8');
-};
-
-const convertToRelativeDomain = lockfile => {
-  const converted = {};
-  for (const key of Object.keys(lockfile)) {
-    converted[key] = {
-      ...lockfile[key],
-      resolved: absoluteUrlToRelative(lockfile[key].resolved),
-    };
-  }
-  return converted;
 };
 
 module.exports = {check, add, remove, upgrade, sync, merge};
