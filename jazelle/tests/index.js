@@ -1371,7 +1371,7 @@ async function testPrependRegistryToLockfileEntry() {
       'https://registry.npmjs.org/'
     ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
   );
-  // Test none have /
+  // Test none of the inputs have /
   assert(
     prependRegistryToLockfileEntry(
       {
