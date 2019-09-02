@@ -50,5 +50,7 @@ function asFontFaceSrc(urls) {
 }
 
 function asFontFaceStyles(styles = {}) {
-  return Object.keys(styles).map(key => `${toKebabCase(key)}: ${styles[key]};\n`);
+  return Object.keys(styles).map(
+    key => `${toKebabCase(key)}: ${styles[key]};\n`
+  );
 }
