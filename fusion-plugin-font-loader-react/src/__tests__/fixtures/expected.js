@@ -37,9 +37,9 @@ export const atomicFontFaces = `
   @font-face{font-family:"Lato-Thin";font-display:fallback;src:url("Lato-Thin.woff")format("woff"),url("Lato-Thin.woff2")format("woff2");}`;
 
 export const styledFontFaces = `
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Regular.woff") format("woff"), url("Lato-Regular.woff2") format("woff2"); font-weight: 400;}
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Bold.woff") format("woff"), url("Lato-Bold.woff2") format("woff2"); font-weight:600;}
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Thin.woff") format("woff"), url("Lato-Thin.woff2") format("woff2"); font-weight:200;}`;
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Regular.woff") format("woff"), url("Lato-Regular.woff2") format("woff2"); font-weight: 400; fontStyle: 'normal';}
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Bold.woff") format("woff"), url("Lato-Bold.woff2") format("woff2"); font-weight:600; fontStyle: 'normal';}
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Thin.woff") format("woff"), url("Lato-Thin.woff2") format("woff2"); font-weight:200; fontStyle: 'normal';}`;
 
 export const preloadLinks =
   '\n<link rel="preload" href="Lato-Regular.woff2" as="font" type="font/woff2" crossorigin>';
