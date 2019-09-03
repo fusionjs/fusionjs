@@ -94,12 +94,20 @@ const ApolloClientPlugin: FusionPlugin<
     endpoint = '/graphql',
     fetch,
     includeCredentials = 'same-origin',
-    apolloContext = ctx => ctx,
+    apolloContext,
     getApolloLinks,
     schema,
     resolvers,
     defaultOptions,
   }) {
+    if (apolloContext) {
+      /* eslint-disable-next-line no-console */
+      console.warn(
+        'WARNING: Setting a custom context via ApolloContextToken is deprecated. Please use the DI system to inject dependencies directly into your resolver plugins.'
+      );
+    } else {
+      apolloContext = ctx => ctx;
+    }
     function getClient(ctx, initialState) {
       const cache = getCache(ctx);
       const connectionLink =

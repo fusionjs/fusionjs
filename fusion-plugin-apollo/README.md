@@ -16,7 +16,6 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
 - [Usage](#usage)
 - [API](#api)
   - [Registration API](#registration-api)
-    - [`ApolloContextToken`](#apollocontexttoken)
     - [`ApolloClientToken`](#apolloclienttoken)
     - [`GraphQLSchemaToken`](#graphqlschematoken)
     - [`GraphQLEndpointToken`](#graphqlendpointtoken)
@@ -26,6 +25,7 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`GetDataFromTreeToken`](#getdatafromtreetoken)
     - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
     - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
+    - [`ApolloContextToken`](#apollocontexttoken)
   = [GQL Macro]($gql)
 
 ---
@@ -121,17 +121,6 @@ A plugin, which provides an instance of [Apollo Client](https://www.apollographq
 type ApolloClient<TInitialState> = (ctx: Context, initialState: TInitialState) => ApolloClientType;
 ```
 
-##### ApolloContextToken
-
-```js
-import {ApolloContextToken} from 'fusion-plugin-apollo';
-```
-
-Optional - A function which returns the apollo context. Defaults to the fusion context. See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
-
-```js
-type ApolloContext<T> = (ctx: Context => T) | T;
-```
 
 ##### GraphQLSchemaToken
 
@@ -222,6 +211,21 @@ app.register(ApolloBodyParserConfigToken, {
 ```
 
 Optional - Provides body parser config to koa-bodyparser for apollo-server. See https://github.com/koajs/bodyparser
+
+##### ApolloContextToken (DEPRECATED)
+
+```js
+import {ApolloContextToken} from 'fusion-plugin-apollo';
+```
+
+DEPRECATED - A function which returns the apollo context. Defaults to the fusion context. It is not recommended to add custom overrides here. Instead, you can
+provide dependencies to your resolvers using the fusion dependency injection system.
+
+See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
+
+```js
+type ApolloContext<T> = (ctx: Context => T) | T;
+```
 
 
 #### gql

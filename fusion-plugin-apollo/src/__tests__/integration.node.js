@@ -13,6 +13,7 @@ import {
   ApolloClientToken,
   ApolloClientPlugin,
   ApolloBodyParserConfigToken,
+  ApolloContextToken,
 } from '../index';
 import gql from 'graphql-tag';
 import App from 'fusion-react/dist';
@@ -81,6 +82,41 @@ test('Query request', async t => {
     },
   };
   const {server, client} = await testApp(el, {typeDefs, resolvers});
+  const result = await client.query({query});
+  t.deepEqual(result, {
+    data: {test: 'test'},
+    loading: false,
+    networkStatus: 7,
+    stale: false,
+  });
+  server.close();
+  t.end();
+});
+
+test('Query request with custom apollo context', async t => {
+  const query = gql`
+    query Test {
+      test
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        t.equal(ctx, 5, 'sets context correctly');
+        return 'test';
+      },
+    },
+  };
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+    // $FlowFixMe
+    app.register(ApolloContextToken, 5);
+  });
   const result = await client.query({query});
   t.deepEqual(result, {
     data: {test: 'test'},

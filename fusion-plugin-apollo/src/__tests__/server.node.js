@@ -17,6 +17,7 @@ import {
   ApolloClientToken,
   ApolloClientPlugin,
   GraphQLEndpointToken,
+  ApolloContextToken,
 } from '../index';
 import gql from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
@@ -104,6 +105,52 @@ test('SSR with <Query>', async t => {
     },
   };
   const app = testApp(el, {typeDefs, resolvers});
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
+  t.equal(ctx.rendered.includes('test'), true, 'renders correctly');
+  t.equal(ctx.rendered.includes('Loading'), false, 'does not render loading');
+  // $FlowFixMe
+  t.ok(ctx.body.includes('ROOT_QUERY'), 'includes serialized data');
+  t.end();
+});
+
+test('SSR with <Query> and custom context', async t => {
+  const query = gql`
+    query Test {
+      test
+    }
+  `;
+  const el = (
+    <div>
+      <Query query={query}>
+        {result => {
+          if (result.loading) {
+            return <div>Loading...</div>;
+          } else if (result.data) {
+            return <div>{result.data.test}</div>;
+          } else {
+            return <div>Failure</div>;
+          }
+        }}
+      </Query>
+    </div>
+  );
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {
+    Query: {
+      test(parent, args, ctx) {
+        t.equal(ctx, 5, 'sets custom context correctly');
+        return 'test';
+      },
+    },
+  };
+  const app = testApp(el, {typeDefs, resolvers});
+  // $FlowFixMe
+  app.register(ApolloContextToken, 5);
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
   t.equal(ctx.rendered.includes('test'), true, 'renders correctly');

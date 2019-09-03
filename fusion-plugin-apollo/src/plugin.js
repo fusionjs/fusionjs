@@ -117,21 +117,26 @@ export default (renderFn: Render) =>
         }
       };
       if (__NODE__ && schema) {
+        const getApolloContext = ctx => {
+          if (typeof apolloContext === 'function') {
+            return apolloContext(ctx);
+          }
+          return apolloContext;
+        };
         const server = new ApolloServer({
           schema,
           // investigate other options
           context: ({ctx}) => {
-            if (typeof apolloContext === 'function') {
-              return apolloContext(ctx);
-            }
-            return apolloContext;
+            return ctx;
           },
           executor: async requestContext => {
-            const client = getApolloClient(requestContext.context, {});
+            const fusionCtx = requestContext.context;
+            const apolloCtx = getApolloContext(fusionCtx);
+            const client = getApolloClient(fusionCtx, {});
             // $FlowFixMe
             const queryObservable = client.queryManager.getObservableFromLink(
               requestContext.document,
-              requestContext.context,
+              apolloCtx,
               requestContext.request.variables
             );
             return new Promise((resolve, reject) => {
