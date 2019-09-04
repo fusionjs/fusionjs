@@ -35,7 +35,7 @@ export function generateStyledFontFaces(fonts: StyledFontsObjectType) {
 font-family: "${fontName}";
 font-display: fallback;
 src: ${asFontFaceSrc(fontInstance.urls).join(',\n')};
-${String(asFontFaceStyles(fontInstance.styles))}}`
+${asFontFaceStyles(fontInstance.styles).join('')}}`
       );
     });
   });
@@ -49,8 +49,8 @@ function asFontFaceSrc(urls) {
   );
 }
 
-function asFontFaceStyles(styles) {
-  return styles
-    ? Object.keys(styles).map(key => `${toKebabCase(key)}: ${styles[key]};\n`)
-    : '';
+function asFontFaceStyles(styles = {}) {
+  return Object.keys(styles).map(
+    key => `${toKebabCase(key)}: ${styles[key]};\n`
+  );
 }
