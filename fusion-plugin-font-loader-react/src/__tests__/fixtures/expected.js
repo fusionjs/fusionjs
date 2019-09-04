@@ -9,24 +9,24 @@
 export const fallbackLookup = {
   depth0: {},
   depth1: {
-    'Lato-Bold': {
-      name: 'Lato-Regular',
-      styles: {fontWeight: 'bold'},
+    "Lato-Bold": {
+      name: "Lato-Regular",
+      styles: { fontWeight: "bold" },
     },
-    'Lato-Thin': {
-      name: 'Lato-Regular',
-      styles: {fontWeight: '100'},
+    "Lato-Thin": {
+      name: "Lato-Regular",
+      styles: { fontWeight: "100" },
     },
   },
   depth2: {
-    'Lato-Regular': {
-      name: 'Helvetica',
+    "Lato-Regular": {
+      name: "Helvetica",
     },
-    'Lato-Bold': {
-      name: 'Helvetica',
+    "Lato-Bold": {
+      name: "Helvetica",
     },
-    'Lato-Thin': {
-      name: 'Helvetica',
+    "Lato-Thin": {
+      name: "Helvetica",
     },
   },
 };
@@ -37,9 +37,9 @@ export const atomicFontFaces = `
   @font-face{font-family:"Lato-Thin";font-display:fallback;src:url("Lato-Thin.woff")format("woff"),url("Lato-Thin.woff2")format("woff2");}`;
 
 export const styledFontFaces = `
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Regular.woff") format("woff"), url("Lato-Regular.woff2") format("woff2"); font-weight: 400; fontStyle: 'normal';}
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Bold.woff") format("woff"), url("Lato-Bold.woff2") format("woff2"); font-weight:600; fontStyle: 'normal';}
-  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Thin.woff") format("woff"), url("Lato-Thin.woff2") format("woff2"); font-weight:200; fontStyle: 'normal';}`;
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Regular.woff") format("woff"), url("Lato-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal;}
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Bold.woff") format("woff"), url("Lato-Bold.woff2") format("woff2"); font-weight:600; font-style: normal;}
+  @font-face {font-family: "Lato"; font-display: fallback; src: url("Lato-Thin.woff") format("woff"), url("Lato-Thin.woff2") format("woff2"); font-weight:200; font-style: normal;}`;
 
 export const preloadLinks =
   '\n<link rel="preload" href="Lato-Regular.woff2" as="font" type="font/woff2" crossorigin>';
