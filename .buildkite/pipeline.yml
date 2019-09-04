@@ -1,10 +1,36 @@
 steps:
+  - label: ':yarn:'
+    timeout_in_minutes: 5
+    commands:
+      - '.buildkite/generate-package-files.sh'
+    plugins:
+      'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
+        run: ci
+        env:
+          - BUILDKITE_AGENT_ACCESS_TOKEN
+          - BUILDKITE_BUILD_ID
+          - BUILDKITE_JOB_ID
+        volumes:
+          - ${BUILDKITE_AGENT_BINARY_PATH:-/usr/bin/buildkite-agent}:/usr/bin/buildkite-agent
+    agents:
+      queue: builders
+  - wait
   - label: ':docker:'
     timeout_in_minutes: 20
     plugins:
-      'docker-compose#v3.0.0':
+      'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
+        pre-build-command: '.buildkite/install-cache.sh'
         build: ci
+        cache-from: ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-latest
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
+    agents:
+      queue: builders
+  - wait
+  - label: ':rocket:'
+    timeout_in_minutes: 5
+    plugins:
+      'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
+        push: ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-latest
     agents:
       queue: builders
   - wait
@@ -12,7 +38,7 @@ steps:
     timeout_in_minutes: 5
     command: .buildkite/bootstrap.sh | buildkite-agent pipeline upload
     plugins:
-      'docker-compose#v3.0.0':
+      'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
         run: ci
         env:
           - BUILDKITE_AGENT_ACCESS_TOKEN
