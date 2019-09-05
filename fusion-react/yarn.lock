@@ -954,10 +954,10 @@
     invariant "^2.2.2"
     semver "^5.3.0"
 
-"@rtsao/react-ssr-prepass@^1.0.5":
-  version "1.0.6"
-  resolved "https://registry.npmjs.org/@rtsao/react-ssr-prepass/-/react-ssr-prepass-1.0.6.tgz#181daa4c52165aba9aecd7af3b8bb7e51cdaa3fb"
-  integrity sha512-KWfGjEchaEArcibKepmLpXKZbJIg1DDokG+eAHjsbzNnFCXWxJQnli3PAdkFGeLuDON+jtc48UVO0FRaRw+MxQ==
+"@rtsao/react-ssr-prepass@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/@rtsao/react-ssr-prepass/-/react-ssr-prepass-1.0.7.tgz#236507285ffe0f4a94e2a4f0181ff7d0eb76ee7d"
+  integrity sha512-CwC2vXWm5+OcgUbKdOlNcM45lC5iueVKs6XIqjCplOWmTV/0qaG2iSk+ySEhNJeNKNC6fCK2Rj1dGmPMTuqERA==
   dependencies:
     object-is "^1.0.1"
 
