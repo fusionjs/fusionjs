@@ -1,11 +1,11 @@
 [ignore]
-.*/common/temp/node_modules/@uber/node-rosetta/.*
+.*/node_modules/@uber/node-rosetta/.*
 .*/templates/.*
 .*/test-artifacts/.*
 
 [include]
-../common/temp/node_modules
-../../common/temp/node_modules
+../node_modules
+../../node_modules
 
 [libs]
 ../flow-typed/
