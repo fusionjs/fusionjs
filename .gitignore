@@ -63,3 +63,7 @@ common/temp/**
 package-deps.json
 
 dist
+
+# Jazelle files
+third_party/jazelle/temp
+bazel-*

@@ -1,3 +1,10 @@
 [ignore]
 .*/tests/fixtures/.*
 .*/tests/tmp/.*
+
+[include]
+../node_modules
+../../node_modules
+
+[libs]
+../flow-typed/
