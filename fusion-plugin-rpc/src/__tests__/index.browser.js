@@ -233,6 +233,69 @@ test('success status request w/args and header', t => {
   t.end();
 });
 
+test('success status request w/form data', t => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method-client');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
+  const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        // eslint-disable-next-line cup/no-undef
+        const formData = new FormData();
+        formData.append('random', 'some-random');
+        formData.append('foo', 'foo content');
+        // TODO do we need to test with file as well?
+        // formData.append('file', '<how to do this>');
+        rpc
+          .request('test', formData)
+          .then(([url, options]) => {
+            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              undefined,
+              'content type is not defined, browser will set it automatically'
+            );
+            // In tests or log, this will show up as `{}`. Don't be fooled~
+            t.equals(
+              options.body,
+              formData,
+              'has right body of form data type'
+            );
+            t.deepEqual(
+              Array.from(options.body.entries()),
+              [['random', 'some-random'], ['foo', 'foo content']],
+              'has right body of form data content'
+            );
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
+});
+
 test('failure status request', t => {
   const mockFetchAsFailure = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});

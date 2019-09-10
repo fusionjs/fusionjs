@@ -64,15 +64,26 @@ class RPC {
     const startTime = Date.now();
     const localeParam = this.localeCode ? `?localeCode=${this.localeCode}` : '';
 
-    // TODO(#3) handle args instanceof FormData
-    return fetch(`${apiPath}${rpcId}${localeParam}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(headers || {}),
-      },
-      body: JSON.stringify(args || {}),
-    })
+    return fetch(
+      `${apiPath}${rpcId}${localeParam}`,
+      args instanceof FormData
+        ? {
+            method: 'POST',
+            headers: {
+              // Content-Type will be set automatically
+              ...(headers || {}),
+            },
+            body: args,
+          }
+        : {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(headers || {}),
+            },
+            body: JSON.stringify(args || {}),
+          }
+    )
       .then(r => r.json())
       .then(args => {
         const {status, data} = args;
