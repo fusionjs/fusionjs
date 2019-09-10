@@ -10,6 +10,17 @@
   "bin": {
     "fusion": "bin/cli.js"
   },
+  "files": [
+    "bin",
+    "build",
+    "commands",
+    "entries",
+    "lib",
+    "plugins",
+    "get-compilation-metadata.js",
+    "serverless.js",
+    "sw.js"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "git clean -Xfd test/fixtures && jest --maxWorkers 1",
