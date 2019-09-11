@@ -21,7 +21,9 @@ steps:
       'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
         pre-build-command: '.buildkite/install-cache.sh'
         build: ci
-        cache-from: ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-latest
+        cache-from:
+          - ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-$BUILDKITE_BRANCH
+          - ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-master
         image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
     agents:
       queue: builders
@@ -30,7 +32,7 @@ steps:
     timeout_in_minutes: 5
     plugins:
       'derekju/docker-compose#1346e78909a17f800064a37e7dfb716200d514a4':
-        push: ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-latest
+        push: ci:027047743804.dkr.ecr.us-east-2.amazonaws.com/uber:public-$BUILDKITE_BRANCH
     agents:
       queue: builders
   - wait
