@@ -24,8 +24,10 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`GetApolloClientLinksToken`](#getapolloclientlinkstoken)
     - [`GetDataFromTreeToken`](#getdatafromtreetoken)
     - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
+    - [`ApolloClientLocalSchemaToken`](#apolloclientlocalschematoken)
     - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
     - [`ApolloContextToken`](#apollocontexttoken)
+
   = [GQL Macro]($gql)
 
 ---
@@ -199,6 +201,14 @@ import { ApolloClientResolversToken } from "fusion-apollo-universal-client";
 ```
 
 Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
+
+##### `ApolloClientLocalSchemaToken`
+
+```js
+import { ApolloClientLocalSchemaToken } from "fusion-apollo-universal-client";
+```
+
+Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
 
 ##### `ApolloBodyParserConfigToken`
 

@@ -15,7 +15,11 @@ import gql from 'graphql-tag';
 import unfetch from 'unfetch';
 import test from 'tape-cup';
 
-import {ApolloClientResolversToken, ApolloClientPlugin} from '../index.js';
+import {
+  ApolloClientResolversToken,
+  ApolloClientPlugin,
+  ApolloClientLocalSchemaToken,
+} from '../index.js';
 
 test('local state management', async t => {
   const app = new App('el', el => el);
@@ -32,12 +36,22 @@ test('local state management', async t => {
       }
     `): any)
   );
+
+  app.register(
+    ApolloClientLocalSchemaToken,
+    gql`
+      extend type Query {
+        queryClient: String
+      }
+    `
+  );
   app.register(FetchToken, unfetch);
 
   let mutationCalled = false;
   app.register(ApolloClientResolversToken, {
     Query: {
       query: () => 'foo',
+      queryClient: () => 'client',
     },
     Mutation: {
       mutate: async () => {
@@ -58,10 +72,12 @@ test('local state management', async t => {
           query: gql`
             query {
               query @client
+              queryClient @client
             }
           `,
         });
         t.equal(data.query, 'foo');
+        t.equal(data.queryClient, 'client');
 
         t.equal(mutationCalled, false);
         await client.mutate({
