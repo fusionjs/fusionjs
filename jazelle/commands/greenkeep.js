@@ -34,7 +34,7 @@ const greenkeep /*: Greenkeep */ = async ({root, name, version, from}) => {
         update(meta, 'optionalDependencies', name, local.meta.version, from);
         await write(
           `${cwd}/package.json`,
-          JSON.stringify(meta, null, 2),
+          `${JSON.stringify(meta, null, 2)}\n`,
           'utf8'
         );
       })

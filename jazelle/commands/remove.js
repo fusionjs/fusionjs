@@ -30,7 +30,11 @@ const remove /*: Remove */ = async ({root, cwd, name}) => {
       delete meta.peerDependencies[name];
     if (meta.optionalDependencies && meta.optionalDependencies[name])
       delete meta.optionalDependencies[name];
-    await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(meta, null, 2)}\n`,
+      'utf8'
+    );
   } else {
     const {projects} = await getManifest({root});
     const deps = await getLocalDependencies({

@@ -55,7 +55,7 @@ const bump /*: Bump */ = async ({
       dep.meta.version = next;
       await write(
         `${dep.dir}/package.json`,
-        JSON.stringify(dep.meta, null, 2),
+        `${JSON.stringify(dep.meta, null, 2)}\n`,
         'utf8'
       );
 

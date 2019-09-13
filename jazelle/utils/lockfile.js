@@ -192,7 +192,11 @@ const writeVersionSets = async ({sets}) => {
   await Promise.all(
     sets.map(async ({dir, meta, lockfile}) => {
       await exec(`mkdir -p ${dir}`);
-      await write(`${dir}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+      await write(
+        `${dir}/package.json`,
+        `${JSON.stringify(meta, null, 2)}\n`,
+        'utf8'
+      );
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
     })
   );
@@ -330,9 +334,12 @@ const update /*: Update */ = async ({
     }
     if (Object.keys(missing).length > 0) {
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const data = JSON.stringify(missing, null, 2);
       await exec(`mkdir -p ${cwd}`);
-      await write(`${cwd}/package.json`, data, 'utf8');
+      await write(
+        `${cwd}/package.json`,
+        `${JSON.stringify(missing, null, 2)}\n`,
+        'utf8'
+      );
       await writeYarnRc(cwd, dir);
       const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
@@ -362,7 +369,7 @@ const update /*: Update */ = async ({
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
       await exec(`mkdir -p ${cwd}`);
       await writeYarnRc(cwd, dir);
-      await write(`${cwd}/package.json`, '{}', 'utf8');
+      await write(`${cwd}/package.json`, '{}\n', 'utf8');
       const deps = missingTransitives.join(' ');
       const add = `yarn add ${deps} --ignore-engines`;
       await exec(add, {cwd}, [process.stdout, process.stderr]);

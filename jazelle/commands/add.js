@@ -54,7 +54,11 @@ const add /*: Add */ = async ({
       }
     }
     meta[type][name] = local.meta.version;
-    await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(meta, null, 2)}\n`,
+      'utf8'
+    );
   } else {
     // adding does not dedupe transitives, since consumers will rarely want to check if they introduced regressions in unrelated projects
     if (!version) {
