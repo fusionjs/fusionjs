@@ -14,6 +14,7 @@ import {createPlugin, memoize, html} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import bodyparser from 'koa-bodyparser';
+import querystring from 'querystring';
 
 import {I18nLoaderToken} from './tokens.js';
 import createLoader from './loader.js';
@@ -166,7 +167,10 @@ const pluginFactory: () => PluginType = () =>
           } catch (e) {
             ctx.request.body = [];
           }
-          const keys = ctx.request.body || [];
+          const keys =
+            ctx.request.body ||
+            JSON.parse(querystring.parse(ctx.querystring).keys || '[]') ||
+            [];
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
