@@ -167,9 +167,10 @@ const pluginFactory: () => PluginType = () =>
           } catch (e) {
             ctx.request.body = [];
           }
-          const keys = ctx.request.body || JSON.parse(
-            querystring.parse(ctx.querystring).keys || '[]'
-          ) || [];
+          const keys =
+            ctx.request.body ||
+            JSON.parse(querystring.parse(ctx.querystring).keys || '[]') ||
+            [];
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
