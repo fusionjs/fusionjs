@@ -187,7 +187,7 @@ let loaded = false,
   savedTest;
 function getExperimentalTransformTest(path) {
   if (!loaded) {
-    const {experimentalTransformTest} = loadFusionRC(path);
+    const {experimentalTransformTest} = loadFusionRC(path, true);
     savedTest = experimentalTransformTest;
     loaded = true;
   }

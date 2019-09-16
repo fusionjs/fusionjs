@@ -34,16 +34,19 @@ export type FusionRC = {
 };
 */
 
-module.exports = function validateConfig(dir /*: string */) /*: FusionRC */ {
+module.exports = function validateConfig(
+  dir /*: string */,
+  silent /*: boolean */ = false
+) /*: FusionRC */ {
   const configPath = path.join(dir, '.fusionrc.js');
   let config;
   if (fs.existsSync(configPath)) {
     // $FlowFixMe
     config = require(configPath);
-    if (!isValid(config)) {
+    if (!isValid(config, silent)) {
       throw new Error('.fusionrc.js is invalid');
     }
-    if (!loggedNotice && config.babel) {
+    if (!loggedNotice && config.babel && !silent) {
       console.log(chalk.dim('Using custom Babel config from .fusionrc.js'));
       console.warn(
         chalk.yellow(
@@ -60,7 +63,7 @@ module.exports = function validateConfig(dir /*: string */) /*: FusionRC */ {
   return config;
 };
 
-function isValid(config) {
+function isValid(config, silent) {
   if (!(typeof config === 'object' && config !== null)) {
     throw new Error('.fusionrc.js must export an object');
   }
@@ -92,9 +95,11 @@ function isValid(config) {
   }
 
   if (config.assumeNoImportSideEffects) {
-    console.log(
-      'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsTest instead.'
-    );
+    if (!silent) {
+      console.log(
+        'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsTest instead.'
+      );
+    }
     config.experimentalSideEffectsTest = (file, defaults) => false;
     delete config.assumeNoImportSideEffects;
   }
@@ -111,9 +116,12 @@ function isValid(config) {
   }
 
   if (config.experimentalCompile) {
-    console.log(
-      'WARNING: experimentalCompile is deprecated. Use experimentalTransformTest instead.'
-    );
+    if (!silent) {
+      console.log(
+        'WARNING: experimentalCompile is deprecated. Use experimentalTransformTest instead.'
+      );
+    }
+
     config.experimentalTransformTest = (file, defaults) => {
       return 'all';
     };
