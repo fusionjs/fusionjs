@@ -23,7 +23,6 @@ export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   splitChunks?: any,
   assumeNoImportSideEffects?: boolean,
-  experimentalSideEffectsTest?: (modulePath: string, defaults: boolean) => boolean,
   experimentalCompile?: boolean,
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
@@ -74,7 +73,6 @@ function isValid(config, silent) {
         'babel',
         'splitChunks',
         'assumeNoImportSideEffects',
-        'experimentalSideEffectsTest',
         'experimentalCompile',
         'experimentalTransformTest',
         'experimentalBundleTest',
@@ -85,23 +83,12 @@ function isValid(config, silent) {
       ].includes(key)
     )
   ) {
-    throw new Error(`Invalid property in .fusionrc.js`);
-  }
-
-  if (config.assumeNoImportSideEffects && config.experimentalSideEffectsTest) {
-    throw new Error(
-      `Cannot use both assumeNoImportSideEffects and experimentalSideEffectsTest in .fusionrc.js`
-    );
-  }
-
-  if (config.assumeNoImportSideEffects) {
-    if (!silent) {
-      console.log(
-        'WARNING: assumeNoImportSideEffects is deprecated. Use experimentalSideEffectsTest instead.'
+    if (config.experimentalSideEffectsTest) {
+      throw new Error(
+        `experimentalSideEffectsTest has been removed. Use assumeNoImportSideEffects instead.`
       );
     }
-    config.experimentalSideEffectsTest = (file, defaults) => false;
-    delete config.assumeNoImportSideEffects;
+    throw new Error(`Invalid property in .fusionrc.js`);
   }
 
   if (config.experimentalCompile && config.experimentalTransformTest) {
@@ -109,6 +96,7 @@ function isValid(config, silent) {
       `Cannot use both experimentalCompile and experimentalTransformTest in .fusionrc.js`
     );
   }
+
   if (config.experimentalCompile && config.experimentalBundleTest) {
     throw new Error(
       `Cannot use both experimentalCompile and experimentalBundleTest in .fusionrc.js`
