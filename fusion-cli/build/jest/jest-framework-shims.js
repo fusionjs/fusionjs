@@ -8,6 +8,10 @@
 
 /* eslint-env node */
 
+process.on('unhandledRejection', e => {
+  throw e;
+});
+
 global.requestAnimationFrame = callback => {
   setTimeout(callback, 0);
 };
@@ -17,3 +21,8 @@ global.requestAnimationFrame = callback => {
 global.__BROWSER__ = Boolean(global.window);
 global.__NODE__ = !global.__BROWSER__;
 global.__DEV__ = process.env !== 'production';
+
+if (__NODE__) {
+  // fixes issue when react testing library is pulled into node test
+  process.env.RTL_SKIP_AUTO_CLEANUP = 'true';
+}

@@ -68,6 +68,7 @@ const styledFonts: StyledFontsObjectType = {
       },
       styles: {
         fontWeight: 400,
+        fontStyle: 'normal',
       },
     },
     {
@@ -77,6 +78,7 @@ const styledFonts: StyledFontsObjectType = {
       },
       styles: {
         fontWeight: 600,
+        fontStyle: 'normal',
       },
     },
     {
@@ -86,6 +88,7 @@ const styledFonts: StyledFontsObjectType = {
       },
       styles: {
         fontWeight: 200,
+        fontStyle: 'normal',
       },
     },
   ],

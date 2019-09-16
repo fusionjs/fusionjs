@@ -19,6 +19,7 @@ import {HttpLink} from 'apollo-link-http';
 import {from as apolloLinkFrom} from 'apollo-link';
 import {SchemaLink} from 'apollo-link-schema';
 import type {ApolloCache, ApolloClientOptions} from 'apollo-client';
+import type {DocumentNode} from 'graphql';
 
 import type {Context, FusionPlugin, Token} from 'fusion-core';
 import {InMemoryCache} from 'apollo-cache-inmemory';
@@ -45,6 +46,10 @@ export const ApolloClientResolversToken: Token<
   ResolverMapType | $ReadOnlyArray<ResolverMapType>
 > = createToken('ApolloClientResolversToken');
 
+export const ApolloClientLocalSchemaToken: Token<
+  string | string[] | DocumentNode | DocumentNode[]
+> = createToken('ApolloClientLocalSchemaToken');
+
 type ResolverMapType = {
   +[key: string]: {
     +[field: string]: (
@@ -63,6 +68,7 @@ type ApolloClientDepsType = {
   includeCredentials: typeof ApolloClientCredentialsToken.optional,
   apolloContext: typeof ApolloContextToken.optional,
   getApolloLinks: typeof GetApolloClientLinksToken.optional,
+  typeDefs: typeof ApolloClientLocalSchemaToken.optional,
   schema: typeof GraphQLSchemaToken.optional,
   resolvers: typeof ApolloClientResolversToken.optional,
   defaultOptions: typeof ApolloClientDefaultOptionsToken.optional,
@@ -81,6 +87,7 @@ const ApolloClientPlugin: FusionPlugin<
     includeCredentials: ApolloClientCredentialsToken.optional,
     apolloContext: ApolloContextToken.optional,
     getApolloLinks: GetApolloClientLinksToken.optional,
+    typeDefs: ApolloClientLocalSchemaToken.optional,
     schema: GraphQLSchemaToken.optional,
     resolvers: ApolloClientResolversToken.optional,
     defaultOptions: ApolloClientDefaultOptionsToken.optional,
@@ -94,12 +101,21 @@ const ApolloClientPlugin: FusionPlugin<
     endpoint = '/graphql',
     fetch,
     includeCredentials = 'same-origin',
-    apolloContext = ctx => ctx,
+    apolloContext,
     getApolloLinks,
+    typeDefs,
     schema,
     resolvers,
     defaultOptions,
   }) {
+    if (apolloContext) {
+      /* eslint-disable-next-line no-console */
+      console.warn(
+        'WARNING: Setting a custom context via ApolloContextToken is deprecated. Please use the DI system to inject dependencies directly into your resolver plugins.'
+      );
+    } else {
+      apolloContext = ctx => ctx;
+    }
     function getClient(ctx, initialState) {
       const cache = getCache(ctx);
       const connectionLink =
@@ -127,6 +143,7 @@ const ApolloClientPlugin: FusionPlugin<
         link: apolloLinkFrom(links),
         cache: cache.restore(initialState),
         resolvers,
+        typeDefs,
         defaultOptions,
       });
       return client;

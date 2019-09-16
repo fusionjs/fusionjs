@@ -18,7 +18,7 @@ test('`fusion dev` top-level error', async () => {
     'should respond with server startup error'
   );
   proc.stderr.destroy();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion dev` recovering from errors', async () => {
@@ -41,7 +41,7 @@ test('`fusion dev` recovering from errors', async () => {
         'should log server startup error'
       );
       proc.stderr.destroy();
-      proc.kill();
+      proc.kill('SIGKILL');
     } else {
       fs.writeFileSync(mainPath, fs.readFileSync(mainPath));
     }

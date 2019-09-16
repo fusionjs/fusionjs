@@ -23,7 +23,7 @@ test('`fusion dev` works with websockets', async () => {
     client.on('message', message => {
       expect(message).toEqual('hello');
       client.close();
-      proc.kill();
+      proc.kill('SIGKILL');
       resolve();
     });
   });
@@ -43,7 +43,7 @@ test('`fusion build/start` works with websockets', async () => {
     client.on('message', message => {
       expect(message).toEqual('hello');
       client.close();
-      proc.kill();
+      proc.kill('SIGKILL');
       resolve();
     });
   });

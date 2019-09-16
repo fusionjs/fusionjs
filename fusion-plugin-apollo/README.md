@@ -16,7 +16,6 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
 - [Usage](#usage)
 - [API](#api)
   - [Registration API](#registration-api)
-    - [`ApolloContextToken`](#apollocontexttoken)
     - [`ApolloClientToken`](#apolloclienttoken)
     - [`GraphQLSchemaToken`](#graphqlschematoken)
     - [`GraphQLEndpointToken`](#graphqlendpointtoken)
@@ -25,7 +24,10 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`GetApolloClientLinksToken`](#getapolloclientlinkstoken)
     - [`GetDataFromTreeToken`](#getdatafromtreetoken)
     - [`ApolloClientResolversToken`](#apolloclientresolverstoken)
+    - [`ApolloClientLocalSchemaToken`](#apolloclientlocalschematoken)
     - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
+    - [`ApolloContextToken`](#apollocontexttoken)
+
   = [GQL Macro]($gql)
 
 ---
@@ -121,17 +123,6 @@ A plugin, which provides an instance of [Apollo Client](https://www.apollographq
 type ApolloClient<TInitialState> = (ctx: Context, initialState: TInitialState) => ApolloClientType;
 ```
 
-##### ApolloContextToken
-
-```js
-import {ApolloContextToken} from 'fusion-plugin-apollo';
-```
-
-Optional - A function which returns the apollo context. Defaults to the fusion context. See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
-
-```js
-type ApolloContext<T> = (ctx: Context => T) | T;
-```
 
 ##### GraphQLSchemaToken
 
@@ -211,6 +202,14 @@ import { ApolloClientResolversToken } from "fusion-apollo-universal-client";
 
 Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
 
+##### `ApolloClientLocalSchemaToken`
+
+```js
+import { ApolloClientLocalSchemaToken } from "fusion-apollo-universal-client";
+```
+
+Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
+
 ##### `ApolloBodyParserConfigToken`
 
 ```js
@@ -222,6 +221,21 @@ app.register(ApolloBodyParserConfigToken, {
 ```
 
 Optional - Provides body parser config to koa-bodyparser for apollo-server. See https://github.com/koajs/bodyparser
+
+##### ApolloContextToken (DEPRECATED)
+
+```js
+import {ApolloContextToken} from 'fusion-plugin-apollo';
+```
+
+DEPRECATED - A function which returns the apollo context. Defaults to the fusion context. It is not recommended to add custom overrides here. Instead, you can
+provide dependencies to your resolvers using the fusion dependency injection system.
+
+See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
+
+```js
+type ApolloContext<T> = (ctx: Context => T) | T;
+```
 
 
 #### gql

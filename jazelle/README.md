@@ -72,7 +72,6 @@ http_archive(
   url = "https://registry.yarnpkg.com/jazelle/-/jazelle-[version].tgz",
   sha256 = "SHA 256 goes here",
   strip_prefix = "package",
-  patch_cmds = ["npm install"],
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
@@ -1204,7 +1203,7 @@ Jazelle SHA256 checksum can be computed through the following command:
 curl -fLs https://github.com/lhorie/jazelle/releases/download/v[version]/jazelle-[version].tar.gz | openssl sha256
 ```
 
-Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUMS256.txt`. Use the checksums for these files:
+Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUM256.txt`. Use the checksums for these files:
 
 - `node-v[version]-darwin-x64.tar.gz`
 - `node-v[version]-linux-x64.tar.xz`

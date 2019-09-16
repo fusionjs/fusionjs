@@ -7,7 +7,7 @@
  */
 
 /* eslint-env node */
-import {getDataFromTree as defaultGetDataFromTree} from 'react-apollo';
+import {getDataFromTree as defaultGetDataFromTree} from '@apollo/react-ssr';
 import type {Logger} from 'fusion-tokens';
 
 import type {Element} from 'react';

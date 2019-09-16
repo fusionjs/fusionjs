@@ -40,5 +40,5 @@ test('`fusion build` app chunk group loading', async () => {
     EXPECTED_PRELOADED_CHUNK_COUNT
   );
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

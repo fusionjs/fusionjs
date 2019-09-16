@@ -211,7 +211,7 @@ test('`fusion build` app with dynamic imports integration', async () => {
   );
 
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
   proxy.close();
 }, 100000);
 
@@ -289,5 +289,5 @@ test('`fusion build` app with Safari user agent and same-origin', async () => {
     'all scripts have nonce attribute'
   );
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

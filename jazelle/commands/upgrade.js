@@ -35,7 +35,11 @@ const upgrade /*: Upgrade */ = async ({root, cwd, name, version}) => {
       meta.peerDependencies[name] = local.meta.version;
     if (meta.optionalDependencies && meta.optionalDependencies[name])
       meta.optionalDependencies[name] = local.meta.version;
-    await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(meta, null, 2)}\n`,
+      'utf8'
+    );
   } else {
     const additions = [{name, range: version}];
     const {projects} = await getManifest({root});

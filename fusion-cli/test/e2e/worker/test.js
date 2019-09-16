@@ -44,5 +44,5 @@ test('`fusion build` app with worker integration', async () => {
   t.ok(content.includes('worker2-included'), 'worker 2 included');
 
   await browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

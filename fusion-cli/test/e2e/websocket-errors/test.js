@@ -22,7 +22,7 @@ test('`fusion dev` handles websocket failures', async () => {
       const resp = await request(`http://localhost:${port}/health`);
       expect(resp).toBeTruthy();
       client.close();
-      proc.kill();
+      proc.kill('SIGKILL');
       resolve();
     });
   });
@@ -40,7 +40,7 @@ test('`fusion build/start` handles websocket failures', async () => {
       const resp = await request(`http://localhost:${port}/health`);
       expect(resp).toBeTruthy();
       client.close();
-      proc.kill();
+      proc.kill('SIGKILL');
       resolve();
     });
   });

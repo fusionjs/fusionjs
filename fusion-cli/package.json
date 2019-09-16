@@ -10,6 +10,17 @@
   "bin": {
     "fusion": "bin/cli.js"
   },
+  "files": [
+    "bin",
+    "build",
+    "commands",
+    "entries",
+    "lib",
+    "plugins",
+    "get-compilation-metadata.js",
+    "serverless.js",
+    "sw.js"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "git clean -Xfd test/fixtures && jest --maxWorkers 1",
@@ -90,7 +101,7 @@
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "globby": "^8.0.1",
-    "graphql": "^14.4.2",
+    "graphql": "14.4.2",
     "locale": "^0.1.0",
     "prettier": "^1.18.2",
     "puppeteer": "^1.15.0",

@@ -138,7 +138,7 @@ Required. An expiration time in seconds.
 ###### Types
 
 ```flow
-type CookieName = number;
+type Expires = number;
 ```
 
 ---
