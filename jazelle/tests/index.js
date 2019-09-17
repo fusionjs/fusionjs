@@ -40,10 +40,7 @@ const {getRootDir} = require('../utils/get-root-dir.js');
 const {installDeps} = require('../utils/install-deps.js');
 const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
-const {absoluteUrlToRelative} = require('../utils/absolute-url-to-relative.js');
-const {
-  prependRegistryToLockfileEntry,
-} = require('../utils/prepend-registry-to-lockfile-entry.js');
+const {getRegistryFromUrl} = require('../utils/get-registry-from-url.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -111,8 +108,8 @@ async function runTests() {
     t(testYarnCommands),
     t(testBin),
     t(testLockfileRegistryResolution),
-    t(testAbsoluteUrlToRelative),
-    t(testPrependRegistryToLockfileEntry),
+    t(testLockfileRegistryResolutionMultirepo),
+    t(testGetRegistryFromUrl),
   ]);
 
   await exec(`rm -rf ${__dirname}/tmp`);
@@ -1315,80 +1312,72 @@ async function testLockfileRegistryResolution() {
     (await read(
       `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
       'utf8'
+    )).includes('registry.yarnpkg.com')
+  );
+  // Test with default registry
+  await exec(`rm -rf ${__dirname}/tmp/lockfile-registry-resolution`);
+  await exec(
+    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`
+  );
+  await exec(`rm ${__dirname}/tmp/lockfile-registry-resolution/.yarnrc`);
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+  });
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
+      'utf8'
     )).includes('registry.npmjs.org')
   );
 }
 
-async function testAbsoluteUrlToRelative() {
+async function testLockfileRegistryResolutionMultirepo() {
+  await exec(
+    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution-multirepo/ ${__dirname}/tmp/lockfile-registry-resolution-multirepo`
+  );
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution-multirepo`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a`,
+  });
+  // Expect that even though multiple projects are pinned to the same dependency version,
+  // install will honor the existance of any registry overrides and write those preferences
+  // back to the individual lock files
   assert(
-    absoluteUrlToRelative(
-      'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
-    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a/yarn.lock`,
+      'utf8'
+    )).includes('registry.yarnpkg.com')
   );
   assert(
-    absoluteUrlToRelative(
-      'http://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
-    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
   );
   assert(
-    absoluteUrlToRelative(
-      'https://singledomain.com/@babel/cli/-/cli-7.5.5.tgz'
-    ) === '/@babel/cli/-/cli-7.5.5.tgz'
-  );
-  assert(
-    absoluteUrlToRelative(
-      'https://many.more.domains.so.crazy.com/@babel/cli/-/cli-7.5.5.tgz'
-    ) === '/@babel/cli/-/cli-7.5.5.tgz'
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
   );
 }
-/*
-export type LockfileEntry = {
-  version: string,
-  resolved: string,
-  dependencies?: {
-    [string]: string,
-  }
-};
-*/
-async function testPrependRegistryToLockfileEntry() {
-  // Test resolved has prefixed /
+
+async function testGetRegistryFromUrl() {
   assert(
-    prependRegistryToLockfileEntry(
-      {
-        version: '1.0.0',
-        resolved: '/@babel/cli/-/cli-7.5.5.tgz',
-      },
-      'https://registry.npmjs.org'
-    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+    getRegistryFromUrl(
+      'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+    ) === 'registry.npmjs.org'
   );
-  // Test registery has suffix /
   assert(
-    prependRegistryToLockfileEntry(
-      {
-        version: '1.0.0',
-        resolved: '@babel/cli/-/cli-7.5.5.tgz',
-      },
-      'https://registry.npmjs.org/'
-    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
-  );
-  // Test none of the inputs have /
-  assert(
-    prependRegistryToLockfileEntry(
-      {
-        version: '1.0.0',
-        resolved: '@babel/cli/-/cli-7.5.5.tgz',
-      },
-      'https://registry.npmjs.org'
-    ).resolved === 'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
-  );
-  // Test invalid registry input
-  assert(
-    prependRegistryToLockfileEntry(
-      {
-        version: '1.0.0',
-        resolved: '@babel/cli/-/cli-7.5.5.tgz',
-      },
-      ''
-    ).resolved === '@babel/cli/-/cli-7.5.5.tgz'
+    getRegistryFromUrl(
+      'https://unpm.uberinternal.com/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52'
+    ) === 'unpm.uberinternal.com'
   );
 }

@@ -4,10 +4,7 @@ const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
-const {absoluteUrlToRelative} = require('./absolute-url-to-relative.js');
-const {
-  prependRegistryToLockfileEntry,
-} = require('./prepend-registry-to-lockfile-entry.js');
+const {getRegistryFromUrl} = require('./get-registry-from-url.js');
 
 /*::
 export type Report = {
@@ -390,13 +387,14 @@ const update /*: Update */ = async ({
         range.includes(':') ||
         !validRange(range) ||
         isYarnResolution({meta, name});
-      const id = `${key}|${lockfile[key].version}`;
+      const resolved = lockfile[key].resolved || '';
+      const id = `${key}|${lockfile[key].version}|${getRegistryFromUrl(
+        resolved
+      )}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
-        // Before pushing the lockfile to the index, convert the registry to a relative path
-        // When we sync the dependencies later, we'll add them back
         index[name].push({
-          lockfile: convertToRelativeDomain(lockfile),
+          lockfile,
           key,
           isAlias,
         });
@@ -419,7 +417,14 @@ const update /*: Update */ = async ({
     const graph = {};
     for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
-      if (!ignored) populateGraph({graph, name, range, index});
+      if (!ignored)
+        populateGraph({
+          graph,
+          name,
+          range,
+          index,
+          registry,
+        });
     }
 
     // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
@@ -432,10 +437,7 @@ const update /*: Update */ = async ({
     }
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = prependRegistryToLockfileEntry(
-        map[`${name}@${graph[key].version}`],
-        registry
-      );
+      lockfile[key] = map[`${name}@${graph[key].version}`];
     }
 
     if (frozenLockfile) {
@@ -468,25 +470,46 @@ const update /*: Update */ = async ({
   return sets;
 };
 
-const populateGraph = ({graph, name, range, index}) => {
+const populateGraph = ({graph, name, range, index, registry}) => {
   const key = `${name}@${range}`;
   if (key in graph) return;
 
+  // Prefer newer versions of packages that adhere to the local registry of the package
+  // If this fails, then disregard the registry check and loop
   for (const ptr of index[name]) {
     const version = ptr.lockfile[ptr.key].version;
     if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
-      graph[key] = ptr.lockfile[ptr.key];
-      break;
+      const {resolved} = ptr.lockfile[ptr.key];
+      if (resolved.indexOf(registry) > -1) {
+        graph[key] = ptr.lockfile[ptr.key];
+        break;
+      }
     }
   }
+
+  if (!graph[key]) {
+    for (const ptr of index[name]) {
+      const version = ptr.lockfile[ptr.key].version;
+      if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
+        graph[key] = ptr.lockfile[ptr.key];
+        break;
+      }
+    }
+  }
+
   if (!graph[key]) return;
-  populateDeps({graph, deps: graph[key].dependencies || {}, index});
+  populateDeps({
+    graph,
+    deps: graph[key].dependencies || {},
+    index,
+    registry,
+  });
 };
 
-const populateDeps = ({graph, deps, index}) => {
+const populateDeps = ({graph, deps, index, registry}) => {
   for (const name in deps) {
     const range = deps[name];
-    populateGraph({graph, name, range, index});
+    populateGraph({graph, name, range, index, registry});
   }
 };
 
@@ -510,17 +533,6 @@ const writeYarnRc = async (cwd, packageDir) => {
     yarnrc.push(`--registry "${registry}"`);
   }
   await write(`${cwd}/.yarnrc`, yarnrc.join('\n'), 'utf8');
-};
-
-const convertToRelativeDomain = lockfile => {
-  const converted = {};
-  for (const key of Object.keys(lockfile)) {
-    converted[key] = {
-      ...lockfile[key],
-      resolved: absoluteUrlToRelative(lockfile[key].resolved),
-    };
-  }
-  return converted;
 };
 
 module.exports = {check, add, remove, upgrade, sync, merge};
