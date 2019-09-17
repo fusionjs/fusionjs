@@ -8,7 +8,7 @@ const {read} = require('../utils/node-helpers.js');
 /*::
 export type FindChangedTargetsArgs = {
   root: string,
-  files: string,
+  files?: string,
   type?: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
@@ -20,21 +20,23 @@ const findChangedTargets /*: FindChangedTargets */ = async ({
 }) => {
   const targets = await findChangedBazelTargets({root, files});
   switch (type) {
-    case 'bazel':
-      return targets;
-    case 'dirs':
-    default: {
+    case 'dirs': {
       const dirs = new Set();
       for (const target of targets) {
         dirs.add(target.slice(2, target.indexOf(':')));
       }
       return [...dirs];
     }
+    default:
+    case 'bazel':
+      return targets;
   }
 };
 
 const findChangedBazelTargets = async ({root, files}) => {
-  const lines = (await read(files, 'utf8')).split('\n').filter(Boolean);
+  // if no file, fallback to reading from stdin (fd=0)
+  const data = await read(files || 0, 'utf8').catch(() => '');
+  const lines = data.split('\n').filter(Boolean);
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
     if (lines.length > 0) {
@@ -45,10 +47,7 @@ const findChangedBazelTargets = async ({root, files}) => {
         return `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
       });
     } else {
-      const queried = await exec(
-        `${bazel} query 'let graph = kind(".*_test rule", "...") in $graph except filter("node_modules", $graph)'`
-      );
-      return queried.trim().split('\n');
+      return [];
     }
   } else {
     const allProjects = await Promise.all([
@@ -67,8 +66,6 @@ const findChangedBazelTargets = async ({root, files}) => {
           if (line.startsWith(project)) set.add(project);
         }
       }
-    } else {
-      for (const project of projects) set.add(project);
     }
 
     // Add to the changeSet all downstream packages that have a dependency

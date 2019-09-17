@@ -93,7 +93,7 @@ Jazelle SHA256 checksum can be computed through the following command:
 curl -fLs https://registry.yarnpkg.com/jazelle/-/jazelle-[version].tgz | openssl sha256
 ```
 
-Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUM256.txt`. Use the checksums for these files:
+Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUMS256.txt`. Use the checksums for these files:
 
 - `node-v[version]-darwin-x64.tar.gz`
 - `node-v[version]-linux-x64.tar.xz`
@@ -338,6 +338,8 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle check`](#jazelle-check)
 - [`jazelle chunk`](#jazelle-chunk)
 - [`jazelle changes`](#jazelle-changes)
+- [`jazelle plan`](#jazelle-plan)
+- [`jazelle batch`](#jazelle-batch)
 - [`jazelle build`](#jazelle-build)
 - [`jazelle dev`](#jazelle-dev)
 - [`jazelle test`](#jazelle-test)
@@ -492,7 +494,7 @@ List projects that have changed since the last git commit.
 
 `jazelle changes`
 
-- `--files` - A file containing a list of changed files, one per line
+- `--files` - A file containing a list of changed files, one per line. Defaults to stdin
 - `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 The `files` file can be generated via git:
@@ -503,6 +505,26 @@ jazelle changes files.txt
 ```
 
 Bazel targets can be tested via the `bazel test [target]` command.
+
+### `jazelle plan`
+
+List an efficient grouping of test jobs to run on a server cluster.
+
+For example, if `jazelle changes` reports 8 projects have changed, and there are 4 cloud nodes, this command will create 4 groupings, each containing the `test`, `lint` and `flow` jobs for 2 projects. If they are distributed over 24 nodes, the command will create 24 groupings, one for each job.
+
+`jazelle plan [targets] --nodes [nodes]`
+
+- `[targets]` - A file containing a list of targets (typically from `jazelle changes`). Defaults to stdin
+- `--nodes` - The number of nodes (i.e. cloud machines). Defaults to 1
+
+### `jazelle batch`
+
+Runs a plan from `jazelle plan`, parallelizing tests across CPUs
+
+`jazelle batch [plan] --index [index]`
+
+- `[plan]` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
+- `--index` - Which group of tests to execute. Defaults to 0
 
 ### `jazelle build`
 
@@ -624,6 +646,8 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [check](#check)
 - [chunk](#chunk)
 - [changes](#changes)
+- [plan](#plan)
+- [batch](#batch)
 - [build](#build)
 - [dev](#dev)
 - [test](#test)
@@ -663,11 +687,10 @@ Generates Bazel files required to make Jazelle run in a workspace
 - Generates [Bazel](https://bazel.build/) BUILD files if they don't exist for the relevant projects.
 - Updates yarn.lock files if needed.
 
-`let install: ({root: string, cwd: string, frozenLockfile?: boolean}) => Promise<void>`
+`let install: ({root: string, cwd: string}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
-- `frozenLockfile` - If true, behaves the same way as `ci`. Defaults to `false`
 
 ### `ci`
 
@@ -810,6 +833,40 @@ git diff-tree --no-commit-id --name-only -r HEAD origin/master > files.txt
 ```
 
 Bazel targets can be tested via the `bazel test [target]` command.
+
+### `plan`
+
+List an efficient grouping of test jobs to run on a server cluster.
+
+For example, if `changes` reports 8 projects have changed, and there are 4 servers, this function will create 4 groupings, each containing the `test`, `lint` and `flow` jobs for 2 projects.
+
+```js
+type PayloadMetadata = {type: string, dir: string, action: string}
+
+let plan: ({root: string, data: Array<string>, nodes: number}) => Promise<Array<Array<PayloadMetadata>>>
+```
+
+- `root` - Monorepo root folder (absolute path)
+- `data` - A report of targets (typically from the `changes` method)
+- `nodes` - The number of nodes (i.e. cloud machines)
+
+### `batch`
+
+Runs a plan from `jazelle plan`, parallelizing tests across CPUs
+
+```js
+type DirTestMetadata = {dir: string, script: string}
+type BazelTestMetadata = {target: string}
+type TestMetadata = DirTestMetadata | BazelTestMetadata
+type TestGroup = Array<TestMetadata>
+
+let batch: ({root: string, data: Array<TestGroup>, index: number, cores: number}) => Promise<void>
+```
+
+- `root` - Monorepo root folder (absolute path)
+- `plan` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
+- `index` - Which group of tests to execute
+- `cores` - Number of cpus to use
 
 ### `build`
 

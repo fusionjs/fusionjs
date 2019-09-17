@@ -45,6 +45,7 @@ then
   if [ -f "$ROOT/WORKSPACE" ]
   then
     echo "Error: Invalid \`jazelle\` configuration in WORKSPACE file. Check the Jazelle download URL and the checksums for Node and Yarn"
+    "$BIN/bazelisk" run //:jazelle -- setup
     exit 1
   fi
   if [ ! -f "$BIN/yarn.js" ]
