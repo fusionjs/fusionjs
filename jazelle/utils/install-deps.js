@@ -1,7 +1,9 @@
 // @flow
 const {dirname, relative} = require('path');
+
+const {isDepsetSubset} = require('./is-depset-subset.js');
 const {merge} = require('./lockfile.js');
-const {exec, spawn} = require('./node-helpers.js');
+const {read, exec, spawn, write, exists} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {setupSymlinks} = require('./setup-symlinks.js');
 
@@ -30,6 +32,16 @@ const installDeps /*: InstallDeps */ = async ({
   const sandbox = relative(root, cwd);
   const bin = `${root}/third_party/jazelle/temp/${sandbox}`;
   await spawn('mkdir', ['-p', bin], {cwd: root});
+
+  // we may already have things installed. If so, check whether we need to reinstall
+  let needsInstall = true;
+  if (modulesDir && (await exists(modulesDir))) {
+    await spawn('mv', [modulesDir, `${bin}/node_modules`], {cwd: root});
+    const prevSource = `${bin}/node_modules/.jazelle-source`;
+    const prev = JSON.parse(await read(prevSource, 'utf8'));
+    const currMeta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
+    needsInstall = !isDepsetSubset({of: prev.meta, it: currMeta});
+  }
 
   // generate global lock file
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
@@ -67,27 +79,36 @@ const installDeps /*: InstallDeps */ = async ({
   }
 
   // install external deps
-  await spawn(
-    node,
-    [
-      yarn,
-      'install',
-      '--frozen-lockfile',
-      '--non-interactive',
-      '--ignore-optional',
-    ],
-    {
-      env: {
-        ...process.env,
-        PATH: `${nodePath}:${String(process.env.PATH)}`,
-      },
-      cwd: bin,
-      stdio: 'inherit',
-    }
-  );
+  if (needsInstall) {
+    await spawn(
+      node,
+      [
+        yarn,
+        'install',
+        '--frozen-lockfile',
+        '--non-interactive',
+        '--ignore-optional',
+      ],
+      {
+        env: {
+          ...process.env,
+          PATH: `${nodePath}:${String(process.env.PATH)}`,
+        },
+        cwd: bin,
+        stdio: 'inherit',
+      }
+    );
+    // record the source of this node_modules so we are able to recycle on future installs if needed
+    const meta = deps[deps.length - 1];
+    const sourceFile = `${bin}/node_modules/.jazelle-source`;
+    await write(sourceFile, JSON.stringify(meta, null, 2), 'utf8');
+  }
 
   if (modulesDir) {
-    await setupSymlinks({root, bin, modulesDir, deps});
+    await spawn('rm', ['-rf', modulesDir], {cwd: root});
+    await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
+
+    await setupSymlinks({root, modulesDir, deps});
   }
 
   // package postinstall hook
