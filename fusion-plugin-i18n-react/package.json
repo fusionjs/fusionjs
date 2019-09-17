@@ -34,7 +34,7 @@
     "flow": "flow check"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "0.0.0-monorepo",
+    "fusion-plugin-i18n": "0.0.0-canary.ffb0ab3.0",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
