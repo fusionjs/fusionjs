@@ -8,10 +8,11 @@ git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 > changes.txt
 CHANGES=$(jazelle changes ./changes.txt)
 
 has_cover_script() {
-  if [[ `cat "$1/package.json" | jq '.scripts.cover'` != 'null' ]]; then
-    return 0
-  else
+  # if [[ `cat "$1/package.json" | jqi '.scripts.cover'` != 'null' ]]; then
+  if [ `cat "$1/package.json" | jq '.scripts.cover'` = "null" ]; then
     return 1
+  else
+    return 0
   fi;
 }
 
