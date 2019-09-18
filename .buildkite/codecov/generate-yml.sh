@@ -12,11 +12,11 @@ generate() {
   echo "      default: off"
   for project in $projects; do
     echo "      ${project}:"
-    echo "        flags: ${project}"
+    echo "        flags: ${project//-/}"
   done
   echo "flags:"
   for project in $projects; do
-    echo "  ${project}:"
+    echo "  ${project//-/}:"
     echo "    paths:"
     echo "      - ${project}"
   done
