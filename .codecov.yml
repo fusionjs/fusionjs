@@ -1,5 +1,5 @@
-# NOTE: projects and flags are dynamically generated from manifest.json
-# in .buildkite/generate-codecov.sh
+# NOTE: package paths are dynamically populated from manifest.json
+# via .buildkite/codecov/generate-yml.sh
 
 parsers:
   javascript:
@@ -9,9 +9,9 @@ coverage:
   status:
     project:
       default: off
-      # [package name]:
-      #   flags: [package name]
+      packages:
+        flags: packages
 flags:
-  # [package name]:
-  #   paths:
-  #     - [package path]
+  packages:
+    paths:
+      # package paths populated here
