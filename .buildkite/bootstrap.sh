@@ -42,7 +42,7 @@ for DIR in $CHANGES ; do (
       echo "    - 'jazelle build --cwd=$DIR'";
 
       if has_cover_script $DIR; then
-        echo "    - 'jazelle cover --cwd=$DIR'";
+        echo "    - 'jazelle yarn cover --cwd=$DIR'";
       else
         echo "    - 'jazelle test --cwd=$DIR'";
       fi;
