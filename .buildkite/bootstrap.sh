@@ -49,7 +49,7 @@ for DIR in $CHANGES ; do (
 
       echo "    - 'jazelle lint --cwd=$DIR'";
       echo "    - 'jazelle flow --cwd=$DIR'";
-      echo "    - './buildkite/codecov/upload.sh $DIR $PACKAGE'";
+      echo "    - './.buildkite/codecov/upload.sh $DIR $PACKAGE'";
       echo "    timeout_in_minutes: 10";
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
