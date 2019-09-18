@@ -114,11 +114,11 @@ async function runTests() {
     t(testScaffold),
     t(testStarlark),
     t(testYarnCommands),
-    t(testBin),
     t(testLockfileRegistryResolution),
     t(testLockfileRegistryResolutionMultirepo),
     t(testGetRegistryFromUrl),
   ]);
+  await t(testBin); // run separately to avoid CI error
 
   await exec(`rm -rf ${__dirname}/tmp`);
 
