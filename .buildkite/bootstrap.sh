@@ -22,6 +22,7 @@ for DIR in $CHANGES ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
+      echo "        pull_retries: 5";
       echo "    agents:";
       echo "      queue: workers";
     else
@@ -36,6 +37,7 @@ for DIR in $CHANGES ; do (
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
       echo "        run: ci";
+      echo "        pull_retries: 5";
       echo "    agents:";
       echo "      queue: workers";
     fi;
