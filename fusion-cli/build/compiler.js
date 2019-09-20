@@ -176,7 +176,9 @@ function Compiler(
     fusionConfig,
     legacyPkgConfig,
     preserveNames,
+    // TODO: Remove redundant zopfli option
     zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
+    gzip: fusionConfig.gzip != undefined ? fusionConfig.gzip : true,
     brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
     minify,
     worker,

@@ -1,4 +1,4 @@
 module.exports = {
   brotli: false,
-  zopfli: false,
+  gzip: false,
 };

@@ -29,6 +29,7 @@ export type FusionRC = {
   nodeBuiltins?: {[string]: any},
   jest?: {transformIgnorePatterns?: Array<string>},
   zopfli?: boolean,
+  gzip?: boolean,
   brotli?:boolean,
 };
 */
@@ -79,7 +80,8 @@ function isValid(config, silent) {
         'nodeBuiltins',
         'jest',
         'brotli',
-        'zopfli',
+        'zopfli', // TODO: Remove redundant zopfli option
+        'gzip',
       ].includes(key)
     )
   ) {
@@ -145,6 +147,20 @@ function isValid(config, silent) {
     )
   ) {
     throw new Error('zopfli must be true, false, or undefined in fusionrc.js');
+  }
+
+  if (config.zopfli === false || config.zopfli === true) {
+    console.warn('`zopfli` option has been deprecated. Use `gzip` instead');
+  }
+
+  if (
+    !(
+      config.gzip === false ||
+      config.gzip === true ||
+      config.gzip === void 0
+    )
+  ) {
+    throw new Error('gzip must be true, false, or undefined in fusionrc.js');
   }
 
   if (

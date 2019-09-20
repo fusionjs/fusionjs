@@ -49,14 +49,14 @@ module.exports = {
 };
 ```
 
-## `zopfli`
+## `gzip`
 
-This is an optional property that can be used to override the Fusion.js defaults for compressing projects using zopfli in production builds.
+This is an optional property that can be used to override the Fusion.js defaults for compressing projects using zlib in production builds.
 If left undefined, this property will default to true.
 
 ```js
 module.exports = {
-  zopfli: false,
+  gzip: false,
 };
 ```
 

@@ -11,19 +11,10 @@
 // gzip compressor
 
 const CompressionPlugin = require('compression-webpack-plugin');
-const gzip = require('@gfx/zopfli').gzip;
 
 module.exports = new CompressionPlugin({
   filename: '[path].gz',
-  algorithm: (buf, _, callback) =>
-    gzip(
-      buf,
-      {
-        numiterations: 15,
-        blocksplitting: true,
-      },
-      callback
-    ),
+  algorithm: 'gzip',
   test: /\.js$/,
   threshold: 0,
   minRatio: 1,

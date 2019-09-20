@@ -33,7 +33,6 @@
     "@babel/plugin-transform-flow-strip-types": "^7.4.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "@gfx/zopfli": "^1.0.10",
     "@rtsao/plugin-proposal-class-properties": "7.0.1-patch.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.8.0",

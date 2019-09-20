@@ -17,7 +17,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const {
-  zopfliWebpackPlugin,
+  gzipWebpackPlugin,
   brotliWebpackPlugin,
   svgoWebpackPlugin,
 } = require('../lib/compression');
@@ -83,6 +83,7 @@ export type WebpackConfigOpts = {|
   watch: boolean,
   preserveNames: boolean,
   zopfli: boolean,
+  gzip: boolean,
   brotli: boolean,
   minify: boolean,
   state: {
@@ -120,7 +121,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     watch,
     state,
     fusionConfig,
-    zopfli,
+    zopfli, // TODO: Remove redundant zopfli option
+    gzip,
     brotli,
     minify,
     legacyPkgConfig = {},
@@ -135,6 +137,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
+
+  // Both options default to true, but if `--zopfli=false`
+  // it should be respected for backwards compatibility
+  const shouldGzip = zopfli && gzip;
 
   const babelConfigData = {
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
@@ -468,7 +474,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             state.i18nDeferredManifest
           ),
       new LoaderContextProviderPlugin(workerKey, worker),
-      !dev && zopfli && zopfliWebpackPlugin,
+      !dev && shouldGzip && gzipWebpackPlugin,
       !dev && brotli && brotliWebpackPlugin,
       !dev && svgoWebpackPlugin,
       // In development, skip the emitting phase on errors to ensure there are
