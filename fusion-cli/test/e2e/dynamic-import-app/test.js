@@ -215,6 +215,43 @@ test('`fusion build` app with dynamic imports integration', async () => {
   proxy.close();
 }, 100000);
 
+test('`fusion build` app with CDN_URL and same-origin', async () => {
+  await cmd(`build --dir=${dir} --production`);
+
+  // Run puppeteer test to ensure that page loads with dynamic content.
+  const {proc, port} = await start(`--dir=${dir}`, {
+    env: Object.assign({}, process.env, {
+      CDN_URL: 'https://cdn.com',
+      NODE_ENV: 'production',
+    }),
+  });
+
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+  await page.on('request', request => {
+    // Ignore CDN requests since they will cause the browser to hang.
+    if (request.url().startsWith('https://cdn.com')) {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
+  await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  t.ok(
+    await page.$$eval('script[src]:not([type="application/json"])', els =>
+      els.every(el => el.crossOrigin === 'anonymous')
+    ),
+    'non-module scripts have crossorigin attribute'
+  );
+
+  browser.close();
+  proc.kill();
+}, 100000);
+
 test('`fusion build` app with Safari user agent and same-origin', async () => {
   var env = Object.create(process.env);
   env.NODE_ENV = 'production';
