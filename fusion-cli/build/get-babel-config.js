@@ -6,6 +6,7 @@
  * @flow
  */
 /* eslint-env node */
+const modernBrowserVersions = require('./modern-browser-versions.js');
 
 /*::
 type Target = "node-native" | "node-bundled" | "browser-modern" | "browser-legacy";
@@ -92,9 +93,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     };
   } else if (target === 'browser-modern') {
     envPresetOpts.modules = false;
-    envPresetOpts.targets = {
-      esmodules: true,
-    };
+    envPresetOpts.targets = modernBrowserVersions;
     envPresetOpts.useBuiltIns = 'entry';
   } else if (target === 'browser-legacy') {
     envPresetOpts.modules = false;
