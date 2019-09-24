@@ -19,12 +19,14 @@ import {
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
+  ReducerNameSpaceToken,
 } from './tokens.js';
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
   ReactReduxServiceType,
 } from './types.js';
+import {parseNamespace} from './utils';
 
 const plugin =
   __NODE__ &&
@@ -34,8 +36,9 @@ const plugin =
       preloadedState: PreloadedStateToken.optional,
       enhancer: EnhancerToken.optional,
       getInitialState: GetInitialStateToken.optional,
+      namespace: ReducerNameSpaceToken.optional,
     },
-    provides({reducer, preloadedState, enhancer, getInitialState}) {
+    provides({reducer, preloadedState, enhancer, getInitialState, namespace}) {
       class Redux {
         ctx: Context;
         store: ?StoreWithContextType<*, *, *>;
@@ -72,16 +75,18 @@ const plugin =
         from: memoize(ctx => new Redux(ctx)),
       };
     },
-    middleware(_, redux) {
+    middleware({namespace}, redux) {
       return async (ctx, next) => {
         if (!ctx.element) return next();
         const store = await redux.from(ctx).initStore();
         ctx.element = <Provider store={store}>{ctx.element}</Provider>;
         await next();
 
+        const {suffix} = parseNamespace(namespace);
+
         const serialized = JSON.stringify(store.getState());
         const script = html`
-          <script type="application/json" id="__REDUX_STATE__">
+          <script type="application/json" id="__REDUX_STATE__${suffix}">
             ${serialized}
           </script>
         `;

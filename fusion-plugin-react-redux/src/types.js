@@ -15,6 +15,7 @@ import {
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
+  ReducerNameSpaceToken,
 } from './tokens.js';
 
 export type GetInitialStateType<TState> = (
@@ -24,6 +25,7 @@ export type GetInitialStateType<TState> = (
 export type StoreWithContextType<S, A, D> = Store<S, A, D> & {ctx: Context};
 
 export type ReactReduxDepsType = {
+  namespace: typeof ReducerNameSpaceToken.optional,
   reducer: typeof ReducerToken,
   preloadedState: typeof PreloadedStateToken.optional,
   enhancer: typeof EnhancerToken.optional,

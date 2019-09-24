@@ -17,34 +17,43 @@ import {createPlugin, unescape} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
-import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
+import {
+  ReducerToken,
+  PreloadedStateToken,
+  EnhancerToken,
+  ReducerNameSpaceToken,
+} from './tokens.js';
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
   ReactReduxServiceType,
 } from './types.js';
+import {parseNamespace} from './utils';
 
 const getPlugin = () => {
-  let storeCache = null;
+  const storeCache = {};
   return createPlugin({
     deps: {
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
       enhancer: EnhancerToken.optional,
+      namespace: ReducerNameSpaceToken.optional,
     },
-    provides({reducer, preloadedState, enhancer}) {
+    provides({reducer, preloadedState, enhancer, namespace}) {
       class Redux {
         store: StoreWithContextType<*, *, *>;
 
         constructor(ctx) {
-          if (storeCache) {
-            // $FlowFixMe
-            this.store = storeCache;
+          const {suffix, cacheKey} = parseNamespace(namespace);
+          if (storeCache[cacheKey]) {
+            this.store = storeCache[cacheKey];
           } else {
             // We only use initialState for client-side hydration
             // The real initial state should be derived from the reducer and the @@INIT action
             if (!preloadedState) {
-              const stateElement = document.getElementById('__REDUX_STATE__');
+              const stateElement = document.getElementById(
+                `__REDUX_STATE__${suffix}`
+              );
               if (stateElement) {
                 preloadedState = JSON.parse(unescape(stateElement.textContent));
               }
@@ -64,7 +73,7 @@ const getPlugin = () => {
               // $FlowFixMe
               compose(...enhancers)
             );
-            storeCache = this.store;
+            storeCache[cacheKey] = this.store;
           }
         }
       }
@@ -82,7 +91,9 @@ const getPlugin = () => {
       };
     },
     cleanup: async () => {
-      storeCache = null;
+      Object.keys(storeCache).forEach(key => {
+        delete storeCache[key];
+      });
     },
   });
 };

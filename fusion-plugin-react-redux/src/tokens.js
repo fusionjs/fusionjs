@@ -26,3 +26,6 @@ export const EnhancerToken: Token<StoreEnhancer<*, *, *>> = createToken(
 export const GetInitialStateToken: Token<GetInitialStateType<*>> = createToken(
   'GetInitialStateToken'
 );
+export const ReducerNameSpaceToken: Token<string> = createToken(
+  'ReducerNameSpaceToken'
+);
