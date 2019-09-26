@@ -525,6 +525,7 @@ Runs a plan from `jazelle plan`, parallelizing tests across CPUs
 
 - `[plan]` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
 - `--index` - Which group of tests to execute. Defaults to 0
+- `--cores` - Number of cpus to use. Defaults to `os.cpus().length`
 
 ### `jazelle build`
 
@@ -866,7 +867,7 @@ let batch: ({root: string, data: Array<TestGroup>, index: number, cores: number}
 - `root` - Monorepo root folder (absolute path)
 - `plan` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
 - `index` - Which group of tests to execute
-- `cores` - Number of cpus to use
+- `cores` - Number of cpus to use. Defaults to `os.cpus().length`
 
 ### `build`
 

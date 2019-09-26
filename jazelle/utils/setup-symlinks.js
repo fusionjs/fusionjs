@@ -6,12 +6,13 @@ import type {Metadata} from './get-local-dependencies.js';
 
 type SetupSymlinksArgs = {
   root: string,
-  modulesDir: string,
   deps: Array<Metadata>,
 }
 type SetupSymlinks = (SetupSymlinksArgs) => Promise<void>
 */
-const setupSymlinks /*: SetupSymlinks */ = async ({root, modulesDir, deps}) => {
+const setupSymlinks /*: SetupSymlinks */ = async ({root, deps}) => {
+  const modulesDir = `${root}/node_modules`;
+
   // symlink local deps
   await Promise.all(
     deps.map(async dep => {
