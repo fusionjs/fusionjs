@@ -1094,6 +1094,16 @@ async function testIsDepsetSubset() {
     const of = {...base, dependencies: {a: '^1.0.0'}};
     assert(!isDepsetSubset({of, it}));
   }
+  {
+    const it = {...base, dependencies: {a: 'npm:foo@0.0.0'}};
+    const of = {...base, dependencies: {a: 'npm:bar@0.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '0.0.0'}};
+    const of = {...base, dependencies: {a: 'npm:bar@0.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
 }
 
 async function testIsYarnResolution() {
