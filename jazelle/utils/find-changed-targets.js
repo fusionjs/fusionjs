@@ -9,18 +9,13 @@ const {read} = require('../utils/node-helpers.js');
 export type FindChangedTargetsArgs = {
   root: string,
   files?: string,
-  type?: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
 */
-const findChangedTargets /*: FindChangedTargets */ = async ({
-  root,
-  files,
-  type,
-}) => {
-  const targets = await findChangedBazelTargets({root, files});
-  switch (type) {
-    case 'dirs': {
+const findChangedTargets /*: FindChangedTargets */ = async ({root, files}) => {
+  const {workspace, targets} = await findChangedBazelTargets({root, files});
+  switch (workspace) {
+    case 'host': {
       const dirs = new Set();
       for (const target of targets) {
         dirs.add(target.slice(2, target.indexOf(':')));
@@ -28,7 +23,7 @@ const findChangedTargets /*: FindChangedTargets */ = async ({
       return [...dirs];
     }
     default:
-    case 'bazel':
+    case 'sandbox':
       return targets;
   }
 };
@@ -40,14 +35,20 @@ const findChangedBazelTargets = async ({root, files}) => {
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
     if (lines.length > 0) {
-      const projects = await batch(lines, file => {
-        return `FILE=$(${bazel} query "${file}") && bazel query "attr('srcs', '$FILE', '\${FILE//:*/}:*')"`;
+      const projects = await batch(root, lines, async file => {
+        const result = await exec(`${bazel} query "${file}"`, {cwd: root});
+        const target = result.trim();
+        const all = target.replace(/:.+/, ':*');
+        const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
+        return exec(cmd, {cwd: root}).catch(() => '');
       });
-      return batch(projects, project => {
-        return `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
+      const targets = await batch(root, projects, async project => {
+        const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
+        return exec(cmd, {cwd: root}).catch(() => '');
       });
+      return {workspace, targets};
     } else {
-      return [];
+      return {workspace, targets: []};
     }
   } else {
     const allProjects = await Promise.all([
@@ -88,14 +89,12 @@ const findChangedBazelTargets = async ({root, files}) => {
         `//${project}:flow`
       );
     }
-    return targets;
+    return {workspace, targets};
   }
 };
 
-async function batch(items, fn) {
-  const stdouts = await Promise.all(
-    items.map(item => exec(fn(item)).catch(() => ''))
-  );
+async function batch(root, items, fn) {
+  const stdouts = await Promise.all(items.map(fn));
   return [
     ...new Set(
       stdouts

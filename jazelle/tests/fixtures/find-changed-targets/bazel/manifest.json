@@ -1,4 +1,5 @@
 {
+  "workspace": "sandbox",
   "projects": [
     "a",
     "b",

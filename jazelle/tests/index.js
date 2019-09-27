@@ -588,20 +588,40 @@ async function testDetectCyclicDeps() {
 }
 
 async function testFindChangedTargets() {
-  const root = `${__dirname}/fixtures/find-changed-targets`;
-  const files = `${__dirname}/fixtures/find-changed-targets/changes.txt`;
-  const dirs = await findChangedTargets({root, files, type: 'dirs'});
-  assert.deepEqual(dirs, ['b', 'a']);
+  {
+    const root = `${__dirname}/fixtures/find-changed-targets/dirs`;
+    const files = `${__dirname}/fixtures/find-changed-targets/dirs/changes.txt`;
+    const dirs = await findChangedTargets({root, files});
+    assert.deepEqual(dirs, ['b', 'a']);
+  }
+  {
+    const cmd = `cp -r ${__dirname}/fixtures/find-changed-targets/ ${__dirname}/tmp/find-changed-targets`;
+    await exec(cmd);
 
-  const targets = await findChangedTargets({root, files, type: 'bazel'});
-  assert.deepEqual(targets, [
-    '//b:test',
-    '//b:lint',
-    '//b:flow',
-    '//a:test',
-    '//a:lint',
-    '//a:flow',
-  ]);
+    const root = `${__dirname}/tmp/find-changed-targets/bazel`;
+    const files = `${__dirname}/tmp/find-changed-targets/bazel/changes.txt`;
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/a`,
+    });
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/b`,
+    });
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/c`,
+    });
+    const targets = await findChangedTargets({root, files});
+    assert.deepEqual(targets, [
+      '//b:test',
+      '//b:lint',
+      '//b:flow',
+      '//a:test',
+      '//a:lint',
+      '//a:flow',
+    ]);
+  }
 }
 
 async function testFindLocalDependency() {

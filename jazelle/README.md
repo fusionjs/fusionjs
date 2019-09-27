@@ -495,7 +495,6 @@ List projects that have changed since the last git commit.
 `jazelle changes`
 
 - `--files` - A file containing a list of changed files, one per line. Defaults to stdin
-- `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 The `files` file can be generated via git:
 
@@ -825,7 +824,6 @@ List projects that have changed since the last git commit.
 
 - `root` - Monorepo root folder (absolute path)
 - `files` - The path to a file containing a list of changed files, one per line
-- `type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 The `files` file can be generated via git:
 
