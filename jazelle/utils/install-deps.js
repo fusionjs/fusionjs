@@ -34,7 +34,7 @@ const installDeps /*: InstallDeps */ = async ({
 
   // we may already have things installed. If so, check whether we need to reinstall
   let needsInstall = true;
-  if (modulesDir && (await exists(modulesDir))) {
+  if (modulesDir && (await exists(`${modulesDir}/.jazelle-source`))) {
     await spawn('mv', [modulesDir, `${bin}/node_modules`], {cwd: root});
     const prevSource = `${bin}/node_modules/.jazelle-source`;
     const prev = JSON.parse(await read(prevSource, 'utf8'));
