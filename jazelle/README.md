@@ -495,7 +495,6 @@ List projects that have changed since the last git commit.
 `jazelle changes`
 
 - `--files` - A file containing a list of changed files, one per line. Defaults to stdin
-- `--type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 The `files` file can be generated via git:
 
@@ -525,6 +524,7 @@ Runs a plan from `jazelle plan`, parallelizing tests across CPUs
 
 - `[plan]` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
 - `--index` - Which group of tests to execute. Defaults to 0
+- `--cores` - Number of cpus to use. Defaults to `os.cpus().length`
 
 ### `jazelle build`
 
@@ -824,7 +824,6 @@ List projects that have changed since the last git commit.
 
 - `root` - Monorepo root folder (absolute path)
 - `files` - The path to a file containing a list of changed files, one per line
-- `type` - If type is `bazel`, it prints Bazel targets. If type is `dirs`, it prints the project folders. Defaults to `dirs`.
 
 The `files` file can be generated via git:
 
@@ -866,7 +865,7 @@ let batch: ({root: string, data: Array<TestGroup>, index: number, cores: number}
 - `root` - Monorepo root folder (absolute path)
 - `plan` - A file containing a plan (typically from `jazelle plan`). Defaults to stdin
 - `index` - Which group of tests to execute
-- `cores` - Number of cpus to use
+- `cores` - Number of cpus to use. Defaults to `os.cpus().length`
 
 ### `build`
 

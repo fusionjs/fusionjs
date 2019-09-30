@@ -26,6 +26,7 @@ const getManifest /*: GetManifest */ = async ({root}) => {
   const data = await read(manifest, 'utf8');
   const parsed = JSON.parse(data || '{}');
   parsed.workspace = parsed.workspace || 'host';
+  parsed.projects = parsed.projects || [];
   return parsed;
 };
 

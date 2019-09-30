@@ -9,9 +9,9 @@ type ChangesArgs = {
 };
 type Changes = (ChangesArgs) => Promise<void>;
 */
-const changes /*: Changes */ = async ({root, files, type}) => {
+const changes /*: Changes */ = async ({root, files}) => {
   // Get every changed target
-  const targets = await findChangedTargets({root, files, type});
+  const targets = await findChangedTargets({root, files});
 
   console.log(targets.join('\n'));
 };

@@ -14,7 +14,6 @@ import type {Hooks} from './get-manifest.js';
 export type InstallDepsArgs = {
   root: string,
   cwd: string,
-  modulesDir?: string,
   deps?: Array<Metadata>,
   ignore?: Array<Metadata>,
   hooks?: Hooks,
@@ -24,18 +23,18 @@ export type InstallDeps = (InstallDepsArgs) => Promise<void>
 const installDeps /*: InstallDeps */ = async ({
   root,
   cwd,
-  modulesDir,
   deps = [],
   ignore = [],
   hooks: {preinstall, postinstall} = {},
 }) => {
+  const modulesDir = `${root}/node_modules`;
   const sandbox = relative(root, cwd);
   const bin = `${root}/third_party/jazelle/temp/${sandbox}`;
   await spawn('mkdir', ['-p', bin], {cwd: root});
 
   // we may already have things installed. If so, check whether we need to reinstall
   let needsInstall = true;
-  if (modulesDir && (await exists(modulesDir))) {
+  if (modulesDir && (await exists(`${modulesDir}/.jazelle-source`))) {
     await spawn('mv', [modulesDir, `${bin}/node_modules`], {cwd: root});
     const prevSource = `${bin}/node_modules/.jazelle-source`;
     const prev = JSON.parse(await read(prevSource, 'utf8'));
@@ -104,12 +103,8 @@ const installDeps /*: InstallDeps */ = async ({
     await write(sourceFile, JSON.stringify(meta, null, 2), 'utf8');
   }
 
-  if (modulesDir) {
-    await spawn('rm', ['-rf', modulesDir], {cwd: root});
-    await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
-
-    await setupSymlinks({root, modulesDir, deps});
-  }
+  await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
+  await setupSymlinks({root, deps});
 
   // package postinstall hook
   for (const dep of deps) {

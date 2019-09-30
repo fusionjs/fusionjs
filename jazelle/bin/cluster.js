@@ -6,6 +6,7 @@ This file is an entry point for multi-cpu coordination. See commands/batch.js
 
 const {isMaster, fork} = require('cluster');
 const {cpus} = require('os');
+const {resolve} = require('path');
 const {parse} = require('../utils/parse-argv.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {read} = require('../utils/node-helpers.js');
@@ -14,6 +15,8 @@ const {install} = require('../commands/install.js');
 const {test} = require('../commands/test.js');
 const {lint} = require('../commands/lint.js');
 const {flow} = require('../commands/flow.js');
+const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
+const {setupSymlinks} = require('../utils/setup-symlinks.js');
 
 const {root, plan, index, cores} = parse(process.argv.slice(2));
 
@@ -48,10 +51,26 @@ async function runMaster() {
         cwd: `${root}/${data[0].dir}`,
         frozenLockfile: true,
       });
+
+      // setup symlinks
+      const map = new Map();
+      await Promise.all(
+        data.slice(1).map(async item => {
+          const deps = await getLocalDependencies({
+            dirs: projects.map(dir => `${root}/${dir}`),
+            target: resolve(root, item.dir),
+          });
+          for (const dep of deps) {
+            map.set(dep.dir, dep);
+          }
+        })
+      );
+      await setupSymlinks({root, deps: [...map.values()]});
+
       await Promise.all(
         workers.map(async worker => {
           while (data.length > 0) {
-            await new Promise(resolve => {
+            await new Promise(async resolve => {
               const item = data.shift();
               worker.send(item);
               worker.once('message', resolve);
@@ -72,7 +91,8 @@ async function runWorker() {
     });
     if (!payload) break;
 
-    const {dir: cwd, action} = payload;
+    const {dir, action} = payload;
+    const cwd = `${root}/${dir}`;
 
     if (action === 'test') await test({root, cwd, args: []});
     else if (action === 'lint') await lint({root, cwd});

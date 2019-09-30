@@ -22,6 +22,8 @@ import {
   initialChunkIds, // $FlowFixMe
 } from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
 
+import modernBrowserVersions from '../build/modern-browser-versions.js';
+
 /*::
 import type {SSRBodyTemplateDepsType, SSRBodyTemplateType} from './types.js';
 declare var __webpack_public_path__: string;
@@ -116,9 +118,9 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
         let preloadHints = [];
 
         for (let url of criticalChunkUrls) {
-          const crossoriginAttr = url.startsWith(__webpack_public_path__)
-            ? ''
-            : ' crossorigin="anonymous"';
+          const crossoriginAttr = process.env.CDN_URL
+            ? ' crossorigin="anonymous"'
+            : '';
           preloadHints.push(
             `<link rel="preload" href="${url}" nonce="${ctx.nonce}"${crossoriginAttr} as="script"/>`
           );
@@ -166,11 +168,11 @@ function checkModuleSupport({name, version}) {
     return false;
   }
   if (name === 'Chrome' || name === 'Chrome Headless' || name === 'Chromium') {
-    if (majorVersion(version) >= 61) return true;
+    if (majorVersion(version) >= modernBrowserVersions.chrome) return true;
   } else if (name === 'Mobile Safari' || name === 'Safari') {
-    if (majorVersion(version) >= 12) return true;
+    if (majorVersion(version) >= modernBrowserVersions.safari) return true;
   } else if (name === 'Firefox') {
-    if (majorVersion(version) >= 60) return true;
+    if (majorVersion(version) >= modernBrowserVersions.firefox) return true;
   }
   return false;
 }

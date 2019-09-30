@@ -77,8 +77,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     await generateBazelignore({root, projects: projects});
     await generateBazelBuildRules({root, deps, projects});
   }
-  const modulesDir = `${root}/node_modules`;
-  await installDeps({root, cwd, modulesDir, deps, ignore: all, hooks});
+  await installDeps({root, cwd, deps, ignore: all, hooks});
 };
 
 module.exports = {install};
