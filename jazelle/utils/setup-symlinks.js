@@ -22,7 +22,7 @@ const setupSymlinks /*: SetupSymlinks */ = async ({root, deps}) => {
       // symlink from global node_modules to local package folders
       if (!(await exists(`${modulesDir}/${dep.meta.name}`))) {
         await spawn('mkdir', ['-p', `${modulesDir}/${ns}`], {cwd: root});
-        await spawn('ln', ['-sf', dep.dir, basename], {
+        await spawn('ln', ['-sfn', dep.dir, basename], {
           cwd: `${modulesDir}/${ns}`,
         });
       }
@@ -30,7 +30,7 @@ const setupSymlinks /*: SetupSymlinks */ = async ({root, deps}) => {
       // symlink node_modules/.bin from local packages to global .bin
       if (!(await exists(`${dep.dir}/node_modules/.bin`))) {
         await spawn('mkdir', ['-p', 'node_modules'], {cwd: dep.dir});
-        await spawn('ln', ['-sf', `${modulesDir}/.bin`, '.bin'], {
+        await spawn('ln', ['-sfn', `${modulesDir}/.bin`, '.bin'], {
           cwd: `${dep.dir}/node_modules`,
         });
       }
@@ -45,7 +45,7 @@ const setupSymlinks /*: SetupSymlinks */ = async ({root, deps}) => {
       }
       for (const cmd in bin) {
         if (!(await exists(`${modulesDir}/.bin/${cmd}`))) {
-          await spawn('ln', ['-sf', `${dep.dir}/${bin[cmd]}`, cmd], {
+          await spawn('ln', ['-sfn', `${dep.dir}/${bin[cmd]}`, cmd], {
             cwd: `${modulesDir}/.bin`,
           });
         }
