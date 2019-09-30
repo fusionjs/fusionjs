@@ -27,6 +27,7 @@ import {
   GraphQLEndpointToken,
   ApolloClientToken,
   ApolloBodyParserConfigToken,
+  ApolloDefaultOptionsConfigToken,
 } from './tokens';
 
 export type DepsType = {
@@ -37,6 +38,7 @@ export type DepsType = {
   getApolloClient: typeof ApolloClientToken,
   getDataFromTree: typeof GetDataFromTreeToken.optional,
   bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
+  defaultOptionsConfig: typeof ApolloDefaultOptionsConfigToken.optional,
 };
 
 export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
@@ -51,6 +53,7 @@ function getDeps(): DepsType {
       getApolloClient: ApolloClientToken,
       getDataFromTree: GetDataFromTreeToken.optional,
       bodyParserConfig: ApolloBodyParserConfigToken.optional,
+      defaultOptionsConfig: ApolloDefaultOptionsConfigToken.optional,
     };
   }
   // $FlowFixMe
@@ -80,6 +83,7 @@ export default (renderFn: Render) =>
         return ctx;
       },
       bodyParserConfig = {},
+      defaultOptionsConfig = {},
     }) {
       const renderMiddleware = async (ctx, next) => {
         if (!ctx.element) {
@@ -124,6 +128,7 @@ export default (renderFn: Render) =>
           return apolloContext;
         };
         const server = new ApolloServer({
+          ...defaultOptionsConfig,
           schema,
           // investigate other options
           context: ({ctx}) => {

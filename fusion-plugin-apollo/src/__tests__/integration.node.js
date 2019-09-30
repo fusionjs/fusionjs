@@ -14,6 +14,7 @@ import {
   ApolloClientPlugin,
   ApolloBodyParserConfigToken,
   ApolloContextToken,
+  ApolloDefaultOptionsConfigToken,
 } from '../index';
 import gql from 'graphql-tag';
 import App from 'fusion-react/dist';
@@ -295,6 +296,41 @@ test('/graphql endpoint with body parser config', async t => {
   });
   const result = await client.query({query});
   t.ok(called, 'calls detectJSON function');
+  t.deepEqual(result, {
+    data: {test: 'test'},
+    loading: false,
+    networkStatus: 7,
+    stale: false,
+  });
+  server.close();
+  t.end();
+});
+
+test('Query request with custom apollo server options config', async t => {
+  const query = gql`
+    query Test {
+      test
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {};
+  const mocks = {
+    Query: () => ({
+      test(parent, args, ctx) {
+        t.equal(ctx.path, '/graphql', 'context defaults correctly');
+        return 'test';
+      },
+    }),
+  };
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+    app.register(ApolloDefaultOptionsConfigToken, {mocks});
+  });
+  const result = await client.query({query});
   t.deepEqual(result, {
     data: {test: 'test'},
     loading: false,
