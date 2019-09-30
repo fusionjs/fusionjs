@@ -17,7 +17,10 @@ import {
 
 test('fusion-tokens exports', t => {
   t.ok(ApolloContextToken, 'exports ApolloContextToken');
-  t.ok(ApolloDefaultOptionsConfigToken, 'exports ApolloDefaultOptionsConfigToken');
+  t.ok(
+    ApolloDefaultOptionsConfigToken,
+    'exports ApolloDefaultOptionsConfigToken'
+  );
   t.ok(GraphQLSchemaToken, 'exports GraphQLSchemaToken');
   t.ok(GraphQLEndpointToken, 'exports GraphQLSchemaToken');
   t.ok(ApolloRenderEnhancer, 'exports plugin');
