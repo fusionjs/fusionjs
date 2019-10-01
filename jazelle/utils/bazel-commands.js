@@ -1,7 +1,7 @@
 // @flow
 const {relative, basename} = require('path');
 const {bazel} = require('./binary-paths.js');
-const {spawn} = require('./node-helpers.js');
+const {spawn, read} = require('./node-helpers.js');
 
 /*::
 import type {Stdio} from './node-helpers.js';
@@ -50,6 +50,12 @@ const test /*: Test */ = async ({
     stdio,
     env: process.env,
     cwd: root,
+  }).catch(async e => {
+    const path = relative(root, cwd);
+    const file = `${root}/bazel-testlogs/${path}/${name}/${name}.log`;
+    const log = await read(file, 'utf8');
+    e.stack += log;
+    throw e;
   });
 };
 
