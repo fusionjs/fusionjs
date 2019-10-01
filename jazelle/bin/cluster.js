@@ -70,10 +70,11 @@ async function runMaster() {
       await Promise.all(
         workers.map(async worker => {
           while (data.length > 0) {
-            await new Promise(async resolve => {
+            await new Promise(async (resolve, reject) => {
               const item = data.shift();
               worker.send(item);
               worker.once('message', resolve);
+              worker.once('error', reject);
             });
           }
         })
