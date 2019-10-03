@@ -40,11 +40,11 @@ const findChangedBazelTargets = async ({root, files}) => {
         const target = result.trim();
         const all = target.replace(/:.+/, ':*');
         const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
-        return exec(cmd, {cwd: root}).catch(() => '');
+        return exec(cmd, {cwd: root});
       });
       const targets = await batch(root, projects, async project => {
         const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
-        return exec(cmd, {cwd: root}).catch(() => '');
+        return exec(cmd, {cwd: root});
       });
       return {workspace, targets};
     } else {
