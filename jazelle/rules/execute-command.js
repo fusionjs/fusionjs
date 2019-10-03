@@ -17,7 +17,7 @@ files.map(f => {
   const label = basename(name);
   const dir = dirname(`node_modules/${name}`);
   exec(`mkdir -p ${dir}`, {cwd: main});
-  exec(`ln -sf "${target}" "${label}"`, {cwd: `${main}/${dir}`});
+  exec(`ln -sfn "${target}" "${label}"`, {cwd: `${main}/${dir}`});
 });
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 const binPath = exists(`${main}/node_modules/.bin`)
