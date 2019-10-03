@@ -70,10 +70,13 @@ async function runMaster() {
       await Promise.all(
         workers.map(async worker => {
           while (data.length > 0) {
-            await new Promise(async resolve => {
+            await new Promise(async (resolve, reject) => {
               const item = data.shift();
               worker.send(item);
               worker.once('message', resolve);
+              worker.once('exit', e => {
+                if (e) reject();
+              });
             });
           }
         })
@@ -84,20 +87,25 @@ async function runMaster() {
 }
 
 async function runWorker() {
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const payload = await new Promise(resolve => {
-      process.once('message', resolve);
-    });
-    if (!payload) break;
+  try {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const payload = await new Promise(resolve => {
+        process.once('message', resolve);
+      });
+      if (!payload) break;
 
-    const {dir, action} = payload;
-    const cwd = `${root}/${dir}`;
+      const {dir, action} = payload;
+      const cwd = `${root}/${dir}`;
 
-    if (action === 'test') await test({root, cwd, args: []});
-    else if (action === 'lint') await lint({root, cwd});
-    else if (action === 'flow') await flow({root, cwd});
+      if (action === 'test') await test({root, cwd, args: []});
+      else if (action === 'lint') await lint({root, cwd});
+      else if (action === 'flow') await flow({root, cwd});
 
-    if (typeof process.send === 'function') process.send(payload);
+      if (typeof process.send === 'function') process.send(payload);
+    }
+  } catch (e) {
+    process.exit(1);
   }
+  process.exit(0);
 }
