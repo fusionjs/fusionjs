@@ -11,7 +11,7 @@
 import {Locale} from 'locale';
 
 import {createPlugin, memoize, html} from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
+import type {FusionPlugin, Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import bodyparser from 'koa-bodyparser';
 import querystring from 'querystring';
@@ -61,6 +61,24 @@ export function matchesLiteralSections(literalSections: Array<string>) {
       return false;
     });
   };
+}
+
+function getKeysFromContext(ctx: Context): string[] {
+  if (ctx.request.body && Array.isArray(ctx.request.body)) {
+    return (ctx.request.body: any);
+  }
+
+  const querystringParams = querystring.parse(ctx.querystring);
+  if (querystringParams.keys) {
+    try {
+      const keys = JSON.parse(querystringParams.keys);
+      return Array.isArray(keys) ? keys : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  return [];
 }
 
 type PluginType = FusionPlugin<I18nDepsType, I18nServiceType>;
@@ -167,10 +185,7 @@ const pluginFactory: () => PluginType = () =>
           } catch (e) {
             ctx.request.body = [];
           }
-          const keys =
-            ctx.request.body ||
-            JSON.parse(querystring.parse(ctx.querystring).keys || '[]') ||
-            [];
+          const keys = getKeysFromContext(ctx);
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
