@@ -8,7 +8,6 @@ const {ci} = require('./commands/ci.js');
 const {add} = require('./commands/add.js');
 const {remove} = require('./commands/remove.js');
 const {upgrade} = require('./commands/upgrade.js');
-const {greenkeep} = require('./commands/greenkeep.js');
 const {dedupe} = require('./commands/dedupe.js');
 const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
@@ -84,22 +83,13 @@ const runCLI /*: RunCLI */ = async argv => {
         async ({cwd, name}) => remove({root: await rootOf(args), cwd, name}),
       ],
       upgrade: [
-        `Upgrade a package version
-
-        [name]                     Package to add
-        --version [version]        Version
-        --cwd [cwd]                Project directory to use`,
-        async ({cwd, name, version}) =>
-          upgrade({root: await rootOf(args), cwd, name, version}),
-      ],
-      greenkeep: [
         `Upgrade a package version across all projects
 
-        [name]                     Package to add
+        [name]                     Package to upgrade
         --version [version]        Version
         --from [from]              If current version satisfies this semver range. Optional`,
         async ({name, version, from}) =>
-          greenkeep({root: await rootOf(args), name, version, from}),
+          upgrade({root: await rootOf(args), name, version, from}),
       ],
       dedupe: [
         `Dedupe transitive deps across all projects`,
@@ -235,7 +225,6 @@ module.exports = {
   add,
   remove,
   upgrade,
-  greenkeep,
   dedupe,
   purge,
   check: reportMismatchedTopLevelDeps,

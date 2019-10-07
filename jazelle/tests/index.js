@@ -7,7 +7,6 @@ const {upgrade} = require('../commands/upgrade.js');
 const {remove} = require('../commands/remove.js');
 const {ci} = require('../commands/ci.js');
 const {dedupe} = require('../commands/dedupe.js');
-const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
@@ -80,7 +79,7 @@ async function runTests() {
     t(testInstallAddUpgradeRemove),
     t(testCi),
     t(testDedupe),
-    t(testGreenkeep),
+    t(testUpgrade),
     t(testPurge),
     t(testYarn),
     t(testBump),
@@ -169,7 +168,6 @@ async function testInstallAddUpgradeRemove() {
   // upgrade linked package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    cwd: `${__dirname}/tmp/commands/a`,
     name: 'c',
     version: '0.0.0',
   });
@@ -179,7 +177,6 @@ async function testInstallAddUpgradeRemove() {
   // upgrade external package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    cwd: `${__dirname}/tmp/commands/a`,
     name: 'has',
     version: '1.0.3',
   });
@@ -226,27 +223,27 @@ async function testDedupe() {
   assert((await read(lockfile, 'utf8')).includes('version "1.0.3"'));
 }
 
-async function testGreenkeep() {
+async function testUpgrade() {
   const meta = `${__dirname}/tmp/greenkeep/a/package.json`;
   const lockfile = `${__dirname}/tmp/greenkeep/a/yarn.lock`;
   const cmd = `cp -r ${__dirname}/fixtures/greenkeep/ ${__dirname}/tmp/greenkeep`;
   await exec(cmd);
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
     name: 'is-number',
     from: '1.1.0',
   });
   assert((await read(meta, 'utf8')).includes('"is-number": "1.0.0"'));
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
     name: 'b',
     from: '^0.0.1',
   });
   assert((await read(meta, 'utf8')).includes('"b": "0.0.0"'));
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
     name: 'has',
     version: '1.0.3',
@@ -254,7 +251,7 @@ async function testGreenkeep() {
   assert((await read(meta, 'utf8')).includes('"has": "1.0.3"'));
   assert((await read(lockfile, 'utf8')).includes('function-bind'));
 
-  await greenkeep({root: `${__dirname}/tmp/greenkeep`, name: 'b'});
+  await upgrade({root: `${__dirname}/tmp/greenkeep`, name: 'b'});
   assert((await read(meta, 'utf8')).includes('"b": "1.0.0"'));
 }
 

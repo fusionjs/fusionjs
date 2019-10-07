@@ -1,62 +1,75 @@
 // @flow
-const {resolve} = require('path');
-const {assertProjectDir} = require('../utils/assert-project-dir.js');
-const {findLocalDependency} = require('../utils/find-local-dependency.js');
+const {minVersion, satisfies} = require('semver');
 const {getManifest} = require('../utils/get-manifest.js');
-const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
-const {read, write, spawn} = require('../utils/node-helpers.js');
+const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {upgrade: upgradeDep} = require('../utils/lockfile.js');
-const {install} = require('./install.js');
+const {getAllDependencies} = require('../utils/get-all-dependencies.js');
+const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
+const {read, write} = require('../utils/node-helpers.js');
 
 /*::
 export type UpgradeArgs = {
   root: string,
-  cwd: string,
   name: string,
   version?: string,
-}
-export type Upgrade = (UpgradeArgs) => Promise<void>
+  from?: string,
+};
+export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({root, cwd, name, version}) => {
-  await assertProjectDir({dir: cwd});
-
+const upgrade /*: Upgrade */ = async ({root, name, version, from}) => {
+  const {projects} = /*:: await */ await getManifest({root}); // FIXME: double await is due to Flow bug
+  const roots = projects.map(dir => `${root}/${dir}`);
   const local = await findLocalDependency({root, name});
   if (local) {
     if (version && version !== local.meta.version) {
       throw new Error(`You must use version ${local.meta.version}`);
     }
 
-    const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
-    if (meta.dependencies && meta.dependencies[name])
-      meta.dependencies[name] = local.meta.version;
-    if (meta.devDependencies && meta.devDependencies[name])
-      meta.devDependencies[name] = local.meta.version;
-    if (meta.peerDependencies && meta.peerDependencies[name])
-      meta.peerDependencies[name] = local.meta.version;
-    if (meta.optionalDependencies && meta.optionalDependencies[name])
-      meta.optionalDependencies[name] = local.meta.version;
-    await write(
-      `${cwd}/package.json`,
-      `${JSON.stringify(meta, null, 2)}\n`,
-      'utf8'
+    await Promise.all(
+      roots.map(async cwd => {
+        const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
+        update(meta, 'dependencies', name, local.meta.version, from);
+        update(meta, 'devDependencies', name, local.meta.version, from);
+        update(meta, 'peerDependencies', name, local.meta.version, from);
+        update(meta, 'optionalDependencies', name, local.meta.version, from);
+        await write(
+          `${cwd}/package.json`,
+          `${JSON.stringify(meta, null, 2)}\n`,
+          'utf8'
+        );
+      })
     );
   } else {
-    const additions = [{name, range: version}];
-    const {projects} = await getManifest({root});
-    const deps = await getLocalDependencies({
-      dirs: projects.map(dir => `${root}/${dir}`),
-      target: resolve(root, cwd),
-    });
+    const upgrades = [{name, range: version, from}];
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
     await upgradeDep({
-      roots: [cwd],
-      additions,
-      ignore: deps.map(d => d.meta.name),
+      roots,
+      upgrades,
+      ignore: await Promise.all(
+        projects.map(async project => {
+          const data = await read(`${root}/${project}/package.json`, 'utf8');
+          return JSON.parse(data).name;
+        })
+      ),
       tmp,
     });
   }
-  await spawn('rm', ['-rf', 'node_modules'], {cwd});
-  await install({root, cwd});
+  const ignore = await getAllDependencies({root, projects});
+  const deps = await Promise.all(
+    roots.map(async dir => ({
+      dir,
+      meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
+    }))
+  );
+  await generateDepLockfiles({root, deps, ignore});
+};
+
+const update = (meta, type, name, version, from) => {
+  if (meta[type] && meta[type][name]) {
+    const min = minVersion(meta[type][name]);
+    const inRange = !from || satisfies(min, from);
+    if (inRange) meta[type][name] = version;
+  }
 };
 
 module.exports = {upgrade};

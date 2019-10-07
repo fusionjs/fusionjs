@@ -332,7 +332,6 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle add`](#jazelle-add)
 - [`jazelle remove`](#jazelle-remove)
 - [`jazelle upgrade`](#jazelle-upgrade)
-- [`jazelle greenkeep`](#jazelle-greenkeep)
 - [`jazelle dedupe`](#jazelle-dedupe)
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
@@ -412,21 +411,10 @@ Removes a dependency from the project's package.json, syncing the `yarn.lock` fi
 
 ### `jazelle upgrade`
 
-Upgrades a dependency in the project's package.json
-
-`jazelle upgrade --name [name] --version [version] --cwd [cwd]`
-`jazelle upgrade [name] --version [version] --cwd [cwd]`
-
-- `name` - Name of dependency to add
-- `--version` - Version of dependency to upgrade. Defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages
-- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
-
-### `jazelle greenkeep`
-
 Upgrades a dependency across all local projects that use it
 
-`jazelle greenkeep --name [name] --version [version] --from [from]`
-`jazelle greenkeep [name] --version [version] --from [from]`
+`jazelle upgrade --name [name] --version [version] --from [from]`
+`jazelle upgrade [name] --version [version] --from [from]`
 
 - `name` - Name of dependency to add
 - `--version` - Version of dependency to upgrade. Defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages
@@ -640,7 +628,6 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [add](#add)
 - [remove](#remove)
 - [upgrade](#upgrade)
-- [greenkeep](#greenkeep)
 - [dedupe](#dedupe)
 - [purge](#purge)
 - [check](#check)
@@ -725,23 +712,13 @@ Removes a dependency from the project's package.json, syncing the `yarn.lock` fi
 
 ### `upgrade`
 
-Upgrades a dependency in the project's package.json
-
-`let upgrade: ({root: string, cwd: string, name: string, version: string}) => Promise<void>`
-
-- `root` - Monorepo root folder (absolute path)
-- `name` - Name of dependency to upgrade
-- `version ` - Version of dependency to add
-- `cwd` - Project folder (absolute path)
-
-### `greenkeep`
-
 Upgrades a dependency across all local projects that use it
 
-`let greenkeep: ({name: string, version: string}) => Promise<void>`
+`let upgrade: ({root: string, name: string, version: string, from: string}) => Promise<void>`
 
 - `name` - Name of dependency to add
 - `version` - Version of dependency to upgrade. Defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages
+- `from` - Only upgrade projects where the current minimum version of the dep is in range of the `from` version range. Optional.
 
 ### `dedupe`
 
@@ -1054,7 +1031,7 @@ The version policy structure specifies which direct dependencies must be kept in
 
 The version policy is enforced when running `jazelle install`, `jazelle add`, `jazelle remove` and `jazelle upgrade`.
 
-If you change the version policy, it's your responsibility to run `jazelle check` to ensure that projects conform to the new policy, and to run `jazelle greenkeep` to fix version policy violations.
+If you change the version policy, it's your responsibility to run `jazelle check` to ensure that projects conform to the new policy, and to run `jazelle upgrade` to fix version policy violations.
 
 ```json
 {
