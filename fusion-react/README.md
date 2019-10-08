@@ -242,7 +242,7 @@ const Component = split({load, LoadingComponent, ErrorComponent});
   The Fusion compiler takes care of bundling the appropriate code and de-duplicating dependencies. The argument to `import` should be a string literal (not a variable). See [webpack docs](https://webpack.js.org/api/module-methods/#import-) for more information.
 - `LoadingComponent` - Required. A component to be displayed while the asynchronous component hasn't downloaded
 - `ErrorComponent` - Required. A component to be displayed if the asynchronous component could not be loaded
-- `defer: boolean` - Defaults to false. Whether split component should be deferred.
+- `defer: boolean` - Defaults to false. If `defer` is false split bundle is also rendered on the server.
 
 #### prepare
 
