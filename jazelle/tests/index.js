@@ -168,8 +168,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade linked package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    name: 'c',
-    version: '0.0.0',
+    name: 'c@0.0.0',
   });
   assert(await exists(`${__dirname}/tmp/commands/node_modules/c`));
   assert((await read(buildFile, 'utf8')).includes('//c:c'));
@@ -177,8 +176,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade external package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
@@ -245,8 +243,7 @@ async function testUpgrade() {
 
   await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert((await read(meta, 'utf8')).includes('"has": "1.0.3"'));
   assert((await read(lockfile, 'utf8')).includes('function-bind'));

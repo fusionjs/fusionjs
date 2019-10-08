@@ -11,12 +11,12 @@ const {read, write} = require('../utils/node-helpers.js');
 export type UpgradeArgs = {
   root: string,
   name: string,
-  version?: string,
   from?: string,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({root, name, version, from}) => {
+const upgrade /*: Upgrade */ = async ({root, name: nameWithVersion, from}) => {
+  let [, name, version] = nameWithVersion.match(/(@?[^@]*)@?(.*)/) || [];
   const {projects} = /*:: await */ await getManifest({root}); // FIXME: double await is due to Flow bug
   const roots = projects.map(dir => `${root}/${dir}`);
   const local = await findLocalDependency({root, name});

@@ -85,7 +85,7 @@ const runCLI /*: RunCLI */ = async argv => {
       upgrade: [
         `Upgrade a package version across all projects
 
-        [name]                     Package to upgrade
+        [name]                     Package to upgrade at a specific version. ie., foo@1.2.3
         --version [version]        Version
         --from [from]              If current version satisfies this semver range. Optional`,
         async ({name, version, from}) =>
