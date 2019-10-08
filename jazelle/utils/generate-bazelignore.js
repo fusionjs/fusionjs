@@ -18,6 +18,7 @@ const generateBazelignore /*: GenerateBazelignore */ = async ({
 
   const ignorePaths = [
     ...new Set([
+      'node_modules',
       ...bazelignore.split('\n'),
       ...projects.map(p => `${p}/node_modules`),
     ]),
