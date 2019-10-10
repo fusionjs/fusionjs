@@ -7,6 +7,7 @@
  */
 
 /* eslint-env node */
+const fs = require('fs');
 
 const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
 const matchValue = process.env.TEST_FOLDER
@@ -53,7 +54,7 @@ const transformIgnorePatterns = getTransformIgnorePatterns();
 module.exports = {
   coverageDirectory: `${process.cwd()}/coverage`,
   coverageReporters: ['json'],
-  rootDir: process.cwd(),
+  rootDir: fs.realpathSync(process.cwd()),
   transform: {
     '\\.js$': require.resolve('./jest-transformer.js'),
     '\\.(gql|graphql)$': require.resolve('./graphql-jest-transformer.js'),
