@@ -36,11 +36,21 @@ const findChangedBazelTargets = async ({root, files}) => {
   if (workspace === 'sandbox') {
     if (lines.length > 0) {
       const projects = await batch(root, lines, async file => {
-        const result = await exec(`${bazel} query "${file}"`, {cwd: root});
+        const find = `${bazel} query "${file}"`;
+        const result = await exec(find, {cwd: root}).catch(async e => {
+          // if file doesn't exist, find which package it would've belong to, and find another file in the same package
+          // doing so is sufficient, because we just want to find out which targets have changed
+          // - in the case the file was deleted but a package still exists, pkg will refer to the package
+          // - in the case the package itself was deleted, pkg will refer to the root package (which will typically yield no targets in a typical Jazelle setup)
+          const [, pkg] = e.message.match(/not declared in package '(.*?)'/);
+          const cmd = `${bazel} query 'kind("source file", //${pkg}:*)' | head -n 1`;
+          return exec(cmd);
+        });
         const target = result.trim();
         const all = target.replace(/:.+/, ':*');
         const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
-        return exec(cmd, {cwd: root});
+        const project = await exec(cmd, {cwd: root});
+        return project;
       });
       const targets = await batch(root, projects, async project => {
         const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
