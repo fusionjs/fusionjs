@@ -46,11 +46,16 @@ const test /*: Test */ = async ({
   stdio = 'inherit',
 }) => {
   cwd = relative(root, cwd);
-  await spawn(bazel, ['test', `//${cwd}:${name}`, '--verbose_failures'], {
-    stdio,
-    env: process.env,
-    cwd: root,
-  }).catch(async e => {
+  const testParams = args.map(arg => `--test_arg=${arg}`);
+  await spawn(
+    bazel,
+    ['test', `//${cwd}:${name}`, '--verbose_failures', ...testParams],
+    {
+      stdio,
+      env: process.env,
+      cwd: root,
+    }
+  ).catch(async e => {
     const path = relative(root, cwd);
     const file = `${root}/bazel-testlogs/${path}/${name}/${name}.log`;
     const log = await read(file, 'utf8');

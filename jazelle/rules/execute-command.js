@@ -4,7 +4,7 @@ const {execSync: exec} = require('child_process');
 const {dirname, basename} = require('path');
 
 const root = process.cwd();
-const [node, , main, bin, command, dist, out] = process.argv;
+const [node, , main, bin, command, dist, out, ...args] = process.argv;
 
 const files = exec(`find . -name output.tgz`, {cwd: bin, encoding: 'utf8'})
   .split('\n')
@@ -26,7 +26,8 @@ const binPath = exists(`${main}/node_modules/.bin`)
 const payload = scripts[command] || ``;
 const nodeDir = dirname(node);
 // prioritize hermetic Node version over system version
-const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload}`;
+const params = args.map(arg => `'${arg}'`).join(' ');
+const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload} ${params}`;
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});
