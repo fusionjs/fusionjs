@@ -68,6 +68,7 @@ const test /*: Test */ = async ({
 export type RunArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   name?: string,
   stdio?: Stdio,
 };
@@ -76,63 +77,73 @@ type Run = (RunArgs) => Promise<void>;
 const run /*: Run */ = async ({
   root,
   cwd,
+  args,
   name = basename(cwd),
   stdio = 'inherit',
 }) => {
   cwd = relative(root, cwd);
-  await spawn(bazel, ['run', `//${cwd}:${name}`, '--verbose_failures'], {
-    stdio,
-    env: process.env,
-    cwd: root,
-  });
+  const runParams = args.length > 0 ? ['--', ...args] : [];
+  await spawn(
+    bazel,
+    ['run', `//${cwd}:${name}`, '--verbose_failures', ...runParams],
+    {
+      stdio,
+      env: process.env,
+      cwd: root,
+    }
+  );
 };
 
 /*::
 export type DevArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   stdio?: Stdio,
 };
 type Dev = (DevArgs) => Promise<void>;
 */
-const dev /*: Dev */ = async ({root, cwd, stdio = 'inherit'}) => {
-  await run({root, cwd, name: 'dev', stdio});
+const dev /*: Dev */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+  await run({root, cwd, args, name: 'dev', stdio});
 };
 
 /*::
 export type LintArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   stdio?: Stdio,
 };
 type Lint = (LintArgs) => Promise<void>;
 */
-const lint /*: Lint */ = async ({root, cwd, stdio = 'inherit'}) => {
-  await run({root, cwd, name: 'lint', stdio});
+const lint /*: Lint */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+  await run({root, cwd, args, name: 'lint', stdio});
 };
 
 /*::
 export type FlowArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   stdio?: Stdio,
 };
 type Flow = (FlowArgs) => Promise<void>;
 */
-const flow /*: Flow */ = async ({root, cwd, stdio = 'inherit'}) => {
-  await run({root, cwd, name: 'flow', stdio});
+const flow /*: Flow */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+  await run({root, cwd, args, name: 'flow', stdio});
 };
 
 /*::
 export type StartArgs = {
   root: string,
   cwd: string,
+  args: Array<string>,
   stdio?: Stdio,
 };
 type Start = (StartArgs) => Promise<void>;
 */
-const start /*: Start */ = async ({root, cwd, stdio = 'inherit'}) => {
-  await run({root, cwd, stdio});
+const start /*: Start */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+  await run({root, cwd, args, stdio});
 };
 
 module.exports = {build, test, run, dev, lint, flow, start};

@@ -525,42 +525,46 @@ Builds a project and its dependencies in topological order. Calls `scripts.build
 
 Runs a project in development mode. Calls `scripts.dev` in package.json
 
-`jazelle dev --cwd [cwd]`
+`jazelle dev --cwd [cwd] [args...]`
 
-- `target` - A Bazel target name
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments to pass to the dev script
 
 ### `jazelle test`
 
 Tests a project. Calls `scripts.test` in package.json
 
-`jazelle test --cwd [cwd]`
+`jazelle test --cwd [cwd] [args...]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments to pass to the test script
 
 ### `jazelle lint`
 
 Lints a project. Calls `scripts.lint` in package.json
 
-`jazelle lint --cwd [cwd]`
+`jazelle lint --cwd [cwd] [args...]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments to pass to the lint script
 
 ### `jazelle flow`
 
 Type-checks a project. Calls `scripts.flow` in package.json
 
-`jazelle flow --cwd [cwd]`
+`jazelle flow --cwd [cwd] [args...]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments to pass to the flow script
 
 ### `jazelle start`
 
 Runs a project. Calls `scripts.start` in package.json
 
-`jazelle start --cwd [cwd]`
+`jazelle start --cwd [cwd] [args...]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments to pass to the start script
 
 ### `jazelle bazel`
 
@@ -854,46 +858,51 @@ Builds a projects and its dependencies in topological order. Calls `scripts.buil
 
 Tests a project. Calls `scripts.test` in package.json
 
-`let test: ({root: string, cwd: string}) => Promise<void>`
+`let test: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `args` - A list of arguments to pass to the test script
 
 ### `dev`
 
 Runs a project in development mode. Calls `scripts.dev` in package.json
 
-`let dev: ({root: string, cwd: string}) => Promise<void>`
+`let dev: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `args` - A list of arguments to pass to the dev script
 
 ### `lint`
 
 Lints a project. Calls `scripts.lint` in package.json
 
-`let lint: ({root: string, cwd: string}) => Promise<void>`
+`let lint: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `args` - A list of arguments to pass to the lint script
 
 ### `flow`
 
 Type-checks a project. Calls `scripts.flow` in package.json
 
-`let flow: ({root: string, cwd: string}) => Promise<void>`
+`let flow: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `args` - A list of arguments to pass to the flow script
 
 ### `start`
 
 Runs a project. Calls `scripts.start` in package.json
 
-`let start: ({root: string, cwd: string}) => Promise<void>`
+`let start: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+- `args` - A list of arguments to pass to the start script
 
 ### `bazel`
 

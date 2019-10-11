@@ -393,6 +393,7 @@ async function testBazelDummy() {
   await bazelCmds.run({
     root: `${__dirname}/tmp/bazel`,
     cwd: `${__dirname}/tmp/bazel`,
+    args: [],
     name: 'target',
     stdio: ['ignore', runStream, 'ignore'],
   });
@@ -437,6 +438,7 @@ async function testBazelBuild() {
   await bazelCmds.run({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     name: 'test',
     stdio: ['ignore', runStream, 'ignore'],
   });
@@ -449,6 +451,7 @@ async function testBazelBuild() {
   await bazelCmds.lint({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
   assert((await read(lintStreamFile, 'utf8')).includes('\n111\n'));
@@ -460,6 +463,7 @@ async function testBazelBuild() {
   await bazelCmds.flow({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', flowStream, flowStream],
   });
   assert((await read(flowStreamFile, 'utf8')).includes('a:flow'));
@@ -471,6 +475,7 @@ async function testBazelBuild() {
   await bazelCmds.start({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', startStream, startStream],
   });
   assert((await read(startStreamFile, 'utf8')).includes('\n333\n'));
@@ -1471,6 +1476,7 @@ async function testYarnCommands() {
   await yarnCmds.dev({
     root,
     deps,
+    args: [],
     stdio: ['ignore', devStream, 'ignore'],
   });
   assert((await read(devStreamFile, 'utf8')).includes('\n333\n'));
@@ -1494,6 +1500,7 @@ async function testYarnCommands() {
   await yarnCmds.lint({
     root,
     deps,
+    args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
   assert((await read(lintStreamFile, 'utf8')).includes('\n555\n'));
@@ -1505,6 +1512,7 @@ async function testYarnCommands() {
   await yarnCmds.flow({
     root,
     deps,
+    args: [],
     stdio: ['ignore', flowStream, 'ignore'],
   });
   assert((await read(flowStreamFile, 'utf8')).includes('\n666\n'));
@@ -1516,6 +1524,7 @@ async function testYarnCommands() {
   await yarnCmds.start({
     root,
     deps,
+    args: [],
     stdio: ['ignore', startStream, 'ignore'],
   });
   assert((await read(startStreamFile, 'utf8')).includes('\n777\n'));

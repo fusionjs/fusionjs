@@ -99,8 +99,8 @@ async function runWorker() {
       const cwd = `${root}/${dir}`;
 
       if (action === 'test') await test({root, cwd, args: []});
-      else if (action === 'lint') await lint({root, cwd});
-      else if (action === 'flow') await flow({root, cwd});
+      else if (action === 'lint') await lint({root, cwd, args: []});
+      else if (action === 'flow') await flow({root, cwd, args: []});
 
       if (typeof process.send === 'function') process.send(payload);
     }

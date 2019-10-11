@@ -62,14 +62,19 @@ const build /*: Build */ = async ({root, deps, stdio = errorsOnly}) => {
 export type DevArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Dev = (DevArgs) => Promise<void>;
 */
-const dev /*: Dev */ = async ({root, deps, stdio = 'inherit'}) => {
+const dev /*: Dev */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'dev'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'dev', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
@@ -95,29 +100,35 @@ const test /*: Test */ = async ({root, deps, args, stdio = 'inherit'}) => {
 export type LintArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Lint = (LintArgs) => Promise<void>;
 */
-const lint /*: Lint */ = async ({root, deps, stdio = 'inherit'}) => {
+const lint /*: Lint */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'lint'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'lint', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
 export type FlowArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Flow = (FlowArgs) => Promise<void>;
 */
-const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
+const flow /*: Flow */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   const configArgs = await generateFlowConfig({root, dir: main.dir});
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'flow', ...configArgs], {
+  await spawn(node, [yarn, 'flow', ...configArgs, ...args], {
     stdio,
     env: process.env,
     cwd: main.dir,
@@ -128,14 +139,19 @@ const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
 export type StartArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Start = (StartArgs) => Promise<void>;
 */
-const start /*: Start */ = async ({root, deps, stdio = 'inherit'}) => {
+const start /*: Start */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: true, stdio: errorsOnly});
-  await spawn(node, [yarn, 'start'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'start', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 module.exports = {build, dev, test, lint, flow, start};

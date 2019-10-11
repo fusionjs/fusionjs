@@ -147,7 +147,7 @@ const runCLI /*: RunCLI */ = async argv => {
         `Run a project
 
         --cwd [cwd]                Project directory to use`,
-        async ({cwd}) => dev({root: await rootOf(args), cwd}),
+        async ({cwd}) => dev({root: await rootOf(args), cwd, args: rest}),
       ],
       test: [
         `Test a project
@@ -159,19 +159,19 @@ const runCLI /*: RunCLI */ = async argv => {
         `Lint a project
 
         --cwd [cwd]                Project directory to use`,
-        async ({cwd}) => lint({root: await rootOf(args), cwd}),
+        async ({cwd}) => lint({root: await rootOf(args), cwd, args: rest}),
       ],
       flow: [
         `Typecheck a project
 
         --cwd [cwd]                Project directory to use`,
-        async ({cwd}) => flow({root: await rootOf(args), cwd}),
+        async ({cwd}) => flow({root: await rootOf(args), cwd, args: rest}),
       ],
       start: [
         `Run a project
 
         --cwd [cwd]                Project directory to use`,
-        async ({cwd}) => start({root: await rootOf(args), cwd}),
+        async ({cwd}) => start({root: await rootOf(args), cwd, args: rest}),
       ],
       bazel: [
         `Run a Bazel command
