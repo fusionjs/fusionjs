@@ -100,8 +100,10 @@ export type RouterHistoryType = {
   entries?: Array<LocationType>,
 };
 
+export type ParamsType = {[key: string]: ?string};
+
 export type MatchType = {
-  params: {[key: string]: ?string},
+  params: ParamsType,
   isExact: boolean,
   path: string,
   url: string,

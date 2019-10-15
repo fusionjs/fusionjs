@@ -17,6 +17,10 @@ import {
   Switch as SwitchUntyped,
   matchPath as matchPathUntyped,
   withRouter as withRouterUntyped,
+  useHistory as useHistoryUntyped,
+  useParams as useParamsUntyped,
+  useRouteMatch as useRouteMatchUntyped,
+  useLocation as useLocationUntyped,
 } from 'react-router-dom';
 
 import {Status, NotFound} from './modules/Status';
@@ -35,6 +39,10 @@ import type {
   SwitchType,
   matchPathType,
   withRouterType,
+  RouterHistoryType,
+  MatchType,
+  LocationType,
+  ParamsType,
 } from './types.js';
 
 /**
@@ -52,6 +60,10 @@ const StaticRouter: StaticRouterType = StaticRouterUntyped;
 const Switch: SwitchType = SwitchUntyped;
 const matchPath: matchPathType = matchPathUntyped;
 const withRouter: withRouterType = withRouterUntyped;
+const useHistory: RouterHistoryType = useHistoryUntyped;
+const useRouteMatch: MatchType = useRouteMatchUntyped;
+const useLocation: LocationType = useLocationUntyped;
+const useParams: ParamsType = useParamsUntyped;
 
 export {
   BrowserRouter,
@@ -69,4 +81,8 @@ export {
   Redirect,
   Router,
   Route,
+  useHistory,
+  useRouteMatch,
+  useLocation,
+  useParams,
 };
