@@ -64,21 +64,21 @@ _jazelle_dependencies = repository_rule(
       doc = """
 A dict w/ `mac`, `linux`, and `windows` keys.
 
-SHA256s can be found at https://nodejs.org/dist/v[version]/SHASUM256.txt
+SHA256s can be found at https://nodejs.org/dist/v[version]/SHASUMS256.txt
 
 - node-v[version]-darwin-x64.tar.xz
 - node-v[version]-linux-x64.tar.xz
 - node-v[version]-win-x64.zip
 
-Sample for Node 10.16.0
+Sample for Node 10.16.3
 
 ```
 jazelle_dependencies(
-  node_version = "10.16.0"
+  node_version = "10.16.3"
   node_sha256 = {
-    "mac": "7a5eaa1f69614375a695ccb62017248e5dcc15b0b8edffa7db5b52997cf992ba",
-    "linux": "faddbe418064baf2226c2fcbd038c3ef4ae6f936eb952a1138c7ff8cfe862438",
-    "windows": "93c881fdc0455a932dd5b506a7a03df27d9fe36155c1d3f351ebfa4e20bf1c0d",
+    "mac": "1d5ce05abf39ef482c2c3eaf16c1f4edb01314308066871d3dfc99e95701b19b",
+    "linux": "d2271fd8cf997fa7447d638dfa92749ff18ca4b0d796bf89f2a82bf7800d5506",
+    "windows": "19aa47de7c5950d7bd71a1e878013b98d93871cc311d7185f5472e6d3f633146",
   }
 )
 ```
@@ -89,12 +89,12 @@ jazelle_dependencies(
       doc = """
 SHA256 can be found via `curl -fLs https://github.com/yarnpkg/yarn/releases/download/v[version]/yarn-[version].js | openssl sha256`
 
-Sample for Yarn 1.15.2
+Sample for Yarn 1.19.1
 
 ```
 install_yarn(
-  version = "1.15.2"
-  sha256 = "7f2f5a90bfe3890bc4653432118ba627cb71a9000a5f60f16efebfc760501396"
+  version = "1.19.1"
+  sha256 = "fdbc534294caef9cc0d7384fb579ec758da7fc033392ce54e0e8268e4db24baf"
 )
 ```
 """
