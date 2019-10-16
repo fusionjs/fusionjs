@@ -247,6 +247,10 @@ let moduleCounter = 0;
  * id format: `__fusion__0`
  */
 function createCachedModuleId(ident) {
+  if (/^__fusion__\d+$/.test(ident)) {
+    // This is already a cached identifier
+    return ident;
+  }
   if (customModuleIds.has(ident)) {
     return customModuleIds.get(ident);
   }
