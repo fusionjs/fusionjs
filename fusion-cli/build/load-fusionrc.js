@@ -11,9 +11,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
-
-let loggedNotice = false;
 
 /*::
 
@@ -45,17 +42,6 @@ module.exports = function validateConfig(
     config = require(configPath);
     if (!isValid(config, silent)) {
       throw new Error('.fusionrc.js is invalid');
-    }
-    if (!loggedNotice && config.babel && !silent) {
-      console.log(chalk.dim('Using custom Babel config from .fusionrc.js'));
-      console.warn(
-        chalk.yellow(
-          'Warning: custom Babel config is an',
-          chalk.bold.underline('unstable API'),
-          'and may be not be supported in future releases. Use at your own risk.'
-        )
-      );
-      loggedNotice = true;
     }
   } else {
     config = {};
@@ -135,7 +121,7 @@ function isValid(config, silent) {
     )
   ) {
     throw new Error(
-      'assumeNoImportSideEffects must be true, false, or undefined in fusionrc.js babel config'
+      'assumeNoImportSideEffects must be true, false, or undefined in fusionrc.js config'
     );
   }
 
@@ -154,11 +140,7 @@ function isValid(config, silent) {
   }
 
   if (
-    !(
-      config.gzip === false ||
-      config.gzip === true ||
-      config.gzip === void 0
-    )
+    !(config.gzip === false || config.gzip === true || config.gzip === void 0)
   ) {
     throw new Error('gzip must be true, false, or undefined in fusionrc.js');
   }
