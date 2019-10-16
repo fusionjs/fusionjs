@@ -25,6 +25,19 @@ for DIR in $CHANGES ; do (
       echo "        pull_retries: 5";
       echo "    agents:";
       echo "      queue: workers";
+      echo "  - label: 'fusion-cli lint flow'";
+      echo "    commands:";
+      echo "    - 'jazelle ci --cwd=$DIR'";
+      echo "    - 'jazelle build --cwd=$DIR'";
+      echo "    - 'jazelle lint --cwd=$DIR'";
+      echo "    - 'jazelle flow --cwd=$DIR'";
+      echo "    timeout_in_minutes: 10";
+      echo "    plugins:";
+      echo "      'docker-compose#v3.0.0':";
+      echo "        run: ci";
+      echo "        pull_retries: 5";
+      echo "    agents:";
+      echo "      queue: workers";
     else
       echo "  - label: '$PROJECT'";
       echo "    commands:";
