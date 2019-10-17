@@ -74,8 +74,8 @@ const generateBazelBuildRules /*: GenerateBazelBuildRules */ = async ({
           });
         items.forEach(item => {
           if (!dependencies.map(d => `"${d}"`).includes(item)) {
-            const [, path] = item.match(/\/\/(.+?):/) || [];
-            if (projects.includes(path)) {
+            const [, path, name] = item.match(/\/\/(.+?):([^"]+)/) || [];
+            if (projects.includes(path) && basename(path) === name) {
               code = removeCallArgItem(code, 'web_library', 'deps', item);
             }
           }
