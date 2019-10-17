@@ -100,8 +100,10 @@ export type RouterHistoryType = {
   entries?: Array<LocationType>,
 };
 
+export type ParamsType = {[key: string]: ?string};
+
 export type MatchType = {
-  params: {[key: string]: ?string},
+  params: ParamsType,
   isExact: boolean,
   path: string,
   url: string,
@@ -186,7 +188,7 @@ export type withRouterType = <Props: {}, Component: React.ComponentType<Props>>(
 >;
 
 type MatchPathOptions = {
-  path?: string,
+  path?: string | string[],
   exact?: boolean,
   sensitive?: boolean,
   strict?: boolean,
