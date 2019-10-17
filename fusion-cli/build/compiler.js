@@ -54,7 +54,8 @@ function getWarnings(info) {
 
 function dedupeErrors(items) {
   const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  return items.map(item => item.replace(re, '$2'));
+  const set = new Set(items.map(item => item.replace(re, '$2')));
+  return Array.from(set);
 }
 
 function getStatsLogger({dir, logger, env}) {
