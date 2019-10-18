@@ -552,22 +552,28 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     optimization: {
       runtimeChunk: runtime === 'client' && {name: 'runtime'},
       splitChunks:
-        runtime === 'client' &&
-        (fusionConfig.splitChunks || {
-          chunks: 'async',
-          cacheGroups: {
-            default: {
-              minChunks: 2,
-              reuseExistingChunk: true,
+        runtime !== 'client'
+          ? void 0
+          : fusionConfig.splitChunks
+          ? // Tilde character in filenames is not well supported
+            // https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
+            {...fusionConfig.splitChunks, automaticNameDelimiter: '-'}
+          : {
+              chunks: 'async',
+              automaticNameDelimiter: '-',
+              cacheGroups: {
+                default: {
+                  minChunks: 2,
+                  reuseExistingChunk: true,
+                },
+                vendor: {
+                  test: /[\\/]node_modules[\\/]/,
+                  name: 'vendor',
+                  chunks: 'initial',
+                  enforce: true,
+                },
+              },
             },
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendor',
-              chunks: 'initial',
-              enforce: true,
-            },
-          },
-        }),
       minimize: shouldMinify,
       minimizer: shouldMinify
         ? [
