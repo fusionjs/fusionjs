@@ -34,7 +34,12 @@ const findChangedBazelTargets = async ({root, files}) => {
   const lines = data.split('\n').filter(Boolean);
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
-    if (lines.length > 0) {
+    if (lines.includes('WORKSPACE')) {
+      const cmd = `${bazel} query 'kind(".*_test rule", "...")'`;
+      const result = await exec(cmd, {cwd: root});
+      const targets = result.split('\n').filter(Boolean);
+      return {workspace, targets};
+    } else {
       const projects = await batch(root, lines, async file => {
         const find = `${bazel} query "${file}"`;
         const result = await exec(find, {cwd: root}).catch(async e => {
@@ -57,8 +62,6 @@ const findChangedBazelTargets = async ({root, files}) => {
         return exec(cmd, {cwd: root});
       });
       return {workspace, targets};
-    } else {
-      return {workspace, targets: []};
     }
   } else {
     const allProjects = await Promise.all([
@@ -70,36 +73,48 @@ const findChangedBazelTargets = async ({root, files}) => {
       }),
     ]);
 
-    const set = new Set();
-    if (lines.length > 0) {
+    if (lines.includes('WORKSPACE')) {
+      const targets = [];
       for (const project of projects) {
-        for (const line of lines) {
-          if (line.startsWith(project)) set.add(project);
+        targets.push(
+          `//${project}:test`,
+          `//${project}:lint`,
+          `//${project}:flow`
+        );
+      }
+      return {workspace, targets};
+    } else {
+      const set = new Set();
+      if (lines.length > 0) {
+        for (const project of projects) {
+          for (const line of lines) {
+            if (line.startsWith(project)) set.add(project);
+          }
         }
       }
-    }
 
-    // Add to the changeSet all downstream packages that have a dependency
-    const changeSet = new Set(set);
-    for (const target of set) {
-      const dep = allProjects.find(project => project.dir === target);
-      if (dep) {
-        const downstreamDeps = getDownstreams(allProjects, dep);
-        for (const downstreamDep of downstreamDeps) {
-          changeSet.add(downstreamDep.dir);
+      // Add to the changeSet all downstream packages that have a dependency
+      const changeSet = new Set(set);
+      for (const target of set) {
+        const dep = allProjects.find(project => project.dir === target);
+        if (dep) {
+          const downstreamDeps = getDownstreams(allProjects, dep);
+          for (const downstreamDep of downstreamDeps) {
+            changeSet.add(downstreamDep.dir);
+          }
         }
       }
-    }
 
-    const targets = [];
-    for (const project of changeSet) {
-      targets.push(
-        `//${project}:test`,
-        `//${project}:lint`,
-        `//${project}:flow`
-      );
+      const targets = [];
+      for (const project of changeSet) {
+        targets.push(
+          `//${project}:test`,
+          `//${project}:lint`,
+          `//${project}:flow`
+        );
+      }
+      return {workspace, targets};
     }
-    return {workspace, targets};
   }
 };
 
