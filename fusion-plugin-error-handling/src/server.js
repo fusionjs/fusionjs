@@ -11,13 +11,21 @@
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
 
-import {createPlugin, createToken, html} from 'fusion-core';
+import {createPlugin, createToken, html, dangerouslySetHTML} from 'fusion-core';
 import type {Token} from 'fusion-core';
 
-import type {ErrorHandlerPluginType, ErrorHandlerType} from './types.js';
+import type {
+  ErrorHandlerPluginType,
+  ErrorHandlerType,
+  ErrorHandlingTransformType,
+} from './types.js';
 
 export const ErrorHandlerToken: Token<ErrorHandlerType> = createToken(
   'ErrorHandlerToken'
+);
+
+export const ErrorHandlingTransformToken: Token<ErrorHandlingTransformType> = createToken(
+  'ErrorHandlingTransformToken'
 );
 
 const captureTypes = {
@@ -29,7 +37,10 @@ const captureTypes = {
 const plugin =
   __NODE__ &&
   createPlugin({
-    deps: {onError: ErrorHandlerToken},
+    deps: {
+      onError: ErrorHandlerToken,
+      errorHandlingTransform: ErrorHandlingTransformToken.optional,
+    },
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
       // It's possible to call reject with a non-error
@@ -44,7 +55,7 @@ const plugin =
       process.once('uncaughtException', err);
       process.once('unhandledRejection', err);
     },
-    middleware({onError}) {
+    middleware({onError, errorHandlingTransform}) {
       const parseBody = bodyParser();
       async function middleware(ctx, next) {
         if (ctx.element) {
@@ -62,28 +73,85 @@ const plugin =
           const script = html`
             <script nonce="${ctx.nonce}">
               const messageCounts = {};
-              onerror = function(m, s, l, c, e) {
-                var _e = e || {};
-                messageCounts[m] = (messageCounts[m] || 0) + 1;
-                if (_e.__handled || messageCounts[m] > 3) return;
-                var error = {};
-                Object.getOwnPropertyNames(_e).forEach(function(key) {
-                  error[key] = e[key];
-                });
-                var x = new XMLHttpRequest();
-                x.open('POST', '${ctx.prefix}/_errors');
-                x.setRequestHeader('Content-Type', 'application/json');
-                x.send(
-                  JSON.stringify({
-                    message: m,
-                    source: s,
-                    line: l,
-                    col: c,
-                    error: error,
-                  })
-                );
-                _e.__handled = true;
+              let transformFailed = false;
+
+              const ErrorHandlingPlugin = {
+                parseError(e) {
+                  var _e = e || {};
+                  var error = {};
+                  Object.getOwnPropertyNames(_e).forEach(function(key) {
+                    error[key] = e[key];
+                  });
+                  return error;
+                },
+                onError() {
+                  const [
+                    errorHandlingTransformError,
+                    m,
+                    s,
+                    l,
+                    c,
+                    e,
+                    ...data
+                  ] = !transformFailed
+                    ? ErrorHandlingPlugin.tryTransform(...arguments)
+                    : [null, ...arguments];
+                  var _e = e || {};
+                  messageCounts[m] = (messageCounts[m] || 0) + 1;
+                  if (_e.__handled || messageCounts[m] > 3) return;
+                  var error = ErrorHandlingPlugin.parseError(_e);
+                  ErrorHandlingPlugin.sendError(
+                    JSON.stringify({
+                      message: m,
+                      source: s,
+                      line: l,
+                      col: c,
+                      error: error,
+                      ...(data.length !== 0 ? {data} : {}),
+                    })
+                  );
+                  if (errorHandlingTransformError != null) {
+                    transformFailed = true;
+                    ErrorHandlingPlugin.sendError(
+                      JSON.stringify({
+                        message: errorHandlingTransformError.message,
+                        source: errorHandlingTransformError.stack,
+                        line: 0,
+                        col: 0,
+                        error: ErrorHandlingPlugin.parseError(
+                          errorHandlingTransformError
+                        ),
+                      })
+                    );
+                    throw errorHandlingTransformError;
+                  }
+                  _e.__handled = true;
+                },
+                tryTransform() {
+                  try {
+                    const transform = ${dangerouslySetHTML(
+                      errorHandlingTransform != null
+                        ? errorHandlingTransform.toString()
+                        : 'null'
+                    )};
+                    return [
+                      null,
+                      ...(transform != null
+                        ? transform(...arguments)
+                        : arguments),
+                    ];
+                  } catch (transformError) {
+                    return [transformError, ...arguments];
+                  }
+                },
+                sendError(message) {
+                  var x = new XMLHttpRequest();
+                  x.open('POST', '${ctx.prefix}/_errors');
+                  x.setRequestHeader('Content-Type', 'application/json');
+                  x.send(message);
+                },
               };
+              onerror = ErrorHandlingPlugin.onError;
             </script>
           `;
           ctx.template.head.unshift(script);

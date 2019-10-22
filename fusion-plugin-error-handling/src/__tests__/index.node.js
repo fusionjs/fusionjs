@@ -7,14 +7,16 @@
  */
 
 /* eslint-env node */
-
 import test from 'tape-cup';
 import {fork} from 'child_process';
 
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
-import ErrorHandling, {ErrorHandlerToken} from '../server';
+import ErrorHandling, {
+  ErrorHandlerToken,
+  ErrorHandlingTransformToken,
+} from '../server';
 
 test('request errors', async t => {
   t.plan(6);
@@ -82,6 +84,34 @@ test('adds script', async t => {
   t.ok(
     consumeSanitizedHTML(ctx.template.head[0]).match(/<script/),
     'adds script to head'
+  );
+
+  t.end();
+});
+
+test('adds script and injects transform function', async t => {
+  const app = new App('test', el => el);
+
+  const errorHandlingTransform = (m, s, l, c, e) => {
+    return ['hasTransformToken', s, l, c, e];
+  };
+
+  const errorHandlingTransformRegex = /\(m, s, l, c, e\)(\\n|\s)*=>(\\n|\s)*{(\\n|\s)*return \['hasTransformToken', s, l, c, e\];(\\n|\s)*}/;
+
+  app.register(ErrorHandling);
+  app.register(ErrorHandlerToken, () => {});
+  app.register(ErrorHandlingTransformToken, errorHandlingTransform);
+
+  const ctx = await await getSimulator(app).render('/');
+  t.ok(
+    consumeSanitizedHTML(ctx.template.head[0]).match(/<script/),
+    'adds script to head'
+  );
+  t.ok(
+    consumeSanitizedHTML(ctx.template.head[0]).match(
+      errorHandlingTransformRegex
+    ),
+    'transform function injected into script'
   );
 
   t.end();

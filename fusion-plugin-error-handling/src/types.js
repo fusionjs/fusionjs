@@ -23,3 +23,9 @@ export type ErrorHandlerType = (
   captureType: string,
   ctx: ?Context
 ) => Promise<*> | void;
+
+type WindowOnErrorType = [string, string, number, number, Error | Object];
+
+export type ErrorHandlingTransformType = (
+  ...onerrorArgs: WindowOnErrorType
+) => WindowOnErrorType;
