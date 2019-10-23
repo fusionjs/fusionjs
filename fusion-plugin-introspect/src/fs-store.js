@@ -13,10 +13,10 @@ export const storeSync = (value: any) => {
   const string = JSON.stringify(value, null, 2);
   try {
     if (!fs.existsSync('.fusion')) fs.mkdirSync('.fusion');
+    fs.writeFileSync(file, string, 'utf8');
   } catch (e) {
     /* noop */
   }
-  fs.writeFileSync(file, string, 'utf8');
 };
 export const store = async (value: any) => {
   const writeFile = util.promisify(fs.writeFile);
