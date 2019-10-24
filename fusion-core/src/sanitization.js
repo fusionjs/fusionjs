@@ -43,7 +43,7 @@ if (__NODE__) {
   };
   dangerouslySetHTML = (str: string): Object => html([str]);
   escape = (str: any): string => {
-    if (str && str[key]) return consumeSanitizedHTML(str);
+    if (str && str[key] !== undefined) return consumeSanitizedHTML(str);
     return String(str).replace(/[<>&"\u2028\u2029]/g, replaceForbidden);
   };
   consumeSanitizedHTML = (h: SanitizedHTMLWrapper): string => {

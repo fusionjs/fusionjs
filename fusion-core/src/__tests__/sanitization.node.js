@@ -59,3 +59,8 @@ test('dangerouslySetHTML works', async t => {
   t.equals(consumeSanitizedHTML(trusted), `{"a":1}`);
   t.end();
 });
+test('sanitization with empty string works', async t => {
+  const obj = dangerouslySetHTML('');
+  t.equals(escape(obj), '');
+  t.end();
+});
