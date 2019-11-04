@@ -213,8 +213,10 @@ module.exports.DevelopmentRuntime = function(
       });
     });
 
-    // $FlowFixMe
     state.server.on('upgrade', (req, socket, head) => {
+      socket.on('error', e => {
+        socket.destroy();
+      });
       lifecycle.wait().then(
         () => {
           // $FlowFixMe

@@ -28,6 +28,12 @@ const withRouter = __BROWSER__ ? browser.withRouter : server.withRouter;
 const NotFound = __BROWSER__ ? browser.NotFound : server.NotFound;
 const Redirect = __BROWSER__ ? browser.Redirect : server.Redirect;
 const Status = __BROWSER__ ? browser.Status : server.Status;
+const useHistory = __BROWSER__ ? browser.useHistory : server.useHistory;
+const useRouteMatch = __BROWSER__
+  ? browser.useRouteMatch
+  : server.useRouteMatch;
+const useLocation = __BROWSER__ ? browser.useLocation : server.useLocation;
+const useParams = __BROWSER__ ? browser.useParams : server.useParams;
 
 export default plugin;
 export {
@@ -47,6 +53,10 @@ export {
   withRouter,
   RouterProviderToken,
   RouterToken,
+  useHistory,
+  useRouteMatch,
+  useLocation,
+  useParams,
 };
 
 export * from './types.js';

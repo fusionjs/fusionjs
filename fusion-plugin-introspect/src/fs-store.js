@@ -11,8 +11,12 @@ import util from 'util';
 export const storeSync = (value: any) => {
   const file = '.fusion/fusion-stats.json';
   const string = JSON.stringify(value, null, 2);
-  if (!fs.existsSync('.fusion')) fs.mkdirSync('.fusion');
-  fs.writeFileSync(file, string, 'utf8');
+  try {
+    if (!fs.existsSync('.fusion')) fs.mkdirSync('.fusion');
+    fs.writeFileSync(file, string, 'utf8');
+  } catch (e) {
+    /* noop */
+  }
 };
 export const store = async (value: any) => {
   const writeFile = util.promisify(fs.writeFile);

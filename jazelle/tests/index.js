@@ -7,14 +7,16 @@ const {upgrade} = require('../commands/upgrade.js');
 const {remove} = require('../commands/remove.js');
 const {ci} = require('../commands/ci.js');
 const {dedupe} = require('../commands/dedupe.js');
-const {greenkeep} = require('../commands/greenkeep.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
+
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
+const {batchTestGroup} = require('../utils/batch-test-group');
 const bazelCmds = require('../utils/bazel-commands.js');
 const {bazel, node, yarn} = require('../utils/binary-paths.js');
 const {cli} = require('../utils/cli.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {
   exec,
   exists,
@@ -23,6 +25,7 @@ const {
   ls,
   lstat,
 } = require('../utils/node-helpers.js');
+const {findChangedTargets} = require('../utils/find-changed-targets.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {
   generateBazelBuildRules,
@@ -34,8 +37,13 @@ const {getDownstreams} = require('../utils/get-downstreams.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {getRootDir} = require('../utils/get-root-dir.js');
+const {getTestGroups} = require('../utils/get-test-groups.js');
+const {groupByDepsets} = require('../utils/group-by-depsets.js');
 const {installDeps} = require('../utils/install-deps.js');
+const {isDepsetSubset} = require('../utils/is-depset-subset.js');
+const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
+const {getRegistryFromUrl} = require('../utils/get-registry-from-url.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -59,7 +67,7 @@ async function t(test) {
   const match = (process.argv[2] || '').toLowerCase();
   if (test.name.toLowerCase().indexOf(match) > -1) {
     if (match) console.log(`Testing ${test.name}`);
-    return test().catch(test);
+    return test();
   }
 }
 
@@ -71,15 +79,18 @@ async function runTests() {
     t(testInstallAddUpgradeRemove),
     t(testCi),
     t(testDedupe),
-    t(testGreenkeep),
+    t(testUpgrade),
     t(testPurge),
     t(testYarn),
     t(testBump),
     t(testBazelDummy),
     t(testBazelBuild),
     t(testAssertProjectDir),
+    t(testBatchTestGroup),
     t(testBinaryPaths),
     t(testCLI),
+    t(testDetectCyclicDeps),
+    t(testFindChangedTargets),
     t(testFindLocalDependency),
     t(testGenerateBazelignore),
     t(testGenerateBazelBuildRules),
@@ -90,7 +101,11 @@ async function runTests() {
     t(testGetManifest),
     t(testGetLocalDependencies),
     t(testGetRootDir),
+    t(testGetTestGroups),
+    t(testGroupByDepsets),
     t(testInstallDeps),
+    t(testIsDepsetSubset),
+    t(testIsYarnResolution),
     t(testNodeHelpers),
     t(testParse),
     t(testGetPassThroughArgs),
@@ -98,8 +113,11 @@ async function runTests() {
     t(testScaffold),
     t(testStarlark),
     t(testYarnCommands),
-    t(testBin),
+    t(testLockfileRegistryResolution),
+    t(testLockfileRegistryResolutionMultirepo),
+    t(testGetRegistryFromUrl),
   ]);
+  await t(testBin); // run separately to avoid CI error
 
   await exec(`rm -rf ${__dirname}/tmp`);
 
@@ -142,8 +160,7 @@ async function testInstallAddUpgradeRemove() {
   await add({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
@@ -151,9 +168,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade linked package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    cwd: `${__dirname}/tmp/commands/a`,
-    name: 'c',
-    version: '0.0.0',
+    name: 'c@0.0.0',
   });
   assert(await exists(`${__dirname}/tmp/commands/node_modules/c`));
   assert((await read(buildFile, 'utf8')).includes('//c:c'));
@@ -161,9 +176,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade external package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    cwd: `${__dirname}/tmp/commands/a`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
@@ -208,35 +221,34 @@ async function testDedupe() {
   assert((await read(lockfile, 'utf8')).includes('version "1.0.3"'));
 }
 
-async function testGreenkeep() {
+async function testUpgrade() {
   const meta = `${__dirname}/tmp/greenkeep/a/package.json`;
   const lockfile = `${__dirname}/tmp/greenkeep/a/yarn.lock`;
   const cmd = `cp -r ${__dirname}/fixtures/greenkeep/ ${__dirname}/tmp/greenkeep`;
   await exec(cmd);
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
     name: 'is-number',
     from: '1.1.0',
   });
   assert((await read(meta, 'utf8')).includes('"is-number": "1.0.0"'));
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
     name: 'b',
     from: '^0.0.1',
   });
   assert((await read(meta, 'utf8')).includes('"b": "0.0.0"'));
 
-  await greenkeep({
+  await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
-    name: 'has',
-    version: '1.0.3',
+    name: 'has@1.0.3',
   });
   assert((await read(meta, 'utf8')).includes('"has": "1.0.3"'));
   assert((await read(lockfile, 'utf8')).includes('function-bind'));
 
-  await greenkeep({root: `${__dirname}/tmp/greenkeep`, name: 'b'});
+  await upgrade({root: `${__dirname}/tmp/greenkeep`, name: 'b'});
   assert((await read(meta, 'utf8')).includes('"b": "1.0.0"'));
 }
 
@@ -306,6 +318,52 @@ async function testAssertProjectDir() {
   assert(await assertProjectDir({dir: dir2}).then(() => false, () => true));
 }
 
+async function testBatchTestGroup() {
+  const cmd = `cp -r ${__dirname}/fixtures/batch-test-group/ ${__dirname}/tmp/batch-test-group`;
+  await exec(cmd);
+
+  const streamFile = `${__dirname}/tmp/batch-test-group/stdout.txt`;
+  const stream = createWriteStream(streamFile);
+  await new Promise(resolve => stream.on('open', resolve));
+  await install({
+    root: `${__dirname}/tmp/batch-test-group`,
+    cwd: `${__dirname}/tmp/batch-test-group/a`,
+  });
+  await install({
+    root: `${__dirname}/tmp/batch-test-group`,
+    cwd: `${__dirname}/tmp/batch-test-group/b`,
+  });
+  await install({
+    root: `${__dirname}/tmp/batch-test-group`,
+    cwd: `${__dirname}/tmp/batch-test-group/b`,
+  });
+  await batchTestGroup({
+    root: `${__dirname}/tmp/batch-test-group`,
+    data: [
+      [
+        {type: 'bazel', dir: 'a', action: 'flow'},
+        {type: 'bazel', dir: 'a', action: 'lint'},
+        {type: 'bazel', dir: 'a', action: 'test'},
+      ],
+      [
+        {type: 'bazel', dir: 'b', action: 'lint'},
+        {type: 'bazel', dir: 'b', action: 'test'},
+        {type: 'bazel', dir: 'c', action: 'test'},
+      ],
+    ],
+    index: 0,
+    cores: 8,
+    stdio: ['ignore', stream, stream],
+  });
+  const output = await read(streamFile, 'utf8');
+  assert(output.includes('Analyzed target //a:test'));
+  assert(output.includes('Analyzed target //a:lint'));
+  assert(output.includes('Analyzed target //a:flow'));
+  assert(!output.includes('//b:test'));
+  assert(!output.includes('//b:lint'));
+  assert(!output.includes('//c:test'));
+}
+
 async function testBazelDummy() {
   await exec(`cp -r ${__dirname}/fixtures/bazel/ ${__dirname}/tmp/bazel`);
 
@@ -323,6 +381,7 @@ async function testBazelDummy() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel`,
     cwd: `${__dirname}/tmp/bazel`,
+    args: [],
     name: 'target',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -334,6 +393,7 @@ async function testBazelDummy() {
   await bazelCmds.run({
     root: `${__dirname}/tmp/bazel`,
     cwd: `${__dirname}/tmp/bazel`,
+    args: [],
     name: 'target',
     stdio: ['ignore', runStream, 'ignore'],
   });
@@ -365,6 +425,7 @@ async function testBazelBuild() {
   await bazelCmds.test({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     name: 'test',
     stdio: ['ignore', testStream, 'ignore'],
   });
@@ -377,6 +438,7 @@ async function testBazelBuild() {
   await bazelCmds.run({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     name: 'test',
     stdio: ['ignore', runStream, 'ignore'],
   });
@@ -389,6 +451,7 @@ async function testBazelBuild() {
   await bazelCmds.lint({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
   assert((await read(lintStreamFile, 'utf8')).includes('\n111\n'));
@@ -400,6 +463,7 @@ async function testBazelBuild() {
   await bazelCmds.flow({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', flowStream, flowStream],
   });
   assert((await read(flowStreamFile, 'utf8')).includes('a:flow'));
@@ -411,6 +475,7 @@ async function testBazelBuild() {
   await bazelCmds.start({
     root: `${__dirname}/tmp/bazel-rules`,
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+    args: [],
     stdio: ['ignore', startStream, startStream],
   });
   assert((await read(startStreamFile, 'utf8')).includes('\n333\n'));
@@ -436,6 +501,126 @@ async function testCLI() {
   };
   cli('foo', {bar: '1'}, cmds, async () => {});
   assert.equal(called, '1');
+}
+
+async function testDetectCyclicDeps() {
+  const cycles = detectCyclicDeps({
+    deps: [
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        meta: {
+          name: 'a',
+          version: '0.0.0',
+          dependencies: {
+            c: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 1,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        meta: {
+          name: 'b',
+          version: '0.0.0',
+          dependencies: {
+            a: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 2,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        meta: {
+          name: 'c',
+          version: '0.0.0',
+          dependencies: {
+            b: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 3,
+      },
+    ],
+  });
+  assert.equal(cycles.length, 1);
+
+  const ok = detectCyclicDeps({
+    deps: [
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/a`,
+        meta: {
+          name: 'a',
+          version: '0.0.0',
+        },
+        lockfile: {},
+        depth: 1,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/b`,
+        meta: {
+          name: 'b',
+          version: '0.0.0',
+          dependencies: {
+            a: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 2,
+      },
+      {
+        dir: `${__dirname}/fixtures/detect-cyclic-deps/c`,
+        meta: {
+          name: 'c',
+          version: '0.0.0',
+          dependencies: {
+            b: '0.0.0',
+          },
+        },
+        lockfile: {},
+        depth: 3,
+      },
+    ],
+  });
+  assert.equal(ok.length, 0);
+}
+
+async function testFindChangedTargets() {
+  {
+    const root = `${__dirname}/fixtures/find-changed-targets/dirs`;
+    const files = `${__dirname}/fixtures/find-changed-targets/dirs/changes.txt`;
+    const dirs = await findChangedTargets({root, files});
+    assert.deepEqual(dirs, ['b', 'a']);
+  }
+  {
+    const cmd = `cp -r ${__dirname}/fixtures/find-changed-targets/ ${__dirname}/tmp/find-changed-targets`;
+    await exec(cmd);
+
+    const root = `${__dirname}/tmp/find-changed-targets/bazel`;
+    const files = `${__dirname}/tmp/find-changed-targets/bazel/changes.txt`;
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/a`,
+    });
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/b`,
+    });
+    await install({
+      root: `${__dirname}/tmp/find-changed-targets/bazel`,
+      cwd: `${__dirname}/tmp/find-changed-targets/bazel/c`,
+    });
+    const targets = await findChangedTargets({root, files});
+    assert.deepEqual(targets, [
+      '//b:test',
+      '//b:lint',
+      '//b:flow',
+      '//a:test',
+      '//a:lint',
+      '//a:flow',
+    ]);
+  }
 }
 
 async function testFindLocalDependency() {
@@ -553,6 +738,18 @@ async function testGenerateDepLockfiles() {
   await generateDepLockfiles({
     root: `${__dirname}/tmp/generate-dep-lockfiles`,
     deps: [
+      {
+        meta: JSON.parse(
+          await read(
+            `${__dirname}/tmp/generate-dep-lockfiles/a/package.json`,
+            'utf8'
+          )
+        ),
+        dir: `${__dirname}/tmp/generate-dep-lockfiles/a`,
+        depth: 1,
+      },
+    ],
+    ignore: [
       {
         meta: JSON.parse(
           await read(
@@ -687,12 +884,182 @@ async function testGetRootDir() {
   assert(await getRootDir({dir}).then(() => true, () => false));
 }
 
+async function testGetTestGroups() {
+  const cmd = `cp -r ${__dirname}/fixtures/get-test-groups/ ${__dirname}/tmp/get-test-groups`;
+  await exec(cmd);
+
+  const bazelByTwo = await getTestGroups({
+    root: `${__dirname}/tmp/get-test-groups`,
+    data: [
+      `//a:test`,
+      `//a:lint`,
+      `//a:flow`,
+      `//b:test`,
+      `//b:lint`,
+      `//c:test`,
+    ],
+    nodes: 2,
+  });
+  assert.deepEqual(bazelByTwo, [
+    [
+      {type: 'bazel', dir: 'a', action: 'test'},
+      {type: 'bazel', dir: 'a', action: 'lint'},
+      {type: 'bazel', dir: 'a', action: 'flow'},
+    ],
+    [
+      {type: 'bazel', dir: 'b', action: 'test'},
+      {type: 'bazel', dir: 'b', action: 'lint'},
+      {type: 'bazel', dir: 'c', action: 'test'},
+    ],
+  ]);
+
+  const bazelByFour = await getTestGroups({
+    root: `${__dirname}/tmp/get-test-groups`,
+    data: [
+      `//a:test`,
+      `//a:lint`,
+      `//a:flow`,
+      `//b:test`,
+      `//b:lint`,
+      `//c:test`,
+    ],
+    nodes: 4,
+  });
+  assert.deepEqual(bazelByFour, [
+    [
+      {type: 'bazel', dir: 'a', action: 'lint'},
+      {type: 'bazel', dir: 'a', action: 'flow'},
+    ],
+    [{type: 'bazel', dir: 'a', action: 'test'}],
+    [
+      {type: 'bazel', dir: 'b', action: 'test'},
+      {type: 'bazel', dir: 'b', action: 'lint'},
+    ],
+    [{type: 'bazel', dir: 'c', action: 'test'}],
+  ]);
+
+  const bazelByEight = await getTestGroups({
+    root: `${__dirname}/tmp/get-test-groups`,
+    data: [
+      `//a:test`,
+      `//a:lint`,
+      `//a:flow`,
+      `//b:test`,
+      `//b:lint`,
+      `//c:test`,
+    ],
+    nodes: 8,
+  });
+  assert.deepEqual(bazelByEight, [
+    [{type: 'bazel', dir: 'a', action: 'flow'}],
+    [{type: 'bazel', dir: 'a', action: 'lint'}],
+    [{type: 'bazel', dir: 'a', action: 'test'}],
+    [{type: 'bazel', dir: 'b', action: 'lint'}],
+    [{type: 'bazel', dir: 'b', action: 'test'}],
+    [{type: 'bazel', dir: 'c', action: 'test'}],
+  ]);
+
+  const dirByTwo = await getTestGroups({
+    root: `${__dirname}/tmp/get-test-groups`,
+    data: [`a`, 'b', 'c'],
+    nodes: 2,
+  });
+  assert.deepEqual(dirByTwo, [
+    [
+      {type: 'dir', dir: 'a', action: 'test'},
+      {type: 'dir', dir: 'a', action: 'lint'},
+      {type: 'dir', dir: 'a', action: 'flow'},
+    ],
+    [
+      {type: 'dir', dir: 'b', action: 'test'},
+      {type: 'dir', dir: 'b', action: 'lint'},
+      {type: 'dir', dir: 'c', action: 'test'},
+    ],
+  ]);
+
+  const dirByFour = await getTestGroups({
+    root: `${__dirname}/tmp/get-test-groups`,
+    data: [`a`, 'b', 'c'],
+    nodes: 4,
+  });
+  assert.deepEqual(dirByFour, [
+    [
+      {type: 'dir', dir: 'a', action: 'lint'},
+      {type: 'dir', dir: 'a', action: 'flow'},
+    ],
+    [{type: 'dir', dir: 'a', action: 'test'}],
+    [
+      {type: 'dir', dir: 'b', action: 'test'},
+      {type: 'dir', dir: 'b', action: 'lint'},
+    ],
+    [{type: 'dir', dir: 'c', action: 'test'}],
+  ]);
+}
+
+async function testGroupByDepsets() {
+  const cmd = `cp -r ${__dirname}/fixtures/group-by-depsets/ ${__dirname}/tmp/group-by-depsets`;
+  await exec(cmd);
+
+  const root = `${__dirname}/tmp/group-by-depsets`;
+  const aMeta = JSON.parse(await read(`${root}/a/package.json`, 'utf8'));
+  const bMeta = JSON.parse(await read(`${root}/b/package.json`, 'utf8'));
+  const cMeta = JSON.parse(await read(`${root}/c/package.json`, 'utf8'));
+  const metas = [
+    {dir: `${root}/a`, depth: 0, meta: aMeta},
+    {dir: `${root}/b`, depth: 0, meta: bMeta},
+    {dir: `${root}/c`, depth: 0, meta: cMeta},
+  ];
+  const group = [
+    {type: 'bazel', dir: 'a', action: 'test'},
+    {type: 'bazel', dir: 'a', action: 'lint'},
+    {type: 'bazel', dir: 'a', action: 'flow'},
+    {type: 'bazel', dir: 'b', action: 'test'},
+    {type: 'bazel', dir: 'b', action: 'lint'},
+    {type: 'bazel', dir: 'b', action: 'flow'},
+    {type: 'bazel', dir: 'c', action: 'test'},
+    {type: 'bazel', dir: 'c', action: 'lint'},
+    {type: 'bazel', dir: 'c', action: 'flow'},
+  ];
+  assert.deepEqual(groupByDepsets({root, metas, group}), [
+    [
+      {type: 'bazel', dir: 'a', action: 'test'},
+      {type: 'bazel', dir: 'a', action: 'lint'},
+      {type: 'bazel', dir: 'a', action: 'flow'},
+      {type: 'bazel', dir: 'b', action: 'test'},
+      {type: 'bazel', dir: 'b', action: 'lint'},
+      {type: 'bazel', dir: 'b', action: 'flow'},
+    ],
+    [
+      {type: 'bazel', dir: 'c', action: 'test'},
+      {type: 'bazel', dir: 'c', action: 'lint'},
+      {type: 'bazel', dir: 'c', action: 'flow'},
+    ],
+  ]);
+}
+
 async function testInstallDeps() {
   const cmd = `cp -r ${__dirname}/fixtures/install-deps/ ${__dirname}/tmp/install-deps`;
   await exec(cmd);
   const deps = {
     root: `${__dirname}/tmp/install-deps`,
+    cwd: `${__dirname}/tmp/install-deps/a`,
     deps: [
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/b`,
+        depth: 2,
+      },
+      {
+        meta: JSON.parse(
+          await read(`${__dirname}/tmp/install-deps/a/package.json`, 'utf8')
+        ),
+        dir: `${__dirname}/tmp/install-deps/a`,
+        depth: 1,
+      },
+    ],
+    ignore: [
       {
         meta: JSON.parse(
           await read(`${__dirname}/tmp/install-deps/b/package.json`, 'utf8')
@@ -712,6 +1079,148 @@ async function testInstallDeps() {
   await installDeps(deps);
   assert(await exists(`${__dirname}/tmp/install-deps/node_modules/b`));
   assert(await exists(`${__dirname}/tmp/install-deps/node_modules/noop`));
+}
+
+async function testIsDepsetSubset() {
+  const base = {name: '', version: ''};
+  {
+    const it = {...base, dependencies: {a: '^1.0.0'}};
+    const of = {...base, dependencies: {a: '^1.0.3'}};
+    assert(isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '^1.2.3'}};
+    const of = {...base, dependencies: {a: '^1.0.0'}};
+    assert(isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '^1.0.0'}};
+    const of = {...base, dependencies: {a: '^1.0.0', b: '1.0.0'}};
+    assert(isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '^1.0.0', b: '1.0.0'}};
+    const of = {...base, dependencies: {a: '^1.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '^1.2.3'}};
+    const of = {...base, dependencies: {a: '^2.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {b: '^1.0.0'}};
+    const of = {...base, dependencies: {a: '^1.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: 'npm:foo@0.0.0'}};
+    const of = {...base, dependencies: {a: 'npm:bar@0.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+  {
+    const it = {...base, dependencies: {a: '0.0.0'}};
+    const of = {...base, dependencies: {a: 'npm:bar@0.0.0'}};
+    assert(!isDepsetSubset({of, it}));
+  }
+}
+
+async function testIsYarnResolution() {
+  const exact = isYarnResolution({
+    meta: {resolutions: {a: '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(exact, true);
+
+  const namespaced = isYarnResolution({
+    meta: {resolutions: {'@a/b': '0.0.0'}, name: '', version: ''},
+    name: '@a/b',
+  });
+  assert.equal(namespaced, true);
+
+  const globbed = isYarnResolution({
+    meta: {resolutions: {'**/a': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(globbed, true);
+
+  const globbedNs = isYarnResolution({
+    meta: {resolutions: {'**/@a/b': '0.0.0'}, name: '', version: ''},
+    name: '@a/b',
+  });
+  assert.equal(globbedNs, true);
+
+  const direct = isYarnResolution({
+    meta: {resolutions: {'a/b': '0.0.0'}, name: '', version: ''},
+    name: 'b',
+  });
+  assert.equal(direct, true);
+
+  const directNs = isYarnResolution({
+    meta: {resolutions: {'a/@b/c': '0.0.0'}, name: '', version: ''},
+    name: '@b/c',
+  });
+  assert.equal(directNs, true);
+
+  const directOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(directOfNs, true);
+
+  const directNsOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/@c/d': '0.0.0'}, name: '', version: ''},
+    name: '@c/d',
+  });
+  assert.equal(directNsOfNs, true);
+
+  const transitive = isYarnResolution({
+    meta: {resolutions: {'a/**/b': '0.0.0'}, name: '', version: ''},
+    name: 'b',
+  });
+  assert.equal(transitive, true);
+
+  const transitiveNs = isYarnResolution({
+    meta: {resolutions: {'a/**/@b/c': '0.0.0'}, name: '', version: ''},
+    name: '@b/c',
+  });
+  assert.equal(transitiveNs, true);
+
+  const transitiveOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/**/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(transitiveOfNs, true);
+
+  const transitiveNsOfNs = isYarnResolution({
+    meta: {resolutions: {'@a/b/**/@c/d': '0.0.0'}, name: '', version: ''},
+    name: '@c/d',
+  });
+  assert.equal(transitiveNsOfNs, true);
+
+  const nested = isYarnResolution({
+    meta: {resolutions: {'a/b/c': '0.0.0'}, name: '', version: ''},
+    name: 'c',
+  });
+  assert.equal(nested, true);
+
+  const nestedOfNs = isYarnResolution({
+    meta: {resolutions: {'a/@b/c/d': '0.0.0'}, name: '', version: ''},
+    name: 'd',
+  });
+  assert.equal(nestedOfNs, true);
+
+  const positional = isYarnResolution({
+    meta: {resolutions: {'a/b': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(positional, false);
+
+  const positionalNs = isYarnResolution({
+    meta: {resolutions: {'@a/a/b': '0.0.0'}, name: '', version: ''},
+    name: 'a',
+  });
+  assert.equal(positionalNs, false);
 }
 
 async function testNodeHelpers() {
@@ -967,6 +1476,7 @@ async function testYarnCommands() {
   await yarnCmds.dev({
     root,
     deps,
+    args: [],
     stdio: ['ignore', devStream, 'ignore'],
   });
   assert((await read(devStreamFile, 'utf8')).includes('\n333\n'));
@@ -978,6 +1488,7 @@ async function testYarnCommands() {
   await yarnCmds.test({
     root,
     deps,
+    args: [],
     stdio: ['ignore', testStream, 'ignore'],
   });
   assert((await read(testStreamFile, 'utf8')).includes('\n444\n'));
@@ -989,6 +1500,7 @@ async function testYarnCommands() {
   await yarnCmds.lint({
     root,
     deps,
+    args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
   assert((await read(lintStreamFile, 'utf8')).includes('\n555\n'));
@@ -1000,6 +1512,7 @@ async function testYarnCommands() {
   await yarnCmds.flow({
     root,
     deps,
+    args: [],
     stdio: ['ignore', flowStream, 'ignore'],
   });
   assert((await read(flowStreamFile, 'utf8')).includes('\n666\n'));
@@ -1011,6 +1524,7 @@ async function testYarnCommands() {
   await yarnCmds.start({
     root,
     deps,
+    args: [],
     stdio: ['ignore', startStream, 'ignore'],
   });
   assert((await read(startStreamFile, 'utf8')).includes('\n777\n'));
@@ -1051,4 +1565,91 @@ async function testBin() {
   await new Promise(resolve => startStream.on('open', resolve));
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
+}
+
+async function testLockfileRegistryResolution() {
+  const cmd = `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`;
+  await exec(cmd);
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+  });
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.yarnpkg.com')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
+      'utf8'
+    )).includes('registry.yarnpkg.com')
+  );
+  // Test with default registry
+  await exec(`rm -rf ${__dirname}/tmp/lockfile-registry-resolution`);
+  await exec(
+    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`
+  );
+  await exec(`rm ${__dirname}/tmp/lockfile-registry-resolution/.yarnrc`);
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+  });
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
+}
+
+async function testLockfileRegistryResolutionMultirepo() {
+  await exec(
+    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution-multirepo/ ${__dirname}/tmp/lockfile-registry-resolution-multirepo`
+  );
+  await install({
+    root: `${__dirname}/tmp/lockfile-registry-resolution-multirepo`,
+    cwd: `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a`,
+  });
+  // Expect that even though multiple projects are pinned to the same dependency version,
+  // install will honor the existance of any registry overrides and write those preferences
+  // back to the individual lock files
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a/yarn.lock`,
+      'utf8'
+    )).includes('registry.yarnpkg.com')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
+  assert(
+    (await read(
+      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
+      'utf8'
+    )).includes('registry.npmjs.org')
+  );
+}
+
+async function testGetRegistryFromUrl() {
+  assert(
+    getRegistryFromUrl(
+      'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
+    ) === 'registry.npmjs.org'
+  );
+  assert(
+    getRegistryFromUrl(
+      'https://unpm.uberinternal.com/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52'
+    ) === 'unpm.uberinternal.com'
+  );
 }

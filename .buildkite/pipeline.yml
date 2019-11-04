@@ -1,14 +1,7 @@
 steps:
-  - label: ':docker:'
-    timeout_in_minutes: 20
-    plugins:
-      'docker-compose#v3.0.0':
-        build: ci
-        image-repository: 027047743804.dkr.ecr.us-east-2.amazonaws.com/uber
-    agents:
-      queue: builders
   - label: ':pipeline:'
-    timeout_in_minutes: 1
-    command: .buildkite/bootstrap.sh | buildkite-agent pipeline upload
+    timeout_in_minutes: 5
+    commands:
+      - '.buildkite/create-pipeline.sh | buildkite-agent pipeline upload'
     agents:
       queue: workers

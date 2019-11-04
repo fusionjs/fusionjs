@@ -63,7 +63,7 @@ function getCompiler(opts) {
   if (instance) {
     return instance;
   }
-  const getWebpackConfig = require('../get-webpack-config.js');
+  const {getWebpackConfig} = require('../get-webpack-config.js');
 
   const config = getWebpackConfig({
     ...opts,

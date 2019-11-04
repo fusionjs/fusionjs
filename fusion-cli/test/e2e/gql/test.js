@@ -123,7 +123,7 @@ type User {
   }
   // $FlowFixMe
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 });
 
 test('`fusion test` with gql macro', async () => {

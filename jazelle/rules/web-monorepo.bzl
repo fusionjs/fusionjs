@@ -43,7 +43,7 @@ def _get_runfiles(ctx):
     content = """
     CWD=$(cd `dirname "{srcdir}"` && pwd)
     NODE=$(cd `dirname "{node}"` && pwd)/$(basename "{node}")
-    $NODE "{build}" "$CWD" "$(pwd)" "{command}"
+    $NODE "{build}" "$CWD" "$(pwd)" "{command}" "" "" $@
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
@@ -60,9 +60,7 @@ def _web_binary_impl(ctx):
   build_ouput = ctx.outputs.out
 
   build_deps = depset(
-    direct = _filter_files(
-      ctx.files._node + ctx.files._script
-    ),
+    direct = _filter_files(ctx.files._script),
     transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
   )
 
@@ -72,7 +70,7 @@ def _web_binary_impl(ctx):
     NODE=$(cd `dirname "{node}"` && pwd)/$(basename "{node}")
     OUT=$(cd `dirname "{output}"` && pwd)/$(basename "{output}")
     BAZEL_BIN_DIR=$(cd {bindir} && pwd)
-    $NODE "{build}" "$CWD" "$BAZEL_BIN_DIR" "{command}" "{dist}" "$OUT"
+    $NODE "{build}" "$CWD" "$BAZEL_BIN_DIR" "{command}" "{dist}" "$OUT" $@
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
@@ -82,6 +80,7 @@ def _web_binary_impl(ctx):
       bindir = ctx.bin_dir.path,
       build = ctx.files._script[0].path,
     ),
+    tools = ctx.files._node,
     inputs = build_deps,
     outputs = [build_ouput],
   )

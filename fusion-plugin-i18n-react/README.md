@@ -82,7 +82,7 @@ import {useTranslations} from 'fusion-plugin-i18n-react';
 
 export default (props) => {
   const translate = useTranslations();
-  return <span>translate(`cities.${props.city}`)</span>;
+  return <span>{translate(`cities.${props.city}`)}</span>;
 };
 ```
 
@@ -184,7 +184,7 @@ type I18nLoader = {
 ```
 
 * `loader.from: (ctx) => ({locale, translations})` -
-  * `ctx: FusionContext` - Required. A [FusionJS context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context) object.
+  * `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context) object.
   * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
   * `translations: Object` - A object that maps translation keys to translated values for the given locale
 

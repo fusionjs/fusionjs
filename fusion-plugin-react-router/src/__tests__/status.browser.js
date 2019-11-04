@@ -11,7 +11,7 @@ import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Status} from '../browser';
-import createBrowserHistory from 'history/createBrowserHistory';
+import {createBrowserHistory} from 'history';
 
 test('noops', t => {
   const root = document.createElement('div');

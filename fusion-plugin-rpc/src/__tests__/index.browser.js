@@ -14,6 +14,7 @@ import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 import type {Token} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {I18nToken} from 'fusion-plugin-i18n';
 
 import RPCPlugin from '../browser.js';
 import type {IEmitter} from '../types.js';
@@ -28,11 +29,21 @@ function createTestFixture() {
   const mockEmitterPlugin = createPlugin({
     provides: () => mockEmitter,
   });
+  const mockI18nPlugin = createPlugin({
+    provides: () => ({
+      from: () => ({
+        locale: 'el-GR',
+        load: async () => {},
+        translate: () => '',
+      }),
+    }),
+  });
 
   const app = new App('content', el => el);
   // $FlowFixMe
   app.register(FetchToken, mockFetch);
   app.register(UniversalEventsToken, mockEmitterPlugin);
+  app.register(I18nToken, mockI18nPlugin);
   app.register(MockPluginToken, RPCPlugin);
   return app;
 }
@@ -62,7 +73,7 @@ test('success status request', t => {
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(url, '/api/test', 'has right url');
+            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
             t.equals(options.method, 'POST', 'has right http method');
             t.equals(
               options.headers['Content-Type'],
@@ -101,7 +112,11 @@ test('success status request (with custom api path)', t => {
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(url, '/test/api/path/test', 'has right url');
+            t.equals(
+              url,
+              '/test/api/path/test?localeCode=el-GR',
+              'has right url'
+            );
             t.equals(options.method, 'POST', 'has right http method');
             t.equals(
               options.headers['Content-Type'],
@@ -140,7 +155,11 @@ test('success status request (with custom api path containing slashes)', t => {
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(url, '/test/api/path/test', 'has right url');
+            t.equals(
+              url,
+              '/test/api/path/test?localeCode=el-GR',
+              'has right url'
+            );
             t.equals(options.method, 'POST', 'has right http method');
             t.equals(
               options.headers['Content-Type'],
@@ -187,7 +206,7 @@ test('success status request w/args and header', t => {
         rpc
           .request('test', {args: 1}, {'test-header': 'header value'})
           .then(([url, options]) => {
-            t.equals(url, '/api/test', 'has right url');
+            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
             t.equals(options.method, 'POST', 'has right http method');
             t.equals(
               options.headers['Content-Type'],
@@ -200,6 +219,69 @@ test('success status request w/args and header', t => {
               'header is passed'
             );
             t.equals(options.body, '{"args":1}', 'has right body');
+          })
+          .catch(e => {
+            t.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  t.true(wasResolved, 'plugin was resolved');
+  t.end();
+});
+
+test('success status request w/form data', t => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method-client');
+      t.equal(payload.method, 'test');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
+  const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from();
+        t.equals(typeof rpc.request, 'function', 'has method');
+        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        // eslint-disable-next-line cup/no-undef
+        const formData = new FormData();
+        formData.append('random', 'some-random');
+        formData.append('foo', 'foo content');
+        // TODO do we need to test with file as well?
+        // formData.append('file', '<how to do this>');
+        rpc
+          .request('test', formData)
+          .then(([url, options]) => {
+            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
+            t.equals(options.method, 'POST', 'has right http method');
+            t.equals(
+              options.headers['Content-Type'],
+              undefined,
+              'content type is not defined, browser will set it automatically'
+            );
+            // In tests or log, this will show up as `{}`. Don't be fooled~
+            t.equals(
+              options.body,
+              formData,
+              'has right body of form data type'
+            );
+            t.deepEqual(
+              Array.from(options.body.entries()),
+              [['random', 'some-random'], ['foo', 'foo content']],
+              'has right body of form data content'
+            );
           })
           .catch(e => {
             t.fail(e);

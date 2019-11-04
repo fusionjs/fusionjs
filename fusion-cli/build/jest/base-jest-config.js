@@ -7,6 +7,10 @@
  */
 
 /* eslint-env node */
+const fs = require('fs');
+const {dirname} = require('path');
+
+const rootDir = dirname(fs.realpathSync(`${process.cwd()}/package.json`));
 
 const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
 const matchValue = process.env.TEST_FOLDER
@@ -16,7 +20,7 @@ const matchValue = process.env.TEST_FOLDER
 
 function getReactVersion() {
   // $FlowFixMe
-  const meta = require(process.cwd() + '/package.json');
+  const meta = require(rootDir + '/package.json');
   const react =
     (meta.dependencies && meta.dependencies.react) ||
     (meta.devDependencies && meta.devDependencies.react) ||
@@ -51,9 +55,9 @@ function getTransformIgnorePatterns() {
 const transformIgnorePatterns = getTransformIgnorePatterns();
 
 module.exports = {
-  coverageDirectory: `${process.cwd()}/coverage`,
+  coverageDirectory: `${rootDir}/coverage`,
   coverageReporters: ['json'],
-  rootDir: process.cwd(),
+  rootDir,
   transform: {
     '\\.js$': require.resolve('./jest-transformer.js'),
     '\\.(gql|graphql)$': require.resolve('./graphql-jest-transformer.js'),

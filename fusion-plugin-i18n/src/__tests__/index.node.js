@@ -13,6 +13,7 @@ import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import I18n, {matchesLiteralSections} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
@@ -25,10 +26,32 @@ test('translate', async t => {
   app.register(I18nLoaderToken, {
     from: () => ({translations: data, locale: 'en_US'}),
   });
+  // $FlowFixMe
+  app.register(UniversalEventsToken, {
+    from: () => ({
+      emit: (name, payload) => {
+        t.equals(
+          name,
+          'i18n-translate-miss',
+          'emits event when translate key missing'
+        );
+        t.equals(
+          payload.key,
+          'missing-translation',
+          'payload contains key for missing translation'
+        );
+      },
+    }),
+  });
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
       t.equals(translator.translate('test'), 'hello');
+      t.equals(
+        translator.translate('missing-translation'),
+        'missing-translation',
+        'fallsback to key'
+      );
       t.equals(
         translator.translate('interpolated', {adjective: 'big', noun: 'world'}),
         'hi big world'
@@ -112,8 +135,9 @@ test('endpoint', async t => {
     preloadChunks: [],
     headers: {'accept-language': 'en_US'},
     path: '/_translations',
-    querystring: 'keys=["test","interpolated"]',
+    querystring: '',
     memoized: new Map(),
+    request: {body: ['test', 'interpolated']},
     body: '',
   };
 
@@ -121,7 +145,13 @@ test('endpoint', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(1);
+  t.plan(3);
+
+  ctx.set = (key, value) => {
+    t.equals(key, 'cache-control', 'cache header set');
+    t.equals(value, 'public, max-age=3600', 'cache translations for 1 hour');
+  };
+
   if (!I18n.provides) {
     t.end();
     return;
@@ -137,6 +167,82 @@ test('endpoint', async t => {
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
+  t.end();
+});
+
+test('endpoint request handles empty body', async t => {
+  const data = {test: 'hello', interpolated: 'hi ${value}'};
+  // $FlowFixMe - Invalid context
+  const ctx: Context = {
+    set: () => {},
+    syncChunks: [],
+    preloadChunks: [],
+    headers: {'accept-language': 'en_US'},
+    path: '/_translations',
+    querystring: '',
+    memoized: new Map(),
+    request: {body: void 0},
+    body: '',
+  };
+
+  const deps = {
+    loader: {from: () => ({translations: data, locale: 'en-US'})},
+  };
+
+  t.plan(2);
+
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
+  const i18n = I18n.provides(deps);
+
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
+  t.pass("doesn't throw");
+  t.deepEquals(ctx.body, {}, 'defaults to an empty set of translations');
+
+  t.end();
+});
+
+test('endpoint request handles legacy query params', async t => {
+  const data = {test: 'hello', interpolated: 'hi ${value}'};
+  // $FlowFixMe - Invalid context
+  const ctx: Context = {
+    set: () => {},
+    syncChunks: [],
+    preloadChunks: [],
+    headers: {'accept-language': 'en_US'},
+    path: '/_translations',
+    querystring: 'keys=["test","interpolated"]',
+    memoized: new Map(),
+    request: {body: void 0},
+    body: '',
+  };
+
+  const deps = {
+    loader: {from: () => ({translations: data, locale: 'en-US'})},
+  };
+
+  t.plan(2);
+
+  if (!I18n.provides) {
+    t.end();
+    return;
+  }
+  const i18n = I18n.provides(deps);
+
+  if (!I18n.middleware) {
+    t.end();
+    return;
+  }
+  await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
+  t.pass("doesn't throw");
+  t.deepEquals(ctx.body, {}, 'defaults to an empty set of translations');
+
   t.end();
 });
 

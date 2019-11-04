@@ -77,6 +77,6 @@ test('`fusion build/start with ROUTE_PREFIX and custom routes`', async () => {
     '/test-prefix',
     'RoutePrefixToken hydrated on client'
   );
-  proc.kill();
+  proc.kill('SIGKILL');
   browser.close();
 }, 100000);

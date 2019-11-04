@@ -10,6 +10,17 @@
   "bin": {
     "fusion": "bin/cli.js"
   },
+  "files": [
+    "bin",
+    "build",
+    "commands",
+    "entries",
+    "lib",
+    "plugins",
+    "get-compilation-metadata.js",
+    "serverless.js",
+    "sw.js"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test": "git clean -Xfd test/fixtures && jest --maxWorkers 1",
@@ -22,7 +33,6 @@
     "@babel/plugin-transform-flow-strip-types": "^7.4.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "@gfx/zopfli": "^1.0.10",
     "@rtsao/plugin-proposal-class-properties": "7.0.1-patch.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.8.0",
@@ -47,6 +57,7 @@
     "istanbul-lib-coverage": "^2.0.1",
     "jest": "^24.8.0",
     "jest-environment-jsdom-global": "^1.2.0",
+    "jest-worker": "^24.6.0",
     "just-snake-case": "^1.1.0",
     "koa-mount": "^4.0.0",
     "koa-static": "^5.0.0",
@@ -62,7 +73,7 @@
     "sade": "^1.6.0",
     "source-map-support": "^0.5.9",
     "terser-webpack-plugin": "^1.1.0",
-    "webpack": "4.26.1",
+    "webpack": "4.32.0",
     "webpack-hot-middleware": "^2.24.3",
     "winston": "^3.1.0"
   },
@@ -89,7 +100,7 @@
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "globby": "^8.0.1",
-    "graphql": "^14.4.2",
+    "graphql": "14.4.2",
     "locale": "^0.1.0",
     "prettier": "^1.18.2",
     "puppeteer": "^1.15.0",
@@ -98,6 +109,7 @@
     "react-test-renderer": "^16.8.6",
     "request-promise": "^4.2.4",
     "tape": "^4.10.1",
+    "ws": "^7.1.1",
     "unfetch": "^4.1.0"
   },
   "peerDependencies": {

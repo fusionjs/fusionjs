@@ -26,7 +26,6 @@
     "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
   },
   "dependencies": {
-    "fusion-react": "0.0.0-monorepo",
     "just-kebab-case": "^1.1.0",
     "prop-types": "^15.7.2"
   },
@@ -47,6 +46,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
+    "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
@@ -57,6 +57,7 @@
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
+    "fusion-react": "0.0.0-monorepo",
     "react": "^16.8.6"
   },
   "scripts": {

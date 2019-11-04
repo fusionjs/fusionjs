@@ -74,7 +74,7 @@ test('`fusion build` app with split translations integration', async () => {
     'renders second split translation'
   );
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);
 
 test('`fusion dev` app with split translations integration', async () => {

@@ -30,35 +30,44 @@ type ClientPluginOpts = {
 };
 */
 
+const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule.js');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
 
 class InstrumentedImportDependency extends ImportDependency {
-  constructor(dep, opts) {
+  constructor(dep, opts, moduleIdent) {
     super(dep.request, dep.originModule, dep.block);
     this.module = dep.module;
     this.loc = dep.loc;
     if (opts.compilation === 'client') {
       this.translationsManifest = opts.i18nManifest;
     }
+    /**
+     * Production builds may have no id at this point
+     * This compilation phase is earlier than moduleIds, so
+     *  we must create our own and cache it based on the module identifier
+     */
+    dep.module.id = createCachedModuleId(moduleIdent);
   }
   getInstrumentation() {
     // client-side, use built-in values
     this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
-    this.translationKeys = [];
+    this.translationKeys = new Set();
     if (this.translationsManifest) {
       const modules = getChunkGroupModules(this);
       for (const module of modules) {
         if (this.translationsManifest.has(module)) {
-          const keys = this.translationsManifest.get(module).keys();
-          this.translationKeys.push(...keys);
+          const keys = this.translationsManifest.get(module);
+          for (const key of keys) {
+            this.translationKeys.add(key);
+          }
         }
       }
     }
     return {
       chunkIds: this.chunkIds,
-      translationKeys: this.translationKeys,
+      translationKeys: Array.from(this.translationKeys),
     };
   }
   updateHash(hash) {
@@ -108,19 +117,14 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
     } else if (this.clientChunkIndex) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      let ids = this.clientChunkIndex.get(
-        (dep.module && dep.module.resource) || dep.originModule.resource
-      );
+      const ids = this.clientChunkIndex.get(getModuleResource(dep.module));
       chunkIds = ids ? Array.from(ids) : [];
     } else {
-      chunkIds = getChunkGroupIds(dep.block.chunkGroup);
+      // Prevent future developers from creating a broken webpack state
+      throw new Error(
+        'Dependency is not Instrumented and lacks a clientChunkIndex'
+      );
     }
-
-    // This is a hack. Some production builds had undefined for the module.id
-    // which broke the build.
-    dep.module.id =
-      dep.module.id || (dep.module.identifier && dep.module.identifier());
-
     const content = runtime.moduleNamespacePromise({
       block: dep.block,
       module: dep.module,
@@ -128,7 +132,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
       strict: dep.originModule.buildMeta.strictHarmonyModule,
       message: 'import()',
     });
-
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
     // - `__MODULE_ID`: the webpack module id of the dynamically imported module. Equivalent to require.resolveWeak(path)
@@ -140,7 +143,6 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
         "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
       : content;
-
     // replace with `customContent` instead of `content`
     source.replace(depBlock.range[0], depBlock.range[1] - 1, customContent);
   }
@@ -189,9 +191,19 @@ class InstrumentedImportDependencyTemplatePlugin {
               module.blocks.forEach(block => {
                 block.dependencies.forEach((dep, index) => {
                   if (dep instanceof ImportDependency) {
+                    let moduleId = dep.module.id;
+                    if (dep.module.id === null && dep.module.libIdent) {
+                      moduleId = dep.module.libIdent({
+                        context: compiler.options.context,
+                      });
+                    }
                     block.dependencies[
                       index
-                    ] = new InstrumentedImportDependency(dep, this.opts);
+                    ] = new InstrumentedImportDependency(
+                      dep,
+                      this.opts,
+                      moduleId
+                    );
                   }
                 });
               });
@@ -200,10 +212,56 @@ class InstrumentedImportDependencyTemplatePlugin {
         });
       });
     }
+    /**
+     * server and client
+     * Ensure custom module ids are used instead of hashed module ids
+     * Based on https://github.com/gogoair/custom-module-ids-webpack-plugin
+     */
+    compiler.hooks.compilation.tap(name, (compilation, params) => {
+      compilation.hooks.beforeModuleIds.tap(name, modules => {
+        for (const module of modules) {
+          if (module.id === null && module.libIdent) {
+            // Some modules lose their id by this point
+            // Reassign the cached module id so it matches the id used in the instrumentation
+            const id = module.libIdent({
+              context: compiler.options.context,
+            });
+            const moduleId = getCachedModuleId(id);
+            if (moduleId) {
+              module.id = moduleId;
+            }
+          }
+        }
+      });
+    });
   }
 }
 
 module.exports = InstrumentedImportDependencyTemplatePlugin;
+
+const customModuleIds = new Map();
+let moduleCounter = 0;
+
+/**
+ * Create custom module id, cached based on the module identifier
+ * id format: `__fusion__0`
+ */
+function createCachedModuleId(ident) {
+  if (/^__fusion__\d+$/.test(ident)) {
+    // This is already a cached identifier
+    return ident;
+  }
+  if (customModuleIds.has(ident)) {
+    return customModuleIds.get(ident);
+  }
+  const moduleId = `__fusion__${(moduleCounter++).toString()}`;
+  customModuleIds.set(ident, moduleId);
+  return moduleId;
+}
+
+function getCachedModuleId(ident) {
+  return customModuleIds.get(ident);
+}
 
 /**
  * Adapted from
@@ -218,22 +276,36 @@ function getChunkGroupIds(chunkGroup) {
   }
 }
 
+function getModuleResource(module) {
+  if (module instanceof ConcatenatedModule) {
+    return module.rootModule.resource;
+  } else {
+    return module.resource;
+  }
+}
+
 function getChunkGroupModules(dep) {
   const modulesSet = new Set();
-  // For ConcatenatedModules in production build
   if (dep.module && dep.module.dependencies) {
-    modulesSet.add(dep.module.userRequest);
+    modulesSet.add(getModuleResource(dep.module));
     dep.module.dependencies.forEach(dependency => {
       if (dependency.module) {
-        modulesSet.add(dependency.module.userRequest);
+        modulesSet.add(getModuleResource(dependency.module));
       }
     });
   }
-  // For NormalModules
-  dep.block.chunkGroup.chunks.forEach(chunk => {
-    for (const module of chunk._modules) {
-      modulesSet.add(module.resource);
-    }
-  });
+  const {chunkGroup} = dep.block;
+  if (chunkGroup && Array.isArray(chunkGroup.chunks)) {
+    chunkGroup.chunks.forEach(chunk => {
+      for (const module of chunk.getModules()) {
+        modulesSet.add(getModuleResource(module));
+        if (module instanceof ConcatenatedModule) {
+          module.buildInfo.fileDependencies.forEach(fileDep => {
+            modulesSet.add(fileDep);
+          });
+        }
+      }
+    });
+  }
   return modulesSet;
 }

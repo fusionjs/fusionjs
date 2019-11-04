@@ -92,6 +92,6 @@ test('able to do simple translations in React 16 - leverages React.Fragment', as
   t.ok(content.includes(`<div id="root"><div>hello world</div></div>`));
 
   await browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
   // $FlowFixMe - Need to add timeouts
 }, 60000);

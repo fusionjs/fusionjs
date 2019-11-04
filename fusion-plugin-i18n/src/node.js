@@ -8,11 +8,13 @@
 
 /* eslint-env node */
 
-import querystring from 'querystring';
 import {Locale} from 'locale';
 
 import {createPlugin, memoize, html} from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
+import type {FusionPlugin, Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import bodyparser from 'koa-bodyparser';
+import querystring from 'querystring';
 
 import {I18nLoaderToken} from './tokens.js';
 import createLoader from './loader.js';
@@ -20,6 +22,7 @@ import type {
   I18nDepsType,
   I18nServiceType,
   TranslationsObjectType,
+  IEmitter,
 } from './types.js';
 
 // exported for testing
@@ -60,35 +63,60 @@ export function matchesLiteralSections(literalSections: Array<string>) {
   };
 }
 
+function getKeysFromContext(ctx: Context): string[] {
+  if (ctx.request.body && Array.isArray(ctx.request.body)) {
+    return (ctx.request.body: any);
+  }
+
+  const querystringParams = querystring.parse(ctx.querystring);
+  if (querystringParams.keys) {
+    try {
+      const keys = JSON.parse(querystringParams.keys);
+      return Array.isArray(keys) ? keys : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 type PluginType = FusionPlugin<I18nDepsType, I18nServiceType>;
 const pluginFactory: () => PluginType = () =>
   createPlugin({
     deps: {
       loader: I18nLoaderToken.optional,
+      events: UniversalEventsToken.optional,
     },
-    provides: ({loader}) => {
+    provides: ({loader, events}) => {
       class I18n {
         translations: TranslationsObjectType;
         locale: string | Locale;
+        emitter: ?IEmitter;
 
         constructor(ctx) {
           if (!loader) {
             loader = createLoader();
           }
           const {translations, locale} = loader.from(ctx);
+          this.emitter = events && events.from(ctx);
           this.translations = translations;
           this.locale = locale;
         }
         async load() {} //mirror client API
         translate(key, interpolations = {}) {
           const template = this.translations[key];
-          return template != null
-            ? template.replace(/\${(.*?)}/g, (_, k) =>
-                interpolations[k] === void 0
-                  ? '${' + k + '}'
-                  : String(interpolations[k])
-              )
-            : key;
+
+          if (typeof template !== 'string') {
+            this.emitter && this.emitter.emit('i18n-translate-miss', {key});
+            return key;
+          }
+
+          return template.replace(/\${(.*?)}/g, (_, k) =>
+            interpolations[k] === void 0
+              ? '${' + k + '}'
+              : String(interpolations[k])
+          );
         }
       }
 
@@ -99,6 +127,7 @@ const pluginFactory: () => PluginType = () =>
       // TODO(#4) refactor: this currently depends on babel plugins in framework's webpack config.
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
       const chunkTranslationMap = require('../chunk-translation-map');
+      const parseBody = bodyparser();
 
       return async (ctx, next) => {
         if (ctx.element) {
@@ -151,9 +180,12 @@ const pluginFactory: () => PluginType = () =>
           ctx.template.htmlAttrs['lang'] = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
-          const keys = JSON.parse(
-            querystring.parse(ctx.querystring).keys || '[]'
-          );
+          try {
+            await parseBody(ctx, () => Promise.resolve());
+          } catch (e) {
+            ctx.request.body = [];
+          }
+          const keys = getKeysFromContext(ctx);
           const possibleTranslations = i18n.translations
             ? Object.keys(i18n.translations)
             : [];
@@ -171,6 +203,7 @@ const pluginFactory: () => PluginType = () =>
             return acc;
           }, {});
           ctx.body = translations;
+          ctx.set('cache-control', 'public, max-age=3600'); // cache translations for up to 1 hour
           return next();
         } else {
           return next();

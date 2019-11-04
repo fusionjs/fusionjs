@@ -1,7 +1,6 @@
 // @flow
 const {sync} = require('../utils/lockfile.js');
 const {getManifest} = require('../utils/get-manifest.js');
-const {installDeps} = require('../utils/install-deps.js');
 const {read} = require('../utils/node-helpers.js');
 
 /*::
@@ -23,7 +22,6 @@ const dedupe /*: Dedupe */ = async ({root}) => {
     ),
     tmp,
   });
-  await installDeps({root});
 };
 
 module.exports = {dedupe};

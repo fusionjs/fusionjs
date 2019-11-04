@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "node tests/index.js",
-    "preinstall": "node utils/download-bazelisk.js && node utils/download-yarn.js",
+    "preinstall": "bin/download-bazelisk.sh && bin/download-yarn.sh",
     "build": "yarn preinstall"
   },
   "dependencies": {

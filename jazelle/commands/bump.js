@@ -5,7 +5,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {exec, write} = require('../utils/node-helpers.js');
 const {node, yarn} = require('../utils/binary-paths.js');
-const {greenkeep} = require('./greenkeep.js');
+const {upgrade} = require('./upgrade.js');
 
 /*::
 type BumpArgs = {
@@ -55,11 +55,11 @@ const bump /*: Bump */ = async ({
       dep.meta.version = next;
       await write(
         `${dep.dir}/package.json`,
-        JSON.stringify(dep.meta, null, 2),
+        `${JSON.stringify(dep.meta, null, 2)}\n`,
         'utf8'
       );
 
-      await greenkeep({
+      await upgrade({
         root,
         cwd,
         name: dep.meta.name,

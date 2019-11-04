@@ -11,7 +11,7 @@ import React from 'react';
 
 import {createPlugin, html, unescape} from 'fusion-core';
 
-import {ApolloProvider} from 'react-apollo';
+import {ApolloProvider} from '@apollo/react-common';
 
 import type {Context, Render} from 'fusion-core';
 
@@ -27,6 +27,7 @@ import {
   GraphQLEndpointToken,
   ApolloClientToken,
   ApolloBodyParserConfigToken,
+  ApolloDefaultOptionsConfigToken,
 } from './tokens';
 
 export type DepsType = {
@@ -37,6 +38,7 @@ export type DepsType = {
   getApolloClient: typeof ApolloClientToken,
   getDataFromTree: typeof GetDataFromTreeToken.optional,
   bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
+  defaultOptionsConfig: typeof ApolloDefaultOptionsConfigToken.optional,
 };
 
 export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
@@ -51,6 +53,7 @@ function getDeps(): DepsType {
       getApolloClient: ApolloClientToken,
       getDataFromTree: GetDataFromTreeToken.optional,
       bodyParserConfig: ApolloBodyParserConfigToken.optional,
+      defaultOptionsConfig: ApolloDefaultOptionsConfigToken.optional,
     };
   }
   // $FlowFixMe
@@ -80,6 +83,7 @@ export default (renderFn: Render) =>
         return ctx;
       },
       bodyParserConfig = {},
+      defaultOptionsConfig = {},
     }) {
       const renderMiddleware = async (ctx, next) => {
         if (!ctx.element) {
@@ -117,34 +121,39 @@ export default (renderFn: Render) =>
         }
       };
       if (__NODE__ && schema) {
+        const getApolloContext = ctx => {
+          if (typeof apolloContext === 'function') {
+            return apolloContext(ctx);
+          }
+          return apolloContext;
+        };
         const server = new ApolloServer({
+          ...defaultOptionsConfig,
           schema,
           // investigate other options
           context: ({ctx}) => {
-            if (typeof apolloContext === 'function') {
-              return apolloContext(ctx);
-            }
-            return apolloContext;
+            return ctx;
           },
-          executor: requestContext => {
-            const client = getApolloClient(requestContext.context, {});
-            const args = {
-              variables: requestContext.request.variables,
-              context: requestContext.context,
-            };
-            if (requestContext.operation.operation === 'query') {
-              return client.query({
-                query: requestContext.document,
-                ...args,
+          executor: async requestContext => {
+            const fusionCtx = requestContext.context;
+            const apolloCtx = getApolloContext(fusionCtx);
+            const client = getApolloClient(fusionCtx, {});
+            // $FlowFixMe
+            const queryObservable = client.queryManager.getObservableFromLink(
+              requestContext.document,
+              apolloCtx,
+              requestContext.request.variables
+            );
+            return new Promise((resolve, reject) => {
+              queryObservable.subscribe({
+                next(x) {
+                  resolve(x);
+                },
+                error(err) {
+                  reject(err);
+                },
               });
-            } else if (requestContext.operation.operation === 'mutation') {
-              return client.mutate({
-                mutation: requestContext.document,
-                ...args,
-              });
-            } else {
-              throw new Error('Subscriptions not supported yet');
-            }
+            });
           },
         });
         let serverMiddleware = [];

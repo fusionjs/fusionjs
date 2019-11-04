@@ -2,6 +2,9 @@
 const {satisfies, minVersion, validRange, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
+const {node, yarn} = require('./binary-paths.js');
+const {isYarnResolution} = require('./is-yarn-resolution.js');
+const {getRegistryFromUrl} = require('./get-registry-from-url.js');
 
 /*::
 export type Report = {
@@ -95,12 +98,18 @@ const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
 export type SyncArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
+  frozenLockfile?: boolean,
   tmp?: string,
 };
 export type Sync = (SyncArgs) => Promise<void>;
 */
-const sync /*: Sync */ = async ({roots, ignore, tmp}) => {
-  await diff({roots, ignore, tmp});
+const sync /*: Sync */ = async ({
+  roots,
+  ignore,
+  tmp,
+  frozenLockfile = false,
+}) => {
+  await diff({roots, ignore, tmp, frozenLockfile});
 };
 
 /*::
@@ -108,32 +117,24 @@ export type MergeArgs = {
   roots: Array<string>,
   out: string,
   ignore?: Array<string>,
-  frozenLockfile?: boolean,
   tmp?: string,
 }
 export type Merge = (MergeArgs) => Promise<void>;
 */
-const merge /*: Merge */ = async ({
-  roots,
-  out,
-  ignore = [],
-  frozenLockfile = false,
-  tmp = '/tmp',
-}) => {
-  const metas = await getMetadata({roots});
-  const updated = await update({metas, ignore, tmp, frozenLockfile});
+const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
+  const sets = await getVersionSets({roots});
   const merged = {dir: out, meta: {}, lockfile: {}};
-  for (const {meta, lockfile} of updated) {
+  for (const {meta, lockfile} of sets) {
     for (const {name, range, type} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (ignored) continue;
 
       if (!merged.meta[type]) merged.meta[type] = {};
       merged.meta[type][name] = range;
-      Object.assign(merged.lockfile, lockfile);
     }
+    Object.assign(merged.lockfile, lockfile);
   }
-  await writeMetadata({metas: [merged]});
+  await writeVersionSets({sets: [merged]});
 };
 
 /*::
@@ -143,6 +144,7 @@ type DiffArgs = {
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
+  frozenLockfile?: boolean,
   tmp?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
@@ -153,21 +155,23 @@ const diff /*: Diff */ = async ({
   removals = [],
   upgrades = [],
   ignore = [],
+  frozenLockfile = false,
   tmp = '/tmp',
 }) => {
-  const metas = await getMetadata({roots});
+  const sets = await getVersionSets({roots});
   const updated = /*:: await */ await update({
-    metas,
+    sets,
     additions,
     removals,
     upgrades,
     ignore,
+    frozenLockfile,
     tmp,
   });
-  await writeMetadata({metas: updated});
+  await writeVersionSets({sets: updated});
 };
 
-const getMetadata = async ({roots}) => {
+const getVersionSets = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
@@ -181,11 +185,15 @@ const getMetadata = async ({roots}) => {
   );
 };
 
-const writeMetadata = async ({metas}) => {
+const writeVersionSets = async ({sets}) => {
   await Promise.all(
-    metas.map(async ({dir, meta, lockfile}) => {
+    sets.map(async ({dir, meta, lockfile}) => {
       await exec(`mkdir -p ${dir}`);
-      await write(`${dir}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+      await write(
+        `${dir}/package.json`,
+        `${JSON.stringify(meta, null, 2)}\n`,
+        'utf8'
+      );
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
     })
   );
@@ -202,37 +210,36 @@ const getDepEntries = meta => {
   ];
   for (const type of types) {
     for (const name in meta[type]) {
-      entries.push({name, range: meta[type][name], type});
+      const realName =
+        type === 'resolutions'
+          ? (name.match(/(@[^@/]+?\/)?[^@/]+$/) || [])[0]
+          : name;
+      entries.push({name: realName, range: meta[type][name], type});
     }
   }
   return entries;
 };
 
 /*::
-export type PackageJson = {
-  name: string,
+import type {PackageJson} from './get-local-dependencies.js';
+
+export type LockfileEntry = {
   version: string,
-  dependencies?: {[string]: string},
-  devDependencies?: {[string]: string},
-  optionalDependencies?: {[string]: string},
-  peerDependencies?: {[string]: string},
-  resolutions?: {[string]: string},
+  resolved: string,
+  dependencies?: {
+    [string]: string,
+  }
 };
 export type Lockfile = {
-  [string]: {
-    version: string,
-    dependencies?: {
-      [string]: string,
-    }
-  }
-}
-export type Metadata = {
+  [string]: LockfileEntry,
+};
+export type VersionSet = {
   dir: string,
   meta: PackageJson,
   lockfile: Lockfile,
 };
 export type UpdateArgs = {
-  metas: Array<Metadata>,
+  sets: Array<VersionSet>,
   additions?: Array<Addition>,
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
@@ -240,10 +247,10 @@ export type UpdateArgs = {
   frozenLockfile?: boolean,
   tmp?: string,
 };
-export type Update = (UpdateArgs) => Promise<Array<Metadata>>;
+export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
 */
 const update /*: Update */ = async ({
-  metas,
+  sets,
   additions = [],
   removals = [],
   upgrades = [],
@@ -254,7 +261,6 @@ const update /*: Update */ = async ({
   // populate missing ranges w/ latest
   const insertions = [...additions, ...upgrades];
   if (insertions.length > 0) {
-    if (frozenLockfile) throwEditError('Checking version to add');
     await Promise.all(
       insertions.map(async insertion => {
         if (!insertion.range) {
@@ -267,10 +273,9 @@ const update /*: Update */ = async ({
     );
   }
 
-  for (const {meta, lockfile} of metas) {
+  for (const {dir, meta, lockfile} of sets) {
     // handle removals
     if (removals.length > 0) {
-      if (frozenLockfile) throwEditError('Removing dep');
       for (const name of removals) {
         const types = [
           'dependencies',
@@ -290,7 +295,6 @@ const update /*: Update */ = async ({
 
     // list additions in package.json
     if (additions.length > 0) {
-      if (frozenLockfile) throwEditError('Adding dep');
       for (const {name, range, type} of additions) {
         if (!meta[type]) meta[type] = {};
         meta[type][name] = range;
@@ -299,7 +303,6 @@ const update /*: Update */ = async ({
 
     // handle upgrades
     if (upgrades.length > 0) {
-      if (frozenLockfile) throwEditError('Upgrading dep');
       for (const {name, range, from} of upgrades) {
         const types = [
           'dependencies',
@@ -327,18 +330,19 @@ const update /*: Update */ = async ({
       }
     }
     if (Object.keys(missing).length > 0) {
-      if (frozenLockfile) throwEditError('Installing dep');
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const data = JSON.stringify(missing, null, 2);
       await exec(`mkdir -p ${cwd}`);
-      await write(`${cwd}/package.json`, data, 'utf8');
-      const yarnrc = '"--install.frozen-lockfile" false';
-      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-      const install = `yarn install --ignore-scripts --ignore-engines`;
+      await write(
+        `${cwd}/package.json`,
+        `${JSON.stringify(missing, null, 2)}\n`,
+        'utf8'
+      );
+      await writeYarnRc(cwd, dir);
+      const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
       await exec(install, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original package.json/yarn.lock
-      const [added] = await getMetadata({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cwd]});
       for (const {name, range, type} of getDepEntries(added.meta)) {
         if (!meta[type]) meta[type] = {};
         if (meta[type]) meta[type][name] = range;
@@ -359,18 +363,16 @@ const update /*: Update */ = async ({
       }
     }
     if (missingTransitives.length > 0) {
-      if (frozenLockfile) throwEditError('Installing dep');
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
       await exec(`mkdir -p ${cwd}`);
-      const yarnrc = '"--add.frozen-lockfile" false';
-      await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-      await write(`${cwd}/package.json`, '{}', 'utf8');
+      await writeYarnRc(cwd, dir);
+      await write(`${cwd}/package.json`, '{}\n', 'utf8');
       const deps = missingTransitives.join(' ');
       const add = `yarn add ${deps} --ignore-engines`;
       await exec(add, {cwd}, [process.stdout, process.stderr]);
 
       // copy newly installed deps back to original yarn.lock
-      const [added] = await getMetadata({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cwd]});
       Object.assign(lockfile, added.lockfile);
     }
   }
@@ -378,14 +380,24 @@ const update /*: Update */ = async ({
   // index lockfiles
   const ids = new Set(); // for deduping
   const index = {};
-  for (const {lockfile} of metas) {
+  for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-      const isAlias = range.includes(':') || !validRange(range);
-      const id = `${key}|${lockfile[key].version}`;
+      const isAlias =
+        range.includes(':') ||
+        !validRange(range) ||
+        isYarnResolution({meta, name});
+      const resolved = lockfile[key].resolved || '';
+      const id = `${key}|${lockfile[key].version}|${getRegistryFromUrl(
+        resolved
+      )}`;
       if (!index[name]) index[name] = [];
       if (!ids.has(id)) {
-        index[name].push({lockfile, key, isAlias});
+        index[name].push({
+          lockfile,
+          key,
+          isAlias,
+        });
         ids.add(id);
       }
     }
@@ -399,46 +411,105 @@ const update /*: Update */ = async ({
   }
 
   // sync
-  for (const item of metas) {
-    const {meta, lockfile} = item;
+  for (const item of sets) {
+    const {dir, meta} = item;
+    const registry = await getRegistry(dir);
     const graph = {};
-    const ref = frozenLockfile ? lockfile : null;
-    for (const {name, range, type} of getDepEntries(meta)) {
-      if (type === 'resolutions') continue;
+    for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
-      if (!ignored) populateGraph({graph, name, range, index, ref});
+      if (!ignored)
+        populateGraph({
+          graph,
+          name,
+          range,
+          index,
+          registry,
+        });
     }
-    if (frozenLockfile && enumerationChanged(lockfile, graph)) {
-      throwEditError('Enumeration changed');
+
+    // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
+    // so we need to ensure that they are
+    const map = {};
+    const lockfile = {};
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      map[`${name}@${graph[key].version}`] = graph[key];
     }
-    item.lockfile = graph;
+    for (const key in graph) {
+      const [, name] = key.match(/(.+?)@(.+)/) || [];
+      lockfile[key] = map[`${name}@${graph[key].version}`];
+    }
+
+    if (frozenLockfile) {
+      const oldKeys = Object.keys(item.lockfile);
+      const newKeys = Object.keys(lockfile);
+      if (oldKeys.sort().join() !== newKeys.sort().join()) {
+        // if newKeys is a subset of oldKeys, we're pruning
+        // dependencies which is OK.
+        const missingKeys = [];
+        for (let key of newKeys) {
+          if (!item.lockfile[key]) {
+            missingKeys.push(key);
+          }
+        }
+        if (missingKeys.length) {
+          console.error(
+            `Updating lockfile is not allowed with frozenLockfile. ` +
+              `This error is most likely happening if you have committed ` +
+              `out-of-date lockfiles and tried to install deps in CI. ` +
+              `Install your deps again locally.\n\n` +
+              `missing keys: ${missingKeys.slice(0, 10).join()}`
+          );
+        }
+      }
+    } else {
+      item.lockfile = lockfile;
+    }
   }
 
-  return metas;
+  return sets;
 };
 
-const populateGraph = ({graph, name, range, index, ref}) => {
+const populateGraph = ({graph, name, range, index, registry}) => {
   const key = `${name}@${range}`;
   if (key in graph) return;
 
+  // Prefer newer versions of packages that adhere to the local registry of the package
+  // If this fails, then disregard the registry check and loop
   for (const ptr of index[name]) {
     const version = ptr.lockfile[ptr.key].version;
     if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
-      graph[key] = ptr.lockfile[ptr.key];
-      break;
+      const {resolved} = ptr.lockfile[ptr.key];
+      if (resolved.indexOf(registry) > -1) {
+        graph[key] = ptr.lockfile[ptr.key];
+        break;
+      }
     }
   }
-  if (!graph[key]) return;
-  if (ref !== null && ref[key].version !== graph[key].version) {
-    throwEditError('Version synced');
+
+  if (!graph[key]) {
+    for (const ptr of index[name]) {
+      const version = ptr.lockfile[ptr.key].version;
+      if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
+        graph[key] = ptr.lockfile[ptr.key];
+        break;
+      }
+    }
   }
-  populateDeps({graph, deps: graph[key].dependencies || {}, index, ref});
+
+  if (!graph[key]) return;
+  populateDeps({
+    graph,
+    deps: graph[key].dependencies || {},
+    index,
+    registry,
+  });
 };
 
-const populateDeps = ({graph, deps, index, ref}) => {
+const populateDeps = ({graph, deps, index, registry}) => {
   for (const name in deps) {
     const range = deps[name];
-    populateGraph({graph, name, range, index, ref});
+    populateGraph({graph, name, range, index, registry});
   }
 };
 
@@ -449,21 +520,19 @@ const isBetterVersion = (version, range, graph, key) => {
   );
 };
 
-const enumerationChanged = (a, b) => {
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return true;
-  if (aKeys.sort().join() !== bKeys.sort().join()) return true;
-  return false;
+const getRegistry = async cwd => {
+  const getRegistry = `${node} ${yarn} config get registry`;
+  const registry = await exec(getRegistry, {cwd});
+  return registry ? registry.trim() : '';
 };
 
-const throwEditError = reason => {
-  throw new Error(
-    `Updating lockfile is not allowed with frozenLockfile. ` +
-      `This error is most likely happening if you have committed ` +
-      `out-of-date lockfiles and tried to install deps in CI. ` +
-      `Install your deps again locally. ${reason}`
-  );
+const writeYarnRc = async (cwd, packageDir) => {
+  const yarnrc = ['"--install.frozen-lockfile" false'];
+  const registry = await getRegistry(packageDir);
+  if (registry) {
+    yarnrc.push(`--registry "${registry}"`);
+  }
+  await write(`${cwd}/.yarnrc`, yarnrc.join('\n'), 'utf8');
 };
 
 module.exports = {check, add, remove, upgrade, sync, merge};

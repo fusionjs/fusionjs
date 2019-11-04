@@ -36,5 +36,5 @@ test('`fusion build` app with split translations integration', async () => {
   );
 
   browser.close();
-  proc.kill();
+  proc.kill('SIGKILL');
 }, 100000);

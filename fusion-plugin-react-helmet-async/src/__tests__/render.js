@@ -6,6 +6,7 @@
  * @flow
  */
 
+/* eslint-disable react/no-unescaped-entities */
 import App from 'fusion-react';
 import {render} from 'react-dom';
 import fs from 'fs';
@@ -24,7 +25,7 @@ test(`${name} side render`, async t => {
           <html lang="en" amp />
           <body className="root" />
           <title itemProp="name" lang="en">
-            My Title
+            My Title's {'</title>'}
           </title>
           <base target="_blank" href="http://mysite.com/" />
           <meta name="description" content="Helmet application" />
@@ -68,7 +69,7 @@ test(`${name} side render`, async t => {
   let root;
   if (__BROWSER__) {
     root = document.createElement('div');
-    root.setAttribute('id', 'root');
+    root.setAttribute('id', 'root2');
     if (document.body) {
       document.body.appendChild(root);
     }
@@ -92,7 +93,7 @@ test(`${name} side render`, async t => {
   } else if (__BROWSER__) {
     // need to wait until next tick for dom changes
     await new Promise(resolve => setTimeout(resolve, 10));
-    t.equal(document.title, 'My Title');
+    t.equal(document.title, "My Title's </title>");
     const baseEl = document.querySelector('base');
     if (!baseEl) {
       throw new Error('Could not find base element');

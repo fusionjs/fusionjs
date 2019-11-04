@@ -17,7 +17,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const rimraf = require('rimraf');
 
 const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
-const getWebpackConfig = require('./get-webpack-config.js');
+const {getWebpackConfig} = require('./get-webpack-config.js');
 const {
   DeferredState,
   SyncState,
@@ -25,6 +25,8 @@ const {
 } = require('./shared-state-containers.js');
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
+
+const Worker = require('jest-worker').default;
 
 function getErrors(info) {
   let errors = [].concat(info.errors);
@@ -52,7 +54,8 @@ function getWarnings(info) {
 
 function dedupeErrors(items) {
   const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  return items.map(item => item.replace(re, '$2'));
+  const set = new Set(items.map(item => item.replace(re, '$2')));
+  return Array.from(set);
 }
 
 function getStatsLogger({dir, logger, env}) {
@@ -119,7 +122,6 @@ type CompilerOpts = {
   forceLegacyBuild?: boolean,
   logger?: any,
   preserveNames?: boolean,
-  zopfli?: boolean,
   minify?: boolean,
   modernBuildOnly?: boolean,
 };
@@ -134,7 +136,6 @@ function Compiler(
     preserveNames,
     watch = false,
     logger = console,
-    zopfli = true,
     minify = true,
     serverless = false,
     modernBuildOnly = false,
@@ -165,6 +166,8 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
+  let worker = createWorker();
+
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -174,8 +177,12 @@ function Compiler(
     fusionConfig,
     legacyPkgConfig,
     preserveNames,
-    zopfli,
+    // TODO: Remove redundant zopfli option
+    zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
+    gzip: fusionConfig.gzip != undefined ? fusionConfig.gzip : true,
+    brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
     minify,
+    worker,
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),
@@ -190,6 +197,21 @@ function Compiler(
       console.log(`End time: ${Date.now()}`);
     });
   }
+
+  if (watch) {
+    compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
+      if (worker === void 0) worker = createWorker();
+    });
+    compiler.hooks.watchClose.tap('KillWorkers', stats => {
+      if (worker !== void 0) worker.end();
+      worker = void 0;
+    });
+  } else
+    compiler.hooks.done.tap('KillWorkers', stats => {
+      if (worker !== void 0) worker.end();
+      worker = void 0;
+    });
+
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
@@ -257,6 +279,14 @@ function loadLegacyPkgConfig(dir) {
     legacyPkgConfig.node = appPkg.node;
   }
   return legacyPkgConfig;
+}
+
+function createWorker() {
+  if (require('os').cpus().length < 2) return void 0;
+  return new Worker(require.resolve('./loaders/babel-worker.js'), {
+    exposedMethods: ['runTransformation'],
+    forkOptions: {stdio: 'inherit'},
+  });
 }
 
 module.exports.Compiler = Compiler;

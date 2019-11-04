@@ -9,6 +9,7 @@
 import type {FusionPlugin, Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {type Fetch, FetchToken} from 'fusion-tokens';
+import {I18nToken} from 'fusion-plugin-i18n';
 
 import {
   RPCHandlersToken,
@@ -24,6 +25,7 @@ export type RPCDepsType = {
   handlers?: typeof RPCHandlersToken,
   bodyParserOptions?: typeof BodyParserOptionsToken.optional,
   fetch?: typeof FetchToken,
+  i18n?: typeof I18nToken.optional,
   rpcConfig?: typeof RPCHandlersConfigToken.optional,
 };
 

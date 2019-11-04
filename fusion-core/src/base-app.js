@@ -1,11 +1,12 @@
 /** Copyright (c) 2018 Uber Technologies, Inc.
  *
+
+
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
  */
-
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
 import {ElementToken, RenderToken, SSRDeciderToken} from './tokens';
@@ -172,73 +173,74 @@ class FusionApp {
       let {value, aliases, enhancers} =
         registered.get(getTokenRef(token)) || {};
       if (value === undefined) {
-        // Attempt to get default value, if optional
-        if (token instanceof TokenImpl && token.type === TokenType.Optional) {
-          this.register(token, undefined);
-        } else {
-          const dependents = Array.from(this.registered.entries());
-
-          /**
-           * Iterate over the entire list of dependencies and find all
-           * dependencies of a given token.
-           */
-          const findDependentTokens = () => {
-            return dependents
-              .filter(entry => {
-                if (!entry[1].value || !entry[1].value.deps) {
-                  return false;
-                }
-                return Object.values(entry[1].value.deps).includes(token);
-              })
-              .map(entry => entry[1].token.name);
-          };
-          const findDependentEnhancers = () => {
-            return appliedEnhancers
-              .filter(([, provides]) => {
-                if (!provides || !provides.deps) {
-                  return false;
-                }
-                return Object.values(provides.deps).includes(token);
-              })
-              .map(([enhancer]) => {
-                const enhancedToken = this.enhancerToToken.get(enhancer);
-                return `EnhancerOf<${
-                  enhancedToken ? enhancedToken.name : '(unknown)'
-                }>`;
-              });
-          };
-          const dependentTokens = [
-            ...findDependentTokens(),
-            ...findDependentEnhancers(),
-          ];
-
-          const base =
-            'A plugin depends on a token, but the token was not registered';
-          const downstreams =
-            'This token is required by plugins registered with tokens: ' +
-            dependentTokens.map(token => `"${token}"`).join(', ');
-          const stack = token.stacks.find(t => t.type === 'token');
-          const meta = `Required token: ${
-            token ? token.name : ''
-          }\n${downstreams}\n${stack ? stack.stack : ''}`;
-          const clue = 'Different tokens with the same name were detected:\n\n';
-          const suggestions = token
-            ? this.plugins
-                .filter(p => p.name === token.name)
-                .map(p => {
-                  const stack = p.stacks.find(t => t.type === 'token');
-                  return `${p.name}\n${stack ? stack.stack : ''}\n\n`;
-                })
-                .join('\n\n')
-            : '';
-          const help =
-            'You may have multiple versions of the same plugin installed.\n' +
-            'Ensure that `yarn list [the-plugin]` results in one version, ' +
-            'and use a yarn resolution or merge package version in your lock file to consolidate versions.\n\n';
-          throw new Error(
-            `${base}\n\n${meta}\n\n${suggestions && clue + suggestions + help}`
-          );
+        // Early return if token is optional
+        const isOptional =
+          token instanceof TokenImpl && token.type === TokenType.Optional;
+        if (isOptional && (!enhancers || !enhancers.length)) {
+          return;
         }
+        const dependents = Array.from(this.registered.entries());
+
+        /**
+         * Iterate over the entire list of dependencies and find all
+         * dependencies of a given token.
+         */
+        const findDependentTokens = () => {
+          return dependents
+            .filter(entry => {
+              if (!entry[1].value || !entry[1].value.deps) {
+                return false;
+              }
+              return Object.values(entry[1].value.deps).includes(token);
+            })
+            .map(entry => entry[1].token.name);
+        };
+        const findDependentEnhancers = () => {
+          return appliedEnhancers
+            .filter(([, provides]) => {
+              if (!provides || !provides.deps) {
+                return false;
+              }
+              return Object.values(provides.deps).includes(token);
+            })
+            .map(([enhancer]) => {
+              const enhancedToken = this.enhancerToToken.get(enhancer);
+              return `EnhancerOf<${
+                enhancedToken ? enhancedToken.name : '(unknown)'
+              }>`;
+            });
+        };
+        const dependentTokens = [
+          ...findDependentTokens(),
+          ...findDependentEnhancers(),
+        ];
+
+        const base =
+          'A plugin depends on a token, but the token was not registered';
+        const downstreams =
+          'This token is required by plugins registered with tokens: ' +
+          dependentTokens.map(token => `"${token}"`).join(', ');
+        const stack = token.stacks.find(t => t.type === 'token');
+        const meta = `Required token: ${
+          token ? token.name : ''
+        }\n${downstreams}\n${stack ? stack.stack : ''}`;
+        const clue = 'Different tokens with the same name were detected:\n\n';
+        const suggestions = token
+          ? this.plugins
+              .filter(p => p.name === token.name)
+              .map(p => {
+                const stack = p.stacks.find(t => t.type === 'token');
+                return `${p.name}\n${stack ? stack.stack : ''}\n\n`;
+              })
+              .join('\n\n')
+          : '';
+        const help =
+          'You may have multiple versions of the same plugin installed.\n' +
+          'Ensure that `yarn list [the-plugin]` results in one version, ' +
+          'and use a yarn resolution or merge package version in your lock file to consolidate versions.\n\n';
+        throw new Error(
+          `${base}\n\n${meta}\n\n${suggestions && clue + suggestions + help}`
+        );
       }
 
       // Recursive: get the registered type and resolve it

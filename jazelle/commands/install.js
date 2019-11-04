@@ -7,6 +7,8 @@ const {
   reportMismatchedTopLevelDeps,
   getErrorMessage,
 } = require('../utils/report-mismatched-top-level-deps.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
+const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {generateBazelignore} = require('../utils/generate-bazelignore.js');
 const {
@@ -14,16 +16,16 @@ const {
 } = require('../utils/generate-bazel-build-rules.js');
 const {installDeps} = require('../utils/install-deps.js');
 const {getDownstreams} = require('../utils/get-downstreams.js');
-const {read} = require('../utils/node-helpers.js');
 
 /*::
 export type InstallArgs = {
   root: string,
   cwd: string,
+  frozenLockfile?: boolean
 }
 export type Install = (InstallArgs) => Promise<void>
 */
-const install /*: Install */ = async ({root, cwd}) => {
+const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
   await assertProjectDir({dir: cwd});
 
   const {
@@ -49,31 +51,33 @@ const install /*: Install */ = async ({root, cwd}) => {
   });
   if (!result.valid) throw new Error(getErrorMessage(result));
 
-  const downstreams = await findDownstreams({root, deps, projects});
+  const cycles = detectCyclicDeps({deps});
+  if (cycles.length > 0) {
+    throw new Error(
+      'Cyclic local dependencies detected. Run `jazelle doctor` for more info'
+    );
+  }
+
+  const all = await getAllDependencies({root, projects});
+  const downstreams = [];
+  for (const dep of deps) {
+    downstreams.push(...getDownstreams(all, dep));
+  }
+  const map = {};
+  for (const dep of [...deps, ...downstreams]) {
+    map[dep.meta.name] = dep;
+  }
   await generateDepLockfiles({
     root,
-    deps: [...new Set([...deps, ...downstreams])],
+    deps: Object.keys(map).map(key => map[key]),
+    ignore: all,
+    frozenLockfile,
   });
-  if (workspace === 'sandbox') {
+  if (workspace === 'sandbox' && frozenLockfile === false) {
     await generateBazelignore({root, projects: projects});
     await generateBazelBuildRules({root, deps, projects});
   }
-  await installDeps({root, deps, hooks});
-};
-
-const findDownstreams = async ({root, deps, projects}) => {
-  const roots = projects.map(dir => `${root}/${dir}`);
-  const metas = await Promise.all(
-    roots.map(async dir => ({
-      dir,
-      meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
-    }))
-  );
-  const downstreams = [];
-  for (const dep of deps) {
-    downstreams.push(...getDownstreams(metas, dep));
-  }
-  return downstreams;
+  await installDeps({root, cwd, deps, ignore: all, hooks});
 };
 
 module.exports = {install};

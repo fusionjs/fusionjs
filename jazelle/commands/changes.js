@@ -4,14 +4,15 @@ const {findChangedTargets} = require('../utils/find-changed-targets.js');
 /*::
 type ChangesArgs = {
   root: string,
-  sha1?: string,
-  sha2?: string,
+  files?: string,
   type?: string,
 };
 type Changes = (ChangesArgs) => Promise<void>;
 */
-const changes /*: Changes */ = async ({root, sha1, sha2, type}) => {
-  const targets = await findChangedTargets({root, sha1, sha2, type});
+const changes /*: Changes */ = async ({root, files}) => {
+  // Get every changed target
+  const targets = await findChangedTargets({root, files});
+
   console.log(targets.join('\n'));
 };
 

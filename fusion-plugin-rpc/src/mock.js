@@ -41,7 +41,8 @@ class RPC {
 const plugin: RPCPluginType = createPlugin({
   deps: {
     handlers: RPCHandlersToken,
-    emitter: UniversalEventsToken,
+    // $FlowFixMe
+    emitter: UniversalEventsToken.optional,
   },
   provides: ({handlers} = {}) => {
     return {from: () => new RPC(handlers)};

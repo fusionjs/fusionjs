@@ -25,9 +25,14 @@ export type AddArgs = {
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
+const add /*: Add */ = async ({
+  root,
+  cwd,
+  name: nameWithVersion,
+  dev = false,
+}) => {
   await assertProjectDir({dir: cwd});
-
+  let [, name, version] = nameWithVersion.match(/(@?[^@]*)@?(.*)/) || [];
   const type = dev ? 'devDependencies' : 'dependencies';
   const local = await findLocalDependency({root, name});
   if (local) {
@@ -49,7 +54,11 @@ const add /*: Add */ = async ({root, cwd, name, version, dev = false}) => {
       }
     }
     meta[type][name] = local.meta.version;
-    await write(`${cwd}/package.json`, JSON.stringify(meta, null, 2), 'utf8');
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(meta, null, 2)}\n`,
+      'utf8'
+    );
   } else {
     // adding does not dedupe transitives, since consumers will rarely want to check if they introduced regressions in unrelated projects
     if (!version) {

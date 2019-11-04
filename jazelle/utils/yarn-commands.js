@@ -31,6 +31,7 @@ const buildCacheable = async ({root, dep, deps, stdio}) => {
   const {dir, meta} = dep;
   const cache = await checksumCache(root);
   if (!(await cache.isCached(dir))) {
+    console.log(`Building ${meta.name}`);
     await spawn(node, [yarn, 'build'], {stdio, env: process.env, cwd: dir});
 
     getDownstreams(deps, dep).forEach(d => {
@@ -39,7 +40,6 @@ const buildCacheable = async ({root, dep, deps, stdio}) => {
     });
     await cache.update(dir);
     await cache.save();
-    console.log(`Building ${meta.name}`);
   }
 };
 
@@ -61,70 +61,95 @@ const build /*: Build */ = async ({root, deps, stdio = errorsOnly}) => {
 export type DevArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Dev = (DevArgs) => Promise<void>;
 */
-const dev /*: Dev */ = async ({root, deps, stdio = 'inherit'}) => {
+const dev /*: Dev */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'dev'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'dev', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
 export type TestArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Test = (TestArgs) => Promise<void>;
 */
-const test /*: Test */ = async ({root, deps, stdio = 'inherit'}) => {
+const test /*: Test */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'test'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'test', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
 export type LintArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Lint = (LintArgs) => Promise<void>;
 */
-const lint /*: Lint */ = async ({root, deps, stdio = 'inherit'}) => {
+const lint /*: Lint */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'lint'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'lint', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
 export type FlowArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Flow = (FlowArgs) => Promise<void>;
 */
-const flow /*: Flow */ = async ({root, deps, stdio = 'inherit'}) => {
+const flow /*: Flow */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: false, stdio: errorsOnly});
-  await spawn(node, [yarn, 'flow'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'flow', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 /*::
 export type StartArgs = {
   root: string,
   deps: Array<Metadata>,
+  args: Array<string>,
   stdio?: Stdio,
 };
 export type Start = (StartArgs) => Promise<void>;
 */
-const start /*: Start */ = async ({root, deps, stdio = 'inherit'}) => {
+const start /*: Start */ = async ({root, deps, args, stdio = 'inherit'}) => {
   const main = deps.slice(-1).pop();
   await batchBuild({root, deps, self: true, stdio: errorsOnly});
-  await spawn(node, [yarn, 'start'], {stdio, env: process.env, cwd: main.dir});
+  await spawn(node, [yarn, 'start', ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
 };
 
 module.exports = {build, dev, test, lint, flow, start};

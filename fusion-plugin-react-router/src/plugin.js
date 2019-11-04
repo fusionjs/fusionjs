@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 import {Router as DefaultProvider} from 'react-router-dom';
-import createBrowserHistory from 'history/createBrowserHistory';
+import {createBrowserHistory} from 'history';
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin, createToken, html, unescape, memoize} from 'fusion-core';
@@ -142,10 +142,16 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             }
             return payload;
           });
-        // Expose the history object
-        if (!browserHistory) {
+        // preserving browser history across hmr fixes warning "Warning: You cannot change <Router history>"
+        // we don't want to preserve the `browserHistory` instance across jsdom tests however, as it will cause
+        // routes to match based on the previous location information.
+        if (
+          !browserHistory ||
+          (__DEV__ && typeof window.jsdom !== 'undefined')
+        ) {
           browserHistory = createBrowserHistory({basename: ctx.prefix});
         }
+        // Expose the history object
         myAPI.history = browserHistory;
         ctx.element = (
           <Router

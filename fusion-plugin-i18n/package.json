@@ -28,7 +28,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
+    "lint": "eslint .",
     "build-test": "rm -rf dist-tests && cup build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
@@ -38,6 +38,7 @@
     "flow": "flow check"
   },
   "dependencies": {
+    "koa-bodyparser": "^4.2.1",
     "locale": "^0.1.0",
     "rollup": "^0.67.3"
   },
@@ -55,6 +56,7 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "flow-bin": "^0.102.0",
     "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "nyc": "^14.1.0",
@@ -64,6 +66,7 @@
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "engines": {

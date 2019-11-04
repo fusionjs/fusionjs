@@ -4,7 +4,7 @@ const {execSync: exec} = require('child_process');
 const {dirname, basename} = require('path');
 
 const root = process.cwd();
-const [node, , main, bin, command, dist, out] = process.argv;
+const [node, , main, bin, command, dist, out, ...args] = process.argv;
 
 const files = exec(`find . -name output.tgz`, {cwd: bin, encoding: 'utf8'})
   .split('\n')
@@ -17,15 +17,17 @@ files.map(f => {
   const label = basename(name);
   const dir = dirname(`node_modules/${name}`);
   exec(`mkdir -p ${dir}`, {cwd: main});
-  exec(`ln -sf "${target}" "${label}"`, {cwd: `${main}/${dir}`});
+  exec(`ln -sfn "${target}" "${label}"`, {cwd: `${main}/${dir}`});
 });
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 const binPath = exists(`${main}/node_modules/.bin`)
   ? `:${main}/node_modules/.bin`
   : '';
 const payload = scripts[command] || ``;
+const nodeDir = dirname(node);
 // prioritize hermetic Node version over system version
-const script = `export PATH=${dirname(node)}:$PATH${binPath}; ${payload}`;
+const params = args.map(arg => `'${arg}'`).join(' ');
+const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload} ${params}`;
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});

@@ -3,6 +3,7 @@ const {satisfies} = require('semver');
 const {resolve} = require('path');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
+const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {ci} = require('../commands/ci.js');
 const {read, exists} = require('../utils/node-helpers.js');
 
@@ -22,7 +23,7 @@ const doctor /*: Doctor */ = async ({root, cwd}) => {
   const errors = [
     ...(await detectDanglingPeerDeps({deps})),
     ...(await detectHoistMismatch({root, deps})),
-    ...(await detectCyclicalDeps({deps})),
+    ...(await detectCyclicDependencies({deps})),
     ...(await detectOutdatedLockfiles({root, cwd})),
   ];
   if (errors.length > 0) {
@@ -74,44 +75,14 @@ const detectHoistMismatch = async ({root, deps}) => {
   return errors;
 };
 
-const detectCyclicalDeps = async ({deps}) => {
+const detectCyclicDependencies = async ({deps}) => {
   const errors = [];
-  const index = {};
-  for (const dep of deps) {
-    const {name} = dep.meta;
-    index[name] = dep;
-  }
-
-  // detect
-  const cycles = [];
-  for (const dep of deps) {
-    collect(index, dep, cycles);
-  }
-  // dedupe
-  const map = {};
+  const cycles = detectCyclicDeps({deps});
   for (const cycle of cycles) {
-    const key = cycle.sort().join();
-    map[key] = cycle;
-  }
-  for (const key in map) {
-    const names = map[key].map(dep => `- ${dep.meta.name}`).join('\n');
+    const names = cycle.map(dep => `- ${dep.meta.name}`).join('\n');
     errors.push(`Cyclical dependency chain detected containing:\n${names}`);
   }
   return errors;
-};
-const collect = (index, dep, cycles, set = new Set()) => {
-  if (set.has(dep)) {
-    const list = [...set];
-    cycles.push(list.slice(list.indexOf(dep)));
-  } else {
-    set.add(dep);
-    for (const {name, range} of getDepEntries(dep.meta)) {
-      const target = index[name];
-      if (target && satisfies(target.meta.version, range)) {
-        collect(index, target, cycles, set);
-      }
-    }
-  }
 };
 
 const detectOutdatedLockfiles = async ({root, cwd}) => {

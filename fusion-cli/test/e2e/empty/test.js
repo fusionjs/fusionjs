@@ -28,6 +28,6 @@ test('generates error if missing default export', async () => {
   } catch (e) {
     t.ok(e.stderr.includes(' is not a function'));
   } finally {
-    proc.kill();
+    proc.kill('SIGKILL');
   }
 });

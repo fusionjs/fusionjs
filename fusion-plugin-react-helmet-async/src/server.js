@@ -29,10 +29,12 @@ const plugin =
         await next();
         const {helmet} = helmetContext;
         if (helmet) {
-          ctx.template.title = helmet.title
-            .toString()
-            .replace('</title>', '')
-            .replace(/^<title.*>/, '');
+          ctx.template.title = dangerouslySetHTML(
+            helmet.title
+              .toString()
+              .replace('</title>', '')
+              .replace(/^<title.*>/, '')
+          );
           keys.forEach(key => {
             ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));
           });
