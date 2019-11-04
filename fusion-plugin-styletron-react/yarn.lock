@@ -1059,10 +1059,9 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
-csstype@2.6.5:
-  version "2.6.5"
-  resolved "https://registry.npmjs.org/csstype/-/csstype-2.6.5.tgz#1cd1dff742ebf4d7c991470ae71e12bb6751e034"
-  integrity sha512-JsTaiksRsel5n7XwqPAfB0l3TFKdpjW/kgAELf9vrb5adGA7UCPLajKK5s3nFrcFm3Rkyp/Qkgl73ENc1UY3cA==
+csstype@rtsao/csstype#c4e709f:
+  version "2.6.4"
+  resolved "https://codeload.github.com/rtsao/csstype/tar.gz/c4e709f5e047e9cacb721e437f53f0b84d6ada84"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -4020,13 +4019,13 @@ strip-json-comments@^3.0.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.0.1.tgz#85713975a91fb87bf1b305cca77395e40d2a64a7"
   integrity sha512-VTyMAUfdm047mwKl+u79WIdrZxtFtn+nBxHeb844XBQ9uMNTuTHdx2hc5RiAJYqwTj3wc/xe5HLSdJSkJ+WfZw==
 
-styletron-engine-atomic@^1.0.13:
-  version "1.4.1"
-  resolved "https://registry.npmjs.org/styletron-engine-atomic/-/styletron-engine-atomic-1.4.1.tgz#142276348df3b1e52ded99002bb630b3e1bc06a2"
-  integrity sha512-G/v9iyAYVKPirXpxqiON7CBZ3Os9kr60Xb5UX2/DvJtAsHIjaj6HjSeus6D5YTYlGiVgBh+okwq1R3VB+wH39g==
+styletron-engine-atomic@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.npmjs.org/styletron-engine-atomic/-/styletron-engine-atomic-1.4.3.tgz#1acdd3e4b432128c9e7f5141eb7a5c03eac2ee99"
+  integrity sha512-eQ/vIHeP1wPbHmzBanW/NUnjcm/9u89Ma4FzAXSIIeSAUTzMX0ZeOU9Vzigt9MGVKPQs1dhzVFlFZXTR8N85/Q==
   dependencies:
     inline-style-prefixer "^5.1.0"
-    styletron-standard "^3.0.1"
+    styletron-standard "^3.0.3"
 
 styletron-react@^5.2.0:
   version "5.2.1"
@@ -4036,12 +4035,12 @@ styletron-react@^5.2.0:
     prop-types "^15.6.0"
     styletron-standard "^3.0.1"
 
-styletron-standard@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.npmjs.org/styletron-standard/-/styletron-standard-3.0.1.tgz#c0b412231582fd2c4ce4d8f7f96b2a10a7523420"
-  integrity sha512-d35UYM4aCf4GDNv7o4ZC8YGkCyGS4Yp4SmbyKOxLxI7JcMJ2hLs+PTwcL41HW65WzZXy6XLDR/H5Fr3919ReoQ==
+styletron-standard@^3.0.1, styletron-standard@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/styletron-standard/-/styletron-standard-3.0.3.tgz#60790fb23cf1ede5f51fcbaa48f13c92b5b8b949"
+  integrity sha512-zr36POeQxvstdY8Sw443h4/AcBj23pNJ30NWPci0TetH6jJXXKn/IE5QBV2XP8ErT7eeB9LJnqlxav3aTe4qRA==
   dependencies:
-    csstype "2.6.5"
+    csstype rtsao/csstype#c4e709f
     inline-style-prefixer "^5.1.0"
 
 supports-color@^5.3.0:
