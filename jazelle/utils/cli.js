@@ -7,7 +7,7 @@ export type CliOptions = {[string]: [string, CliAction]};
 export type CliAction = (Args) => Promise<void>;
 */
 const cli /*: Cli */ = async (command, args, options, fallback) => {
-  if (command == null || command === '--help') {
+  if (command == null || ['-h', '--help', 'help'].includes(command)) {
     const keys = Object.keys(options);
     const maxWidth = Math.max(...keys.map(key => key.length));
     console.log(`\nUsage: jazelle [command]\n`);
