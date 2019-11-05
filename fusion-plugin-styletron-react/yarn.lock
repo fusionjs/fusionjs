@@ -4020,7 +4020,7 @@ strip-json-comments@^3.0.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.0.1.tgz#85713975a91fb87bf1b305cca77395e40d2a64a7"
   integrity sha512-VTyMAUfdm047mwKl+u79WIdrZxtFtn+nBxHeb844XBQ9uMNTuTHdx2hc5RiAJYqwTj3wc/xe5HLSdJSkJ+WfZw==
 
-styletron-engine-atomic@^1.0.13:
+styletron-engine-atomic@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/styletron-engine-atomic/-/styletron-engine-atomic-1.4.1.tgz#142276348df3b1e52ded99002bb630b3e1bc06a2"
   integrity sha512-G/v9iyAYVKPirXpxqiON7CBZ3Os9kr60Xb5UX2/DvJtAsHIjaj6HjSeus6D5YTYlGiVgBh+okwq1R3VB+wH39g==
@@ -4028,10 +4028,10 @@ styletron-engine-atomic@^1.0.13:
     inline-style-prefixer "^5.1.0"
     styletron-standard "^3.0.1"
 
-styletron-react@^5.2.0:
-  version "5.2.1"
-  resolved "https://registry.npmjs.org/styletron-react/-/styletron-react-5.2.1.tgz#80386bbcb1a0491106d87097b3c0ff638c791faf"
-  integrity sha512-knVqjIb9c01PtBg8+bsoQ52X7mzMCVkU/vy0ze46oW6ExYSHnRpnedfQk+76zxEV6u57ncA0ouMSpk3SE9V1Eg==
+styletron-react@^5.2.2:
+  version "5.2.2"
+  resolved "https://registry.npmjs.org/styletron-react/-/styletron-react-5.2.2.tgz#8c07252f15410ddee8f1c613ff3d27411829a5cc"
+  integrity sha512-y37qOyaLT/WKaPinuJXHZ6rvxKdhW0l4W+p/WiE95wAjpOXqKi02uoQWoX+ufXsZx91WeBN8yXnwS5a54l0mXw==
   dependencies:
     prop-types "^15.6.0"
     styletron-standard "^3.0.1"
