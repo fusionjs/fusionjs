@@ -103,6 +103,9 @@ const installDeps /*: InstallDeps */ = async ({
     await write(sourceFile, JSON.stringify(meta, null, 2), 'utf8');
   }
 
+  if (await exists(modulesDir)) {
+    await spawn('rm', ['-rf', modulesDir], {cwd: root});
+  }
   await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
   await setupSymlinks({root, deps});
 

@@ -444,23 +444,12 @@ const update /*: Update */ = async ({
       const oldKeys = Object.keys(item.lockfile);
       const newKeys = Object.keys(lockfile);
       if (oldKeys.sort().join() !== newKeys.sort().join()) {
-        // if newKeys is a subset of oldKeys, we're pruning
-        // dependencies which is OK.
-        const missingKeys = [];
-        for (let key of newKeys) {
-          if (!item.lockfile[key]) {
-            missingKeys.push(key);
-          }
-        }
-        if (missingKeys.length) {
-          console.error(
-            `Updating lockfile is not allowed with frozenLockfile. ` +
-              `This error is most likely happening if you have committed ` +
-              `out-of-date lockfiles and tried to install deps in CI. ` +
-              `Install your deps again locally.\n\n` +
-              `missing keys: ${missingKeys.slice(0, 10).join()}`
-          );
-        }
+        console.error(
+          `Updating lockfile is not allowed with frozenLockfile. ` +
+            `This error is most likely happening if you have committed ` +
+            `out-of-date lockfiles and tried to install deps in CI. ` +
+            `Install your deps again locally.`
+        );
       }
     } else {
       item.lockfile = lockfile;

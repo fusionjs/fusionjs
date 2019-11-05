@@ -18,6 +18,7 @@ const generateBazelignore /*: GenerateBazelignore */ = async ({
 
   const ignorePaths = [
     ...new Set([
+      'third_party/jazelle/temp',
       'node_modules',
       ...bazelignore.split('\n'),
       ...projects.map(p => `${p}/node_modules`),
