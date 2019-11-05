@@ -33,16 +33,17 @@ const findChangedBazelTargets = async ({root, files}) => {
   const data = await read(files || 0, 'utf8').catch(() => '');
   const lines = data.split('\n').filter(Boolean);
   const {projects, workspace} = await getManifest({root});
+  const opts = {cwd: root, maxBuffer: 1e8};
   if (workspace === 'sandbox') {
     if (lines.includes('WORKSPACE')) {
       const cmd = `${bazel} query 'kind(".*_test rule", "...")'`;
-      const result = await exec(cmd, {cwd: root});
+      const result = await exec(cmd, opts);
       const targets = result.split('\n').filter(Boolean);
       return {workspace, targets};
     } else {
       const projects = await batch(root, lines, async file => {
         const find = `${bazel} query "${file}"`;
-        const result = await exec(find, {cwd: root}).catch(async e => {
+        const result = await exec(find, opts).catch(async e => {
           // if file doesn't exist, find which package it would've belong to, and find another file in the same package
           // doing so is sufficient, because we just want to find out which targets have changed
           // - in the case the file was deleted but a package still exists, pkg will refer to the package
@@ -54,12 +55,12 @@ const findChangedBazelTargets = async ({root, files}) => {
         const target = result.trim();
         const all = target.replace(/:.+/, ':*');
         const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
-        const project = await exec(cmd, {cwd: root});
+        const project = await exec(cmd, opts);
         return project;
       });
       const targets = await batch(root, projects, async project => {
         const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
-        return exec(cmd, {cwd: root});
+        return exec(cmd, opts);
       });
       return {workspace, targets};
     }

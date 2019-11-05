@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "css-to-js-sourcemap-worker": "^2.0.4",
-    "styletron-engine-atomic": "^1.0.13"
+    "styletron-engine-atomic": "^1.4.1"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "react": "^16.8.6",
-    "styletron-react": "^5.2.0"
+    "styletron-react": "^5.2.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
@@ -59,7 +59,7 @@
     "puppeteer": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "styletron-react": "^5.2.0",
+    "styletron-react": "^5.2.2",
     "eslint-plugin-react-hooks": "^1.6.1"
   },
   "engines": {

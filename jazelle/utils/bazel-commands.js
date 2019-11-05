@@ -57,7 +57,7 @@ const test /*: Test */ = async ({
     }
   ).catch(async e => {
     const path = relative(root, cwd);
-    const file = `${root}/bazel-testlogs/${path}/${name}/${name}.log`;
+    const file = `${root}/bazel-testlogs/${path}/${name}.log`;
     const log = await read(file, 'utf8');
     e.stack += log;
     throw e;
