@@ -168,7 +168,7 @@ const diff /*: Diff */ = async ({
     frozenLockfile,
     tmp,
   });
-  await writeVersionSets({sets: updated});
+  if (!frozenLockfile) await writeVersionSets({sets: updated});
 };
 
 const getVersionSets = async ({roots}) => {
