@@ -15,7 +15,8 @@
   "dependencies": {
     "@yarnpkg/lockfile": "^1.1.0",
     "globby": "^10.0.1",
-    "semver": "^6.2.0"
+    "semver": "^6.2.0",
+    "fast-rmrf": "1.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

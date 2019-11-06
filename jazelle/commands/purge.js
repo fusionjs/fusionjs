@@ -2,23 +2,22 @@
 const {getManifest} = require('../utils/get-manifest.js');
 const {spawn} = require('../utils/node-helpers.js');
 const {bazel} = require('../utils/binary-paths.js');
+const rm = require('fast-rmrf');
 
 /*::
 export type PurgeArgs = {
   root: string,
+  fork?: boolean,
 };
 export type Purge = (PurgeArgs) => Promise<void>;
 */
-const purge /*: Purge */ = async ({root}) => {
+const purge /*: Purge */ = async ({root, fork}) => {
   const {projects = []} = await getManifest({root});
-  await Promise.all(
-    projects.map(project => {
-      return spawn('rm', ['-rf', `${root}/${project}/node_modules`]);
-    })
-  );
-  const tmp = `${root}/third_party/jazelle/temp`;
-  await spawn('rm', ['-rf', `${root}/node_modules`]);
-  await spawn('rm', ['-rf', `${tmp}`]);
+  projects.map(project => {
+    rm(`${root}/${project}/node_modules`, {fork});
+  });
+  rm(`${root}/third_party/jazelle/temp`, {fork});
+  rm(`${root}/node_modules`, {fork});
   await spawn(bazel, ['clean', '--expunge'], {
     cwd: root,
     stdio: 'inherit',

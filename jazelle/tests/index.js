@@ -254,7 +254,7 @@ async function testUpgrade() {
 
 async function testPurge() {
   await exec(`cp -r ${__dirname}/fixtures/purge/ ${__dirname}/tmp/purge`);
-  await purge({root: `${__dirname}/tmp/purge`});
+  await purge({root: `${__dirname}/tmp/purge`, fork: false});
   const nodeModules = `${__dirname}/tmp/purge/a/node_modules`;
   const globalNodeModules = `${__dirname}/tmp/purge/node_modules`;
   const temp = `${__dirname}/third_party/jazelle/temp`;
