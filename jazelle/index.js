@@ -73,7 +73,12 @@ const runCLI /*: RunCLI */ = async argv => {
         --dev                      Whether to install as devDependency
         --cwd [cwd]                Project directory to use`,
         async ({cwd, name, dev}) =>
-          add({root: await rootOf(args), cwd, name, dev: Boolean(dev)}), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
+          add({
+            root: await rootOf(args),
+            cwd,
+            name: name || dev, // if dev is passed before name, resolve to correct value
+            dev: Boolean(dev), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
+          }),
       ],
       remove: [
         `Remove a package
@@ -197,7 +202,7 @@ const runCLI /*: RunCLI */ = async argv => {
           bump({
             root: await rootOf(args),
             cwd,
-            type,
+            type: type || frozen, // if frozen is passed before type, resolve to correct value
             frozenPackageJson: Boolean(frozen),
           }),
       ],
