@@ -70,10 +70,17 @@ const installDeps /*: InstallDeps */ = async ({
   // package preinstall hook
   for (const dep of deps) {
     if (dep.meta.scripts && dep.meta.scripts.preinstall) {
-      await exec(dep.meta.scripts.preinstall, {
-        env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
-        cwd: dep.dir,
-      });
+      await exec(
+        dep.meta.scripts.preinstall,
+        {
+          env: {
+            ...process.env,
+            PATH: `${nodePath}:${String(process.env.PATH)}`,
+          },
+          cwd: dep.dir,
+        },
+        [process.stdout, process.stderr]
+      );
     }
   }
 
@@ -112,10 +119,17 @@ const installDeps /*: InstallDeps */ = async ({
   // package postinstall hook
   for (const dep of deps) {
     if (dep.meta.scripts && dep.meta.scripts.postinstall) {
-      await exec(dep.meta.scripts.postinstall, {
-        env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
-        cwd: dep.dir,
-      });
+      await exec(
+        dep.meta.scripts.postinstall,
+        {
+          env: {
+            ...process.env,
+            PATH: `${nodePath}:${String(process.env.PATH)}`,
+          },
+          cwd: dep.dir,
+        },
+        [process.stdout, process.stderr]
+      );
     }
   }
 
