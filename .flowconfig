@@ -1,6 +1,4 @@
 [ignore]
-.*/common/temp/node_modules/@uber/node-rosetta/.*
-.*/common/temp/yarn-cache/.*
 .*/templates/.*
 .*/fixtures/failure/.*
 .*/test-artifacts/.*
@@ -8,7 +6,6 @@
 .*/jazelle/tests/tmp/.*
 
 [include]
-../common/temp/node_modules
 
 [libs]
 
