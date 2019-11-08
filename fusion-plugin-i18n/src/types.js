@@ -21,7 +21,7 @@ type ExtractReturnType = <V>(() => V) => V;
 
 export type TranslateFuncType = (
   key: string,
-  interpolations?: {[string]: string | number}
+  interpolations?: {+[string]: string | number}
 ) => string;
 
 export type I18nDepsType = {
