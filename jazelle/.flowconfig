@@ -1,6 +1,7 @@
 [ignore]
 .*/tests/fixtures/.*
 .*/tests/tmp/.*
+.*/templates/.*
 
 [include]
 ../node_modules
