@@ -4,7 +4,6 @@ const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
-const {getRegistryFromUrl} = require('./get-registry-from-url.js');
 
 /*::
 export type Report = {
@@ -378,7 +377,6 @@ const update /*: Update */ = async ({
   }
 
   // index lockfiles
-  const ids = new Set(); // for deduping
   const index = {};
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
@@ -387,19 +385,12 @@ const update /*: Update */ = async ({
         range.includes(':') ||
         !validRange(range) ||
         isYarnResolution({meta, name});
-      const resolved = lockfile[key].resolved || '';
-      const id = `${key}|${lockfile[key].version}|${getRegistryFromUrl(
-        resolved
-      )}`;
       if (!index[name]) index[name] = [];
-      if (!ids.has(id)) {
-        index[name].push({
-          lockfile,
-          key,
-          isAlias,
-        });
-        ids.add(id);
-      }
+      index[name].push({
+        lockfile,
+        key,
+        isAlias,
+      });
     }
   }
   for (const name in index) {
@@ -467,7 +458,7 @@ const populateGraph = ({graph, name, range, index, registry}) => {
   // If this fails, then disregard the registry check and loop
   for (const ptr of index[name]) {
     const version = ptr.lockfile[ptr.key].version;
-    if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
+    if (!ptr.isAlias && isBetterVersion(version, range, graph, key)) {
       const {resolved} = ptr.lockfile[ptr.key];
       if (resolved.indexOf(registry) > -1) {
         graph[key] = ptr.lockfile[ptr.key];

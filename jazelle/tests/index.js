@@ -43,7 +43,6 @@ const {installDeps} = require('../utils/install-deps.js');
 const {isDepsetSubset} = require('../utils/is-depset-subset.js');
 const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
-const {getRegistryFromUrl} = require('../utils/get-registry-from-url.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -115,7 +114,6 @@ async function runTests() {
     t(testYarnCommands),
     t(testLockfileRegistryResolution),
     t(testLockfileRegistryResolutionMultirepo),
-    t(testGetRegistryFromUrl),
   ]);
   await t(testBin); // run separately to avoid CI error
 
@@ -1638,18 +1636,5 @@ async function testLockfileRegistryResolutionMultirepo() {
       `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
       'utf8'
     )).includes('registry.npmjs.org')
-  );
-}
-
-async function testGetRegistryFromUrl() {
-  assert(
-    getRegistryFromUrl(
-      'https://registry.npmjs.org/@babel/cli/-/cli-7.5.5.tgz'
-    ) === 'registry.npmjs.org'
-  );
-  assert(
-    getRegistryFromUrl(
-      'https://unpm.uberinternal.com/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52'
-    ) === 'unpm.uberinternal.com'
   );
 }
