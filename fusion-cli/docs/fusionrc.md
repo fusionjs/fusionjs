@@ -21,6 +21,31 @@ module.exports = {
 
 **Please note that custom Babel config is an unstable API and may not be supported in future releases.**
 
+## `jsExtPattern`
+
+ By default this is `/\.(mjs|js|jsx)$/`
+
+ For example, this enables Typescript support by adding the appropriate Babel preset:
+
+ ```js
+module.exports = {
+  jsExtPattern: /[jt]sx?$/,
+  babel: {
+    presets: ["@babel/preset-typescript"],
+  }
+};
+```
+	
+ ```js
+module.exports = {
+  resolveExtensions: ['.wasm', '.mjs', '.js', '.json', '.ts', '.tsx'],
+};
+```
+
+ ## `resolveExtensions`
+
+ By default this is the Webpack default which is: `['.wasm', '.mjs', '.js', '.json']`
+
 ## `assumeNoImportSideEffects`
 
 By default this is `false`.

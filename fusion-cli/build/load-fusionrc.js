@@ -25,6 +25,8 @@ export type FusionRC = {
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
   nodeBuiltins?: {[string]: any},
   jest?: {transformIgnorePatterns?: Array<string>},
+  jsExtPattern?: RegExp,
+  resolveExtensions?: Array<string>,
   zopfli?: boolean,
   gzip?: boolean,
   brotli?:boolean,
@@ -65,6 +67,8 @@ function isValid(config, silent) {
         'experimentalBundleTest',
         'nodeBuiltins',
         'jest',
+        'jsExtPattern',
+        'resolveExtensions',
         'brotli',
         'zopfli', // TODO: Remove redundant zopfli option
         'gzip',
