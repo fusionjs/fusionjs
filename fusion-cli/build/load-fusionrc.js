@@ -24,7 +24,7 @@ export type FusionRC = {
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
   nodeBuiltins?: {[string]: any},
-  jest?: {transformIgnorePatterns?: Array<string>},
+  jest?: {globFileExt? string, transformIgnorePatterns?: Array<string>, setupFilesAfterEnv?: Array<string>},
   jsExtPattern?: RegExp,
   resolveExtensions?: Array<string>,
   zopfli?: boolean,

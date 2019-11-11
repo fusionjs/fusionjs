@@ -9,6 +9,10 @@
 /* eslint-env node */
 
 const baseJestConfig = require('../base-jest-config.js');
+const loadFusionRC = require('../../load-fusionrc.js');
+
+const {jsExtPattern} = loadFusionRC(process.cwd());
+const testFileExt = jsExtPattern ? jsExtPattern.source : '\\.js$';
 
 module.exports = {
   ...baseJestConfig,
@@ -17,5 +21,5 @@ module.exports = {
   name: 'browser',
   // Exposes global.jsdom so we can reconfigure the url on each simulator.render call
   testEnvironment: 'jest-environment-jsdom-global',
-  testPathIgnorePatterns: ['.*\\.node\\.js'],
+  testPathIgnorePatterns: ['.*\\.node' + testFileExt],
 };

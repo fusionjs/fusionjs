@@ -74,6 +74,35 @@ module.exports = {
 };
 ```
 
+## `jest`
+
+```
+  globFileExt?: string
+  transformIgnorePatterns?: Array<string>
+  setupFilesAfterEnv?: Array<string>
+```
+
+#### globFileExt
+default: `.js`
+
+This glob file extension pattern is used by jest to find test files and
+aggregate coverage raport.
+
+#### transformIgnorePatterns
+default: `['/node_modules/(?!(fusion-cli.*build))']`
+
+An array of regexp pattern strings that are matched against all source file
+paths before transformation. If the test path matches any of the patterns, it
+will not be transformed.
+
+#### setupFilesAfterEnv
+default: `undefined`
+
+A list of paths to modules that run some code to configure or set up the
+testing framework before each test. This script file presents you the
+opportunity of running some code immediately after the test framework has been
+installed in the environment.
+
 ## `gzip`
 
 This is an optional property that can be used to override the Fusion.js defaults for compressing projects using zlib in production builds.
