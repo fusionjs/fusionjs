@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Uber Technologies, Inc.
+/** Copyright (c) 2019 Uber Technologies, Inc.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -76,6 +76,7 @@ export default (renderFn: Render) =>
       };
     },
     middleware({
+      logger,
       schema,
       endpoint = '/graphql',
       getApolloClient,
@@ -128,6 +129,10 @@ export default (renderFn: Render) =>
           return apolloContext;
         };
         const server = new ApolloServer({
+          formatError: error => {
+            logger && logger.error(error.message, error);
+            return error;
+          },
           ...defaultOptionsConfig,
           schema,
           // investigate other options

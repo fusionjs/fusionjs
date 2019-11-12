@@ -26,6 +26,7 @@ import getPort from 'get-port';
 import http from 'http';
 import fetch from 'node-fetch';
 import {makeExecutableSchema} from 'graphql-tools';
+import {LoggerToken} from 'fusion-tokens';
 
 async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   const port = await getPort();
@@ -339,4 +340,43 @@ test('Query request with custom apollo server options config', async t => {
   });
   server.close();
   t.end();
+});
+
+test('Invalid query request - logs error', async t => {
+  const query = gql`
+    query Test {
+      lmao
+    }
+  `;
+  const el = <div />;
+  const typeDefs = gql`
+    type Query {
+      test: String
+    }
+  `;
+  const resolvers = {};
+  let logCount = 0;
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+    // $FlowFixMe
+    app.register(LoggerToken, {
+      error: (message, error) => {
+        t.equal(
+          message,
+          'Cannot query field "lmao" on type "Query".',
+          'should log error'
+        );
+        t.equal(error instanceof Error, true, 'should log instanceof error');
+        logCount++;
+      },
+    });
+  });
+
+  try {
+    await client.query({query});
+  } catch (e) {
+    t.ok(e instanceof Error);
+    t.equal(logCount, 1);
+    server.close();
+    t.end();
+  }
 });
