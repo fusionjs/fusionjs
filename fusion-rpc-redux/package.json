@@ -42,7 +42,7 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "execa": "^1.0.0",
-    "flow-bin": "^0.102.0",
+    "flow-bin": "^0.109.0",
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "redux": "^4.0.1",

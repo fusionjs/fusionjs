@@ -42,7 +42,7 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "express": "^4.16.4",
-    "flow-bin": "^0.102.0",
+    "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
