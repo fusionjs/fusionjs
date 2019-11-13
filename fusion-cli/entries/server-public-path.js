@@ -27,7 +27,19 @@ if (typeof cdnUrl === 'string') {
   assert(new URL(cdnUrl), 'CDN_URL must be valid absolute URL');
 }
 
-let assetBasePath = '/_static/';
+let assetsPath = load('FRAMEWORK_STATIC_ASSET_PATH');
+if (typeof assetsPath === 'string') {
+  assert(
+    !assetsPath.endsWith('/'),
+    'FRAMEWORK_STATIC_ASSET_PATH must not end with /'
+  );
+  assert(
+    assetsPath.startsWith('/'),
+    'FRAMEWORK_STATIC_ASSET_PATH must start with /'
+  );
+}
+
+let assetBasePath = assetsPath ? assetsPath + '/' : '/_static/';
 
 if (prefix) {
   assetBasePath = prefix + assetBasePath;
