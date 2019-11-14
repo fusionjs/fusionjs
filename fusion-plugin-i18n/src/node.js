@@ -105,7 +105,7 @@ const pluginFactory: () => PluginType = () =>
         }
         async load() {} //mirror client API
         translate(key, interpolations = {}) {
-          const template = this.translations[key];
+          const template = this.translations ? this.translations[key] : null;
 
           if (typeof template !== 'string') {
             this.emitter && this.emitter.emit('i18n-translate-miss', {key});
@@ -115,7 +115,7 @@ const pluginFactory: () => PluginType = () =>
           return template.replace(/\${(.*?)}/g, (_, k) =>
             interpolations[k] === void 0
               ? '${' + k + '}'
-              : String(interpolations[k])
+              : String(interpolations[k]),
           );
         }
       }
@@ -145,12 +145,12 @@ const pluginFactory: () => PluginType = () =>
             : [];
           chunks.forEach(id => {
             const keys = Array.from(
-              chunkTranslationMap.translationsForChunk(id)
+              chunkTranslationMap.translationsForChunk(id),
             );
             keys.forEach(key => {
               if (Array.isArray(key)) {
                 const matches = possibleTranslations.filter(
-                  matchesLiteralSections(key)
+                  matchesLiteralSections(key),
                 );
                 for (const match of matches) {
                   translations[match] =
@@ -192,7 +192,7 @@ const pluginFactory: () => PluginType = () =>
           const translations = keys.reduce((acc, key) => {
             if (Array.isArray(key)) {
               const matches = possibleTranslations.filter(
-                matchesLiteralSections(key)
+                matchesLiteralSections(key),
               );
               for (const match of matches) {
                 acc[match] = i18n.translations && i18n.translations[match];
