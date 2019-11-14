@@ -385,7 +385,8 @@ async function testBazelDummy() {
     name: 'target',
     stdio: ['ignore', testStream, 'ignore'],
   });
-  assert((await read(testStreamFile, 'utf8')).includes('PASSED'));
+  const testMessage = 'Executing tests from //:target';
+  assert((await read(testStreamFile, 'utf8')).includes(testMessage));
 
   const runStreamFile = `${__dirname}/tmp/bazel/run-stream.txt`;
   const runStream = createWriteStream(runStreamFile);
@@ -397,8 +398,8 @@ async function testBazelDummy() {
     name: 'target',
     stdio: ['ignore', runStream, 'ignore'],
   });
-  const msg = 'Executing tests from //:target';
-  assert((await read(runStreamFile, 'utf8')).includes(msg));
+  const runMessage = 'Executing tests from //:target';
+  assert((await read(runStreamFile, 'utf8')).includes(runMessage));
 }
 
 async function testBazelBuild() {
@@ -429,7 +430,7 @@ async function testBazelBuild() {
     name: 'test',
     stdio: ['ignore', testStream, 'ignore'],
   });
-  assert((await read(testStreamFile, 'utf8')).includes('PASSED'));
+  assert((await read(testStreamFile, 'utf8')).includes('\nb\nv8.15.1'));
 
   // run
   const runStreamFile = `${__dirname}/tmp/bazel-rules/run-stream.txt`;
