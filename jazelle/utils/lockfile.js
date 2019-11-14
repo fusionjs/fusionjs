@@ -450,7 +450,28 @@ const update /*: Update */ = async ({
   return sets;
 };
 
-const populateGraph = ({graph, name, range, index, registry}) => {
+/*::
+type IndexEntry = {
+  key: string,
+  lockfile: Lockfile,
+  isAlias: boolean,
+}
+type PopulateGraphArgs = {
+  graph: Lockfile,
+  name: string,
+  range: string,
+  index: {[string]: Array<IndexEntry>},
+  registry: string,
+}
+type PopulateGraph = (PopulateGraphArgs) => void;
+*/
+const populateGraph /*: PopulateGraph */ = ({
+  graph,
+  name,
+  range,
+  index,
+  registry,
+}) => {
   const key = `${name}@${range}`;
   if (key in graph) return;
 
@@ -462,18 +483,10 @@ const populateGraph = ({graph, name, range, index, registry}) => {
       const {resolved} = ptr.lockfile[ptr.key];
       if (resolved.indexOf(registry) > -1) {
         graph[key] = ptr.lockfile[ptr.key];
-        break;
       }
-    }
-  }
-
-  if (!graph[key]) {
-    for (const ptr of index[name]) {
-      const version = ptr.lockfile[ptr.key].version;
-      if (ptr.isAlias || isBetterVersion(version, range, graph, key)) {
-        graph[key] = ptr.lockfile[ptr.key];
-        break;
-      }
+    } else if (ptr.isAlias) {
+      graph[key] = ptr.lockfile[ptr.key];
+      break;
     }
   }
 
@@ -515,4 +528,4 @@ const writeYarnRc = async (cwd, packageDir) => {
   await write(`${cwd}/.yarnrc`, yarnrc.join('\n'), 'utf8');
 };
 
-module.exports = {check, add, remove, upgrade, sync, merge};
+module.exports = {check, add, remove, upgrade, sync, merge, populateGraph};

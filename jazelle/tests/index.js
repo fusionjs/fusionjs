@@ -43,6 +43,7 @@ const {installDeps} = require('../utils/install-deps.js');
 const {isDepsetSubset} = require('../utils/is-depset-subset.js');
 const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
+const {populateGraph} = require('../utils/lockfile.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -114,6 +115,7 @@ async function runTests() {
     t(testYarnCommands),
     t(testLockfileRegistryResolution),
     t(testLockfileRegistryResolutionMultirepo),
+    t(testPopulateGraph),
   ]);
   await t(testBin); // run separately to avoid CI error
 
@@ -1318,22 +1320,16 @@ async function testScaffold() {
 
 async function testStarlark() {
   await exec(`cp -r ${__dirname}/fixtures/starlark/ ${__dirname}/tmp/starlark`);
-  const buildFile = `${__dirname}/tmp/starlark/indented/BUILD.bazel`;
-  const indented = await read(buildFile, 'utf8');
-  assert.deepEqual(getCallArgItems(indented, 'web_library', 'deps'), [
-    '"//a:a"',
-    '"//b:b"',
-  ]);
+  {
+    const buildFile = `${__dirname}/tmp/starlark/indented/BUILD.bazel`;
+    const indented = await read(buildFile, 'utf8');
+    assert.deepEqual(getCallArgItems(indented, 'web_library', 'deps'), [
+      '"//a:a"',
+      '"//b:b"',
+    ]);
 
-  const indentedWithAddedDep = addCallArgItem(
-    indented,
-    'web_library',
-    'deps',
-    '"//c:c"'
-  );
-  assert.equal(
-    indentedWithAddedDep.trim(),
-    `
+    const added = addCallArgItem(indented, 'web_library', 'deps', '"//c:c"');
+    const expected = `
 web_library(
   name = "foo",
   deps = [
@@ -1341,66 +1337,41 @@ web_library(
     "//b:b",
     "//c:c",
   ]
-)
-  `.trim()
-  );
+)`;
+    assert.equal(added.trim(), expected.trim());
 
-  const indentedWithRemovedDep = removeCallArgItem(
-    indentedWithAddedDep,
-    'web_library',
-    'deps',
-    '"//b:b"'
-  );
-  assert.equal(
-    indentedWithRemovedDep.trim(),
-    `
+    const removed = removeCallArgItem(added, 'web_library', 'deps', '"//b:b"');
+    const reset = `
 web_library(
   name = "foo",
   deps = [
     "//a:a",
     "//c:c",
   ]
-)
-  `.trim()
-  );
+)`;
+    assert.equal(removed.trim(), reset.trim());
+  }
 
-  const inline = await read(
-    `${__dirname}/tmp/starlark/inline/BUILD.bazel`,
-    'utf8'
-  );
-  const inlineWithAddedDep = addCallArgItem(
-    inline,
-    'web_library',
-    'deps',
-    '"//c:c"'
-  );
-  assert.equal(
-    inlineWithAddedDep.trim(),
-    `
+  {
+    const buildFile = `${__dirname}/tmp/starlark/inline/BUILD.bazel`;
+    const inline = await read(buildFile, 'utf8');
+    const added = addCallArgItem(inline, 'web_library', 'deps', '"//c:c"');
+    const expected = `
 web_library(
   name = "foo",
   deps = ["//a:a", "//b:b", "//c:c"]
-)
-  `.trim()
-  );
-
-  const commented = await read(
-    `${__dirname}/tmp/starlark/comments/BUILD.bazel`,
-    'utf8'
-  );
-  const commentedWithAddedDep = addCallArgItem(
-    commented,
-    'web_library',
-    'deps',
-    '"//c:c"'
-  );
-  assert.equal(
-    commentedWithAddedDep
+)`;
+    assert.equal(added.trim(), expected.trim());
+  }
+  {
+    const buildFile = `${__dirname}/tmp/starlark/comments/BUILD.bazel`;
+    const commented = await read(buildFile, 'utf8');
+    const added = addCallArgItem(commented, 'web_library', 'deps', '"//c:c"');
+    const trimmed = added
       .split('\n')
       .map(l => l.replace(/\s+$/, ''))
-      .join('\n')
-      .trim(),
-    `
+      .join('\n');
+    const expected = `
 web_library(    # comment
   name = "foo", # comment
   deps = [
@@ -1408,32 +1379,24 @@ web_library(    # comment
     "//b:b",
     "//c:c",
   ]             # comment
-)               # comment
-  `.trim()
-  );
+)               # comment`;
+    assert.equal(trimmed.trim(), expected.trim());
 
-  const commentedWithRemovedDep = removeCallArgItem(
-    commentedWithAddedDep,
-    'web_library',
-    'deps',
-    '"//b:b"'
-  );
-  assert.equal(
-    commentedWithRemovedDep
+    const removed = removeCallArgItem(added, 'web_library', 'deps', '"//b:b"');
+    const clean = removed
       .split('\n')
       .map(l => l.replace(/\s+$/, ''))
-      .join('\n')
-      .trim(),
-    `
+      .join('\n');
+    const reset = `
 web_library(    # comment
   name = "foo", # comment
   deps = [
     "//a:a",
     "//c:c",
   ]             # comment
-)               # comment
-  `.trim()
-  );
+)               # comment`;
+    assert.equal(clean.trim(), reset.trim());
+  }
 }
 
 async function testYarnCommands() {
@@ -1566,46 +1529,38 @@ async function testBin() {
 }
 
 async function testLockfileRegistryResolution() {
-  const cmd = `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`;
-  await exec(cmd);
-  await install({
-    root: `${__dirname}/tmp/lockfile-registry-resolution`,
-    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
-  });
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
-      'utf8'
-    )).includes('registry.yarnpkg.com')
-  );
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
-      'utf8'
-    )).includes('registry.yarnpkg.com')
-  );
+  {
+    const cmd = `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`;
+    await exec(cmd);
+    await install({
+      root: `${__dirname}/tmp/lockfile-registry-resolution`,
+      cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+    });
+
+    const bLock = `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`;
+    assert((await read(bLock, 'utf8')).includes('registry.yarnpkg.com'));
+
+    const cLock = `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`;
+    assert((await read(cLock, 'utf8')).includes('registry.yarnpkg.com'));
+  }
   // Test with default registry
   await exec(`rm -rf ${__dirname}/tmp/lockfile-registry-resolution`);
-  await exec(
-    `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`
-  );
-  await exec(`rm ${__dirname}/tmp/lockfile-registry-resolution/.yarnrc`);
-  await install({
-    root: `${__dirname}/tmp/lockfile-registry-resolution`,
-    cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
-  });
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`,
-      'utf8'
-    )).includes('registry.npmjs.org')
-  );
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`,
-      'utf8'
-    )).includes('registry.npmjs.org')
-  );
+
+  {
+    const cmd = `cp -r ${__dirname}/fixtures/lockfile-registry-resolution/ ${__dirname}/tmp/lockfile-registry-resolution`;
+    await exec(cmd);
+    await exec(`rm ${__dirname}/tmp/lockfile-registry-resolution/.yarnrc`);
+    await install({
+      root: `${__dirname}/tmp/lockfile-registry-resolution`,
+      cwd: `${__dirname}/tmp/lockfile-registry-resolution/a`,
+    });
+
+    const bLock = `${__dirname}/tmp/lockfile-registry-resolution/b/yarn.lock`;
+    assert((await read(bLock, 'utf8')).includes('registry.npmjs.org'));
+
+    const cLock = `${__dirname}/tmp/lockfile-registry-resolution/c/yarn.lock`;
+    assert((await read(cLock, 'utf8')).includes('registry.npmjs.org'));
+  }
 }
 
 async function testLockfileRegistryResolutionMultirepo() {
@@ -1617,24 +1572,66 @@ async function testLockfileRegistryResolutionMultirepo() {
     cwd: `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a`,
   });
   // Expect that even though multiple projects are pinned to the same dependency version,
-  // install will honor the existance of any registry overrides and write those preferences
+  // install will honor the existence of any registry overrides and write those preferences
   // back to the individual lock files
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a/yarn.lock`,
-      'utf8'
-    )).includes('registry.yarnpkg.com')
-  );
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
-      'utf8'
-    )).includes('registry.npmjs.org')
-  );
-  assert(
-    (await read(
-      `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`,
-      'utf8'
-    )).includes('registry.npmjs.org')
-  );
+  const aLock = `${__dirname}/tmp/lockfile-registry-resolution-multirepo/first/a/yarn.lock`;
+  assert((await read(aLock, 'utf8')).includes('registry.yarnpkg.com'));
+
+  const bLock = `${__dirname}/tmp/lockfile-registry-resolution-multirepo/second/b/yarn.lock`;
+  assert((await read(bLock, 'utf8')).includes('registry.npmjs.org'));
+}
+
+async function testPopulateGraph() {
+  {
+    const graph = {};
+    const name = 'foo';
+    const range = '^1.0.0';
+    const index = {
+      foo: [
+        {
+          key: 'foo@^1.0.0',
+          lockfile: {
+            'foo@^1.0.0': {version: '1.0.0', resolved: ''},
+          },
+          isAlias: false,
+        },
+        {
+          key: 'foo@^1.0.0',
+          lockfile: {
+            'foo@^1.0.0': {version: '1.2.0', resolved: ''},
+          },
+          isAlias: false,
+        },
+      ],
+    };
+    const registry = '';
+    populateGraph({graph, name, range, index, registry});
+    assert.equal(graph['foo@^1.0.0'].version, '1.2.0');
+  }
+  {
+    const graph = {};
+    const name = 'foo';
+    const range = '^1.0.0';
+    const index = {
+      foo: [
+        {
+          key: 'foo@^1.0.0',
+          lockfile: {
+            'foo@^1.0.0': {version: '1.2.0', resolved: ''},
+          },
+          isAlias: false,
+        },
+        {
+          key: 'foo@^1.0.0',
+          lockfile: {
+            'foo@^1.0.0': {version: '1.0.0', resolved: ''},
+          },
+          isAlias: true,
+        },
+      ],
+    };
+    const registry = '';
+    populateGraph({graph, name, range, index, registry});
+    assert.equal(graph['foo@^1.0.0'].version, '1.0.0');
+  }
 }
