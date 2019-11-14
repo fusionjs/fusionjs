@@ -63,10 +63,10 @@
     "fusion-tokens": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
     "build": "cup build",
     "build-tests": "cup build-tests",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ignore-path .gitignore",
     "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-tests && npm run just-test",
     "cover": "npm run build-tests && nyc npm run just-test",
