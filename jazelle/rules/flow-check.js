@@ -15,6 +15,6 @@ files.map(f => {
 });
 
 const params = args.map(arg => `'${arg}'`).join(' ');
-const cmd = `${node} ${main}/node_modules/.bin/flow check ${params}`;
+const cmd = `${node} ${main}/node_modules/.bin/flow ${params}`;
 const dir = dirname(realpath(`${main}/package.json`));
 exec(cmd, {cwd: dir, env: process.env, stdio: 'inherit'});
