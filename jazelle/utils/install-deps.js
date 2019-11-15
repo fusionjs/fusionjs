@@ -3,7 +3,7 @@ const {dirname, relative} = require('path');
 
 const {isDepsetSubset} = require('./is-depset-subset.js');
 const {merge} = require('./lockfile.js');
-const {read, exec, spawn, write, exists} = require('./node-helpers.js');
+const {read, exec, spawn, write, exists, remove} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {setupSymlinks} = require('./setup-symlinks.js');
 
@@ -111,7 +111,7 @@ const installDeps /*: InstallDeps */ = async ({
   }
 
   if (await exists(modulesDir)) {
-    await spawn('rm', ['-rf', modulesDir], {cwd: root});
+    await remove(`${root}/${modulesDir}`);
   }
   await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
   await setupSymlinks({root, deps});

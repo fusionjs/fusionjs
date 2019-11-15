@@ -24,6 +24,7 @@ const {
   write,
   ls,
   lstat,
+  remove: rm,
 } = require('../utils/node-helpers.js');
 const {findChangedTargets} = require('../utils/find-changed-targets.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
@@ -60,6 +61,9 @@ process.on('unhandledRejection', e => {
   console.error(e.stack);
   process.exit(1);
 });
+
+// $FlowFixMe flow can't handle statics of async function
+remove.fork = false;
 
 runTests();
 
@@ -254,7 +258,7 @@ async function testUpgrade() {
 
 async function testPurge() {
   await exec(`cp -r ${__dirname}/fixtures/purge/ ${__dirname}/tmp/purge`);
-  await purge({root: `${__dirname}/tmp/purge`, fork: false});
+  await purge({root: `${__dirname}/tmp/purge`});
   const nodeModules = `${__dirname}/tmp/purge/a/node_modules`;
   const globalNodeModules = `${__dirname}/tmp/purge/node_modules`;
   const temp = `${__dirname}/third_party/jazelle/temp`;
@@ -1227,17 +1231,27 @@ async function testIsYarnResolution() {
 async function testNodeHelpers() {
   const cmd = `cp -r ${__dirname}/fixtures/node-helpers/ ${__dirname}/tmp/node-helpers`;
   await exec(cmd);
+
   assert.equal(await exec('echo abc'), 'abc\n');
+
   assert(await exists(__filename));
+
   const files = await ls(`${__dirname}/fixtures/node-helpers`);
   assert.deepEqual(files, ['file.txt']);
+
   const file = `${__dirname}/tmp/node-helpers/file.txt`;
   await write(file, 'hello', 'utf8');
+
   const text = readFileSync(file, 'utf8');
   assert.equal(await read(file, 'utf8'), text);
   assert.equal(text, 'hello');
+
   const stats = await lstat(`${__dirname}/tmp/node-helpers/file.txt`);
   assert.equal(stats.isFile(), true);
+
+  await exec(`mkdir -p ${__dirname}/tmp/node-helpers-remove/a/b`);
+  await rm(`${__dirname}/tmp/node-helpers-remove`);
+  assert(!(await exists(`${__dirname}/tmp/node-helpers-remove`)));
 }
 
 async function testParse() {
@@ -1594,14 +1608,14 @@ async function testPopulateGraph() {
           lockfile: {
             'foo@^1.0.0': {version: '1.0.0', resolved: ''},
           },
-          isAlias: false,
+          isExact: false,
         },
         {
           key: 'foo@^1.0.0',
           lockfile: {
             'foo@^1.0.0': {version: '1.2.0', resolved: ''},
           },
-          isAlias: false,
+          isExact: false,
         },
       ],
     };
@@ -1620,19 +1634,45 @@ async function testPopulateGraph() {
           lockfile: {
             'foo@^1.0.0': {version: '1.2.0', resolved: ''},
           },
-          isAlias: false,
+          isExact: false,
         },
         {
-          key: 'foo@^1.0.0',
+          key: 'foo@npm:bar@^1.4.0',
           lockfile: {
-            'foo@^1.0.0': {version: '1.0.0', resolved: ''},
+            'foo@npm:bar@^1.4.0': {version: '1.4.0', resolved: ''},
           },
-          isAlias: true,
+          isExact: true,
         },
       ],
     };
     const registry = '';
     populateGraph({graph, name, range, index, registry});
-    assert.equal(graph['foo@^1.0.0'].version, '1.0.0');
+    assert.equal(graph['foo@^1.0.0'].version, '1.2.0');
+  }
+  {
+    const graph = {};
+    const name = 'foo';
+    const range = 'npm:bar@0.1.0';
+    const index = {
+      foo: [
+        {
+          key: 'foo@^1.0.0',
+          lockfile: {
+            'foo@^1.0.0': {version: '1.2.0', resolved: ''},
+          },
+          isExact: false,
+        },
+        {
+          key: 'foo@npm:bar@0.1.0',
+          lockfile: {
+            'foo@npm:bar@0.1.0': {version: '0.1.0', resolved: ''},
+          },
+          isExact: true,
+        },
+      ],
+    };
+    const registry = '';
+    populateGraph({graph, name, range, index, registry});
+    assert.equal(graph['foo@npm:bar@0.1.0'].version, '0.1.0');
   }
 }

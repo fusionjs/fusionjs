@@ -23,22 +23,33 @@ const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 const binPath = exists(`${main}/node_modules/.bin`)
   ? `:${main}/node_modules/.bin`
   : '';
-const payload = scripts[command] || ``;
-const nodeDir = dirname(node);
-// prioritize hermetic Node version over system version
-const params = args.map(arg => `'${arg}'`).join(' ');
-const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload} ${params}`;
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});
-  exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
+  runScript(`pre${command}`);
+  runScript(command, args);
+  runScript(`post${command}`);
   exec(`tar czf "${out}" "${dist}"`, {cwd: main});
 } else {
   try {
-    exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
+    runScript(`pre${command}`);
+    runScript(command, args);
+    runScript(`post${command}`);
   } catch (e) {
     // we don't want the failed `exec` call to print a stack trace to stderr
     // because we are piping the NPM script's stderr to the user
     process.exit(1);
+  }
+}
+
+function runScript(command, args = []) {
+  if (scripts[command]) {
+    const payload = scripts[command];
+    const nodeDir = dirname(node);
+    const params = args.map(arg => `'${arg}'`).join(' ');
+
+    // prioritize hermetic Node version over system version
+    const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload} ${params}`;
+    exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
 }

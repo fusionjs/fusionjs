@@ -1,6 +1,7 @@
 // @flow
 const proc = require('child_process');
 const {promisify} = require('util');
+const {tmpdir} = require('os');
 const {readFile, writeFile, access, readdir, lstat} = require('fs');
 
 /*::
@@ -81,7 +82,7 @@ const spawn /*: Spawn */ = (cmd, argv, opts) => {
 const accessFile = promisify(access);
 
 /*::
-export type Exists = (string) => Promise<boolean>
+export type Exists = (string) => Promise<boolean>;
 */
 const exists /*: Exists */ = filename =>
   accessFile(filename)
@@ -93,4 +94,23 @@ const write = promisify(writeFile);
 const ls = promisify(readdir);
 const lstatP = promisify(lstat);
 
-module.exports = {exec, spawn, exists, read, write, ls, lstat: lstatP};
+/*::
+export type Remove = (string) => Promise<void>;
+*/
+const remove /*: Remove */ = async dir => {
+  const tmp = `${tmpdir()}/${Math.random() * 1e17}`;
+  // $FlowFixMe flow can't handle statics of async function
+  const fork = remove.fork;
+  if (await exists(dir)) {
+    await exec(`mkdir -p ${tmp} && mv ${dir} ${tmp}`);
+    const child = proc.spawn('rm', ['-rf', tmp], {
+      detached: fork,
+      stdio: 'ignore',
+    });
+    if (fork) child.unref();
+  }
+};
+// $FlowFixMe flow can't handle statics of async function
+remove.fork = true;
+
+module.exports = {exec, spawn, exists, read, write, remove, ls, lstat: lstatP};

@@ -1,5 +1,5 @@
 // @flow
-const {satisfies, minVersion, validRange, compare, gt} = require('semver');
+const {satisfies, minVersion, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
 const {read, exec, write} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
@@ -45,6 +45,7 @@ const check /*: Check */ = async ({roots}) => {
 };
 
 /*::
+type Cache = {[string]: Promise<string>};
 export type Addition = {
   name: string,
   range: string,
@@ -55,11 +56,12 @@ export type AddArgs = {
   additions?: Array<Addition>,
   ignore?: Array<string>,
   tmp?: string,
+  cache?: Cache,
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({roots, additions, ignore, tmp}) => {
-  await diff({roots, additions, ignore, tmp});
+const add /*: Add */ = async ({roots, additions, ignore, tmp, cache}) => {
+  await diff({roots, additions, ignore, tmp, cache});
 };
 
 /*::
@@ -68,11 +70,12 @@ export type RemoveArgs = {
   removals?: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
+  cache?: Cache,
 };
 export type Remove = (RemoveArgs) => Promise<void>;
 */
-const remove /*: Remove */ = async ({roots, removals, ignore, tmp}) => {
-  await diff({roots, removals, ignore, tmp});
+const remove /*: Remove */ = async ({roots, removals, ignore, tmp, cache}) => {
+  await diff({roots, removals, ignore, tmp, cache});
 };
 
 /*::
@@ -86,19 +89,27 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
+  cache?: Cache,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
-  await diff({roots, upgrades, ignore, tmp});
+const upgrade /*: Upgrade */ = async ({
+  roots,
+  upgrades,
+  ignore,
+  tmp,
+  cache,
+}) => {
+  await diff({roots, upgrades, ignore, tmp, cache});
 };
 
 /*::
 export type SyncArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
-  frozenLockfile?: boolean,
   tmp?: string,
+  cache?: Cache,
+  frozenLockfile?: boolean,
 };
 export type Sync = (SyncArgs) => Promise<void>;
 */
@@ -106,9 +117,10 @@ const sync /*: Sync */ = async ({
   roots,
   ignore,
   tmp,
+  cache,
   frozenLockfile = false,
 }) => {
-  await diff({roots, ignore, tmp, frozenLockfile});
+  await diff({roots, ignore, tmp, cache, frozenLockfile});
 };
 
 /*::
@@ -145,6 +157,7 @@ type DiffArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
+  cache?: Cache,
 };
 type Diff = (DiffArgs) => Promise<void>;
 */
@@ -156,6 +169,7 @@ const diff /*: Diff */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
+  cache,
 }) => {
   const sets = await getVersionSets({roots});
   const updated = /*:: await */ await update({
@@ -166,6 +180,7 @@ const diff /*: Diff */ = async ({
     ignore,
     frozenLockfile,
     tmp,
+    cache,
   });
   if (!frozenLockfile) await writeVersionSets({sets: updated});
 };
@@ -245,6 +260,7 @@ export type UpdateArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
+  cache?: Cache,
 };
 export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
 */
@@ -256,6 +272,7 @@ const update /*: Update */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
+  cache = {},
 }) => {
   // populate missing ranges w/ latest
   const insertions = [...additions, ...upgrades];
@@ -322,26 +339,40 @@ const update /*: Update */ = async ({
 
     // install missing deps
     const missing = {};
+    const cacheKeyParts = [];
     for (const {name, range, type} of getDepEntries(meta)) {
       if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
         if (!missing[type]) missing[type] = {};
         missing[type][name] = range;
+        cacheKeyParts.push(`${name}@${range}`);
       }
     }
     if (Object.keys(missing).length > 0) {
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      await exec(`mkdir -p ${cwd}`);
-      await write(
-        `${cwd}/package.json`,
-        `${JSON.stringify(missing, null, 2)}\n`,
-        'utf8'
-      );
-      await writeYarnRc(cwd, dir);
-      const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
-      await exec(install, {cwd}, [process.stdout, process.stderr]);
+      const yarnrc = await getYarnRc(dir);
+
+      // install missing deps and reuse promise in parallel runs if possible
+      const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
+      if (!cache[cacheKey]) {
+        const install = async () => {
+          await exec(`mkdir -p ${cwd}`);
+          await write(
+            `${cwd}/package.json`,
+            `${JSON.stringify(missing, null, 2)}\n`,
+            'utf8'
+          );
+          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+          const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
+          await exec(install, {cwd}, [process.stdout, process.stderr]);
+          return cwd;
+        };
+        cache[cacheKey] = install(); // cache the promise
+      }
+      const cachedCwd = await cache[cacheKey];
 
       // copy newly installed deps back to original package.json/yarn.lock
-      const [added] = await getVersionSets({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cachedCwd]});
       for (const {name, range, type} of getDepEntries(added.meta)) {
         if (!meta[type]) meta[type] = {};
         if (meta[type]) meta[type][name] = range;
@@ -363,15 +394,27 @@ const update /*: Update */ = async ({
     }
     if (missingTransitives.length > 0) {
       const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      await exec(`mkdir -p ${cwd}`);
-      await writeYarnRc(cwd, dir);
-      await write(`${cwd}/package.json`, '{}\n', 'utf8');
-      const deps = missingTransitives.join(' ');
-      const add = `yarn add ${deps} --ignore-engines`;
-      await exec(add, {cwd}, [process.stdout, process.stderr]);
+      const yarnrc = await getYarnRc(dir);
+
+      // add missing transitives and reuse promise in parallel runs if possible
+      const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
+      if (!cache[cacheKey]) {
+        const add = async () => {
+          await exec(`mkdir -p ${cwd}`);
+          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+          await write(`${cwd}/package.json`, '{}\n', 'utf8');
+          const deps = missingTransitives.join(' ');
+          const add = `yarn add ${deps} --ignore-engines`;
+          await exec(add, {cwd}, [process.stdout, process.stderr]);
+          return cwd;
+        };
+        cache[cacheKey] = add(); // cache promise
+      }
+      const cachedCwd = await cache[cacheKey];
 
       // copy newly installed deps back to original yarn.lock
-      const [added] = await getVersionSets({roots: [cwd]});
+      const [added] = await getVersionSets({roots: [cachedCwd]});
       Object.assign(lockfile, added.lockfile);
     }
   }
@@ -381,15 +424,15 @@ const update /*: Update */ = async ({
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-      const isAlias =
+      const isExact =
         range.includes(':') ||
-        !validRange(range) ||
+        range.includes('/') ||
         isYarnResolution({meta, name});
       if (!index[name]) index[name] = [];
       index[name].push({
         lockfile,
         key,
-        isAlias,
+        isExact,
       });
     }
   }
@@ -397,7 +440,7 @@ const update /*: Update */ = async ({
     index[name].sort((a, b) => {
       const aVersion = a.lockfile[a.key].version;
       const bVersion = b.lockfile[b.key].version;
-      return b.isAlias - a.isAlias || compare(bVersion, aVersion);
+      return b.isExact - a.isExact || compare(bVersion, aVersion);
     });
   }
 
@@ -454,7 +497,7 @@ const update /*: Update */ = async ({
 type IndexEntry = {
   key: string,
   lockfile: Lockfile,
-  isAlias: boolean,
+  isExact: boolean,
 }
 type PopulateGraphArgs = {
   graph: Lockfile,
@@ -479,12 +522,12 @@ const populateGraph /*: PopulateGraph */ = ({
   // If this fails, then disregard the registry check and loop
   for (const ptr of index[name]) {
     const version = ptr.lockfile[ptr.key].version;
-    if (!ptr.isAlias && isBetterVersion(version, range, graph, key)) {
+    if (!ptr.isExact && isBetterVersion(version, range, graph, key)) {
       const {resolved} = ptr.lockfile[ptr.key];
       if (resolved.indexOf(registry) > -1) {
         graph[key] = ptr.lockfile[ptr.key];
       }
-    } else if (ptr.isAlias) {
+    } else if (ptr.isExact && key === ptr.key) {
       graph[key] = ptr.lockfile[ptr.key];
       break;
     }
@@ -519,13 +562,13 @@ const getRegistry = async cwd => {
   return registry ? registry.trim() : '';
 };
 
-const writeYarnRc = async (cwd, packageDir) => {
+const getYarnRc = async packageDir => {
   const yarnrc = ['"--install.frozen-lockfile" false'];
   const registry = await getRegistry(packageDir);
   if (registry) {
     yarnrc.push(`--registry "${registry}"`);
   }
-  await write(`${cwd}/.yarnrc`, yarnrc.join('\n'), 'utf8');
+  return yarnrc.join('\n');
 };
 
 module.exports = {check, add, remove, upgrade, sync, merge, populateGraph};

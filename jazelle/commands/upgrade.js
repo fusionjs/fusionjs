@@ -3,8 +3,6 @@ const {minVersion, satisfies} = require('semver');
 const {getManifest} = require('../utils/get-manifest.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {upgrade: upgradeDep} = require('../utils/lockfile.js');
-const {getAllDependencies} = require('../utils/get-all-dependencies.js');
-const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
 const {read, write} = require('../utils/node-helpers.js');
 
 /*::
@@ -42,26 +40,25 @@ const upgrade /*: Upgrade */ = async ({root, name: nameWithVersion, from}) => {
   } else {
     const upgrades = [{name, range: version, from}];
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-    await upgradeDep({
-      roots,
-      upgrades,
-      ignore: await Promise.all(
-        projects.map(async project => {
-          const data = await read(`${root}/${project}/package.json`, 'utf8');
-          return JSON.parse(data).name;
-        })
-      ),
-      tmp,
-    });
+    const cache = {};
+    await Promise.all(
+      roots.map(async dir => {
+        await upgradeDep({
+          roots: [dir],
+          upgrades,
+          ignore: await Promise.all(
+            projects.map(async project => {
+              const metaFile = `${root}/${project}/package.json`;
+              const data = await read(metaFile, 'utf8');
+              return JSON.parse(data).name;
+            })
+          ),
+          tmp,
+          cache,
+        });
+      })
+    );
   }
-  const ignore = await getAllDependencies({root, projects});
-  const deps = await Promise.all(
-    roots.map(async dir => ({
-      dir,
-      meta: JSON.parse(await read(`${dir}/package.json`, 'utf8')),
-    }))
-  );
-  await generateDepLockfiles({root, deps, ignore});
 };
 
 const update = (meta, type, name, version, from) => {

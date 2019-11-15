@@ -3,7 +3,7 @@ const {resolve} = require('path');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
-const {read, write, spawn} = require('../utils/node-helpers.js');
+const {read, write, remove: rm} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {remove: removeDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
@@ -49,8 +49,8 @@ const remove /*: Remove */ = async ({root, cwd, name}) => {
       tmp,
     });
   }
-  await spawn('rm', ['-rf', 'node_modules'], {cwd});
-  await spawn('rm', ['-rf', 'node_modules'], {cwd: root});
+  await rm(`${cwd}/node_modules`);
+  await rm(`${root}/node_modules`);
   await install({root, cwd});
 };
 
