@@ -156,5 +156,9 @@ module.exports = {
     // This rule enforces that all exports are declared at the bottom of the file.
     // https://github.com/benmosher/eslint-plugin-import/blob/98acd6afd04dcb6920b81330114e146dc8532ea4/docs/rules/exports-last.md
     'import/exports-last': 'off',
+
+    // eslint-config-jest@23 adds these rules that are incompatible with `fusion-test-utils`
+    'jest/expect-expect': 'off',
+    'jest/no-test-callback': 'off',
   },
 };
