@@ -4,7 +4,7 @@ echo "  - wait"
 # Get the change set
 SHA1="$(git rev-parse HEAD)"
 SHA2="$(git rev-parse origin/master)"
-git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 > changes.txt
+git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 | grep -v "\.md$" > changes.txt
 CHANGES=$(jazelle changes ./changes.txt)
 
 for DIR in $CHANGES ; do (
