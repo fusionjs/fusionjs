@@ -1,6 +1,6 @@
 # fusion-plugin-universal-logger
 
-[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
+[![Build status](https://badge.buildkite.com/7a82192275779f6a8ba81f7d4a1b0d294256838faa1dfdf080.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 A logger plugin that can handle logging both server side and client side. On the server it uses [winston](https://github.com/winstonjs/winston) directly. On the client, it batches logs and sends them via network to the server at set intervals.
 

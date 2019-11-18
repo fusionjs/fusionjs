@@ -1,6 +1,6 @@
 # fusion-react
 
-[![Build status](https://badge.buildkite.com/4c8b6bc04b61175d66d26b54b1d88d52e24fecb1b537c54551.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
+[![Build status](https://badge.buildkite.com/7a82192275779f6a8ba81f7d4a1b0d294256838faa1dfdf080.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
 Provides a Fusion.js application class that is pre-configured with React universal rendering.
 
@@ -87,7 +87,7 @@ const app: App = new App(
 - `el: ReactElement` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
 - `render: ?Plugin<Render>|Render` - Optional. Defines how rendering should occur. A Plugin should provide a value of type `Render`
   - `type Render = (el:ReactComponent, ctx: Context) => any`
-  
+
 
 **app.register**
 
@@ -403,34 +403,34 @@ const hoc: HOC = ProvidedHOC.create(
 
 #### Using a service
 
-```js	
-// src/plugins/my-plugin.js	
-import {createPlugin, createToken} from 'fusion-core';	
+```js
+// src/plugins/my-plugin.js
+import {createPlugin, createToken} from 'fusion-core';
 
 export const MyToken = createToken('my-token');
-export const MyPlugin = createPlugin({	
-  provides() {	
-    return console;	
-  },	
-});	
+export const MyPlugin = createPlugin({
+  provides() {
+    return console;
+  },
+});
 
-// src/main.js	
-import {MyPlugin, MyToken} from './plugins/my-plugin.js';	
+// src/main.js
+import {MyPlugin, MyToken} from './plugins/my-plugin.js';
 
 export default (app: FusionApp) => {
-  app.register(MyToken, MyPlugin);	
+  app.register(MyToken, MyPlugin);
   // ...
 };
 
-// components/some-component.js	
-import {MyToken} from '../plugins/my-plugin.js';	
+// components/some-component.js
+import {MyToken} from '../plugins/my-plugin.js';
 import {useService} from 'fusion-react';
 
-exoprt default Component (props) {	
+exoprt default Component (props) {
   const console = useService(MyToken);
   return (
     <button onClick={() => console.log('hello')}>Click me</button>
-  );	
+  );
 }
 ```
 
