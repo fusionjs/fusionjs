@@ -17,6 +17,7 @@ exports.run = async function(
     dir = '.',
     production,
     preserveNames,
+    maxWorkers,
     logLevel,
     minify,
     experimentalServerless,
@@ -25,6 +26,7 @@ exports.run = async function(
     experimentalServerless: boolean,
     dir: string,
     production: boolean,
+    maxWorkers?: number,
     preserveNames: boolean,
     logLevel: string,
     minify: boolean,
@@ -49,6 +51,7 @@ exports.run = async function(
     minify,
     serverless: experimentalServerless,
     modernBuildOnly,
+    maxWorkers,
   });
 
   await compiler.clean();

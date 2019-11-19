@@ -124,6 +124,7 @@ type CompilerOpts = {
   preserveNames?: boolean,
   minify?: boolean,
   modernBuildOnly?: boolean,
+  maxWorkers?: number,
 };
 */
 
@@ -139,6 +140,7 @@ function Compiler(
     minify = true,
     serverless = false,
     modernBuildOnly = false,
+    maxWorkers,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const clientChunkMetadata = new DeferredState();
@@ -166,7 +168,7 @@ function Compiler(
   const fusionConfig = loadFusionRC(root);
   const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  let worker = createWorker();
+  let worker = createWorker(maxWorkers);
 
   const sharedOpts = {
     dir: root,
@@ -200,7 +202,7 @@ function Compiler(
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      if (worker === void 0) worker = createWorker();
+      if (worker === void 0) worker = createWorker(maxWorkers);
     });
     compiler.hooks.watchClose.tap('KillWorkers', stats => {
       if (worker !== void 0) worker.end();
@@ -281,11 +283,12 @@ function loadLegacyPkgConfig(dir) {
   return legacyPkgConfig;
 }
 
-function createWorker() {
+function createWorker(maxWorkers /* maxWorkers?: number */) {
   if (require('os').cpus().length < 2) return void 0;
   return new Worker(require.resolve('./loaders/babel-worker.js'), {
     exposedMethods: ['runTransformation'],
     forkOptions: {stdio: 'inherit'},
+    numWorkers: maxWorkers,
   });
 }
 

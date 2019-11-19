@@ -22,7 +22,7 @@ yarn add fusion-cli
 
 The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusion build` or `npx fusion build`.
 
-- `fusion build [dir] [--production] [--log-level]`
+- `fusion build [dir] [--production] [--log-level] [--maxWorkers]`
   Builds your application assets
 
   This command generates transpiled javascript/source map files (aka assets, artifacts) for browser and server. By default it builds development assets, but can also build test and production assets, given the respective flags.
@@ -31,6 +31,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   - `--production`: Build production assets
   - `--log-level`: Log level to output to console `[default: "info"]`
+  - `--maxWorkers`: Maximum number of workers create by webpack during build process
 
 - `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild]`
   Builds development assets and runs the application in development mode
@@ -101,6 +102,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--watch`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watch
   - `--watchAll`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watchall
   - `--watchman`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watchman
+  - `--maxWorkers`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#maxworkers
 
 - `fusion profile`
   Generates a graph diagram of dependencies
