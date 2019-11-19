@@ -639,11 +639,6 @@ fast-levenshtein@~2.0.4:
   resolved "https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-rmrf@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/fast-rmrf/-/fast-rmrf-1.0.1.tgz#beedb9db8c7c218db7876e06f4f83429e1e5cdc4"
-  integrity sha512-BsrRfERo5iBiw659rHcgNnl7LhpPWpjCe3kPS4WTJYNPqF57/K6IK4kxGaHAPtxD27Mhd02L2K/B6pJpWG5xNw==
-
 fastq@^1.6.0:
   version "1.6.0"
   resolved "https://registry.npmjs.org/fastq/-/fastq-1.6.0.tgz#4ec8a38f4ac25f21492673adb7eae9cfef47d1c2"

@@ -41,6 +41,7 @@ async function runTransformation(
 ) {
   let newOptions = {
     ...getBabelConfigFromCache(
+      rootContext,
       loaderOptions.configCacheKey,
       loaderOptions.babelConfigData
     ),
@@ -50,6 +51,7 @@ async function runTransformation(
   if (loaderOptions.overrides != undefined) {
     for (let i = 0; i < loaderOptions.overrides.length; i++) {
       let override = getBabelConfigFromCache(
+        rootContext,
         loaderOptions.overrideCacheKey,
         loaderOptions.overrides[i]
       );
@@ -91,7 +93,10 @@ async function runTransformation(
 
   const options = config.options;
 
-  const cacheDir = path.join(process.cwd(), 'node_modules/.fusion_babel-cache');
+  const cacheDir = path.join(
+    loaderOptions.dir,
+    'node_modules/.fusion_babel-cache'
+  );
 
   const diskCache = getCache(cacheDir);
   const result = await diskCache.get(cacheKey, () => {
@@ -183,20 +188,33 @@ function relative(root, file) {
   }
   return path.relative(root, file);
 }
-let loaded = false,
-  savedTest;
-function getExperimentalTransformTest(path) {
-  if (!loaded) {
-    const {experimentalTransformTest} = loadFusionRC(path, true);
-    savedTest = experimentalTransformTest;
-    loaded = true;
-  }
-  return savedTest;
-}
+
 let babelConfigCache = {};
-function getBabelConfigFromCache(uid, data) {
+function getBabelConfigFromCache(path, uid, data) {
   if (babelConfigCache[uid]) return babelConfigCache[uid];
-  const config = getBabelConfig(data);
+  const customConfig = getCustomBabelConfig(path);
+  const config = getBabelConfig({
+    ...data,
+    plugins: customConfig.plugins,
+    presets: customConfig.presets,
+  });
   babelConfigCache[uid] = config;
   return config;
+}
+
+let loaded = false,
+  savedConfig;
+function getFusionRC(path) {
+  if (!loaded) {
+    const config = loadFusionRC(path, true);
+    savedConfig = config;
+    loaded = true;
+  }
+  return savedConfig;
+}
+function getExperimentalTransformTest(path) {
+  return getFusionRC(path).experimentalTransformTest;
+}
+function getCustomBabelConfig(path) {
+  return getFusionRC(path).babel || {};
 }

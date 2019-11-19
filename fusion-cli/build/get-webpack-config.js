@@ -286,6 +286,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
+                dir,
                 configCacheKey: 'server-config',
                 overrideCacheKey: 'server-override',
                 babelConfigData: {...babelConfigData},
@@ -312,6 +313,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
+                dir,
                 configCacheKey: 'client-config',
                 overrideCacheKey: 'client-override',
                 babelConfigData: {...babelConfigData},
@@ -338,6 +340,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {
               loader: babelLoader.path,
               options: {
+                dir,
                 configCacheKey: 'legacy-config',
                 overrideCacheKey: 'legacy-override',
                 babelConfigData: {

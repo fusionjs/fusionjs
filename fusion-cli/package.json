@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "git clean -Xfd test/fixtures && jest --maxWorkers 1",
+    "test": "git clean -Xfd test/e2e && jest --maxWorkers 1",
     "build": "echo ok",
     "flow": "flow check"
   },

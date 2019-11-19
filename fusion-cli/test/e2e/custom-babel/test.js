@@ -35,6 +35,7 @@ test('compiles with babel plugin', async () => {
   const clientEntry = await readFile(clientEntryPath, 'utf8');
   const clientVendorEntry = await readFile(clientVendorPath, 'utf8');
   const serverEntry = await readFile(serverEntryPath, 'utf8');
+
   t.ok(
     clientEntry.includes('transformed_custom_babel'),
     'custom plugin applied in client'
