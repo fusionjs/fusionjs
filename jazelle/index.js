@@ -3,6 +3,7 @@ const {resolve} = require('path');
 const {getRootDir} = require('./utils/get-root-dir.js');
 const {parse} = require('./utils/parse-argv.js');
 const {cli} = require('./utils/cli.js');
+const {version} = require('./commands/version.js');
 const {install} = require('./commands/install.js');
 const {ci} = require('./commands/ci.js');
 const {add} = require('./commands/add.js');
@@ -21,6 +22,7 @@ const {test} = require('./commands/test.js');
 const {lint} = require('./commands/lint.js');
 const {flow} = require('./commands/flow.js');
 const {start} = require('./commands/start.js');
+const {node} = require('./commands/node.js');
 const {yarn} = require('./commands/yarn.js');
 const {bazel} = require('./commands/bazel.js');
 const {bump} = require('./commands/bump.js');
@@ -32,7 +34,6 @@ const {getChunkPattern} = require('./utils/get-chunk-pattern.js');
 const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {getTestGroups} = require('./utils/get-test-groups.js');
 const {scaffold} = require('./utils/scaffold.js');
-const {version} = require('./package.json');
 
 /*::
 export type RunCLI = (Array<string>) => Promise<void>;
@@ -45,7 +46,7 @@ const runCLI /*: RunCLI */ = async argv => {
     command,
     args,
     {
-      version: [`Display the version number`, async () => console.log(version)],
+      version: [`Display the version number`, version],
       init: [
         `Scaffolds a workspace`,
         async () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
@@ -192,6 +193,13 @@ const runCLI /*: RunCLI */ = async argv => {
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => yarn({cwd, args: rest}),
       ],
+      node: [
+        `Runs Node
+
+        [args...]                  A space separated list of arguments
+        --cwd [cwd]                Project directory to use`,
+        async ({cwd}) => node({cwd, args: rest}),
+      ],
       bump: [
         `Bump version for the specified package, plus changed dependencies
 
@@ -223,7 +231,7 @@ async function rootOf(args) {
 
 module.exports = {
   runCLI,
-  version,
+  version: require('./package.json').version,
   scaffold,
   install,
   ci,
@@ -244,6 +252,7 @@ module.exports = {
   flow,
   start,
   bazel,
+  node,
   yarn,
   bump,
   doctor,

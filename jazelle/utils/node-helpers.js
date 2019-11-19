@@ -2,7 +2,7 @@
 const proc = require('child_process');
 const {promisify} = require('util');
 const {tmpdir} = require('os');
-const {readFile, writeFile, access, readdir, lstat} = require('fs');
+const {readFile, writeFile, access, readdir, lstat, realpath} = require('fs');
 
 /*::
 import {Writable, Readable, Duplex} from 'stream';
@@ -93,6 +93,7 @@ const read = promisify(readFile);
 const write = promisify(writeFile);
 const ls = promisify(readdir);
 const lstatP = promisify(lstat);
+const realpathP = promisify(realpath);
 
 /*::
 export type Remove = (string) => Promise<void>;
@@ -113,4 +114,14 @@ const remove /*: Remove */ = async dir => {
 // $FlowFixMe flow can't handle statics of async function
 remove.fork = true;
 
-module.exports = {exec, spawn, exists, read, write, remove, ls, lstat: lstatP};
+module.exports = {
+  exec,
+  spawn,
+  exists,
+  read,
+  write,
+  remove,
+  ls,
+  lstat: lstatP,
+  realpath: realpathP,
+};

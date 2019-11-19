@@ -49,7 +49,7 @@ function runScript(command, args = []) {
     const params = args.map(arg => `'${arg}'`).join(' ');
 
     // prioritize hermetic Node version over system version
-    const script = `export PATH=${nodeDir}:$PATH${binPath}; ${payload} ${params}`;
+    const script = `export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
 }

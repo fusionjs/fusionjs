@@ -346,6 +346,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle flow`](#jazelle-flow)
 - [`jazelle start`](#jazelle-start)
 - [`jazelle bazel`](#jazelle-bazel)
+- [`jazelle node`](#jazelle-node)
 - [`jazelle yarn`](#jazelle-yarn)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
@@ -364,7 +365,7 @@ Displays help information
 
 ### `jazelle version`
 
-Displays installed version
+Displays installed version. You may see two values: `actual` is the version of Jazelle being run. `system` is the version of Jazelle that is globally installed in the machine. Note that they may be different because the `actual` version is set in a repository's `WORKSPACE` file.
 
 ### `jazelle init`
 
@@ -575,6 +576,15 @@ Runs a Bazel command
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of Bazel arguments
 
+### `jazelle node`
+
+Runs a Node script
+
+`jazelle node --cwd [cwd] [args...]`
+
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - A space separated list of arguments
+
 ### `jazelle yarn`
 
 Runs a Yarn command
@@ -644,6 +654,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [lint](#lint)
 - [flow](#flow)
 - [bazel](#bazel)
+- [node](#node)
 - [yarn](#yarn)
 - [bump](#bump)
 - [doctor](#doctor)
@@ -914,15 +925,22 @@ Runs a Bazel command
 - `cwd` - Project folder (absolute path)
 - `args` - List of Bazel args
 
+### `node`
+
+Runs a Node script
+
+`let node: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
+
+- `cwd` - Project folder (absolute path)
+- `args` - List of args
+
 ### `yarn`
 
 Runs a Yarn command
 
-`let test: ({root: string, cwd: string, command: string, args: Array<string>}) => Promise<void>`
+`let yarn: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
-- `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
-- `command`- A Yarn command (e.g. `add`)
 - `args` - List of Yarn args
 
 ### `bump`
