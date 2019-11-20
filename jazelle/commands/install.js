@@ -49,7 +49,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     projects,
     versionPolicy,
   });
-  if (!result.valid) throw new Error(getErrorMessage(result));
+  if (!result.valid) throw new Error(getErrorMessage(result, false));
 
   const cycles = detectCyclicDeps({deps});
   if (cycles.length > 0) {
