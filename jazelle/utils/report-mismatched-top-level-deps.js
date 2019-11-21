@@ -29,7 +29,7 @@ const reportMismatchedTopLevelDeps /*: ReportMismatchedTopLevelDeps */ = async (
   const reported = await checkDeps({roots: projects.map(p => `${root}/${p}`)});
   if (!versionPolicy) {
     return {
-      valid: true,
+      valid: Object.keys(reported).length === 0,
       policy: {
         lockstep: false,
         exceptions: [],
@@ -57,21 +57,21 @@ const reportMismatchedTopLevelDeps /*: ReportMismatchedTopLevelDeps */ = async (
 
     return {valid, policy, reported: reportedFilter};
   } else {
-    const valid = exceptions.length === Object.keys(reported);
+    const valid = !Object.keys(reported).find(r => exceptions.includes(r));
     return {valid, policy, reported};
   }
 };
 
 /*::
-export type GetErrorMessage = (Report) => string;
+export type GetErrorMessage = (Report, boolean) => string;
 */
-const getErrorMessage /*: GetErrorMessage */ = result => {
+const getErrorMessage /*: GetErrorMessage */ = (result, json = false) => {
   if (!result.valid) {
     const policy = result.policy;
     const exceptions = Object.keys(result.reported).filter(dep =>
       policy.exceptions.includes(dep)
     );
-    const message = `Version policy violation. Use \`jazelle greenkeep\` to ensure all projects use the same dependency version`;
+    const message = `Version policy violation. Use \`jazelle upgrade\` to ensure all projects use the same dependency version`;
     const positiveSpecifier =
       policy.exceptions.length > 0
         ? ` for deps other than ${policy.exceptions.join(', ')}`
@@ -79,12 +79,11 @@ const getErrorMessage /*: GetErrorMessage */ = result => {
     const negativeSpecifier =
       exceptions.length > 0 ? ` for ${exceptions.join(', ')}` : '';
     const modifier = policy.lockstep ? positiveSpecifier : negativeSpecifier;
-    const violations = `\nViolations:\n${Object.keys(result.reported)
-      .map(dep => `${dep}: ${Object.keys(result.reported[dep]).join(', ')}`)
-      .join('\n')}`;
-    return message + modifier + violations;
+    const report = JSON.stringify(result.reported, null, 2);
+    const violations = `\nViolations:\n${report}`;
+    return json ? report : message + modifier + violations;
   } else {
-    return '';
+    return json ? '{}' : '';
   }
 };
 
