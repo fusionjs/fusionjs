@@ -39,14 +39,14 @@ const checksumCache /*: ChecksumCache */ = async root => {
 
   return {
     async isCached(key) {
-      const digest = await compute(key);
+      const digest = await getHash(key);
       return digest === cache[key];
     },
     invalidate(key) {
       delete cache[key];
     },
     async update(key) {
-      cache[key] = await compute(key);
+      cache[key] = await getHash(key);
     },
     async save() {
       // If lock is a promise, another instance is already writing,
@@ -65,7 +65,11 @@ const checksumCache /*: ChecksumCache */ = async root => {
     },
   };
 };
-const compute = async key => {
+
+/*::
+type GetHash = string => Promise<string>
+*/
+const getHash /*: GetHash */ = async key => {
   const stats = await lstat(key);
   const cmd = stats.isDirectory()
     ? `tar -c --exclude ${key}/node_modules ${key} | md5sum`
@@ -73,4 +77,4 @@ const compute = async key => {
   return await exec(cmd);
 };
 
-module.exports = {checksumCache};
+module.exports = {checksumCache, getHash};

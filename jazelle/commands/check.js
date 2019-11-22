@@ -1,9 +1,6 @@
 // @flow
 const {getManifest} = require('../utils/get-manifest.js');
-const {
-  reportMismatchedTopLevelDeps,
-  getErrorMessage,
-} = require('../utils/report-mismatched-top-level-deps.js');
+const {check: checkDeps} = require('../utils/lockfile.js');
 
 /*::
 export type CheckArgs = {
@@ -13,15 +10,15 @@ export type CheckArgs = {
 export type Check = (CheckArgs) => Promise<void>;
 */
 const check /*: Check */ = async ({root, json}) => {
-  const {projects, versionPolicy} = await getManifest({root});
-  const result = await reportMismatchedTopLevelDeps({
-    root,
-    projects,
-    versionPolicy,
-  });
-  const message =
-    result.valid && !json ? 'No problems found' : getErrorMessage(result, json);
-  console.log(message);
+  const {projects} = await getManifest({root});
+  const reported = await checkDeps({roots: projects.map(p => `${root}/${p}`)});
+  const result = JSON.stringify(reported, null, 2);
+  if (json) {
+    console.log(result);
+  } else {
+    const ok = Object.keys(reported).length === 0;
+    console.log(ok ? 'No problems found' : `Violations:\n${result}`);
+  }
 };
 
 module.exports = {check};
