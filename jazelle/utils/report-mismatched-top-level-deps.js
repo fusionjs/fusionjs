@@ -29,7 +29,7 @@ const reportMismatchedTopLevelDeps /*: ReportMismatchedTopLevelDeps */ = async (
   const reported = await checkDeps({roots: projects.map(p => `${root}/${p}`)});
   if (!versionPolicy) {
     return {
-      valid: Object.keys(reported).length === 0,
+      valid: true,
       policy: {
         lockstep: false,
         exceptions: [],
