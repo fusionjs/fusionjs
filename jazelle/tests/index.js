@@ -121,7 +121,11 @@ async function runTests() {
     t(testLockfileRegistryResolutionMultirepo),
     t(testPopulateGraph),
   ]);
-  await t(testBin); // run separately to avoid CI error
+  // run separately to avoid CI error
+  await t(testCommand);
+  await t(testYarnCommand);
+  await t(testBazelCommand);
+  await t(testStartCommand);
 
   await exec(`rm -rf ${__dirname}/tmp`);
 
@@ -1505,43 +1509,6 @@ async function testYarnCommands() {
   });
   assert((await read(startStreamFile, 'utf8')).includes('\n777\n'));
 }
-async function testBin() {
-  const cmd = `cp -r ${__dirname}/fixtures/bin ${__dirname}/tmp/bin`;
-  await exec(cmd);
-
-  const cwd = `${__dirname}/tmp/bin`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
-
-  const streamFile = `${__dirname}/tmp/bin/stream.txt`;
-  const stream = createWriteStream(streamFile);
-  await new Promise(resolve => stream.on('open', resolve));
-  await exec(`${jazelle}`, {cwd}, [stream, stream]);
-  assert((await read(streamFile, 'utf8')).includes('Usage: jazelle [command]'));
-
-  const yarnStreamFile = `${__dirname}/tmp/bin/yarn-stream.txt`;
-  const yarnStream = createWriteStream(yarnStreamFile);
-  await new Promise(resolve => yarnStream.on('open', resolve));
-  await exec(`${jazelle} yarn --version --cwd a`, {cwd}, [yarnStream]);
-  assert((await read(yarnStreamFile, 'utf8')).includes('.'));
-
-  const cwdStreamFile = `${__dirname}/tmp/bin/cwd-stream.txt`;
-  const cwdStream = createWriteStream(cwdStreamFile);
-  await new Promise(resolve => cwdStream.on('open', resolve));
-  await exec(`${jazelle} yarn --version`, {cwd: `${cwd}/a`}, [cwdStream]);
-  assert((await read(cwdStreamFile, 'utf8')).includes('.'));
-
-  const bazelStreamFile = `${__dirname}/tmp/bin/bazel-stream.txt`;
-  const bazelStream = createWriteStream(bazelStreamFile);
-  await new Promise(resolve => bazelStream.on('open', resolve));
-  await exec(`${jazelle} bazel version`, {cwd}, [bazelStream]);
-  assert((await read(bazelStreamFile, 'utf8')).includes('Bazelisk version:'));
-
-  const startStreamFile = `${__dirname}/tmp/bin/start-stream.txt`;
-  const startStream = createWriteStream(startStreamFile);
-  await new Promise(resolve => startStream.on('open', resolve));
-  await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
-  assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
-}
 
 async function testLockfileRegistryResolution() {
   {
@@ -1675,4 +1642,66 @@ async function testPopulateGraph() {
     populateGraph({graph, name, range, index, registry});
     assert.equal(graph['foo@npm:bar@0.1.0'].version, '0.1.0');
   }
+}
+
+async function testCommand() {
+  const cmd = `cp -r ${__dirname}/fixtures/bin ${__dirname}/tmp/bin`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bin`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const streamFile = `${__dirname}/tmp/bin/stream.txt`;
+  const stream = createWriteStream(streamFile);
+  await new Promise(resolve => stream.on('open', resolve));
+  await exec(`${jazelle}`, {cwd}, [stream, stream]);
+  assert((await read(streamFile, 'utf8')).includes('Usage: jazelle [command]'));
+}
+
+async function testYarnCommand() {
+  const cmd = `cp -r ${__dirname}/fixtures/bin ${__dirname}/tmp/bin`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bin`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const yarnStreamFile = `${__dirname}/tmp/bin/yarn-stream.txt`;
+  const yarnStream = createWriteStream(yarnStreamFile);
+  await new Promise(resolve => yarnStream.on('open', resolve));
+  await exec(`${jazelle} yarn --version --cwd a`, {cwd}, [yarnStream]);
+  assert((await read(yarnStreamFile, 'utf8')).includes('.'));
+
+  const cwdStreamFile = `${__dirname}/tmp/bin/cwd-stream.txt`;
+  const cwdStream = createWriteStream(cwdStreamFile);
+  await new Promise(resolve => cwdStream.on('open', resolve));
+  await exec(`${jazelle} yarn --version`, {cwd: `${cwd}/a`}, [cwdStream]);
+  assert((await read(cwdStreamFile, 'utf8')).includes('.'));
+}
+
+async function testBazelCommand() {
+  const cmd = `cp -r ${__dirname}/fixtures/bin ${__dirname}/tmp/bin`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bin`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const bazelStreamFile = `${__dirname}/tmp/bin/bazel-stream.txt`;
+  const bazelStream = createWriteStream(bazelStreamFile);
+  await new Promise(resolve => bazelStream.on('open', resolve));
+  await exec(`${jazelle} bazel version`, {cwd}, [bazelStream]);
+  assert((await read(bazelStreamFile, 'utf8')).includes('Bazelisk version:'));
+}
+
+async function testStartCommand() {
+  const cmd = `cp -r ${__dirname}/fixtures/bin ${__dirname}/tmp/bin`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bin`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const startStreamFile = `${__dirname}/tmp/bin/start-stream.txt`;
+  const startStream = createWriteStream(startStreamFile);
+  await new Promise(resolve => startStream.on('open', resolve));
+  await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
+  assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
 }

@@ -106,8 +106,11 @@ const runCLI /*: RunCLI */ = async argv => {
         async () => purge({root: await rootOf(args)}),
       ],
       check: [
-        `Display deps w/ multiple versions installed across projects`,
-        async () => check({root: await rootOf(args)}),
+        `Display deps w/ multiple versions installed across projects
+
+        --json                     Whether to print as JSON (e.g. for piping to jq)`,
+        async ({json}) =>
+          check({root: await rootOf(args), json: Boolean(json)}),
       ],
       chunk: [
         `Print a glob pattern representing a chunk of a set of files

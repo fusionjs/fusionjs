@@ -49,13 +49,13 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     projects,
     versionPolicy,
   });
-  if (!result.valid) throw new Error(getErrorMessage(result));
+  if (!result.valid) throw new Error(getErrorMessage(result, false));
 
   const cycles = detectCyclicDeps({deps});
   if (cycles.length > 0) {
-    throw new Error(
-      'Cyclic local dependencies detected. Run `jazelle doctor` for more info'
-    );
+    const cycleError =
+      'Cyclic local dependencies detected. Run `jazelle doctor` for more info';
+    throw new Error(cycleError);
   }
 
   const all = await getAllDependencies({root, projects});
