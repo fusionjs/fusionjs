@@ -436,7 +436,9 @@ Removes generated files (i.e. `node_modules` folders and bazel output files)
 
 Shows a report of out-of-sync top level dependencies across projects
 
-`jazelle check`
+`jazelle check --json`
+
+- `--json` - Whether to output as JSON. This is useful if you want to pipe the report to `jq` (e.g `jazelle changes --json | jq .jest` to see report for only `jest`)
 
 ```js
 // sample report
@@ -772,6 +774,10 @@ Returns a report of out-of-sync top level dependencies across projects
 ```
 
 ```js
+type VersionPolicy = {
+  lockstep: boolean,
+  exceptions: Array<string>,
+}
 type Report = {
   valid: string,
   policy: {
@@ -781,7 +787,7 @@ type Report = {
   reported: {[string]: {[string]: Array<string>}},
 }
 
-let check: ({root: string}) => Promise<Report>
+let check: ({root: string, projects: Array<string>, versionPolicy: VersionPolicy}) => Promise<Report>
 ```
 
 - `root` - Monorepo root folder (absolute path)
