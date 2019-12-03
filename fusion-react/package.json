@@ -28,14 +28,14 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-tests && cup build-tests",
+    "build-test": "rm -rf dist-tests && cup3 build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && npm run just-cover",
     "just-cover": "nyc --reporter=cobertura --reporter=html npm run just-test",
     "view-cover": "npm run cover && open coverage/index.html",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
+    "build": "npm run clean && cup3 build",
     "flow": "flow check"
   },
   "dependencies": {
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package-v3": "^3.4.7",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^6.0.1",

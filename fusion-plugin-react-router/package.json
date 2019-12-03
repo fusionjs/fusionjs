@@ -39,7 +39,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package-v3": "^3.4.7",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -64,12 +64,12 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-tests && cup build-tests",
+    "build-test": "rm -rf dist-tests && cup3 build-tests",
     "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-test && npm run just-test",
     "cover": "npm run build-test && nyc npm run just-test",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
+    "build": "npm run clean && cup3 build",
     "flow": "flow check"
   },
   "engines": {
