@@ -1,9 +1,16 @@
 echo "steps:"
 echo "  - wait"
 
+SHA1="HEAD"
+if [ "$BUILDKITE_PULL_REQUEST" = "false" ]; then
+  # master commits compare HEAD with HEAD~1
+  SHA2="HEAD~1"
+else
+  # pull requests compare HEAD with latest master
+  SHA2="origin/master"
+fi
+
 # Get the change set
-SHA1="$(git rev-parse HEAD)"
-SHA2="$(git rev-parse origin/master)"
 git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 | grep -v "\.md$" > changes.txt
 CHANGES=$(jazelle changes ./changes.txt)
 

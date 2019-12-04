@@ -236,18 +236,30 @@ const token:Token = createToken(name: string);
 import {memoize} from 'fusion-core';
 ```
 
-Sometimes, it's useful to maintain the same instance of a plugin associated with a request lifecycle. For example, session state.
+It may be desirable to share the same instance of a particular request-scoped value across different plugins. For example, session state, which is associated with specific requests but might be used in several plugins.
 
-Fusion.js provides a `memoize` utility function to memoize per-request instances.
+Fusion.js provides a `memoize` utility function for this purpose:
+
+* `fn: (ctx: Context) => any` - A function to be memoized
+* returns `memoized: (ctx: Context) => any`
+
+For example, using session state as an example:
+
+```
+const getSession = memoize(ctx => createSession(ctx));
+```
+
+The first time `getSession` is invoked with a given `ctx` object, `createSession(ctx)` will be invoked and a session state instance will be created. Then, any subsequent calls of `getSession` with the exact same `ctx` will yield the existing session state instance for that request.
+
+Under the hood, these lookups work similar to a `WeakMap` so these memoized values are garbage collected along with each `ctx` object.
+
+Note that by convention, Fusion.js plugins provide these memoized getters via a `from` method.
 
 ```js
 const memoized = {from: memoize((fn: (ctx: Context) => any))};
 ```
 
-* `fn: (ctx: Context) => any` - A function to be memoized
-* returns `memoized: (ctx: Context) => any`
-
-Idiomatically, Fusion.js plugins provide memoized instances via a `from` method. This method is meant to be called from a [middleware](#middleware):
+This method is meant to be called from a [middleware](#middleware), for example:
 
 ```js
 createPlugin({
@@ -778,4 +790,3 @@ app.register(ValueToken, createPlugin({
 If you do not need to access the value by associating it with a token, there
 should be no reason to use the Fusion.js DI system for it. It is recommended to
 import and use the value directly in your application.
-

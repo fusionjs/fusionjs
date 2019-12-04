@@ -30,7 +30,7 @@
     "lint": "eslint src",
     "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
+    "build": "npm run clean && cup3 build",
     "flow": "flow check"
   },
   "dependencies": {
@@ -48,7 +48,7 @@
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.8.0",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package-v3": "^3.4.7",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^6.0.1",
@@ -73,7 +73,7 @@
     "eslint-plugin-react-hooks": "^1.6.1"
   },
   "engines": {
-    "node": ">=8.9.0 <11",
+    "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
