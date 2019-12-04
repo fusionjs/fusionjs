@@ -42,17 +42,17 @@ type LogEntry = {
 };
 
 type LogMethod = {
-  (level: string, message: string, callback: LogCallback): Logger,
-  (level: string, message: string, meta: any, callback: LogCallback): Logger,
-  (level: string, message: string, ...meta: any[]): Logger,
-  (entry: LogEntry): Logger,
+  (level: string, message: string, callback: LogCallback): void,
+  (level: string, message: string, meta: any, callback: LogCallback): void,
+  (level: string, message: string, ...meta: any[]): void,
+  (entry: LogEntry): void,
 };
 
 type LeveledLogMethod = {
-  (message: string, callback: LogCallback): Logger,
-  (message: string, meta: any, callback: LogCallback): Logger,
-  (message: string, ...meta: any[]): Logger,
-  (infoObject: Object): Logger,
+  (message: string, callback: LogCallback): void,
+  (message: string, meta: any, callback: LogCallback): void,
+  (message: string, ...meta: any[]): void,
+  (infoObject: Object): void,
 };
 
 export type Logger = {
