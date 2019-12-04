@@ -688,6 +688,7 @@ async function testGenerateBazelBuildRules() {
       },
     ],
     projects: ['a', 'b', 'c', 'd'],
+    dependencySyncRule: 'web_library',
   });
   const code = await read(
     `${__dirname}/tmp/generate-bazel-build-rules/a/BUILD.bazel`,
@@ -733,9 +734,11 @@ async function testGenerateBazelBuildRulesUpdate() {
       },
     ],
     projects: ['a', 'b', 'c'],
+    dependencySyncRule: 'custom_target_rule',
   });
   const aBuild = `${__dirname}/tmp/generate-bazel-build-rules-update/a/BUILD.bazel`;
   const data = await read(aBuild);
+  assert(data.includes('custom_target_rule'));
   assert(data.includes('//b:b'));
   assert(!data.includes('//c:c'));
   assert(data.includes('//external:external'));
@@ -884,6 +887,7 @@ async function testGetManifest() {
     {
       projects: ['path/to/a', 'path/to/b'],
       workspace: 'host',
+      dependencySyncRule: 'web_library',
     }
   );
 }

@@ -1013,7 +1013,9 @@ Note: The `manifest.json` file does **not** allow comments; they are present her
     "exceptions": [
       "foo"
     ]
-  }
+  },
+  // Optional rule name to use when auto-updating target `deps` in BUILD.bazel
+  "dependencySyncRule": "my_repo_target",
 }
 ```
 
