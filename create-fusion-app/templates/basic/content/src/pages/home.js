@@ -62,7 +62,7 @@ const Home = () => (
 
       <Center>
         <Circle>
-          <GettingStartedLink href="https://fusionjs.com/docs/getting-started">
+          <GettingStartedLink href="https://fusionjs.com/docs/overview">
             Let&apos;s Get Started
           </GettingStartedLink>
         </Circle>
