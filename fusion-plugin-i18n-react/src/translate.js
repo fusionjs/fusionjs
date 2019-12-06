@@ -17,7 +17,9 @@ type TranslatePropsType = {
 
 function Translate(props: TranslatePropsType) {
   const i18n = React.useContext(I18nContext);
-  const content = (i18n && i18n.translate(props.id, props.data)) || props.id;
+  const content =
+    (i18n && i18n.translate && i18n.translate(props.id, props.data)) ||
+    props.id;
   return React.Fragment ? <>{content}</> : <span>{content}</span>;
 }
 
