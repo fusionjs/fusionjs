@@ -6,7 +6,7 @@
  * @noflow
  */
 
-const {Runtime} = require('../utils.js');
+const {Runtime} = require('../../utils.js');
 
 /* eslint-env node */
 test('browser plugin integration test withRPCRedux', async done => {

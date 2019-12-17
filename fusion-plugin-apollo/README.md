@@ -2,11 +2,11 @@
 
 [![Build status](https://badge.buildkite.com/7a82192275779f6a8ba81f7d4a1b0d294256838faa1dfdf080.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
-Fusion.js plugin for universal rendering with React and Apollo
+Fusion.js plugin for universal rendering with React and Apollo.
 
 This package provides universal rendering for Fusion.js applications leveraging GraphQL.
 
-The plugin will perform graphql queries on the server, thereby rendering your applications initial HTML view on the server before sending it to the client. Additionally this plugin will also provide initial state hydration on the client side.
+The plugin will perform GraphQL queries on the server, thereby rendering your applications initial HTML view on the server before sending it to the client. Additionally this plugin will also provide initial state hydration on the client side.
 
 ---
 
@@ -27,8 +27,7 @@ The plugin will perform graphql queries on the server, thereby rendering your ap
     - [`ApolloClientLocalSchemaToken`](#apolloclientlocalschematoken)
     - [`ApolloBodyParserConfigToken`](#apollobodyparserconfigtoken)
     - [`ApolloContextToken`](#apollocontexttoken)
-
-  = [GQL Macro]($gql)
+  - [GQL Macro](#gql)
 
 ---
 
@@ -43,7 +42,6 @@ yarn add fusion-plugin-apollo
 ### Usage
 
 ```js
-// ./src/main.js
 import React from 'react';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
@@ -68,10 +66,9 @@ export default function() {
 
 ### Usage with external server
 
-When schema file is not provided, the plugin will not run graphQL server locally. The endpoint of the external graphQL server can be then provided using `GraphQLEndpointToken`.
+When a schema file is not provided, the plugin will not run a GraphQL server locally. The endpoint of the external GraphQL server can be then provided using the `GraphQLEndpointToken`.
 
 ```js
-// ./src/main.js
 import React from 'react';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
@@ -94,8 +91,7 @@ export default function() {
 
 ### Loading GraphQL Queries/Schemas
 
-fusion-plugin-apollo ships with a compiler plugin that lets you load graphql queries and schemas with the `gql` macro.
-This macro takes a relative path argument and returns the query/schema as a string.
+`fusion-plugin-apollo` ships with a compiler plugin that lets you load GraphQL queries and schemas with the `gql` macro. This macro takes a relative path argument and returns the query/schema as a string.
 
 NOTE: Because this is a build time feature, the path argument must be a string literal. Dynamic paths are not supported.
 
@@ -117,12 +113,11 @@ const schema = gql('./some-schema.graphql');
 import {ApolloClientToken} from 'fusion-plugin-apollo';
 ```
 
-A plugin, which provides an instance of [Apollo Client](https://www.apollographql.com/docs/react/api/apollo-client.html), to be registered and used as within the Apollo Provider. You can use [fusion-apollo-universal-client](https://github.com/fusionjs/fusion-apollo-universal-client) as a barebones Apollo Client token.
+A plugin, which provides an instance of [Apollo Client](https://www.apollographql.com/docs/react/api/apollo-client/), to be registered and used within the Apollo Provider. You can use `ApolloClientPlugin` as a barebones Apollo Client token.
 
 ```flow
 type ApolloClient<TInitialState> = (ctx: Context, initialState: TInitialState) => ApolloClientType;
 ```
-
 
 ##### GraphQLSchemaToken
 
@@ -130,7 +125,7 @@ type ApolloClient<TInitialState> = (ctx: Context, initialState: TInitialState) =
 import {GraphQLSchemaToken} from 'fusion-plugin-apollo';
 ```
 
-Your graphql schema is registered on the `GraphQLSchemaToken` token. This is the result of `makeExecutableSchema` or `makeRemoteExecutableSchema` from the `graphql-tools` library.
+Your GraphQL schema is registered on the `GraphQLSchemaToken` token. This is the result of `makeExecutableSchema` or `makeRemoteExecutableSchema` from the `graphql-tools` library.
 
 ##### GraphQLEndpointToken
 
@@ -138,7 +133,7 @@ Your graphql schema is registered on the `GraphQLSchemaToken` token. This is the
 import {GraphQLEndpointToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - the endpoint for serving the graphql API. Defaults to `'/graphql'`. This can also be an endpoint of an external graphQL server (hosted outside fusion app).
+Optional - the endpoint for serving the GraphQL API. Defaults to `'/graphql'`. This can also be an endpoint of an external GraphQL server (hosted outside the Fusion.js app).
 
 ```js
 type GraphQLEndpoint = string;
@@ -147,10 +142,10 @@ type GraphQLEndpoint = string;
 ##### `GetApolloClientCacheToken`
 
 ```js
-import {GetApolloClientCacheToken} from 'fusion-apollo-universal-client';
+import {GetApolloClientCacheToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - A function that returns an Apollo [cache implementation](https://www.apollographql.com/docs/react/advanced/caching.html).
+Optional - A function that returns an Apollo [cache implementation](https://www.apollographql.com/docs/react/v2.5/advanced/caching/).
 
 ```js
 type GetApolloClientCache = (ctx: Context) => ApolloCache
@@ -163,11 +158,10 @@ The default cache implementation uses [InMemoryCache](https://github.com/apollog
 ##### `ApolloClientCredentialsToken`
 
 ```js
-import {ApolloClientCredentialsToken} from 'fusion-apollo-universal-client';
+import {ApolloClientCredentialsToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - A configuration value that provides the value of credentials value passed directly into the [fetch implementation](https://github.com/github/fetch).
-The default value is `same-origin`.
+Optional - A configuration value that provides the value of credentials passed directly into the [fetch implementation](https://github.com/github/fetch). The default value is `same-origin`.
 
 ```js
 type ApolloClientCredentials = 'omit' | 'include' | 'same-origin'
@@ -176,10 +170,10 @@ type ApolloClientCredentials = 'omit' | 'include' | 'same-origin'
 ##### `GetApolloClientLinksToken`
 
 ```js
-import {GetApolloClientLinksToken} from 'fusion-apollo-universal-client';
+import {GetApolloClientLinksToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - A configuration value that provides a array of [ApolloLinks](https://www.apollographql.com/docs/link/composition.html). The default links are provided as an argument to the provided function.
+Optional - A configuration value that provides a array of [ApolloLinks](https://www.apollographql.com/docs/link/composition/). The default links are provided as an argument to the provided function.
 
 ```js
 type GetApolloClientLinks = (Array<ApolloLinkType>) => Array<ApolloLinkType>
@@ -191,48 +185,47 @@ type GetApolloClientLinks = (Array<ApolloLinkType>) => Array<ApolloLinkType>
 import {GetDataFromTreeToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - A configuration value that provides an option to provide custom `getDataFromTree` function for server side rendering. Default value is [react-apollo](https://www.apollographql.com/docs/react/features/server-side-rendering#getDataFromTree) implementation but with this token you can provide proper server side rendering with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks#server-side-rendering).
-
+Optional - A configuration value that provides an option to provide custom `getDataFromTree` function for server side rendering. The default value is the [react-apollo](https://www.apollographql.com/docs/react/performance/server-side-rendering/#getDataFromTree) implementation but with this token you can provide proper server side rendering with [react-apollo-hooks](https://github.com/trojanowski/react-apollo-hooks#server-side-rendering).
 
 ##### `ApolloClientResolversToken`
 
 ```js
-import { ApolloClientResolversToken } from "fusion-apollo-universal-client";
+import {ApolloClientResolversToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
+Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/data/local-state/).
 
 ##### `ApolloClientLocalSchemaToken`
 
 ```js
-import { ApolloClientLocalSchemaToken } from "fusion-apollo-universal-client";
+import {ApolloClientLocalSchemaToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/essentials/local-state.html).
+Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/data/local-state/).
 
 ##### `ApolloBodyParserConfigToken`
 
 ```js
-import { ApolloBodyParserConfigToken } from "fusion-apollo-universal-client";
+import {ApolloBodyParserConfigToken} from 'fusion-plugin-apollo';
 // Example for increasing the json limit
 app.register(ApolloBodyParserConfigToken, {
   jsonLimit: '5mb',
 });
 ```
 
-Optional - Provides body parser config to koa-bodyparser for apollo-server. See https://github.com/koajs/bodyparser
+Optional - Provides body parser config to `koa-bodyparser` for `apollo-server`. See https://github.com/koajs/bodyparser.
 
 ##### `ApolloDefaultOptionsConfigToken`
 
 ```js
-import { ApolloDefaultOptionsConfigToken } from "fusion-apollo-universal-client";
+import {ApolloDefaultOptionsConfigToken} from 'fusion-plugin-apollo';
 // Example for enabling schema introspection
 app.register(ApolloDefaultOptionsConfigToken, {
   introspection: true,
 });
 ```
 
-Optional - Provides default options config to apollo-server. See https://github.com/apollographql/apollo-server/blob/master/packages/apollo-server-core/src/graphqlOptions.ts
+Optional - Provides default options config to `apollo-server`. See https://github.com/apollographql/apollo-server/blob/master/packages/apollo-server-core/src/graphqlOptions.ts.
 
 ##### ApolloContextToken (DEPRECATED)
 
@@ -240,8 +233,7 @@ Optional - Provides default options config to apollo-server. See https://github.
 import {ApolloContextToken} from 'fusion-plugin-apollo';
 ```
 
-DEPRECATED - A function which returns the apollo context. Defaults to the fusion context. It is not recommended to add custom overrides here. Instead, you can
-provide dependencies to your resolvers using the fusion dependency injection system.
+DEPRECATED - A function which returns the apollo context. Defaults to the Fusion.js context. It is not recommended to add custom overrides here. Instead, you can provide dependencies to your resolvers using the Fusion.js dependency injection system.
 
 See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
 
@@ -249,19 +241,16 @@ See the [Apollo Client context documentation](https://www.apollographql.com/docs
 type ApolloContext<T> = (ctx: Context => T) | T;
 ```
 
-
 #### gql
 
 ```js
 import {gql} from 'fusion-plugin-apollo';
 ```
 
-A macro for loading graphql queries and schemas. Takes a relative path string and returns the contents of the graphql schema/query as a string.
+A macro for loading GraphQL queries and schemas. Takes a relative path string and returns the contents of the GraphQL schema/query as a string.
 
 ```js
 type gql = (path: string): DocumentNode
 ```
 
 - `path: string` - Relative path to the graphql schema/query file. NOTE: This must be a string literal, dynamic paths are not supported.
-
----

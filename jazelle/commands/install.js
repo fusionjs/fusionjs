@@ -33,6 +33,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     versionPolicy,
     hooks,
     workspace,
+    dependencySyncRule,
   } = /*:: await */ await getManifest({root});
   const deps = /*:: await */ await getLocalDependencies({
     dirs: projects.map(dir => `${root}/${dir}`),
@@ -75,7 +76,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
   });
   if (workspace === 'sandbox' && frozenLockfile === false) {
     await generateBazelignore({root, projects: projects});
-    await generateBazelBuildRules({root, deps, projects});
+    await generateBazelBuildRules({root, deps, projects, dependencySyncRule});
   }
   await installDeps({root, cwd, deps, ignore: all, hooks});
 };

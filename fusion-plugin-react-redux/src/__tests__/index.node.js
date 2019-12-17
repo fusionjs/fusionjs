@@ -142,7 +142,7 @@ tape('enhancers', async t => {
 });
 
 const testEnhancer = async (
-  t: tape$Context,
+  t,
   enhancer: StoreEnhancer<*, *, *> | FusionPlugin<*, StoreEnhancer<*, *, *>>
 ): Promise<void> => {
   const app = new App('el', el => el);
