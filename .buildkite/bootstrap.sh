@@ -34,10 +34,10 @@ for DIR in $CHANGES ; do (
       echo "      queue: workers";
       echo "  - label: 'fusion-cli lint flow'";
       echo "    commands:";
-      echo "    - 'jazelle ci --cwd=$DIR'";
-      echo "    - 'jazelle build --cwd=$DIR'";
-      echo "    - 'jazelle lint --cwd=$DIR'";
-      echo "    - 'jazelle flow --cwd=$DIR'";
+      echo "    - 'jazelle ci --cwd $DIR'";
+      echo "    - 'jazelle build --cwd $DIR'";
+      echo "    - 'jazelle lint --cwd $DIR'";
+      echo "    - 'jazelle flow --cwd $DIR'";
       echo "    timeout_in_minutes: 10";
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
@@ -48,11 +48,11 @@ for DIR in $CHANGES ; do (
     else
       echo "  - label: '$PROJECT'";
       echo "    commands:";
-      echo "    - 'jazelle ci --cwd=$DIR'";
-      echo "    - 'jazelle build --cwd=$DIR'";
-      echo "    - 'jazelle test --cwd=$DIR'";
-      echo "    - 'jazelle lint --cwd=$DIR'";
-      echo "    - 'jazelle flow --cwd=$DIR'";
+      echo "    - 'jazelle ci --cwd $DIR'";
+      echo "    - 'jazelle build --cwd $DIR'";
+      echo "    - 'jazelle test --cwd $DIR'";
+      echo "    - 'jazelle lint --cwd $DIR'";
+      echo "    - 'jazelle flow --cwd $DIR'";
       echo "    timeout_in_minutes: 10";
       echo "    plugins:";
       echo "      'docker-compose#v3.0.0':";
