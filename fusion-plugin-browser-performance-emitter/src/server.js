@@ -20,6 +20,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
     deps: {emitter: UniversalEventsToken},
     provides: deps => {
       const emitter = deps.emitter;
+      const perfLoggerVersion = require('../package.json').version;
       emitter.on('browser-performance-emitter:stats:browser-only', (e, ctx) => {
         if (ctx) {
           const scopedEmitter = emitter.from(ctx);
@@ -44,7 +45,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
           if (!enhancedMetrics.app) {
             enhancedMetrics.app = {};
           }
-          enhancedMetrics.app.perfLoggerVersion = require('../package.json').version;
+          enhancedMetrics.app.perfLoggerVersion = perfLoggerVersion;
         }
 
         const calculatedStats = getCalculatedStats(
