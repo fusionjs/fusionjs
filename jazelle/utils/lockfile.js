@@ -377,7 +377,9 @@ const update /*: Update */ = async ({
         if (!meta[type]) meta[type] = {};
         if (meta[type]) meta[type][name] = range;
       }
-      Object.assign(lockfile, added.lockfile);
+      for (const key in added.lockfile) {
+        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
+      }
     }
 
     // install missing transitives
@@ -415,7 +417,9 @@ const update /*: Update */ = async ({
 
       // copy newly installed deps back to original yarn.lock
       const [added] = await getVersionSets({roots: [cachedCwd]});
-      Object.assign(lockfile, added.lockfile);
+      for (const key in added.lockfile) {
+        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
+      }
     }
   }
 
@@ -467,11 +471,11 @@ const update /*: Update */ = async ({
     const lockfile = {};
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
-      map[`${name}@${graph[key].version}`] = graph[key];
+      map[`${name}@${graph[key].resolved}`] = graph[key];
     }
     for (const key in graph) {
       const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = map[`${name}@${graph[key].version}`];
+      lockfile[key] = map[`${name}@${graph[key].resolved}`];
     }
 
     if (frozenLockfile) {
