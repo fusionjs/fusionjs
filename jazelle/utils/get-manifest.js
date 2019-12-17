@@ -25,9 +25,14 @@ const getManifest /*: GetManifest */ = async ({root}) => {
   const manifest = `${root}/manifest.json`;
   const data = await read(manifest, 'utf8');
   const parsed = JSON.parse(data || '{}');
-  parsed.workspace = parsed.workspace || 'host';
-  parsed.projects = parsed.projects || [];
-  return parsed;
+
+  return {
+    // defaults
+    workspace: 'host',
+    projects: [],
+    dependencySyncRule: 'web_library',
+    ...parsed,
+  };
 };
 
 module.exports = {getManifest};

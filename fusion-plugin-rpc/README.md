@@ -184,8 +184,10 @@ Required. See
 ##### `RPCHandlersToken`
 
 ```js
-import {RPCHandlersToken} from 'fusion-plugin-rpc-redux-react';
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
 ```
+
+Object with keys as the name of the handler and the value the handler implementation. Required. Server-only.
 
 ##### `RPCHandlersConfigToken`
 
@@ -195,7 +197,21 @@ import {RPCHandlersConfigToken} from 'fusion-plugin-rpc';
 
 Configures what RPC handlers exist. Required. Server-only.
 
-###### Types
+##### `BodyParserOptionsToken`
+
+```js
+import {BodyParserOptionsToken} from 'fusion-plugin-rpc';
+```
+
+Configures options for `koa-bodyparser`. Optional. See available options [here](https://github.com/koajs/bodyparser#options).
+
+For example, if you want to increase the limit for uploading large file sizes, set `jsonLimit` to a higher limit:
+
+```js
+app.register(BodyParserOptionsToken, {jsonLimit: '20mb'});
+```
+
+#### Types
 
 ```flow
 type RPCHandlers = Object<string, () => any>
@@ -228,6 +244,10 @@ type RPCConfigType = {
   apiPath?: string,
 }
 ```
+
+##### `BodyParserOptionsToken`
+
+Optional. See [koa-bodyparser Options type](https://github.com/flow-typed/flow-typed/blob/master/definitions/npm/koa-bodyparser_v4.x.x/flow_v0.104.x-/koa-bodyparser_v4.x.x.js#L9).
 
 ---
 

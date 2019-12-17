@@ -6,9 +6,9 @@
  * @noflow
  */
 
-import {createRPCReducer} from '../../../../';
+import {createRPCReducer} from 'fusion-rpc-redux';
 
-export default createRPCReducer('getUser', {
+export const lastTripReducer = createRPCReducer('getLastTrip', {
   start: (state, action) => ({...state, loading: true}),
   success: (state, action) => ({
     ...state,
@@ -21,3 +21,5 @@ export default createRPCReducer('getUser', {
     error: action.payload.error,
   }),
 });
+
+export const lastTripInitialState = {loading: false, data: null, error: ''};
