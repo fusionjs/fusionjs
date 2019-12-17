@@ -8,9 +8,13 @@
 
 import React from 'react';
 import App from 'fusion-react';
-import RPCPlugin, {RPCToken} from '../../..';
-import Root from './root.js';
-import ReduxPlugin, {ReducerToken, ReduxToken} from 'fusion-plugin-react-redux';
+import RPCPlugin, {RPCToken} from '../../../..';
+import Root from './components/root.js';
+import ReduxPlugin, {
+  ReducerToken,
+  ReduxToken,
+  GetInitialStateToken,
+} from 'fusion-plugin-react-redux';
 import UniversalEvents, {
   UniversalEventsToken,
 } from 'fusion-plugin-universal-events';
@@ -22,9 +26,14 @@ import reducer from './redux.js';
 export default () => {
   const app = new App(<Root />);
 
-  __NODE__
-    ? app.register(RPCHandlersToken, rpcHandlers)
-    : app.register(FetchToken, fetch);
+  if (__BROWSER__) {
+    app.register(FetchToken, window.fetch);
+  }
+
+  if (__NODE__) {
+    app.register(RPCHandlersToken, rpcHandlers);
+    app.register(GetInitialStateToken, async ctx => ({}));
+  }
 
   app.register(RPCToken, RPCPlugin);
   app.register(UniversalEventsToken, UniversalEvents);

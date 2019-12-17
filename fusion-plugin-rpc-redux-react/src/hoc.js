@@ -8,6 +8,7 @@
 
 import * as React from 'react';
 import type {Reducer} from 'redux';
+import {ReactReduxContext} from 'react-redux';
 import {RPCToken} from 'fusion-plugin-rpc';
 import {ReduxToken} from 'fusion-plugin-react-redux';
 import {FusionContext, useService} from 'fusion-react';
@@ -57,12 +58,16 @@ export function withRPCRedux<Props: {}>(
 ): (React.ComponentType<*>) => React.ComponentType<*> {
   return (Component: React.ComponentType<Props>) => {
     function WithRPCRedux(props: Props) {
+      const reactReduxContext = React.useContext(ReactReduxContext);
       const ctx = React.useContext(FusionContext);
-      const {store} = useService(ReduxToken).from(ctx);
+      const reduxPlugin = useService(ReduxToken).from(ctx);
       const rpc = useService(RPCToken).from(ctx);
       const wrappedMapStateToParams =
         mapStateToParams &&
         ((state, args) => mapStateToParams(state, args, props));
+      const store = reactReduxContext
+        ? reactReduxContext.store
+        : reduxPlugin.store;
       const handler = createRPCHandler({
         rpcId,
         rpc,
