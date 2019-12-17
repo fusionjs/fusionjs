@@ -60,7 +60,7 @@ const installDeps /*: InstallDeps */ = async ({
   if (await exists(modulesDir)) {
     await remove(`${root}/${modulesDir}`);
   }
-  await spawn('mv', [`${bin}/node_modules`, modulesDir], {cwd: root});
+  await spawn('mv', [`${bin}/node_modules/`, modulesDir], {cwd: root});
   await setupSymlinks({root, deps});
 
   await executeNpmHooks(deps, 'postinstall');

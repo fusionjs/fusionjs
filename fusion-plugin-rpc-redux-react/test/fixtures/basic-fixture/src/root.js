@@ -10,7 +10,7 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {prepared} from 'fusion-react';
-import {withRPCRedux} from '../../..';
+import {withRPCRedux} from '../../../..';
 
 function Root(props) {
   return (

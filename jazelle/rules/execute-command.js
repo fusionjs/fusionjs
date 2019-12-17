@@ -1,5 +1,5 @@
 // @flow
-const {readFileSync: read, existsSync: exists} = require('fs');
+const {readFileSync: read} = require('fs');
 const {execSync: exec} = require('child_process');
 const {dirname, basename} = require('path');
 
@@ -20,9 +20,6 @@ files.map(f => {
   exec(`ln -sfn "${target}" "${label}"`, {cwd: `${main}/${dir}`});
 });
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
-const binPath = exists(`${main}/node_modules/.bin`)
-  ? `:${main}/node_modules/.bin`
-  : '';
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});
@@ -49,6 +46,7 @@ function runScript(command, args = []) {
     const params = args.map(arg => `'${arg}'`).join(' ');
 
     // prioritize hermetic Node version over system version
+    const binPath = `:${root}/node_modules/.bin`;
     const script = `export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
