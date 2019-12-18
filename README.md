@@ -43,7 +43,7 @@ We initially [built Fusion.js](https://eng.uber.com/fusionjs/) to make our own w
 
 ## Try it out
 
-If you're interested in giving Fusion.js a shot, [Getting started](https://fusionjs.com/docs/getting-started/) and [Core concepts](https://fusionjs.com/docs/learn-fusion/core-concepts) are great places to start.
+If you're interested in giving Fusion.js a shot, [Overview](https://fusionjs.com/docs/overview/) and [Core concepts](https://fusionjs.com/docs/learn-fusion/core-concepts) are great places to start.
 
 
 ## Contributing
