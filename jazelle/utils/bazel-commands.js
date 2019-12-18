@@ -1,6 +1,6 @@
 // @flow
-const {relative, basename} = require('path');
-const {bazel} = require('./binary-paths.js');
+const {relative, basename, dirname} = require('path');
+const {bazel, node} = require('./binary-paths.js');
 const {spawn} = require('./node-helpers.js');
 
 /*::
@@ -140,4 +140,22 @@ const start /*: Start */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await run({root, cwd, args, stdio});
 };
 
-module.exports = {build, test, run, dev, lint, flow, start};
+/*::
+export type ExecArgs = {
+  root: string,
+  cwd: string,
+  args: Array<string>,
+  stdio?: Stdio,
+}
+export type Exec = (ExecArgs) => Promise<void>;
+*/
+const exec /*: Exec */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+  const [command, ...params] = args;
+  const path = process.env.PATH || '';
+  const bazelDir = dirname(bazel);
+  const nodeDir = dirname(node);
+  const env = {PATH: `${bazelDir}:${nodeDir}:${path}:${cwd}/node_modules/.bin`};
+  await spawn(command, params, {cwd, env, stdio});
+};
+
+module.exports = {build, test, lint, flow, dev, start, run, exec};

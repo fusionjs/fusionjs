@@ -60,4 +60,4 @@ then
   JAZELLE="$BIN/../cli.js"
 fi
 
-"$NODE" "$JAZELLE" $@
+"$NODE" "$JAZELLE" "$@"

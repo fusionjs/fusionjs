@@ -8,28 +8,28 @@ const yarn = require('../utils/yarn-commands.js');
 
 /*::
 import type {Stdio} from '../utils/node-helpers.js';
-export type TestArgs = {
+export type ExecArgs = {
   root: string,
   cwd: string,
   args: Array<string>,
   stdio?: Stdio,
 }
-export type Test = (TestArgs) => Promise<void>
+export type Exec = (ExecArgs) => Promise<void>
 */
-const test /*: Test */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+const exec /*: Exec */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await assertProjectDir({dir: cwd});
 
   const params = getPassThroughArgs(args);
   const {projects, workspace} = await getManifest({root});
   if (workspace === 'sandbox') {
-    await bazel.test({root, cwd, args: params, stdio});
+    await bazel.exec({root, cwd, args: params, stdio});
   } else {
     const deps = await getLocalDependencies({
       dirs: projects.map(dir => `${root}/${dir}`),
       target: cwd,
     });
-    await yarn.test({root, deps, args: params, stdio});
+    await yarn.exec({root, deps, args: params, stdio});
   }
 };
 
-module.exports = {test};
+module.exports = {exec};

@@ -2,7 +2,7 @@
 const {read} = require('../utils/node-helpers.js');
 
 /*::
-export type PayloadMetadata = {type: string, dir: string, action: string}
+export type PayloadMetadata = {type: string, dir: string, action: string, args: Array<string>}
 export type GetTestGroupsArgs = {
   root: string,
   data: Array<string>,
@@ -26,12 +26,16 @@ const normalize = async (root, data) => {
     await Promise.all(
       data.map(async dir => {
         const file = `${root}/${dir}/package.json`;
-        const meta = JSON.parse(await read(file, 'utf8').catch(() => '{}'));
+        const data = await read(file, 'utf8').catch(e => {
+          const message = `Invalid bazel target or project folder ${root}/${dir}`;
+          throw new Error(message);
+        });
+        const meta = JSON.parse(data);
         if (meta.scripts) {
           const {test, lint, flow} = meta.scripts;
-          if (test) output.push({type: 'dir', dir, action: 'test'});
-          if (lint) output.push({type: 'dir', dir, action: 'lint'});
-          if (flow) output.push({type: 'dir', dir, action: 'flow'});
+          if (test) output.push({type: 'dir', dir, action: 'test', args: []});
+          if (lint) output.push({type: 'dir', dir, action: 'lint', args: []});
+          if (flow) output.push({type: 'dir', dir, action: 'flow', args: []});
         }
       })
     );
@@ -41,7 +45,7 @@ const normalize = async (root, data) => {
       const parts = target.split(':');
       const dir = parts[0].slice(2);
       const action = parts[1];
-      return {type: 'bazel', dir, action};
+      return {type: 'bazel', dir, action, args: []};
     });
   }
 };
@@ -70,6 +74,7 @@ const distributeGroups = (groups, numNodes) => {
     let i = 0;
     for (const payload of underloaded) {
       const candidates = overloaded[i % overloaded.length];
+      if (!candidates) break;
       if (candidates.length > 1) {
         const candidate = candidates.shift();
         payload.push(candidate);
