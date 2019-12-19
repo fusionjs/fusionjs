@@ -24,6 +24,8 @@ const {flow} = require('./commands/flow.js');
 const {start} = require('./commands/start.js');
 const {node} = require('./commands/node.js');
 const {yarn} = require('./commands/yarn.js');
+const {exec} = require('./commands/exec.js');
+const {each} = require('./commands/each.js');
 const {bazel} = require('./commands/bazel.js');
 const {bump} = require('./commands/bump.js');
 const {doctor} = require('./commands/doctor.js');
@@ -188,6 +190,13 @@ const runCLI /*: RunCLI */ = async argv => {
         [args...]                  A space separated list of arguments`,
         async ({cwd}) => bazel({root: await rootOf(args), args: rest}),
       ],
+      node: [
+        `Runs Node
+
+        [args...]                  A space separated list of arguments
+        --cwd [cwd]                Project directory to use`,
+        async ({cwd}) => node({cwd, args: rest}),
+      ],
       yarn: [
         `Runs a Yarn command
 
@@ -196,12 +205,18 @@ const runCLI /*: RunCLI */ = async argv => {
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => yarn({cwd, args: rest}),
       ],
-      node: [
-        `Runs Node
+      exec: [
+        `Runs a bash script
 
         [args...]                  A space separated list of arguments
         --cwd [cwd]                Project directory to use`,
-        async ({cwd}) => node({cwd, args: rest}),
+        async ({cwd}) => exec({root: await rootOf(args), cwd, args: rest}),
+      ],
+      each: [
+        `Runs a script in each project
+
+        [args...]                  A space separated list of arguments`,
+        async ({cwd}) => each({root: await rootOf(args), cwd, args: rest}),
       ],
       bump: [
         `Bump version for the specified package, plus changed dependencies

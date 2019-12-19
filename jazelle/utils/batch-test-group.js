@@ -1,7 +1,8 @@
 // @flow
 
-const {spawn} = require('../utils/node-helpers.js');
+const {spawn, read, remove, exists} = require('../utils/node-helpers.js');
 const {node} = require('../utils/binary-paths.js');
+const {tmpdir} = require('os');
 
 /*::
 import type {PayloadMetadata} from './get-test-groups.js';
@@ -14,7 +15,7 @@ type BatchTestGroupArgs = {
   cores: number,
   stdio?: Stdio,
 }
-type BatchTestGroup = (BatchTestGroupArgs) => Promise<void>
+type BatchTestGroup = (BatchTestGroupArgs) => Promise<Array<PayloadMetadata>>
 */
 const batchTestGroup /*: BatchTestGroup */ = async ({
   root,
@@ -23,6 +24,7 @@ const batchTestGroup /*: BatchTestGroup */ = async ({
   cores,
   stdio = 'inherit',
 }) => {
+  const log = `${tmpdir()}/${Math.random() * 1e17}`;
   await spawn(
     node,
     [
@@ -35,9 +37,18 @@ const batchTestGroup /*: BatchTestGroup */ = async ({
       String(index),
       '--cores',
       String(cores),
+      '--log',
+      log,
     ],
     {stdio, cwd: root, env: process.env}
   );
+  if (await exists(log)) {
+    const failed = JSON.parse(await read(log, 'utf8'));
+    await remove(log);
+    return failed;
+  } else {
+    return [];
+  }
 };
 
 module.exports = {batchTestGroup};
