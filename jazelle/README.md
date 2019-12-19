@@ -348,6 +348,8 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle bazel`](#jazelle-bazel)
 - [`jazelle node`](#jazelle-node)
 - [`jazelle yarn`](#jazelle-yarn)
+- [`jazelle exec`](#jazelle-exec)
+- [`jazelle each`](#jazelle-each)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
 - [`jazelle setup`](#jazelle-setup)
@@ -596,6 +598,24 @@ Runs a Yarn command
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of Yarn arguments
 
+### `jazelle exec`
+
+Runs a bash script
+
+`jazelle exec --cwd [cwd] [args...]`
+
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - List of shell args
+
+### `jazelle each`
+
+Runs a bash script in all projects, parallelizing across CPUs
+
+`jazelle each --cores [cores] [...args]`
+
+- `cores` - Number of cores to use. Defaults to `os.cpus().length - 1`
+- `args` - List of shell args
+
 ### `jazelle bump`
 
 Bumps a package and its dependencies to the next version. It also updates all matching local packages to match
@@ -658,6 +678,8 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [bazel](#bazel)
 - [node](#node)
 - [yarn](#yarn)
+- [exec](#exec)
+- [each](#each)
 - [bump](#bump)
 - [doctor](#doctor)
 - [getRootDir](#getRootDir)
@@ -948,6 +970,26 @@ Runs a Yarn command
 
 - `cwd` - Project folder (absolute path)
 - `args` - List of Yarn args
+
+### `exec`
+
+Runs a bash script
+
+`let exec: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
+- `args` - List of shell args
+
+### `each`
+
+Runs a bash script in all projects, parallelizing across CPUs
+
+`let each: ({root: string, args: Array<string>, cores: string}) => Promise<void>`
+
+- `cwd` - Project folder (absolute path)
+- `args` - List of shell args
+- `cores` - Number of cores to use. Defaults to `os.cpus().length - 1`
 
 ### `bump`
 

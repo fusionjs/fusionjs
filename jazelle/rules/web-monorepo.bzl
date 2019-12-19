@@ -41,9 +41,9 @@ def _get_runfiles(ctx):
   ctx.actions.write(
     output = ctx.outputs.executable,
     content = """
-    CWD=$(cd `dirname "{srcdir}"` && pwd)
-    NODE=$(cd `dirname "{node}"` && pwd)/$(basename "{node}")
-    $NODE "{build}" "$CWD" "$(pwd)" "{command}" "" "" $@
+    CWD=$(cd `dirname '{srcdir}'` && pwd)
+    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
+    $NODE '{build}' "$CWD" "$(pwd)" '{command}' '' '' $@
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
@@ -66,11 +66,11 @@ def _web_binary_impl(ctx):
 
   ctx.actions.run_shell(
     command = """
-    CWD=$(cd `dirname "{srcdir}"` && pwd)
-    NODE=$(cd `dirname "{node}"` && pwd)/$(basename "{node}")
-    OUT=$(cd `dirname "{output}"` && pwd)/$(basename "{output}")
-    BAZEL_BIN_DIR=$(cd {bindir} && pwd)
-    $NODE "{build}" "$CWD" "$BAZEL_BIN_DIR" "{command}" "{dist}" "$OUT" $@
+    CWD=$(cd `dirname '{srcdir}'` && pwd)
+    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
+    OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}')
+    BAZEL_BIN_DIR=$(cd '{bindir}' && pwd)
+    $NODE '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' "$OUT" $@
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
