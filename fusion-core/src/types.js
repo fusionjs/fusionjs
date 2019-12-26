@@ -75,3 +75,7 @@ export type cleanupFn = (thing: any) => Promise<void>;
 export type SSRBodyTemplate = Context => $PropertyType<Context, 'body'>;
 
 export type RenderType = (any, Context) => any;
+
+export type RouteTagsType = {
+  from: (ctx: Context) => {[string]: string},
+};

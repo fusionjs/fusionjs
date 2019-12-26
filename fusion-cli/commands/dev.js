@@ -13,6 +13,7 @@ const winston = require('winston');
 const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
 const {TestAppRuntime} = require('../build/test-runtime');
+const {execSync: exec} = require('child_process');
 
 exports.run = async function(
   {
@@ -86,7 +87,16 @@ exports.run = async function(
   });
 
   // Rerun for each recompile
-  compiler.on('done', runAll);
+  compiler.on('done', () => {
+    if (debug) {
+      // make the default node debug port available for attaching by killing the
+      // old attached process
+      try {
+        exec('kill -9 $(lsof -n -t -i:9229)');
+      } catch (e) {} // eslint-disable-line
+    }
+    runAll();
+  });
   compiler.on('invalid', () => devRuntime.invalidate());
 
   function stop() {
