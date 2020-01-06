@@ -24,13 +24,11 @@ export default function(dir /*: string */) {
   return createPlugin/*:: <AssetsDepsType, AssetsType> */(
     {
       middleware: () => {
-        const {baseAssetPath, env} = getEnv();
-
+        const {baseAssetPath, env, dangerouslyExposeSourceMaps} = getEnv();
         const denyList = new Set();
-
-        if (!__DEV__) {
-          // Add sourcemaps to static asset denylist in production
-          for (let chunk of chunks.values()) {
+        for (let chunk of chunks.values()) {
+          if (!__DEV__ && !dangerouslyExposeSourceMaps) {
+            // Add sourcemaps to static asset denylist
             denyList.add(`/${path.basename(chunk)}.map`);
           }
         }

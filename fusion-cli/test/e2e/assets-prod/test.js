@@ -10,6 +10,10 @@ const {cmd, start} = require('../utils.js');
 
 const dir = path.resolve(__dirname, './fixture');
 
+function isWithMap(file) {
+  return file.endsWith('-with-map.js');
+}
+
 test('source maps for JS static assets are not served in production', async () => {
   const env = {...process.env, NODE_ENV: 'production'};
   await cmd(`build --dir=${dir} --production`, {env});
@@ -19,7 +23,7 @@ test('source maps for JS static assets are not served in production', async () =
 
     const bundles = fs
       .readdirSync(path.join(dir, '.fusion/dist/production/client'))
-      .filter(file => path.extname(file) === '.js');
+      .filter(file => path.extname(file) === '.js' && !isWithMap(file));
     t.ok(bundles.length > 0);
 
     for (const bundle of bundles) {

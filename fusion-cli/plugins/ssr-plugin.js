@@ -14,6 +14,7 @@ import {
   consumeSanitizedHTML,
   CriticalChunkIdsToken,
   RoutePrefixToken,
+  getEnv,
 } from 'fusion-core';
 
 import {
@@ -37,6 +38,7 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
       routePrefix: RoutePrefixToken.optional,
     },
     provides: ({criticalChunkIds, routePrefix}) => {
+      const {dangerouslyExposeSourceMaps} = getEnv();
       return ctx => {
         const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
         const safeAttrs = Object.keys(htmlAttrs)
@@ -118,6 +120,10 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
         let preloadHints = [];
 
         for (let url of criticalChunkUrls) {
+          if (!__DEV__ && dangerouslyExposeSourceMaps) {
+            // Use -with-map.js bundles
+            url = addWithMap(url);
+          }
           const crossoriginAttr = process.env.CDN_URL
             ? ' crossorigin="anonymous"'
             : '';
@@ -179,4 +185,12 @@ function checkModuleSupport({name, version}) {
 
 function majorVersion(version) {
   return parseInt(version.split('.')[0], 10);
+}
+
+function addWithMap(url) {
+  if (url.endsWith('-with-map.js')) {
+    return url;
+  } else {
+    return url.replace(/\.js$/, '-with-map.js');
+  }
 }
