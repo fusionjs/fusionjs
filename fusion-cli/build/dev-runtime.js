@@ -90,6 +90,7 @@ module.exports.DevelopmentRuntime = function(
     const childPort = await getPort();
     const command = `
       process.on('SIGTERM', () => process.exit());
+      process.on('SIGINT', () => process.exit());
 
       const fs = require('fs');
       const path = require('path');

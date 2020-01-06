@@ -45,6 +45,7 @@ const {
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
+const SourceMapPlugin = require('./plugins/source-map-plugin.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -227,15 +228,17 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
      * `cheap-module-source-map` is best supported by Chrome DevTools
      * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
      *
-     * We use `hidden-source-map` in production to produce a source map but
-     * omit the source map comment in the source file.
+     * We use `source-map` in production but effectively create a
+     * `hidden-source-map` using SourceMapPlugin to strip the comment.
      *
      * Chrome DevTools support doesn't matter in these case.
      * We only use it for generating nice stack traces
      */
     // TODO(#6): what about node v8 inspector?
     devtool:
-      (runtime === 'client' && !dev) || runtime === 'sw'
+      runtime === 'client' && !dev
+        ? 'source-map'
+        : runtime === 'sw'
         ? 'hidden-source-map'
         : 'cheap-module-source-map',
     output: {
@@ -452,6 +455,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     },
 
     plugins: [
+      runtime === 'client' && !dev && new SourceMapPlugin(),
       runtime === 'client' &&
         new webpack.optimize.RuntimeChunkPlugin({
           name: 'runtime',
