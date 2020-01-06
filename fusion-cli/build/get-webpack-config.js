@@ -15,6 +15,7 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const DefaultNoImportSideEffectsPlugin = require('default-no-import-side-effects-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const {
   gzipWebpackPlugin,
@@ -455,6 +456,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         new webpack.optimize.RuntimeChunkPlugin({
           name: 'runtime',
         }),
+      (fusionConfig.defaultImportSideEffects === false ||
+        Array.isArray(fusionConfig.defaultImportSideEffects)) &&
+        new DefaultNoImportSideEffectsPlugin(
+          Array.isArray(fusionConfig.defaultImportSideEffects)
+            ? {ignoredPackages: fusionConfig.defaultImportSideEffects}
+            : {}
+        ),
       new webpack.optimize.SideEffectsFlagPlugin(),
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),

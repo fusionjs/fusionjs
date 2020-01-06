@@ -19,9 +19,36 @@ module.exports = {
 };
 ```
 
-**Please note that custom Babel config is an unstable API and may not be supported in future releases.**
+## Import side effects, import pruning, and tree shaking
 
-## `assumeNoImportSideEffects`
+### `defaultImportSideEffects`
+
+This option controls how `fusion-cli` handles pruning of unused/unreachable import statements.
+
+By default this is `true`. In other words, import statements to other packages are assumed to have import side effects unless specified otherwise. Therefore, any unreachable/unused import statements cannot be pruned/tree-shaken unless the module being imported is explicitly marked as `sideEffects: false` in its package.json. This is the most conservative setting.
+
+Setting this to `false` means that unreachable/unused imports to packages into your app may be pruned (unless they explicitly specify import side effects in their `package.json` via the `sideEffects` field). Note that this only applies to imports to other packages from within your application source code. Imports within other packages to other packages will not be affected by this configuration. This is the recommended setting because it allows for a greater degree of import pruning with respect to imports used only in `__BROWSER__` or `__NODE__`.
+
+```js
+module.exports = {
+  // All packages omitting a sideEffects field are assumed to be free of import side effects
+  defaultImportSideEffects: false,
+};
+```
+
+Setting this to an array of package names is the same as `false` with the exception of the specified packages.
+
+```js
+module.exports = {
+  // All packages omitting a sideEffects field are assumed to be free of import side effects
+  // *except* core-js, which is assumed to have import side effects.
+  defaultImportSideEffects: ["core-js"],
+};
+```
+
+Note: `defaultImportSideEffects` applies to packages but *not* your application code. Use the standard `sideEffects` field in your app `package.json` to specify which project code files, when imported, cause side effects to happen.
+
+### `assumeNoImportSideEffects` (deprecated in favor of `defaultImportSideEffects`)
 
 By default this is `false`.
 

@@ -9,8 +9,14 @@
  */
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
-import {ElementToken, RenderToken, SSRDeciderToken} from './tokens';
+import {
+  ElementToken,
+  RenderToken,
+  SSRDeciderToken,
+  RouteTagsToken,
+} from './tokens';
 import {SSRDecider} from './plugins/ssr';
+import RouteTagsPlugin from './plugins/route-tags';
 
 import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
@@ -29,6 +35,7 @@ class FusionApp {
     el && this.register(ElementToken, el);
     render && this.register(RenderToken, render);
     this.register(SSRDeciderToken, SSRDecider);
+    this.register(RouteTagsToken, RouteTagsPlugin);
   }
 
   // eslint-disable-next-line

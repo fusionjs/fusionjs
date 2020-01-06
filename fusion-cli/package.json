@@ -45,6 +45,7 @@
     "chalk": "^2.4.2",
     "compression-webpack-plugin": "^2.0.0",
     "core-js": "^3.0.0",
+    "default-no-import-side-effects-webpack-plugin": "1.0.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "enzyme-to-json": "^3.3.4",
     "get-port": "^5.0.0",
