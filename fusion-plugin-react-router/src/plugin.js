@@ -11,7 +11,14 @@ import {Router as DefaultProvider} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {createPlugin, createToken, html, unescape, memoize} from 'fusion-core';
+import {
+  createPlugin,
+  createToken,
+  html,
+  unescape,
+  memoize,
+  RouteTagsToken,
+} from 'fusion-core';
 import type {Token, Context, FusionPlugin} from 'fusion-core';
 
 import {Router as ServerRouter} from './server.js';
@@ -44,6 +51,7 @@ const Router = __NODE__ ? ServerRouter : BrowserRouter;
 type PluginDepsType = {
   emitter: typeof UniversalEventsToken.optional,
   Provider: typeof RouterProviderToken.optional,
+  RouteTags: typeof RouteTagsToken,
 };
 
 // Preserve browser history instance across HMR
@@ -53,9 +61,11 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
     Provider: RouterProviderToken.optional,
+    RouteTags: RouteTagsToken,
   },
-  middleware: ({emitter, Provider = DefaultProvider}, self) => {
+  middleware: ({RouteTags, emitter, Provider = DefaultProvider}, self) => {
     return async (ctx, next) => {
+      const tags = RouteTags.from(ctx);
       const prefix = ctx.prefix || '';
       if (!ctx.element) {
         return next();
@@ -89,6 +99,8 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             Provider={Provider}
             onRoute={d => {
               pageData = d;
+              tags.name = pageData.title;
+              tags.page = pageData.page;
             }}
             basename={prefix}
             context={context}
@@ -133,6 +145,8 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         const element = document.getElementById('__ROUTER_DATA__');
         if (element) {
           pageData = JSON.parse(unescape(element.textContent));
+          tags.name = pageData.title;
+          tags.page = pageData.page;
         }
         emitter &&
           emitter.map(payload => {
@@ -160,6 +174,8 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             basename={ctx.prefix}
             onRoute={payload => {
               pageData = payload;
+              tags.name = pageData.title;
+              tags.page = pageData.page;
               emitter && emitter.emit('pageview:browser', payload);
             }}
           >
