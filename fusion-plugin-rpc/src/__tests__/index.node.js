@@ -9,6 +9,7 @@
 import test from 'tape-cup';
 import MockEmitter from 'events';
 import MockReq from 'mock-req';
+import FormData from 'form-data';
 
 import App, {createPlugin, createToken} from 'fusion-core';
 import type {Context, Token} from 'fusion-core';
@@ -802,6 +803,73 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
       return 1;
     },
   };
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      t.equal(type, 'rpc:method');
+      t.equal(payload.method, 'test');
+      t.equal(payload.origin, 'browser');
+      t.equal(payload.status, 'success');
+      t.equal(typeof payload.timing, 'number');
+    },
+  });
+
+  const middleware =
+    RPCPlugin.middleware &&
+    RPCPlugin.middleware(
+      {
+        emitter: mockEmitter,
+        handlers: mockHandlers,
+      },
+      mockService
+    );
+  if (!middleware) {
+    t.fail();
+    t.end();
+    return;
+  }
+
+  try {
+    await middleware(mockCtx, () => Promise.resolve());
+  } catch (e) {
+    t.fail(e);
+  }
+  t.end();
+});
+
+test('middleware - parse formData', async t => {
+  const form = new FormData();
+  form.append('name', 'test');
+  const req = new MockReq({
+    method: 'POST',
+    url: '/api/test',
+    headers: {
+      ...form.getHeaders(),
+      'content-length': 3,
+    },
+  });
+  form.pipe(req);
+  req.end();
+  const mockCtx: Context = ({
+    req,
+    headers: {
+      'content-type': 'multipart/form-data',
+    },
+    prefix: '/lol',
+    path: '/api/test',
+    method: 'POST',
+    request: {
+      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+    },
+  }: any);
+
+  const mockHandlers = {
+    test(args, ctx) {
+      t.deepEqual(args, {name: 'test'});
+      t.equal(ctx, mockCtx);
+      return 1;
+    },
+  };
+
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       t.equal(type, 'rpc:method');

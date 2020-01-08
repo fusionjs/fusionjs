@@ -118,7 +118,7 @@ module.exports.DevelopmentRuntime = function(
       if (fs.existsSync(entry)) {
         try {
           const {start} = require(entry);
-          start({port: ${childPort}, dir: "${dir}"})
+          start({port: ${childPort}})
             .then(() => {
               process.send({event: 'started'})
             })

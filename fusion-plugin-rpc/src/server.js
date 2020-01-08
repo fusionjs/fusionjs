@@ -9,6 +9,7 @@
 /* eslint-env node */
 
 import bodyparser from 'koa-bodyparser';
+import formidable from 'formidable';
 
 import {createPlugin, memoize} from 'fusion-core';
 import type {Context} from 'fusion-core';
@@ -126,6 +127,7 @@ const pluginFactory: () => RPCPluginType = () =>
       if (!emitter)
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
+      const form = new formidable.IncomingForm();
 
       const apiPath = formatApiPath(
         rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
@@ -140,8 +142,30 @@ const pluginFactory: () => RPCPluginType = () =>
           const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
           const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
+            let body;
             try {
-              await parseBody(ctx, () => Promise.resolve());
+              if (
+                ctx.req &&
+                ctx.req.headers &&
+                ctx.req.headers['content-type'] &&
+                ctx.req.headers['content-type'].indexOf(
+                  'multipart/form-data'
+                ) !== -1
+              ) {
+                body = await new Promise((resolve, reject) => {
+                  form.parse(ctx.req, (err, fields: {[string]: any}, files) => {
+                    if (err) {
+                      reject(err);
+                    }
+                    if (fields && Object.keys(fields).length) {
+                      resolve(fields);
+                    }
+                    resolve(files.file);
+                  });
+                });
+              } else {
+                await parseBody(ctx, () => Promise.resolve());
+              }
             } catch (e) {
               ctx.body = {
                 status: 'failure',
@@ -165,7 +189,10 @@ const pluginFactory: () => RPCPluginType = () =>
             }
 
             try {
-              const result = await handlers[method](ctx.request.body, ctx);
+              const result = await handlers[method](
+                body || ctx.request.body,
+                ctx
+              );
               ctx.body = {
                 status: 'success',
                 data: result,
