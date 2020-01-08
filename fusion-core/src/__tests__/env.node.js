@@ -19,6 +19,7 @@ tape('loadEnv defaults', t => {
     baseAssetPath: '/_static',
     cdnUrl: '',
     webpackPublicPath: '/_static',
+    dangerouslyExposeSourceMaps: false,
   });
   t.end();
 });
@@ -29,6 +30,7 @@ tape('loadEnv overrides', t => {
   process.env.ROUTE_PREFIX = 'test_route_prefix';
   process.env.FRAMEWORK_STATIC_ASSET_PATH = '/test_framework';
   process.env.CDN_URL = 'test_cdn_url';
+  process.env.DANGEROUSLY_EXPOSE_SOURCE_MAPS = 'true';
 
   const env = loadEnv()();
   t.deepEqual(env, {
@@ -39,6 +41,7 @@ tape('loadEnv overrides', t => {
     baseAssetPath: '/test_framework',
     cdnUrl: 'test_cdn_url',
     webpackPublicPath: 'test_cdn_url',
+    dangerouslyExposeSourceMaps: true,
   });
 
   process.env.ROOT_DIR = '';

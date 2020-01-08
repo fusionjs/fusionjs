@@ -12,9 +12,11 @@ import type {
   SSRDecider,
   SSRBodyTemplate,
   Context,
+  RouteTagsType,
 } from './types.js';
 import type {Server} from 'http';
 
+export const RouteTagsToken = createToken<RouteTagsType>('RouteTagsToken');
 export const RenderToken = createToken<RenderType>('RenderToken');
 export const ElementToken = createToken<any>('ElementToken');
 export const SSRDeciderToken = createToken<SSRDecider>('SSRDeciderToken');

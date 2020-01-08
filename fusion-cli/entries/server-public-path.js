@@ -45,8 +45,10 @@ if (prefix) {
   assetBasePath = prefix + assetBasePath;
 }
 
+const dangerouslyExposeSourceMaps = load('DANGEROUSLY_EXPOSE_SOURCE_MAPS');
 // eslint-disable-next-line
-__webpack_public_path__ = cdnUrl ? cdnUrl + '/' : assetBasePath;
+__webpack_public_path__ =
+  cdnUrl && !dangerouslyExposeSourceMaps ? cdnUrl + '/' : assetBasePath;
 
 function load(key) {
   const value = process.env[key];

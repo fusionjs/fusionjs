@@ -29,6 +29,10 @@ export function loadEnv() {
   );
   const cdnUrl = load('CDN_URL', '');
   assert(!cdnUrl.endsWith('/'), 'CDN_URL must not end with /');
+  const dangerouslyExposeSourceMaps = load(
+    'DANGEROUSLY_EXPOSE_SOURCE_MAPS',
+    'false'
+  );
 
   const assetPath = `${prefix}${baseAssetPath}`;
   return function loadEnv(): Env {
@@ -40,6 +44,7 @@ export function loadEnv() {
       baseAssetPath,
       cdnUrl,
       webpackPublicPath: cdnUrl || assetPath,
+      dangerouslyExposeSourceMaps: dangerouslyExposeSourceMaps === 'true',
     };
   };
 }
@@ -53,5 +58,6 @@ type Env = {
   baseAssetPath: string,
   cdnUrl: string,
   webpackPublicPath: string,
+  dangerouslyExposeSourceMaps: boolean,
 };
 declare export default () => Env;
