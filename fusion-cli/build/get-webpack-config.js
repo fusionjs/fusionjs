@@ -596,6 +596,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
               cache: true, // default from webpack
               parallel: true, // default from webpack
+              extractComments: false,
               terserOptions: {
                 compress: {
                   // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
