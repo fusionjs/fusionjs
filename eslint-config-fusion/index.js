@@ -36,6 +36,7 @@ module.exports = {
     'flowtype/space-after-type-colon': 'off',
 
     'require-atomic-updates': 0,
+    'dot-notation': 'error',
   },
   settings: {
     react: {
