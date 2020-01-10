@@ -27,6 +27,7 @@ test('`fusion build` with assets', async () => {
       .readFileSync(path.resolve(dir, 'src/static/test.css'))
       .toString();
     t.equal(res.headers['cache-control'], 'public, max-age=31536000');
+    t.equal(res.headers['x-route-name'], 'static_asset');
     t.equal(res.body, contents);
     t.equal(res.headers['x-test'], 'test');
     proc.kill('SIGKILL');
@@ -53,6 +54,7 @@ test('`fusion build` with assets', async () => {
       .toString();
     t.equal(res.body, contents);
     t.equal(res.headers['x-test'], 'test');
+    t.equal(res.headers['x-route-name'], 'static_asset');
     proc.kill('SIGKILL');
   } catch (e) {
     t.ifError(e);
@@ -86,9 +88,15 @@ test('`fusion dev` works with assets', async () => {
     t.equal(await request(`${url}/dirname`), 'src');
     t.equal(await request(`${url}/filename`), 'src/main.js');
 
-    const jsonAssetUrl = await request(`${url}/json`);
-    const jsonAsset = await request(url + jsonAssetUrl);
-    t.equal(jsonAssetUrl, '/_static/8dc83113b16a107e573e02bd18468b22.json');
+    const jsonAssetRes = await request(`${url}/json`, {
+      resolveWithFullResponse: true,
+    });
+    t.equal(jsonAssetRes.headers['x-route-name'], 'unknown_route');
+    const jsonAsset = await request(url + jsonAssetRes.body);
+    t.equal(
+      jsonAssetRes.body,
+      '/_static/8dc83113b16a107e573e02bd18468b22.json'
+    );
     t.deepEqual(
       JSON.parse(jsonAsset),
       {key: 'value', unused_key: ''},

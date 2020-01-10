@@ -10,7 +10,7 @@
 /*::
 import type {AssetsDepsType, AssetsType} from './types.js';
 */
-import {createPlugin, getEnv} from 'fusion-core';
+import {createPlugin, getEnv, RouteTagsToken} from 'fusion-core';
 
 // $FlowFixMe
 import {chunks} from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
@@ -23,7 +23,10 @@ export default function(dir /*: string */) {
   /* eslint-disable-next-line */
   return createPlugin/*:: <AssetsDepsType, AssetsType> */(
     {
-      middleware: () => {
+      deps: {
+        RouteTags: RouteTagsToken,
+      },
+      middleware: ({RouteTags}) => {
         const {baseAssetPath, env, dangerouslyExposeSourceMaps} = getEnv();
         const denyList = new Set();
         for (let chunk of chunks.values()) {
@@ -50,6 +53,7 @@ export default function(dir /*: string */) {
         );
 
         return mount(baseAssetPath, (ctx, next) => {
+          RouteTags.from(ctx).name = 'static_asset';
           if (denyList.has(ctx.url)) {
             return next();
           }
