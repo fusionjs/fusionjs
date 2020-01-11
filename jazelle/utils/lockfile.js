@@ -482,7 +482,7 @@ const update /*: Update */ = async ({
       const oldKeys = Object.keys(item.lockfile);
       const newKeys = Object.keys(lockfile);
       if (oldKeys.sort().join() !== newKeys.sort().join()) {
-        console.error(
+        throw new Error(
           `Updating lockfile is not allowed with frozenLockfile. ` +
             `This error is most likely happening if you have committed ` +
             `out-of-date lockfiles and tried to install deps in CI. ` +
