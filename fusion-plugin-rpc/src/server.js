@@ -11,7 +11,7 @@
 import bodyparser from 'koa-bodyparser';
 import formidable from 'formidable';
 
-import {createPlugin, memoize} from 'fusion-core';
+import {createPlugin, memoize, RouteTagsToken} from 'fusion-core';
 import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import type {Fetch} from 'fusion-tokens';
@@ -105,6 +105,7 @@ class RPC {
 const pluginFactory: () => RPCPluginType = () =>
   createPlugin({
     deps: {
+      RouteTags: RouteTagsToken.optional,
       emitter: UniversalEventsToken,
       handlers: RPCHandlersToken,
       bodyParserOptions: BodyParserOptionsToken.optional,
@@ -135,6 +136,7 @@ const pluginFactory: () => RPCPluginType = () =>
 
       return async (ctx, next) => {
         await next();
+        const routeTags = (deps.RouteTags && deps.RouteTags.from(ctx)) || {};
         const scopedEmitter = emitter.from(ctx);
         if (ctx.method === 'POST' && ctx.path.startsWith(apiPath)) {
           const startTime = ms();
@@ -142,6 +144,7 @@ const pluginFactory: () => RPCPluginType = () =>
           const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
           const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
+            routeTags.name = method;
             let body;
             try {
               if (

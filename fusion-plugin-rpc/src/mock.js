@@ -6,7 +6,7 @@
  * @flow
  */
 
-import {createPlugin} from 'fusion-core';
+import {createPlugin, RouteTagsToken} from 'fusion-core';
 import type {Context} from 'fusion-core';
 import type {Fetch} from 'fusion-tokens';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -40,6 +40,7 @@ class RPC {
 
 const plugin: RPCPluginType = createPlugin({
   deps: {
+    RouteTags: RouteTagsToken.optional,
     handlers: RPCHandlersToken,
     // $FlowFixMe
     emitter: UniversalEventsToken.optional,
