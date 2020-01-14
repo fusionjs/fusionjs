@@ -9,10 +9,17 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-// $FlowFixMe
-import {__RouterContext as RouterContext} from 'react-router-dom';
+import {
+  // $FlowFixMe
+  __RouterContext as RouterContext,
+  Redirect as RedirectComponent,
+} from 'react-router-dom';
 
-import type {LocationShapeType, RedirectType} from '../types.js';
+import type {
+  LocationShapeType,
+  RedirectType,
+  StaticContextType,
+} from '../types.js';
 
 type PropsType = {|
   to: string | LocationShapeType,
@@ -24,37 +31,11 @@ type PropsType = {|
   children?: React.Node,
 |};
 
-type HistoryContextType = {
-  push: (el: string | LocationShapeType) => void,
-  replace: (el: string | LocationShapeType) => void,
-};
-
-type StaticContextType = {
-  setCode: (code: number) => void,
-  redirect: (el: string | LocationShapeType) => void,
-};
-
 type ContextType = {
   router?: {
     staticContext?: StaticContextType,
   },
 };
-
-class Lifecycle extends React.Component<{
-  onConstruct?: (self: Lifecycle) => void,
-  onMount?: (self: Lifecycle) => void,
-}> {
-  constructor(props) {
-    super(props);
-    if (this.props.onConstruct) this.props.onConstruct.call(this, this);
-  }
-  componentDidMount() {
-    if (this.props.onMount) this.props.onMount.call(this, this);
-  }
-  render() {
-    return null;
-  }
-}
 
 export class Redirect extends React.Component<PropsType> {
   context: ContextType;
@@ -64,40 +45,19 @@ export class Redirect extends React.Component<PropsType> {
     code: 307,
   };
 
-  isStatic(context: ContextType = this.context): boolean {
-    return !!(context && context.router && context.router.staticContext);
-  }
-
-  perform(history: HistoryContextType, staticContext: ?StaticContextType) {
-    const {push, to, code} = this.props;
-
-    if (__NODE__ && staticContext) {
-      staticContext.setCode(parseInt(code, 10));
-      staticContext.redirect(to);
-      return;
-    }
-
-    if (push) {
-      history.push(to);
-    } else {
-      history.replace(to);
-    }
-  }
-
   render() {
     return (
       <RouterContext.Consumer>
         {context => {
-          const history = context.history;
           const staticContext =
             this.context.router && this.context.router.staticContext;
-          const perform = () => this.perform(history, staticContext);
 
-          const props = this.isStatic()
-            ? {onConstruct: perform}
-            : {onMount: perform};
+          if (__NODE__ && staticContext) {
+            staticContext.status = parseInt(this.props.code, 10);
+          }
 
-          return <Lifecycle {...props} />;
+          const {children, code, ...rest} = this.props;
+          return <RedirectComponent {...rest} />;
         }}
       </RouterContext.Consumer>
     );

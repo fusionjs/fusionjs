@@ -147,6 +147,33 @@ The [universal events](https://github.com/fusionjs/fusionjs/tree/master/fusion-p
 Provide the UniversalEventsToken when you would like to emit routing events for data collection.
 
 
+##### `GetStaticContextToken`
+
+```js
+import {GetStaticContextToken} from 'fusion-plugin-react-router';
+```
+
+Gives the ability to register custom static context for handling server side redirects and setting the status code. Optional.
+
+For example:
+
+```js
+import type {Context} from 'fusion-core';
+import {GetStaticContextToken} from 'fusion-plugin-react-router';
+
+app.register(GetStaticContextToken, (ctx: Context) => {
+  return {
+    set status(code: string) {
+      ctx.status = code;
+    },
+    set url(url: string) {
+      ctx.status = 307;
+      ctx.redirect(url);
+    }
+  }
+});
+```
+
 ---
 
 #### Routing Events and Timing Metrics
@@ -210,8 +237,7 @@ import {Router} from 'fusion-plugin-react-router';
 
 * `location: string` - Required. The current pathname. Should be `ctx.url` in a Fusion plugin, or `req.url` in the server or `location.pathname` in the client
 * `basename: string` - Optional. Defaults to `''`. A route prefix.
-* `context: {setCode: (string) => void}` - Optional.
-  * `setCode: (string) => void` - Called when `<Status />` is mounted. Provides an HTTP status code.
+* `context: {url: string, status: string}` - Optional.
 * `onRoute: ({page: string, title: string}) => void` - Optional. Called when a route change happens. Provides a pathname and a title.
 * `child: React.Element` - Required.
 
