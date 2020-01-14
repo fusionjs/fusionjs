@@ -50,6 +50,7 @@ const findChangedBazelTargets = async ({root, files}) => {
           // - in the case the package itself was deleted, pkg will refer to the root package (which will typically yield no targets in a typical Jazelle setup)
           const regex = /not declared in package '(.*?)'/;
           const [, pkg = ''] = e.message.match(regex) || [];
+          if (pkg === '') return '';
           const cmd = `${bazel} query 'kind("source file", //${pkg}:*)' | head -n 1`;
           return exec(cmd);
         });
