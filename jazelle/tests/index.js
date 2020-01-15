@@ -154,7 +154,7 @@ async function testInstallAddUpgradeRemove() {
   assert(await exists(bDep));
   assert(await exists(bindDep));
   assert(await exists(downstreamLockfile));
-  assert(!(await exists(notDownstreamLockfile)));
+  assert(await exists(notDownstreamLockfile));
 
   // add linked package
   await add({

@@ -449,13 +449,15 @@ const update /*: Update */ = async ({
   }
 
   // sync
+  process.stdout.write('Checking lockfiles');
   for (const item of sets) {
     const {dir, meta} = item;
     const registry = await getRegistry(dir);
     const graph = {};
+    process.stdout.write('.');
     for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
-      if (!ignored)
+      if (!ignored) {
         populateGraph({
           graph,
           name,
@@ -463,6 +465,7 @@ const update /*: Update */ = async ({
           index,
           registry,
         });
+      }
     }
 
     // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
@@ -493,6 +496,7 @@ const update /*: Update */ = async ({
       item.lockfile = lockfile;
     }
   }
+  process.stdout.write('\n');
 
   return sets;
 };
