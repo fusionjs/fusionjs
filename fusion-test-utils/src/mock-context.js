@@ -40,7 +40,12 @@ export function createRequestContext(
   const Stream = require('stream');
   const Koa = require('koa');
   let req = httpMocks.createRequest({url, ...options});
-  let res = httpMocks.createResponse();
+  let res = httpMocks.createResponse({
+    /* Import the event emitter as described here:
+    /* https://github.com/howardabrams/node-mocks-http/tree/a88c9e31e08a95976973ea7d79e46496dbfefb9d#createresponse
+    */
+    eventEmitter: require('events').EventEmitter,
+  });
 
   const outHeadersKey = Object.getOwnPropertySymbols(
     // $FlowFixMe
@@ -57,10 +62,17 @@ export function createRequestContext(
   const socket = new Stream.Duplex();
   //$FlowFixMe
   req = Object.assign({headers: {}, socket}, Stream.Readable.prototype, req);
+  if (!req.connection) {
+    req.connection = {
+      encrypted: false,
+    };
+  }
+  const onEmitter = res.on;
   //$FlowFixMe
   res = Object.assign({_headers: {}, socket}, Stream.Writable.prototype, res, {
     statusCode: 404,
   });
+  res.on = onEmitter;
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
   res.getHeader = k => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);

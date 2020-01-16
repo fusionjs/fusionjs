@@ -46,7 +46,9 @@
     "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "unitest": "^2.1.1",
+    "fusion-plugin-http-handler": "0.0.0-monorepo",
+    "express": "^4.16.4"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -62,7 +64,8 @@
   "dependencies": {
     "assert": "^1.4.1",
     "koa": "^2.7.0",
-    "node-mocks-http": "^1.7.5"
+    "node-mocks-http": "^1.7.5",
+    "express": "^4.16.4"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo"
