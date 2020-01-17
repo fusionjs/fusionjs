@@ -55,6 +55,7 @@ const findChangedBazelTargets = async ({root, files}) => {
           return exec(cmd);
         });
         const target = result.trim();
+        if (target === '') return '';
         const all = target.replace(/:.+/, ':*');
         const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
         const project = await exec(cmd, opts);

@@ -652,6 +652,12 @@ async function testFindChangedTargets() {
       '//a:flow',
     ]);
   }
+  {
+    const root = `${__dirname}/fixtures/find-changed-targets/no-target`;
+    const files = `${__dirname}/fixtures/find-changed-targets/no-target/changes.txt`;
+    const dirs = await findChangedTargets({root, files});
+    assert.deepEqual(dirs, []);
+  }
 }
 
 async function testFindLocalDependency() {
