@@ -572,6 +572,14 @@ Runs a project. Calls `scripts.start` in package.json
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of arguments to pass to the start script
 
+### `jazelle bin-path`
+
+Print the local path of a binary
+
+`jazelle bin-path [name]`
+
+- `name` - 'bazel', 'node', or 'yarn'
+
 ### `jazelle bazel`
 
 Runs a Bazel command
@@ -944,6 +952,14 @@ Runs a project. Calls `scripts.start` in package.json
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
 - `args` - A list of arguments to pass to the start script
+
+### `binPath`
+
+Print the local path of a binary
+
+`let binPath: = (name: 'bazel' | 'node' | 'yarn') => string`
+
+- `name` - 'bazel', 'node', or 'yarn'
 
 ### `bazel`
 
