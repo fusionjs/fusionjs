@@ -621,7 +621,7 @@ async function testFindChangedTargets() {
   {
     const root = `${__dirname}/fixtures/find-changed-targets/dirs`;
     const files = `${__dirname}/fixtures/find-changed-targets/dirs/changes.txt`;
-    const dirs = await findChangedTargets({root, files});
+    const dirs = await findChangedTargets({root, files, format: 'dirs'});
     assert.deepEqual(dirs, ['b', 'a']);
   }
   {
@@ -642,7 +642,7 @@ async function testFindChangedTargets() {
       root: `${__dirname}/tmp/find-changed-targets/bazel`,
       cwd: `${__dirname}/tmp/find-changed-targets/bazel/c`,
     });
-    const targets = await findChangedTargets({root, files});
+    const targets = await findChangedTargets({root, files, format: 'targets'});
     assert.deepEqual(targets, [
       '//b:test',
       '//b:lint',
@@ -655,7 +655,7 @@ async function testFindChangedTargets() {
   {
     const root = `${__dirname}/fixtures/find-changed-targets/no-target`;
     const files = `${__dirname}/fixtures/find-changed-targets/no-target/changes.txt`;
-    const dirs = await findChangedTargets({root, files});
+    const dirs = await findChangedTargets({root, files, format: 'dirs'});
     assert.deepEqual(dirs, []);
   }
 }

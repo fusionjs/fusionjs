@@ -127,9 +127,9 @@ const runCLI /*: RunCLI */ = async argv => {
         `Lists Bazel test targets that changed given a list of changed files
 
         [files]                    A file containing a list of changed files (one per line). Defaults to stdin
-        --type [type]              'bazel' or 'dirs'. Defaults to 'bazel'`,
-        async ({name, type}) =>
-          changes({root: await rootOf(args), files: name, type}),
+        --format [format]          'targets' or 'dirs'. Defaults to 'targets'`,
+        async ({name, format = 'targets'}) =>
+          changes({root: await rootOf(args), files: name, format}),
       ],
       plan: [
         `Outputs a plan that can be passed to \`jazelle batch\` for parallelizing a group of tests across workers
