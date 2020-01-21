@@ -1,3 +1,5 @@
+#!/bin/bash
+
 YARN_PATH=$(dirname $0)/yarn.js
 VERSION=1.16.0
 
