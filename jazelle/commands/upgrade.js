@@ -40,24 +40,18 @@ const upgrade /*: Upgrade */ = async ({root, name: nameWithVersion, from}) => {
   } else {
     const upgrades = [{name, range: version, from}];
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-    const cache = {};
-    await Promise.all(
-      roots.map(async dir => {
-        await upgradeDep({
-          roots: [dir],
-          upgrades,
-          ignore: await Promise.all(
-            projects.map(async project => {
-              const metaFile = `${root}/${project}/package.json`;
-              const data = await read(metaFile, 'utf8');
-              return JSON.parse(data).name;
-            })
-          ),
-          tmp,
-          cache,
-        });
-      })
-    );
+    await upgradeDep({
+      roots,
+      upgrades,
+      ignore: await Promise.all(
+        projects.map(async project => {
+          const metaFile = `${root}/${project}/package.json`;
+          const data = await read(metaFile, 'utf8');
+          return JSON.parse(data).name;
+        })
+      ),
+      tmp,
+    });
   }
 };
 

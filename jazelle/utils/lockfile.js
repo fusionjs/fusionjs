@@ -45,7 +45,6 @@ const check /*: Check */ = async ({roots}) => {
 };
 
 /*::
-type Cache = {[string]: Promise<string>};
 export type Addition = {
   name: string,
   range: string,
@@ -56,12 +55,11 @@ export type AddArgs = {
   additions?: Array<Addition>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({roots, additions, ignore, tmp, cache}) => {
-  await diff({roots, additions, ignore, tmp, cache});
+const add /*: Add */ = async ({roots, additions, ignore, tmp}) => {
+  await diff({roots, additions, ignore, tmp});
 };
 
 /*::
@@ -70,12 +68,11 @@ export type RemoveArgs = {
   removals?: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Remove = (RemoveArgs) => Promise<void>;
 */
-const remove /*: Remove */ = async ({roots, removals, ignore, tmp, cache}) => {
-  await diff({roots, removals, ignore, tmp, cache});
+const remove /*: Remove */ = async ({roots, removals, ignore, tmp}) => {
+  await diff({roots, removals, ignore, tmp});
 };
 
 /*::
@@ -89,18 +86,11 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({
-  roots,
-  upgrades,
-  ignore,
-  tmp,
-  cache,
-}) => {
-  await diff({roots, upgrades, ignore, tmp, cache});
+const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
+  await diff({roots, upgrades, ignore, tmp});
 };
 
 /*::
@@ -121,7 +111,6 @@ export type RegenerateArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
   frozenLockfile?: boolean,
 };
 export type Regenerate = (RegenerateArgs) => Promise<void>;
@@ -130,10 +119,9 @@ const regenerate /*: Regenerate */ = async ({
   roots,
   ignore,
   tmp,
-  cache,
   frozenLockfile = false,
 }) => {
-  await diff({roots, ignore, tmp, cache, frozenLockfile});
+  await diff({roots, ignore, tmp, frozenLockfile});
 };
 
 /*::
@@ -170,7 +158,6 @@ type DiffArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
-  cache?: Cache,
 };
 type Diff = (DiffArgs) => Promise<void>;
 */
@@ -182,7 +169,6 @@ const diff /*: Diff */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
-  cache,
 }) => {
   const sets = await readVersionSets({roots});
   const updated = /*:: await */ await update({
@@ -193,7 +179,6 @@ const diff /*: Diff */ = async ({
     ignore,
     frozenLockfile,
     tmp,
-    cache,
   });
   if (!frozenLockfile) await writeVersionSets({sets: updated});
 };
@@ -273,7 +258,6 @@ export type UpdateArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
-  cache?: Cache,
 };
 export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
 */
@@ -285,7 +269,6 @@ const update /*: Update */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
-  cache = {},
 }) => {
   // note: this function mutates metadata and lockfile structures in `sets` if:
   // - the originating command was either `add`, `remove` or `upgrade`
@@ -308,7 +291,6 @@ const update /*: Update */ = async ({
       lockfile,
       ignore,
       tmp,
-      cache,
     });
     const hasRemovals = removals.length > 0;
     const hasAdditions = additions.length > 0;
@@ -397,52 +379,34 @@ const applyMetadataUpgrades = ({meta, upgrades}) => {
   }
 };
 
-const installMissingDeps = async ({
-  dir,
-  meta,
-  lockfile,
-  ignore,
-  tmp,
-  cache,
-}) => {
+const installMissingDeps = async ({dir, meta, lockfile, ignore, tmp}) => {
   let edited = false;
 
   // generate lockfile entries for missing top level deps
   const missing = {};
-  const cacheKeyParts = [];
   for (const {name, range, type} of getDepEntries(meta)) {
     if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
       if (!missing[type]) missing[type] = {};
       missing[type][name] = range;
-      cacheKeyParts.push(`${name}@${range}`);
     }
   }
   if (Object.keys(missing).length > 0) {
     const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
     const yarnrc = await getYarnRc(dir);
 
-    // install missing deps and reuse promise in parallel runs if possible
-    const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
-    if (!cache[cacheKey]) {
-      const install = async () => {
-        await exec(`mkdir -p ${cwd}`);
-        await write(
-          `${cwd}/package.json`,
-          `${JSON.stringify(missing, null, 2)}\n`,
-          'utf8'
-        );
-        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+    await exec(`mkdir -p ${cwd}`);
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(missing, null, 2)}\n`,
+      'utf8'
+    );
+    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
-        const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
-        await exec(install, {cwd}, [process.stdout, process.stderr]);
-        return cwd;
-      };
-      cache[cacheKey] = install(); // cache the promise
-    }
-    const cachedCwd = await cache[cacheKey];
+    const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
+    await exec(install, {cwd}, [process.stdout, process.stderr]);
 
     // copy newly installed deps back to original package.json/yarn.lock
-    const [added] = await readVersionSets({roots: [cachedCwd]});
+    const [added] = await readVersionSets({roots: [cwd]});
     for (const {name, range, type} of getDepEntries(added.meta)) {
       if (!meta[type]) meta[type] = {};
       if (meta[type]) meta[type][name] = range;
@@ -472,24 +436,16 @@ const installMissingDeps = async ({
     const yarnrc = await getYarnRc(dir);
 
     // add missing transitives and reuse promise in parallel runs if possible
-    const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
-    if (!cache[cacheKey]) {
-      const add = async () => {
-        await exec(`mkdir -p ${cwd}`);
-        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+    await exec(`mkdir -p ${cwd}`);
+    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
-        await write(`${cwd}/package.json`, '{}\n', 'utf8');
-        const deps = missingTransitives.join(' ');
-        const add = `yarn add ${deps} --ignore-engines`;
-        await exec(add, {cwd}, [process.stdout, process.stderr]);
-        return cwd;
-      };
-      cache[cacheKey] = add(); // cache promise
-    }
-    const cachedCwd = await cache[cacheKey];
+    await write(`${cwd}/package.json`, '{}\n', 'utf8');
+    const deps = missingTransitives.join(' ');
+    const add = `yarn add ${deps} --ignore-engines`;
+    await exec(add, {cwd}, [process.stdout, process.stderr]);
 
     // copy newly installed deps back to original yarn.lock
-    const [added] = await readVersionSets({roots: [cachedCwd]});
+    const [added] = await readVersionSets({roots: [cwd]});
     for (const key in added.lockfile) {
       if (!lockfile[key]) {
         lockfile[key] = added.lockfile[key];
