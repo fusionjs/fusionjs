@@ -50,7 +50,13 @@ export function createRequestContext(
   const outHeadersKey = Object.getOwnPropertySymbols(
     // $FlowFixMe
     new (require('http')).OutgoingMessage()
-  ).filter(sym => /outHeadersKey/.test(sym.toString()))[0];
+  ).filter(
+    sym =>
+      // Node 10
+      /outHeadersKey/.test(sym.toString()) ||
+      // Node 12
+      /kOutHeaders/.test(sym.toString())
+  )[0];
   res[outHeadersKey] = null; // required for headers to work correctly in Node >10
 
   /**
