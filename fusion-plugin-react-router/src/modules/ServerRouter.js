@@ -26,10 +26,37 @@ class ServerRouter extends React.Component<PropsType> {
     onRoute: () => {},
   };
 
+  getRouterStaticContext() {
+    let context = this.props.context;
+    if (context && typeof context.setCode === 'function') {
+      console.warn(
+        'Using context.setCode is deprecated. Use a setter on the status prop instead'
+      );
+      Object.defineProperty(context, 'status', {
+        set: code => {
+          context.setCode(code);
+        },
+        configurable: true,
+      });
+    }
+    if (context && typeof context.redirect === 'function') {
+      console.warn(
+        'Using context.redirect is deprecated. Use a setter on the url prop instead'
+      );
+      Object.defineProperty(context, 'url', {
+        set: url => {
+          context.redirect(url);
+        },
+        configurable: true,
+      });
+    }
+    return context || {};
+  }
+
   getChildContext() {
     return {
       router: {
-        staticContext: this.props.context || {},
+        staticContext: this.getRouterStaticContext(),
       },
       onRoute: (routeData: any) =>
         this.props.onRoute && this.props.onRoute(routeData),
@@ -41,7 +68,11 @@ class ServerRouter extends React.Component<PropsType> {
     if (!Provider) throw new Error('Missing Provider for Server Router');
     return (
       // $FlowFixMe
-      <Provider basename={basename} history={history}>
+      <Provider
+        basename={basename}
+        history={history}
+        staticContext={this.getRouterStaticContext()}
+      >
         {children}
       </Provider>
     );

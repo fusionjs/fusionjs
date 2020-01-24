@@ -30,6 +30,7 @@
     "fusion-plugin-apollo",
     "fusion-core",
     "fusion-cli",
+    "fusion-cli-tests",
     "eslint-config-fusion",
     "create-fusion-plugin",
     "create-fusion-app",

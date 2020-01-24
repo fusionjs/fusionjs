@@ -16,7 +16,11 @@ import test from 'tape-cup';
 import type {FusionPlugin} from 'fusion-core';
 import {Route} from '../modules/Route';
 import {Redirect} from '../modules/Redirect.js';
-import RouterPlugin, {RouterProviderToken, RouterToken} from '../plugin';
+import RouterPlugin, {
+  RouterProviderToken,
+  RouterToken,
+  GetStaticContextToken,
+} from '../plugin';
 
 const addRoutePrefix = (ctx, next) => {
   // hack until we have better route prefix support in fusion-test-utils
@@ -77,6 +81,48 @@ if (__NODE__) {
     const ctx = await simulator.render('/');
     t.equal(ctx.status, 307);
     t.equal(ctx.res.getHeader('Location'), '/lol');
+    cleanup();
+    t.end();
+  });
+
+  test('custom context', async t => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Redirect from="/" to="/lol" />
+        <Route path="/test" component={Hello} />
+      </div>
+    );
+    const app = getApp(element);
+    app.register(GetStaticContextToken, ctx => {
+      return {
+        set status(code) {
+          t.equal(code, 307);
+          ctx.status = 302;
+        },
+        set url(url) {
+          t.equal(url, '/lol');
+          ctx.redirect('/test');
+        },
+      };
+    });
+    const emitter: FusionPlugin<any, any> = createPlugin({
+      provides: () => ({
+        map() {},
+        emit() {},
+        from() {
+          return {
+            map() {},
+            emit() {},
+          };
+        },
+      }),
+    });
+    app.register(UniversalEventsToken, emitter);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/');
+    t.equal(ctx.status, 302);
+    t.equal(ctx.res.getHeader('Location'), '/test');
     cleanup();
     t.end();
   });

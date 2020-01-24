@@ -15,6 +15,7 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const DefaultNoImportSideEffectsPlugin = require('default-no-import-side-effects-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const {
   gzipWebpackPlugin,
@@ -44,6 +45,7 @@ const {
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
+const SourceMapPlugin = require('./plugins/source-map-plugin.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -226,15 +228,17 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
      * `cheap-module-source-map` is best supported by Chrome DevTools
      * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
      *
-     * We use `hidden-source-map` in production to produce a source map but
-     * omit the source map comment in the source file.
+     * We use `source-map` in production but effectively create a
+     * `hidden-source-map` using SourceMapPlugin to strip the comment.
      *
      * Chrome DevTools support doesn't matter in these case.
      * We only use it for generating nice stack traces
      */
     // TODO(#6): what about node v8 inspector?
     devtool:
-      (runtime === 'client' && !dev) || runtime === 'sw'
+      runtime === 'client' && !dev
+        ? 'source-map'
+        : runtime === 'sw'
         ? 'hidden-source-map'
         : 'cheap-module-source-map',
     output: {
@@ -451,10 +455,18 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     },
 
     plugins: [
+      runtime === 'client' && !dev && new SourceMapPlugin(),
       runtime === 'client' &&
         new webpack.optimize.RuntimeChunkPlugin({
           name: 'runtime',
         }),
+      (fusionConfig.defaultImportSideEffects === false ||
+        Array.isArray(fusionConfig.defaultImportSideEffects)) &&
+        new DefaultNoImportSideEffectsPlugin(
+          Array.isArray(fusionConfig.defaultImportSideEffects)
+            ? {ignoredPackages: fusionConfig.defaultImportSideEffects}
+            : {}
+        ),
       new webpack.optimize.SideEffectsFlagPlugin(),
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
@@ -584,6 +596,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
               cache: true, // default from webpack
               parallel: true, // default from webpack
+              extractComments: false,
               terserOptions: {
                 compress: {
                   // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.

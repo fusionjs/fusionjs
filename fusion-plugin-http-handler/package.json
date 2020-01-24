@@ -27,7 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package-v3": "^3.4.7",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -54,8 +54,8 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "eslint . --ignore-path .gitignore",
-    "build": "cup build",
-    "build-tests": "cup build-tests",
+    "build": "cup3 build",
+    "build-tests": "cup3 build-tests",
     "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
     "test": "npm run build-tests && npm run just-test",
     "cover": "npm run build-tests && nyc npm run just-test",

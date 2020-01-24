@@ -15,7 +15,6 @@ const {
   generateBazelBuildRules,
 } = require('../utils/generate-bazel-build-rules.js');
 const {installDeps} = require('../utils/install-deps.js');
-const {getDownstreams} = require('../utils/get-downstreams.js');
 
 /*::
 export type InstallArgs = {
@@ -60,17 +59,9 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
   }
 
   const all = await getAllDependencies({root, projects});
-  const downstreams = [];
-  for (const dep of deps) {
-    downstreams.push(...getDownstreams(all, dep));
-  }
-  const map = {};
-  for (const dep of [...deps, ...downstreams]) {
-    map[dep.meta.name] = dep;
-  }
   await generateDepLockfiles({
     root,
-    deps: Object.keys(map).map(key => map[key]),
+    deps: all,
     ignore: all,
     frozenLockfile,
   });

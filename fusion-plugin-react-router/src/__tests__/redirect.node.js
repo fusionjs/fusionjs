@@ -17,20 +17,50 @@ test('redirects to a new URL', t => {
   const Moved = () => <Redirect to="/hello" />;
   let setCode = false;
   let didRedirect = false;
-  const state = {
+  const ctx = {
     action: null,
     location: null,
-    url: null,
-    setCode: code => {
+    set status(code) {
       t.equal(code, 307);
       setCode = true;
     },
-    redirect: to => {
+    set url(to) {
       t.equal(to, '/hello');
       didRedirect = true;
     },
   };
-  const ctx = state;
+  const history = createServerHistory('/', ctx, '/');
+  const el = (
+    <Router history={history} context={ctx}>
+      <div>
+        <Route path="/" component={Moved} />
+        <Route path="/hello" component={Hello} />
+      </div>
+    </Router>
+  );
+  render(el);
+  t.ok(setCode);
+  t.ok(didRedirect);
+  t.end();
+});
+
+test('redirects with deprecated context', t => {
+  const Hello = () => <div>Hello</div>;
+  const Moved = () => <Redirect to="/hello" />;
+  let setCode = false;
+  let didRedirect = false;
+  const ctx = {
+    action: null,
+    location: null,
+    setCode(code) {
+      t.equal(code, 307);
+      setCode = true;
+    },
+    redirect(to) {
+      t.equal(to, '/hello');
+      didRedirect = true;
+    },
+  };
   const history = createServerHistory('/', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>

@@ -2216,10 +2216,10 @@ eslint-config-cup@^2.0.1:
   resolved "https://registry.npmjs.org/eslint-config-cup/-/eslint-config-cup-2.0.2.tgz#dd96a158fe8ebbcf9f3625041b0a740312072b7e"
   integrity sha512-OUZzNyDV6EtFBlP4lmUt4GTe5yayyamoxCudcVPdJb/KAfnAWfWsL9petQtwPh+i/bvkODDZc7SBQ902462sXQ==
 
-eslint-config-fusion@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.npmjs.org/eslint-config-fusion/-/eslint-config-fusion-6.0.1.tgz#610d27709ddb48c3ec28a250740c6eee8460de22"
-  integrity sha512-PQlZn8ckFz2Hwp2fDWX/K55VeO/mMB3X/iINOgbW48TV8oaHyqTY8zXYi6wR4k40IKdc8OuKG0FiuNuZBwLgqw==
+eslint-config-fusion@^6.0.7:
+  version "6.0.7"
+  resolved "https://registry.npmjs.org/eslint-config-fusion/-/eslint-config-fusion-6.0.7.tgz#3c6af587440fe56a3ee03190b46222e90f2734c3"
+  integrity sha512-0GSkN6W6CoV/gQa8Rc83AZsLbuyrw4h0VuoHlRSpnLJlw+3JLQL/irq+T5MZJe6SvsWwJwOk5hVhUmmF2Pl3ug==
   dependencies:
     eslint-config-uber-universal-stage-3 "^3.0.1"
 
@@ -2719,10 +2719,10 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.npmjs.org/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-fusion-core@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.npmjs.org/fusion-core/-/fusion-core-2.0.2.tgz#6c9caeac7af4f3da5ad28602f8e623ea7ce34ce0"
-  integrity sha512-TB5ObWshv48vSYtbw9k4NrARZGLlNmjxo8j8y+FvVIw3SBlPsdLJyeaU4r3FbAFdYNcq7zP2nKpZzbblAxym4w==
+fusion-core@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.npmjs.org/fusion-core/-/fusion-core-2.0.9.tgz#fbe062b5c6b4e4cf707fff119f7cef27b7eba3ea"
+  integrity sha512-P1crq1MWEIRl22e1abUJEeaGY85bgJrWNybgIFyMTo0hQSeten+EIYrDrTOZ12DjlrLxsanvxDAwxk+UY7N9tQ==
   dependencies:
     koa "^2.7.0"
     koa-compose "^4.1.0"
@@ -2731,10 +2731,10 @@ fusion-core@^2.0.2:
     ua-parser-js "^0.7.19"
     uuid "^3.3.2"
 
-fusion-test-utils@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.npmjs.org/fusion-test-utils/-/fusion-test-utils-2.0.2.tgz#f68ef909c7fdcb10993453cedc1fd55632634519"
-  integrity sha512-e/YwI7Ausf84KoxEdw/E3vmIKS8nTO1zjwodP1JEer7X1gKPIP7MnyL/wGteptaI7iefRBAzWzp3Sw0llLDpmA==
+fusion-test-utils@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.npmjs.org/fusion-test-utils/-/fusion-test-utils-2.0.9.tgz#abdb76c70f0b1ce073d91c8e66f08875d5b39a74"
+  integrity sha512-EyyWYeeLnE3FO2DWPcsVf1xi76NszbzcJjxGrqNJ+a/1i8+ZyMQwtkVlUqMzCkSsZYQyYSlESgk6wT6ksTQT4Q==
   dependencies:
     assert "^1.4.1"
     koa "^2.7.0"

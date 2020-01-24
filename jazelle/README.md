@@ -348,6 +348,8 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle bazel`](#jazelle-bazel)
 - [`jazelle node`](#jazelle-node)
 - [`jazelle yarn`](#jazelle-yarn)
+- [`jazelle exec`](#jazelle-exec)
+- [`jazelle each`](#jazelle-each)
 - [`jazelle bump`](#jazelle-bump)
 - [`jazelle doctor`](#jazelle-doctor)
 - [`jazelle setup`](#jazelle-setup)
@@ -485,6 +487,7 @@ List projects that have changed since the last git commit.
 `jazelle changes`
 
 - `--files` - A file containing a list of changed files, one per line. Defaults to stdin
+- `--format` - 'targets' or 'dirs'. Defaults to 'targets'. Determine whether to return directory paths or bazel targets
 
 The `files` file can be generated via git:
 
@@ -569,6 +572,14 @@ Runs a project. Calls `scripts.start` in package.json
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of arguments to pass to the start script
 
+### `jazelle bin-path`
+
+Print the local path of a binary
+
+`jazelle bin-path [name]`
+
+- `name` - 'bazel', 'node', or 'yarn'
+
 ### `jazelle bazel`
 
 Runs a Bazel command
@@ -595,6 +606,24 @@ Runs a Yarn command
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of Yarn arguments
+
+### `jazelle exec`
+
+Runs a bash script
+
+`jazelle exec --cwd [cwd] [args...]`
+
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+- `args` - List of shell args
+
+### `jazelle each`
+
+Runs a bash script in all projects, parallelizing across CPUs
+
+`jazelle each --cores [cores] [...args]`
+
+- `cores` - Number of cores to use. Defaults to `os.cpus().length - 1`
+- `args` - List of shell args
 
 ### `jazelle bump`
 
@@ -658,6 +687,8 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [bazel](#bazel)
 - [node](#node)
 - [yarn](#yarn)
+- [exec](#exec)
+- [each](#each)
 - [bump](#bump)
 - [doctor](#doctor)
 - [getRootDir](#getRootDir)
@@ -819,6 +850,7 @@ List projects that have changed since the last git commit.
 
 - `root` - Monorepo root folder (absolute path)
 - `files` - The path to a file containing a list of changed files, one per line
+- `format` - 'targets' or 'dirs'. Defaults to 'targets'. Determine whether to return directory paths or bazel targets
 
 The `files` file can be generated via git:
 
@@ -921,6 +953,14 @@ Runs a project. Calls `scripts.start` in package.json
 - `cwd` - Project folder (absolute path)
 - `args` - A list of arguments to pass to the start script
 
+### `binPath`
+
+Print the local path of a binary
+
+`let binPath: = (name: 'bazel' | 'node' | 'yarn') => string`
+
+- `name` - 'bazel', 'node', or 'yarn'
+
 ### `bazel`
 
 Runs a Bazel command
@@ -948,6 +988,26 @@ Runs a Yarn command
 
 - `cwd` - Project folder (absolute path)
 - `args` - List of Yarn args
+
+### `exec`
+
+Runs a bash script
+
+`let exec: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
+- `args` - List of shell args
+
+### `each`
+
+Runs a bash script in all projects, parallelizing across CPUs
+
+`let each: ({root: string, args: Array<string>, cores: string}) => Promise<void>`
+
+- `cwd` - Project folder (absolute path)
+- `args` - List of shell args
+- `cores` - Number of cores to use. Defaults to `os.cpus().length - 1`
 
 ### `bump`
 
@@ -1268,7 +1328,7 @@ Jazelle SHA256 checksum can be computed through the following command:
 curl -fLs https://github.com/lhorie/jazelle/releases/download/v[version]/jazelle-[version].tar.gz | openssl sha256
 ```
 
-Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUM256.txt`. Use the checksums for these files:
+Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUMS256.txt`. Use the checksums for these files:
 
 - `node-v[version]-darwin-x64.tar.gz`
 - `node-v[version]-linux-x64.tar.xz`

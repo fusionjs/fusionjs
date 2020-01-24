@@ -164,6 +164,32 @@ app.register(HttpServerToken, server);
 The `HttpServerToken` is used to register the current server as a dependency that can be utilized from plugins that require
 access to it. This is normally not required but is available for specific usage cases.
 
+##### RouteTagsToken
+
+```js
+import {RouteTagsToken, createPlugin} from 'fusion-core';
+
+createPlugin({
+  deps: {
+    RouteTags: RouteTagsToken,
+  },
+  middleware({RouteTags}) {
+    return (ctx, next) => {
+      const routeTags = RouteTags.from(ctx);
+      if (ctx.path === '/graphql') {
+        routeTags.name = 'graphql';
+        routeTags.customTag = 'custom-value';
+      }
+    }
+  }
+});
+```
+
+The RouteTagsToken exposes an Object for holding tags related to a given request. There is a default tag called 'name' which refers
+to a stable name for a given route. This is useful for situations where you need low cardinality values for metrics and tracing. By
+default, the route name is set to 'unknown_route' by fusion-core. If you are using `fusion-plugin-react-router` it will automatically
+set the route name to the matched react route.
+
 ---
 
 #### Plugin

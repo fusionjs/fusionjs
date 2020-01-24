@@ -51,12 +51,10 @@ function createActionNames(rpcId: string): ActionNamesType {
   }, {});
 }
 
-type Action<TType, TPayload> =
-  | {
-      type: TType,
-      payload: TPayload,
-    }
-  | TType;
+type Action<TType, TPayload> = {
+  type: TType,
+  payload: TPayload,
+};
 type ConvertToAction = <T>(T) => (payload: any) => Action<T, *>;
 type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
 export function createRPCActions(rpcId: string): RPCActionsType {

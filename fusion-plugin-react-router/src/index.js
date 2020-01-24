@@ -6,7 +6,11 @@
  * @flow
  */
 
-import plugin, {RouterProviderToken, RouterToken} from './plugin';
+import plugin, {
+  RouterProviderToken,
+  RouterToken,
+  GetStaticContextToken,
+} from './plugin';
 import * as server from './server';
 import * as browser from './browser';
 
@@ -52,6 +56,7 @@ export {
   Switch,
   withRouter,
   RouterProviderToken,
+  GetStaticContextToken,
   RouterToken,
   useHistory,
   useRouteMatch,

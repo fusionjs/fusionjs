@@ -1,4 +1,7 @@
-// @noflow
+/**
+ * @jest-environment node
+ * @noflow
+ */
 
 /* eslint-env jest, node, browser */
 
