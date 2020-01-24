@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import MockEmitter from 'events';
 
 import App, {createPlugin, createToken} from 'fusion-core';
@@ -48,13 +47,13 @@ function createTestFixture() {
   return app;
 }
 
-test('success status request', t => {
+test('success status request', done => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method-client');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -68,22 +67,20 @@ test('success status request', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
-        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
-            t.equals(options.method, 'POST', 'has right http method');
-            t.equals(
-              options.headers['Content-Type'],
-              'application/json',
-              'has right content-type'
-            );
-            t.equals(options.body, '{}', 'has right body');
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
+            done();
           })
           .catch(e => {
-            t.fail(e);
+            // $FlowFixMe
+            done.fail(e);
           });
 
         wasResolved = true;
@@ -91,11 +88,10 @@ test('success status request', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('success status request (with custom api path)', t => {
+test('success status request (with custom api path)', done => {
   const app = createTestFixture();
 
   app.register(RPCHandlersConfigToken, {apiPath: 'test/api/path'});
@@ -107,26 +103,20 @@ test('success status request (with custom api path)', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
-        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(
-              url,
-              '/test/api/path/test?localeCode=el-GR',
-              'has right url'
-            );
-            t.equals(options.method, 'POST', 'has right http method');
-            t.equals(
-              options.headers['Content-Type'],
-              'application/json',
-              'has right content-type'
-            );
-            t.equals(options.body, '{}', 'has right body');
+            expect(url).toBe('/test/api/path/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
+            done();
           })
           .catch(e => {
-            t.fail(e);
+            // $FlowFixMe
+            done.fail(e);
           });
 
         wasResolved = true;
@@ -134,11 +124,10 @@ test('success status request (with custom api path)', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('success status request (with custom api path containing slashes)', t => {
+test('success status request (with custom api path containing slashes)', done => {
   const app = createTestFixture();
 
   app.register(RPCHandlersConfigToken, {apiPath: '///test/api///path/'});
@@ -150,26 +139,20 @@ test('success status request (with custom api path containing slashes)', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
-        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
           .request('test')
           .then(([url, options]) => {
-            t.equals(
-              url,
-              '/test/api/path/test?localeCode=el-GR',
-              'has right url'
-            );
-            t.equals(options.method, 'POST', 'has right http method');
-            t.equals(
-              options.headers['Content-Type'],
-              'application/json',
-              'has right content-type'
-            );
-            t.equals(options.body, '{}', 'has right body');
+            expect(url).toBe('/test/api/path/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
+            done();
           })
           .catch(e => {
-            t.fail(e);
+            // $FlowFixMe
+            done.fail(e);
           });
 
         wasResolved = true;
@@ -177,17 +160,16 @@ test('success status request (with custom api path containing slashes)', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('success status request w/args and header', t => {
+test('success status request w/args and header', done => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method-client');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -201,27 +183,21 @@ test('success status request w/args and header', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
-        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
           .request('test', {args: 1}, {'test-header': 'header value'})
           .then(([url, options]) => {
-            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
-            t.equals(options.method, 'POST', 'has right http method');
-            t.equals(
-              options.headers['Content-Type'],
-              'application/json',
-              'has right content-type'
-            );
-            t.equals(
-              options.headers['test-header'],
-              'header value',
-              'header is passed'
-            );
-            t.equals(options.body, '{"args":1}', 'has right body');
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.headers['test-header']).toBe('header value');
+            expect(options.body).toBe('{"args":1}');
+            done();
           })
           .catch(e => {
-            t.fail(e);
+            // $FlowFixMe
+            done.fail(e);
           });
 
         wasResolved = true;
@@ -229,17 +205,16 @@ test('success status request w/args and header', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('success status request w/form data', t => {
+test('success status request w/form data', done => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method-client');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -253,8 +228,8 @@ test('success status request w/form data', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
-        t.ok(rpc.request('test') instanceof Promise, 'has right return type');
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         // eslint-disable-next-line cup/no-undef
         const formData = new FormData();
         formData.append('random', 'some-random');
@@ -264,27 +239,20 @@ test('success status request w/form data', t => {
         rpc
           .request('test', formData)
           .then(([url, options]) => {
-            t.equals(url, '/api/test?localeCode=el-GR', 'has right url');
-            t.equals(options.method, 'POST', 'has right http method');
-            t.equals(
-              options.headers['Content-Type'],
-              undefined,
-              'content type is not defined, browser will set it automatically'
-            );
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe(undefined);
             // In tests or log, this will show up as `{}`. Don't be fooled~
-            t.equals(
-              options.body,
-              formData,
-              'has right body of form data type'
-            );
-            t.deepEqual(
-              Array.from(options.body.entries()),
-              [['random', 'some-random'], ['foo', 'foo content']],
-              'has right body of form data content'
-            );
+            expect(options.body).toBe(formData);
+            expect(Array.from(options.body.entries())).toEqual([
+              ['random', 'some-random'],
+              ['foo', 'foo content'],
+            ]);
+            done();
           })
           .catch(e => {
-            t.fail(e);
+            // $FlowFixMe
+            done.fail(e);
           });
 
         wasResolved = true;
@@ -292,20 +260,19 @@ test('success status request w/form data', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('failure status request', t => {
+test('failure status request', done => {
   const mockFetchAsFailure = () =>
     Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method-client');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
-      t.equal(payload.error, 'failure data');
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('failure');
+      expect(typeof payload.timing).toBe('number');
+      expect(payload.error).toBe('failure data');
     },
   });
 
@@ -322,16 +289,17 @@ test('failure status request', t => {
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
         const rpc = deps.rpcFactory.from();
-        t.equals(typeof rpc.request, 'function', 'has method');
+        expect(typeof rpc.request).toBe('function');
         const testRequest = rpc.request('test');
-        t.ok(testRequest instanceof Promise, 'has right return type');
+        expect(testRequest instanceof Promise).toBeTruthy();
         testRequest
           .then(() => {
             // $FlowFixMe
-            t.fail(() => new Error('should reject promise'));
+            done.fail(() => new Error('should reject promise'));
           })
           .catch(e => {
-            t.equal(e, 'failure data', 'should pass failure data through');
+            expect(e).toBe('failure data');
+            done();
           });
 
         wasResolved = true;
@@ -339,6 +307,5 @@ test('failure status request', t => {
     })
   );
 
-  t.true(wasResolved, 'plugin was resolved');
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });

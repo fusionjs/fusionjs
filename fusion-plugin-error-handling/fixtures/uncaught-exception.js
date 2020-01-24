@@ -8,9 +8,8 @@
 
 /* eslint-env node */
 const App = require('fusion-core').default;
-// eslint-disable-next-line import/no-unresolved
-// $FlowFixMe
-const {default: Plugin, ErrorHandlerToken} = require('../dist/index.js');
+
+const {default: Plugin, ErrorHandlerToken} = require('..');
 
 const onError = e => {
   console.log('ERROR HANDLER', e); // eslint-disable-line

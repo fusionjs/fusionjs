@@ -47,7 +47,7 @@
     "test": "yarn fast-test",
     "cover": "nyc yarn test",
     "build": "echo ok",
-    "flow": "flow check"
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

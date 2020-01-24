@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import * as React from 'react';
 import {createToken, createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
@@ -18,7 +17,7 @@ import {
   withServices,
 } from '../context.js';
 
-test('context#useService', async t => {
+test('context#useService', async () => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
@@ -26,8 +25,8 @@ test('context#useService', async t => {
     const provides = useService(TestToken);
     const ctx = React.useContext(FusionContext);
     didRender = true;
-    t.equal(provides, 3, 'gets registered service');
-    t.equal(ctx.request.url, '/', 'gets Fusion context');
+    expect(provides).toBe(3);
+    expect(ctx.request.url).toBe('/');
     return React.createElement('div', null, 'hello');
   }
   const element = React.createElement(TestComponent);
@@ -35,12 +34,13 @@ test('context#useService', async t => {
   app.register(TestToken, TestPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });
 
-test('context#useService - unregistered token', async t => {
+test('context#useService - unregistered token', async () => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -54,16 +54,12 @@ test('context#useService - unregistered token', async t => {
   try {
     await sim.render('/');
   } catch (e) {
-    t.ok(
-      /Token .* not registered/.test(e.message),
-      'throws when token not registered'
-    );
+    expect(/Token .* not registered/.test(e.message)).toBeTruthy();
   }
-  t.notOk(didRender);
-  t.end();
+  expect(didRender).toBeFalsy();
 });
 
-test('context#useService - optional token', async t => {
+test('context#useService - optional token', async () => {
   let didRender = false;
   function TestComponent() {
     const TestToken = createToken('test');
@@ -75,11 +71,10 @@ test('context#useService - optional token', async t => {
   const app = new App(element);
   const sim = getSimulator(app);
   await sim.render('/');
-  t.ok(didRender, 'renders without error');
-  t.end();
+  expect(didRender).toBeTruthy();
 });
 
-test('context#ServiceConsumer', async t => {
+test('context#ServiceConsumer', async () => {
   const TestToken = createToken('test');
   const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
@@ -89,7 +84,7 @@ test('context#ServiceConsumer', async t => {
       {token: TestToken},
       provides => {
         didRender = true;
-        t.equal(provides, 3, 'gets registered service');
+        expect(provides).toBe(3);
         return React.createElement('div', null, 'hello');
       }
     );
@@ -99,12 +94,13 @@ test('context#ServiceConsumer', async t => {
   app.register(TestToken, TestPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });
 
-test('context#withServices', async t => {
+test('context#withServices', async () => {
   const TestToken1 = createToken('test-1');
   const TestToken2 = createToken('test-2');
   const TestPlugin1 = createPlugin({provides: () => 1});
@@ -112,9 +108,9 @@ test('context#withServices', async t => {
   let didRender = false;
   function TestComponent({mappedOne, mappedTwo, propValue}) {
     didRender = true;
-    t.equal(mappedOne, 1, 'gets registered service');
-    t.equal(mappedTwo, 2, 'gets registered service');
-    t.equal(propValue, 3, 'passes props through');
+    expect(mappedOne).toBe(1);
+    expect(mappedTwo).toBe(2);
+    expect(propValue).toBe(3);
     return React.createElement('div', null, 'hello');
   }
   const WrappedComponent = withServices(
@@ -130,7 +126,8 @@ test('context#withServices', async t => {
   app.register(TestToken2, TestPlugin2);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'), 'renders');
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });

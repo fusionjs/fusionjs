@@ -1,6 +1,5 @@
 // @flow
 const path = require('path');
-const process = require('process');
 const {parseRuntimeMetadata} = require('./parseRuntimeMetadata.js');
 const {listDependencies} = require('./listDependencies.js');
 const {listSourceLines} = require('./listSourceLines.js');

@@ -7,13 +7,12 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import {MemoryRouter, Route} from '../browser.js';
 
-test('works in browser', t => {
+test('works in browser', () => {
   const root = document.createElement('div');
 
   const el = (
@@ -22,6 +21,5 @@ test('works in browser', t => {
     </MemoryRouter>
   );
   ReactDOM.render(el, root);
-  t.ok(/Test/.test(root.innerHTML), 'matches');
-  t.end();
+  expect(/Test/.test(root.innerHTML)).toBeTruthy();
 });

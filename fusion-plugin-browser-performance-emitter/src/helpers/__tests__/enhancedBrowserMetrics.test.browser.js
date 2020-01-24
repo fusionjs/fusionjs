@@ -6,7 +6,6 @@
  * @flow
  */
 /* eslint-env browser */
-import test from 'tape-cup';
 import browserPerfCollector from '../enhancedBrowserMetrics';
 
 function mockWindow({performance, ...otherOverrides} = {}) {
@@ -27,55 +26,43 @@ function mockWindow({performance, ...otherOverrides} = {}) {
   };
 }
 
-test('enhancedBrowserMetrics', t => {
+test('enhancedBrowserMetrics', () => {
   [null, undefined, {}, {performance: {}}, {performance: {timing: {}}}].forEach(
     w => {
-      t.deepEqual(
-        browserPerfCollector(w),
-        {},
-        `it should return empty object when window is: ${JSON.stringify(
-          w,
-          null,
-          2
-        ) || ''}`
-      );
+      expect(browserPerfCollector(w)).toEqual({});
     }
   );
 
   const data = browserPerfCollector(mockWindow());
   // test variable data first
-  t.ok(
+  expect(
     typeof data.navigationMeta.time === 'number' && data.navigationMeta.time > 0
-  );
-  t.ok(
+  ).toBeTruthy();
+  expect(
     typeof data.navigationMeta.url === 'string' &&
-      data.navigationMeta.url.startsWith(`http://localhost:`)
-  );
+      data.navigationMeta.url.startsWith(`http://localhost/`)
+  ).toBeTruthy();
   // test the rest
-  t.deepEqual(
-    data,
-    {
-      dimensions: {height: 600, width: 800},
-      memory: {},
-      navigation: {},
-      navigationMeta: {
-        hostname: 'localhost',
-        page: '/',
-        pathname: '/',
-        referrer: '',
-        time: data.navigationMeta.time,
-        url: data.navigationMeta.url,
-      },
-      network: {},
-      paintTimes: {firstContentfulPaint: null, firstPaint: null},
-      renderTimes: {clientRenderStart: null, firstRenderStart: null},
-      resources: [],
-      server: undefined,
+  expect(data).toEqual({
+    dimensions: {height: 0, width: 0},
+    memory: {},
+    navigation: {},
+    navigationMeta: {
+      hostname: 'localhost',
+      page: '/',
+      pathname: '/',
+      referrer: '',
+      time: data.navigationMeta.time,
+      url: data.navigationMeta.url,
     },
-    'it should not error and return sane default values if `performance.timing` and `performance.getEntriesByType(type: string)` are/return empty results'
-  );
+    network: {},
+    paintTimes: {firstContentfulPaint: null, firstPaint: null},
+    renderTimes: {clientRenderStart: null, firstRenderStart: null},
+    resources: [],
+    server: undefined,
+  });
 
-  t.deepEqual(
+  expect(
     browserPerfCollector(
       mockWindow({
         performance: {
@@ -98,10 +85,6 @@ test('enhancedBrowserMetrics', t => {
           },
         },
       })
-    ).server,
-    [],
-    'it should return the result of `window.performance.getEntriesByType("navigation")[0].serverTiming` as `browserPerfCollector(window).server`'
-  );
-
-  t.end();
+    ).server
+  ).toEqual([]);
 });

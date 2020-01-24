@@ -49,7 +49,7 @@ export function createRequestContext(
 
   const outHeadersKey = Object.getOwnPropertySymbols(
     // $FlowFixMe
-    new (require('http')).OutgoingMessage()
+    new (require('http').OutgoingMessage)()
   ).filter(
     sym =>
       // Node 10

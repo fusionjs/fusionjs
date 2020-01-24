@@ -7,7 +7,6 @@
  */
 
 /* eslint-env node */
-import test from 'tape-cup';
 import MockEmitter from 'events';
 
 import App, {createPlugin} from 'fusion-core';
@@ -115,7 +114,7 @@ function createTestFixture() {
 }
 
 /* Tests */
-test('Correct metrics are emitted', t => {
+test('Correct metrics are emitted', () => {
   const mockEmitter = new MockEmitter();
   const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
@@ -125,10 +124,10 @@ test('Correct metrics are emitted', t => {
   app.register(UniversalEventsToken, mockEmitterPlugin);
 
   // Process emits
-  t.plan(14);
+  expect.assertions(14);
   const handlePerfEvent = function(event) {
     const calculatedStats = event.calculatedStats;
-    t.notEqual(calculatedStats, undefined, 'calculatedStates are defined');
+    expect(calculatedStats).not.toBe(undefined);
 
     const redirectionTimeArgs = calculatedStats.redirection_time;
     const timeToFirstByteArgs = calculatedStats.time_to_first_byte;
@@ -147,40 +146,20 @@ test('Correct metrics are emitted', t => {
       calculatedStats.total_blocking_resource_load_time;
     const resourcesAvgLoadTime = calculatedStats.resources_avg_load_time;
 
-    t.equal(redirectionTimeArgs, 0, 'redirection_time');
-    t.equal(timeToFirstByteArgs, 81, 'time_to_first_byte');
-    t.equal(domContentLoadedArgs, 932, 'dom_content_loaded');
-    t.equal(fullPageLoadArgs, 1066, 'full_page_load');
-    t.equal(dnsArgs, 0, 'dns');
+    expect(redirectionTimeArgs).toBe(0);
+    expect(timeToFirstByteArgs).toBe(81);
+    expect(domContentLoadedArgs).toBe(932);
+    expect(fullPageLoadArgs).toBe(1066);
+    expect(dnsArgs).toBe(0);
 
-    t.equal(tcpConnectionTimeArgs, 0, 'logs the tcp_connection_time');
-    t.equal(browserRequestTimeArgs, 75, 'logs the browser_request_time');
-    t.equal(
-      browserRequestFirstByteArgs,
-      74,
-      'logs the browser_request_first_byte'
-    );
-    t.equal(
-      browserRequestResponseTimeArgs,
-      1,
-      'logs the browser_request_response_time'
-    );
-    t.equal(domInteractiveTimeArgs, 721, 'logs the dom_interactive_time');
-    t.equal(
-      totalResourceLoadTimeArgs,
-      984,
-      'logs the total_resource_load_time'
-    );
-    t.equal(
-      totalBlockingResourceLoadTimeArgs,
-      721,
-      'logs the total_blocking_resource_load_time'
-    );
-    t.deepLooseEqual(
-      resourcesAvgLoadTime,
-      {css: 42, image: 155, js: 16},
-      'logs the total_blocking_resource_load_time'
-    );
+    expect(tcpConnectionTimeArgs).toBe(0);
+    expect(browserRequestTimeArgs).toBe(75);
+    expect(browserRequestFirstByteArgs).toBe(74);
+    expect(browserRequestResponseTimeArgs).toBe(1);
+    expect(domInteractiveTimeArgs).toBe(721);
+    expect(totalResourceLoadTimeArgs).toBe(984);
+    expect(totalBlockingResourceLoadTimeArgs).toBe(721);
+    expect(resourcesAvgLoadTime).toStrictEqual({css: 42, image: 155, js: 16}); // 'logs the total_blocking_resource_load_time'
   };
 
   /* Simulator */
@@ -196,11 +175,9 @@ test('Correct metrics are emitted', t => {
       },
     })
   );
-
-  t.end();
 });
 
-test('Re-emitting events from browser to server correctly', t => {
+test('Re-emitting events from browser to server correctly', () => {
   const mockEmitter = new MockEmitter();
   const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
     provides: () => mockEmitter,
@@ -211,7 +188,7 @@ test('Re-emitting events from browser to server correctly', t => {
 
   const mockEvent = {foo: {bar: 99}};
 
-  t.plan(1);
+  expect.assertions(1);
 
   /* Simulator */
   getSimulator(
@@ -219,11 +196,7 @@ test('Re-emitting events from browser to server correctly', t => {
     createPlugin({
       provides: () => {
         mockEmitter.on('browser-performance-emitter:stats', e => {
-          t.deepEqual(
-            e.foo,
-            mockEvent.foo,
-            'Browser event payload is inherited'
-          );
+          expect(e.foo).toEqual(mockEvent.foo);
         });
         mockEmitter.emit(
           'browser-performance-emitter:stats:browser-only',
@@ -232,6 +205,4 @@ test('Re-emitting events from browser to server correctly', t => {
       },
     })
   );
-
-  t.end();
 });

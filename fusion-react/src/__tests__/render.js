@@ -6,29 +6,27 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import App, {SkipPrepareToken} from '../index';
 import prepared from '../async/prepared';
 
-test('custom render function', async t => {
+test('custom render function', async () => {
   let didRender = false;
   const app = new App(React.createElement('span', null, 'hello'), (el, ctx) => {
-    t.ok(el);
-    t.ok(ctx);
+    expect(el).toBeTruthy();
+    expect(ctx).toBeTruthy();
     didRender = true;
     return 10;
   });
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.ok(ctx.element);
-  t.equal(ctx.rendered, 10);
-  t.ok(didRender);
-  t.end();
+  expect(ctx.element).toBeTruthy();
+  expect(ctx.rendered).toBe(10);
+  expect(didRender).toBeTruthy();
 });
 
-test('runs prepare', async t => {
+test('runs prepare', async done => {
   let called = false;
   const Root = prepared(() => {
     called = true;
@@ -37,22 +35,23 @@ test('runs prepare', async t => {
     return React.createElement('span', null, 'hello');
   });
   const app = new App(React.createElement(Root), () => {
-    t.equal(called, true, 'calls prepass by default');
-    t.end();
+    expect(called).toBe(true);
+    done();
   });
   const simulator = getSimulator(app);
   await simulator.render('/');
 });
 
-test('skip prepare', async t => {
+test('skip prepare', async done => {
   const Root = prepared(() => {
-    t.fail('Should not call this');
+    // $FlowFixMe
+    done.fail('Should not call this');
     return Promise.resolve();
   })(() => {
     return React.createElement('span', null, 'hello');
   });
   const app = new App(React.createElement(Root), () => {
-    t.end();
+    done();
   });
   app.register(SkipPrepareToken, true);
   const simulator = getSimulator(app);

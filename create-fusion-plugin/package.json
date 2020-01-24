@@ -36,17 +36,7 @@
     "test": "yarn clean && jest",
     "postinstall": "cd ./templates/plugin/content && yarn install",
     "build": "echo ok",
-    "flow": "flow check"
-  },
-  "jest": {
-    "cache": false,
-    "modulePathIgnorePatterns": [
-      "templates/.*"
-    ],
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

@@ -6,14 +6,13 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import App from 'fusion-core';
 import HttpHandlerPlugin, {HttpHandlerToken} from 'fusion-plugin-http-handler';
 import express from 'express';
 
 import {getSimulator} from '../index.js';
 
-test('integrate with express', async t => {
+test('integrate with express', async done => {
   const flags = {render: false, end: false};
   const element = 'hi';
   const renderFn = () => {
@@ -35,10 +34,10 @@ test('integrate with express', async t => {
 
   if (!__BROWSER__) {
     const ctx = await testApp.request('/');
-    t.notok(ctx.element, 'does not set ctx.element');
-    t.ok(!flags.render, 'did not trigger ssr');
-    t.ok(flags.end, 'res.end callback called');
+    expect(ctx.element).toBeFalsy();
+    expect(!flags.render).toBeTruthy();
+    expect(flags.end).toBeTruthy();
 
-    t.end();
+    done();
   }
 });

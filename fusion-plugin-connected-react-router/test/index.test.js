@@ -32,10 +32,7 @@ const {connect} = require('react-redux');
 
 test('An app', async done => {
   expect.assertions(5);
-  const Root = connect(
-    state => state,
-    {push}
-  )(props => {
+  const Root = connect(state => state, {push})(props => {
     expect(props.router.location.pathname).toBe('/');
     props.push('/test');
     return React.createElement('div', null, 'Hello World');
