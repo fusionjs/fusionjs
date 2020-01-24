@@ -487,6 +487,7 @@ List projects that have changed since the last git commit.
 `jazelle changes`
 
 - `--files` - A file containing a list of changed files, one per line. Defaults to stdin
+- `--format` - 'targets' or 'dirs'. Defaults to 'targets'. Determine whether to return directory paths or bazel targets
 
 The `files` file can be generated via git:
 
@@ -570,6 +571,14 @@ Runs a project. Calls `scripts.start` in package.json
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of arguments to pass to the start script
+
+### `jazelle bin-path`
+
+Print the local path of a binary
+
+`jazelle bin-path [name]`
+
+- `name` - 'bazel', 'node', or 'yarn'
 
 ### `jazelle bazel`
 
@@ -841,6 +850,7 @@ List projects that have changed since the last git commit.
 
 - `root` - Monorepo root folder (absolute path)
 - `files` - The path to a file containing a list of changed files, one per line
+- `format` - 'targets' or 'dirs'. Defaults to 'targets'. Determine whether to return directory paths or bazel targets
 
 The `files` file can be generated via git:
 
@@ -942,6 +952,14 @@ Runs a project. Calls `scripts.start` in package.json
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
 - `args` - A list of arguments to pass to the start script
+
+### `binPath`
+
+Print the local path of a binary
+
+`let binPath: = (name: 'bazel' | 'node' | 'yarn') => string`
+
+- `name` - 'bazel', 'node', or 'yarn'
 
 ### `bazel`
 
@@ -1310,7 +1328,7 @@ Jazelle SHA256 checksum can be computed through the following command:
 curl -fLs https://github.com/lhorie/jazelle/releases/download/v[version]/jazelle-[version].tar.gz | openssl sha256
 ```
 
-Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUM256.txt`. Use the checksums for these files:
+Node SHA256 checksums can be found at `https://nodejs.org/dist/v[version]/SHASUMS256.txt`. Use the checksums for these files:
 
 - `node-v[version]-darwin-x64.tar.gz`
 - `node-v[version]-linux-x64.tar.xz`

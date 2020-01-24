@@ -836,13 +836,6 @@
     invariant "^2.2.2"
     semver "^5.3.0"
 
-"@rtsao/react-ssr-prepass@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.npmjs.org/@rtsao/react-ssr-prepass/-/react-ssr-prepass-1.0.7.tgz#236507285ffe0f4a94e2a4f0181ff7d0eb76ee7d"
-  integrity sha512-CwC2vXWm5+OcgUbKdOlNcM45lC5iueVKs6XIqjCplOWmTV/0qaG2iSk+ySEhNJeNKNC6fCK2Rj1dGmPMTuqERA==
-  dependencies:
-    object-is "^1.0.1"
-
 "@types/json-schema@^7.0.3":
   version "7.0.3"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
@@ -4417,6 +4410,13 @@ react-is@^16.8.0, react-is@^16.8.1, react-is@^16.8.6, react-is@^16.9.0:
   version "16.12.0"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
+
+react-ssr-prepass@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/react-ssr-prepass/-/react-ssr-prepass-1.1.0.tgz#f765378009423181ca7b6d59ca71f7af1073a3a4"
+  integrity sha512-FKoL5+YJxkNDhcTFfBgWM82PPHS4AC+uc05ja//CR3+xHPQ6i9UfWyHx8vakIIaBzsHeaRtRhOO8uHhn1R8Dnw==
+  dependencies:
+    object-is "^1.0.2"
 
 react-test-renderer@^16.0.0-0:
   version "16.9.0"

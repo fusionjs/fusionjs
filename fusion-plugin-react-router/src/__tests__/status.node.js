@@ -23,7 +23,7 @@ test('sets code with static code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };
@@ -49,7 +49,7 @@ test('sets code with numeric code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };
@@ -75,7 +75,7 @@ test('sets code with string code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };

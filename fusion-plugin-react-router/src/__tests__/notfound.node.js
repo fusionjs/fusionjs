@@ -25,7 +25,7 @@ test('sets code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code: number) {
+    set status(code: number) {
       state.code = code;
     },
   };

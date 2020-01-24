@@ -11,7 +11,6 @@ export type Dedupe = (DedupeArgs) => Promise<void>;
 */
 const dedupe /*: Dedupe */ = async ({root}) => {
   const {projects} = await getManifest({root});
-  const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
   await sync({
     roots: projects.map(project => `${root}/${project}`),
     ignore: await Promise.all(
@@ -20,7 +19,6 @@ const dedupe /*: Dedupe */ = async ({root}) => {
         return JSON.parse(data).name;
       })
     ),
-    tmp,
   });
 };
 

@@ -11,19 +11,18 @@ import MockEmitter from 'events';
 import MockReq from 'mock-req';
 import FormData from 'form-data';
 
-import App, {createPlugin, createToken} from 'fusion-core';
-import type {Context, Token} from 'fusion-core';
+import App, {createPlugin, RouteTagsToken} from 'fusion-core';
+import type {Context} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import {RPCHandlersToken} from '../tokens.js';
+import {RPCHandlersToken, RPCToken} from '../tokens.js';
 import RPCPlugin from '../server.js';
 import type {IEmitter, RPCServiceType} from '../types.js';
 import MockRPCPlugin from '../mock.js';
 import ResponseError from '../response-error.js';
 import createMockEmitter from './create-mock-emitter';
 
-const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
 
 const mockService: RPCServiceType = getService(() => {
@@ -35,7 +34,7 @@ const mockService: RPCServiceType = getService(() => {
     provides: () => mockEmitter,
   });
   app.register(UniversalEventsToken, mockEmitterPlugin);
-  app.register(RPCHandlersToken, {});
+  app.register(RPCHandlersToken, createPlugin({provides: () => ({})}));
   return app;
 }, MockRPCPlugin);
 
@@ -52,7 +51,7 @@ function createTestFixture() {
   const app = new App('content', el => el);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, mockHandlers);
-  app.register(MockPluginToken, RPCPlugin);
+  app.register(RPCToken, RPCPlugin);
   return app;
 }
 
@@ -77,7 +76,7 @@ test('FusionApp - service resolved', t => {
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       provides: ({rpcFactory}) => {
         t.ok(rpcFactory);
         wasResolved = true;
@@ -96,7 +95,7 @@ test('service - requires ctx', t => {
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       provides: ({rpcFactory}) => {
         // $FlowFixMe
         t.throws(() => rpcFactory());
@@ -121,26 +120,33 @@ test('service - request api', async t => {
       return 1;
     },
   };
-  const mockEmitter = createMockEmitter({
-    emit: (type: mixed, payload: Object) => {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit: (type: mixed, payload: Object) => {
+          t.equal(type, 'rpc:method');
+          t.equal(payload.method, 'test');
+          t.equal(payload.status, 'success');
+          t.equal(typeof payload.timing, 'number');
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(UniversalEventsToken, mockEmitter);
+    app.register(RPCToken, RPCPlugin);
     app.register(RPCHandlersToken, mockHandlers);
     return app;
   };
 
-  const rpcFactory = getService(appCreator, RPCPlugin);
+  const sim = getSimulator(appCreator());
+
+  const rpcFactory = sim.getService(RPCToken);
+  const routeTags = sim.getService(RouteTagsToken);
   const rpc = rpcFactory.from(mockCtx);
 
   t.equals(typeof rpc.request, 'function', 'has request method');
@@ -148,6 +154,11 @@ test('service - request api', async t => {
     const p = rpc.request('test', 'test-args');
     t.ok(p instanceof Promise, 'has right return type');
     t.equals(await p, 1, 'method works');
+    t.equals(
+      routeTags.from(mockCtx).name,
+      'unknown_route',
+      'does not overwrite the name tag on SSR'
+    );
   } catch (e) {
     t.fail(e);
   }
@@ -165,17 +176,20 @@ test('service - request api with failing request', async t => {
       return Promise.reject(e);
     },
   };
-  const mockEmitter = createMockEmitter({
-    emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
-      t.equal(payload.error, e);
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit(type, payload) {
+          t.equal(type, 'rpc:method');
+          t.equal(payload.method, 'test');
+          t.equal(payload.status, 'failure');
+          t.equal(typeof payload.timing, 'number');
+          t.equal(payload.error, e);
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
@@ -206,16 +220,19 @@ test('service - request api with invalid endpoint', async t => {
     memoized: new Map(),
   }: any);
   const mockHandlers = {};
-  const mockEmitter = createMockEmitter({
-    emit(type, payload) {
-      t.equal(type, 'rpc:error');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'server');
-      t.equal(payload.error.message, 'Missing RPC handler for test');
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit(type, payload) {
+          t.equal(type, 'rpc:error');
+          t.equal(payload.method, 'test');
+          t.equal(payload.origin, 'server');
+          t.equal(payload.error.message, 'Missing RPC handler for test');
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
@@ -246,7 +263,7 @@ test('FusionJS - middleware resolves', async t => {
   let wasResolved = false;
 
   const testPlugin = createPlugin({
-    deps: {rpcFactory: MockPluginToken},
+    deps: {rpcFactory: RPCToken},
     middleware: ({rpcFactory}) => {
       t.ok(rpcFactory);
       wasResolved = true;
@@ -351,10 +368,16 @@ test('middleware - valid endpoint', async t => {
     },
   });
 
+  const tags = {
+    name: 'unknown_route',
+  };
   const middleware =
     RPCPlugin.middleware &&
     RPCPlugin.middleware(
       {
+        RouteTags: {
+          from: () => tags,
+        },
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
@@ -371,6 +394,7 @@ test('middleware - valid endpoint', async t => {
       t.equal(executedHandler, false, 'awaits next');
       Promise.resolve();
     });
+    t.equal(tags.name, 'test');
     t.equal(executedHandler, true);
     // $FlowFixMe
     t.equal(mockCtx.body.data, 1);
@@ -711,7 +735,7 @@ test('throws when not passed ctx', async t => {
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       middleware: ({rpcFactory}) => async () => {
         // $FlowFixMe
         t.throws(() => rpcFactory.from(), 'missing context throws error');
