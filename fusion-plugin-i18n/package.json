@@ -39,8 +39,7 @@
   },
   "dependencies": {
     "koa-bodyparser": "^4.2.1",
-    "locale": "^0.1.0",
-    "rollup": "^0.67.3"
+    "locale": "^0.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

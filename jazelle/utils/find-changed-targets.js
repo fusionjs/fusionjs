@@ -9,23 +9,28 @@ const {read} = require('../utils/node-helpers.js');
 export type FindChangedTargetsArgs = {
   root: string,
   files?: string,
+  format?: string,
 };
 export type FindChangedTargets = (FindChangedTargetsArgs) => Promise<Array<string>>;
 */
-const findChangedTargets /*: FindChangedTargets */ = async ({root, files}) => {
-  const {workspace, targets} = await findChangedBazelTargets({root, files});
-  switch (workspace) {
-    case 'host': {
-      const dirs = new Set();
-      for (const target of targets) {
-        dirs.add(target.slice(2, target.indexOf(':')));
-      }
-      return [...dirs];
-    }
-    default:
-    case 'sandbox':
-      return targets;
+const findChangedTargets /*: FindChangedTargets */ = async ({
+  root,
+  files,
+  format = 'targets',
+}) => {
+  let {targets} = await findChangedBazelTargets({root, files});
+
+  if (format === 'dirs') {
+    targets = [
+      ...targets.reduce((set, target) => {
+        // convert from target to dir path
+        set.add(target.slice(2, target.indexOf(':')));
+        return set;
+      }, new Set()),
+    ];
   }
+
+  return targets;
 };
 
 const findChangedBazelTargets = async ({root, files}) => {
@@ -50,10 +55,12 @@ const findChangedBazelTargets = async ({root, files}) => {
           // - in the case the package itself was deleted, pkg will refer to the root package (which will typically yield no targets in a typical Jazelle setup)
           const regex = /not declared in package '(.*?)'/;
           const [, pkg = ''] = e.message.match(regex) || [];
+          if (pkg === '') return '';
           const cmd = `${bazel} query 'kind("source file", //${pkg}:*)' | head -n 1`;
           return exec(cmd);
         });
         const target = result.trim();
+        if (target === '') return '';
         const all = target.replace(/:.+/, ':*');
         const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
         const project = await exec(cmd, opts);

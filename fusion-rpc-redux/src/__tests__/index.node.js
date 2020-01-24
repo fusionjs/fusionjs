@@ -56,20 +56,20 @@ test('createRPCHandler success', t => {
       start: args => {
         t.equal(args.transformed, 'transformed-args');
         t.equal(args.mapped, 'mapped-params');
-        return 'start';
+        return {type: 'start', payload: args};
       },
       success: result => {
         t.equal(result, 'test-resolve');
-        return 'success';
+        return {type: 'success', payload: result};
       },
-      failure: () => {
+      failure: e => {
         t.fail('should not call failure');
-        return 'failure';
+        return {type: 'failure', payload: e};
       },
     },
     store: {
       dispatch: action => {
-        t.equal(action, expectedActions.shift());
+        t.equal(action.type, expectedActions.shift());
       },
       getState: () => {
         return 'test-state';
@@ -113,19 +113,19 @@ test('createRPCHandler error in success reducer', t => {
   const handler = createRPCHandler({
     actions: {
       start: args => {
-        return 'start';
+        return {type: 'start', payload: args};
       },
       success: result => {
         throw new Error('Fail');
       },
-      failure: () => {
+      failure: e => {
         t.fail('should not call failure');
-        return 'failure';
+        return {type: 'failure', payload: e};
       },
     },
     store: {
       dispatch: action => {
-        t.equal(action, expectedActions.shift());
+        t.equal(action.type, expectedActions.shift());
       },
       getState: () => {
         return 'test-state';
@@ -154,18 +154,18 @@ test('createRPCHandler error in start reducer', async t => {
       start: args => {
         throw new Error('Fail');
       },
-      success: () => {
+      success: result => {
         t.fail('should not call success');
-        return 'success';
+        return {type: 'success', payload: result};
       },
-      failure: () => {
+      failure: e => {
         t.fail('should not call failure');
-        return 'failure';
+        return {type: 'failure', payload: e};
       },
     },
     store: {
       dispatch: action => {
-        t.equal(action, expectedActions.shift());
+        t.equal(action.type, expectedActions.shift());
       },
       getState: () => {
         return 'test-state';
@@ -194,19 +194,19 @@ test('createRPCHandler error in failure reducer', async t => {
   const handler = createRPCHandler({
     actions: {
       start: args => {
-        return 'start';
+        return {type: 'start', payload: args};
       },
-      success: () => {
+      success: result => {
         t.fail('should not call success');
-        return 'success';
+        return {type: 'success', payload: result};
       },
-      failure: () => {
+      failure: e => {
         throw new Error('Fail');
       },
     },
     store: {
       dispatch: action => {
-        t.equal(action, expectedActions.shift());
+        t.equal(action.type, expectedActions.shift());
       },
       getState: () => {
         return 'test-state';
@@ -237,21 +237,21 @@ test('createRPCHandler failure', t => {
     actions: {
       start: args => {
         t.equal(args, 'transformed-args');
-        return 'start';
+        return {type: 'start', payload: args};
       },
-      success: () => {
+      success: result => {
         t.fail('should not call success');
-        return 'success';
+        return {type: 'success', payload: result};
       },
       failure: e => {
         t.equals(e.message, error.message);
         t.deepEqual(e.initialArgs, 'transformed-args');
-        return 'failure';
+        return {type: 'failure', payload: e};
       },
     },
     store: {
       dispatch: action => {
-        t.equal(action, expectedActions.shift());
+        t.equal(action.type, expectedActions.shift());
       },
       getState: () => {
         return 'test-state';

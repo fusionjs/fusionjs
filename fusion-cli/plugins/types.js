@@ -6,10 +6,12 @@
  * @flow
  */
 /*::
-import {CriticalChunkIdsToken, RoutePrefixToken} from 'fusion-core';
+import {CriticalChunkIdsToken, RoutePrefixToken, RouteTagsToken} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-export type AssetsDepsType = {};
+export type AssetsDepsType = {
+  RouteTags: typeof RouteTagsToken,
+};
 export type AssetsType = void;
 
 export type SSRBodyTemplateDepsType = {

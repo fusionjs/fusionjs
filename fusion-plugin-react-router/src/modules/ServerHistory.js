@@ -6,21 +6,22 @@
  * @flow
  */
 
-import {createPath, parsePath} from 'history';
+// $FlowFixMe
+import {createPath, createLocation as defaultCreateLocation} from 'history';
 
 import {addRoutePrefix, removeRoutePrefix} from './utils.js';
-import type {RouterHistoryType, LocationType} from '../types.js';
+import type {
+  RouterHistoryType,
+  LocationType,
+  StaticContextType,
+} from '../types.js';
 
 const createLocation = (
   path: string | LocationType,
   prefix: string
 ): LocationType => {
   const unprefixed = removeRoutePrefix(path, prefix);
-  if (typeof unprefixed === 'string') {
-    return ((parsePath(unprefixed): any): LocationType);
-  } else {
-    return unprefixed;
-  }
+  return defaultCreateLocation(unprefixed);
 };
 
 const createPrefixedURL = (
@@ -35,33 +36,15 @@ const createPrefixedURL = (
   }
 };
 
-const createURL = (
-  location: string | LocationType,
-  prefix: string
-): string | LocationType => {
-  const unprefixed = removeRoutePrefix(location, prefix);
-  if (typeof unprefixed === 'string') {
-    return unprefixed;
-  } else {
-    return createPath(unprefixed);
-  }
-};
-
 const staticHandler = methodName => () => {
   throw new Error(`You cannot ${methodName} with server side <Router>`);
 };
 
 const noop = () => {};
 
-type ContextType = {
-  action: ?string,
-  location: any,
-  url: ?string,
-};
-
 export function createServerHistory(
   basename: string,
-  context: ContextType,
+  context: StaticContextType,
   location: string | LocationType
 ): RouterHistoryType {
   function createHref(location: string | LocationType): string | LocationType {
@@ -70,7 +53,7 @@ export function createServerHistory(
   function push(path: string) {
     context.action = 'PUSH';
     context.location = createLocation(path, basename);
-    const url = createURL(path, basename);
+    const url = createPath(context.location);
     if (typeof url === 'string') {
       context.url = url;
     }
@@ -79,7 +62,7 @@ export function createServerHistory(
   function replace(path: string) {
     context.action = 'REPLACE';
     context.location = createLocation(path, basename);
-    const url = createURL(path, basename);
+    const url = createPath(context.location);
     if (typeof url === 'string') {
       context.url = url;
     }

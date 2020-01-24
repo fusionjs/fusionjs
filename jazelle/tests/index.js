@@ -87,6 +87,7 @@ async function runTests() {
     t(testPurge),
     t(testYarn),
     t(testBump),
+    t(testEach),
     t(testBazelDummy),
     t(testBazelBuild),
     t(testAssertProjectDir),
@@ -153,7 +154,7 @@ async function testInstallAddUpgradeRemove() {
   assert(await exists(bDep));
   assert(await exists(bindDep));
   assert(await exists(downstreamLockfile));
-  assert(!(await exists(notDownstreamLockfile)));
+  assert(await exists(notDownstreamLockfile));
 
   // add linked package
   await add({
@@ -285,6 +286,27 @@ async function testYarn() {
   assert((await read(streamFile, 'utf8')).includes('Usage:'));
 }
 
+async function testEach() {
+  await exec(`cp -r ${__dirname}/fixtures/each/ ${__dirname}/tmp/each`);
+
+  const root = `${__dirname}/tmp/each`;
+
+  const plan = [
+    {type: 'dir', dir: 'a', action: 'exec', args: ['foo']},
+    {type: 'dir', dir: 'b', action: 'exec', args: ['foo']},
+    {type: 'dir', dir: 'c', action: 'exec', args: ['foo']},
+    {type: 'dir', dir: 'c', action: 'exec', args: ['bash', '-c', 'echo $PWD']},
+  ];
+  const failed = /*:: await */ await batchTestGroup({
+    root,
+    data: [plan],
+    index: 0,
+    cores: 8,
+  });
+  assert.equal(failed.length, 1);
+  assert(failed[0].stderr.includes('spawn foo ENOENT'));
+}
+
 async function testBump() {
   await exec(`cp -r ${__dirname}/fixtures/bump/ ${__dirname}/tmp/bump`);
 
@@ -349,14 +371,14 @@ async function testBatchTestGroup() {
     root: `${__dirname}/tmp/batch-test-group`,
     data: [
       [
-        {type: 'bazel', dir: 'a', action: 'flow'},
-        {type: 'bazel', dir: 'a', action: 'lint'},
-        {type: 'bazel', dir: 'a', action: 'test'},
+        {type: 'bazel', dir: 'a', action: 'flow', args: []},
+        {type: 'bazel', dir: 'a', action: 'lint', args: []},
+        {type: 'bazel', dir: 'a', action: 'test', args: []},
       ],
       [
-        {type: 'bazel', dir: 'b', action: 'lint'},
-        {type: 'bazel', dir: 'b', action: 'test'},
-        {type: 'bazel', dir: 'c', action: 'test'},
+        {type: 'bazel', dir: 'b', action: 'lint', args: []},
+        {type: 'bazel', dir: 'b', action: 'test', args: []},
+        {type: 'bazel', dir: 'c', action: 'test', args: []},
       ],
     ],
     index: 0,
@@ -364,9 +386,9 @@ async function testBatchTestGroup() {
     stdio: ['ignore', stream, stream],
   });
   const output = await read(streamFile, 'utf8');
-  assert(output.includes('Analyzed target //a:test'));
-  assert(output.includes('Analyzed target //a:lint'));
-  assert(output.includes('Analyzed target //a:flow'));
+  assert(output.includes('Executing tests from //a:test'));
+  assert(output.includes('Executing tests from //a:lint'));
+  assert(output.includes('Executing tests from //a:flow'));
   assert(!output.includes('//b:test'));
   assert(!output.includes('//b:lint'));
   assert(!output.includes('//c:test'));
@@ -599,7 +621,7 @@ async function testFindChangedTargets() {
   {
     const root = `${__dirname}/fixtures/find-changed-targets/dirs`;
     const files = `${__dirname}/fixtures/find-changed-targets/dirs/changes.txt`;
-    const dirs = await findChangedTargets({root, files});
+    const dirs = await findChangedTargets({root, files, format: 'dirs'});
     assert.deepEqual(dirs, ['b', 'a']);
   }
   {
@@ -620,7 +642,7 @@ async function testFindChangedTargets() {
       root: `${__dirname}/tmp/find-changed-targets/bazel`,
       cwd: `${__dirname}/tmp/find-changed-targets/bazel/c`,
     });
-    const targets = await findChangedTargets({root, files});
+    const targets = await findChangedTargets({root, files, format: 'targets'});
     assert.deepEqual(targets, [
       '//b:test',
       '//b:lint',
@@ -629,6 +651,12 @@ async function testFindChangedTargets() {
       '//a:lint',
       '//a:flow',
     ]);
+  }
+  {
+    const root = `${__dirname}/fixtures/find-changed-targets/no-target`;
+    const files = `${__dirname}/fixtures/find-changed-targets/no-target/changes.txt`;
+    const dirs = await findChangedTargets({root, files, format: 'dirs'});
+    assert.deepEqual(dirs, []);
   }
 }
 
@@ -915,14 +943,14 @@ async function testGetTestGroups() {
   });
   assert.deepEqual(bazelByTwo, [
     [
-      {type: 'bazel', dir: 'a', action: 'test'},
-      {type: 'bazel', dir: 'a', action: 'lint'},
-      {type: 'bazel', dir: 'a', action: 'flow'},
+      {type: 'bazel', dir: 'a', action: 'test', args: []},
+      {type: 'bazel', dir: 'a', action: 'lint', args: []},
+      {type: 'bazel', dir: 'a', action: 'flow', args: []},
     ],
     [
-      {type: 'bazel', dir: 'b', action: 'test'},
-      {type: 'bazel', dir: 'b', action: 'lint'},
-      {type: 'bazel', dir: 'c', action: 'test'},
+      {type: 'bazel', dir: 'b', action: 'test', args: []},
+      {type: 'bazel', dir: 'b', action: 'lint', args: []},
+      {type: 'bazel', dir: 'c', action: 'test', args: []},
     ],
   ]);
 
@@ -940,15 +968,15 @@ async function testGetTestGroups() {
   });
   assert.deepEqual(bazelByFour, [
     [
-      {type: 'bazel', dir: 'a', action: 'lint'},
-      {type: 'bazel', dir: 'a', action: 'flow'},
+      {type: 'bazel', dir: 'a', action: 'lint', args: []},
+      {type: 'bazel', dir: 'a', action: 'flow', args: []},
     ],
-    [{type: 'bazel', dir: 'a', action: 'test'}],
+    [{type: 'bazel', dir: 'a', action: 'test', args: []}],
     [
-      {type: 'bazel', dir: 'b', action: 'test'},
-      {type: 'bazel', dir: 'b', action: 'lint'},
+      {type: 'bazel', dir: 'b', action: 'test', args: []},
+      {type: 'bazel', dir: 'b', action: 'lint', args: []},
     ],
-    [{type: 'bazel', dir: 'c', action: 'test'}],
+    [{type: 'bazel', dir: 'c', action: 'test', args: []}],
   ]);
 
   const bazelByEight = await getTestGroups({
@@ -964,12 +992,12 @@ async function testGetTestGroups() {
     nodes: 8,
   });
   assert.deepEqual(bazelByEight, [
-    [{type: 'bazel', dir: 'a', action: 'flow'}],
-    [{type: 'bazel', dir: 'a', action: 'lint'}],
-    [{type: 'bazel', dir: 'a', action: 'test'}],
-    [{type: 'bazel', dir: 'b', action: 'lint'}],
-    [{type: 'bazel', dir: 'b', action: 'test'}],
-    [{type: 'bazel', dir: 'c', action: 'test'}],
+    [{type: 'bazel', dir: 'a', action: 'flow', args: []}],
+    [{type: 'bazel', dir: 'a', action: 'lint', args: []}],
+    [{type: 'bazel', dir: 'a', action: 'test', args: []}],
+    [{type: 'bazel', dir: 'b', action: 'lint', args: []}],
+    [{type: 'bazel', dir: 'b', action: 'test', args: []}],
+    [{type: 'bazel', dir: 'c', action: 'test', args: []}],
   ]);
 
   const dirByTwo = await getTestGroups({
@@ -979,14 +1007,14 @@ async function testGetTestGroups() {
   });
   assert.deepEqual(dirByTwo, [
     [
-      {type: 'dir', dir: 'a', action: 'test'},
-      {type: 'dir', dir: 'a', action: 'lint'},
-      {type: 'dir', dir: 'a', action: 'flow'},
+      {type: 'dir', dir: 'a', action: 'test', args: []},
+      {type: 'dir', dir: 'a', action: 'lint', args: []},
+      {type: 'dir', dir: 'a', action: 'flow', args: []},
     ],
     [
-      {type: 'dir', dir: 'b', action: 'test'},
-      {type: 'dir', dir: 'b', action: 'lint'},
-      {type: 'dir', dir: 'c', action: 'test'},
+      {type: 'dir', dir: 'b', action: 'test', args: []},
+      {type: 'dir', dir: 'b', action: 'lint', args: []},
+      {type: 'dir', dir: 'c', action: 'test', args: []},
     ],
   ]);
 
@@ -997,15 +1025,15 @@ async function testGetTestGroups() {
   });
   assert.deepEqual(dirByFour, [
     [
-      {type: 'dir', dir: 'a', action: 'lint'},
-      {type: 'dir', dir: 'a', action: 'flow'},
+      {type: 'dir', dir: 'a', action: 'lint', args: []},
+      {type: 'dir', dir: 'a', action: 'flow', args: []},
     ],
-    [{type: 'dir', dir: 'a', action: 'test'}],
+    [{type: 'dir', dir: 'a', action: 'test', args: []}],
     [
-      {type: 'dir', dir: 'b', action: 'test'},
-      {type: 'dir', dir: 'b', action: 'lint'},
+      {type: 'dir', dir: 'b', action: 'test', args: []},
+      {type: 'dir', dir: 'b', action: 'lint', args: []},
     ],
-    [{type: 'dir', dir: 'c', action: 'test'}],
+    [{type: 'dir', dir: 'c', action: 'test', args: []}],
   ]);
 }
 
@@ -1023,29 +1051,29 @@ async function testGroupByDepsets() {
     {dir: `${root}/c`, depth: 0, meta: cMeta},
   ];
   const group = [
-    {type: 'bazel', dir: 'a', action: 'test'},
-    {type: 'bazel', dir: 'a', action: 'lint'},
-    {type: 'bazel', dir: 'a', action: 'flow'},
-    {type: 'bazel', dir: 'b', action: 'test'},
-    {type: 'bazel', dir: 'b', action: 'lint'},
-    {type: 'bazel', dir: 'b', action: 'flow'},
-    {type: 'bazel', dir: 'c', action: 'test'},
-    {type: 'bazel', dir: 'c', action: 'lint'},
-    {type: 'bazel', dir: 'c', action: 'flow'},
+    {type: 'bazel', dir: 'a', action: 'test', args: []},
+    {type: 'bazel', dir: 'a', action: 'lint', args: []},
+    {type: 'bazel', dir: 'a', action: 'flow', args: []},
+    {type: 'bazel', dir: 'b', action: 'test', args: []},
+    {type: 'bazel', dir: 'b', action: 'lint', args: []},
+    {type: 'bazel', dir: 'b', action: 'flow', args: []},
+    {type: 'bazel', dir: 'c', action: 'test', args: []},
+    {type: 'bazel', dir: 'c', action: 'lint', args: []},
+    {type: 'bazel', dir: 'c', action: 'flow', args: []},
   ];
   assert.deepEqual(groupByDepsets({root, metas, group}), [
     [
-      {type: 'bazel', dir: 'a', action: 'test'},
-      {type: 'bazel', dir: 'a', action: 'lint'},
-      {type: 'bazel', dir: 'a', action: 'flow'},
-      {type: 'bazel', dir: 'b', action: 'test'},
-      {type: 'bazel', dir: 'b', action: 'lint'},
-      {type: 'bazel', dir: 'b', action: 'flow'},
+      {type: 'bazel', dir: 'a', action: 'test', args: []},
+      {type: 'bazel', dir: 'a', action: 'lint', args: []},
+      {type: 'bazel', dir: 'a', action: 'flow', args: []},
+      {type: 'bazel', dir: 'b', action: 'test', args: []},
+      {type: 'bazel', dir: 'b', action: 'lint', args: []},
+      {type: 'bazel', dir: 'b', action: 'flow', args: []},
     ],
     [
-      {type: 'bazel', dir: 'c', action: 'test'},
-      {type: 'bazel', dir: 'c', action: 'lint'},
-      {type: 'bazel', dir: 'c', action: 'flow'},
+      {type: 'bazel', dir: 'c', action: 'test', args: []},
+      {type: 'bazel', dir: 'c', action: 'lint', args: []},
+      {type: 'bazel', dir: 'c', action: 'flow', args: []},
     ],
   ]);
 }

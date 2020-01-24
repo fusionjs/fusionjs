@@ -45,7 +45,6 @@ const check /*: Check */ = async ({roots}) => {
 };
 
 /*::
-type Cache = {[string]: Promise<string>};
 export type Addition = {
   name: string,
   range: string,
@@ -56,12 +55,11 @@ export type AddArgs = {
   additions?: Array<Addition>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({roots, additions, ignore, tmp, cache}) => {
-  await diff({roots, additions, ignore, tmp, cache});
+const add /*: Add */ = async ({roots, additions, ignore, tmp}) => {
+  await diff({roots, additions, ignore, tmp});
 };
 
 /*::
@@ -70,12 +68,11 @@ export type RemoveArgs = {
   removals?: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Remove = (RemoveArgs) => Promise<void>;
 */
-const remove /*: Remove */ = async ({roots, removals, ignore, tmp, cache}) => {
-  await diff({roots, removals, ignore, tmp, cache});
+const remove /*: Remove */ = async ({roots, removals, ignore, tmp}) => {
+  await diff({roots, removals, ignore, tmp});
 };
 
 /*::
@@ -89,38 +86,42 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({
-  roots,
-  upgrades,
-  ignore,
-  tmp,
-  cache,
-}) => {
-  await diff({roots, upgrades, ignore, tmp, cache});
+const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
+  await diff({roots, upgrades, ignore, tmp});
 };
 
 /*::
 export type SyncArgs = {
   roots: Array<string>,
-  ignore?: Array<string>,
-  tmp?: string,
-  cache?: Cache,
-  frozenLockfile?: boolean,
+  ignore: Array<string>,
 };
 export type Sync = (SyncArgs) => Promise<void>;
 */
-const sync /*: Sync */ = async ({
+const sync /*: Sync */ = async ({roots, ignore}) => {
+  const sets = await readVersionSets({roots});
+  await syncLockfiles({sets, ignore, frozenLockfile: false});
+  await writeVersionSets({sets});
+};
+
+/*::
+export type RegenerateArgs = {
+  roots: Array<string>,
+  ignore?: Array<string>,
+  tmp?: string,
+  frozenLockfile?: boolean,
+};
+export type Regenerate = (RegenerateArgs) => Promise<void>;
+*/
+const regenerate /*: Regenerate */ = async ({
   roots,
   ignore,
   tmp,
-  cache,
   frozenLockfile = false,
 }) => {
-  await diff({roots, ignore, tmp, cache, frozenLockfile});
+  await diff({roots, ignore, tmp, frozenLockfile});
 };
 
 /*::
@@ -133,7 +134,7 @@ export type MergeArgs = {
 export type Merge = (MergeArgs) => Promise<void>;
 */
 const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
-  const sets = await getVersionSets({roots});
+  const sets = await readVersionSets({roots});
   const merged = {dir: out, meta: {}, lockfile: {}};
   for (const {meta, lockfile} of sets) {
     for (const {name, range, type} of getDepEntries(meta)) {
@@ -157,7 +158,6 @@ type DiffArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
-  cache?: Cache,
 };
 type Diff = (DiffArgs) => Promise<void>;
 */
@@ -169,9 +169,8 @@ const diff /*: Diff */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
-  cache,
 }) => {
-  const sets = await getVersionSets({roots});
+  const sets = await readVersionSets({roots});
   const updated = /*:: await */ await update({
     sets,
     additions,
@@ -180,12 +179,11 @@ const diff /*: Diff */ = async ({
     ignore,
     frozenLockfile,
     tmp,
-    cache,
   });
   if (!frozenLockfile) await writeVersionSets({sets: updated});
 };
 
-const getVersionSets = async ({roots}) => {
+const readVersionSets = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
@@ -260,7 +258,6 @@ export type UpdateArgs = {
   ignore?: Array<string>,
   frozenLockfile?: boolean,
   tmp?: string,
-  cache?: Cache,
 };
 export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
 */
@@ -272,10 +269,45 @@ const update /*: Update */ = async ({
   ignore = [],
   frozenLockfile = false,
   tmp = '/tmp',
-  cache = {},
 }) => {
+  // note: this function mutates metadata and lockfile structures in `sets` if:
+  // - the originating command was either `add`, `remove` or `upgrade`
+  // - a dep was added to or upgraded in a package.json manually
+  // - a resolution was manually added or modified
+  //
+  // it does not sync lockfiles if:
+  // - a dep was removed from package.json manually (use the dedupe command to clean up in that case)
+  // - a dep (top-level or transitive) has a new compatible version in the registry but there are no changes locally
+
   // populate missing ranges w/ latest
-  const insertions = [...additions, ...upgrades];
+  await ensureInsertionRanges([...additions, ...upgrades]);
+
+  let shouldSyncLockfiles = false;
+  for (const {dir, meta, lockfile} of sets) {
+    applyMetadataChanges({meta, removals, additions, upgrades});
+    const hasLockfileChanges = await installMissingDeps({
+      dir,
+      meta,
+      lockfile,
+      ignore,
+      tmp,
+    });
+    const hasRemovals = removals.length > 0;
+    const hasAdditions = additions.length > 0;
+    const hasUpgrades = upgrades.length > 0;
+    const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
+    if (hasMetadataChanges || hasLockfileChanges) shouldSyncLockfiles = true;
+  }
+
+  if (shouldSyncLockfiles) {
+    await syncLockfiles({sets, ignore, frozenLockfile});
+  }
+
+  return sets;
+};
+
+const ensureInsertionRanges = async insertions => {
+  // this function mutates `insertions`
   if (insertions.length > 0) {
     await Promise.all(
       insertions.map(async insertion => {
@@ -288,142 +320,144 @@ const update /*: Update */ = async ({
       })
     );
   }
+};
 
-  for (const {dir, meta, lockfile} of sets) {
-    // handle removals
-    if (removals.length > 0) {
-      for (const name of removals) {
-        const types = [
-          'dependencies',
-          'devDependencies',
-          'peerDependencies',
-          'optionalDependencies',
-          'resolutions',
-        ];
-        for (const type of types) {
-          if (meta[type]) {
-            if (meta[type][name]) delete meta[type][name];
-            if (Object.keys(meta[type]).length === 0) delete meta[type];
+const applyMetadataChanges = ({meta, removals, additions, upgrades}) => {
+  // this function mutates `meta.dependencies`, `.devDependencies`, etc, then returns `meta`
+  applyMetadataRemovals({meta, removals});
+  applyMetadataAdditions({meta, additions});
+  applyMetadataUpgrades({meta, upgrades});
+};
+
+const applyMetadataRemovals = ({meta, removals}) => {
+  if (removals.length > 0) {
+    for (const name of removals) {
+      const types = [
+        'dependencies',
+        'devDependencies',
+        'peerDependencies',
+        'optionalDependencies',
+        'resolutions',
+      ];
+      for (const type of types) {
+        if (meta[type]) {
+          if (meta[type][name]) delete meta[type][name];
+          if (Object.keys(meta[type]).length === 0) delete meta[type];
+        }
+      }
+    }
+  }
+};
+
+const applyMetadataAdditions = ({meta, additions}) => {
+  if (additions.length > 0) {
+    for (const {name, range, type} of additions) {
+      if (!meta[type]) meta[type] = {};
+      meta[type][name] = range;
+    }
+  }
+};
+
+const applyMetadataUpgrades = ({meta, upgrades}) => {
+  if (upgrades.length > 0) {
+    for (const {name, range, from} of upgrades) {
+      const types = [
+        'dependencies',
+        'devDependencies',
+        'peerDependencies',
+        'optionalDependencies',
+        'resolutions',
+      ];
+      for (const type of types) {
+        if (meta[type] && meta[type][name] && range) {
+          if (!from || satisfies(minVersion(meta[type][name]), from)) {
+            meta[type][name] = range;
           }
         }
       }
     }
+  }
+};
 
-    // list additions in package.json
-    if (additions.length > 0) {
-      for (const {name, range, type} of additions) {
-        if (!meta[type]) meta[type] = {};
-        meta[type][name] = range;
-      }
+const installMissingDeps = async ({dir, meta, lockfile, ignore, tmp}) => {
+  let edited = false;
+
+  // generate lockfile entries for missing top level deps
+  const missing = {};
+  for (const {name, range, type} of getDepEntries(meta)) {
+    if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
+      if (!missing[type]) missing[type] = {};
+      missing[type][name] = range;
     }
+  }
+  if (Object.keys(missing).length > 0) {
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const yarnrc = await getYarnRc(dir);
 
-    // handle upgrades
-    if (upgrades.length > 0) {
-      for (const {name, range, from} of upgrades) {
-        const types = [
-          'dependencies',
-          'devDependencies',
-          'peerDependencies',
-          'optionalDependencies',
-          'resolutions',
-        ];
-        for (const type of types) {
-          if (meta[type] && meta[type][name] && range) {
-            if (!from || satisfies(minVersion(meta[type][name]), from)) {
-              meta[type][name] = range;
-            }
-          }
-        }
-      }
+    await exec(`mkdir -p ${cwd}`);
+    await write(
+      `${cwd}/package.json`,
+      `${JSON.stringify(missing, null, 2)}\n`,
+      'utf8'
+    );
+    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+    const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
+    await exec(install, {cwd}, [process.stdout, process.stderr]);
+
+    // copy newly installed deps back to original package.json/yarn.lock
+    const [added] = await readVersionSets({roots: [cwd]});
+    for (const {name, range, type} of getDepEntries(added.meta)) {
+      if (!meta[type]) meta[type] = {};
+      if (meta[type]) meta[type][name] = range;
     }
-
-    // install missing deps
-    const missing = {};
-    const cacheKeyParts = [];
-    for (const {name, range, type} of getDepEntries(meta)) {
-      if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
-        if (!missing[type]) missing[type] = {};
-        missing[type][name] = range;
-        cacheKeyParts.push(`${name}@${range}`);
-      }
-    }
-    if (Object.keys(missing).length > 0) {
-      const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const yarnrc = await getYarnRc(dir);
-
-      // install missing deps and reuse promise in parallel runs if possible
-      const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
-      if (!cache[cacheKey]) {
-        const install = async () => {
-          await exec(`mkdir -p ${cwd}`);
-          await write(
-            `${cwd}/package.json`,
-            `${JSON.stringify(missing, null, 2)}\n`,
-            'utf8'
-          );
-          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-
-          const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
-          await exec(install, {cwd}, [process.stdout, process.stderr]);
-          return cwd;
-        };
-        cache[cacheKey] = install(); // cache the promise
-      }
-      const cachedCwd = await cache[cacheKey];
-
-      // copy newly installed deps back to original package.json/yarn.lock
-      const [added] = await getVersionSets({roots: [cachedCwd]});
-      for (const {name, range, type} of getDepEntries(added.meta)) {
-        if (!meta[type]) meta[type] = {};
-        if (meta[type]) meta[type][name] = range;
-      }
-      for (const key in added.lockfile) {
-        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
-      }
-    }
-
-    // install missing transitives
-    const missingTransitives = [];
-    for (const key in lockfile) {
-      if (lockfile[key].dependencies) {
-        for (const name in lockfile[key].dependencies) {
-          const range = lockfile[key].dependencies[name];
-          if (!lockfile[`${name}@${range}`]) {
-            missingTransitives.push(`${name}@${range}`);
-          }
-        }
-      }
-    }
-    if (missingTransitives.length > 0) {
-      const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const yarnrc = await getYarnRc(dir);
-
-      // add missing transitives and reuse promise in parallel runs if possible
-      const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
-      if (!cache[cacheKey]) {
-        const add = async () => {
-          await exec(`mkdir -p ${cwd}`);
-          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-
-          await write(`${cwd}/package.json`, '{}\n', 'utf8');
-          const deps = missingTransitives.join(' ');
-          const add = `yarn add ${deps} --ignore-engines`;
-          await exec(add, {cwd}, [process.stdout, process.stderr]);
-          return cwd;
-        };
-        cache[cacheKey] = add(); // cache promise
-      }
-      const cachedCwd = await cache[cacheKey];
-
-      // copy newly installed deps back to original yarn.lock
-      const [added] = await getVersionSets({roots: [cachedCwd]});
-      for (const key in added.lockfile) {
-        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
+    for (const key in added.lockfile) {
+      if (!lockfile[key]) {
+        lockfile[key] = added.lockfile[key];
+        edited = true;
       }
     }
   }
 
-  // index lockfiles
+  // generate lockfile entries for missing transitives
+  const missingTransitives = [];
+  for (const key in lockfile) {
+    if (lockfile[key].dependencies) {
+      for (const name in lockfile[key].dependencies) {
+        const range = lockfile[key].dependencies[name];
+        if (!lockfile[`${name}@${range}`]) {
+          missingTransitives.push(`${name}@${range}`);
+        }
+      }
+    }
+  }
+  if (missingTransitives.length > 0) {
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const yarnrc = await getYarnRc(dir);
+
+    // add missing transitives and reuse promise in parallel runs if possible
+    await exec(`mkdir -p ${cwd}`);
+    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+    await write(`${cwd}/package.json`, '{}\n', 'utf8');
+    const deps = missingTransitives.join(' ');
+    const add = `yarn add ${deps} --ignore-engines`;
+    await exec(add, {cwd}, [process.stdout, process.stderr]);
+
+    // copy newly installed deps back to original yarn.lock
+    const [added] = await readVersionSets({roots: [cwd]});
+    for (const key in added.lockfile) {
+      if (!lockfile[key]) {
+        lockfile[key] = added.lockfile[key];
+        edited = true;
+      }
+    }
+  }
+  return edited;
+};
+
+const indexLockfiles = ({sets}) => {
+  // "index" in the dababase sense: makes it fast to lookup items in `sets` based on package name
   const index = {};
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
@@ -447,15 +481,23 @@ const update /*: Update */ = async ({
       return b.isExact - a.isExact || compare(bVersion, aVersion);
     });
   }
+  return index;
+};
 
-  // sync
+const syncLockfiles = async ({sets, ignore, frozenLockfile}) => {
+  const log = s => process.stdout.write(s);
+  log('Checking lockfiles');
+
+  const index = indexLockfiles({sets});
+
   for (const item of sets) {
     const {dir, meta} = item;
     const registry = await getRegistry(dir);
     const graph = {};
+    log('.');
     for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
-      if (!ignored)
+      if (!ignored) {
         populateGraph({
           graph,
           name,
@@ -463,6 +505,7 @@ const update /*: Update */ = async ({
           index,
           registry,
         });
+      }
     }
 
     // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
@@ -482,7 +525,7 @@ const update /*: Update */ = async ({
       const oldKeys = Object.keys(item.lockfile);
       const newKeys = Object.keys(lockfile);
       if (oldKeys.sort().join() !== newKeys.sort().join()) {
-        console.error(
+        throw new Error(
           `Updating lockfile is not allowed with frozenLockfile. ` +
             `This error is most likely happening if you have committed ` +
             `out-of-date lockfiles and tried to install deps in CI. ` +
@@ -493,8 +536,7 @@ const update /*: Update */ = async ({
       item.lockfile = lockfile;
     }
   }
-
-  return sets;
+  log('\n');
 };
 
 /*::
@@ -575,4 +617,13 @@ const getYarnRc = async packageDir => {
   return yarnrc.join('\n');
 };
 
-module.exports = {check, add, remove, upgrade, sync, merge, populateGraph};
+module.exports = {
+  check,
+  add,
+  remove,
+  upgrade,
+  sync,
+  regenerate,
+  merge,
+  populateGraph,
+};

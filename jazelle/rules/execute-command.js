@@ -23,15 +23,11 @@ const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 
 if (out) {
   exec(`mkdir -p "${dist}"`, {cwd: main});
-  runScript(`pre${command}`);
-  runScript(command, args);
-  runScript(`post${command}`);
+  runCommands();
   exec(`tar czf "${out}" "${dist}"`, {cwd: main});
 } else {
   try {
-    runScript(`pre${command}`);
-    runScript(command, args);
-    runScript(`post${command}`);
+    runCommands();
   } catch (e) {
     // we don't want the failed `exec` call to print a stack trace to stderr
     // because we are piping the NPM script's stderr to the user
@@ -39,7 +35,13 @@ if (out) {
   }
 }
 
-function runScript(command, args = []) {
+function runCommands() {
+  runCommand(`pre${command}`);
+  runCommand(command, args);
+  runCommand(`post${command}`);
+}
+
+function runCommand(command, args = []) {
   if (scripts[command]) {
     const payload = scripts[command];
     const nodeDir = dirname(node);
