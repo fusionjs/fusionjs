@@ -40,7 +40,7 @@
     "lint": "eslint .",
     "test": "echo ok",
     "build": "echo ok",
-    "flow": "flow check"
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

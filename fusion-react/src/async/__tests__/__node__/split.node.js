@@ -7,13 +7,12 @@
  */
 
 /* eslint-disable react/no-multi-comp */
-import tape from 'tape-cup';
 import * as React from 'react';
 import {renderToString} from 'react-dom/server';
 import Provider from '../../prepare-provider';
 import {prepare, split} from '../../index.js';
 
-tape('Preparing an app with an async component', async t => {
+test('Preparing an app with an async component', async () => {
   function DeferredComponent(props: {foo: 'foo'}) {
     return <div>Loaded</div>;
   }
@@ -37,20 +36,19 @@ tape('Preparing an app with an async component', async t => {
     </Provider>
   );
 
-  t.ok(/Loading/.test(renderToString(app)), 'starts off loading');
+  expect(/Loading/.test(renderToString(app))).toBeTruthy();
 
   await prepare(app);
 
-  t.ok(/Loaded/.test(renderToString(app)), 'ends loaded');
+  expect(/Loaded/.test(renderToString(app))).toBeTruthy();
   try {
     await prepare(app);
   } catch (e) {
-    t.ifError(e, 'should not error');
+    expect(e).toBeFalsy();
   }
-  t.end();
 });
 
-tape('Preparing an app with an errored async component', async t => {
+test('Preparing an app with an errored async component', async () => {
   function LoadingComponent() {
     return <div>Loading</div>;
   }
@@ -71,8 +69,7 @@ tape('Preparing an app with an errored async component', async t => {
     </Provider>
   );
 
-  t.ok(/Loading/.test(renderToString(app)), 'starts off loading');
+  expect(/Loading/.test(renderToString(app))).toBeTruthy();
   await prepare(app);
-  t.ok(/Failed/.test(renderToString(app)), 'ends failed');
-  t.end();
+  expect(/Failed/.test(renderToString(app))).toBeTruthy();
 });

@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import type {StoreCreator, Reducer} from 'redux';
 
 import App, {createPlugin} from 'fusion-core';
@@ -41,7 +40,7 @@ function createTestFixture() {
   return app;
 }
 
-test('plugin - service resolved as expected', t => {
+test('plugin - service resolved as expected', () => {
   const app = createTestFixture();
   let wasResolved = false;
 
@@ -51,7 +50,7 @@ test('plugin - service resolved as expected', t => {
       deps: {enhancer: EnhancerToken},
       provides: deps => {
         const {enhancer} = deps;
-        t.ok(enhancer);
+        expect(enhancer).toBeTruthy();
         const createStore: StoreCreator<*, *, *> = () => {
           return {
             dispatch: () => {},
@@ -72,8 +71,7 @@ test('plugin - service resolved as expected', t => {
     })
   );
 
-  t.true(wasResolved, 'test plugin was resolved');
-  t.equal(eventsEmitted[0].type, 'redux-action-emitter:action');
-  t.equal(eventsEmitted.length, 1, 'only emits events for standard actions');
-  t.end();
+  expect(wasResolved).toBeTruthy();
+  expect(eventsEmitted[0].type).toBe('redux-action-emitter:action');
+  expect(eventsEmitted.length).toBe(1);
 });

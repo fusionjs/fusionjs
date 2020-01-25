@@ -6,10 +6,8 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import JWTBrowser from '../jwt-browser';
 
-tape('browser api', t => {
-  t.equal(JWTBrowser, null);
-  t.end();
+test('browser api', () => {
+  expect(JWTBrowser).toBe(null);
 });

@@ -5,10 +5,8 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import browserPlugin from '../browser.js';
 
-test('browser exports null', t => {
-  t.deepEqual(browserPlugin, null);
-  t.end();
+test('browser exports null', () => {
+  expect(browserPlugin).toEqual(null);
 });

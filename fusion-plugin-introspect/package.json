@@ -8,25 +8,18 @@
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "bin": {
     "fusion-run-introspect": "src/cli/index.js"
   },
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
   "dependencies": {
     "koa-bodyparser": "^4.2.1",
@@ -40,7 +33,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.8.0",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eslint": "^6.0.1",
@@ -62,54 +55,13 @@
     "fusion-core": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint .",
     "test": "jest",
-    "cover": "jest --coverage",
     "view-cover": "npm run cover && open coverage/index.html",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
-  },
-  "jest": {
-    "projects": [
-      {
-        "name": "node",
-        "displayName": "node",
-        "browser": false,
-        "testEnvironment": "node",
-        "testRegex": ".*\\.node\\.js$",
-        "globals": {
-          "__BROWSER__": false,
-          "__NODE__": true,
-          "__DEV__": false
-        }
-      },
-      {
-        "name": "browser",
-        "displayName": "browser",
-        "browser": true,
-        "testEnvironment": "jsdom",
-        "testRegex": ".*\\.browser\\.js$",
-        "globals": {
-          "__BROWSER__": true,
-          "__NODE__": false,
-          "__DEV__": false
-        }
-      }
-    ]
-  },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "@babel/preset-flow"
-        ],
-        "plugins": [
-          "@babel/plugin-transform-modules-commonjs"
-        ]
-      }
-    }
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

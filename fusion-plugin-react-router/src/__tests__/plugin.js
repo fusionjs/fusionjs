@@ -12,7 +12,6 @@ import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import {withRouter, Link} from 'react-router-dom';
-import test from 'tape-cup';
 import type {FusionPlugin} from 'fusion-core';
 import {Route} from '../modules/Route';
 import {Redirect} from '../modules/Redirect.js';
@@ -55,7 +54,7 @@ function cleanup() {
 }
 
 if (__NODE__) {
-  test('server side redirects', async t => {
+  test('server side redirects', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
@@ -79,13 +78,12 @@ if (__NODE__) {
     app.register(UniversalEventsToken, emitter);
     const simulator = setup(app);
     const ctx = await simulator.render('/');
-    t.equal(ctx.status, 307);
-    t.equal(ctx.res.getHeader('Location'), '/lol');
+    expect(ctx.status).toBe(307);
+    expect(ctx.res.getHeader('Location')).toBe('/lol');
     cleanup();
-    t.end();
   });
 
-  test('custom context', async t => {
+  test('custom context', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
@@ -97,11 +95,11 @@ if (__NODE__) {
     app.register(GetStaticContextToken, ctx => {
       return {
         set status(code) {
-          t.equal(code, 307);
+          expect(code).toBe(307);
           ctx.status = 302;
         },
         set url(url) {
-          t.equal(url, '/lol');
+          expect(url).toBe('/lol');
           ctx.redirect('/test');
         },
       };
@@ -121,13 +119,12 @@ if (__NODE__) {
     app.register(UniversalEventsToken, emitter);
     const simulator = setup(app);
     const ctx = await simulator.render('/');
-    t.equal(ctx.status, 302);
-    t.equal(ctx.res.getHeader('Location'), '/test');
+    expect(ctx.status).toBe(302);
+    expect(ctx.res.getHeader('Location')).toBe('/test');
     cleanup();
-    t.end();
   });
 
-  test('server side redirects with prefix', async t => {
+  test('server side redirects with prefix', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
@@ -138,14 +135,13 @@ if (__NODE__) {
     const app = getPrefixApp(element);
     const simulator = setup(app);
     const ctx = await simulator.render('/');
-    t.equal(ctx.status, 307);
-    t.equal(ctx.res.getHeader('Location'), '/test/lol');
+    expect(ctx.status).toBe(307);
+    expect(ctx.res.getHeader('Location')).toBe('/test/lol');
     cleanup();
-    t.end();
   });
 }
 
-test('events with trackingId', async t => {
+test('events with trackingId', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -155,7 +151,6 @@ test('events with trackingId', async t => {
   );
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: 'home',
     page: '/',
   });
@@ -163,10 +158,9 @@ test('events with trackingId', async t => {
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
-  t.end();
 });
 
-test('events with no tracking id', async t => {
+test('events with no tracking id', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -177,7 +171,6 @@ test('events with no tracking id', async t => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/',
     page: '/',
   });
@@ -185,10 +178,9 @@ test('events with no tracking id', async t => {
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
-  t.end();
 });
 
-test('Custom Provider', async t => {
+test('Custom Provider', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -199,7 +191,6 @@ test('Custom Provider', async t => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/',
     page: '/',
   });
@@ -220,12 +211,11 @@ test('Custom Provider', async t => {
     result = rendered;
   }
 
-  t.ok(result.includes('CUSTOM PROVIDER RESULT'), 'uses custom provider');
+  expect(result.includes('CUSTOM PROVIDER RESULT')).toBeTruthy();
   cleanup();
-  t.end();
 });
 
-test('Router Providing History', async t => {
+test('Router Providing History', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -236,7 +226,6 @@ test('Router Providing History', async t => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/',
     page: '/',
   });
@@ -247,27 +236,18 @@ test('Router Providing History', async t => {
     },
     ({router}) => (ctx, next) => {
       const {history} = router.from(ctx);
-      t.ok(history, 'provides a history object');
-      t.equal(
-        typeof history.push,
-        'function',
-        'provides correct history object'
-      );
-      t.equal(
-        typeof history.replace,
-        'function',
-        'provides correct history object'
-      );
+      expect(history).toBeTruthy();
+      expect(typeof history.push).toBe('function');
+      expect(typeof history.replace).toBe('function');
       return next();
     }
   );
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
-  t.end();
 });
 
-test('events with no tracking id and route prefix', async t => {
+test('events with no tracking id and route prefix', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -278,7 +258,6 @@ test('events with no tracking id and route prefix', async t => {
 
   const app = getPrefixApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/',
     page: '/',
   });
@@ -286,14 +265,13 @@ test('events with no tracking id and route prefix', async t => {
   const simulator = setup(app);
   await simulator.render('/');
   cleanup();
-  t.end();
 });
 
-test('events with no tracking id and deep path', async t => {
+test('events with no tracking id and deep path', async done => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
-    return t.end();
+    return done();
   }
   const element = (
     <div>
@@ -306,7 +284,6 @@ test('events with no tracking id and deep path', async t => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/user/:uuid',
     page: '/user/:uuid',
   });
@@ -315,21 +292,20 @@ test('events with no tracking id and deep path', async t => {
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
 
-  t.ok(ctx.rendered.includes('href="/lol"'), 'sets links correctly');
-  t.ok(
-    ctx.rendered.includes('<div>Hello</div><div>Hello</div>'),
-    'matches both user routes'
-  );
-  t.ok(!ctx.rendered.includes('NotHere'), 'does not match not here route');
+  expect(ctx.rendered.includes('href="/lol"')).toBeTruthy();
+  expect(
+    ctx.rendered.includes('<div>Hello</div><div>Hello</div>')
+  ).toBeTruthy();
+  expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
   cleanup();
-  t.end();
+  done();
 });
 
-test('events with no tracking id and deep path and route prefix', async t => {
+test('events with no tracking id and deep path and route prefix', async done => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
-    return t.end();
+    return done();
   }
   const element = (
     <div>
@@ -342,7 +318,6 @@ test('events with no tracking id and deep path and route prefix', async t => {
 
   const app = getPrefixApp(element);
   const UniversalEvents = getMockEvents({
-    t,
     title: '/user/:uuid',
     page: '/user/:uuid',
   });
@@ -350,17 +325,16 @@ test('events with no tracking id and deep path and route prefix', async t => {
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   const ctx = await simulator.render('/user/abcd');
-  t.ok(ctx.rendered.includes('href="/test/lol"'), 'sets links correctly');
-  t.ok(
-    ctx.rendered.includes('<div>Hello</div><div>Hello</div>'),
-    'matches both user routes'
-  );
-  t.ok(!ctx.rendered.includes('NotHere'), 'does not match not here route');
+  expect(ctx.rendered.includes('href="/test/lol"')).toBeTruthy();
+  expect(
+    ctx.rendered.includes('<div>Hello</div><div>Hello</div>')
+  ).toBeTruthy();
+  expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
   cleanup();
-  t.end();
+  done();
 });
 
-test('without UniversalEventsToken', async t => {
+test('without UniversalEventsToken', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
@@ -371,14 +345,13 @@ test('without UniversalEventsToken', async t => {
   const simulator = setup(app);
   const ctx = await simulator.render('/');
   if (__NODE__) {
-    t.ok(ctx.rendered.includes('<div>Hello</div>'), 'matches route');
+    expect(ctx.rendered.includes('<div>Hello</div>')).toBeTruthy();
   }
   cleanup();
-  t.end();
 });
 
 if (__BROWSER__) {
-  test('mapping events in browser', async t => {
+  test('mapping events in browser', async done => {
     const Home = withRouter(({location, history}) => {
       if (location.pathname === '/') {
         setTimeout(() => {
@@ -423,13 +396,13 @@ if (__BROWSER__) {
         },
         emit(type, payload) {
           const expected = expectedPayloads.shift();
-          t.deepLooseEqual(payload, expected);
+          expect(payload).toStrictEqual(expected);
           const mapped = mapper({});
-          t.equal(mapped.__url__, expected.title);
-          t.deepEqual(mapped.__urlParams__, expected.params);
+          expect(mapped.__url__).toBe(expected.title);
+          expect(mapped.__urlParams__).toEqual(expected.params);
           if (expectedPayloads.length === 0) {
             cleanup();
-            t.end();
+            done();
           }
         },
       }),
@@ -442,7 +415,6 @@ if (__BROWSER__) {
 }
 
 function getMockEvents({
-  t,
   title: expectedTitle,
   page: expectedPage,
 }): FusionPlugin<any, any> {
@@ -452,26 +424,26 @@ function getMockEvents({
   return createPlugin({
     provides: () => ({
       map(mapper) {
-        t.equal(typeof mapper, 'function');
+        expect(typeof mapper).toBe('function');
       },
       emit(type, {title, page}) {
         if (__NODE__) {
           throw new Error('fail');
         }
-        t.equal(type, expected.shift(), 'emits with the correct type');
-        t.equal(title, expectedTitle, 'correct title');
-        t.equal(page, expectedPage, 'correct page');
+        expect(type).toBe(expected.shift());
+        expect(title).toBe(expectedTitle);
+        expect(page).toBe(expectedPage);
       },
       from(ctx) {
-        t.ok(ctx, 'emits from scoped emitter');
+        expect(ctx).toBeTruthy();
         return {
           map() {},
           emit(type, {title, page, status, timing}) {
-            t.equal(type, expected.shift(), 'emits with the correct type');
-            t.equal(title, expectedTitle, 'correct title');
-            t.equal(page, expectedPage, 'correct page');
-            t.equal(status, 200, 'emits status code');
-            t.equal(typeof timing, 'number', 'emits with the correct value');
+            expect(type).toBe(expected.shift());
+            expect(title).toBe(expectedTitle);
+            expect(page).toBe(expectedPage);
+            expect(status).toBe(200);
+            expect(typeof timing).toBe('number');
           },
         };
       },

@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import {inMemoryBatchStorage, localBatchStorage} from '../index.js';
 
 const toBeTested = {
@@ -17,61 +16,44 @@ const toBeTested = {
 Object.keys(toBeTested).forEach(storageType => {
   const {add, addToStart, getAndClear} = toBeTested[storageType];
 
-  test(storageType, t => {
-    t.test('add', t => {
+  // eslint-disable-next-line jest/valid-describe
+  describe(storageType, () => {
+    test('add', () => {
       const data = {type: 'nick', payload: 'test'};
       getAndClear();
       add(data);
-      t.deepEqual(getAndClear(), [data], 'add should add to storage');
-      t.end();
+      expect(getAndClear()).toEqual([data]);
     });
 
-    t.test('addToStart', t => {
+    test('addToStart', () => {
       const data1 = {type: '1', payload: 'test'};
       const data2 = {type: '2', payload: 'test'};
       getAndClear();
       add(data1);
       addToStart(data2);
 
-      t.deepEqual(
-        getAndClear(),
-        [data2, data1],
-        'addToStart should add to beginning of array'
-      );
-      t.end();
+      expect(getAndClear()).toEqual([data2, data1]);
     });
 
-    t.test('getAndClear', t => {
+    test('getAndClear', () => {
       const data = {type: 'nick', payload: 'test'};
       getAndClear();
       add(data);
 
-      t.deepEqual(
-        getAndClear(),
-        [data],
-        'getAndClear should get current array'
-      );
-      t.notOk(getAndClear().length, 'and clear it');
-      t.end();
+      expect(getAndClear()).toEqual([data]);
+      expect(getAndClear().length).toBeFalsy();
     });
 
-    t.test('getAndClear with limit', t => {
+    test('getAndClear with limit', () => {
       const data = {type: 'nick', payload: 'test'};
       getAndClear();
       add(data);
       add(data);
       add(data);
 
-      t.deepEqual(
-        getAndClear(2),
-        [data, data],
-        'getAndClear should get current array with limit'
-      );
-      t.deepEqual(getAndClear(), [data], 'should clear with limit correctly');
-      t.notOk(getAndClear().length, 'finally is cleared');
-      t.end();
+      expect(getAndClear(2)).toEqual([data, data]);
+      expect(getAndClear()).toEqual([data]);
+      expect(getAndClear().length).toBeFalsy();
     });
-
-    t.end();
   });
 });

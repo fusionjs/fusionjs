@@ -8,26 +8,19 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {},
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "create-universal-package-v3": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -41,26 +34,22 @@
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "get-port": "^5.0.0",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "jest": "^24.9.0"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build": "cup3 build",
-    "build-tests": "cup3 build-tests",
-    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-tests && npm run just-test",
-    "cover": "npm run build-tests && nyc npm run just-test",
+    "build": "cup-build",
+    "build-tests": "cup-build-tests",
+    "test": "jest",
     "prepublish": "npm run build",
-    "flow": "flow check"
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

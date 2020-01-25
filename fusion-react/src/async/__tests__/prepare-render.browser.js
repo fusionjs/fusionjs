@@ -7,7 +7,6 @@
  */
 
 /* eslint-env browser */
-import tape from 'tape-cup';
 import * as React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
@@ -16,7 +15,7 @@ import {prepare} from '../../index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
-tape('Client-side preparing', t => {
+test('Client-side preparing', done => {
   let numRenders = 0;
   function SimplePortal() {
     numRenders++;
@@ -25,9 +24,9 @@ tape('Client-side preparing', t => {
   }
   const app = <SimplePortal />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numRenders, 1, 'renders SimplePortal once');
-    t.end();
+    expect(numRenders).toBe(1);
+    done();
   });
 });

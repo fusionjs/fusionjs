@@ -6,13 +6,12 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Switch, Route} from '../server';
 import {createServerHistory} from '../modules/ServerHistory';
 
-test('matches as expected', t => {
+test('matches as expected', () => {
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
   const ctx = {
@@ -29,7 +28,6 @@ test('matches as expected', t => {
       </Switch>
     </Router>
   );
-  t.ok(/Hello/.test(render(el)), 'matches first');
-  t.ok(!/Hi/.test(render(el)), 'does not match second');
-  t.end();
+  expect(/Hello/.test(render(el))).toBeTruthy();
+  expect(!/Hi/.test(render(el))).toBeTruthy();
 });

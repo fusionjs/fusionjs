@@ -11,7 +11,7 @@ import type {FusionPlugin, Token} from 'fusion-core';
 
 import serverPlugin from './node';
 import clientPlugin, {HydrationStateToken} from './browser';
-import createI18nLoader from './loader';
+import serverLoader from './loader';
 import type {
   I18nDepsType,
   I18nServiceType,
@@ -25,6 +25,10 @@ const I18nToken: Token<I18nServiceType> = createToken('I18nToken');
 const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = __NODE__
   ? serverPlugin
   : clientPlugin;
+
+const createI18nLoader: typeof serverLoader = __NODE__
+  ? serverLoader
+  : (void 0: any);
 
 export type {
   I18nDepsType,

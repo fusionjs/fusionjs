@@ -7,8 +7,6 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
-
 import App, {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {LoggerToken} from 'fusion-tokens';
@@ -41,17 +39,17 @@ const createMockEmitter = (
   return emitter;
 };
 
-test('browser logger', t => {
+test('browser logger', () => {
   let called = false;
   const app = new App('el', el => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {
-    t.equal(type, 'universal-log');
+    expect(type).toBe('universal-log');
     // $FlowFixMe
-    t.equal(payload.level, 'info');
+    expect(payload.level).toBe('info');
     // $FlowFixMe
-    t.equal(payload.args[0], 'test');
+    expect(payload.args[0]).toBe('test');
     called = true;
   });
   const mockEmitterPlugin = createPlugin({
@@ -64,29 +62,29 @@ test('browser logger', t => {
     return (ctx, next) => next();
   });
   getSimulator(app);
-  t.equals(called, true, 'called');
-  t.end();
+  expect(called).toBe(true);
 });
 
-test('browser logger with errors', t => {
-  t.plan(6);
+test('browser logger with errors', done => {
+  expect.assertions(6);
   const app = new App('el', el => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {
-    t.equal(type, 'universal-log');
+    expect(type).toBe('universal-log');
     // $FlowFixMe
-    t.equal(payload.level, 'error');
+    expect(payload.level).toBe('error');
     // $FlowFixMe
-    t.equal(payload.args[0], 'some-message');
+    expect(payload.args[0]).toBe('some-message');
     // $FlowFixMe
-    t.equal(typeof payload.args[1].error.stack, 'string');
+    expect(typeof payload.args[1].error.stack).toBe('string');
     // $FlowFixMe
-    t.equal(typeof payload.args[1].error.message, 'string');
+    expect(typeof payload.args[1].error.message).toBe('string');
 
     setTimeout(() => {
       // $FlowFixMe
-      t.equal(mockEmitter.flushCount, 1, 'error immediately flushed');
+      expect(mockEmitter.flushCount).toBe(1);
+      done();
     }, 0);
   });
   const mockEmitterPlugin = createPlugin({
@@ -101,19 +99,19 @@ test('browser logger with errors', t => {
   getSimulator(app);
 });
 
-test('browser logger with errors as first argument', t => {
+test('browser logger with errors as first argument', () => {
   let called = false;
   const app = new App('el', el => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {
-    t.equal(type, 'universal-log');
+    expect(type).toBe('universal-log');
     // $FlowFixMe
-    t.equal(payload.level, 'error');
+    expect(payload.level).toBe('error');
     // $FlowFixMe
-    t.equal(typeof payload.args[0].error.stack, 'string');
+    expect(typeof payload.args[0].error.stack).toBe('string');
     // $FlowFixMe
-    t.equal(typeof payload.args[0].error.message, 'string');
+    expect(typeof payload.args[0].error.message).toBe('string');
     called = true;
   });
   const mockEmitterPlugin = createPlugin({
@@ -126,6 +124,5 @@ test('browser logger with errors as first argument', t => {
     return (ctx, next) => next();
   });
   getSimulator(app);
-  t.equals(called, true, 'called');
-  t.end();
+  expect(called).toBe(true);
 });
