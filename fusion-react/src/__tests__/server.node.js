@@ -6,40 +6,39 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import render from '../server';
 import App from '../index';
 
-test('renders', t => {
+test('renders', () => {
   const rendered = render(React.createElement('span', null, 'hello'));
-  t.ok(/<span/.test(rendered), 'has right tag');
-  t.ok(/hello/.test(rendered), 'has right text');
-  t.end();
+  expect(/<span/.test(rendered)).toBeTruthy();
+  expect(/hello/.test(rendered)).toBeTruthy();
 });
 
-test('app api', async t => {
-  t.equal(typeof App, 'function', 'exports a function');
+test('app api', async done => {
+  expect(typeof App).toBe('function');
   try {
     const app = new App(React.createElement('div', null, 'Hello World'));
     const simulator = getSimulator(app);
     const ctx = await simulator.render('/');
-    t.ok(ctx.rendered.includes('Hello World'));
-    t.ok(typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered));
+    expect(ctx.rendered.includes('Hello World')).toBeTruthy();
+    expect(
+      typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered)
+    ).toBeTruthy();
   } catch (e) {
-    t.ifError(e);
+    expect(e).toBeFalsy();
   } finally {
-    t.end();
+    done();
   }
 });
 
-test('throw on non-element root', async t => {
-  t.throws(() => {
+test('throw on non-element root', async () => {
+  expect(() => {
     // $FlowFixMe
     new App(function() {
       return null;
     });
-  }, 'Passing a component instead of an element throws');
-  t.end();
+  }).toThrow();
 });

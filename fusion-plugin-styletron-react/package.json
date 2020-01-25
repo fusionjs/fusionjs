@@ -12,7 +12,7 @@
     "dist-browser-esm",
     "dist-node-cjs",
     "dist-node-esm",
-    "src"
+    "src/"
   ],
   "main": "./dist-node-cjs/index.js",
   "module": "./dist-node-esm/index.js",
@@ -21,12 +21,12 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
     "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup4 build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "dependencies": {
     "css-to-js-sourcemap-worker": "^2.0.4",
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.0.0",
-    "@rtsao/create-universal-package-4": "^4.1.0",
+    "create-universal-package": "^4.1.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",

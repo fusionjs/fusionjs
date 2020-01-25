@@ -8,7 +8,6 @@
 
 /* eslint-env node */
 
-import test from 'tape-cup';
 import {fork} from 'child_process';
 
 import App, {consumeSanitizedHTML} from 'fusion-core';
@@ -16,16 +15,16 @@ import {getSimulator} from 'fusion-test-utils';
 
 import ErrorHandling, {ErrorHandlerToken} from '../server';
 
-test('request errors', async t => {
-  t.plan(6);
+test('request errors', async () => {
+  expect.assertions(6);
 
   const app = new App('test', el => el);
 
   let called = 0;
   const expectedTypes = ['browser', 'request'];
   const onError = (body, type, ctx) => {
-    t.equal(type, expectedTypes.shift());
-    t.ok(ctx);
+    expect(type).toBe(expectedTypes.shift());
+    expect(ctx).toBeTruthy();
     called++;
   };
   app.register(ErrorHandling);
@@ -37,18 +36,16 @@ test('request errors', async t => {
       body: {message: 'test'},
     })
     .catch(e => {
-      t.equals(e, 'REJECTED');
+      expect(e).toBe('REJECTED');
     });
 
-  t.equals(called, 2, 'emits browser error');
+  expect(called).toBe(2);
   process.removeAllListeners('uncaughtException');
   process.removeAllListeners('unhandledRejection');
-
-  t.end();
 });
 
-test('request errors send early response', async t => {
-  t.plan(2);
+test('request errors send early response', async () => {
+  expect.assertions(2);
 
   const app = new App('test', el => el);
 
@@ -66,29 +63,24 @@ test('request errors send early response', async t => {
       body: {message: 'test'},
     })
     .catch(e => {
-      t.equals(e, 'REJECTED');
+      expect(e).toBe('REJECTED');
     });
-  t.equals(called, 1, 'calls error handler without awaiting it');
-  t.end();
+  expect(called).toBe(1);
 });
 
-test('adds script', async t => {
+test('adds script', async () => {
   const app = new App('test', el => el);
 
   app.register(ErrorHandling);
   app.register(ErrorHandlerToken, () => {});
 
   const ctx = await await getSimulator(app).render('/');
-  t.ok(
-    consumeSanitizedHTML(ctx.template.head[0]).match(/<script/),
-    'adds script to head'
-  );
-
-  t.end();
+  expect(
+    consumeSanitizedHTML(ctx.template.head[0]).match(/<script/)
+  ).toBeTruthy();
 });
 
-test('Uncaught exceptions', async t => {
-  // $FlowFixMe
+test('Uncaught exceptions', async done => {
   const forked = fork('./fixtures/uncaught-exception.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', data => {
@@ -96,28 +88,26 @@ test('Uncaught exceptions', async t => {
   });
 
   forked.on('close', code => {
-    t.equal(code, 1, 'exits with code 1');
-    t.ok(stdout.includes('ERROR HANDLER'), 'outputs expected error');
-    t.end();
+    expect(code).toBe(1);
+    expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
+    done();
   });
 });
 
-test('Unhandled rejections', async t => {
-  // $FlowFixMe
+test('Unhandled rejections', async done => {
   const forked = fork('./fixtures/unhandled-rejection.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', data => {
     stdout += data.toString();
   });
   forked.on('close', code => {
-    t.equal(code, 1, 'exits with code 1');
-    t.ok(stdout.includes('ERROR HANDLER'), 'outputs expected error');
-    t.end();
+    expect(code).toBe(1);
+    expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
+    done();
   });
 });
 
-test('Unhandled rejections with non-error', async t => {
-  // $FlowFixMe
+test('Unhandled rejections with non-error', async done => {
   const forked = fork('./fixtures/unhandled-rejection-non-error.js', {
     stdio: 'pipe',
   });
@@ -126,9 +116,9 @@ test('Unhandled rejections with non-error', async t => {
     stdout += data.toString();
   });
   forked.on('close', code => {
-    t.equal(code, 1, 'exits with code 1');
-    t.ok(stdout.includes('ERROR HANDLER'), 'outputs expected error');
-    t.ok(stdout.includes('INSTANCEOF ERROR true'), 'outputs expected error');
-    t.end();
+    expect(code).toBe(1);
+    expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
+    expect(stdout.includes('INSTANCEOF ERROR true')).toBeTruthy();
+    done();
   });
 });

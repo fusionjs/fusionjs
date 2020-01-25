@@ -7,7 +7,8 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
+
+import 'whatwg-fetch'; // Needed for Response global
 
 import App from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
@@ -43,7 +44,7 @@ function createMockFetch(responseParams: mixed): Response {
   };
 }
 
-test('Browser EventEmitter', async t => {
+test('Browser EventEmitter', async () => {
   let fetched = false;
   let emitted = false;
   const fetch: Fetch = (url, options) => {
@@ -61,29 +62,26 @@ test('Browser EventEmitter', async t => {
 
     let {method, headers, body} = options;
 
-    t.equals(url, '/_events', 'url is ok');
-    t.equals(method, 'POST', 'method is ok');
-    t.equals(
+    expect(url).toBe('/_events');
+    expect(method).toBe('POST');
+    expect(
       // $FlowFixMe
-      headers['Content-Type'],
-      'application/json',
-      'content-type is okay'
-    );
+      headers['Content-Type']
+    ).toBe('application/json');
     const jsonBody = JSON.parse(body);
-    t.equals(jsonBody.items.length, 1, 'data size is ok');
-    t.equals(jsonBody.items[0].payload.x, 1, 'data is ok');
+    expect(jsonBody.items.length).toBe(1);
+    expect(jsonBody.items[0].payload.x).toBe(1);
     fetched = true;
-
-    return Promise.resolve(createMockFetch({ok: true}));
+    return Promise.resolve(createMockFetch());
   };
 
   const app = getApp(fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     return (ctx, next) => {
       const emitter = events.from(ctx);
-      t.equal(emitter, events);
+      expect(emitter).toBe(events);
       emitter.on('a', ({x}) => {
-        t.equals(x, 1, 'payload is correct');
+        expect(x).toBe(1);
         emitted = true;
       });
       emitter.emit('a', {x: 1});
@@ -95,22 +93,19 @@ test('Browser EventEmitter', async t => {
   const simulator = getSimulator(app);
   await simulator.render('/');
 
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  t.equals(emitted, true, 'emitted');
-  t.equals(fetched, true, 'fetched');
-  t.equal(store.data.length, 0, 'queue empty');
-  t.end();
+  expect(emitted).toBe(true);
+  expect(fetched).toBe(true);
+  expect(store.data.length).toBe(0);
 });
 
-test('Browser EventEmitter adds events back to queue if they fail to send', async t => {
-  const fetch: Fetch = () => Promise.resolve(createMockFetch());
+test('Browser EventEmitter adds events back to queue if they fail to send', async () => {
+  const fetch: Fetch = () => Promise.resolve(createMockFetch({ok: false}));
 
   const app = getApp(fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     return (ctx, next) => {
       const emitter = events.from(ctx);
-      t.equal(emitter, events);
+      expect(emitter).toBe(events);
       emitter.emit('a', {x: 1});
       window.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
@@ -120,20 +115,17 @@ test('Browser EventEmitter adds events back to queue if they fail to send', asyn
   const simulator = getSimulator(app);
   await simulator.render('/');
 
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  t.equal(store.data.length, 1, 'event stored when fetch fails');
-  t.end();
+  expect(store.data.length).toBe(1);
 });
 
-test('Browser EventEmitter adds events back to queue if they fail to send 2', async t => {
+test('Browser EventEmitter adds events back to queue if they fail to send 2', async () => {
   const fetch: Fetch = () => Promise.reject();
 
   const app = getApp(fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     return (ctx, next) => {
       const emitter = events.from(ctx);
-      t.equal(emitter, events);
+      expect(emitter).toBe(events);
       emitter.emit('a', {x: 1});
       window.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
@@ -143,25 +135,22 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
   const simulator = getSimulator(app);
   await simulator.render('/');
 
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  t.equal(store.data.length, 1, 'event stored when fetch fails');
-  t.end();
+  expect(store.data.length).toBe(1);
 });
 
-test('Browser EventEmitter interval', async t => {
+test('Browser EventEmitter interval', async done => {
   store.getAndClear();
   const emitter = new UniversalEmitter(
     () => {
-      return Promise.resolve(createMockFetch({ok: true}));
+      return Promise.resolve(createMockFetch());
     },
     {
       add() {},
       addToStart() {},
       getAndClear() {
-        t.ok('Calls storage getAndClear on interval');
+        expect('Calls storage getAndClear on interval').toBeTruthy();
         emitter.teardown();
-        t.end();
+        done();
         return [];
       },
     },
@@ -169,34 +158,32 @@ test('Browser EventEmitter interval', async t => {
   );
 });
 
-test('Respects the limit when flushing', async t => {
+test('Respects the limit when flushing', async () => {
   store.getAndClear();
-  const fetch: Fetch = () => Promise.resolve(createMockFetch({ok: true}));
+  const fetch: Fetch = () => Promise.resolve(createMockFetch());
   const emitter = new UniversalEmitter(fetch, store, 2000, 20);
   for (let index = 0; index < 50; index++) {
     emitter.emit('a', {x: 1});
   }
   await emitter.flush();
-  t.equal(store.data.length, 30, 'only flushes the limit of events');
+  expect(store.data.length).toBe(30);
   await emitter.flush();
-  t.equal(store.data.length, 10, 'only flushes the limit of events');
+  expect(store.data.length).toBe(10);
   await emitter.flush();
-  t.equal(store.data.length, 0, 'flushes the rest of the events');
+  expect(store.data.length).toBe(0);
   emitter.teardown();
-  t.end();
 });
 
-test('Lowers limit for 413 errors', async t => {
+test('Lowers limit for 413 errors', async () => {
   store.getAndClear();
   const fetch: Fetch = () =>
     Promise.resolve(createMockFetch({status: 413, ok: false}));
   const emitter = new UniversalEmitter(fetch, store, 2000, 20);
   emitter.emit('a', {x: 1});
   await emitter.flush();
-  t.equal(store.data.length, 1, 'event stored when fetch fails');
-  t.equal(emitter.limit, 10, 'cuts limit in half when receiving a 413');
+  expect(store.data.length).toBe(1);
+  expect(emitter.limit).toBe(10);
   await emitter.flush();
-  t.equal(emitter.limit, 5, 'cuts limit in half when receiving a 413');
+  expect(emitter.limit).toBe(5);
   await emitter.flush();
-  t.end();
 });

@@ -6,19 +6,17 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 
 import {renderToString as render} from 'react-dom/server';
 
 import {MemoryRouter, Route} from '../server.js';
 
-test('works in server', t => {
+test('works in server', () => {
   const el = (
     <MemoryRouter initialEntries={['/test']}>
       <Route path="/test" render={() => <div>Test</div>} />
     </MemoryRouter>
   );
-  t.ok(/Test/.test(render(el)), 'matches');
-  t.end();
+  expect(/Test/.test(render(el))).toBeTruthy();
 });

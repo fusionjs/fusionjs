@@ -1,7 +1,6 @@
 // @flow
 /* eslint-env node */
 
-const t = require('assert');
 const path = require('path');
 
 const request = require('request-promise');
@@ -19,11 +18,7 @@ test('sw bundle works with serialized/deserialized arguments', async () => {
   });
 
   const result = await request(`http://localhost:${port}/sw.js`);
-  t.deepEqual(
-    eval(result),
-    [{foo: 'bar'}, 'browser.es2017.es.js'],
-    'arguments serialized/deserialized correctly'
-  );
+  expect(eval(result)).toStrictEqual([{foo: 'bar'}, 'browser.es2017.es.js']); // 'arguments serialized/deserialized correctly'
 
   proc.kill('SIGKILL');
 }, 100000);

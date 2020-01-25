@@ -29,7 +29,10 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   const callback = this.async();
   loader
     .call(this, source, inputSourceMap, this[translationsDiscoveryKey])
-    .then(([code, map]) => callback(null, code, map), err => callback(err));
+    .then(
+      ([code, map]) => callback(null, code, map),
+      err => callback(err)
+    );
 }
 
 async function loader(

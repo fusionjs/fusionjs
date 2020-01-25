@@ -13,11 +13,10 @@ import fs from 'fs';
 import React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import {Helmet} from 'react-helmet-async';
-import test from 'tape-cup';
 import HelmetPlugin from '../index.js';
 
 const name = __NODE__ ? 'Server' : 'Client';
-test(`${name} side render`, async t => {
+test(`${name} side render`, async () => {
   const TestA = () => {
     return (
       <div>
@@ -89,24 +88,23 @@ test(`${name} side render`, async t => {
     const fixtureFile = './src/__fixtures__/ssr1.html';
     // Uncomment to regenerate fixture
     // fs.writeFileSync(fixtureFile, ctx.body);
-    t.equal(ctx.body, fs.readFileSync(fixtureFile).toString());
+    expect(ctx.body).toBe(fs.readFileSync(fixtureFile).toString());
   } else if (__BROWSER__) {
     // need to wait until next tick for dom changes
-    await new Promise(resolve => setTimeout(resolve, 10));
-    t.equal(document.title, "My Title's </title>");
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(document.title).toBe("My Title's </title>");
     const baseEl = document.querySelector('base');
     if (!baseEl) {
       throw new Error('Could not find base element');
     }
-    t.equal(baseEl.getAttribute('href'), 'http://mysite.com/');
+    expect(baseEl.getAttribute('href')).toBe('http://mysite.com/');
     const metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       throw new Error('Could not find meta description');
     }
-    t.equal(metaDescription.getAttribute('content'), 'Helmet application');
+    expect(metaDescription.getAttribute('content')).toBe('Helmet application');
     if (document.body && root instanceof HTMLElement) {
       document.body.removeChild(root);
     }
   }
-  t.end();
 });

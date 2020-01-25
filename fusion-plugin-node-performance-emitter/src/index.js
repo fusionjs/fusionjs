@@ -7,8 +7,18 @@
  */
 
 // Main export file
-import browser from './browser';
-import server from './server';
+import browser from './browser.js';
+import server from './server.js';
+
+const plugin = __NODE__ ? server : browser;
+
+// Use comment so server is unused and therefore pruned from browser
+/*::
+type PluginType = typeof server;
+*/
+
+// Cast to typeof server for now to avoid requiring consumers to use refinements
+export default ((plugin: any): PluginType);
 
 export {
   NodePerformanceEmitterToken,
@@ -17,7 +27,3 @@ export {
   MemoryIntervalToken,
   SocketIntervalToken,
 } from './tokens';
-
-const plugin = __BROWSER__ ? browser : server;
-// Cast to typeof server for now to avoid requiring consumers to use refinements
-export default ((plugin: any): typeof server);

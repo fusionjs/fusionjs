@@ -7,7 +7,6 @@
  */
 
 /* eslint-env node */
-import test from 'tape-cup';
 import MockEmitter from 'events';
 
 import App, {createPlugin} from 'fusion-core';
@@ -40,14 +39,14 @@ const mockEmitterFactory = () => {
   return (mockEmitter: any);
 };
 
-const mockTimersFactory = t => {
+const mockTimersFactory = shouldExpect => {
   let _numSetInterval = 0;
   return {
     _getNumSetInterval: () => _numSetInterval,
     setInterval: (fn, timeout) => {
-      if (t) {
-        t.equals(typeof fn, 'function', 'passes a function into setInterval');
-        t.equals(typeof timeout, 'number', 'passes a number into setInterval');
+      if (shouldExpect) {
+        expect(typeof fn).toBe('function');
+        expect(typeof timeout).toBe('number');
       }
       fn();
       _numSetInterval++;
@@ -55,8 +54,8 @@ const mockTimersFactory = t => {
     },
     clearInterval: function mockClearInterval(intervalId) {
       _numSetInterval--;
-      if (t) {
-        t.equals(intervalId, 5, 'clears the interval correctly');
+      if (shouldExpect) {
+        expect(intervalId).toBe(5);
       }
     },
   };
@@ -83,7 +82,7 @@ function registerMockConfig(app) {
 }
 
 /* Tests */
-test('FusionApp - service resolved', t => {
+test('FusionApp - service resolved', () => {
   const app = createTestFixture();
 
   let wasResolved = false;
@@ -92,42 +91,32 @@ test('FusionApp - service resolved', t => {
     createPlugin({
       deps: {perfEmitter: NodePerformanceEmitterToken},
       provides: ({perfEmitter}) => {
-        t.ok(perfEmitter);
+        expect(perfEmitter).toBeTruthy();
         wasResolved = true;
       },
     })
   );
-  t.true(wasResolved, 'service was resolved');
-
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('service - cannot track the same types more than once at a time', t => {
+test('service - cannot track the same types more than once at a time', () => {
   const perfService = getService(
     createTestFixture,
     NodePerformanceEmitterPlugin
   );
 
-  t.throws(() => perfService.start(), 'already running trackers cannot start');
+  expect(() => perfService.start()).toThrow();
 
   // Able to start now that we've stopped
-  t.doesNotThrow(() => perfService.stop(), 'service can be stopped');
-  t.doesNotThrow(
-    () => perfService.start(),
-    'service can run if the trackers are not active'
-  );
+  expect(() => perfService.stop()).not.toThrow();
+  expect(() => perfService.start()).not.toThrow();
 
-  t.doesNotThrow(() => perfService.stop(), 'service can be stopped');
-  t.doesNotThrow(
-    () => perfService.stop(),
-    'stopped service can remain stopped'
-  );
-
-  t.end();
+  expect(() => perfService.stop()).not.toThrow();
+  expect(() => perfService.stop()).not.toThrow();
 });
 
-test('service - tracking number of timer intervals set', t => {
-  const mockTimers = mockTimersFactory(t);
+test('service - tracking number of timer intervals set', () => {
+  const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(TimersToken, mockTimers);
@@ -137,22 +126,14 @@ test('service - tracking number of timer intervals set', t => {
   };
   const perfService = getService(appCreator, NodePerformanceEmitterPlugin);
 
-  t.assert(
-    mockTimers._getNumSetInterval() === 3,
-    'socket usage, event loop, and memory intervals should be set'
-  );
+  expect(mockTimers._getNumSetInterval() === 3).toBeTruthy();
   perfService.stop();
-  t.assert(
-    mockTimers._getNumSetInterval() === 0,
-    'when stopped, no timer intervals should be set'
-  );
-
-  t.end();
+  expect(mockTimers._getNumSetInterval() === 0).toBeTruthy();
 });
 
-test('service - tracking emit messages', t => {
+test('service - tracking emit messages', done => {
   const mockEmitter = mockEmitterFactory();
-  const mockTimers = mockTimersFactory();
+  const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(TimersToken, mockTimers);
@@ -165,40 +146,37 @@ test('service - tracking emit messages', t => {
   let emitNumberTracker = 0;
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:event_loop_lag`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'event_loop_lag: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:rss`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'rss: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'externalMemory: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'heapTotal: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapUsed`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'heapUsed: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentSockets`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'globalAgentSockets: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`, payload => {
     emitNumberTracker++;
-    t.assert(payload !== undefined, 'globalAgentRequests: message received');
+    expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(
     `${EVENT_PLUGIN_NAME}:gauge:globalAgentFreeSockets`,
     payload => {
       emitNumberTracker++;
-      t.assert(
-        payload !== undefined,
-        'globalAgentFreeSockets: message received'
-      );
+      expect(payload !== undefined).toBeTruthy();
     }
   );
 
@@ -207,12 +185,12 @@ test('service - tracking emit messages', t => {
   perfService.stop();
 
   setImmediate(() => {
-    t.assert(emitNumberTracker === 8, 'all emits should be captured');
-    t.end();
+    expect(emitNumberTracker === 8).toBeTruthy();
+    done();
   });
 });
 
-test('service - testing garbage collection emits', t => {
+test('service - testing garbage collection emits', done => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory();
   const appCreator = () => {
@@ -243,8 +221,8 @@ test('service - testing garbage collection emits', t => {
 
   setTimeout(() => {
     perfService.stopTrackingGCUsage();
-    t.assert(gcMessageReceived, 'gc: message was received');
-    t.assert(totalDuration > 0, 'gc: total duration is greater than 0');
-    t.end();
+    expect(gcMessageReceived).toBeTruthy();
+    expect(totalDuration > 0).toBeTruthy();
+    done();
   }, 100);
 });

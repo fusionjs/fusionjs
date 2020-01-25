@@ -342,10 +342,20 @@ async function testBump() {
 // utils
 async function testAssertProjectDir() {
   const dir1 = `${__dirname}/fixtures/project-dir`;
-  assert(await assertProjectDir({dir: dir1}).then(() => true, () => false));
+  assert(
+    await assertProjectDir({dir: dir1}).then(
+      () => true,
+      () => false
+    )
+  );
 
   const dir2 = `${__dirname}/fixtures/not-project-dir`;
-  assert(await assertProjectDir({dir: dir2}).then(() => false, () => true));
+  assert(
+    await assertProjectDir({dir: dir2}).then(
+      () => false,
+      () => true
+    )
+  );
 }
 
 async function testBatchTestGroup() {
@@ -922,7 +932,12 @@ async function testGetManifest() {
 
 async function testGetRootDir() {
   const dir = `${__dirname}/fixtures/get-root-dir/a`;
-  assert(await getRootDir({dir}).then(() => true, () => false));
+  assert(
+    await getRootDir({dir}).then(
+      () => true,
+      () => false
+    )
+  );
 }
 
 async function testGetTestGroups() {

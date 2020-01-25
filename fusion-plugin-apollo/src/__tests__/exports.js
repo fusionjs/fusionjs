@@ -5,7 +5,6 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import {
   ApolloRenderEnhancer,
   ApolloContextToken,
@@ -15,16 +14,12 @@ import {
   ApolloDefaultOptionsConfigToken,
 } from '../index.js';
 
-test('fusion-tokens exports', t => {
-  t.ok(ApolloContextToken, 'exports ApolloContextToken');
-  t.ok(
-    ApolloDefaultOptionsConfigToken,
-    'exports ApolloDefaultOptionsConfigToken'
-  );
-  t.ok(GraphQLSchemaToken, 'exports GraphQLSchemaToken');
-  t.ok(GraphQLEndpointToken, 'exports GraphQLSchemaToken');
-  t.ok(ApolloRenderEnhancer, 'exports plugin');
-  t.equal(typeof gql, 'function', 'exports a gql function');
-  t.throws(gql, 'gql function throws an error if executed directly');
-  t.end();
+test('fusion-tokens exports', () => {
+  expect(ApolloContextToken).toBeTruthy();
+  expect(ApolloDefaultOptionsConfigToken).toBeTruthy();
+  expect(GraphQLSchemaToken).toBeTruthy();
+  expect(GraphQLEndpointToken).toBeTruthy();
+  expect(ApolloRenderEnhancer).toBeTruthy();
+  expect(typeof gql).toBe('function');
+  expect(gql).toThrow();
 });

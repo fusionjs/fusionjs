@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import {
   ApolloClientPlugin,
   GetApolloClientCacheToken,
@@ -16,12 +15,11 @@ import {
   ApolloClientResolversToken,
 } from '../index.js';
 
-test('exports', t => {
-  t.ok(ApolloClientPlugin, 'exports ApolloClientPlugin');
-  t.ok(GetApolloClientCacheToken, 'exports GetApolloClientCacheToken');
-  t.ok(ApolloClientCredentialsToken, 'exports ApolloClientCredentialsToken');
-  t.ok(GetApolloClientLinksToken, 'exports ApolloClientAuthKeyToken');
-  t.ok(ApolloClientDefaultOptionsToken, 'exports ApolloClientAuthKeyToken');
-  t.ok(ApolloClientResolversToken, 'exports ApolloClientResolversToken');
-  t.end();
+test('exports', () => {
+  expect(ApolloClientPlugin).toBeTruthy();
+  expect(GetApolloClientCacheToken).toBeTruthy();
+  expect(ApolloClientCredentialsToken).toBeTruthy();
+  expect(GetApolloClientLinksToken).toBeTruthy();
+  expect(ApolloClientDefaultOptionsToken).toBeTruthy();
+  expect(ApolloClientResolversToken).toBeTruthy();
 });

@@ -8,22 +8,15 @@
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.2",
@@ -40,7 +33,7 @@
     "@apollo/react-components": "^3.0.1",
     "@apollo/react-ssr": "^3.0.1",
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -60,14 +53,12 @@
     "graphql-tag": "^2.10.1",
     "graphql-tools": "^4.0.5",
     "node-fetch": "^2.3.0",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "redux": "^4.0.1",
-    "tape-cup": "^4.7.1",
     "unfetch": "^4.1.0",
-    "unitest": "^2.1.1"
+    "jest": "^24.9.0"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
@@ -80,16 +71,12 @@
     "@apollo/react-ssr": "^3.0.1"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint src/",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "cover": "npm run build-test && npm run just-cover",
-    "just-cover": "nyc --reporter=cobertura --reporter=text npm run just-test",
-    "test": "npm run build-test && npm run just-test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

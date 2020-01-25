@@ -6,13 +6,12 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
 import ReactPlugin from '../plugin';
 
-test('.create works', t => {
+test('.create works', done => {
   class Foo {
     foo() {}
   }
@@ -23,16 +22,18 @@ test('.create works', t => {
   const ctx = {element};
   // $FlowFixMe
   middleware(ctx, () => Promise.resolve()).then(() => {
-    t.notEquals(ctx.element, element, 'wraps provider');
+    expect(ctx.element).not.toBe(element);
     // $FlowFixMe
-    t.equals(ctx.element.type.displayName, 'FooProvider');
+    expect(ctx.element.type.displayName).toBe('FooProvider');
     // $FlowFixMe
-    t.equals(ctx.element.type.childContextTypes.foo, PropTypes.any.isRequired);
-    t.end();
+    expect(ctx.element.type.childContextTypes.foo).toBe(
+      PropTypes.any.isRequired
+    );
+    done();
   });
 });
 
-test('idempotency with wrapped middleware', async t => {
+test('idempotency with wrapped middleware', async () => {
   let called = 0;
   const foo = 'foo';
   const bar = 'bar';
@@ -41,8 +42,8 @@ test('idempotency with wrapped middleware', async t => {
   const expectedSelf = [bar, baz];
   const plugin = ReactPlugin.create('foo', {
     middleware: (deps, self) => async () => {
-      t.equal(deps, expectedDeps.shift());
-      t.equal(self, expectedSelf.shift());
+      expect(deps).toBe(expectedDeps.shift());
+      expect(self).toBe(expectedSelf.shift());
       called += 1;
     },
   });
@@ -56,6 +57,5 @@ test('idempotency with wrapped middleware', async t => {
   middleware(ctx, () => Promise.resolve());
   // $FlowFixMe
   middleware2(ctx, () => Promise.resolve());
-  t.equals(called, 2, 'called two times');
-  t.end();
+  expect(called).toBe(2);
 });

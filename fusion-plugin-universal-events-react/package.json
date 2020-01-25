@@ -10,21 +10,14 @@
   "keywords": [],
   "license": "MIT",
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
     "fusion-plugin-universal-events": "0.0.0-monorepo",
@@ -32,7 +25,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -43,31 +36,27 @@
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.109.0",
     "fusion-react": "0.0.0-monorepo",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "tape-cup": "^4.7.1",
     "eslint-plugin-react-hooks": "^1.6.1"
   },
   "peerDependencies": {
     "fusion-react": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-test && cup build-tests",
-    "just-test": "node dist-tests/node.js",
-    "test": "yarn build-test && yarn just-test",
-    "cover": "nyc yarn test",
+    "test": "jest",
     "prepublish": "yarn build",
-    "build": "yarn clean && cup build",
-    "flow": "flow check"
+    "build": "yarn clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-universal-events-react"
+  "homepage": "https://fusionjs.com/api/fusion-plugin-universal-events-react",
+  "sideEffects": false
 }
