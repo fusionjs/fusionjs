@@ -11,7 +11,7 @@ Extend `eslint-config-fusion` in your `.eslintrc.js`:
 ```js
 module.exports = {
   extends: [
-    require.resolve('eslint-config-fusion')
+    'fusion'
   ]
 };
 ```
