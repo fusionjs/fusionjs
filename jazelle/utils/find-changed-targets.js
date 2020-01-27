@@ -57,7 +57,7 @@ const findChangedBazelTargets = async ({root, files}) => {
           const [, pkg = ''] = e.message.match(regex) || [];
           if (pkg === '') return '';
           const cmd = `${bazel} query 'kind("source file", //${pkg}:*)' | head -n 1`;
-          return exec(cmd);
+          return exec(cmd).catch(() => '');
         });
         const target = result.trim();
         if (target === '') return '';
