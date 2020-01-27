@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # find dirname of cli.sh file
 if [ -L "$0" ]
 then
