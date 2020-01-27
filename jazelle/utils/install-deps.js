@@ -51,7 +51,7 @@ const installDeps /*: InstallDeps */ = async ({
   await generateLockfile({root, bin, deps, ignore});
 
   // jazelle hook
-  await executeJazelleHook(preinstall);
+  await executeJazelleHook(preinstall, root);
   await executeNpmHooks(deps, 'preinstall');
 
   // install external deps
