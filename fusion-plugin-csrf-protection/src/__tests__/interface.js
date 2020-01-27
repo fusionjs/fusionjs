@@ -6,12 +6,9 @@
  * @flow
  */
 
-import tape from 'tape-cup';
-
 import Plugin, {CsrfIgnoreRoutesToken} from '../index';
 
-tape('plugin api', t => {
-  t.ok(Plugin);
-  t.ok(CsrfIgnoreRoutesToken);
-  t.end();
+test('plugin api', () => {
+  expect(Plugin).toBeTruthy();
+  expect(CsrfIgnoreRoutesToken).toBeTruthy();
 });

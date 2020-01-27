@@ -10,28 +10,21 @@
   "keywords": [],
   "license": "MIT",
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
     "koa-bodyparser": "^4.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "create-universal-package-v3": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -44,25 +37,22 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1",
-    "eslint-plugin-react-hooks": "^1.6.1"
+    "jest": "^24.9.0",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "whatwg-fetch": "3.0.0"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-tests && cup3 build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js && node dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup3 build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

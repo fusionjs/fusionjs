@@ -6,22 +6,21 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import App from 'fusion-core';
 import express from 'express';
 import {HttpHandlerToken} from '../tokens.js';
 import HttpHandlerPlugin from '../server.js';
 import {startServer} from '../test-util.js';
 
-test('http handler with express using send', async t => {
+test('http handler with express using send', async () => {
   const app = new App('test', () => 'test');
 
   app.middleware(async (ctx, next) => {
     await next();
     if (ctx.url === '/express') {
-      t.equal(ctx.res.statusCode, 200, 'express route sets status code');
+      expect(ctx.res.statusCode).toBe(200);
     } else {
-      t.equal(ctx.res.statusCode, 404, 'non express routes default to 404');
+      expect(ctx.res.statusCode).toBe(404);
     }
     // $FlowFixMe
     ctx.req.secure = false;
@@ -36,17 +35,8 @@ test('http handler with express using send', async t => {
 
   const {server, request} = await startServer(app.callback());
 
-  t.equal(await request('/express'), 'OK', 'express routes can send responses');
-  t.equal(
-    await request('/fallthrough'),
-    'hit fallthrough',
-    'express routes can delegate back to koa'
-  );
-  t.equal(
-    await request('/fallthrough'),
-    'hit fallthrough',
-    'express routes can delegate back to koa'
-  );
+  expect(await request('/express')).toBe('OK');
+  expect(await request('/fallthrough')).toBe('hit fallthrough');
+  expect(await request('/fallthrough')).toBe('hit fallthrough');
   server.close();
-  t.end();
 });

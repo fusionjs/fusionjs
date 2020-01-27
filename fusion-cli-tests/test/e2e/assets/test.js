@@ -97,11 +97,8 @@ test('`fusion dev` works with assets', async () => {
       jsonAssetRes.body,
       '/_static/8dc83113b16a107e573e02bd18468b22.json'
     );
-    t.deepEqual(
-      JSON.parse(jsonAsset),
-      {key: 'value', unused_key: ''},
-      'assetUrl saves original json file'
-    );
+    expect(JSON.parse(jsonAsset)).toStrictEqual({key: 'value', unused_key: ''}); // 'assetUrl saves original json file'
+
     t.equal(
       await request(`${url}/json-import`),
       'value',

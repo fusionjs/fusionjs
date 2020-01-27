@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 // @flow
-const process = require('process');
 const sade = require('sade');
 
 const {logs} = require('./logs.js');

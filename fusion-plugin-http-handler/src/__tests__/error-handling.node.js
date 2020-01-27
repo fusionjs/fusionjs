@@ -6,21 +6,20 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import App from 'fusion-core';
 import express from 'express';
 import {HttpHandlerToken} from '../tokens.js';
 import HttpHandlerPlugin from '../server.js';
 import {startServer} from '../test-util.js';
 
-test('error after await next in middleware before http handler', async t => {
+test('error after await next in middleware before http handler', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
     try {
       await next();
     } catch (e) {
-      t.equal(e.message, 'FAIL', 'catches correct error');
+      expect(e.message).toBe('FAIL');
       ctx.body = 'Caught error';
     }
   });
@@ -48,22 +47,21 @@ test('error after await next in middleware before http handler', async t => {
 
   const {server, request} = await startServer(app.callback());
 
-  t.equal(await request('/'), 'Caught error', 'catches errors');
-  t.equal(hitExpressMiddleware, true);
-  t.equal(hitFallthrough, true);
+  expect(await request('/')).toBe('Caught error');
+  expect(hitExpressMiddleware).toBe(true);
+  expect(hitFallthrough).toBe(true);
 
   server.close();
-  t.end();
 });
 
-test('error before await next in middleware after http handler', async t => {
+test('error before await next in middleware after http handler', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
     try {
       await next();
     } catch (e) {
-      t.equal(e.message, 'FAIL', 'catches correct error');
+      expect(e.message).toBe('FAIL');
       ctx.body = 'Caught error';
     }
   });
@@ -92,22 +90,21 @@ test('error before await next in middleware after http handler', async t => {
 
   const {server, request} = await startServer(app.callback());
 
-  t.equal(await request('/'), 'Caught error', 'catches errors');
-  t.equal(hitExpressMiddleware, false);
-  t.equal(hitFallthrough, false);
+  expect(await request('/')).toBe('Caught error');
+  expect(hitExpressMiddleware).toBe(false);
+  expect(hitFallthrough).toBe(false);
 
   server.close();
-  t.end();
 });
 
-test('error in express middleware', async t => {
+test('error in express middleware', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
     try {
       await next();
     } catch (e) {
-      t.equal(e.message, 'FAIL', 'catches correct error');
+      expect(e.message).toBe('FAIL');
       ctx.body = 'Caught error';
     }
   });
@@ -122,7 +119,6 @@ test('error in express middleware', async t => {
 
   const {server, request} = await startServer(app.callback());
 
-  t.equal(await request('/'), 'Caught error', 'catches errors');
+  expect(await request('/')).toBe('Caught error');
   server.close();
-  t.end();
 });

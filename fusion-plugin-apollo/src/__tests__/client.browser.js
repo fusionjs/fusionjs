@@ -8,11 +8,10 @@
 
 /* eslint-env browser */
 
-import test from 'tape-cup';
 import React from 'react';
 import render from '../client';
 
-test('renders', t => {
+test('renders', () => {
   const root = document.createElement('div');
   root.id = 'root';
   if (!document.body) {
@@ -24,12 +23,11 @@ test('renders', t => {
   if (!firstChild) {
     throw new Error('Could not first child');
   }
-  t.equals(firstChild.nodeName, 'SPAN', 'has right tag');
-  t.equals(firstChild.textContent, 'hello', 'has right text');
+  expect(firstChild.nodeName).toBe('SPAN');
+  expect(firstChild.textContent).toBe('hello');
 
   if (!document.body) {
     throw new Error('Could not find body');
   }
   document.body.removeChild(root);
-  t.end();
 });

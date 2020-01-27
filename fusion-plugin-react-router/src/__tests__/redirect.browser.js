@@ -7,13 +7,12 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Redirect} from '../browser';
 import {createBrowserHistory} from 'history';
 
-test('test Redirect', t => {
+test('test Redirect', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello">Hi</Redirect>;
@@ -26,8 +25,8 @@ test('test Redirect', t => {
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), `matches ${root.innerHTML}`);
-  t.equal(window.location.pathname, '/hello');
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
+  expect(window.location.pathname).toBe('/hello');
 
   // reset the url back to "/"
   ReactDOM.render(
@@ -36,5 +35,4 @@ test('test Redirect', t => {
     </Router>,
     document.createElement('div')
   );
-  t.end();
 });

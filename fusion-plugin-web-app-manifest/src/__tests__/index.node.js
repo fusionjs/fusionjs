@@ -5,7 +5,6 @@
  *
  * @flow
  */
-import tape from 'tape-cup';
 import React from 'react';
 import {consumeSanitizedHTML} from 'fusion-core';
 
@@ -15,13 +14,13 @@ const TEST_MANIFEST = {
   name: 'Fusion test manifest',
 };
 
-tape('injects manifest', async t => {
+test('injects manifest', async done => {
   const element = React.createElement('div');
   const setupContext: any = {element, template: {head: [], body: []}};
 
-  t.plan(1);
+  expect.assertions(1);
   if (!Plugin.middleware) {
-    t.end();
+    done();
     return;
   }
 
@@ -30,25 +29,23 @@ tape('injects manifest', async t => {
     Promise.resolve()
   );
   const manifestLink = '<link rel="manifest" href="/manifest.json" />';
-  t.equals(
+  expect(
     // $FlowFixMe
-    consumeSanitizedHTML(setupContext.template.head[0]).match(manifestLink)[0],
-    manifestLink,
-    'manifest link injected into head'
-  );
-  t.end();
+    consumeSanitizedHTML(setupContext.template.head[0]).match(manifestLink)[0]
+  ).toBe(manifestLink);
+  done();
 });
 
-tape('returns manifest', async t => {
+test('returns manifest', async done => {
   const requestContext: any = {
     undefined,
     method: 'GET',
     path: '/manifest.json',
   };
 
-  t.plan(1);
+  expect.assertions(1);
   if (!Plugin.middleware) {
-    t.end();
+    done();
     return;
   }
   // $FlowFixMe
@@ -56,6 +53,6 @@ tape('returns manifest', async t => {
     Promise.resolve()
   );
   // $FlowFixMe
-  t.equals(requestContext.body, TEST_MANIFEST, 'manifest object returned');
-  t.end();
+  expect(requestContext.body).toBe(TEST_MANIFEST);
+  done();
 });

@@ -8,23 +8,16 @@
     "src"
   ],
   "repository": "yourorg/fusion-plugin-yourplugin",
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "devDependencies": {
     "@babel/preset-react": "7.0.0",
     "babel-eslint": "^10.0.2",
-    "create-universal-package": "3.4.6",
+    "create-universal-package": "^4.0.0",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
     "eslint": "^6.0.1",
@@ -38,26 +31,20 @@
     "flow-bin": "^0.102.0",
     "fusion-core": "^2.0.9",
     "fusion-test-utils": "^2.0.9",
-    "nyc": "^14.1.1",
+    "jest": "^24.0.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "tape-cup": "4.7.1",
-    "unitest": "2.1.1"
+    "react-dom": "^16.8.6"
   },
   "peerDependencies": {
     "fusion-core": "^2.0.0",
     "react": "14.x - 16.x"
   },
   "scripts": {
-    "clean": "rm -rf dist",
-    "lint": "eslint . --ignore-path .gitignore",
-    "transpile": "yarn clean && cup build",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "cover": "npm run build-test && nyc npm run just-test",
-    "view-cover": "npm run cover && open coverage/index.html",
+    "clean": "cup-clean",
+    "lint": "eslint .",
+    "transpile": "yarn clean && cup-build",
+    "test": "jest",
     "prepare": "yarn transpile"
   },
   "engines": {

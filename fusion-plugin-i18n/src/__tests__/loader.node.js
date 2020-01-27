@@ -9,7 +9,6 @@
 /* eslint-env node */
 
 import fs from 'fs';
-import test from 'tape-cup';
 
 import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
@@ -19,7 +18,7 @@ import I18n from '../node';
 import createLoader from '../loader';
 import {createI18nLoader, I18nLoaderToken, I18nToken} from '../index.js';
 
-test('loader', async t => {
+test('loader', async () => {
   fs.mkdirSync('translations');
   fs.writeFileSync('translations/en_US.json', '{"test": "hi ${value}"}');
 
@@ -32,7 +31,7 @@ test('loader', async t => {
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
-      t.equals(translator.translate('test', {value: 'world'}), 'hi world');
+      expect(translator.translate('test', {value: 'world'})).toBe('hi world');
       return next();
     };
   });
@@ -40,16 +39,18 @@ test('loader', async t => {
   await simulator.render('/');
   fs.unlinkSync('translations/en_US.json');
   fs.rmdirSync('translations');
-  t.end();
 });
 
-test('custom locale resolver', async t => {
+test('custom locale resolver', async () => {
   fs.mkdirSync('translations');
   fs.writeFileSync('translations/en_US.json', '{"foo": "bar"}');
   fs.writeFileSync('translations/custom_US.json', '{"foo": "qux"}');
 
   const app = new App('el', el => el);
-  app.register(I18nLoaderToken, createI18nLoader(ctx => 'custom_US'));
+  app.register(
+    I18nLoaderToken,
+    createI18nLoader(ctx => 'custom_US')
+  );
   app.register(I18nToken, I18n);
   // $FlowFixMe
   app.register(UniversalEventsToken, {
@@ -58,7 +59,7 @@ test('custom locale resolver', async t => {
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
-      t.equals(translator.translate('foo'), 'qux');
+      expect(translator.translate('foo')).toBe('qux');
       return next();
     };
   });
@@ -67,10 +68,8 @@ test('custom locale resolver', async t => {
   fs.unlinkSync('translations/en_US.json');
   fs.unlinkSync('translations/custom_US.json');
   fs.rmdirSync('translations');
-  t.end();
 });
 
-test('no translations dir', t => {
-  t.doesNotThrow(createLoader);
-  t.end();
+test('no translations dir', () => {
+  expect(createLoader).not.toThrow();
 });

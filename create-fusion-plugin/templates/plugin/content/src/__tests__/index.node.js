@@ -1,5 +1,4 @@
 // @flow
-import tape from 'tape-cup';
 import React from 'react';
 
 import App, {consumeSanitizedHTML} from 'fusion-core';
@@ -13,26 +12,25 @@ const appCreator = () => {
   return () => app;
 };
 
-tape('serialization', async t => {
+test('serialization', async done => {
   const element = React.createElement('div');
   const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const service = getService(appCreator(), Plugin);
 
-  t.plan(3);
+  expect.assertions(3);
   if (!Plugin.middleware) {
-    t.end();
+    done();
     return;
   }
 
   // $FlowFixMe
   await Plugin.middleware(null, service)(ctx, () => Promise.resolve());
 
-  t.equals(ctx.template.body.length, 1, 'pushes serialization to body');
-  t.equals(
+  expect(ctx.template.body.length).toBe(1);
+  expect(
     // $FlowFixMe
-    consumeSanitizedHTML(ctx.template.body[0]).match('__plugin__value__')[0],
-    '__plugin__value__'
-  );
-  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
-  t.end();
+    consumeSanitizedHTML(ctx.template.body[0]).match('__plugin__value__')[0]
+  ).toBe('__plugin__value__');
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
+  done();
 });

@@ -6,13 +6,12 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import App, {createPlugin, createToken, memoize} from 'fusion-core';
 import type {Token, FusionPlugin} from 'fusion-core';
 
 import {getSimulator, getService, test as exportedTest} from '../index.js';
 
-test('simulate render request', async t => {
+test('simulate render request', async () => {
   const flags = {render: false};
   const element = 'hi';
   const renderFn = () => {
@@ -21,12 +20,11 @@ test('simulate render request', async t => {
   const app = new App(element, renderFn);
   var testApp = getSimulator(app);
   const ctx = await testApp.render('/');
-  t.ok(flags.render, 'triggered ssr');
-  t.ok(ctx.element, 'sets ctx.element');
-  t.end();
+  expect(flags.render).toBeTruthy();
+  expect(ctx.element).toBeTruthy();
 });
 
-test('simulate multi-render requests', async t => {
+test('simulate multi-render requests', async () => {
   const counter = {renderCount: 0};
   const renderFn = () => {
     counter.renderCount++;
@@ -36,13 +34,11 @@ test('simulate multi-render requests', async t => {
 
   for (var i = 1; i <= 5; i++) {
     await testApp.render('/');
-    t.equal(counter.renderCount, i, `#${i} ssr render successful`);
+    expect(counter.renderCount).toBe(i);
   }
-
-  t.end();
 });
 
-test('simulate non-render request', async t => {
+test('simulate non-render request', async done => {
   const flags = {render: false};
   const element = 'hi';
   const renderFn = () => {
@@ -53,21 +49,22 @@ test('simulate non-render request', async t => {
   if (__BROWSER__) {
     try {
       testApp.request('/');
-      t.fail('should have thrown');
+      // $FlowFixMe jest typedefs wrong it seems
+      done.fail('should have thrown');
     } catch (e) {
-      t.ok(e, 'throws an error');
+      expect(e).toBeTruthy();
     } finally {
-      t.end();
+      done();
     }
   } else {
     const ctx = await testApp.request('/');
-    t.notok(ctx.element, 'does not set ctx.element');
-    t.ok(!flags.render, 'did not trigger ssr');
-    t.end();
+    expect(ctx.element).toBeFalsy();
+    expect(!flags.render).toBeTruthy();
+    done();
   }
 });
 
-test('use simulator with fixture and plugin dependencies', async t => {
+test('use simulator with fixture and plugin dependencies', async () => {
   // Dependency-less plugin
   type MessageType = {
     msg: string,
@@ -88,42 +85,36 @@ test('use simulator with fixture and plugin dependencies', async t => {
   }
   const app = getTestFixture();
 
-  t.plan(3);
+  expect.assertions(3);
   let testPlugin: FusionPlugin<*, *> = createPlugin({
     deps: {msgProvider: msgProviderPluginToken},
     provides(deps) {
-      t.ok(deps, 'some dependencies successfully resolved');
-      t.ok(deps.msgProvider, 'requested dependency successfully resolved');
+      expect(deps).toBeTruthy();
+      expect(deps.msgProvider).toBeTruthy();
       const {msgProvider} = deps;
       if (msgProviderPlugin.provides) {
-        t.equal(
-          msgProvider.msg,
-          msgProviderPlugin.provides().msg,
-          'dependency payload is correct'
-        );
+        let provided = msgProviderPlugin.provides();
+        expect(msgProvider.msg).toBe(provided.msg);
       }
       return 'yay!';
     },
   });
   getSimulator(app, testPlugin);
-
-  t.end();
 });
 
-test('test throws when not using test-app', async t => {
+// Has to be skipped because this test relies on Jest globals not existing (i.e. tape)
+test.skip('test throws when not using test-app', async done => {
   try {
     //$FlowFixMe
     exportedTest();
   } catch (e) {
-    t.ok(
-      e.message.includes('test-app'),
-      'throws an error about running test-app'
-    );
-    t.end();
+    console.log(e);
+    expect(e.message.includes('test-app')).toBeTruthy();
+    done();
   }
 });
 
-test('getService - returns service as expected, with no dependencies', async t => {
+test('getService - returns service as expected, with no dependencies', async () => {
   const simplePlugin = createPlugin({
     provides() {
       return {meaningOfLife: 42};
@@ -131,13 +122,11 @@ test('getService - returns service as expected, with no dependencies', async t =
   });
 
   const service = getService(() => new App('hi', el => el), simplePlugin);
-  t.ok(service);
-  t.equal(service.meaningOfLife, 42);
-
-  t.end();
+  expect(service).toBeTruthy();
+  expect(service.meaningOfLife).toBe(42);
 });
 
-test('getService - returns service as expected, with dependencies', async t => {
+test('getService - returns service as expected, with dependencies', async () => {
   const meaningOfLifeToken = createToken('meaning-of-life-token');
   const meaningOfLifePlugin = createPlugin({
     provides() {
@@ -156,13 +145,11 @@ test('getService - returns service as expected, with dependencies', async t => {
     app.register(meaningOfLifeToken, meaningOfLifePlugin);
     return app;
   }, simplePlugin);
-  t.ok(service);
-  t.equal(service.meaningOfLife, 42);
-
-  t.end();
+  expect(service).toBeTruthy();
+  expect(service.meaningOfLife).toBe(42);
 });
 
-test('getService - throws as expected due to missing dependency', async t => {
+test('getService - throws as expected due to missing dependency', async () => {
   const meaningOfLifeToken = createToken('meaning-of-life-token');
   const simplePlugin = createPlugin({
     deps: {meaning: meaningOfLifeToken},
@@ -170,11 +157,12 @@ test('getService - throws as expected due to missing dependency', async t => {
       return {meaningOfLife: meaning};
     },
   });
-  t.throws(() => getService(() => new App('hi', el => el), simplePlugin));
-  t.end();
+  expect(() =>
+    getService(() => new App('hi', el => el), simplePlugin)
+  ).toThrow();
 });
 
-test('memoize helper', async t => {
+test('memoize helper', async () => {
   const app = new App('hi', el => el);
   app.register(
     createPlugin({
@@ -187,7 +175,7 @@ test('memoize helper', async t => {
       },
       middleware: (deps, self) => {
         return (ctx, next) => {
-          t.equal(self.from(ctx), 5);
+          expect(self.from(ctx)).toBe(5);
           return next();
         };
       },
@@ -195,5 +183,4 @@ test('memoize helper', async t => {
   );
   const sim = getSimulator(app);
   await sim.render('/');
-  t.end();
 });

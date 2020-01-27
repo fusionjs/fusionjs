@@ -8,7 +8,6 @@
 
 /* eslint-env browser */
 
-import test from 'tape-cup';
 import {getSimulator} from 'fusion-test-utils';
 import React from 'react';
 import {
@@ -36,7 +35,7 @@ function testApp(el, {typeDefs, resolvers}) {
   return app;
 }
 
-test('Server renders without schema', async t => {
+test('Server renders without schema', async () => {
   const el = <div>Hello World</div>;
   const app = new App(el);
   app.enhance(RenderToken, ApolloRenderEnhancer);
@@ -45,11 +44,10 @@ test('Server renders without schema', async t => {
   app.register(FetchToken, ((fetch: any): Fetch));
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
-  t.end();
+  expect(ctx.rendered.includes('Hello World')).toBe(true);
 });
 
-test('Server render simulate', async t => {
+test('Server render simulate', async () => {
   const el = <div>Hello World</div>;
   const typeDefs = gql`
     type Query {
@@ -66,11 +64,10 @@ test('Server render simulate', async t => {
   const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.equal(ctx.rendered.includes('Hello World'), true, 'renders correctly');
-  t.end();
+  expect(ctx.rendered.includes('Hello World')).toBe(true);
 });
 
-test('SSR with <Query>', async t => {
+test('SSR with <Query>', async () => {
   const query = gql`
     query Test {
       test
@@ -99,7 +96,7 @@ test('SSR with <Query>', async t => {
   const resolvers = {
     Query: {
       test(parent, args, ctx) {
-        t.equal(ctx.path, '/', 'context defaults correctly');
+        expect(ctx.path).toBe('/');
         return 'test';
       },
     },
@@ -107,14 +104,13 @@ test('SSR with <Query>', async t => {
   const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.equal(ctx.rendered.includes('test'), true, 'renders correctly');
-  t.equal(ctx.rendered.includes('Loading'), false, 'does not render loading');
+  expect(ctx.rendered.includes('test')).toBe(true);
+  expect(ctx.rendered.includes('Loading')).toBe(false);
   // $FlowFixMe
-  t.ok(ctx.body.includes('ROOT_QUERY'), 'includes serialized data');
-  t.end();
+  expect(ctx.body.includes('ROOT_QUERY')).toBeTruthy();
 });
 
-test('SSR with <Query> and custom context', async t => {
+test('SSR with <Query> and custom context', async () => {
   const query = gql`
     query Test {
       test
@@ -143,7 +139,7 @@ test('SSR with <Query> and custom context', async t => {
   const resolvers = {
     Query: {
       test(parent, args, ctx) {
-        t.equal(ctx, 5, 'sets custom context correctly');
+        expect(ctx).toBe(5);
         return 'test';
       },
     },
@@ -153,14 +149,13 @@ test('SSR with <Query> and custom context', async t => {
   app.register(ApolloContextToken, 5);
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.equal(ctx.rendered.includes('test'), true, 'renders correctly');
-  t.equal(ctx.rendered.includes('Loading'), false, 'does not render loading');
+  expect(ctx.rendered.includes('test')).toBe(true);
+  expect(ctx.rendered.includes('Loading')).toBe(false);
   // $FlowFixMe
-  t.ok(ctx.body.includes('ROOT_QUERY'), 'includes serialized data');
-  t.end();
+  expect(ctx.body.includes('ROOT_QUERY')).toBeTruthy();
 });
 
-test('SSR with <Query> and errors', async t => {
+test('SSR with <Query> and errors', async () => {
   const query = gql`
     query Test {
       test
@@ -196,7 +191,6 @@ test('SSR with <Query> and errors', async t => {
   const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
   const ctx = await simulator.render('/');
-  t.equal(ctx.rendered.includes('test'), false, 'does not fetch data');
-  t.equal(ctx.rendered.includes('Loading'), true, 'Renders the loading');
-  t.end();
+  expect(ctx.rendered.includes('test')).toBe(false);
+  expect(ctx.rendered.includes('Loading')).toBe(true);
 });

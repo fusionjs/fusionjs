@@ -7,8 +7,6 @@
  */
 
 /* eslint-env node */
-import test from 'tape-cup';
-
 import App, {createPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
@@ -36,7 +34,7 @@ function getApp() {
   return app;
 }
 
-test('valid token', async t => {
+test('valid token', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
     if (ctx.url === '/test' && ctx.method === 'POST') {
@@ -52,12 +50,11 @@ test('valid token', async t => {
       'x-csrf-token': 'x',
     },
   });
-  t.equal(ctx.status, 200);
-  t.equal(ctx.body, 'test');
-  t.end();
+  expect(ctx.status).toBe(200);
+  expect(ctx.body).toBe('test');
 });
 
-test('GET request', async t => {
+test('GET request', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
     if (ctx.url === '/test' && ctx.method === 'GET') {
@@ -68,22 +65,20 @@ test('GET request', async t => {
   });
   const sim = getSimulator(app);
   const ctx = await sim.request('/test');
-  t.equal(ctx.status, 200);
-  t.equal(ctx.body, 'test');
-  t.end();
+  expect(ctx.status).toBe(200);
+  expect(ctx.body).toBe('test');
 });
 
-test('/csrf-token POST', async t => {
+test('/csrf-token POST', async () => {
   const app = getApp();
   const sim = getSimulator(app);
   const ctx = await sim.request('/csrf-token', {
     method: 'POST',
   });
-  t.equal(ctx.status, 200);
-  t.end();
+  expect(ctx.status).toBe(200);
 });
 
-test('POST with missing token', async t => {
+test('POST with missing token', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
     if (ctx.url === '/test' && ctx.method === 'POST') {
@@ -96,11 +91,10 @@ test('POST with missing token', async t => {
   const ctx = await sim.request('/test', {
     method: 'POST',
   });
-  t.equal(ctx.status, 403);
-  t.end();
+  expect(ctx.status).toBe(403);
 });
 
-test('does not verify ignored paths', async t => {
+test('does not verify ignored paths', async () => {
   const app = getApp();
   app.register(CsrfIgnoreRoutesToken, ['/test']);
   app.middleware((ctx, next) => {
@@ -111,19 +105,18 @@ test('does not verify ignored paths', async t => {
   const ctx = await simulator.request('/test', {
     method: 'POST',
   });
-  t.equal(ctx.status, 200);
-  t.end();
+  expect(ctx.status).toBe(200);
 });
 
-test('throws if fetch is used on server', async t => {
+test('throws if fetch is used on server', async done => {
   const app = getApp();
   app.register(
     createPlugin({
       deps: {fetch: FetchToken},
       provides: ({fetch}) => {
         fetch('/test').catch(e => {
-          t.ok(e, 'throws on server');
-          t.end();
+          expect(e).toBeTruthy();
+          done();
         });
       },
     })

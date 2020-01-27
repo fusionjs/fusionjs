@@ -7,7 +7,6 @@
  */
 
 import {createStore, compose} from 'redux';
-import test from 'tape-cup';
 
 import App from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -63,21 +62,15 @@ const appCreator = (deps?: {emitter?: IEmitter, transformer?: Function}) => {
   return () => app;
 };
 
-test('Instantiation', t => {
+test('Instantiation', () => {
   const mockEventEmitter = getMockEventEmitterFactory();
-  t.throws(
-    () => getService(appCreator(), actionEmitterPlugin),
-    'requires the EventEmitter dependency'
-  );
-  t.doesNotThrow(
-    () =>
-      getService(appCreator({emitter: mockEventEmitter}), actionEmitterPlugin),
-    'provide the EventEmitter dependency'
-  );
-  t.end();
+  expect(() => getService(appCreator(), actionEmitterPlugin)).toThrow();
+  expect(() =>
+    getService(appCreator({emitter: mockEventEmitter}), actionEmitterPlugin)
+  ).not.toThrow();
 });
 
-test('Emits actions', t => {
+test('Emits actions', () => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
   const enhancer = getService(
@@ -89,42 +82,31 @@ test('Emits actions', t => {
   const store = createStore(
     sampleReducer,
     [],
-    compose(
-      enhancer,
-      createStore => (...args) => {
-        const store = createStore(...args);
-        // $FlowFixMe
-        store.ctx = mockCtx;
-        return store;
-      }
-    )
+    compose(enhancer, createStore => (...args) => {
+      const store = createStore(...args);
+      // $FlowFixMe
+      store.ctx = mockCtx;
+      return store;
+    })
   );
 
   // Test Emits
   mockEventEmitter
     .from(mockCtxTyped)
     .on('redux-action-emitter:action', (payload, ctx) => {
-      t.equal(
-        payload.type,
-        'SAMPLE_SET',
-        'payload type is SAMPLE_SET, as expected'
-      );
-      t.ok(
-        typeof payload.foo === 'undefined',
-        'By default properties other than {type, _trackingMeta} is emitted'
-      );
-      t.equal(ctx, mockCtxTyped, 'ctx was provided');
+      expect(payload.type).toBe('SAMPLE_SET');
+      expect(typeof payload.foo === 'undefined').toBeTruthy();
+      expect(ctx).toBe(mockCtxTyped);
     });
   store.dispatch({
     type: 'SAMPLE_SET',
     foo: {bar: 1},
   });
 
-  t.plan(3);
-  t.end();
+  expect.assertions(3);
 });
 
-test('transformers', t => {
+test('transformers', () => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
 
@@ -140,29 +122,25 @@ test('transformers', t => {
   const store = createStore(
     sampleReducer,
     [],
-    compose(
-      enhancer,
-      createStore => (...args) => {
-        const store = createStore(...args);
-        // $FlowFixMe
-        store.ctx = mockCtx;
-        return store;
-      }
-    )
+    compose(enhancer, createStore => (...args) => {
+      const store = createStore(...args);
+      // $FlowFixMe
+      store.ctx = mockCtx;
+      return store;
+    })
   );
 
   // Test Emits
   mockEventEmitter
     .from(mockCtxTyped)
     .on('redux-action-emitter:action', (payload, ctx) => {
-      t.deepEqual(payload, {foo: 1}, 'payload is transformed');
-      t.equal(ctx, mockCtxTyped, 'ctx was provided');
+      expect(payload).toEqual({foo: 1});
+      expect(ctx).toBe(mockCtxTyped);
     });
   store.dispatch({
     type: 'SAMPLE_SET',
     foo: 1,
   });
 
-  t.plan(2);
-  t.end();
+  expect.assertions(2);
 });

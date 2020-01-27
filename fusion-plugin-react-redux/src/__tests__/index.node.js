@@ -6,7 +6,6 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import React from 'react';
 import type {Reducer, StoreEnhancer} from 'redux';
 
@@ -41,25 +40,25 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
   return () => app;
 };
 
-tape('interface', async t => {
+test('interface', async done => {
   const ctx = {memoized: new Map()};
   const reducer = (state, action) => ({test: action.payload || 1});
   const redux = getService(appCreator(reducer), Redux).from((ctx: any));
 
-  t.plan(2);
+  expect.assertions(2);
   if (!redux.initStore) {
-    t.end();
+    done();
     return;
   }
   const store = await redux.initStore();
 
-  t.equals(store.getState().test, 1, 'state is accessible');
+  expect(store.getState().test).toBe(1);
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2, 'state receives dispatch');
-  t.end();
+  expect(store.getState().test).toBe(2);
+  done();
 });
 
-tape('non-ssr routes', async t => {
+test('non-ssr routes', async done => {
   const reducer = (state, action) => ({test: action.payload || 1});
   const plugin = getService(appCreator(reducer), Redux);
   let mockCtx = {
@@ -67,26 +66,26 @@ tape('non-ssr routes', async t => {
     memoized: new Map(),
   };
 
-  t.plan(1);
+  expect.assertions(1);
   if (!Redux.middleware) {
-    t.end();
+    done();
     return;
   }
 
   // $FlowFixMe
   await Redux.middleware(null, plugin)((mockCtx: any), () => Promise.resolve());
-  t.notok(plugin.from((mockCtx: any)).store);
-  t.end();
+  expect(plugin.from((mockCtx: any)).store).toBeFalsy();
+  done();
 });
 
-tape('getInitialState', async t => {
+test('getInitialState', async done => {
   const reducer = (state = {}, action) => ({
     ...state,
     test: action.payload || 1,
   });
   const mockCtx = {mock: true, memoized: new Map()};
   const getInitialState: any = async ctx => {
-    t.equal(ctx, mockCtx);
+    expect(ctx).toBe(mockCtx);
     return {hello: 'world'};
   };
   const preloadedState = {a: 'b'};
@@ -95,33 +94,29 @@ tape('getInitialState', async t => {
     Redux
   ).from((mockCtx: any));
 
-  t.plan(6);
+  expect.assertions(6);
   if (!redux.initStore) {
-    t.end();
+    done();
     return;
   }
 
   const store = await redux.initStore();
 
-  t.equals(store.getState().test, 1, 'state is accessible');
-  t.equal(store.getState().hello, 'world');
-  t.equal(store.getState().a, 'b');
+  expect(store.getState().test).toBe(1);
+  expect(store.getState().hello).toBe('world');
+  expect(store.getState().a).toBe('b');
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2, 'state receives dispatch');
-  t.equal(
-    store,
-    await (redux.initStore && redux.initStore()),
-    'memoization works'
-  );
-  t.end();
+  expect(store.getState().test).toBe(2);
+  expect(store).toBe(await (redux.initStore && redux.initStore()));
+  done();
 });
 
-tape('enhancers', async t => {
+test('enhancers', async done => {
   const mockCtx: any = {mock: true, memoized: new Map()};
   const myEnhancer = createStore => (...args) => {
     const store = createStore(...args);
     // $FlowFixMe
-    t.equals(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
+    expect(store.ctx).toBe(mockCtx);
     return store;
   };
   const reducer = s => s;
@@ -130,19 +125,19 @@ tape('enhancers', async t => {
     Redux
   ).from(mockCtx);
 
-  t.plan(2);
+  expect.assertions(2);
   if (!redux.initStore) {
-    t.end();
+    done();
     return;
   }
 
   const store = await redux.initStore();
-  t.equals(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
-  t.end();
+  expect(store.ctx).toBe(mockCtx);
+  done();
 });
 
 const testEnhancer = async (
-  t,
+  done,
   enhancer: StoreEnhancer<*, *, *> | FusionPlugin<*, StoreEnhancer<*, *, *>>
 ): Promise<void> => {
   const app = new App('el', el => el);
@@ -161,14 +156,14 @@ const testEnhancer = async (
         const reduxScoped = redux.from(ctx);
 
         if (!reduxScoped.initStore) {
-          t.fail();
-          t.end();
+          // $FlowFixMe
+          done.fail();
           return;
         }
 
         const store = await reduxScoped.initStore();
         // $FlowFixMe
-        t.equals(store.mock, true, '[Final store] ctx provided by ctxEnhancer');
+        expect(store.mock).toBe(true);
 
         return next();
       };
@@ -180,7 +175,7 @@ const testEnhancer = async (
   await simulator.render('/');
 };
 
-tape('enhancers - via app.register', async t => {
+test('enhancers - via app.register', async done => {
   /* Enhancer function */
   const myEnhancer: StoreEnhancer<*, *, *> = createStore => (...args) => {
     const store = createStore(...args);
@@ -188,7 +183,7 @@ tape('enhancers - via app.register', async t => {
     store.mock = true;
     return store;
   };
-  await testEnhancer(t, myEnhancer);
+  await testEnhancer(done, myEnhancer);
 
   /* Enhancer plugin */
   const myEnhancerPlugin: FusionPlugin<
@@ -199,12 +194,11 @@ tape('enhancers - via app.register', async t => {
       return myEnhancer;
     },
   });
-  await testEnhancer(t, myEnhancerPlugin);
-
-  t.end();
+  await testEnhancer(done, myEnhancerPlugin);
+  done();
 });
 
-tape('serialization', async t => {
+test('serialization', async done => {
   const reducer = (state, action) => ({
     test: action.payload || 1,
     xss: '</div>',
@@ -213,20 +207,22 @@ tape('serialization', async t => {
   const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const Plugin = getService(appCreator(reducer), Redux);
 
-  t.plan(5);
+  expect.assertions(5);
   if (!Redux.middleware) {
-    t.end();
+    done();
     return;
   }
 
   // $FlowFixMe
   await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
 
-  t.ok(Plugin.from(ctx).store);
-  t.notEquals(ctx.element, element, 'wraps provider');
-  t.equals(ctx.template.body.length, 1, 'pushes serialization to body');
+  expect(Plugin.from(ctx).store).toBeTruthy();
+  expect(ctx.element).not.toBe(element);
+  expect(ctx.template.body.length).toBe(1);
   // $FlowFixMe
-  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('test')[0], 'test');
-  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
-  t.end();
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('test')[0]).toBe(
+    'test'
+  );
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
+  done();
 });

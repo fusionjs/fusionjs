@@ -8,21 +8,19 @@
 
 /* eslint-env browser */
 
-import test from 'tape-cup';
-
 import App from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
 import ErrorHandlingPlugin, {ErrorHandlingEmitterToken} from '../client';
 
-test('Get exception stack frames', t => {
-  t.plan(4);
+test('Get exception stack frames', () => {
+  expect.assertions(4);
 
   const app = new App('test', el => el);
 
   const mockError = new Error('mock');
   const mockEmit = e => {
-    t.equal(e, mockError, 'emits error');
+    expect(e).toBe(mockError);
   };
 
   function h() {
@@ -31,8 +29,8 @@ test('Get exception stack frames', t => {
 
   class Foo {
     addEventListener(event, handler) {
-      t.equal(event, 'some-event', 'passes event type through');
-      t.notEqual(handler, h, 'wraps handler in try catch');
+      expect(event).toBe('some-event');
+      expect(handler).not.toBe(h);
       handler();
     }
   }
@@ -47,14 +45,12 @@ test('Get exception stack frames', t => {
   try {
     window.__foo__.prototype.addEventListener('some-event', h);
   } catch (e) {
-    t.equal(e, mockError, 'throws error in dev');
+    expect(e).toBe(mockError);
   }
-
-  t.end();
 });
 
-test("Don't break on cross-origin exceptions", t => {
-  t.plan(1);
+test("Don't break on cross-origin exceptions", () => {
+  expect.assertions(1);
 
   const app = new App('test', el => el);
 
@@ -70,7 +66,5 @@ test("Don't break on cross-origin exceptions", t => {
 
   app.register(ErrorHandlingPlugin);
 
-  t.doesNotThrow(() => getSimulator(app));
-
-  t.end();
+  expect(() => getSimulator(app)).not.toThrow();
 });
