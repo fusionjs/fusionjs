@@ -17,4 +17,7 @@
   },
   "flow.pathToFlow": "${workspaceFolder}/common/temp/node_modules/.bin/flow",
   "javascript.validate.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
 }
