@@ -14,6 +14,7 @@ exports.allowedJestOptions = [
   'ci',
   'clearCache',
   'collectCoverageFrom',
+  'coverageThreshold',
   'colors',
   'coverage',
   'collectCoverage',
