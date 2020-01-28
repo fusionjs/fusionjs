@@ -16,6 +16,7 @@ exports.allowedJestOptions = [
   'collectCoverageFrom',
   'colors',
   'coverage',
+  'collectCoverage',
   'detectOpenHandles',
   'errorOnDeprecated',
   'expand',
