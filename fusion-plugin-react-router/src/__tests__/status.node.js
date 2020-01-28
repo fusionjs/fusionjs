@@ -6,13 +6,12 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route, Status} from '../server';
 import {createServerHistory} from '../modules/ServerHistory';
 
-test('sets code with static code', t => {
+test('sets code with static code', () => {
   const Hello = () => (
     <Status code="404">
       <div>Hello</div>
@@ -23,7 +22,7 @@ test('sets code with static code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };
@@ -33,12 +32,11 @@ test('sets code with static code', t => {
       <Route component={Hello} />
     </Router>
   );
-  t.ok(/Hello/.test(render(el)), 'matches');
-  t.equals(state.code, 404, 'sets code');
-  t.end();
+  expect(/Hello/.test(render(el))).toBeTruthy();
+  expect(state.code).toBe(404);
 });
 
-test('sets code with numeric code', t => {
+test('sets code with numeric code', () => {
   const Hello = () => (
     <Status code={404}>
       <div>Hello</div>
@@ -49,7 +47,7 @@ test('sets code with numeric code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };
@@ -59,12 +57,11 @@ test('sets code with numeric code', t => {
       <Route component={Hello} />
     </Router>
   );
-  t.ok(/Hello/.test(render(el)), 'matches');
-  t.equals(state.code, 404, 'sets code');
-  t.end();
+  expect(/Hello/.test(render(el))).toBeTruthy();
+  expect(state.code).toBe(404);
 });
 
-test('sets code with string code', t => {
+test('sets code with string code', () => {
   const Hello = () => (
     <Status code={'404'}>
       <div>Hello</div>
@@ -75,7 +72,7 @@ test('sets code with string code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code) {
+    set status(code) {
       state.code = code;
     },
   };
@@ -85,7 +82,6 @@ test('sets code with string code', t => {
       <Route component={Hello} />
     </Router>
   );
-  t.ok(/Hello/.test(render(el)), 'matches');
-  t.equals(state.code, 404, 'sets code');
-  t.end();
+  expect(/Hello/.test(render(el))).toBeTruthy();
+  expect(state.code).toBe(404);
 });

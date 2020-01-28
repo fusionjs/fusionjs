@@ -8,20 +8,18 @@
 
 /* eslint-env browser */
 
-import test from 'tape-cup';
-
 import type {Context} from 'fusion-core';
 
 import I18n from '../browser';
 
-test('hydration', t => {
+test('hydration', done => {
   const hydrationState = {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${adjective} ${noun}'},
   };
-  t.plan(8);
+  expect.assertions(8);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
 
@@ -29,40 +27,31 @@ test('hydration', t => {
   // $FlowFixMe
   const events = {
     emit: (name, payload) => {
-      t.equals(
-        name,
-        'i18n-translate-miss',
-        'emits event when translate key missing'
-      );
+      expect(name).toBe('i18n-translate-miss');
       const key = payload && typeof payload === 'object' && payload.key;
-      t.equals(
-        key,
-        'missing-browser-translation',
-        'payload contains key for missing translation'
-      );
+      expect(key).toBe('missing-browser-translation');
     },
   };
 
   const i18n = I18n.provides({hydrationState, events}).from(mockContext);
-  t.equals(i18n.translate('test'), 'hello');
-  t.equals(
-    i18n.translate('missing-browser-translation'),
+  expect(i18n.translate('test')).toBe('hello');
+  expect(i18n.translate('missing-browser-translation')).toBe(
     'missing-browser-translation'
   );
-  t.equals(
-    i18n.translate('interpolated', {adjective: 'big', noun: 'world'}),
-    'hi big world'
-  );
-  t.equals(
-    i18n.translate('interpolated', {noun: 'world'}),
+  expect(
+    i18n.translate('interpolated', {adjective: 'big', noun: 'world'})
+  ).toBe('hi big world');
+  expect(i18n.translate('interpolated', {noun: 'world'})).toBe(
     'hi ${adjective} world'
   );
-  t.equals(i18n.translate('interpolated', {adjective: '', noun: '0'}), 'hi  0');
-  t.equals(i18n.translate('interpolated'), 'hi ${adjective} ${noun}');
-  t.end();
+  expect(i18n.translate('interpolated', {adjective: '', noun: '0'})).toBe(
+    'hi  0'
+  );
+  expect(i18n.translate('interpolated')).toBe('hi ${adjective} ${noun}');
+  done();
 });
 
-test('hydration from element', t => {
+test('hydration from element', done => {
   const hydrationState = {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${value}'},
@@ -73,30 +62,30 @@ test('hydration from element', t => {
   translations.textContent = JSON.stringify(hydrationState);
   document.body && document.body.appendChild(translations);
 
-  t.plan(2);
+  expect.assertions(2);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
 
   const mockContext: Context = ({}: any);
   const i18n = I18n.provides({hydrationState}).from(mockContext);
-  t.equals(i18n.translate('test'), 'hello');
-  t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
+  expect(i18n.translate('test')).toBe('hello');
+  expect(i18n.translate('interpolated', {value: 'world'})).toBe('hi world');
   document.body && document.body.removeChild(translations);
-  t.end();
+  done();
 });
 
-test('hydration parse error', t => {
+test('hydration parse error', done => {
   const translations = document.createElement('script');
   translations.setAttribute('type', 'application/json');
   translations.setAttribute('id', '__TRANSLATIONS__');
   translations.textContent = 'abcdomg-"asddf}';
   document.body && document.body.appendChild(translations);
 
-  t.plan(1);
+  expect.assertions(1);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
 
@@ -105,20 +94,19 @@ test('hydration parse error', t => {
     const plugin = I18n.provides({});
     plugin.from(mockContext);
   } catch (e) {
-    t.equal(
-      e.message,
+    expect(e.message).toBe(
       '[fusion-plugin-i18n] - Error parsing __TRANSLATIONS__ element content'
     );
   } finally {
     document.body && document.body.removeChild(translations);
-    t.end();
+    done();
   }
 });
 
-test('hydration missing element error', t => {
-  t.plan(1);
+test('hydration missing element error', done => {
+  expect.assertions(1);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
 
@@ -127,16 +115,15 @@ test('hydration missing element error', t => {
     const plugin = I18n.provides({});
     plugin.from(mockContext);
   } catch (e) {
-    t.equal(
-      e.message,
+    expect(e.message).toBe(
       '[fusion-plugin-i18n] - Could not find a __TRANSLATIONS__ element'
     );
   } finally {
-    t.end();
+    done();
   }
 });
 
-test('load', t => {
+test('load', done => {
   let called = false;
   const hydrationState = {
     chunks: [],
@@ -145,15 +132,13 @@ test('load', t => {
   };
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   const fetch: any = (url, options) => {
-    t.equals(url, '/_translations?localeCode=es-MX', 'url is ok');
-    t.equals(options.body, '["test-key"]');
-    t.equals(options && options.method, 'POST', 'method is ok');
-    t.equals(
-      options && options.headers && options.headers['X-Fusion-Locale-Code'],
-      'es-MX',
-      'locale code header is ok'
-    );
-    t.equals(options && options.method, 'POST', 'method is ok');
+    expect(url).toBe('/_translations?localeCode=es-MX');
+    expect(options.body).toBe('["test-key"]');
+    expect(options && options.method).toBe('POST');
+    expect(
+      options && options.headers && options.headers['X-Fusion-Locale-Code']
+    ).toBe('es-MX');
+    expect(options && options.method).toBe('POST');
     called = true;
     return Promise.resolve({json: () => data});
   };
@@ -162,13 +147,16 @@ test('load', t => {
   if (plugin) {
     const i18n = plugin.from(mockContext);
     i18n.load(['test-key']).then(() => {
-      t.ok(called, 'fetch called');
-      t.equals(i18n.translate('test'), 'hello');
-      t.equals(i18n.translate('interpolated', {value: 'world'}), 'hi world');
-      t.ok(i18n.translations && !('test-key' in i18n.translations));
-      t.end();
+      expect(called).toBeTruthy();
+      expect(i18n.translate('test')).toBe('hello');
+      expect(i18n.translate('interpolated', {value: 'world'})).toBe('hi world');
+      expect(
+        i18n.translations && !('test-key' in i18n.translations)
+      ).toBeTruthy();
+      done();
     });
   } else {
-    t.fail();
+    // $FlowFixMe
+    done.fail();
   }
 });

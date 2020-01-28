@@ -6,8 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
-
 import {getSimulator} from 'fusion-test-utils';
 import App from 'fusion-core';
 import {LoggerToken} from 'fusion-tokens';
@@ -27,8 +25,8 @@ type SupportedLevelsType =
   | 'debug'
   | 'silly';
 
-test('Server logger', async t => {
-  t.plan(4);
+test('Server logger', async () => {
+  expect.assertions(4);
   class Transport extends TransportStream {
     name: string;
 
@@ -37,8 +35,8 @@ test('Server logger', async t => {
       this.name = 'test-transport';
     }
     log({level, message}: {level: SupportedLevelsType, message: string}): void {
-      t.equals(level, 'info', 'level is ok');
-      t.equals(message, 'test message', 'message is ok');
+      expect(level).toBe('info');
+      expect(message).toBe('test message');
     }
   }
 
@@ -50,14 +48,10 @@ test('Server logger', async t => {
     {events: UniversalEventsToken, logger: LoggerToken},
     ({events, logger}) => {
       events.on('universal-log', ({args, level}) => {
-        t.equals(
-          args[0],
-          'test message',
-          'all logs are passed through event emitter'
-        );
+        expect(args[0]).toBe('test message');
       });
 
-      t.ok(logger);
+      expect(logger).toBeTruthy();
       logger.info('test message');
       return (ctx, next) => next();
     }
@@ -65,7 +59,7 @@ test('Server logger', async t => {
   getSimulator(app);
 });
 
-test('Server logger listening on events', async t => {
+test('Server logger listening on events', async () => {
   let called = false;
   class Transport extends TransportStream {
     name: string;
@@ -83,10 +77,10 @@ test('Server logger listening on events', async t => {
       message: string,
       hello: string,
     }) {
-      t.equals(level, 'info', 'level is ok');
-      t.equals(message, 'test', 'message is ok');
-      t.equals(message, 'test', 'message is ok');
-      t.equals(hello, 'world', 'meta is ok');
+      expect(level).toBe('info');
+      expect(message).toBe('test');
+      expect(message).toBe('test');
+      expect(hello).toBe('world');
       called = true;
     }
   }
@@ -102,6 +96,5 @@ test('Server logger listening on events', async t => {
     return (ctx, next) => next();
   });
   getSimulator(app);
-  t.equals(called, true, 'called');
-  t.end();
+  expect(called).toBe(true);
 });

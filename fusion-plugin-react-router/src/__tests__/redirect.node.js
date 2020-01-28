@@ -6,31 +6,28 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route, Redirect} from '../server';
 import {createServerHistory} from '../modules/ServerHistory';
 
-test('redirects to a new URL', t => {
+test('redirects to a new URL', () => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello" />;
   let setCode = false;
   let didRedirect = false;
-  const state = {
+  const ctx = {
     action: null,
     location: null,
-    url: null,
-    setCode: code => {
-      t.equal(code, 307);
+    set status(code) {
+      expect(code).toBe(307);
       setCode = true;
     },
-    redirect: to => {
-      t.equal(to, '/hello');
+    set url(to) {
+      expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
-  const ctx = state;
   const history = createServerHistory('/', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
@@ -41,7 +38,37 @@ test('redirects to a new URL', t => {
     </Router>
   );
   render(el);
-  t.ok(setCode);
-  t.ok(didRedirect);
-  t.end();
+  expect(setCode).toBeTruthy();
+  expect(didRedirect).toBeTruthy();
+});
+
+test('redirects with deprecated context', () => {
+  const Hello = () => <div>Hello</div>;
+  const Moved = () => <Redirect to="/hello" />;
+  let setCode = false;
+  let didRedirect = false;
+  const ctx = {
+    action: null,
+    location: null,
+    setCode(code) {
+      expect(code).toBe(307);
+      setCode = true;
+    },
+    redirect(to) {
+      expect(to).toBe('/hello');
+      didRedirect = true;
+    },
+  };
+  const history = createServerHistory('/', ctx, '/');
+  const el = (
+    <Router history={history} context={ctx}>
+      <div>
+        <Route path="/" component={Moved} />
+        <Route path="/hello" component={Hello} />
+      </div>
+    </Router>
+  );
+  render(el);
+  expect(setCode).toBeTruthy();
+  expect(didRedirect).toBeTruthy();
 });

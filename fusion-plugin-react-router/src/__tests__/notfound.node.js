@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 
 import {renderToString as render} from 'react-dom/server';
@@ -14,7 +13,7 @@ import {renderToString as render} from 'react-dom/server';
 import {Router, Route, NotFound} from '../server.js';
 import {createServerHistory} from '../modules/ServerHistory.js';
 
-test('sets code', t => {
+test('sets code', () => {
   const Hello = () => (
     <NotFound>
       <div>Hello</div>
@@ -25,7 +24,7 @@ test('sets code', t => {
     action: null,
     location: null,
     url: null,
-    setCode(code: number) {
+    set status(code: number) {
       state.code = code;
     },
   };
@@ -35,7 +34,6 @@ test('sets code', t => {
       <Route component={Hello} />
     </Router>
   );
-  t.ok(/Hello/.test(render(el)), 'matches');
-  t.equals(state.code, 404, 'sets code');
-  t.end();
+  expect(/Hello/.test(render(el))).toBeTruthy();
+  expect(state.code).toBe(404);
 });

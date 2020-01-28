@@ -6,13 +6,11 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import App from 'fusion-core';
 import {SessionToken} from 'fusion-tokens';
 import JWTServer from '../index';
 
-tape('registers against session token', t => {
+test('registers against session token', () => {
   const app = new App('fake-element', el => el);
   app.register(SessionToken, JWTServer);
-  t.end();
 });

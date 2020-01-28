@@ -13,11 +13,10 @@ import {ApolloClientToken} from '../../tokens';
 import {ApolloLink} from 'apollo-link';
 import {FetchToken} from 'fusion-tokens';
 import unfetch from 'unfetch';
-import test from 'tape-cup';
 
 import {ApolloClientPlugin, GetApolloClientLinksToken} from '../index.js';
 
-test('ApolloUniveralClient', async t => {
+test('ApolloUniveralClient', async () => {
   const app = new App('el', el => el);
   app.register(GetApolloClientLinksToken, links => [
     new ApolloLink((op, forward) => {
@@ -37,10 +36,10 @@ test('ApolloUniveralClient', async t => {
       return async (ctx, next) => {
         const client = universalClient(ctx, {});
         clients.push(client);
-        t.ok(client.link);
-        t.ok(client.cache instanceof InMemoryCache);
+        expect(client.link).toBeTruthy();
+        expect(client.cache instanceof InMemoryCache).toBeTruthy();
         // memoizes the client on ctx correctly
-        t.equal(client, universalClient(ctx, {}));
+        expect(client).toBe(universalClient(ctx, {}));
         return next();
       };
     },
@@ -50,8 +49,7 @@ test('ApolloUniveralClient', async t => {
   const simulator = getSimulator(app);
   await simulator.render('/');
   await simulator.render('/');
-  t.equal(clients.length, 2);
-  t.notEqual(clients[0], clients[1]);
-  t.notEqual(clients[0].cache, clients[1].cache);
-  t.end();
+  expect(clients.length).toBe(2);
+  expect(clients[0]).not.toBe(clients[1]);
+  expect(clients[0].cache).not.toBe(clients[1].cache);
 });

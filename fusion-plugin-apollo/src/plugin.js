@@ -6,10 +6,9 @@
  * @flow
  */
 
-/* eslint-env browser */
 import React from 'react';
 
-import {createPlugin, html, unescape} from 'fusion-core';
+import {createPlugin, html, unescape, RouteTagsToken} from 'fusion-core';
 
 import {ApolloProvider} from '@apollo/react-common';
 
@@ -31,6 +30,7 @@ import {
 } from './tokens';
 
 export type DepsType = {
+  RouteTags: typeof RouteTagsToken,
   apolloContext: typeof ApolloContextToken.optional,
   logger: typeof LoggerToken.optional,
   schema: typeof GraphQLSchemaToken.optional,
@@ -46,6 +46,7 @@ export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
 function getDeps(): DepsType {
   if (__NODE__) {
     return {
+      RouteTags: RouteTagsToken,
       apolloContext: ApolloContextToken.optional,
       logger: LoggerToken.optional,
       schema: GraphQLSchemaToken.optional,
@@ -76,6 +77,7 @@ export default (renderFn: Render) =>
       };
     },
     middleware({
+      RouteTags,
       logger,
       schema,
       endpoint = '/graphql',
@@ -141,6 +143,8 @@ export default (renderFn: Render) =>
           },
           executor: async requestContext => {
             const fusionCtx = requestContext.context;
+            const routeTags = RouteTags.from(fusionCtx);
+            routeTags.name = 'graphql';
             const apolloCtx = getApolloContext(fusionCtx);
             const client = getApolloClient(fusionCtx, {});
             // $FlowFixMe

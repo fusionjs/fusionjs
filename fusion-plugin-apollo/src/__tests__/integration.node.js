@@ -5,7 +5,6 @@
  *
  * @flow
  */
-import test from 'tape-cup';
 import React from 'react';
 import {
   ApolloRenderEnhancer,
@@ -17,7 +16,7 @@ import {
   ApolloDefaultOptionsConfigToken,
 } from '../index';
 import gql from 'graphql-tag';
-import App from 'fusion-react/dist';
+import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 import {ApolloClient} from 'apollo-client';
 import {InMemoryCache} from 'apollo-cache-inmemory';
@@ -63,7 +62,7 @@ async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   return {app, server, client, endpoint};
 }
 
-test('Query request', async t => {
+test('Query request', async () => {
   const query = gql`
     query Test {
       test
@@ -78,24 +77,23 @@ test('Query request', async t => {
   const resolvers = {
     Query: {
       test(parent, args, ctx) {
-        t.equal(ctx.path, '/graphql', 'context defaults correctly');
+        expect(ctx.path).toBe('/graphql');
         return 'test';
       },
     },
   };
   const {server, client} = await testApp(el, {typeDefs, resolvers});
   const result = await client.query({query});
-  t.deepEqual(result, {
+  expect(result).toEqual({
     data: {test: 'test'},
     loading: false,
     networkStatus: 7,
     stale: false,
   });
   server.close();
-  t.end();
 });
 
-test('Query request with custom apollo context', async t => {
+test('Query request with custom apollo context', async () => {
   const query = gql`
     query Test {
       test
@@ -110,7 +108,7 @@ test('Query request with custom apollo context', async t => {
   const resolvers = {
     Query: {
       test(parent, args, ctx) {
-        t.equal(ctx, 5, 'sets context correctly');
+        expect(ctx).toBe(5);
         return 'test';
       },
     },
@@ -120,17 +118,16 @@ test('Query request with custom apollo context', async t => {
     app.register(ApolloContextToken, 5);
   });
   const result = await client.query({query});
-  t.deepEqual(result, {
+  expect(result).toEqual({
     data: {test: 'test'},
     loading: false,
     networkStatus: 7,
     stale: false,
   });
   server.close();
-  t.end();
 });
 
-test('Mutation request', async t => {
+test('Mutation request', async () => {
   const mutation = gql`
     mutation Test($arg: String) {
       testMutation(arg: $arg) {
@@ -158,7 +155,7 @@ test('Mutation request', async t => {
     },
     Mutation: {
       testMutation(parent, args, ctx) {
-        t.equal(args.arg, 'test');
+        expect(args.arg).toBe('test');
         return {
           result: 'pass',
         };
@@ -167,16 +164,15 @@ test('Mutation request', async t => {
   };
   const {server, client} = await testApp(el, {typeDefs, resolvers});
   const result = await client.mutate({mutation, variables: {arg: 'test'}});
-  t.deepEqual(result.data, {
+  expect(result.data).toEqual({
     testMutation: {
       result: 'pass',
     },
   });
   server.close();
-  t.end();
 });
 
-test('Mutation request with error', async t => {
+test('Mutation request with error', async done => {
   const mutation = gql`
     mutation Test($arg: String) {
       testMutation(arg: $arg) {
@@ -204,7 +200,7 @@ test('Mutation request with error', async t => {
     },
     Mutation: {
       testMutation(parent, args, ctx) {
-        t.equal(args.arg, 'test');
+        expect(args.arg).toBe('test');
         throw new Error('FAIL');
       },
     },
@@ -212,15 +208,16 @@ test('Mutation request with error', async t => {
   const {server, client} = await testApp(el, {typeDefs, resolvers});
   try {
     await client.mutate({mutation, variables: {arg: 'test'}});
-    t.fail('should throw');
+    // $FlowFixMe
+    done.fail('should throw');
   } catch (e) {
-    t.equal(e.message, 'GraphQL error: FAIL');
+    expect(e.message).toBe('GraphQL error: FAIL');
   }
   server.close();
-  t.end();
+  done();
 });
 
-test('Query request with error', async t => {
+test('Query request with error', async done => {
   const query = gql`
     query Test {
       test
@@ -247,10 +244,10 @@ test('Query request with error', async t => {
       fetch: async (url, options) => {
         // required since the url here is only the path
         const result = await fetch(endpoint, options);
-        t.equal(result.ok, true, 'responds with 2XX status code');
+        expect(result.ok).toBe(true);
         const json = await result.json();
-        t.equal(json.errors[0].message, 'FAIL');
-        t.deepEqual(json.data, {test: null});
+        expect(json.errors[0].message).toBe('FAIL');
+        expect(json.data).toEqual({test: null});
         // duplicate fetch so we can assert on json, but also return to client
         return fetch(endpoint, options);
       },
@@ -258,15 +255,16 @@ test('Query request with error', async t => {
   });
   try {
     await client.query({query});
-    t.fail('should throw');
+    // $FlowFixMe
+    done.fail('should throw');
   } catch (e) {
-    t.equal(e.message, 'GraphQL error: FAIL');
+    expect(e.message).toBe('GraphQL error: FAIL');
   }
   server.close();
-  t.end();
+  done();
 });
 
-test('/graphql endpoint with body parser config', async t => {
+test('/graphql endpoint with body parser config', async () => {
   const query = gql`
     query Test {
       test
@@ -281,7 +279,7 @@ test('/graphql endpoint with body parser config', async t => {
   const resolvers = {
     Query: {
       test(parent, args, ctx) {
-        t.equal(ctx.path, '/graphql', 'context defaults correctly');
+        expect(ctx.path).toBe('/graphql');
         return 'test';
       },
     },
@@ -296,18 +294,17 @@ test('/graphql endpoint with body parser config', async t => {
     });
   });
   const result = await client.query({query});
-  t.ok(called, 'calls detectJSON function');
-  t.deepEqual(result, {
+  expect(called).toBeTruthy();
+  expect(result).toEqual({
     data: {test: 'test'},
     loading: false,
     networkStatus: 7,
     stale: false,
   });
   server.close();
-  t.end();
 });
 
-test('Query request with custom apollo server options config', async t => {
+test('Query request with custom apollo server options config', async () => {
   const query = gql`
     query Test {
       test
@@ -323,7 +320,7 @@ test('Query request with custom apollo server options config', async t => {
   const mocks = {
     Query: () => ({
       test(parent, args, ctx) {
-        t.equal(ctx.path, '/graphql', 'context defaults correctly');
+        expect(ctx.path).toBe('/graphql');
         return 'test';
       },
     }),
@@ -332,17 +329,16 @@ test('Query request with custom apollo server options config', async t => {
     app.register(ApolloDefaultOptionsConfigToken, {mocks});
   });
   const result = await client.query({query});
-  t.deepEqual(result, {
+  expect(result).toEqual({
     data: {test: 'test'},
     loading: false,
     networkStatus: 7,
     stale: false,
   });
   server.close();
-  t.end();
 });
 
-test('Invalid query request - logs error', async t => {
+test('Invalid query request - logs error', async done => {
   const query = gql`
     query Test {
       lmao
@@ -360,12 +356,8 @@ test('Invalid query request - logs error', async t => {
     // $FlowFixMe
     app.register(LoggerToken, {
       error: (message, error) => {
-        t.equal(
-          message,
-          'Cannot query field "lmao" on type "Query".',
-          'should log error'
-        );
-        t.equal(error instanceof Error, true, 'should log instanceof error');
+        expect(message).toBe('Cannot query field "lmao" on type "Query".');
+        expect(error instanceof Error).toBe(true);
         logCount++;
       },
     });
@@ -374,9 +366,9 @@ test('Invalid query request - logs error', async t => {
   try {
     await client.query({query});
   } catch (e) {
-    t.ok(e instanceof Error);
-    t.equal(logCount, 1);
+    expect(e instanceof Error).toBeTruthy();
+    expect(logCount).toBe(1);
     server.close();
-    t.end();
+    done();
   }
 });

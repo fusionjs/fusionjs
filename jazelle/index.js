@@ -26,12 +26,14 @@ const {node} = require('./commands/node.js');
 const {yarn} = require('./commands/yarn.js');
 const {exec} = require('./commands/exec.js');
 const {each} = require('./commands/each.js');
+const {binPath} = require('./commands/bin-path.js');
 const {bazel} = require('./commands/bazel.js');
 const {bump} = require('./commands/bump.js');
 const {doctor} = require('./commands/doctor.js');
 const {
   reportMismatchedTopLevelDeps,
 } = require('./utils/report-mismatched-top-level-deps.js');
+const {getBinaryPath} = require('./utils/binary-paths.js');
 const {getChunkPattern} = require('./utils/get-chunk-pattern.js');
 const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {getTestGroups} = require('./utils/get-test-groups.js');
@@ -127,9 +129,9 @@ const runCLI /*: RunCLI */ = async argv => {
         `Lists Bazel test targets that changed given a list of changed files
 
         [files]                    A file containing a list of changed files (one per line). Defaults to stdin
-        --type [type]              'bazel' or 'dirs'. Defaults to 'bazel'`,
-        async ({name, type}) =>
-          changes({root: await rootOf(args), files: name, type}),
+        --format [format]          'targets' or 'dirs'. Defaults to 'targets'`,
+        async ({name, format = 'targets'}) =>
+          changes({root: await rootOf(args), files: name, format}),
       ],
       plan: [
         `Outputs a plan that can be passed to \`jazelle batch\` for parallelizing a group of tests across workers
@@ -183,6 +185,12 @@ const runCLI /*: RunCLI */ = async argv => {
 
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => start({root: await rootOf(args), cwd, args: rest}),
+      ],
+      'bin-path': [
+        `Print the local path of a binary
+
+        [name]                     'bazel', 'node', or 'yarn'`,
+        async ({name}) => binPath(name),
       ],
       bazel: [
         `Run a Bazel command
@@ -269,6 +277,7 @@ module.exports = {
   lint,
   flow,
   start,
+  binPath: getBinaryPath,
   bazel,
   node,
   yarn,

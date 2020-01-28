@@ -11,7 +11,7 @@ import serverPlugin from './server';
 
 export default __NODE__ ? serverPlugin : browserPlugin();
 
-export * from './types';
+export type * from './types';
 
 export {
   ReduxToken,

@@ -14,7 +14,7 @@
     "dist-node-cjs",
     "dist-node-esm",
     "flow-typed",
-    "src"
+    "src/"
   ],
   "main": "./dist-node-cjs/index.js",
   "module": "./dist-node-esm/index.js",
@@ -34,7 +34,7 @@
     "redux": "^4.0.1"
   },
   "devDependencies": {
-    "@rtsao/create-universal-package-4": "^4.1.0",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -55,7 +55,6 @@
     "fusion-tokens": "0.0.0-monorepo",
     "get-port": "^5.0.0",
     "jest": "^24.8.0",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "prop-types": "^15.7.2",
     "puppeteer": "^1.15.0",
@@ -68,13 +67,12 @@
     "request-promise": "^4.2.4"
   },
   "scripts": {
-    "clean": "cup4 clean",
+    "clean": "cup-clean",
     "lint": "eslint .",
     "test": "jest",
-    "cover": "nyc jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup4 build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

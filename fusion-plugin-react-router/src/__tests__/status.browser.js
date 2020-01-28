@@ -7,13 +7,12 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, Status} from '../browser';
 import {createBrowserHistory} from 'history';
 
-test('noops', t => {
+test('noops', () => {
   const root = document.createElement('div');
   const Hello = () => (
     <Status code="404">
@@ -26,6 +25,5 @@ test('noops', t => {
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), 'matches');
-  t.end();
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
 });

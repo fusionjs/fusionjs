@@ -7,7 +7,6 @@
  */
 
 /* eslint-env browser */
-import tape from 'tape-cup';
 import Enzyme, {mount} from 'enzyme';
 import {connect} from 'react-redux';
 import Adapter from 'enzyme-adapter-react-16';
@@ -37,7 +36,7 @@ const appCreator = (reducer, preloadedState, enhancer) => {
   return () => app;
 };
 
-tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
+test('browser with no preloadedState and no __REDUX_STATE__ element', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -47,13 +46,12 @@ tape('browser with no preloadedState and no __REDUX_STATE__ element', t => {
   };
   const provider = getService(appCreator(reducer), Redux);
   const {store} = provider && provider.from();
-  t.deepLooseEqual(store.getState(), {test: 1});
+  expect(store.getState()).toStrictEqual({test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2, 'state receives dispatch');
-  t.end();
+  expect(store.getState().test).toBe(2);
 });
 
-tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
+test('browser with preloadedState and no __REDUX_STATE__ element', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -63,13 +61,12 @@ tape('browser with preloadedState and no __REDUX_STATE__ element', t => {
   };
   const preloadedState = {hello: 'world'};
   const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
-  t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
-  t.end();
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
 });
 
-tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
+test('browser with no preloadedState and a __REDUX_STATE__ element', () => {
   const Redux = GetReduxPlugin();
   const reduxState = document.createElement('script');
   reduxState.setAttribute('type', 'application/json');
@@ -83,14 +80,13 @@ tape('browser with no preloadedState and a __REDUX_STATE__ element', t => {
     };
   };
   const {store} = getService(appCreator(reducer), Redux).from();
-  t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
   document.body && document.body.removeChild(reduxState);
-  t.end();
 });
 
-tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
+test('browser with preloadedState and a __REDUX_STATE__ element', () => {
   const Redux = GetReduxPlugin();
   const reduxState = document.createElement('script');
   reduxState.setAttribute('type', 'application/json');
@@ -108,14 +104,13 @@ tape('browser with preloadedState and a __REDUX_STATE__ element', t => {
   };
   const preloadedState = {hello: 'world'};
   const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
-  t.deepLooseEqual(store.getState(), {test: 1, hello: 'world'});
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.deepLooseEqual(store.getState(), {test: 2, hello: 'world'});
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
   document.body && document.body.removeChild(reduxState);
-  t.end();
 });
 
-tape('browser with enhancer', t => {
+test('browser with enhancer', () => {
   const Redux = GetReduxPlugin();
   const mockCtx = {mock: true};
   const reducer = (state, action) => {
@@ -127,12 +122,12 @@ tape('browser with enhancer', t => {
   let enhancerCalls = 0;
   const enhancer = createStore => {
     enhancerCalls++;
-    t.equal(typeof createStore, 'function');
+    expect(typeof createStore).toBe('function');
     return (...args) => {
-      t.equal(args[0], reducer);
+      expect(args[0]).toBe(reducer);
       const store = createStore(...args);
       // $FlowFixMe
-      t.equal(store.ctx, mockCtx, '[Enhancer] ctx provided by ctxEnhancer');
+      expect(store.ctx).toBe(mockCtx);
       return store;
     };
   };
@@ -142,15 +137,14 @@ tape('browser with enhancer', t => {
   if (!store.ctx) {
     return;
   }
-  t.equal(store.ctx, mockCtx, '[Final store] ctx provided by ctxEnhancer');
-  t.deepLooseEqual(store.getState(), {test: 1});
+  expect(store.ctx).toBe(mockCtx);
+  expect(store.getState()).toStrictEqual({test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2);
-  t.equal(enhancerCalls, 1);
-  t.end();
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(1);
 });
 
-tape('browser with devtools enhancer', t => {
+test('browser with devtools enhancer', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -161,22 +155,21 @@ tape('browser with devtools enhancer', t => {
   let enhancerCalls = 0;
   window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
     enhancerCalls++;
-    t.equal(typeof createStore, 'function');
+    expect(typeof createStore).toBe('function');
     return (...args) => {
-      t.equal(args[0], reducer);
+      expect(args[0]).toBe(reducer);
       return createStore(...args);
     };
   };
   const {store} = getService(appCreator(reducer), Redux).from();
-  t.deepLooseEqual(store.getState(), {test: 1});
+  expect(store.getState()).toStrictEqual({test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2);
-  t.equal(enhancerCalls, 1);
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(1);
   delete window.__REDUX_DEVTOOLS_EXTENSION__;
-  t.end();
 });
 
-tape('browser with devtools enhancer and normal enhancer', t => {
+test('browser with devtools enhancer and normal enhancer', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -188,38 +181,37 @@ tape('browser with devtools enhancer and normal enhancer', t => {
   let enhancerCalls = 0;
   window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
     devtoolsEnhancerCalls++;
-    t.equal(typeof createStore, 'function');
+    expect(typeof createStore).toBe('function');
     return (...args) => {
-      t.equal(args[0], reducer);
+      expect(args[0]).toBe(reducer);
       return createStore(...args);
     };
   };
   const enhancer = createStore => {
     enhancerCalls++;
-    t.equal(typeof createStore, 'function');
+    expect(typeof createStore).toBe('function');
     return (...args) => {
-      t.equal(args[0], reducer);
+      expect(args[0]).toBe(reducer);
       return createStore(...args);
     };
   };
   const {store} = getService(appCreator(reducer, null, enhancer), Redux).from();
-  t.deepLooseEqual(store.getState(), {test: 1});
+  expect(store.getState()).toStrictEqual({test: 1});
   store.dispatch({type: 'CHANGE', payload: 2});
-  t.equals(store.getState().test, 2);
-  t.equal(devtoolsEnhancerCalls, 1);
-  t.equal(enhancerCalls, 1);
+  expect(store.getState().test).toBe(2);
+  expect(devtoolsEnhancerCalls).toBe(1);
+  expect(enhancerCalls).toBe(1);
   delete window.__REDUX_DEVTOOLS_EXTENSION__;
-  t.end();
 });
 
-tape('browser middleware', async t => {
+test('browser middleware', async () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => ({
     test: action.payload || 1,
   });
   function Component(props) {
-    t.equal(props.test, 1);
-    t.equal(typeof props.dispatch, 'function');
+    expect(props.test).toBe(1);
+    expect(typeof props.dispatch).toBe('function');
     return React.createElement('div');
   }
   const Connected = connect(state => state)(Component);
@@ -231,18 +223,17 @@ tape('browser middleware', async t => {
       // $FlowFixMe
       Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve()));
   } catch (e) {
-    t.ifError(e);
+    expect(e).toBeFalsy();
   }
-  t.notEquals(ctx.element, element, 'wraps provider');
+  expect(ctx.element).not.toBe(element);
   const rendered = mount(ctx.element);
-  t.equal(rendered.find(Connected).length, 1);
-  t.equal(rendered.find(Component).length, 1);
-  t.equal(rendered.find(Component).props().test, 1);
-  t.equal(typeof rendered.find(Component).props().dispatch, 'function');
-  t.end();
+  expect(rendered.find(Connected).length).toBe(1);
+  expect(rendered.find(Component).length).toBe(1);
+  expect(rendered.find(Component).props().test).toBe(1);
+  expect(typeof rendered.find(Component).props().dispatch).toBe('function');
 });
 
-tape('browser - store creation without cleanup between iterations', t => {
+test('browser - store creation without cleanup between iterations', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -259,11 +250,10 @@ tape('browser - store creation without cleanup between iterations', t => {
   const firstStore = getStore(appCreator(reducer), Redux);
   const secondStore = getStore(appCreator(reducer), Redux);
 
-  t.equals(firstStore, secondStore, 'cached store should be returned');
-  t.end();
+  expect(firstStore).toBe(secondStore);
 });
 
-tape('browser - store creation with cleanup between iterations', t => {
+test('browser - store creation with cleanup between iterations', () => {
   const Redux = GetReduxPlugin();
   const reducer = (state, action) => {
     return {
@@ -284,10 +274,5 @@ tape('browser - store creation with cleanup between iterations', t => {
   const secondApp = appCreator(reducer)();
   const secondStore = getStore(() => secondApp, Redux);
 
-  t.notEquals(
-    firstStore,
-    secondStore,
-    'store cache should be busted and fresh store should be returned'
-  );
-  t.end();
+  expect(firstStore).not.toBe(secondStore);
 });

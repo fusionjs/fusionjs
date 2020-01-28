@@ -6,24 +6,22 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import MockEmitter from 'events';
 import MockReq from 'mock-req';
 import FormData from 'form-data';
 
-import App, {createPlugin, createToken} from 'fusion-core';
-import type {Context, Token} from 'fusion-core';
+import App, {createPlugin, RouteTagsToken} from 'fusion-core';
+import type {Context} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import {RPCHandlersToken} from '../tokens.js';
+import {RPCHandlersToken, RPCToken} from '../tokens.js';
 import RPCPlugin from '../server.js';
 import type {IEmitter, RPCServiceType} from '../types.js';
 import MockRPCPlugin from '../mock.js';
 import ResponseError from '../response-error.js';
 import createMockEmitter from './create-mock-emitter';
 
-const MockPluginToken: Token<RPCServiceType> = createToken('test-plugin-token');
 const MOCK_JSON_PARAMS = {test: 'test-args'};
 
 const mockService: RPCServiceType = getService(() => {
@@ -35,7 +33,7 @@ const mockService: RPCServiceType = getService(() => {
     provides: () => mockEmitter,
   });
   app.register(UniversalEventsToken, mockEmitterPlugin);
-  app.register(RPCHandlersToken, {});
+  app.register(RPCHandlersToken, createPlugin({provides: () => ({})}));
   return app;
 }, MockRPCPlugin);
 
@@ -52,7 +50,7 @@ function createTestFixture() {
   const app = new App('content', el => el);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, mockHandlers);
-  app.register(MockPluginToken, RPCPlugin);
+  app.register(RPCToken, RPCPlugin);
   return app;
 }
 
@@ -70,91 +68,97 @@ function mockRequest() {
   return req;
 }
 
-test('FusionApp - service resolved', t => {
+test('FusionApp - service resolved', () => {
   const app = createTestFixture();
 
   let wasResolved = false;
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       provides: ({rpcFactory}) => {
-        t.ok(rpcFactory);
+        expect(rpcFactory).toBeTruthy();
         wasResolved = true;
       },
     })
   );
-  t.true(wasResolved, 'service was resolved');
-
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('service - requires ctx', t => {
+test('service - requires ctx', () => {
   const app = createTestFixture();
 
   let wasResolved = false;
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       provides: ({rpcFactory}) => {
         // $FlowFixMe
-        t.throws(() => rpcFactory());
+        expect(() => rpcFactory()).toThrow();
         wasResolved = true;
       },
     })
   );
-  t.true(wasResolved, 'service was resolved');
-
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('service - request api', async t => {
+test('service - request api', async done => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
   }: any);
   const mockHandlers = {
     test(args, ctx) {
-      t.equal(args, 'test-args');
-      t.equal(ctx, mockCtx);
+      expect(args).toBe('test-args');
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
-  const mockEmitter = createMockEmitter({
-    emit: (type: mixed, payload: Object) => {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit: (type: mixed, payload: Object) => {
+          expect(type).toBe('rpc:method');
+          expect(payload.method).toBe('test');
+          expect(payload.status).toBe('success');
+          expect(typeof payload.timing).toBe('number');
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
     const app = new App('content', el => el);
     app.register(UniversalEventsToken, mockEmitter);
+    app.register(RPCToken, RPCPlugin);
     app.register(RPCHandlersToken, mockHandlers);
     return app;
   };
 
-  const rpcFactory = getService(appCreator, RPCPlugin);
+  const sim = getSimulator(appCreator());
+
+  const rpcFactory = sim.getService(RPCToken);
+  const routeTags = sim.getService(RouteTagsToken);
   const rpc = rpcFactory.from(mockCtx);
 
-  t.equals(typeof rpc.request, 'function', 'has request method');
+  expect(typeof rpc.request).toBe('function');
   try {
     const p = rpc.request('test', 'test-args');
-    t.ok(p instanceof Promise, 'has right return type');
-    t.equals(await p, 1, 'method works');
+    expect(p instanceof Promise).toBeTruthy();
+    expect(await p).toBe(1);
+    expect(routeTags.from(mockCtx).name).toBe('unknown_route');
+    //  'does not overwrite the name tag on SSR'
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('service - request api with failing request', async t => {
+test('service - request api with failing request', async done => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -165,17 +169,20 @@ test('service - request api with failing request', async t => {
       return Promise.reject(e);
     },
   };
-  const mockEmitter = createMockEmitter({
-    emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
-      t.equal(payload.error, e);
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit(type, payload) {
+          expect(type).toBe('rpc:method');
+          expect(payload.method).toBe('test');
+          expect(payload.status).toBe('failure');
+          expect(typeof payload.timing).toBe('number');
+          expect(payload.error).toBe(e);
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
@@ -188,34 +195,38 @@ test('service - request api with failing request', async t => {
   const rpcFactory = getService(appCreator, RPCPlugin);
   const rpc = rpcFactory.from(mockCtx);
 
-  t.equals(typeof rpc.request, 'function', 'has request method');
+  expect(typeof rpc.request).toBe('function');
   const p = rpc.request('test', 'test-args');
-  t.ok(p instanceof Promise, 'has right return type');
+  expect(p instanceof Promise).toBeTruthy();
   try {
     await p;
-    t.fail('should throw before this point');
+    // $FlowFixMe
+    done.fail('should throw before this point');
   } catch (error) {
-    t.equal(error, e);
+    expect(error).toBe(e);
+    done();
   }
-  t.end();
 });
 
-test('service - request api with invalid endpoint', async t => {
+test('service - request api with invalid endpoint', async done => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
   }: any);
   const mockHandlers = {};
-  const mockEmitter = createMockEmitter({
-    emit(type, payload) {
-      t.equal(type, 'rpc:error');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'server');
-      t.equal(payload.error.message, 'Missing RPC handler for test');
-    },
-    from() {
-      return this;
-    },
+  const mockEmitter = createPlugin({
+    provides: () =>
+      createMockEmitter({
+        emit(type, payload) {
+          expect(type).toBe('rpc:error');
+          expect(payload.method).toBe('test');
+          expect(payload.origin).toBe('server');
+          expect(payload.error.message).toBe('Missing RPC handler for test');
+        },
+        from() {
+          return this;
+        },
+      }),
   });
 
   const appCreator = () => {
@@ -228,27 +239,28 @@ test('service - request api with invalid endpoint', async t => {
   const rpcFactory = getService(appCreator, RPCPlugin);
   const rpc = rpcFactory.from(mockCtx);
 
-  t.equals(typeof rpc.request, 'function', 'has request method');
+  expect(typeof rpc.request).toBe('function');
   const p = rpc.request('test', 'test-args');
-  t.ok(p instanceof Promise, 'has right return type');
+  expect(p instanceof Promise).toBeTruthy();
   try {
     await p;
-    t.fail('should throw before this point');
+    // $FlowFixMe
+    done.fail('should throw before this point');
   } catch (error) {
-    t.equal(error.message, 'Missing RPC handler for test');
+    expect(error.message).toBe('Missing RPC handler for test');
+    done();
   }
-  t.end();
 });
 
-test('FusionJS - middleware resolves', async t => {
+test('FusionJS - middleware resolves', async () => {
   const app = createTestFixture();
 
   let wasResolved = false;
 
   const testPlugin = createPlugin({
-    deps: {rpcFactory: MockPluginToken},
+    deps: {rpcFactory: RPCToken},
     middleware: ({rpcFactory}) => {
-      t.ok(rpcFactory);
+      expect(rpcFactory).toBeTruthy();
       wasResolved = true;
 
       return async () => {};
@@ -257,12 +269,10 @@ test('FusionJS - middleware resolves', async t => {
   app.register(testPlugin);
 
   getSimulator(app);
-  t.true(wasResolved, 'middleware was resolved');
-
-  t.end();
+  expect(wasResolved).toBeTruthy();
 });
 
-test('middleware - invalid endpoint', async t => {
+test('middleware - invalid endpoint', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -280,14 +290,10 @@ test('middleware - invalid endpoint', async t => {
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:error');
-      t.equal(payload.method, 'valueOf');
-      t.equal(payload.origin, 'browser');
-      t.equal(
-        payload.error.message,
-        'Missing RPC handler for valueOf',
-        'emits error in payload'
-      );
+      expect(type).toBe('rpc:error');
+      expect(payload.method).toBe('valueOf');
+      expect(payload.origin).toBe('browser');
+      expect(payload.error.message).toBe('Missing RPC handler for valueOf');
     },
   });
 
@@ -301,27 +307,29 @@ test('middleware - invalid endpoint', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
     // $FlowFixMe
-    t.equal(mockCtx.body.data.message, 'Missing RPC handler for valueOf');
+    expect(mockCtx.body.data.message).toBe('Missing RPC handler for valueOf');
     // $FlowFixMe
-    t.equal(mockCtx.body.data.code, 'ERR_MISSING_HANDLER');
+    expect(mockCtx.body.data.code).toBe('ERR_MISSING_HANDLER');
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'failure');
-    t.equal(mockCtx.status, 404);
+    expect(mockCtx.body.status).toBe('failure');
+    expect(mockCtx.status).toBe(404);
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint', async t => {
+test('middleware - valid endpoint', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -336,53 +344,62 @@ test('middleware - valid endpoint', async t => {
   const mockHandlers = {
     test(args, ctx) {
       executedHandler = true;
-      t.equal(args, 'test-args');
-      t.equal(ctx, mockCtx);
+      expect(args).toBe('test-args');
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
+  const tags = {
+    name: 'unknown_route',
+  };
   const middleware =
     RPCPlugin.middleware &&
     RPCPlugin.middleware(
       {
+        RouteTags: {
+          from: () => tags,
+        },
         emitter: mockEmitter,
         handlers: mockHandlers,
       },
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, async () => {
-      t.equal(executedHandler, false, 'awaits next');
+      expect(executedHandler).toBe(false);
       Promise.resolve();
     });
-    t.equal(executedHandler, true);
+    expect(tags.name).toBe('test');
+    expect(executedHandler).toBe(true);
     // $FlowFixMe
-    t.equal(mockCtx.body.data, 1);
+    expect(mockCtx.body.data).toBe(1);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'success');
+    expect(mockCtx.body.status).toBe('success');
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint (custom api path)', async t => {
+test('middleware - valid endpoint (custom api path)', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -397,18 +414,18 @@ test('middleware - valid endpoint (custom api path)', async t => {
   const mockHandlers = {
     test(args, ctx) {
       executedHandler = true;
-      t.equal(args, 'test-args');
-      t.equal(ctx, mockCtx);
+      expect(args).toBe('test-args');
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
@@ -425,28 +442,30 @@ test('middleware - valid endpoint (custom api path)', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, async () => {
-      t.equal(executedHandler, false, 'awaits next');
+      expect(executedHandler).toBe(false);
       Promise.resolve();
     });
-    t.equal(executedHandler, true);
+    expect(executedHandler).toBe(true);
     // $FlowFixMe
-    t.equal(mockCtx.body.data, 1);
+    expect(mockCtx.body.data).toBe(1);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'success');
+    expect(mockCtx.body.status).toBe('success');
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint (custom api path including slashes)', async t => {
+test('middleware - valid endpoint (custom api path including slashes)', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -461,18 +480,18 @@ test('middleware - valid endpoint (custom api path including slashes)', async t 
   const mockHandlers = {
     test(args, ctx) {
       executedHandler = true;
-      t.equal(args, 'test-args');
-      t.equal(ctx, mockCtx);
+      expect(args).toBe('test-args');
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
@@ -489,28 +508,30 @@ test('middleware - valid endpoint (custom api path including slashes)', async t 
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, async () => {
-      t.equal(executedHandler, false, 'awaits next');
+      expect(executedHandler).toBe(false);
       Promise.resolve();
     });
-    t.equal(executedHandler, true);
+    expect(executedHandler).toBe(true);
     // $FlowFixMe
-    t.equal(mockCtx.body.data, 1);
+    expect(mockCtx.body.data).toBe(1);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'success');
+    expect(mockCtx.body.status).toBe('success');
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint with route prefix', async t => {
+test('middleware - valid endpoint with route prefix', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '/lol',
@@ -523,18 +544,18 @@ test('middleware - valid endpoint with route prefix', async t => {
   }: any);
   const mockHandlers = {
     test(args, ctx) {
-      t.equal(args, 'test-args');
-      t.equal(ctx, mockCtx);
+      expect(args).toBe('test-args');
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
@@ -548,24 +569,26 @@ test('middleware - valid endpoint with route prefix', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
     // $FlowFixMe
-    t.equal(mockCtx.body.data, 1);
+    expect(mockCtx.body.data).toBe(1);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'success');
+    expect(mockCtx.body.status).toBe('success');
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint failure with ResponseError', async t => {
+test('middleware - valid endpoint failure with ResponseError', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -589,12 +612,12 @@ test('middleware - valid endpoint failure with ResponseError', async t => {
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
-      t.equal(payload.error, e);
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('failure');
+      expect(typeof payload.timing).toBe('number');
+      expect(payload.error).toBe(e);
     },
   });
 
@@ -608,32 +631,34 @@ test('middleware - valid endpoint failure with ResponseError', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
     // $FlowFixMe
-    t.equal(mockCtx.body.data.message, e.message);
+    expect(mockCtx.body.data.message).toBe(e.message);
     // $FlowFixMe
-    t.equal(mockCtx.body.data.code, e.code);
+    expect(mockCtx.body.data.code).toBe(e.code);
     // $FlowFixMe
-    t.equal(mockCtx.body.data.meta, e.meta);
+    expect(mockCtx.body.data.meta).toBe(e.meta);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'failure');
+    expect(mockCtx.body.status).toBe('failure');
     // $FlowFixMe
-    t.equal(Object.keys(mockCtx.body).length, 2);
+    expect(Object.keys(mockCtx.body).length).toBe(2);
     // $FlowFixMe
-    t.equal(Object.keys(mockCtx.body.data).length, 3);
+    expect(Object.keys(mockCtx.body.data).length).toBe(3);
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - valid endpoint failure with standard error', async t => {
+test('middleware - valid endpoint failure with standard error', async done => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -657,12 +682,12 @@ test('middleware - valid endpoint failure with standard error', async t => {
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
-      t.equal(payload.error, e);
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('failure');
+      expect(typeof payload.timing).toBe('number');
+      expect(payload.error).toBe(e);
     },
   });
 
@@ -676,52 +701,55 @@ test('middleware - valid endpoint failure with standard error', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
-    t.equal(
+    expect(
       // $FlowFixMe
-      mockCtx.body.data.message,
+      mockCtx.body.data.message
+    ).toBe(
       'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
     );
     // $FlowFixMe
-    t.equal(mockCtx.body.data.code, undefined);
+    expect(mockCtx.body.data.code).toBe(undefined);
     // $FlowFixMe
-    t.equal(mockCtx.body.data.meta, undefined);
+    expect(mockCtx.body.data.meta).toBe(undefined);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'failure');
+    expect(mockCtx.body.status).toBe('failure');
     // $FlowFixMe
-    t.equal(Object.keys(mockCtx.body).length, 2);
+    expect(Object.keys(mockCtx.body).length).toBe(2);
     // $FlowFixMe
-    t.equal(Object.keys(mockCtx.body.data).length, 3);
+    expect(Object.keys(mockCtx.body.data).length).toBe(3);
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('throws when not passed ctx', async t => {
+test('throws when not passed ctx', async done => {
   const app = createTestFixture();
 
-  t.plan(1);
+  expect.assertions(1);
   getSimulator(
     app,
     createPlugin({
-      deps: {rpcFactory: MockPluginToken},
+      deps: {rpcFactory: RPCToken},
       middleware: ({rpcFactory}) => async () => {
         // $FlowFixMe
-        t.throws(() => rpcFactory.from(), 'missing context throws error');
-        t.end();
+        expect(() => rpcFactory.from()).toThrow();
+        done();
       },
     })
   ).request('/');
 });
 
-test('middleware - bodyparser options with very small jsonLimit', async t => {
+test('middleware - bodyparser options with very small jsonLimit', async done => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -736,18 +764,18 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
   const mockHandlers = {
     test(args, ctx) {
       executedHandler = true;
-      t.deepEqual(args, MOCK_JSON_PARAMS);
-      t.equal(ctx, mockCtx);
+      expect(args).toEqual(MOCK_JSON_PARAMS);
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'failure');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('failure');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const mockBodyParserOptions = {jsonLimit: '1b'};
@@ -763,28 +791,30 @@ test('middleware - bodyparser options with very small jsonLimit', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, async () => {
-      t.equal(executedHandler, false, 'awaits next');
+      expect(executedHandler).toBe(false);
       Promise.resolve();
     });
-    t.equal(executedHandler, false);
+    expect(executedHandler).toBe(false);
     // $FlowFixMe
-    t.equal(mockCtx.body.status, 'failure');
+    expect(mockCtx.body.status).toBe('failure');
     // $FlowFixMe
-    t.equal(mockCtx.body.data.code, 'entity.too.large');
+    expect(mockCtx.body.data.code).toBe('entity.too.large');
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - bodyparser options with default jsonLimit', async t => {
+test('middleware - bodyparser options with default jsonLimit', async done => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -798,18 +828,18 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
 
   const mockHandlers = {
     test(args, ctx) {
-      t.deepEqual(args, MOCK_JSON_PARAMS);
-      t.equal(ctx, mockCtx);
+      expect(args).toEqual(MOCK_JSON_PARAMS);
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
@@ -823,20 +853,22 @@ test('middleware - bodyparser options with default jsonLimit', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });
 
-test('middleware - parse formData', async t => {
+test('middleware - parse formData', async done => {
   const form = new FormData();
   form.append('name', 'test');
   const req = new MockReq({
@@ -864,19 +896,19 @@ test('middleware - parse formData', async t => {
 
   const mockHandlers = {
     test(args, ctx) {
-      t.deepEqual(args, {name: 'test'});
-      t.equal(ctx, mockCtx);
+      expect(args).toEqual({name: 'test'});
+      expect(ctx).toBe(mockCtx);
       return 1;
     },
   };
 
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      t.equal(type, 'rpc:method');
-      t.equal(payload.method, 'test');
-      t.equal(payload.origin, 'browser');
-      t.equal(payload.status, 'success');
-      t.equal(typeof payload.timing, 'number');
+      expect(type).toBe('rpc:method');
+      expect(payload.method).toBe('test');
+      expect(payload.origin).toBe('browser');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
 
@@ -890,15 +922,17 @@ test('middleware - parse formData', async t => {
       mockService
     );
   if (!middleware) {
-    t.fail();
-    t.end();
+    // $FlowFixMe
+    done.fail();
+    done();
     return;
   }
 
   try {
     await middleware(mockCtx, () => Promise.resolve());
+    done();
   } catch (e) {
-    t.fail(e);
+    // $FlowFixMe
+    done.fail(e);
   }
-  t.end();
 });

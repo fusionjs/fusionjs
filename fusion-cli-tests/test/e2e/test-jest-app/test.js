@@ -119,16 +119,24 @@ test('`fusion test --testFolder and --testMatch cannot occur at same time', asyn
   const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js --testFolder=__foo__`;
 
   const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  // $FlowFixMe
-  await exec(`node -e "${cmd}"`).then(() => t.fail(), e => t.ok('ok'));
+
+  await exec(`node -e "${cmd}"`).then(
+    // $FlowFixMe
+    () => t.fail(),
+    e => t.ok('ok')
+  );
 });
 
 test('`fusion test --testFolder and --testRegex cannot occur at same time', async () => {
   const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testRegex=.*/__foo__/.* --testFolder=__foo__`;
 
   const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  // $FlowFixMe
-  await exec(`node -e "${cmd}"`).then(() => t.fail(), e => t.ok('ok'));
+
+  await exec(`node -e "${cmd}"`).then(
+    // $FlowFixMe
+    () => t.fail(),
+    e => t.ok('ok')
+  );
 });
 
 test('`fusion test` snapshotting', async () => {

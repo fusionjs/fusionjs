@@ -9,15 +9,14 @@
 /* eslint-env node */
 
 import execa from 'execa';
-import test from 'tape-cup';
 
-test('Flow tests', async t => {
+test('Flow tests', async done => {
   // This test is currently failing in release verification due to monorepo construction.
   // Quick fix to disable this running in CI.
   if (process.env.BUILDKITE_PIPELINE_SLUG === 'fusion-release-verification') {
-    return t.end();
+    return done();
   }
   const successPath = 'src/fixtures/success';
   await execa.shell(`flow check ${successPath}`);
-  t.end();
-});
+  done();
+}, 10000);

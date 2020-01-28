@@ -8,7 +8,11 @@
 import React from 'react';
 import {createToken, type Context, type Token} from 'fusion-core';
 import type {ApolloClient} from 'apollo-client';
+
+/*::
 import {GraphQLOptions} from 'apollo-server-koa';
+type GraphQLOptionsType = typeof GraphQLOptions;
+*/
 
 export type InitApolloClientType<TInitialState> = (
   ctx: Context,
@@ -54,6 +58,6 @@ export const ApolloBodyParserConfigToken: Token<BodyParserConfigType> = createTo
   'ApolloBodyParserConfigToken'
 );
 
-export const ApolloDefaultOptionsConfigToken: Token<
-  typeof GraphQLOptions
-> = createToken('ApolloDefaultOptionsConfigToken');
+export const ApolloDefaultOptionsConfigToken: Token<GraphQLOptionsType> = createToken(
+  'ApolloDefaultOptionsConfigToken'
+);

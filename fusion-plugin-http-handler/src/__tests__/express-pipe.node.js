@@ -7,7 +7,6 @@
  */
 
 import http from 'http';
-import test from 'tape-cup';
 import App from 'fusion-core';
 import request from 'request';
 import reqPromise from 'request-promise';
@@ -16,7 +15,7 @@ import getPort from 'get-port';
 import {HttpHandlerToken} from '../tokens.js';
 import HttpHandlerPlugin from '../server.js';
 
-test('http handler with express', async t => {
+test('http handler with express', async () => {
   const app = new App('test', () => 'test');
   const port = await getPort();
   // $FlowFixMe
@@ -25,7 +24,7 @@ test('http handler with express', async t => {
   await new Promise(resolve => proxyServer.listen(port, resolve));
   app.middleware(async (ctx, next) => {
     await next();
-    t.equal(ctx.respond, false);
+    expect(ctx.respond).toBe(false);
   });
   app.register(HttpHandlerPlugin);
   const expressApp = express();
@@ -38,13 +37,8 @@ test('http handler with express', async t => {
   const server = http.createServer(app.callback());
   await new Promise(resolve => server.listen(port2, resolve));
 
-  t.equal(
-    await reqPromise(`http://localhost:${port2}/proxy`),
-    'Proxy OK',
-    'express routes can send responses'
-  );
+  expect(await reqPromise(`http://localhost:${port2}/proxy`)).toBe('Proxy OK');
 
   server.close();
   proxyServer.close();
-  t.end();
 });

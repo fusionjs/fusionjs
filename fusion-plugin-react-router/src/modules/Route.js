@@ -52,8 +52,7 @@ function Route(props: PropsType, context: ContextType) {
 
         if (typeof children === 'function') return children(routeProps);
 
-        if (children && !isEmptyChildren(children))
-          return React.Children.only(children);
+        if (children && !isEmptyChildren(children)) return children;
 
         return null;
       }}

@@ -1,13 +1,12 @@
 // @flow
-import test from 'tape-cup';
 import sinon from 'sinon';
 
 import getMockRpcHandlers from '../mock-rpc-handlers.js';
 import type {RpcResponseMap} from '../mock-rpc-handlers.js';
 import ResponseError from '../response-error.js';
 
-test('mockRpcHandlers', async t => {
-  t.plan(4);
+test('mockRpcHandlers', async () => {
+  expect.assertions(4);
   const getUserFixture = {
     getUser: {
       firstName: 'John',
@@ -39,50 +38,35 @@ test('mockRpcHandlers', async t => {
 
   const user = await mockRpcHandlers.getUser();
 
-  t.deepEqual(
-    user,
+  expect(user).toEqual({
+    firstName: 'John',
+    lastName: 'Doe',
+    uuid: 123,
+  });
+
+  expect(onMockRpcSpy.getCall(0).args).toEqual([
+    'getUser',
+    [],
     {
       firstName: 'John',
       lastName: 'Doe',
       uuid: 123,
     },
-    'should return success response'
-  );
-
-  t.deepEqual(
-    onMockRpcSpy.getCall(0).args,
-    [
-      'getUser',
-      [],
-      {
-        firstName: 'John',
-        lastName: 'Doe',
-        uuid: 123,
-      },
-    ],
-    'should call getUser rpc handler, with correct args and returns correct response'
-  );
+  ]);
 
   const updatedUser = await mockRpcHandlers.updateUser({firstName: 'Jane'});
 
-  t.deepEqual(
-    updatedUser,
-    {
-      firstName: 'Jane',
-      lastName: 'Doe',
-      uuid: 123,
-    },
-    'should return error response '
-  );
+  expect(updatedUser).toEqual({
+    firstName: 'Jane',
+    lastName: 'Doe',
+    uuid: 123,
+  });
 
   try {
     await mockRpcHandlers.updateUser({firstName: ''});
   } catch (e) {
-    t.ok(
-      e instanceof Error && e.message === 'Username cant be empty',
-      'should return error response '
-    );
+    expect(
+      e instanceof Error && e.message === 'Username cant be empty'
+    ).toBeTruthy();
   }
-
-  t.end();
 });

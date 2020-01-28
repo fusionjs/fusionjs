@@ -7,13 +7,10 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
-
 import HelmetPlugin, {Helmet, HelmetProvider} from '../index.js';
 
-test('exports are', t => {
-  t.ok(HelmetPlugin, 'Has a default export');
-  t.ok(Helmet, 'Has a Helmet export');
-  t.ok(HelmetProvider, 'Has a HelmetProvider export');
-  t.end();
+test('exports are', () => {
+  expect(HelmetPlugin).toBeTruthy();
+  expect(Helmet).toBeTruthy();
+  expect(HelmetProvider).toBeTruthy();
 });

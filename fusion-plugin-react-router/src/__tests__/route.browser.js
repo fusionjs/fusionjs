@@ -7,13 +7,12 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route} from '../browser';
 import {createBrowserHistory} from 'history';
 
-test('matches as expected', t => {
+test('matches as expected', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
@@ -22,10 +21,9 @@ test('matches as expected', t => {
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), 'renders matched route');
-  t.end();
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
 });
-test('misses as expected', t => {
+test('misses as expected', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
@@ -34,10 +32,9 @@ test('misses as expected', t => {
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(!/Hello/.test(root.innerHTML), 'does not render unmatched route');
-  t.end();
+  expect(!/Hello/.test(root.innerHTML)).toBeTruthy();
 });
-test('support props.render', t => {
+test('support props.render', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const el = (
@@ -45,13 +42,12 @@ test('support props.render', t => {
       <Route path="/" render={() => <Hello />} />
     </Router>
   );
-  t.doesNotThrow(() => {
+  expect(() => {
     ReactDOM.render(el, root);
-  }, 'does not throw when passing props.render');
-  t.ok(/Hello/.test(root.innerHTML), 'renders matched route');
-  t.end();
+  }).not.toThrow();
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
 });
-test('support props.children as render prop', t => {
+test('support props.children as render prop', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   /* eslint-disable react/no-children-prop */
@@ -61,9 +57,8 @@ test('support props.children as render prop', t => {
     </Router>
   );
   /* eslint-enable react/no-children-prop */
-  t.doesNotThrow(() => {
+  expect(() => {
     ReactDOM.render(el, root);
-  }, 'does not throw when passing props.children as function to <Route>');
-  t.ok(/Hello/.test(root.innerHTML), 'renders matched route');
-  t.end();
+  }).not.toThrow();
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
 });

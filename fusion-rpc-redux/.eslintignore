@@ -1,3 +1,2 @@
 flow-typed
-dist/
-dist-tests/
+dist-*/

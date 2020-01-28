@@ -7,11 +7,8 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
-
 import NodePerformanceEmitterPlugin from '../browser';
 
-test('null export, as expected', t => {
-  t.equal(NodePerformanceEmitterPlugin, null, 'plugin null as expected');
-  t.end();
+test('null export, as expected', () => {
+  expect(NodePerformanceEmitterPlugin).toBe(null);
 });

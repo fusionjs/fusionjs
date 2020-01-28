@@ -7,7 +7,6 @@
  */
 /* globals global */
 
-import test from 'tape-cup';
 import App from 'fusion-core';
 
 import {
@@ -16,70 +15,65 @@ import {
   createRenderContext,
 } from '../index.js';
 
-test('jsdom', async t => {
+test('jsdom', async () => {
   let reconfigured = false;
   global.jsdom = {
     reconfigure: ({url}) => {
-      t.equal(url, 'http://localhost/test');
+      expect(url).toBe('http://localhost/test');
       reconfigured = true;
     },
   };
   const app = new App('el', () => 'hello');
   await getSimulator(app).render('/test');
-  t.equal(reconfigured, true);
-  t.end();
+  expect(reconfigured).toBe(true);
   delete global.jsdom;
 });
 
-test('jsdom with empty string', async t => {
+test('jsdom with empty string', async () => {
   let reconfigured = false;
   global.jsdom = {
     reconfigure: ({url}) => {
-      t.equal(url, 'http://localhost/');
+      expect(url).toBe('http://localhost/');
       reconfigured = true;
     },
   };
   const app = new App('el', () => 'hello');
   await getSimulator(app).render('');
-  t.equal(reconfigured, true);
-  t.end();
+  expect(reconfigured).toBe(true);
   delete global.jsdom;
 });
 
-test('jsdom with /', async t => {
+test('jsdom with /', async () => {
   let reconfigured = false;
   global.jsdom = {
     reconfigure: ({url}) => {
-      t.equal(url, 'http://localhost/');
+      expect(url).toBe('http://localhost/');
       reconfigured = true;
     },
   };
   const app = new App('el', () => 'hello');
   await getSimulator(app).render('/');
-  t.equal(reconfigured, true);
-  t.end();
+  expect(reconfigured).toBe(true);
   delete global.jsdom;
 });
 
-test('status is 404 if ctx.body is never updated', async t => {
+test('status is 404 if ctx.body is never updated', async () => {
   const app = new App('el', el => el);
   const ctx = await getSimulator(app).request('/');
-  t.equals(ctx.status, 404, 'status defaults to 404');
-  t.end();
+  expect(ctx.status).toBe(404);
 });
 
-test('status is 200 if ctx.body is updated in request', async t => {
+test('status is 200 if ctx.body is updated in request', async () => {
   const app = new App('el', el => el);
   app.middleware((ctx, next) => {
     ctx.body = {ok: 1};
     return next();
   });
   const ctx = await getSimulator(app).request('/');
-  t.equals(ctx.status, 200, 'status defaults to 200');
-  t.end();
+  expect(ctx.status).toBe(200);
 });
 
-test('status is set if ctx.status is updated in request', async t => {
+test('status is set if ctx.status is updated in request', async () => {
   const app = new App('el', () => 'hello');
   app.middleware((ctx, next) => {
     ctx.status = 500;
@@ -87,29 +81,26 @@ test('status is set if ctx.status is updated in request', async t => {
     return next();
   });
   const ctx = await getSimulator(app).render('/');
-  t.equals(ctx.status, 500, 'status is set');
-  t.end();
+  expect(ctx.status).toBe(500);
 });
 
-test('status is 200 if ctx.body is updated in render', async t => {
+test('status is 200 if ctx.body is updated in render', async () => {
   const app = new App('el', () => 'hello');
   const ctx = await getSimulator(app).render('/');
-  t.equals(ctx.status, 200, 'status defaults to 200');
-  t.end();
+  expect(ctx.status).toBe(200);
 });
 
-test('status is set if ctx.status is updated in render', async t => {
+test('status is set if ctx.status is updated in render', async () => {
   const app = new App('el', () => 'hello');
   app.middleware((ctx, next) => {
     ctx.status = 500;
     return next();
   });
   const ctx = await getSimulator(app).render('/');
-  t.equals(ctx.status, 500, 'status is set');
-  t.end();
+  expect(ctx.status).toBe(500);
 });
 
-test('simulator accepts extra headers', async t => {
+test('simulator accepts extra headers', async () => {
   const app = new App('hi', () => {});
   const simulator = getSimulator(app);
 
@@ -119,60 +110,38 @@ test('simulator accepts extra headers', async t => {
     },
   });
 
-  t.equal(ctx.request.headers['x-header'], 'value');
-  t.end();
+  expect(ctx.request.headers['x-header']).toBe('value');
 });
 
-test('body contains some message', async t => {
+test('body contains some message', async () => {
   const app = new App('el', () => 'hello');
   const ctx = await getSimulator(app).request('/_errors', {
     body: {message: 'test'},
   });
-  t.equals(ctx.status, 404, 'status is set');
-  t.deepEquals(ctx.request.body, {message: 'test'}, 'body is set');
-  t.end();
+  expect(ctx.status).toBe(404);
+  expect(ctx.request.body).toEqual({message: 'test'});
 });
 
-test('createRequestContext', t => {
-  t.equal(createRequestContext('/').url, '/', 'url');
-  t.equal(createRequestContext('/test').url, '/test', 'url');
-  t.equal(createRequestContext('/', {method: 'POST'}).method, 'POST', 'method');
-  t.equal(
-    createRequestContext('/', {headers: {test: 'test'}}).headers.test,
-    'test',
-    'custom header'
-  );
-  t.equal(
-    createRequestContext('/', {body: 'test'}).request.body,
-    'test',
-    'body'
-  );
-  t.end();
+test('createRequestContext', () => {
+  expect(createRequestContext('/').url).toBe('/');
+  expect(createRequestContext('/test').url).toBe('/test');
+  expect(createRequestContext('/', {method: 'POST'}).method).toBe('POST');
+  expect(
+    createRequestContext('/', {headers: {test: 'test'}}).headers.test
+  ).toBe('test');
+  expect(createRequestContext('/', {body: 'test'}).request.body).toBe('test');
 });
 
-test('createRenderContext', t => {
-  t.equal(createRenderContext('/').url, '/', 'url');
-  t.equal(createRenderContext('/test').url, '/test', 'url');
-  t.equal(createRenderContext('/', {method: 'POST'}).method, 'POST', 'method');
-  t.equal(
-    createRenderContext('/', {headers: {test: 'test'}}).headers.test,
-    'test',
-    'custom header'
+test('createRenderContext', () => {
+  expect(createRenderContext('/').url).toBe('/');
+  expect(createRenderContext('/test').url).toBe('/test');
+  expect(createRenderContext('/', {method: 'POST'}).method).toBe('POST');
+  expect(createRenderContext('/', {headers: {test: 'test'}}).headers.test).toBe(
+    'test'
   );
-  t.equal(
-    createRenderContext('/', {headers: {test: 'test'}}).headers.accept,
-    'text/html',
-    'default accept header'
-  );
-  t.equal(
-    createRenderContext('/').headers.accept,
-    'text/html',
-    'default accept header'
-  );
-  t.equal(
-    createRenderContext('/', {body: 'test'}).request.body,
-    'test',
-    'body'
-  );
-  t.end();
+  expect(
+    createRenderContext('/', {headers: {test: 'test'}}).headers.accept
+  ).toBe('text/html');
+  expect(createRenderContext('/').headers.accept).toBe('text/html');
+  expect(createRenderContext('/', {body: 'test'}).request.body).toBe('test');
 });

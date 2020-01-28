@@ -6,37 +6,34 @@
  * @flow
  */
 
-import test from 'tape-cup';
-
 import EventEmitter from '../emitter.js';
 import type {IEmitter} from '../types.js';
 
-test('Base EventEmitter on/off', t => {
-  t.ok(typeof EventEmitter === 'function', 'exported correctly');
+test('Base EventEmitter on/off', () => {
+  expect(typeof EventEmitter === 'function').toBeTruthy();
   const events: IEmitter = new EventEmitter();
   let eventHandlerCount = 0;
   function handleEvent(event) {
     eventHandlerCount++;
-    t.equal(event, 'test-data', 'correct payload passed to handler');
+    expect(event).toBe('test-data');
   }
   events.on('some-event', handleEvent);
   events.handleEvent('other-event', 'other-data');
   events.handleEvent('some-event', 'test-data');
-  t.equal(eventHandlerCount, 1, 'calls handler one time');
+  expect(eventHandlerCount).toBe(1);
   events.off('some-event', handleEvent);
   events.handleEvent('some-event', 'test-data');
-  t.equal(eventHandlerCount, 1, 'does not call the handler after removal');
-  t.end();
+  expect(eventHandlerCount).toBe(1);
 });
 
-test('Base EventEmitter mappers', t => {
+test('Base EventEmitter mappers', () => {
   const events: IEmitter = new EventEmitter();
   let eventHandlerCount = 0;
   let mapCount = 0;
   events.on('test', event => {
     eventHandlerCount++;
-    t.equal(event.a, true, 'correct payload passed to handler');
-    t.equal(event.b, true, 'correct payload passed to handler');
+    expect(event.a).toBe(true);
+    expect(event.b).toBe(true);
   });
   events.map('test', event => {
     mapCount++;
@@ -44,12 +41,11 @@ test('Base EventEmitter mappers', t => {
   });
   const mappedPayload = events.mapEvent('test', {b: true});
   events.handleEvent('test', mappedPayload);
-  t.equal(eventHandlerCount, 1, 'calls handler one time');
-  t.equal(mapCount, 1, 'calls mapper one time');
-  t.end();
+  expect(eventHandlerCount).toBe(1);
+  expect(mapCount).toBe(1);
 });
 
-test('Base EventEmitter * mappers', t => {
+test('Base EventEmitter * mappers', done => {
   const events: IEmitter = new EventEmitter();
   events.map('*', payload => {
     return {...payload, a: true};
@@ -58,18 +54,18 @@ test('Base EventEmitter * mappers', t => {
     return {...payload, b: true};
   });
   events.on('test', payload => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       a: true,
       b: true,
       c: true,
     });
-    t.end();
+    done();
   });
   const mappedPayload = events.mapEvent('test', {c: true});
   events.handleEvent('test', mappedPayload);
 });
 
-test('Base EventEmitter implicit * mappers', t => {
+test('Base EventEmitter implicit * mappers', done => {
   const events: IEmitter = new EventEmitter();
   events.map(payload => {
     return {...payload, a: true};
@@ -78,61 +74,59 @@ test('Base EventEmitter implicit * mappers', t => {
     return {...payload, b: true};
   });
   events.on('test', payload => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       a: true,
       b: true,
       c: true,
     });
-    t.end();
+    done();
   });
   const mappedPayload = events.mapEvent('test', {c: true});
   events.handleEvent('test', mappedPayload);
 });
 
-test('Base EventEmitter * handlers', t => {
+test('Base EventEmitter * handlers', () => {
   const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
   events.on((payload, ctx, type) => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       c: true,
     });
-    t.equal(type, 'test', 'correct type passed to handler');
+    expect(type).toBe('test');
     calledGlobal = true;
   });
 
   events.on('test', payload => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       c: true,
     });
     calledNormal = true;
   });
   events.handleEvent('test', {c: true});
-  t.ok(calledGlobal);
-  t.ok(calledNormal);
-  t.end();
+  expect(calledGlobal).toBeTruthy();
+  expect(calledNormal).toBeTruthy();
 });
 
-test('Base EventEmitter implicit * handlers', t => {
+test('Base EventEmitter implicit * handlers', () => {
   const events: IEmitter = new EventEmitter();
   let calledGlobal = false;
   let calledNormal = false;
   events.on('*', (payload, ctx, type) => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       c: true,
     });
-    t.equal(type, 'test', 'correct type passed to handler');
+    expect(type).toBe('test');
     calledGlobal = true;
   });
 
   events.on('test', payload => {
-    t.deepLooseEqual(payload, {
+    expect(payload).toStrictEqual({
       c: true,
     });
     calledNormal = true;
   });
   events.handleEvent('test', {c: true});
-  t.ok(calledGlobal);
-  t.ok(calledNormal);
-  t.end();
+  expect(calledGlobal).toBeTruthy();
+  expect(calledNormal).toBeTruthy();
 });

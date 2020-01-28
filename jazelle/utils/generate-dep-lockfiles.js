@@ -1,5 +1,5 @@
 // @flow
-const {sync} = require('./lockfile.js');
+const {regenerate} = require('./lockfile.js');
 
 /*::
 import type {Metadata} from './get-local-dependencies.js';
@@ -20,7 +20,7 @@ const generateDepLockfiles /*: GenerateDepLockfiles */ = async ({
 }) => {
   const roots = deps.map(dep => dep.dir);
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
-  await sync({
+  await regenerate({
     roots,
     ignore: ignore.map(dep => dep.meta.name),
     tmp,

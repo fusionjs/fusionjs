@@ -24,8 +24,9 @@ import type {Token, Context, FusionPlugin} from 'fusion-core';
 import {Router as ServerRouter} from './server.js';
 import {Router as BrowserRouter} from './browser.js';
 import {createServerHistory} from './modules/ServerHistory.js';
+
 import {addRoutePrefix} from './modules/utils.js';
-import type {RouterHistoryType} from './types.js';
+import type {RouterHistoryType, StaticContextType} from './types.js';
 
 type ProviderPropsType = {
   history: RouterHistoryType,
@@ -40,6 +41,10 @@ type HistoryWrapperType = {
   },
 };
 
+export const GetStaticContextToken = createToken<
+  (ctx: Context) => StaticContextType
+>('GetStaticContext');
+
 export const RouterProviderToken: Token<
   React.ComponentType<ProviderPropsType>
 > = createToken('RouterProvider');
@@ -49,6 +54,7 @@ export const RouterToken: Token<HistoryWrapperType> = createToken('Router');
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
 
 type PluginDepsType = {
+  getStaticContext: typeof GetStaticContextToken.optional,
   emitter: typeof UniversalEventsToken.optional,
   Provider: typeof RouterProviderToken.optional,
   RouteTags: typeof RouteTagsToken,
@@ -61,9 +67,13 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
     Provider: RouterProviderToken.optional,
+    getStaticContext: GetStaticContextToken.optional,
     RouteTags: RouteTagsToken,
   },
-  middleware: ({RouteTags, emitter, Provider = DefaultProvider}, self) => {
+  middleware: (
+    {RouteTags, emitter, Provider = DefaultProvider, getStaticContext},
+    self
+  ) => {
     return async (ctx, next) => {
       const tags = RouteTags.from(ctx);
       const prefix = ctx.prefix || '';
@@ -76,20 +86,21 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
           title: ctx.path,
           page: ctx.path,
         };
-        const context = {
-          action: null,
-          location: null,
-          url: null,
-          setCode: code => {
-            ctx.status = code;
-          },
-          redirect: (url: string) => {
-            const toUrl = addRoutePrefix(url, prefix);
-            if (typeof toUrl === 'string') {
-              ctx.redirect(toUrl);
-            }
-          },
-        };
+        const context = getStaticContext
+          ? getStaticContext(ctx)
+          : {
+              action: null,
+              location: null,
+              set status(code: number) {
+                ctx.status = code;
+              },
+              set url(url: string) {
+                const toUrl = addRoutePrefix(url, prefix);
+                if (typeof toUrl === 'string') {
+                  ctx.redirect(toUrl);
+                }
+              },
+            };
         // Expose the history object
         const history = createServerHistory(prefix, context, prefix + ctx.url);
         myAPI.history = history;

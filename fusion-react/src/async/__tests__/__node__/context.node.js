@@ -6,13 +6,12 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import * as React from 'react';
 import {renderToString} from 'react-dom/server';
 import Provider from '../../prepare-provider';
 import {prepare} from '../../index.js';
 
-tape('Handling context', async t => {
+test('Handling context', async () => {
   class Child extends React.Component<any, any> {
     static contextTypes = {
       field: () => {},
@@ -54,8 +53,7 @@ tape('Handling context', async t => {
       <ToTest />
     </Provider>
   );
-  t.ok(/Yes/.test(renderToString(app)));
+  expect(/Yes/.test(renderToString(app))).toBeTruthy();
   await prepare(app);
-  t.ok(/Yes/.test(renderToString(app)));
-  t.end();
+  expect(/Yes/.test(renderToString(app))).toBeTruthy();
 });

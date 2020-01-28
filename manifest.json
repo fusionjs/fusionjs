@@ -10,6 +10,7 @@
     "fusion-plugin-universal-events-react",
     "fusion-plugin-styletron-react",
     "fusion-plugin-service-worker",
+    "fusion-plugin-service-worker-tests",
     "fusion-plugin-rpc",
     "fusion-plugin-rpc-redux-react",
     "fusion-plugin-redux-action-emitter-enhancer",
