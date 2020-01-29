@@ -95,11 +95,8 @@ const runCLI /*: RunCLI */ = async argv => {
       upgrade: [
         `Upgrade a package version across all projects
 
-        [name]                     Package to upgrade at a specific version. ie., foo@1.2.3
-        --version [version]        Version
-        --from [from]              If current version satisfies this semver range. Optional`,
-        async ({name, version, from}) =>
-          upgrade({root: await rootOf(args), name, version, from}),
+        [args...]                     Packages to upgrade and optionally their version ranges. e.g., foo@^1.2.3 bar@^1.2.3`,
+        async () => upgrade({root: await rootOf(args), args: rest}),
       ],
       dedupe: [
         `Dedupe transitive deps across all projects`,

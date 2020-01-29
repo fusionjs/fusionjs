@@ -416,11 +416,9 @@ Removes a dependency from the project's package.json, syncing the `yarn.lock` fi
 
 Upgrades a dependency across all local projects that use it
 
-`jazelle upgrade --name [name] --from [from]`
-`jazelle upgrade [name] --from [from]`
+`jazelle upgrade [args...]`
 
-- `name` - Name of dependency and it's version to upgrade to. ie., `foo@1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
-- `--from` - Only upgrade projects where the current minimum version of the dep is in range of the `from` version range. Optional.
+- `args` - Space-separated list of dependency names and optionally their desired version ranges. e.g., `foo@^1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages. Note that local packages must be pinned to an exact version.
 
 ### `jazelle dedupe`
 
@@ -760,10 +758,9 @@ Removes a dependency from the project's package.json, syncing the `yarn.lock` fi
 
 Upgrades a dependency across all local projects that use it
 
-`let upgrade: ({root: string, name: string, version: string, from: string}) => Promise<void>`
+`let upgrade: ({root: string, args: Array<string>}) => Promise<void>`
 
-- `name` - Name of dependency to upgrade and its version range (e.g. `foo@^1.2.3`). If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
-- `from` - Only upgrade projects where the current minimum version of the dep is in range of the `from` version range. Optional.
+- `args` - Space-separated list of dependency names and optionally their desired version ranges. e.g., `foo@^1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages. Note that local packages must be pinned to an exact version.
 
 ### `dedupe`
 
