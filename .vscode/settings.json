@@ -1,5 +1,4 @@
 {
-  "eslint.autoFixOnSave": true,
   "eslint.nodePath": "common/temp/node_modules",
   "eslint.options": {
     "ignorePattern": [
