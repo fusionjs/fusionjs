@@ -19,13 +19,13 @@ const swTemplateFunction = (params: AssetInfo) => {
 };
 
 const createMockLogger = () => ({
-  log: () => createMockLogger(),
-  error: () => createMockLogger(),
-  warn: () => createMockLogger(),
-  info: () => createMockLogger(),
-  verbose: () => createMockLogger(),
-  debug: () => createMockLogger(),
-  silly: () => createMockLogger(),
+  log: () => {},
+  error: () => {},
+  warn: () => {},
+  info: () => {},
+  verbose: () => {},
+  debug: () => {},
+  silly: () => {},
 });
 
 test('/health request', async () => {

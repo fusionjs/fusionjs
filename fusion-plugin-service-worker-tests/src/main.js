@@ -17,13 +17,13 @@ import MockErrorPlugin from './plugins/mock-server-error';
 import root from './root.js';
 
 const createMockLogger = () => ({
-  log: () => createMockLogger(),
-  error: () => createMockLogger(),
-  warn: () => createMockLogger(),
-  info: () => createMockLogger(),
-  verbose: () => createMockLogger(),
-  debug: () => createMockLogger(),
-  silly: () => createMockLogger(),
+  log: () => {},
+  error: () => {},
+  warn: () => {},
+  info: () => {},
+  verbose: () => {},
+  debug: () => {},
+  silly: () => {},
 });
 
 export default () => {
