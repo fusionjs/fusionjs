@@ -21,9 +21,9 @@ test('collectMetadata', () => {
   expect(data.lockFileType).toBe('yarn');
   expect(data.devDependencies.constructor).toBe(Object);
   // $FlowFixMe
-  expect(data.devDependencies['jest'].constructor).toBe(String);
+  expect(data.devDependencies.jest.constructor).toBe(String);
   // $FlowFixMe
-  expect(data.devDependencies['jest'].length > 0).toBe(true);
+  expect(data.devDependencies.jest.length > 0).toBe(true);
   expect(data.varNames.constructor).toBe(Array);
   expect(data.varNames[0].constructor).toBe(String);
   expect(data.vars).toEqual({FOO: 'foo'});
@@ -32,7 +32,7 @@ test('collectMetadata', () => {
 test('collectMetadata in hoisted', () => {
   const data = collectMetadata('src/__tests__/__fixtures__/hoisted', []);
   // $FlowFixMe
-  expect(data.devDependencies['jest'].constructor).toBe(String);
+  expect(data.devDependencies.jest.constructor).toBe(String);
 });
 
 test('collectMetadata w/ npm lock file', () => {

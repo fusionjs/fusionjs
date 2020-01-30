@@ -8,28 +8,41 @@ const {read, write} = require('../utils/node-helpers.js');
 /*::
 export type UpgradeArgs = {
   root: string,
-  name: string,
-  from?: string,
+  args: Array<string>,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({root, name: nameWithVersion, from}) => {
-  let [, name, version] = nameWithVersion.match(/(@?[^@]*)@?(.*)/) || [];
+const upgrade /*: Upgrade */ = async ({root, args}) => {
   const {projects} = /*:: await */ await getManifest({root}); // FIXME: double await is due to Flow bug
   const roots = projects.map(dir => `${root}/${dir}`);
-  const local = await findLocalDependency({root, name});
-  if (local) {
-    if (version && version !== local.meta.version) {
-      throw new Error(`You must use version ${local.meta.version}`);
-    }
 
+  // group by whether the dep is local (listed in manifest.json) or external (from registry)
+  const locals = [];
+  const externals = [];
+  for (const arg of args) {
+    let [, name, version] = arg.match(/(@?[^@]*)@?(.*)/) || [];
+    const local = await findLocalDependency({root, name});
+    if (local) locals.push({local, name, version});
+    else externals.push({name, range: version});
+  }
+
+  // upgrade local deps
+  if (locals.length > 0) {
     await Promise.all(
       roots.map(async cwd => {
         const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
-        update(meta, 'dependencies', name, local.meta.version, from);
-        update(meta, 'devDependencies', name, local.meta.version, from);
-        update(meta, 'peerDependencies', name, local.meta.version, from);
-        update(meta, 'optionalDependencies', name, local.meta.version, from);
+
+        for (const {local, name, version} of locals) {
+          if (version && version !== local.meta.version) {
+            const error = `You must use version ${name}@${local.meta.version}`;
+            throw new Error(error);
+          }
+
+          update(meta, 'dependencies', name, local.meta.version);
+          update(meta, 'devDependencies', name, local.meta.version);
+          update(meta, 'peerDependencies', name, local.meta.version);
+          update(meta, 'optionalDependencies', name, local.meta.version);
+        }
         await write(
           `${cwd}/package.json`,
           `${JSON.stringify(meta, null, 2)}\n`,
@@ -37,12 +50,14 @@ const upgrade /*: Upgrade */ = async ({root, name: nameWithVersion, from}) => {
         );
       })
     );
-  } else {
-    const upgrades = [{name, range: version, from}];
+  }
+
+  // upgrade external deps
+  if (externals.length > 0) {
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
     await upgradeDep({
       roots,
-      upgrades,
+      upgrades: externals,
       ignore: await Promise.all(
         projects.map(async project => {
           const metaFile = `${root}/${project}/package.json`;
