@@ -177,7 +177,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade linked package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    name: 'c@0.0.0',
+    args: ['c@0.0.0'],
   });
   assert(await exists(`${__dirname}/tmp/commands/node_modules/c`));
   assert((await read(buildFile, 'utf8')).includes('//c:c'));
@@ -185,7 +185,7 @@ async function testInstallAddUpgradeRemove() {
   // upgrade external package
   await upgrade({
     root: `${__dirname}/tmp/commands`,
-    name: 'has@1.0.3',
+    args: ['has@1.0.3'],
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
@@ -238,26 +238,12 @@ async function testUpgrade() {
 
   await upgrade({
     root: `${__dirname}/tmp/greenkeep`,
-    name: 'is-number',
-    from: '1.1.0',
-  });
-  assert((await read(meta, 'utf8')).includes('"is-number": "1.0.0"'));
-
-  await upgrade({
-    root: `${__dirname}/tmp/greenkeep`,
-    name: 'b',
-    from: '^0.0.1',
-  });
-  assert((await read(meta, 'utf8')).includes('"b": "0.0.0"'));
-
-  await upgrade({
-    root: `${__dirname}/tmp/greenkeep`,
-    name: 'has@1.0.3',
+    args: ['has@1.0.3'],
   });
   assert((await read(meta, 'utf8')).includes('"has": "1.0.3"'));
   assert((await read(lockfile, 'utf8')).includes('function-bind'));
 
-  await upgrade({root: `${__dirname}/tmp/greenkeep`, name: 'b'});
+  await upgrade({root: `${__dirname}/tmp/greenkeep`, args: ['b']});
   assert((await read(meta, 'utf8')).includes('"b": "1.0.0"'));
 }
 
@@ -342,10 +328,14 @@ async function testBump() {
 // utils
 async function testAssertProjectDir() {
   const dir1 = `${__dirname}/fixtures/project-dir`;
-  assert(await assertProjectDir({dir: dir1}).then(() => true, () => false));
+  const t = () => true;
+  const f = () => false;
+  const result1 = await assertProjectDir({dir: dir1}).then(t, f);
+  assert(result1);
 
   const dir2 = `${__dirname}/fixtures/not-project-dir`;
-  assert(await assertProjectDir({dir: dir2}).then(() => false, () => true));
+  const result2 = await assertProjectDir({dir: dir2}).then(f, t);
+  assert(result2);
 }
 
 async function testBatchTestGroup() {
@@ -922,7 +912,10 @@ async function testGetManifest() {
 
 async function testGetRootDir() {
   const dir = `${__dirname}/fixtures/get-root-dir/a`;
-  assert(await getRootDir({dir}).then(() => true, () => false));
+  const t = () => true;
+  const f = () => false;
+  const result = await getRootDir({dir}).then(t, f);
+  assert(result);
 }
 
 async function testGetTestGroups() {

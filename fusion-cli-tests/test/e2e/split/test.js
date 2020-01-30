@@ -19,10 +19,10 @@ test('`fusion dev` CHUNK_ID instrumentation', async () => {
   const resB = await request(`${url}/test-b`);
   const resCombined = await request(`${url}/test-combined`);
   const resTransitive = await request(`${url}/test-transitive`);
-  t.deepEqual(JSON.parse(resA), [0, 2]);
-  t.deepEqual(JSON.parse(resB), [0, 3]);
-  t.deepEqual(JSON.parse(resCombined), [0]);
-  t.deepEqual(JSON.parse(resTransitive), [1]);
+  expect(JSON.parse(resA)).toStrictEqual([0, 2]);
+  expect(JSON.parse(resB)).toStrictEqual([0, 3]);
+  expect(JSON.parse(resCombined)).toStrictEqual([0]);
+  expect(JSON.parse(resTransitive)).toStrictEqual([1]);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -50,10 +50,10 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const resTransitive = await request(
     `http://localhost:${port}/test-transitive`
   );
-  t.deepEqual(JSON.parse(resA), [10003, 10004, 3, 4]);
-  t.deepEqual(JSON.parse(resB), [10003, 10005, 3, 5]);
-  t.deepEqual(JSON.parse(resCombined), [10003, 3]);
-  t.deepEqual(JSON.parse(resTransitive), [10006, 6]);
+  expect(JSON.parse(resA)).toStrictEqual([10003, 10004, 3, 4]);
+  expect(JSON.parse(resB)).toStrictEqual([10003, 10005, 3, 5]);
+  expect(JSON.parse(resCombined)).toStrictEqual([10003, 3]);
+  expect(JSON.parse(resTransitive)).toStrictEqual([10006, 6]);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],

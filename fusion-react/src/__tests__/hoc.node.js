@@ -6,7 +6,6 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import * as React from 'react';
 import {createToken, createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
@@ -16,14 +15,14 @@ import hoc from '../hoc';
 import plugin from '../plugin';
 import compose from 'just-compose';
 
-tape('hoc#legacy', async t => {
+test('hoc#legacy', async () => {
   const withTest = hoc.create('test');
   const testProvides = {hello: 'world'};
   let didRender = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.test, testProvides);
-    t.notok(props.ctx, 'does not pass ctx through by default');
+    expect(props.test).toStrictEqual(testProvides);
+    expect(props.ctx).toBeFalsy();
     return React.createElement('div', null, 'hello');
   }
   const testPlugin = plugin.create(
@@ -35,12 +34,13 @@ tape('hoc#legacy', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });
 
-tape('hoc#legacy with mapProvidesToProps', async t => {
+test('hoc#legacy with mapProvidesToProps', async () => {
   const withTest = hoc.create('test', provides => {
     return {mapped: provides};
   });
@@ -49,7 +49,7 @@ tape('hoc#legacy with mapProvidesToProps', async t => {
   let didRender = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.mapped, testProvides);
+    expect(props.mapped).toStrictEqual(testProvides);
     return React.createElement('div', null, 'hello');
   }
 
@@ -62,12 +62,13 @@ tape('hoc#legacy with mapProvidesToProps', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });
 
-tape('hoc#legacy with custom provider', async t => {
+test('hoc#legacy with custom provider', async () => {
   const withTest = hoc.create('test');
 
   const testProvides = {hello: 'world'};
@@ -75,7 +76,7 @@ tape('hoc#legacy with custom provider', async t => {
   let didUseCustomProvider = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.test, testProvides);
+    expect(props.test).toStrictEqual(testProvides);
     return React.createElement('div', null, 'hello');
   }
   class CustomProvider extends React.Component<*> {
@@ -84,7 +85,7 @@ tape('hoc#legacy with custom provider', async t => {
     }
     render() {
       didUseCustomProvider = true;
-      t.ok(this.props.ctx, 'passes ctx through');
+      expect(this.props.ctx).toBeTruthy();
       return React.Children.only(this.props.children);
     }
   }
@@ -102,13 +103,14 @@ tape('hoc#legacy with custom provider', async t => {
   app.register(testPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
-  t.ok(didRender);
-  t.ok(didUseCustomProvider);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
+  expect(didUseCustomProvider).toBeTruthy();
 });
 
-tape('hoc', async t => {
+test('hoc', async () => {
   const TestToken1 = createToken('test-token-1');
   const TestToken2 = createToken('test-token-2');
   const TestToken3 = createToken('test-token-3');
@@ -123,14 +125,10 @@ tape('hoc', async t => {
   let didRender = false;
   function TestComponent(props) {
     didRender = true;
-    t.deepLooseEqual(props.test1, testProvides1, 'works with plain plugin');
-    t.deepLooseEqual(
-      props.test2,
-      testProvides2,
-      'works with legacy PluginProvider'
-    );
-    t.deepLooseEqual(props.mapped, testProvides3, 'maps service to props');
-    t.notok(props.ctx, 'does not pass ctx through by default');
+    expect(props.test1).toStrictEqual(testProvides1);
+    expect(props.test2).toStrictEqual(testProvides2);
+    expect(props.mapped).toStrictEqual(testProvides3);
+    expect(props.ctx).toBeFalsy();
     return React.createElement('div', null, 'hello');
   }
   const testPlugin1 = createPlugin({provides: () => testProvides1});
@@ -146,7 +144,8 @@ tape('hoc', async t => {
   app.register(TestToken3, testPlugin3);
   const sim = getSimulator(app);
   const ctx = await sim.render('/');
-  t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
-  t.ok(didRender);
-  t.end();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
+  ).toBeTruthy();
+  expect(didRender).toBeTruthy();
 });

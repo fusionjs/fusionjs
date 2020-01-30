@@ -388,14 +388,32 @@ test('production works', async () => {
 
   const clientDir = path.resolve(dir, `.fusion/dist/production/client`);
   const assets = await readdir(clientDir);
-  t.ok(assets.find(a => a.match(/^client-main.+\.js$/)), 'main .js');
-  t.ok(assets.find(a => a.match(/^client-main.+\.js.map$/)), 'main .map');
+  t.ok(
+    assets.find(a => a.match(/^client-main.+\.js$/)),
+    'main .js'
+  );
+  t.ok(
+    assets.find(a => a.match(/^client-main.+\.js.map$/)),
+    'main .map'
+  );
   //t.ok(assets.find(a => a.match(/^client-main.+\.js.gz$/)), 'main .gz');
-  t.ok(assets.find(a => a.match(/^client-main.+\.js.br$/)), 'main .br');
-  t.ok(assets.find(a => a.match(/^client-vendor.+\.js$/)), 'vendor .js');
-  t.ok(assets.find(a => a.match(/^client-vendor.+\.js.map$/)), 'vendor .map');
+  t.ok(
+    assets.find(a => a.match(/^client-main.+\.js.br$/)),
+    'main .br'
+  );
+  t.ok(
+    assets.find(a => a.match(/^client-vendor.+\.js$/)),
+    'vendor .js'
+  );
+  t.ok(
+    assets.find(a => a.match(/^client-vendor.+\.js.map$/)),
+    'vendor .map'
+  );
   //t.ok(assets.find(a => a.match(/^client-vendor.+\.js.gz$/)), 'vendor .gz');
-  t.ok(assets.find(a => a.match(/^client-vendor.+\.js.br$/)), 'vendor .br');
+  t.ok(
+    assets.find(a => a.match(/^client-vendor.+\.js.br$/)),
+    'vendor .br'
+  );
   const command = `
     const assert = require('assert');
     const app = require('${entry}');

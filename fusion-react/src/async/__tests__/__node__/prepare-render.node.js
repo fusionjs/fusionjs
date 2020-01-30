@@ -7,7 +7,6 @@
  */
 
 /* eslint-disable react/no-multi-comp */
-import tape from 'tape-cup';
 import * as React from 'react';
 import Enzyme, {shallow} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
@@ -15,22 +14,22 @@ import {prepare, prepared} from '../../index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
-tape('Preparing a hook', t => {
+test('Preparing a hook', done => {
   function Component() {
     const [state] = React.useState(0);
     return <span>{state}</span>;
   }
   const app = <Component />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const wrapper = shallow(app);
-    t.equal(wrapper.find('span').length, 1, 'has one children');
-    t.end();
+    expect(wrapper.find('span').length).toBe(1);
+    done();
   });
 });
 
-tape('Preparing a sync app', t => {
+test('Preparing a sync app', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -50,16 +49,16 @@ tape('Preparing a sync app', t => {
   }
   const app = <SimpleComponent />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-    t.end();
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
+    done();
   });
 });
 
-tape('Preparing a sync app with nested children', t => {
+test('Preparing a sync app with nested children', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -83,55 +82,48 @@ tape('Preparing a sync app with nested children', t => {
     </SimpleComponent>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-    t.end();
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
+    done();
   });
 });
 
-tape(
-  'Preparing a sync app with functional components referencing children',
-  t => {
-    let numRenders = 0;
-    let numChildRenders = 0;
-    let numPrepares = 0;
-    function SimpleComponent(props, context) {
-      numRenders++;
-      return <div>{props.children}</div>;
-    }
-    function SimplePresentational() {
-      numChildRenders++;
-      return <div>Hello World</div>;
-    }
-    const AsyncChild = prepared(props => {
-      numPrepares++;
-      t.equal(
-        props.data,
-        'test',
-        'passes props through to prepared component correctly'
-      );
-      return Promise.resolve();
-    })(SimplePresentational);
-    const app = (
-      <SimpleComponent>
-        <AsyncChild data="test" />
-      </SimpleComponent>
-    );
-    const p = prepare(app);
-    t.ok(p instanceof Promise, 'prepare returns a promise');
-    p.then(() => {
-      t.equal(numRenders, 2, 'renders SimpleComponent twice');
-      t.equal(numPrepares, 1, 'runs prepare function once');
-      t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-      t.end();
-    });
+test('Preparing a sync app with functional components referencing children', done => {
+  let numRenders = 0;
+  let numChildRenders = 0;
+  let numPrepares = 0;
+  function SimpleComponent(props, context) {
+    numRenders++;
+    return <div>{props.children}</div>;
   }
-);
+  function SimplePresentational() {
+    numChildRenders++;
+    return <div>Hello World</div>;
+  }
+  const AsyncChild = prepared(props => {
+    numPrepares++;
+    expect(props.data).toBe('test');
+    return Promise.resolve();
+  })(SimplePresentational);
+  const app = (
+    <SimpleComponent>
+      <AsyncChild data="test" />
+    </SimpleComponent>
+  );
+  const p = prepare(app);
+  expect(p instanceof Promise).toBeTruthy();
+  p.then(() => {
+    expect(numRenders).toBe(2);
+    expect(numPrepares).toBe(1);
+    expect(numChildRenders).toBe(1);
+    done();
+  });
+});
 
-tape('Preparing an async app', t => {
+test('Preparing an async app', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -152,26 +144,22 @@ tape('Preparing an async app', t => {
   }
   const AsyncParent = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimpleComponent);
   const app = <AsyncParent data="test" />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 1, 'runs the prepare function once');
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-    t.end();
+    expect(numPrepares).toBe(1);
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
+    done();
   });
 });
 
-tape('Preparing an async app with nested asyncs', t => {
+test('Preparing an async app with nested asyncs', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -193,11 +181,7 @@ tape('Preparing an async app with nested asyncs', t => {
   }
   const AsyncParent = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimpleComponent);
   const app = (
@@ -209,21 +193,17 @@ tape('Preparing an async app with nested asyncs', t => {
   );
 
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs each prepare function once');
-    t.equal(
-      numConstructors,
-      3,
-      'constructs SimpleComponent once for each render'
-    );
-    t.equal(numRenders, 3, 'renders SimpleComponent three times');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-    t.end();
+    expect(numPrepares).toBe(2);
+    expect(numConstructors).toBe(3);
+    expect(numRenders).toBe(3);
+    expect(numChildRenders).toBe(1);
+    done();
   });
 });
 
-tape('Preparing an app with sibling async components', t => {
+test('Preparing an app with sibling async components', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -245,11 +225,7 @@ tape('Preparing an app with sibling async components', t => {
   }
   const AsyncParent = prepared(async props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
   })(SimpleComponent);
   const app = (
     <div>
@@ -263,25 +239,17 @@ tape('Preparing an app with sibling async components', t => {
   );
 
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs each prepare function once');
-    t.equal(
-      numConstructors,
-      2,
-      'constructs SimpleComponent once for each render'
-    );
-    t.equal(numRenders, 2, 'renders SimpleComponent twice');
-    t.equal(
-      numChildRenders,
-      2,
-      'renders SimplePresentational once for each render'
-    );
-    t.end();
+    expect(numPrepares).toBe(2);
+    expect(numConstructors).toBe(2);
+    expect(numRenders).toBe(2);
+    expect(numChildRenders).toBe(2);
+    done();
   });
 });
 
-tape('Rendering a component triggers componentWillMount before render', t => {
+test('Rendering a component triggers componentWillMount before render', done => {
   const orderedMethodCalls = [];
   const orderedChildMethodCalls = [];
 
@@ -313,15 +281,15 @@ tape('Rendering a component triggers componentWillMount before render', t => {
 
   const app = <SimpleComponent />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.deepEqual(orderedMethodCalls, ['componentWillMount', 'render']);
-    t.deepEqual(orderedChildMethodCalls, ['componentWillMount', 'render']);
-    t.end();
+    expect(orderedMethodCalls).toEqual(['componentWillMount', 'render']);
+    expect(orderedChildMethodCalls).toEqual(['componentWillMount', 'render']);
+    done();
   });
 });
 
-tape('Preparing an async app with componentWillReceiveProps option', t => {
+test('Preparing an async app with componentWillReceiveProps option', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -343,11 +311,7 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
   const AsyncParent = prepared(
     props => {
       numPrepares++;
-      t.equal(
-        props.data,
-        'test',
-        'passes props through to prepared component correctly'
-      );
+      expect(props.data).toBe('test');
       return Promise.resolve();
     },
     {
@@ -356,23 +320,23 @@ tape('Preparing an async app with componentWillReceiveProps option', t => {
   )(SimpleComponent);
   const app = <AsyncParent data="test" />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 1, 'runs the prepare function once');
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
+    expect(numPrepares).toBe(1);
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
     // triggers componentDidMount
     const wrapper = shallow(app);
-    t.equal(numPrepares, 2, 'runs prepare on componentDidMount');
+    expect(numPrepares).toBe(2);
     // triggers componentWillReceiveProps
     wrapper.setProps({test: true});
-    t.equal(numPrepares, 3, 'runs prepare on componentWillReceiveProps');
-    t.end();
+    expect(numPrepares).toBe(3);
+    done();
   });
 });
 
-tape('Preparing an async app with componentDidUpdate option', t => {
+test('Preparing an async app with componentDidUpdate option', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -394,11 +358,7 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   const AsyncParent = prepared(
     props => {
       numPrepares++;
-      t.equal(
-        props.data,
-        'test',
-        'passes props through to prepared component correctly'
-      );
+      expect(props.data).toBe('test');
       return Promise.resolve();
     },
     {
@@ -407,23 +367,23 @@ tape('Preparing an async app with componentDidUpdate option', t => {
   )(SimpleComponent);
   const app = <AsyncParent data="test" />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 1, 'runs the prepare function once');
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
+    expect(numPrepares).toBe(1);
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
     // triggers componentDidMount
     const wrapper = shallow(app);
-    t.equal(numPrepares, 2, 'runs prepare on componentDidMount');
+    expect(numPrepares).toBe(2);
     // triggers componentDidUpdate
     wrapper.setProps({test: true});
-    t.equal(numPrepares, 3, 'runs prepare on componentDidUpdate');
-    t.end();
+    expect(numPrepares).toBe(3);
+    done();
   });
 });
 
-tape('Preparing React.forwardRef', t => {
+test('Preparing React.forwardRef', done => {
   // $FlowFixMe
   const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
@@ -436,15 +396,15 @@ tape('Preparing React.forwardRef', t => {
     </Forwarded>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const wrapper = shallow(<div>{app}</div>);
-    t.equal(wrapper.find('span').length, 2, 'has two children');
-    t.end();
+    expect(wrapper.find('span').length).toBe(2);
+    done();
   });
 });
 
-tape('Preparing React.forwardRef with async children', t => {
+test('Preparing React.forwardRef with async children', done => {
   // $FlowFixMe
   const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
@@ -457,11 +417,7 @@ tape('Preparing React.forwardRef with async children', t => {
   }
   const AsyncChild = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimplePresentational);
   const app = (
@@ -471,15 +427,15 @@ tape('Preparing React.forwardRef with async children', t => {
     </Forwarded>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs prepare function twice');
-    t.equal(numChildRenders, 2, 'renders SimplePresentational twice');
-    t.end();
+    expect(numPrepares).toBe(2);
+    expect(numChildRenders).toBe(2);
+    done();
   });
 });
 
-tape('Preparing a Fragment', t => {
+test('Preparing a Fragment', done => {
   const app = (
     <React.Fragment>
       <span>1</span>
@@ -487,15 +443,15 @@ tape('Preparing a Fragment', t => {
     </React.Fragment>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const wrapper = shallow(<div>{app}</div>);
-    t.equal(wrapper.find('span').length, 2, 'has two children');
-    t.end();
+    expect(wrapper.find('span').length).toBe(2);
+    done();
   });
 });
 
-tape('Preparing a fragment with async children', t => {
+test('Preparing a fragment with async children', done => {
   let numChildRenders = 0;
   let numPrepares = 0;
   function SimplePresentational() {
@@ -504,11 +460,7 @@ tape('Preparing a fragment with async children', t => {
   }
   const AsyncChild = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimplePresentational);
   const app = (
@@ -519,15 +471,15 @@ tape('Preparing a fragment with async children', t => {
     </React.Fragment>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs prepare function twice');
-    t.equal(numChildRenders, 2, 'renders SimplePresentational twice');
-    t.end();
+    expect(numPrepares).toBe(2);
+    expect(numChildRenders).toBe(2);
+    done();
   });
 });
 
-tape('Preparing React.createContext()', t => {
+test('Preparing React.createContext()', done => {
   // $FlowFixMe
   const {Provider, Consumer} = React.createContext('light');
 
@@ -538,15 +490,15 @@ tape('Preparing React.createContext()', t => {
     </Provider>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const wrapper = shallow(<div>{app}</div>);
-    t.equal(wrapper.find('span').length, 1, 'one span is rendered');
-    t.end();
+    expect(wrapper.find('span').length).toBe(1);
+    done();
   });
 });
 
-tape('Preparing React.createContext() with async children', t => {
+test('Preparing React.createContext() with async children', done => {
   // $FlowFixMe
   const {Provider, Consumer} = React.createContext('light');
 
@@ -560,7 +512,7 @@ tape('Preparing React.createContext() with async children', t => {
       <Consumer>
         {theme => {
           numRenderPropsRenders++;
-          t.equal(theme, 'dark', 'passes the context value correctly');
+          expect(theme).toBe('dark');
           return <div>{theme}</div>;
         }}
       </Consumer>
@@ -569,11 +521,7 @@ tape('Preparing React.createContext() with async children', t => {
 
   const AsyncChild = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -584,22 +532,20 @@ tape('Preparing React.createContext() with async children', t => {
     </Provider>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 2, 'runs prepare function twice');
-    t.equal(numRenderPropsRenders, 2, 'prepares consumer render props');
-    t.equal(numChildRenders, 2, 'renders SimplePresentational twice');
+    expect(numPrepares).toBe(2);
+    expect(numRenderPropsRenders).toBe(2);
+    expect(numChildRenders).toBe(2);
 
-    t.equal(
-      shallow(<div>{app}</div>).html(),
-      '<div><div>dark</div><div>dark</div></div>',
-      'passes values via context'
+    expect(shallow(<div>{app}</div>).html()).toBe(
+      '<div><div>dark</div><div>dark</div></div>'
     );
-    t.end();
+    done();
   });
 });
 
-tape('Preparing React.createContext() with deep async children', t => {
+test('Preparing React.createContext() with deep async children', done => {
   // $FlowFixMe
   const {Provider, Consumer} = React.createContext('light');
 
@@ -613,11 +559,7 @@ tape('Preparing React.createContext() with deep async children', t => {
 
   const AsyncChild = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -626,7 +568,7 @@ tape('Preparing React.createContext() with deep async children', t => {
       <Consumer>
         {theme => {
           numRenderPropsRenders++;
-          t.equal(theme, 'dark');
+          expect(theme).toBe('dark');
           return <AsyncChild data="test" />;
         }}
       </Consumer>
@@ -639,16 +581,16 @@ tape('Preparing React.createContext() with deep async children', t => {
     </Provider>
   );
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 1, 'runs prepare function');
-    t.equal(numChildRenders, 1, 'prepares SimplePresentational');
-    t.ok(numRenderPropsRenders > 0, 'runs render prop function');
-    t.end();
+    expect(numPrepares).toBe(1);
+    expect(numChildRenders).toBe(1);
+    expect(numRenderPropsRenders > 0).toBeTruthy();
+    done();
   });
 });
 
-tape('Preparing React.createContext() using the default provider value', t => {
+test('Preparing React.createContext() using the default provider value', done => {
   // $FlowFixMe
   const {Consumer} = React.createContext('light');
 
@@ -662,11 +604,7 @@ tape('Preparing React.createContext() using the default provider value', t => {
 
   const AsyncChild = prepared(props => {
     numPrepares++;
-    t.equal(
-      props.data,
-      'test',
-      'passes props through to prepared component correctly'
-    );
+    expect(props.data).toBe('test');
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -675,7 +613,7 @@ tape('Preparing React.createContext() using the default provider value', t => {
       <Consumer>
         {theme => {
           numRenderPropsRenders++;
-          t.equal(theme, 'light');
+          expect(theme).toBe('light');
           return <AsyncChild data="test" />;
         }}
       </Consumer>
@@ -684,16 +622,16 @@ tape('Preparing React.createContext() using the default provider value', t => {
 
   const app = <ConsumerComponent />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numPrepares, 1, 'runs prepare function');
-    t.equal(numChildRenders, 1, 'prepares SimplePresentational');
-    t.ok(numRenderPropsRenders > 0, 'runs render prop function');
-    t.end();
+    expect(numPrepares).toBe(1);
+    expect(numChildRenders).toBe(1);
+    expect(numRenderPropsRenders > 0).toBeTruthy();
+    done();
   });
 });
 
-tape('Preparing a component using getDerivedStateFromProps', t => {
+test('Preparing a component using getDerivedStateFromProps', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -742,11 +680,7 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   const AsyncParent = prepared(
     props => {
       numPrepares++;
-      t.equal(
-        props.data,
-        'test',
-        'passes props through to prepared component correctly'
-      );
+      expect(props.data).toBe('test');
       return Promise.resolve();
     },
     {
@@ -756,22 +690,18 @@ tape('Preparing a component using getDerivedStateFromProps', t => {
   )(SimpleComponent);
   const app = <AsyncParent data="test" />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(retainedState, true, 'gDSFP does not overwrite state');
-    t.equal(numPrepares, 1, 'runs the prepare function once');
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
+    expect(retainedState).toBe(true);
+    expect(numPrepares).toBe(1);
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
     const wrapper = shallow(app);
     // triggers getDerivedStateFromProps
     // Enzyme does not yet support calling getDerivedStateFromProps after setProps
     wrapper.setProps({test: true});
-    t.equal(
-      numDerivedStateFromProps,
-      1,
-      'runs prepare on getDerivedStateFromProps'
-    );
-    t.end();
+    expect(numDerivedStateFromProps).toBe(1);
+    done();
   });
 });

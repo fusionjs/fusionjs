@@ -24,7 +24,7 @@ function Root() {
 }
 
 export default () => {
-  const app = new App(<Root />);
+  const app = new App((<Root />));
   app.register(Styletron);
   return app;
 };

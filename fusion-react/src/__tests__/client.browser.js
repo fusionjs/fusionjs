@@ -8,43 +8,41 @@
 
 /* eslint-env browser */
 
-import test from 'tape-cup';
 import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import render from '../client';
 import App from '../index';
 
-test('renders', t => {
+test('renders', () => {
   const root = setup();
 
   render(React.createElement('span', null, 'hello'));
-  t.ok(root.firstChild);
+  expect(root.firstChild).toBeTruthy();
   const firstChild = ((root.firstChild: any): Node);
-  t.equals(firstChild.nodeName, 'SPAN', 'has right tag');
-  t.equals(firstChild.textContent, 'hello', 'has right text');
+  expect(firstChild.nodeName).toBe('SPAN');
+  expect(firstChild.textContent).toBe('hello');
 
   cleanup(root);
-  t.end();
 });
 
-test('client side app', async t => {
+test('client side app', async done => {
   const root = setup();
 
   const app = new App(React.createElement('span', null, 'hello'));
   const simulator = getSimulator(app);
   try {
     const ctx = await simulator.render('/');
-    t.ok(ctx.rendered, 'sets rendered');
-    t.ok(ctx.element, 'sets element');
-    t.ok(root.firstChild);
+    expect(ctx.rendered).toBeTruthy();
+    expect(ctx.element).toBeTruthy();
+    expect(root.firstChild).toBeTruthy();
     const firstChild = ((root.firstChild: any): Node);
-    t.equals(firstChild.nodeName, 'SPAN', 'has right tag');
-    t.equals(firstChild.textContent, 'hello', 'has right text');
+    expect(firstChild.nodeName).toBe('SPAN');
+    expect(firstChild.textContent).toBe('hello');
   } catch (e) {
-    t.ifError(e);
+    expect(e).toBeFalsy();
   } finally {
     cleanup(root);
-    t.end();
+    done();
   }
 });
 

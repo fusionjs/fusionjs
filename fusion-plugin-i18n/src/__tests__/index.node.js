@@ -8,8 +8,6 @@
 
 /* eslint-env node */
 
-import test from 'tape-cup';
-
 import {getSimulator} from 'fusion-test-utils';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
@@ -19,7 +17,7 @@ import I18n, {matchesLiteralSections} from '../node';
 import {I18nLoaderToken} from '../tokens.js';
 import {I18nToken} from '../index';
 
-test('translate', async t => {
+test('translate', async () => {
   const data = {test: 'hello', interpolated: 'hi ${adjective} ${noun}'};
   const app = new App('el', el => el);
   app.register(I18nToken, I18n);
@@ -30,56 +28,44 @@ test('translate', async t => {
   app.register(UniversalEventsToken, {
     from: () => ({
       emit: (name, payload) => {
-        t.equals(
-          name,
-          'i18n-translate-miss',
-          'emits event when translate key missing'
-        );
-        t.equals(
-          payload.key,
-          'missing-translation',
-          'payload contains key for missing translation'
-        );
+        expect(name).toBe('i18n-translate-miss');
+        expect(payload.key).toBe('missing-translation');
       },
     }),
   });
   app.middleware({i18n: I18nToken}, ({i18n}) => {
     return (ctx, next) => {
       const translator = i18n.from(ctx);
-      t.equals(translator.translate('test'), 'hello');
-      t.equals(
-        translator.translate('missing-translation'),
-        'missing-translation',
-        'fallsback to key'
+      expect(translator.translate('test')).toBe('hello');
+      expect(translator.translate('missing-translation')).toBe(
+        'missing-translation'
       );
-      t.equals(
-        translator.translate('interpolated', {adjective: 'big', noun: 'world'}),
-        'hi big world'
-      );
-      t.equals(
-        translator.translate('interpolated', {noun: 'world'}),
+      expect(
+        translator.translate('interpolated', {
+          adjective: 'big',
+          noun: 'world',
+        })
+      ).toBe('hi big world');
+      expect(translator.translate('interpolated', {noun: 'world'})).toBe(
         'hi ${adjective} world'
       );
-      t.equals(
-        translator.translate('interpolated', {adjective: '', noun: '0'}),
-        'hi  0'
+      expect(
+        translator.translate('interpolated', {adjective: '', noun: '0'})
+      ).toBe('hi  0');
+      expect(translator.translate('interpolated')).toBe(
+        'hi ${adjective} ${noun}'
       );
-      t.equals(translator.translate('interpolated'), 'hi ${adjective} ${noun}');
       return next();
     };
   });
   const simulator = getSimulator(app);
   await simulator.render('/');
-  t.end();
 });
 
-test('ssr', async t => {
+test('ssr', async done => {
   const data = {test: 'hello</div>', interpolated: 'hi ${value}'};
 
-  /* eslint-disable import/no-unresolved */
-  // $FlowFixMe
-  const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
-  /* eslint-enable import/no-unresolved */
+  const chunkTranslationMap = require('../../chunk-translation-map');
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
 
   const ctx: Context = {
@@ -95,39 +81,36 @@ test('ssr', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(4);
+  expect.assertions(4);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    t.end();
+    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
-  t.equals(ctx.template.body.length, 1, 'injects hydration code');
-  t.equals(
+  expect(ctx.template.body.length).toBe(1);
+  expect(
     // $FlowFixMe
-    consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0],
-    'hello'
-  );
-  t.equals(consumeSanitizedHTML(ctx.template.body[0]).match('</div>'), null);
-  t.equals(ctx.template.htmlAttrs['lang'], 'en-US');
+    consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0]
+  ).toBe('hello');
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
+  expect(ctx.template.htmlAttrs['lang']).toBe('en-US');
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
-  t.end();
+  done();
 });
 
-test('endpoint', async t => {
+test('endpoint', async done => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
 
-  /* eslint-disable import/no-unresolved */
-  // $FlowFixMe
-  const chunkTranslationMap = require('../chunk-translation-map'); // relative to ./dist-tests
-  /* eslint-enable import/no-unresolved */
+  const chunkTranslationMap = require('../../chunk-translation-map');
+
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -145,32 +128,32 @@ test('endpoint', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(3);
+  expect.assertions(3);
 
   ctx.set = (key, value) => {
-    t.equals(key, 'cache-control', 'cache header set');
-    t.equals(value, 'public, max-age=3600', 'cache translations for 1 hour');
+    expect(key).toBe('cache-control');
+    expect(value).toBe('public, max-age=3600');
   };
 
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    t.end();
+    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
-  t.deepEquals(ctx.body, data, 'injects hydration code');
+  expect(ctx.body).toEqual(data);
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
-  t.end();
+  done();
 });
 
-test('endpoint request handles empty body', async t => {
+test('endpoint request handles empty body', async done => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -189,26 +172,25 @@ test('endpoint request handles empty body', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(2);
+  expect.assertions(1);
 
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    t.end();
+    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
-  t.pass("doesn't throw");
-  t.deepEquals(ctx.body, {}, 'defaults to an empty set of translations');
 
-  t.end();
+  expect(ctx.body).toEqual({});
+  done();
 });
 
-test('endpoint request handles legacy query params', async t => {
+test('endpoint request handles legacy query params', async done => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -227,26 +209,24 @@ test('endpoint request handles legacy query params', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(2);
+  expect.assertions(1);
 
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    t.end();
+    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
-  t.pass("doesn't throw");
-  t.deepEquals(ctx.body, {}, 'defaults to an empty set of translations');
-
-  t.end();
+  expect(ctx.body).toEqual({});
+  done();
 });
 
-test('non matched route', async t => {
+test('non matched route', async done => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -259,23 +239,23 @@ test('non matched route', async t => {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
 
-  t.plan(1);
+  expect.assertions(1);
   if (!I18n.provides) {
-    t.end();
+    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    t.end();
+    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
-  t.notok(ctx.body, 'does not set ctx.body');
-  t.end();
+  expect(ctx.body).toBeFalsy();
+  done();
 });
 
-test('matchesLiteralSections matches positionally', async t => {
+test('matchesLiteralSections matches positionally', async () => {
   function literalSections(quasis, ...substitutions) {
     return quasis;
   }
@@ -295,18 +275,18 @@ test('matchesLiteralSections matches positionally', async t => {
   const buffaloMatches = translations.filter(
     matchesLiteralSections(literalSections`${''}.Buffalo`)
   );
-  t.deepEqual(buffaloMatches, ['cities.Buffalo', 'animals.Buffalo']);
+  expect(buffaloMatches).toEqual(['cities.Buffalo', 'animals.Buffalo']);
 
   // handles beginning matches'
   const animalMatches = translations.filter(
     matchesLiteralSections(literalSections`animals.${''}`)
   );
-  t.deepEqual(animalMatches, ['animals.Buffalo', 'animals.Cat']);
+  expect(animalMatches).toEqual(['animals.Buffalo', 'animals.Cat']);
 
   const dotMatches = translations.filter(
     matchesLiteralSections(literalSections`${''}.${''}`)
   );
-  t.deepEqual(dotMatches, [
+  expect(dotMatches).toEqual([
     'cities.Buffalo',
     'cities.Chicago',
     'cities.LosAngeles',
@@ -318,30 +298,28 @@ test('matchesLiteralSections matches positionally', async t => {
   const staticMatches = translations.filter(
     matchesLiteralSections(literalSections`test`)
   );
-  t.deepEqual(staticMatches, ['test']);
+  expect(staticMatches).toEqual(['test']);
 
   // handles multiple parts
   const matches1 = translations.filter(
     matchesLiteralSections(literalSections`${''}citi${''}s.${''}a${''}o`)
   );
-  t.deepEqual(matches1, ['cities.Buffalo', 'cities.Chicago']);
+  expect(matches1).toEqual(['cities.Buffalo', 'cities.Chicago']);
 
   // confines match to later parts in the string
   const matches2 = translations.filter(
     matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}o`)
   );
-  t.deepEqual(matches2, []);
+  expect(matches2).toEqual([]);
 
   const matches3 = translations.filter(
     matchesLiteralSections(literalSections`${''}citi${''}s.${''}A${''}`)
   );
-  t.deepEqual(matches3, ['cities.LosAngeles']);
+  expect(matches3).toEqual(['cities.LosAngeles']);
 
   // doesn't overlap matches
   const matches4 = ['abc', 'abbc', 'ababc'].filter(
     matchesLiteralSections(literalSections`${''}ab${''}bc${''}`)
   );
-  t.deepEqual(matches4, ['abbc', 'ababc']);
-
-  t.end();
+  expect(matches4).toEqual(['abbc', 'ababc']);
 });

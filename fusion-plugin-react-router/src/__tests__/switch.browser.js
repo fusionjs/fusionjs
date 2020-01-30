@@ -7,13 +7,12 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Switch, Route} from '../browser';
 import {createBrowserHistory} from 'history';
 
-test('matches as expected', t => {
+test('matches as expected', () => {
   const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
@@ -26,7 +25,6 @@ test('matches as expected', t => {
     </Router>
   );
   ReactDOM.render(el, root);
-  t.ok(/Hello/.test(root.innerHTML), 'matches first');
-  t.ok(!/Hi/.test(root.innerHTML), 'does not match second');
-  t.end();
+  expect(/Hello/.test(root.innerHTML)).toBeTruthy();
+  expect(!/Hi/.test(root.innerHTML)).toBeTruthy();
 });

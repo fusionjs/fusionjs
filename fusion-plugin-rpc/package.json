@@ -8,21 +8,14 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -33,7 +26,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.0.1",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.1",
@@ -49,11 +42,9 @@
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "mock-req": "^0.2.0",
-    "nyc": "^14.1.0",
     "prettier": "^1.18.2",
     "sinon": "^7.1.1",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1",
+    "jest": "^24.9.0",
     "eslint-plugin-react-hooks": "^1.6.1",
     "form-data": "3.0.0"
   },
@@ -64,15 +55,13 @@
     "fusion-tokens": "0.0.0-monorepo"
   },
   "scripts": {
-    "build": "cup build",
-    "build-tests": "cup build-tests",
-    "clean": "rm -rf dist",
+    "build": "cup-build",
+    "build-tests": "cup-build-tests",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "just-test": "unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-tests && npm run just-test",
-    "cover": "npm run build-tests && nyc npm run just-test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "flow": "flow check"
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

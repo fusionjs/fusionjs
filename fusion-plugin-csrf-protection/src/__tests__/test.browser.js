@@ -7,7 +7,7 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
+import 'whatwg-fetch';
 
 import App, {createPlugin} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
@@ -31,24 +31,24 @@ function createMockFetch(responseParams: mixed): Response {
   };
 }
 
-test('exposes right methods', t => {
+test('exposes right methods', done => {
   const app = getApp(window.fetch);
   app.register(
     createPlugin({
       deps: {fetch: FetchToken},
       provides: ({fetch}) => {
-        t.equal(typeof fetch, 'function');
-        t.end();
+        expect(typeof fetch).toBe('function');
+        done();
       },
     })
   );
   app.resolve();
 });
 
-test('includes routePrefix if exists', async t => {
+test('includes routePrefix if exists', async done => {
   window.__ROUTE_PREFIX__ = '/something';
   const fetch = (url, args) => {
-    t.equal(url, '/something/hello');
+    expect(url).toBe('/something/hello');
     return Promise.resolve(
       createMockFetch({
         url,
@@ -62,24 +62,24 @@ test('includes routePrefix if exists', async t => {
     createPlugin({
       deps: {fetch: FetchToken},
       provides: async ({fetch}) => {
-        t.equal(typeof fetch, 'function');
+        expect(typeof fetch).toBe('function');
         // $FlowFixMe
         const {url, args} = await fetch('/hello', {method: 'POST'});
-        t.equals(url, '/something/hello', 'ok url');
-        t.equals(args.credentials, 'same-origin', 'ok credentials');
-        t.equals(args.headers['x-csrf-token'], 'x', 'sends token');
+        expect(url).toBe('/something/hello');
+        expect(args.credentials).toBe('same-origin');
+        expect(args.headers['x-csrf-token']).toBe('x');
         delete window.__ROUTE_PREFIX__;
-        t.end();
+        done();
       },
     })
   );
   app.resolve();
 });
 
-test('sends token on POST', async t => {
+test('sends token on POST', async done => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
-    t.equal(url, expectedUrls.shift());
+    expect(url).toBe(expectedUrls.shift());
     return Promise.resolve(
       createMockFetch({
         url,
@@ -95,20 +95,20 @@ test('sends token on POST', async t => {
       provides: async ({fetch}) => {
         // $FlowFixMe
         const {url, args} = await fetch('/hello', {method: 'POST'});
-        t.equals(url, '/hello', 'ok url');
-        t.equals(args.credentials, 'same-origin', 'ok credentials');
-        t.equal(args.headers['x-csrf-token'], 'x');
-        t.end();
+        expect(url).toBe('/hello');
+        expect(args.credentials).toBe('same-origin');
+        expect(args.headers['x-csrf-token']).toBe('x');
+        done();
       },
     })
   );
   app.resolve();
 });
 
-test('defaults method to GET', async t => {
+test('defaults method to GET', async done => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
-    t.equal(url, expectedUrls.shift());
+    expect(url).toBe(expectedUrls.shift());
     return Promise.resolve(
       createMockFetch({
         url,
@@ -124,9 +124,9 @@ test('defaults method to GET', async t => {
       provides: async ({fetch}) => {
         // $FlowFixMe
         const {url, args} = await fetch('/hello');
-        t.equals(url, '/hello', 'ok url');
-        t.notok(args.headers, 'does not send token on GET requests');
-        t.end();
+        expect(url).toBe('/hello');
+        expect(args.headers).toBeFalsy();
+        done();
       },
     })
   );

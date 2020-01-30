@@ -1,7 +1,6 @@
 flow-typed/
 node_modules/
-dist/
-dist-tests/
+dist-*/
 coverage/
 .nyc_output/
 

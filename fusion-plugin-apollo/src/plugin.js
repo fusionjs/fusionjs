@@ -6,7 +6,6 @@
  * @flow
  */
 
-/* eslint-env browser */
 import React from 'react';
 
 import {createPlugin, html, unescape, RouteTagsToken} from 'fusion-core';

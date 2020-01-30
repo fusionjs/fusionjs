@@ -24,7 +24,7 @@ import rpcHandlers from './rpc/index.js';
 import reducer from './redux.js';
 
 export default () => {
-  const app = new App(<Root />);
+  const app = new App((<Root />));
 
   if (__BROWSER__) {
     app.register(FetchToken, window.fetch);

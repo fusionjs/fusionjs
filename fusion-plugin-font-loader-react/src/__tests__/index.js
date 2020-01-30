@@ -6,8 +6,6 @@
  * @flow
  */
 
-import tape from 'tape-cup';
-
 import {getFontConfig} from './fixtures/static/font-config';
 import {
   fallbackLookup as expectedFallbackLookup,
@@ -24,52 +22,42 @@ import {
 import type {AtomicFontsObjectType, StyledFontsObjectType} from '../types';
 import generatePreloadLinks from '../generate-preload-links';
 
-tape('generateFallbackMap with atomic config', t => {
+test('generateFallbackMap with atomic config', () => {
   const atomicFonts: AtomicFontsObjectType = (getFontConfig(false).fonts: any);
-  t.deepEqual(
-    generateFallbackMap(atomicFonts, 0),
+  expect(generateFallbackMap(atomicFonts, 0)).toEqual(
     expectedFallbackLookup.depth0
   );
-  t.deepEqual(
-    generateFallbackMap(atomicFonts, 1),
+  expect(generateFallbackMap(atomicFonts, 1)).toEqual(
     expectedFallbackLookup.depth1
   );
-  t.deepEqual(
-    generateFallbackMap(atomicFonts, 2),
+  expect(generateFallbackMap(atomicFonts, 2)).toEqual(
     expectedFallbackLookup.depth2
   );
-  t.end();
 });
 
-tape('generateAtomicFontFaces', t => {
+test('generateAtomicFontFaces', () => {
   const atomicFonts: AtomicFontsObjectType = (getFontConfig(false).fonts: any);
   equalWithoutSpaces(
-    t,
     generateAtomicFontFaces(atomicFonts),
     expectedAtomicFontFaces
   );
-  t.end();
 });
 
-tape('generateStyledFontFaces', t => {
+test('generateStyledFontFaces', () => {
   const styledFonts: StyledFontsObjectType = (getFontConfig(true).fonts: any);
   equalWithoutSpaces(
-    t,
     generateStyledFontFaces(styledFonts),
     expectedStyledFontFaces
   );
-  t.end();
 });
 
-tape('generatePreloadLinks', t => {
+test('generatePreloadLinks', () => {
   const atomicFonts: AtomicFontsObjectType = (getFontConfig(false).fonts: any);
-  t.equal(
-    generatePreloadLinks({'Lato-Regular': true}, atomicFonts),
+  expect(generatePreloadLinks({'Lato-Regular': true}, atomicFonts)).toBe(
     expectedPreloadLinks
   );
-  t.end();
 });
 
-function equalWithoutSpaces(t, str1, str2) {
-  t.equal(str1.replace(/\s/g, ''), str2.replace(/\s/g, ''));
+function equalWithoutSpaces(str1, str2) {
+  expect(str1.replace(/\s/g, '')).toBe(str2.replace(/\s/g, ''));
 }

@@ -9,19 +9,17 @@
 import React from 'react';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
-import test from 'tape-cup';
 import HelmetPlugin from '../index.js';
 
-test('Non render request', async t => {
+test('Non render request', async () => {
   const app = new App(React.createElement('div'), el => el);
   app.register(HelmetPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.request('/');
-  t.equal(ctx.element, null, 'does not wrap ctx.element');
-  t.end();
+  expect(ctx.element).toBe(null);
 });
 
-test('Render request with server side redirect', async t => {
+test('Render request with server side redirect', async () => {
   const app = new App(React.createElement('div'), el => el);
   app.register(HelmetPlugin);
   app.middleware((ctx, next) => {
@@ -30,5 +28,4 @@ test('Render request with server side redirect', async t => {
   });
   const sim = getSimulator(app);
   await sim.render('/');
-  t.end();
 });

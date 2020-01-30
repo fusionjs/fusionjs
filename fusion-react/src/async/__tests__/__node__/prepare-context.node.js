@@ -7,11 +7,10 @@
  */
 
 /* eslint-disable react/no-multi-comp */
-import tape from 'tape-cup';
 import * as React from 'react';
 import {prepare} from '../../index.js';
 
-tape('Preparing a sync app passing through context', t => {
+test('Preparing a sync app passing through context', done => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -34,7 +33,7 @@ tape('Preparing a sync app passing through context', t => {
     test: () => {},
   };
   function SimplePresentational(props, context) {
-    t.equal(context.test, 'data', 'handles child context correctly');
+    expect(context.test).toBe('data');
     numChildRenders++;
     return <div>Hello World</div>;
   }
@@ -43,11 +42,11 @@ tape('Preparing a sync app passing through context', t => {
   };
   const app = <SimpleComponent />;
   const p = prepare(app);
-  t.ok(p instanceof Promise, 'prepare returns a promise');
+  expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    t.equal(numConstructors, 1, 'constructs SimpleComponent once');
-    t.equal(numRenders, 1, 'renders SimpleComponent once');
-    t.equal(numChildRenders, 1, 'renders SimplePresentational once');
-    t.end();
+    expect(numConstructors).toBe(1);
+    expect(numRenders).toBe(1);
+    expect(numChildRenders).toBe(1);
+    done();
   });
 });

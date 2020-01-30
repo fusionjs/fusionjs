@@ -25,11 +25,10 @@ test('`fusion build` with dynamic imports', async () => {
     testContent.dynamicContent.includes('loaded dynamic import'),
     'dynamic import is executed'
   );
-  t.deepEqual(
-    testContent.chunkIds,
-    [[10003, 0], [10004, 1]],
-    'Chunk IDs are populated'
-  );
+  expect(testContent.chunkIds).toStrictEqual([
+    [10003, 0],
+    [10004, 1],
+  ]); // 'Chunk IDs are populated'
 
   t.ok(
     await exists(

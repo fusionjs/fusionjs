@@ -6,7 +6,6 @@
  * @flow
  */
 
-import tape from 'tape-cup';
 import App, {createToken} from 'fusion-core';
 import type {Token} from 'fusion-core';
 import {createServer} from 'http';
@@ -21,7 +20,7 @@ import JWTServer, {
 
 const JWTToken: Token<Session> = createToken('Session');
 
-tape('JWTServer', async t => {
+test('JWTServer', async () => {
   const app = new App('fake-element', el => el);
   app.register(SessionSecretToken, 'session-secret');
   app.register(SessionCookieNameToken, 'cookie-name');
@@ -32,7 +31,7 @@ tape('JWTServer', async t => {
     count++;
     const session = Session.from(ctx);
     if (count === 2) {
-      t.equal(session.get('test-something'), 'test-value');
+      expect(session.get('test-something')).toBe('test-value');
     }
     session.set('test-something', 'test-value');
     ctx.body = 'OK';
@@ -43,19 +42,18 @@ tape('JWTServer', async t => {
   const server = createServer(cb);
   await new Promise(resolve => server.listen(3000, resolve));
   let res = await fetch('http://localhost:3000/');
-  t.ok(res.headers.get('set-cookie'), 'generates a session');
-  t.equal(res.status, 200);
+  expect(res.headers.get('set-cookie')).toBeTruthy();
+  expect(res.status).toBe(200);
   res = await fetch('http://localhost:3000/', {
     headers: {
       Cookie: res.headers.get('set-cookie') || '',
     },
   });
-  t.equal(res.status, 200);
+  expect(res.status).toBe(200);
   server.close();
-  t.end();
 });
 
-tape('JWTServer with expired token', async t => {
+test('JWTServer with expired token', async () => {
   const app = new App('fake-element', el => el);
   app.register(SessionSecretToken, 'session-secret');
   app.register(SessionCookieNameToken, 'cookie-name');
@@ -67,10 +65,7 @@ tape('JWTServer with expired token', async t => {
     count++;
     const session = Session.from(ctx);
     if (count === 2) {
-      t.notok(
-        session.get('test-something'),
-        'does not set the session if it has expired'
-      );
+      expect(session.get('test-something')).toBeFalsy();
     }
     session.set('test-something', 'test-value');
     ctx.body = 'OK';
@@ -82,8 +77,8 @@ tape('JWTServer with expired token', async t => {
   const server = createServer(cb);
   await new Promise(resolve => server.listen(3000, resolve));
   let res = await fetch('http://localhost:3000/');
-  t.ok(res.headers.get('set-cookie'), 'generates a session');
-  t.equal(res.status, 200);
+  expect(res.headers.get('set-cookie')).toBeTruthy();
+  expect(res.status).toBe(200);
 
   await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -92,7 +87,6 @@ tape('JWTServer with expired token', async t => {
       Cookie: res.headers.get('set-cookie') || '',
     },
   });
-  t.equal(res.status, 200);
+  expect(res.status).toBe(200);
   server.close();
-  t.end();
 });

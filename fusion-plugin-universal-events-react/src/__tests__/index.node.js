@@ -7,17 +7,16 @@
  */
 
 import React from 'react';
-import test from 'tape-cup';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import plugin, {withBatchEvents, UniversalEventsToken} from '../index.js';
 
-test('test plugin', async t => {
+test('test plugin', async () => {
   let called = false;
   const Root = withBatchEvents(props => {
     const {universalEvents} = props;
-    t.equal(typeof universalEvents.on, 'function');
-    t.equal(typeof universalEvents.emit, 'function');
+    expect(typeof universalEvents.on).toBe('function');
+    expect(typeof universalEvents.emit).toBe('function');
     universalEvents.emit('test', {hello: 'world'});
     return React.createElement('div', null, 'Hello World');
   });
@@ -25,7 +24,7 @@ test('test plugin', async t => {
   app.register(UniversalEventsToken, plugin);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     events.on('test', p => {
-      t.deepLooseEqual(p, {hello: 'world'});
+      expect(p).toStrictEqual({hello: 'world'});
       called = true;
     });
     return (ctx, next) => {
@@ -34,6 +33,5 @@ test('test plugin', async t => {
   });
   const sim = getSimulator(app);
   await sim.render('/');
-  t.ok(called);
-  t.end();
+  expect(called).toBeTruthy();
 });

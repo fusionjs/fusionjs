@@ -1,3 +1,5 @@
+#!/bin/bash
+
 case $OSTYPE in
   msys*) FILE=bazelisk-windows-amd64.exe ;;
   darwin*) FILE=bazelisk-darwin-amd64 ;;

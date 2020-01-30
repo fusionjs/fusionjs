@@ -6,13 +6,12 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
 import {Router, Route, Redirect} from '../server';
 import {createServerHistory} from '../modules/ServerHistory';
 
-test('redirects to a new URL', t => {
+test('redirects to a new URL', () => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello" />;
   let setCode = false;
@@ -21,11 +20,11 @@ test('redirects to a new URL', t => {
     action: null,
     location: null,
     set status(code) {
-      t.equal(code, 307);
+      expect(code).toBe(307);
       setCode = true;
     },
     set url(to) {
-      t.equal(to, '/hello');
+      expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
@@ -39,12 +38,11 @@ test('redirects to a new URL', t => {
     </Router>
   );
   render(el);
-  t.ok(setCode);
-  t.ok(didRedirect);
-  t.end();
+  expect(setCode).toBeTruthy();
+  expect(didRedirect).toBeTruthy();
 });
 
-test('redirects with deprecated context', t => {
+test('redirects with deprecated context', () => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Redirect to="/hello" />;
   let setCode = false;
@@ -53,11 +51,11 @@ test('redirects with deprecated context', t => {
     action: null,
     location: null,
     setCode(code) {
-      t.equal(code, 307);
+      expect(code).toBe(307);
       setCode = true;
     },
     redirect(to) {
-      t.equal(to, '/hello');
+      expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
@@ -71,7 +69,6 @@ test('redirects with deprecated context', t => {
     </Router>
   );
   render(el);
-  t.ok(setCode);
-  t.ok(didRedirect);
-  t.end();
+  expect(setCode).toBeTruthy();
+  expect(didRedirect).toBeTruthy();
 });

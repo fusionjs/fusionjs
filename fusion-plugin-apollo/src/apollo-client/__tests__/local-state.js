@@ -13,7 +13,6 @@ import {FetchToken} from 'fusion-tokens';
 import {buildSchema} from 'graphql';
 import gql from 'graphql-tag';
 import unfetch from 'unfetch';
-import test from 'tape-cup';
 
 import {
   ApolloClientResolversToken,
@@ -21,7 +20,7 @@ import {
   ApolloClientLocalSchemaToken,
 } from '../index.js';
 
-test('local state management', async t => {
+test('local state management', async () => {
   const app = new App('el', el => el);
   app.register(ApolloClientToken, ApolloClientPlugin);
   app.register(
@@ -76,10 +75,10 @@ test('local state management', async t => {
             }
           `,
         });
-        t.equal(data.query, 'foo');
-        t.equal(data.queryClient, 'client');
+        expect(data.query).toBe('foo');
+        expect(data.queryClient).toBe('client');
 
-        t.equal(mutationCalled, false);
+        expect(mutationCalled).toBe(false);
         await client.mutate({
           mutation: gql`
             mutation {
@@ -87,7 +86,7 @@ test('local state management', async t => {
             }
           `,
         });
-        t.equal(mutationCalled, true);
+        expect(mutationCalled).toBe(true);
 
         return next();
       };
@@ -97,5 +96,4 @@ test('local state management', async t => {
 
   const simulator = getSimulator(app);
   await simulator.render('/');
-  t.end();
 });

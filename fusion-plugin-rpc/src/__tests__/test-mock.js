@@ -6,7 +6,6 @@
  * @flow
  */
 
-import test from 'tape-cup';
 import MockEmitter from 'events';
 
 import App, {
@@ -40,10 +39,10 @@ function createTestFixture() {
   return app;
 }
 
-test('mock with missing handler', async t => {
+test('mock with missing handler', async done => {
   const app = createTestFixture();
 
-  t.plan(1);
+  expect.assertions(1);
   getSimulator(
     app,
     createPlugin({
@@ -53,19 +52,19 @@ test('mock with missing handler', async t => {
         try {
           await rpc.request('test');
         } catch (e) {
-          t.equal(e.message, 'Missing RPC handler for test');
+          expect(e.message).toBe('Missing RPC handler for test');
         } finally {
-          t.end();
+          done();
         }
       },
     })
   );
 });
 
-test('mock with handler', async t => {
+test('mock with handler', async done => {
   const mockHandlers = {
     test: args => {
-      t.deepLooseEqual(args, {test: 'args'}, 'correct args provded');
+      expect(args).toStrictEqual({test: 'args'});
       return 10;
     },
   };
@@ -73,7 +72,7 @@ test('mock with handler', async t => {
   const app = createTestFixture();
   app.register(RPCHandlersToken, mockHandlers);
 
-  t.plan(2);
+  expect.assertions(2);
   getSimulator(
     app,
     createPlugin({
@@ -83,11 +82,11 @@ test('mock with handler', async t => {
 
         try {
           const result = await rpc.request('test', {test: 'args'});
-          t.equal(result, 10, 'correct request result');
+          expect(result).toBe(10);
         } catch (e) {
-          t.ifError(e);
+          expect(e).toBeFalsy();
         } finally {
-          t.end();
+          done();
         }
       },
     })

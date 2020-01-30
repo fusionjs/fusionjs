@@ -62,7 +62,6 @@ export class UniversalEmitter extends Emitter {
   async flushInternal(): Promise<void> {
     const items = this.storage.getAndClear(this.limit);
     if (items.length === 0) return;
-
     try {
       const res = await this.fetch('/_events', {
         method: 'POST',

@@ -7,9 +7,6 @@
  */
 
 /* eslint-env browser */
-import test from 'tape-cup';
-
-test('ok', t => {
-  t.ok(1, 'ok');
-  t.end();
+test('ok', () => {
+  expect(1).toBeTruthy();
 });

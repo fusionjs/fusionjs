@@ -26,7 +26,8 @@ class BrowserPerformanceEmitter {
       (!window.performance ||
         !window.performance.timing ||
         !window.performance.getEntriesByType) &&
-      (!timing && !resourceEntries)
+      !timing &&
+      !resourceEntries
     ) {
       return {};
     }
