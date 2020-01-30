@@ -177,7 +177,7 @@ const pluginFactory: () => PluginType = () =>
 
           // set HTML lang tag as a hint for signal screen readers to switch to the
           // recommended language.
-          ctx.template.htmlAttrs['lang'] = localeCode;
+          ctx.template.htmlAttrs.lang = localeCode;
         } else if (ctx.path === '/_translations') {
           const i18n = plugin.from(ctx);
           try {
