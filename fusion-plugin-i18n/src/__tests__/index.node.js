@@ -99,7 +99,7 @@ test('ssr', async done => {
     consumeSanitizedHTML(ctx.template.body[0]).match('hello')[0]
   ).toBe('hello');
   expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
-  expect(ctx.template.htmlAttrs['lang']).toBe('en-US');
+  expect(ctx.template.htmlAttrs.lang).toBe('en-US');
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();

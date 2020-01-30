@@ -171,7 +171,7 @@ async function testInstallAddUpgradeRemove() {
     cwd: `${__dirname}/tmp/commands/a`,
     name: 'has@1.0.3',
   });
-  assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
+  assert(JSON.parse(await read(meta, 'utf8')).dependencies.has);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
 
   // upgrade linked package
@@ -187,7 +187,7 @@ async function testInstallAddUpgradeRemove() {
     root: `${__dirname}/tmp/commands`,
     args: ['has@1.0.3'],
   });
-  assert(JSON.parse(await read(meta, 'utf8')).dependencies['has']);
+  assert(JSON.parse(await read(meta, 'utf8')).dependencies.has);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
 
   // remove linked package
