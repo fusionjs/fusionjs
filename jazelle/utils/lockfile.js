@@ -283,6 +283,7 @@ const update /*: Update */ = async ({
   await ensureInsertionRanges([...additions, ...upgrades]);
 
   let shouldSyncLockfiles = false;
+  const cache = {};
   for (const {dir, meta, lockfile} of sets) {
     applyMetadataChanges({meta, removals, additions, upgrades});
     const hasLockfileChanges = await installMissingDeps({
@@ -291,6 +292,7 @@ const update /*: Update */ = async ({
       lockfile,
       ignore,
       tmp,
+      cache,
     });
     const hasRemovals = removals.length > 0;
     const hasAdditions = additions.length > 0;
@@ -379,34 +381,52 @@ const applyMetadataUpgrades = ({meta, upgrades}) => {
   }
 };
 
-const installMissingDeps = async ({dir, meta, lockfile, ignore, tmp}) => {
+const installMissingDeps = async ({
+  dir,
+  meta,
+  lockfile,
+  ignore,
+  tmp,
+  cache,
+}) => {
   let edited = false;
 
   // generate lockfile entries for missing top level deps
   const missing = {};
+  const cacheKeyParts = [];
   for (const {name, range, type} of getDepEntries(meta)) {
     if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
       if (!missing[type]) missing[type] = {};
       missing[type][name] = range;
+      cacheKeyParts.push(`${name}@${range}`);
     }
   }
   if (Object.keys(missing).length > 0) {
     const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
     const yarnrc = await getYarnRc(dir);
 
-    await exec(`mkdir -p ${cwd}`);
-    await write(
-      `${cwd}/package.json`,
-      `${JSON.stringify(missing, null, 2)}\n`,
-      'utf8'
-    );
-    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+    // install missing deps and reuse promise in parallel runs if possible
+    const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
+    if (!cache[cacheKey]) {
+      const install = async () => {
+        await exec(`mkdir -p ${cwd}`);
+        await write(
+          `${cwd}/package.json`,
+          `${JSON.stringify(missing, null, 2)}\n`,
+          'utf8'
+        );
+        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
-    const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
-    await exec(install, {cwd}, [process.stdout, process.stderr]);
+        const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
+        await exec(install, {cwd}, [process.stdout, process.stderr]);
+        return cwd;
+      };
+      cache[cacheKey] = install(); // cache the promise
+    }
+    const cachedCwd = await cache[cacheKey];
 
     // copy newly installed deps back to original package.json/yarn.lock
-    const [added] = await readVersionSets({roots: [cwd]});
+    const [added] = await readVersionSets({roots: [cachedCwd]});
     for (const {name, range, type} of getDepEntries(added.meta)) {
       if (!meta[type]) meta[type] = {};
       if (meta[type]) meta[type][name] = range;
@@ -436,16 +456,24 @@ const installMissingDeps = async ({dir, meta, lockfile, ignore, tmp}) => {
     const yarnrc = await getYarnRc(dir);
 
     // add missing transitives and reuse promise in parallel runs if possible
-    await exec(`mkdir -p ${cwd}`);
-    await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+    const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
+    if (!cache[cacheKey]) {
+      const add = async () => {
+        await exec(`mkdir -p ${cwd}`);
+        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
-    await write(`${cwd}/package.json`, '{}\n', 'utf8');
-    const deps = missingTransitives.join(' ');
-    const add = `yarn add ${deps} --ignore-engines`;
-    await exec(add, {cwd}, [process.stdout, process.stderr]);
+        await write(`${cwd}/package.json`, '{}\n', 'utf8');
+        const deps = missingTransitives.join(' ');
+        const add = `yarn add ${deps} --ignore-engines`;
+        await exec(add, {cwd}, [process.stdout, process.stderr]);
+        return cwd;
+      };
+      cache[cacheKey] = add(); // cache promise
+    }
+    const cachedCwd = await cache[cacheKey];
 
     // copy newly installed deps back to original yarn.lock
-    const [added] = await readVersionSets({roots: [cwd]});
+    const [added] = await readVersionSets({roots: [cachedCwd]});
     for (const key in added.lockfile) {
       if (!lockfile[key]) {
         lockfile[key] = added.lockfile[key];
