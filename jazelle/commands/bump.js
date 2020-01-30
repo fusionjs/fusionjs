@@ -62,9 +62,7 @@ const bump /*: Bump */ = async ({
       await upgrade({
         root,
         cwd,
-        name: dep.meta.name,
-        version: dep.meta.version,
-        from: old,
+        args: [`${dep.meta.name}@${dep.meta.version}`],
       });
     }
   }
