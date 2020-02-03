@@ -12,6 +12,7 @@ const {upgrade} = require('./commands/upgrade.js');
 const {dedupe} = require('./commands/dedupe.js');
 const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
+const {align} = require('./commands/align.js');
 const {chunk} = require('./commands/chunk.js');
 const {changes} = require('./commands/changes.js');
 const {plan} = require('./commands/plan.js');
@@ -112,6 +113,12 @@ const runCLI /*: RunCLI */ = async argv => {
         --json                     Whether to print as JSON (e.g. for piping to jq)`,
         async ({json}) =>
           check({root: await rootOf(args), json: Boolean(json)}),
+      ],
+      align: [
+        `Align a project's dependency versions to respect the version policy, if there is one
+
+        --cwd [cwd]                Project directory to use`,
+        async ({cwd}) => await align({root: await rootOf(args), cwd}),
       ],
       chunk: [
         `Print a glob pattern representing a chunk of a set of files
@@ -264,6 +271,7 @@ module.exports = {
   dedupe,
   purge,
   check: reportMismatchedTopLevelDeps,
+  align,
   chunk: getChunkPattern,
   changes: findChangedTargets,
   plan: getTestGroups,
