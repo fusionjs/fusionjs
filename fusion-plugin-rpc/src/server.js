@@ -225,6 +225,7 @@ const pluginFactory: () => RPCPluginType = () =>
                   meta: error.meta,
                 },
               };
+              ctx.status = 500;
               if (scopedEmitter) {
                 scopedEmitter.emit(statKey, {
                   method,
