@@ -78,11 +78,11 @@ const runCLI /*: RunCLI */ = async argv => {
         [name]                     Package to add at a specific version. ie., foo@1.2.3
         --dev                      Whether to install as devDependency
         --cwd [cwd]                Project directory to use`,
-        async ({cwd, name, dev}) =>
+        async ({cwd, dev}) =>
           add({
             root: await rootOf(args),
             cwd,
-            name: name || dev, // if dev is passed before name, resolve to correct value
+            args: rest.filter(arg => arg != '--dev'), // if dev is passed before name, resolve to correct value
             dev: Boolean(dev), // FIXME all args can technically be boolean, but we don't want Flow complaining about it everywhere
           }),
       ],

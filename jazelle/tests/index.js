@@ -160,7 +160,7 @@ async function testInstallAddUpgradeRemove() {
   await add({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'c',
+    args: ['c'],
   });
   assert(await exists(`${__dirname}/tmp/commands/node_modules/c`));
   assert((await read(buildFile, 'utf8')).includes('//c:c'));
@@ -169,7 +169,7 @@ async function testInstallAddUpgradeRemove() {
   await add({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'has@1.0.3',
+    args: ['has@1.0.3'],
   });
   assert(JSON.parse(await read(meta, 'utf8')).dependencies.has);
   assert(await exists(`${__dirname}/tmp/commands/node_modules/has`));
