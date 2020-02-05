@@ -46,7 +46,7 @@ const findChangedBazelTargets = async ({root, files}) => {
       const targets = result.split('\n').filter(Boolean);
       return {workspace, targets};
     } else {
-      const projects = await batch(root, lines, async file => {
+      const queried = await batch(root, lines, async file => {
         const find = `${bazel} query "${file}"`;
         const result = await exec(find, opts).catch(async e => {
           // if file doesn't exist, find which package it would've belong to, and find another file in the same package
@@ -66,9 +66,13 @@ const findChangedBazelTargets = async ({root, files}) => {
         const project = await exec(cmd, opts);
         return project;
       });
-      const targets = await batch(root, projects, async project => {
+      const unfiltered = await batch(root, queried, async project => {
         const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
         return exec(cmd, opts);
+      });
+      const targets = unfiltered.filter(target => {
+        const path = target.replace(/\/\/(.+?):.+/, '$1');
+        return projects.includes(path);
       });
       return {workspace, targets};
     }

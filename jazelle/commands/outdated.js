@@ -5,7 +5,13 @@ const {exec} = require('../utils/node-helpers.js');
 const {node, yarn} = require('../utils/binary-paths.js');
 const {minVersion, gt} = require('semver');
 
-const outdated = async ({root}) => {
+/*::
+type OutdatedArgs = {
+  root: string,
+};
+type Outdated = (OutdatedArgs) => Promise<void>
+*/
+const outdated /*: Outdated */ = async ({root}) => {
   const {projects} = await getManifest({root});
   const locals = await getAllDependencies({root, projects});
   const map = {};

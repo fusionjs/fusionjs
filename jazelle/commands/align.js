@@ -12,7 +12,7 @@ type AlignArgs = {
 type Align = (AlignArgs) => Promise<void>
 */
 const align /*: Align */ = async ({root, cwd}) => {
-  const {projects, versionPolicy} = await getManifest({root});
+  const {projects, versionPolicy} = /*:: await */ await getManifest({root});
   if (versionPolicy) {
     const deps = await getAllDependencies({root, projects});
     const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
@@ -44,7 +44,7 @@ const shouldSyncVersions = ({versionPolicy, name}) => {
   const {lockstep = false, exceptions = []} = versionPolicy;
   return (
     (lockstep && !exceptions.includes(name)) ||
-    (!lockstep && exceptions.include(name))
+    (!lockstep && exceptions.includes(name))
   );
 };
 
