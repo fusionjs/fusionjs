@@ -9,7 +9,7 @@ def _jazelle_impl(ctx):
     ROOT=`$NODE -e "console.log(require('path').dirname(require('fs').realpathSync('{cli}')))"`
     if [ ! -d $ROOT/node_modules ]
     then
-      $NODE $YARN --cwd $ROOT --ignore-engines --production=true --mutex network
+      $NODE $YARN --cwd $ROOT --ignore-engines --production=true
     fi
     cd $CWD && $NODE $CLI $@
     """.format(
