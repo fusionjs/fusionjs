@@ -12,6 +12,7 @@ const {upgrade} = require('./commands/upgrade.js');
 const {dedupe} = require('./commands/dedupe.js');
 const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
+const {outdated} = require('./commands/outdated.js');
 const {align} = require('./commands/align.js');
 const {chunk} = require('./commands/chunk.js');
 const {changes} = require('./commands/changes.js');
@@ -113,6 +114,10 @@ const runCLI /*: RunCLI */ = async argv => {
         --json                     Whether to print as JSON (e.g. for piping to jq)`,
         async ({json}) =>
           check({root: await rootOf(args), json: Boolean(json)}),
+      ],
+      outdated: [
+        `Displays deps whose version is behind the latest version`,
+        async () => outdated({root: await rootOf(args)}),
       ],
       align: [
         `Align a project's dependency versions to respect the version policy, if there is one
