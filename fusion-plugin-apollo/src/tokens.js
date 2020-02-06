@@ -61,3 +61,7 @@ export const ApolloBodyParserConfigToken: Token<BodyParserConfigType> = createTo
 export const ApolloDefaultOptionsConfigToken: Token<GraphQLOptionsType> = createToken(
   'ApolloDefaultOptionsConfigToken'
 );
+
+export const ApolloCustomLinksToken: Token<any> = createToken(
+  'ApolloCustomLinksToken'
+);

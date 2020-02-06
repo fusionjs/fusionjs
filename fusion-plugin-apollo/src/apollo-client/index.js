@@ -12,6 +12,7 @@ import {
   GraphQLSchemaToken,
   ApolloContextToken,
   GraphQLEndpointToken,
+  ApolloCustomLinksToken,
   type InitApolloClientType,
 } from '../tokens';
 import {ApolloClient} from 'apollo-client';
@@ -71,6 +72,7 @@ type ApolloClientDepsType = {
   typeDefs: typeof ApolloClientLocalSchemaToken.optional,
   schema: typeof GraphQLSchemaToken.optional,
   resolvers: typeof ApolloClientResolversToken.optional,
+  customLinks: typeof ApolloCustomLinksToken.optional,
   defaultOptions: typeof ApolloClientDefaultOptionsToken.optional,
 };
 
@@ -90,6 +92,7 @@ const ApolloClientPlugin: FusionPlugin<
     typeDefs: ApolloClientLocalSchemaToken.optional,
     schema: GraphQLSchemaToken.optional,
     resolvers: ApolloClientResolversToken.optional,
+    customLinks: ApolloCustomLinksToken.optional,
     defaultOptions: ApolloClientDefaultOptionsToken.optional,
   },
   provides({
@@ -106,6 +109,7 @@ const ApolloClientPlugin: FusionPlugin<
     typeDefs,
     schema,
     resolvers,
+    customLinks,
     defaultOptions,
   }) {
     if (apolloContext) {
@@ -131,11 +135,15 @@ const ApolloClientPlugin: FusionPlugin<
               uri: endpoint,
               credentials: includeCredentials,
               fetch,
+              fetchOptions: {
+                credentials: includeCredentials,
+              },
             });
 
       const links: Array<ApolloLinkType> = getApolloLinks
-        ? getApolloLinks([connectionLink], ctx)
-        : [connectionLink];
+        ? getApolloLinks([...(customLinks || []), connectionLink], ctx)
+        : [...(customLinks || []), connectionLink];
+
 
       const client = new ApolloClient({
         ssrMode: __NODE__,
