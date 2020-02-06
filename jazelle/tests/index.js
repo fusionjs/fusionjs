@@ -80,7 +80,6 @@ async function runTests() {
   await exec(`mkdir -p ${__dirname}/tmp`);
 
   await Promise.all([
-    t(testInstallAddUpgradeRemove),
     t(testCi),
     t(testDedupe),
     t(testUpgrade),
@@ -123,6 +122,7 @@ async function runTests() {
     t(testPopulateGraph),
   ]);
   // run separately to avoid CI error
+  await t(testInstallAddUpgradeRemove);
   await t(testCommand);
   await t(testYarnCommand);
   await t(testBazelCommand);
