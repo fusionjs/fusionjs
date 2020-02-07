@@ -16,12 +16,8 @@ test('error after await next in middleware before http handler', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
-    try {
-      await next();
-    } catch (e) {
-      expect(e.message).toBe('FAIL');
-      ctx.body = 'Caught error';
-    }
+    await expect(next()).rejects.toThrow('FAIL');
+    ctx.body = 'Caught error';
   });
 
   // Trigger error in upstream
@@ -58,12 +54,8 @@ test('error before await next in middleware after http handler', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
-    try {
-      await next();
-    } catch (e) {
-      expect(e.message).toBe('FAIL');
-      ctx.body = 'Caught error';
-    }
+    await expect(next()).rejects.toThrow('FAIL');
+    ctx.body = 'Caught error';
   });
 
   app.register(HttpHandlerPlugin);
@@ -101,12 +93,8 @@ test('error in express middleware', async () => {
   const app = new App('test', () => 'test');
   // Error handler
   app.middleware(async (ctx, next) => {
-    try {
-      await next();
-    } catch (e) {
-      expect(e.message).toBe('FAIL');
-      ctx.body = 'Caught error';
-    }
+    await expect(next()).rejects.toThrow('FAIL');
+    ctx.body = 'Caught error';
   });
 
   app.register(HttpHandlerPlugin);

@@ -198,14 +198,8 @@ test('service - request api with failing request', async done => {
   expect(typeof rpc.request).toBe('function');
   const p = rpc.request('test', 'test-args');
   expect(p instanceof Promise).toBeTruthy();
-  try {
-    await p;
-    // $FlowFixMe
-    done.fail('should throw before this point');
-  } catch (error) {
-    expect(error).toBe(e);
-    done();
-  }
+  await expect(p).rejects.toThrow(e);
+  done();
 });
 
 test('service - request api with invalid endpoint', async done => {
@@ -242,14 +236,8 @@ test('service - request api with invalid endpoint', async done => {
   expect(typeof rpc.request).toBe('function');
   const p = rpc.request('test', 'test-args');
   expect(p instanceof Promise).toBeTruthy();
-  try {
-    await p;
-    // $FlowFixMe
-    done.fail('should throw before this point');
-  } catch (error) {
-    expect(error.message).toBe('Missing RPC handler for test');
-    done();
-  }
+  await expect(p).rejects.toThrowError('Missing RPC handler for test');
+  done();
 });
 
 test('FusionJS - middleware resolves', async () => {

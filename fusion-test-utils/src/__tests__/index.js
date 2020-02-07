@@ -47,15 +47,8 @@ test('simulate non-render request', async done => {
   const app = new App(element, renderFn);
   const testApp = getSimulator(app);
   if (__BROWSER__) {
-    try {
-      testApp.request('/');
-      // $FlowFixMe jest typedefs wrong it seems
-      done.fail('should have thrown');
-    } catch (e) {
-      expect(e).toBeTruthy();
-    } finally {
-      done();
-    }
+    expect(() => testApp.request('/')).toThrow();
+    done();
   } else {
     const ctx = await testApp.request('/');
     expect(ctx.element).toBeFalsy();
@@ -104,14 +97,8 @@ test('use simulator with fixture and plugin dependencies', async () => {
 
 // Has to be skipped because this test relies on Jest globals not existing (i.e. tape)
 test.skip('test throws when not using test-app', async done => {
-  try {
-    //$FlowFixMe
-    exportedTest();
-  } catch (e) {
-    console.log(e);
-    expect(e.message.includes('test-app')).toBeTruthy();
-    done();
-  }
+  expect(exportedTest).toThrow('test-app');
+  done();
 });
 
 test('getService - returns service as expected, with no dependencies', async () => {

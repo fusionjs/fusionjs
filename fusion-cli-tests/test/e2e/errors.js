@@ -13,6 +13,7 @@ const t = require('assert');
 
 const {Compiler} = require('fusion-cli/build/compiler');
 
+// eslint-disable-next-line jest/no-export
 module.exports = function testEnvs(title /*: string */, dir /*: string */) {
   testDev(`${title} dev`, dir);
   testProd(`${title} prod`, dir);

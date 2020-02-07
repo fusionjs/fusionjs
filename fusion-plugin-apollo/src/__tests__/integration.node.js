@@ -206,13 +206,9 @@ test('Mutation request with error', async done => {
     },
   };
   const {server, client} = await testApp(el, {typeDefs, resolvers});
-  try {
-    await client.mutate({mutation, variables: {arg: 'test'}});
-    // $FlowFixMe
-    done.fail('should throw');
-  } catch (e) {
-    expect(e.message).toBe('GraphQL error: FAIL');
-  }
+  await expect(
+    client.mutate({mutation, variables: {arg: 'test'}})
+  ).rejects.toThrow('GraphQL error: FAIL');
   server.close();
   done();
 });
@@ -253,13 +249,7 @@ test('Query request with error', async done => {
       },
     }),
   });
-  try {
-    await client.query({query});
-    // $FlowFixMe
-    done.fail('should throw');
-  } catch (e) {
-    expect(e.message).toBe('GraphQL error: FAIL');
-  }
+  await expect(client.query({query})).rejects.toThrow('GraphQL error: FAIL');
   server.close();
   done();
 });
@@ -363,12 +353,8 @@ test('Invalid query request - logs error', async done => {
     });
   });
 
-  try {
-    await client.query({query});
-  } catch (e) {
-    expect(e instanceof Error).toBeTruthy();
-    expect(logCount).toBe(1);
-    server.close();
-    done();
-  }
+  await expect(client.query({query})).rejects.toThrow();
+  expect(logCount).toBe(1);
+  server.close();
+  done();
 });

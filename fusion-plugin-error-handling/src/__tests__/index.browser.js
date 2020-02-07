@@ -42,11 +42,9 @@ test('Get exception stack frames', () => {
 
   getSimulator(app);
 
-  try {
-    window.__foo__.prototype.addEventListener('some-event', h);
-  } catch (e) {
-    expect(e).toBe(mockError);
-  }
+  expect(() =>
+    window.__foo__.prototype.addEventListener('some-event', h)
+  ).toThrow(mockError);
 });
 
 test("Don't break on cross-origin exceptions", () => {

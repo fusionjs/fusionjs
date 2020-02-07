@@ -32,11 +32,9 @@ test('browser middleware', async () => {
   const element = React.createElement('div');
   const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const service = getService(appCreator(), Plugin);
-  try {
-    await (Plugin.middleware &&
-      // $FlowFixMe
-      Plugin.middleware(null, service)((ctx: any), () => Promise.resolve()));
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+  expect(Plugin.middleware).toBeTruthy();
+  await expect(
+    // $FlowFixMe
+    Plugin.middleware(null, service)((ctx: any), () => Promise.resolve())
+  ).resolves.not.toThrow();
 });

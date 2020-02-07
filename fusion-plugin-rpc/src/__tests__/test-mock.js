@@ -49,13 +49,10 @@ test('mock with missing handler', async done => {
       deps: {rpcFactory: MockPluginToken},
       provides: async deps => {
         const rpc = deps.rpcFactory.from(mockCtx);
-        try {
-          await rpc.request('test');
-        } catch (e) {
-          expect(e.message).toBe('Missing RPC handler for test');
-        } finally {
-          done();
-        }
+        await expect(rpc.request('test')).rejects.toThrowError(
+          'Missing RPC handler for test'
+        );
+        done();
       },
     })
   );
@@ -80,14 +77,9 @@ test('mock with handler', async done => {
       provides: async deps => {
         const rpc = deps.rpcFactory.from(mockCtx);
 
-        try {
-          const result = await rpc.request('test', {test: 'args'});
-          expect(result).toBe(10);
-        } catch (e) {
-          expect(e).toBeFalsy();
-        } finally {
-          done();
-        }
+        const result = await rpc.request('test', {test: 'args'});
+        expect(result).toBe(10);
+        done();
       },
     })
   );
