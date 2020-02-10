@@ -7,21 +7,22 @@
  */
 
 /* eslint-env node */
-const puppeteer = require('puppeteer');
-const getPort = require('get-port');
-const child_process = require('child_process');
-const {promisify} = require('util');
+import puppeteer from 'puppeteer';
+import getPort from 'get-port';
+import child_process from 'child_process';
+import {promisify} from 'util';
+import request from 'request-promise';
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
-const request = require('request-promise');
 
 /* Test helpers */
-module.exports.createMockEmitter = function createMockEmitter(props) {
+export const createMockEmitter = function createMockEmitter(props) {
   const emitter = {
     from: () => {
       return emitter;
     },
+
     emit: () => {},
     setFrequency: () => {},
     teardown: () => {},
@@ -36,7 +37,7 @@ module.exports.createMockEmitter = function createMockEmitter(props) {
   return emitter;
 };
 
-module.exports.Runtime = class Runtime {
+export const Runtime = class Runtime {
   constructor(opts) {
     this.fixturePath = opts.fixture || '.';
     this.collectLogs = opts.collectLogs || false;

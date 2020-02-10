@@ -18,6 +18,7 @@ RPC is a natural way of expressing that a server-side function should be run in 
 * [API](#api)
   * [Registration API](#registration-api)
   * [Dependencies](#dependencies)
+  * [`useRPCRedux`](#userpc)
   * [`withRPCRedux`](#withrpcredux)
   * [`withRPCReactor`](#withrpcreactor)
   * [`ResponseError`](#responseerror)
@@ -57,11 +58,15 @@ export default createRPCReducer('greet', {
 // connect your component
 // src/components/index.js
 import React from 'react';
-import {withRPCRedux} from 'fusion-plugin-rpc-redux-react';
-import {connect} from 'react-redux';
-import {compose} from 'redux';
+import {useRPCRedux} from 'fusion-plugin-rpc-redux-react';
+import {useSelector} from 'react-redux';
 
-function Example({greet, greeting, loading, error}) {
+export default function Example() {
+  const greet = useRPCRedux('greet');
+  const {greeting, loading, error} = useSelector(
+    ({greeting, loading, error}) => ({greeting, loading, error})
+  );
+
   return (
     <div>
       <button onClick={() => greet({name: 'person'})}>Greet</button>
@@ -71,11 +76,6 @@ function Example({greet, greeting, loading, error}) {
     </div>
   );
 }
-const hoc = compose(
-  withRPCRedux('greet'),
-  connect(({greeting, loading, error}) => ({greeting, loading, error})),
-);
-export default hoc(Example);
 ```
 
 ---
@@ -130,6 +130,33 @@ The Redux plugin must be registered from `fusion-plugin-react-redux`. See [fusio
 
 ---
 
+#### `useRPCRedux`
+
+```js
+import {useRPCRedux} from 'fusion-plugin-rpc-redux-react';
+```
+
+Creates an RPC handler for the given RPC method. The handler returns a promise,
+so must be called in an event handler or within a `React.useEffect` callback.
+The promise resolves to the requested rpc return value, or (recommended) you
+can use `useSelector` from `react-redux` to select your data from the redux
+store.
+
+```js
+const handler:Handler<T> = useRPCRedux(rpcId: string, {
+  mapStateToParams?: (state: any, args: ?any) => any,
+  transformParams?: (params: any) => any,
+})
+
+```
+
+* `rpcId: string` - The name of the RPC method to expose in the component's
+  props
+* `mapStateToParams?: (state: any, args: ?any) => any` - populate the RPC request with
+  parameters from Redux state
+* `transformParams?: (params: any) => any` - transforms the params
+* returns `handler: (args?: HandlerArgs) => Promise<HandlerResult>`
+
 #### `withRPCRedux`
 
 ```js
@@ -143,19 +170,19 @@ a transformation function.
 ```js
 const hoc:HOC = withRPCRedux(rpcId: string, {
   propName: ?string,
-  mapStateToParams: ?(state: any) => any,
-  transformParams: ?(params: any) => any,
+  mapStateToParams?: (state: any, args: ?any, ownProps: Props) => any,
+  transformParams?: (params: any) => any,
 })
 
 ```
 
 * `rpcId: string` - The name of the RPC method to expose in the component's
   props
-* `propName: ?string` - Optional. The name of the prop. Defaults to the same as
+* `propName?: string` - Optional. The name of the prop. Defaults to the same as
   `rpcId`
-* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
+* `mapStateToParams?: (state: any, args: ?any, ownProps: Props) => any` - populate the RPC request with
   parameters from Redux state
-* `transformParams: ?(params: any) => any` - transforms the params
+* `transformParams?: (params: any) => any` - transforms the params
 * returns `hoc: Component => Component`
 
 #### `withRPCReactor`
@@ -168,29 +195,29 @@ Creates a higher order component by colocating global reducers to the component
 
 ```js
 const hoc:HOC = withRPCReactor(rpcId: string, {
-  start: ?(state: any, action: Object) => any,
-  success: ?(state: any, action: Object) => any,
-  failure: ?(state: any, action: Object) => any,
+  start?: (state: any, action: Object) => any,
+  success?: (state: any, action: Object) => any,
+  failure?: (state: any, action: Object) => any,
 }, {
-  propName: ?string
-  mapStateToParams: ?(state: any) => any,
-  transformParams: ?(params: any) => any,
+  propName?: string
+  mapStateToParams?: (state: any, args: ?any, ownProps: Props) => any,
+  transformParams?: (params: any) => any,
 });
 ```
 
 * `rpcId: string` - The name of the RPC method to expose in the component's
   props
-* `start: ?(state: any, action: Object) => any` - A reducer to run when the RPC
+* `start?: (state: any, action: Object) => any` - A reducer to run when the RPC
   call is made
-* `success: ?(state: any, action: Object) => any` - A reducer to run when the
+* `success?: (state: any, action: Object) => any` - A reducer to run when the
   RPC call succeeds
-* `failure: ?(state: any, action: Object) => any` - A reducer to run when the
+* `failure?: (state: any, action: Object) => any` - A reducer to run when the
   RPC call fails
-* `propName: ?string` - Optional. The name of the prop. Defaults to the same as
+* `propName?: string` - Optional. The name of the prop. Defaults to the same as
   `rpcId`
-* `mapStateToParams: ?(state: any) => any` - populate the RPC request with
+* `mapStateToParams?: (state: any, args: ?any, ownProps: Props) => any` - populate the RPC request with
   parameters from Redux state
-* `transformParams: ?(params: any) => any` - transforms the params
+* `transformParams?: (params: any) => any` - transforms the params
 * returns `hoc: Component => Component`
 
 

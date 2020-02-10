@@ -6,13 +6,7 @@
  * @noflow
  */
 
-const {
-  default: Plugin,
-  createRPCReducer,
-  mock,
-  withRPCRedux,
-  withRPCReactor,
-} = require('..');
+import Plugin, {createRPCReducer, mock, withRPCRedux, withRPCReactor} from '..';
 
 test('interface', () => {
   expect(typeof Plugin.provides).toBe('function');
