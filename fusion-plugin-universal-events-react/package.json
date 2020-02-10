@@ -24,22 +24,22 @@
     "fusion-test-utils": "0.0.0-monorepo"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
-    "eslint": "^6.0.1",
+    "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^23.0.4",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-cup": "^2.0.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
     "flow-bin": "^0.109.0",
     "fusion-react": "0.0.0-monorepo",
-    "prettier": "^1.18.2",
+    "prettier": "^1.19.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "eslint-plugin-react-hooks": "^1.6.1"
+    "eslint-plugin-react-hooks": "^2.3.0"
   },
   "peerDependencies": {
     "fusion-react": "0.0.0-monorepo"

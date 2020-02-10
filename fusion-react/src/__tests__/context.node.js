@@ -51,11 +51,7 @@ test('context#useService - unregistered token', async () => {
   const element = React.createElement(TestComponent);
   const app = new App(element);
   const sim = getSimulator(app);
-  try {
-    await sim.render('/');
-  } catch (e) {
-    expect(/Token .* not registered/.test(e.message)).toBeTruthy();
-  }
+  await expect(sim.render('/')).rejects.toThrow(/Token .* not registered/);
   expect(didRender).toBeFalsy();
 });
 

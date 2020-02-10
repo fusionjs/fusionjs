@@ -62,11 +62,7 @@ test('mockRpcHandlers', async () => {
     uuid: 123,
   });
 
-  try {
-    await mockRpcHandlers.updateUser({firstName: ''});
-  } catch (e) {
-    expect(
-      e instanceof Error && e.message === 'Username cant be empty'
-    ).toBeTruthy();
-  }
+  await expect(mockRpcHandlers.updateUser({firstName: ''})).rejects.toThrow(
+    new Error('Username cant be empty')
+  );
 });

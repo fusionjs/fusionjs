@@ -12,7 +12,7 @@ fi
 
 # Get the change set
 git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 | grep -v "\.md$" > changes.txt
-CHANGES=$(jazelle changes ./changes.txt)
+CHANGES=$(jazelle changes --format dirs ./changes.txt)
 
 for DIR in $CHANGES ; do (
   PROJECT=$(basename "$DIR");

@@ -4,7 +4,8 @@ const {execSync: exec} = require('child_process');
 const {dirname, basename} = require('path');
 
 const root = process.cwd();
-const [node, , main, bin, command, dist, out, ...args] = process.argv;
+const [node, , main, bin, command, distPaths, out, ...args] = process.argv;
+const dists = distPaths.split('|');
 
 const files = exec(`find . -name output.tgz`, {cwd: bin, encoding: 'utf8'})
   .split('\n')
@@ -22,9 +23,12 @@ files.map(f => {
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 
 if (out) {
-  exec(`mkdir -p "${dist}"`, {cwd: main});
+  for (const dist of dists) {
+    exec(`mkdir -p "${dist}"`, {cwd: main});
+  }
   runCommands();
-  exec(`tar czf "${out}" "${dist}"`, {cwd: main});
+  const dirs = dists.map(dist => `"${dist}"`).join(' ');
+  exec(`tar czf "${out}" ${dirs}`, {cwd: main});
 } else {
   try {
     runCommands();

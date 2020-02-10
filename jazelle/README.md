@@ -335,6 +335,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle dedupe`](#jazelle-dedupe)
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
+- [`jazelle align`](#jazelle-align)
 - [`jazelle chunk`](#jazelle-chunk)
 - [`jazelle changes`](#jazelle-changes)
 - [`jazelle plan`](#jazelle-plan)
@@ -460,6 +461,14 @@ Shows a report of out-of-sync top level dependencies across projects
   }
 }
 ```
+
+### `jazelle align`
+
+Align a project's dependency versions to respect the version policy, if there is one
+
+`jazelle align --cwd [cwd]`
+
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
 ### `jazelle chunk`
 
@@ -673,6 +682,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [dedupe](#dedupe)
 - [purge](#purge)
 - [check](#check)
+- [align](#align)
 - [chunk](#chunk)
 - [changes](#changes)
 - [plan](#plan)
@@ -819,6 +829,15 @@ let check: ({root: string, projects: Array<string>, versionPolicy: VersionPolicy
 ```
 
 - `root` - Monorepo root folder (absolute path)
+
+### `align`
+
+Align a project's dependency versions to respect the version policy, if there is one
+
+`let align: ({root: string, cwd: string}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
 
 ### `chunk`
 

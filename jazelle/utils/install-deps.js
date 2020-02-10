@@ -119,7 +119,7 @@ const generateNodeModules = async bin => {
   const args = [
     yarn,
     'install',
-    '--frozen-lockfile',
+    '--pure-lockfile',
     '--non-interactive',
     '--ignore-optional',
   ];

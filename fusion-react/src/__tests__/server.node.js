@@ -19,19 +19,14 @@ test('renders', () => {
 
 test('app api', async done => {
   expect(typeof App).toBe('function');
-  try {
-    const app = new App(React.createElement('div', null, 'Hello World'));
-    const simulator = getSimulator(app);
-    const ctx = await simulator.render('/');
-    expect(ctx.rendered.includes('Hello World')).toBeTruthy();
-    expect(
-      typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered)
-    ).toBeTruthy();
-  } catch (e) {
-    expect(e).toBeFalsy();
-  } finally {
-    done();
-  }
+  const app = new App(React.createElement('div', null, 'Hello World'));
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
+  expect(ctx.rendered.includes('Hello World')).toBeTruthy();
+  expect(
+    typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered)
+  ).toBeTruthy();
+  done();
 });
 
 test('throw on non-element root', async () => {

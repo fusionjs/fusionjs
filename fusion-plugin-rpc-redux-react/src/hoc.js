@@ -8,6 +8,7 @@
 
 import * as React from 'react';
 import type {Reducer} from 'redux';
+// $FlowFixMe
 import {ReactReduxContext} from 'react-redux';
 import {RPCToken} from 'fusion-plugin-rpc';
 import {ReduxToken} from 'fusion-plugin-react-redux';

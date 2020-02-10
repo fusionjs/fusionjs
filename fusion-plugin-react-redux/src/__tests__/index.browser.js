@@ -218,13 +218,11 @@ test('browser middleware', async () => {
   const element = React.createElement(Connected);
   const ctx = {element};
   const Plugin = getService(appCreator(reducer), Redux);
-  try {
-    await (Redux.middleware &&
-      // $FlowFixMe
-      Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve()));
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+  expect(Redux.middleware).toBeTruthy();
+  await expect(
+    // $FlowFixMe
+    Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve())
+  ).resolves.not.toThrow();
   expect(ctx.element).not.toBe(element);
   const rendered = mount(ctx.element);
   expect(rendered.find(Connected).length).toBe(1);

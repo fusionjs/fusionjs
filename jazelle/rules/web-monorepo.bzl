@@ -75,7 +75,7 @@ def _web_binary_impl(ctx):
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
       command = ctx.attr.build,
-      dist = ctx.attr.dist[0],
+      dist = "|".join(ctx.attr.dist),
       output = build_ouput.path,
       bindir = ctx.bin_dir.path,
       build = ctx.files._script[0].path,

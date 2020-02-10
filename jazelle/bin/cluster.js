@@ -48,7 +48,7 @@ async function runMaster() {
   for (const data of payload) {
     if (data.length > 0) {
       const requiredCores = Math.min(availableCores, data.length);
-      const workers = [...Array(requiredCores)].map(() => fork());
+      const workers = [...Array(requiredCores)].map(() => fork(process.env));
 
       await install({
         root,
@@ -79,7 +79,7 @@ async function runMaster() {
                 const command = data.shift();
                 const log = `${tmpdir()}/${Math.random() * 1e17}`;
 
-                if (worker.state === 'dead') worker = fork();
+                if (worker.state === 'dead') worker = fork(process.env);
 
                 worker.send({command, log});
                 worker.once('exit', async () => {
