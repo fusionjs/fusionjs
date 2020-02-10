@@ -15,6 +15,7 @@ import {
 import {createRPCReducer} from 'fusion-rpc-redux';
 import type {ActionType} from 'fusion-rpc-redux';
 import {withRPCRedux, withRPCReactor} from './hoc';
+import {useRPCRedux} from './hook';
 import plugin, {mock} from './plugin';
 
 export default plugin;
@@ -27,5 +28,6 @@ export {
   RPCHandlersToken,
   withRPCRedux,
   withRPCReactor,
+  useRPCRedux,
 };
 export type {ActionType};
