@@ -2,6 +2,8 @@
 const {resolve} = require('path');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {getManifest} = require('../utils/get-manifest.js');
+const {getAllDependencies} = require('../utils/get-all-dependencies.js');
+const {shouldSync, getVersion} = require('../utils/version-onboarding.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {read, write} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
@@ -70,7 +72,18 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
 
   // add external deps
   if (externals.length > 0) {
-    const {projects} = await getManifest({root});
+    const {projects, versionPolicy} = await getManifest({root});
+    const unversioned = externals.filter(({range}) => !range);
+    if (unversioned.length > 0 && versionPolicy) {
+      const deps = await getAllDependencies({root, projects});
+      for (const external of unversioned) {
+        const {name} = external;
+        if (shouldSync({versionPolicy, name})) {
+          const version = getVersion({name, deps});
+          if (version !== '') external.range = version;
+        }
+      }
+    }
     const deps = await getLocalDependencies({
       dirs: projects.map(dir => `${root}/${dir}`),
       target: resolve(root, cwd),

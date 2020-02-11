@@ -264,6 +264,8 @@ async function rootOf(args) {
   return getRootDir({dir: args.cwd});
 }
 
+// FIXME eslint is being dumb in CI
+// eslint-disable-next-line jest/no-export
 module.exports = {
   runCLI,
   version: require('./package.json').version,

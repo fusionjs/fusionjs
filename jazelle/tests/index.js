@@ -55,6 +55,7 @@ const {
   addCallArgItem,
   removeCallArgItem,
 } = require('../utils/starlark.js');
+const {shouldSync, getVersion} = require('../utils/version-onboarding.js');
 const yarnCmds = require('../utils/yarn-commands.js');
 
 process.on('unhandledRejection', e => {
@@ -90,7 +91,6 @@ async function runTests() {
     t(testBazelDummy),
     t(testBazelBuild),
     t(testAssertProjectDir),
-    t(testBatchTestGroup),
     t(testBinaryPaths),
     t(testCLI),
     t(testDetectCyclicDeps),
@@ -116,6 +116,7 @@ async function runTests() {
     t(testReportMismatchedTopLevelDeps),
     t(testScaffold),
     t(testStarlark),
+    t(testVersionOnboarding),
     t(testYarnCommands),
     t(testLockfileRegistryResolution),
     t(testLockfileRegistryResolutionMultirepo),
@@ -123,6 +124,7 @@ async function runTests() {
   ]);
   // run separately to avoid CI error
   await t(testInstallAddUpgradeRemove);
+  await t(testBatchTestGroup);
   await t(testCommand);
   await t(testYarnCommand);
   await t(testBazelCommand);
@@ -1440,6 +1442,58 @@ web_library(    # comment
   ]             # comment
 )               # comment`;
     assert.equal(clean.trim(), reset.trim());
+  }
+}
+
+async function testVersionOnboarding() {
+  {
+    const versionPolicy = {
+      lockstep: true,
+      exceptions: ['foo'],
+    };
+    const name = 'foo';
+    assert(!shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: false,
+      exceptions: ['foo'],
+    };
+    const name = 'foo';
+    assert(shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: true,
+      exceptions: ['foo'],
+    };
+    const name = 'bar';
+    assert(shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: false,
+      exceptions: ['foo'],
+    };
+    const name = 'bar';
+    assert(!shouldSync({versionPolicy, name}));
+  }
+  {
+    const name = 'foo';
+    const deps = [
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '^1.0.0',
+          },
+        },
+        depth: 0,
+      },
+    ];
+    assert.equal(getVersion({name, deps}), '^1.0.0');
   }
 }
 
