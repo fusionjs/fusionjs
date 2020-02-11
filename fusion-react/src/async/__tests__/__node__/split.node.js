@@ -41,11 +41,7 @@ test('Preparing an app with an async component', async () => {
   await prepare(app);
 
   expect(/Loaded/.test(renderToString(app))).toBeTruthy();
-  try {
-    await prepare(app);
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+  await expect(prepare(app)).resolves.toBeUndefined();
 });
 
 test('Preparing an app with an errored async component', async () => {

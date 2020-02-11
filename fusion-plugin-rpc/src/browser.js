@@ -8,7 +8,7 @@
 
 /* eslint-env browser */
 
-import {createPlugin, type Context} from 'fusion-core';
+import {createPlugin, memoize, type Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {I18nToken} from 'fusion-plugin-i18n';
 import {FetchToken} from 'fusion-tokens';
@@ -119,7 +119,7 @@ const pluginFactory: () => RPCPluginType = () =>
       const {fetch = window.fetch, emitter, rpcConfig, i18n} = deps;
 
       return {
-        from: ctx => {
+        from: memoize(ctx => {
           const locale = (i18n && i18n.from(ctx).locale) || '';
           const localeCode = typeof locale === 'string' ? locale : locale.code;
           return new RPC({
@@ -128,7 +128,7 @@ const pluginFactory: () => RPCPluginType = () =>
             rpcConfig,
             localeCode,
           });
-        },
+        }),
       };
     },
   });

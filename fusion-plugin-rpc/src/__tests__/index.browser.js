@@ -57,7 +57,6 @@ test('success status request', done => {
     },
   });
   const app = createTestFixture();
-  // $FlowFixMe
   app.register(UniversalEventsToken, mockEmitter);
 
   let wasResolved = false;
@@ -66,7 +65,9 @@ test('success status request', done => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
@@ -102,7 +103,9 @@ test('success status request (with custom api path)', done => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
@@ -138,7 +141,9 @@ test('success status request (with custom api path containing slashes)', done =>
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
@@ -182,7 +187,9 @@ test('success status request w/args and header', done => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
@@ -227,7 +234,9 @@ test('success status request w/form data', done => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
         // eslint-disable-next-line cup/no-undef
@@ -265,7 +274,9 @@ test('success status request w/form data', done => {
 
 test('failure status request', done => {
   const mockFetchAsFailure = () =>
-    Promise.resolve({json: () => ({status: 'failure', data: 'failure data'})});
+    Promise.resolve({
+      json: () => ({status: 'failure', data: 'failure data'}),
+    });
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -288,7 +299,9 @@ test('failure status request', done => {
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
       provides: deps => {
-        const rpc = deps.rpcFactory.from();
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
         expect(typeof rpc.request).toBe('function');
         const testRequest = rpc.request('test');
         expect(testRequest instanceof Promise).toBeTruthy();

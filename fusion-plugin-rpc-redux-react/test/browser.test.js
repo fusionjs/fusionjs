@@ -6,25 +6,25 @@
  * @noflow
  */
 
-/* eslint-env node, browser */
-const React = require('react');
-const {default: App, prepared} = require('fusion-react');
-const {createPlugin} = require('fusion-core');
-const {compose, createStore} = require('redux');
-const {Provider, connect} = require('react-redux');
-const {getSimulator} = require('fusion-test-utils');
-const {reactorEnhancer} = require('redux-reactors');
-const {ReduxToken} = require('fusion-plugin-react-redux');
-const {createMockEmitter} = require('./utils.js');
-const {UniversalEventsToken} = require('fusion-plugin-universal-events');
-const {
-  default: Plugin,
+/* eslint-env browser */
+import React from 'react';
+import App, {prepared} from 'fusion-react';
+import {createPlugin} from 'fusion-core';
+import {compose, createStore} from 'redux';
+import {Provider, connect} from 'react-redux';
+import {getSimulator} from 'fusion-test-utils';
+import {reactorEnhancer} from 'redux-reactors';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {createMockEmitter} from './utils.js';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import Plugin, {
   withRPCRedux,
   withRPCReactor,
-  mock: RPCPluginMock,
+  mock as RPCPluginMock,
   RPCToken,
   RPCHandlersToken,
-} = require('..');
+} from '..';
 
 const initActionPattern = /^@@redux\/INIT.*/;
 

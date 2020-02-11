@@ -38,10 +38,6 @@ test('throws rendering errors', async done => {
   const app = new App(element, render);
   const callback = app.callback();
 
-  try {
-    await callback();
-  } catch (e) {
-    expect(e.message).toBe('Test error');
-    done();
-  }
+  await expect(callback()).rejects.toThrow('Test error');
+  done();
 });

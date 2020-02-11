@@ -62,14 +62,12 @@ test('Server EventEmitter - events from browser', async () => {
     };
   });
   app.resolve();
-  try {
+  await expect(
     // $FlowFixMe
-    await compose(app.plugins)(mockCtx, () => Promise.resolve());
-    expect(called).toBeTruthy();
-    expect(globalCalled).toBeTruthy();
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+    compose(app.plugins)(mockCtx, () => Promise.resolve())
+  ).resolves.not.toThrow();
+  expect(called).toBeTruthy();
+  expect(globalCalled).toBeTruthy();
 });
 
 test('Server EventEmitter - events with ctx', async done => {
@@ -135,14 +133,12 @@ test('Server EventEmitter - mapping', async () => {
     };
   });
   app.resolve();
-  try {
+  await expect(
     // $FlowFixMe
-    await compose(app.plugins)(mockCtx, () => Promise.resolve());
-    expect(called).toBeTruthy();
-    expect(globalCalled).toBeTruthy();
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+    compose(app.plugins)(mockCtx, () => Promise.resolve())
+  ).resolves.not.toThrow();
+  expect(called).toBeTruthy();
+  expect(globalCalled).toBeTruthy();
 });
 
 test('Server EventEmitter error handling', async done => {

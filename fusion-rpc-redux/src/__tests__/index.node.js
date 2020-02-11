@@ -17,14 +17,9 @@ import {
 test('Flow tests', async done => {
   const failurePath = 'src/fixtures/failure';
   const successPath = 'src/fixtures/success';
-  try {
-    await execa.shell(`flow check ${failurePath}`);
-    // $FlowFixMe
-    done.fail('Should fail flow check');
-  } catch (e) {
-    const {stdout} = e;
-    expect(stdout.includes('Found 5 errors')).toBeTruthy();
-  }
+  await expect(execa.shell(`flow check ${failurePath}`)).rejects.toThrow(
+    'Found 5 errors'
+  );
   await execa.shell(`flow check ${successPath}`);
   done();
 });
@@ -171,13 +166,9 @@ test('createRPCHandler error in start reducer', async done => {
     },
     rpcId: 'test',
   });
-  try {
-    await handler('args');
-  } catch (e) {
-    expect(e.message).toBe('Fail');
-    expect(e.stack).toBeTruthy();
-    done();
-  }
+  // Will throw before promise is returned
+  expect(() => handler('args')).toThrowError('Fail');
+  done();
 });
 
 test('createRPCHandler error in failure reducer', async done => {
@@ -213,13 +204,8 @@ test('createRPCHandler error in failure reducer', async done => {
     },
     rpcId: 'test',
   });
-  try {
-    await handler('args');
-  } catch (e) {
-    expect(e.message).toBe('Fail');
-    expect(e.stack).toBeTruthy();
-    done();
-  }
+  await expect(handler('args')).rejects.toThrow('Fail');
+  done();
 });
 
 test('createRPCHandler failure', done => {

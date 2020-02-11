@@ -6,22 +6,22 @@
  * @noflow
  */
 
-const React = require('react');
-const {default: App, createPlugin} = require('fusion-core');
-const {default: ReactApp} = require('fusion-react');
-const {getService, getSimulator} = require('fusion-test-utils');
-const {UniversalEventsToken} = require('fusion-plugin-universal-events');
-const {ReduxToken} = require('fusion-plugin-react-redux');
-const {createMockEmitter} = require('./utils.js');
-const {
-  default: Plugin,
+import React from 'react';
+import App, {createPlugin} from 'fusion-core';
+import ReactApp from 'fusion-react';
+import {getService, getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {createMockEmitter} from './utils.js';
+
+import Plugin, {
   mock,
   ResponseError,
   RPCToken,
   RPCHandlersToken,
   withRPCRedux,
   withRPCReactor,
-} = require('..');
+} from '..';
 
 test('plugin', () => {
   expect(typeof Plugin.provides).toBe('function');

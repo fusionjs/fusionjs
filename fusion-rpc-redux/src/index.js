@@ -135,8 +135,8 @@ export function createRPCHandler({
   store: Store<*, *, *>,
   rpc: any,
   rpcId: string,
-  mapStateToParams?: any,
-  transformParams?: any,
+  mapStateToParams?: (state: any, args?: any) => any,
+  transformParams?: (params: any) => any,
 }): RPCHandlerType {
   if (!actions) {
     actions = createRPCActions(rpcId);

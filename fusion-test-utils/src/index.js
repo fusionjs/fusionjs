@@ -19,16 +19,19 @@ import type {FusionPlugin, Token} from 'fusion-core';
 import type {JestTestName, JestObjectType} from './flow/jest_v22.x.x.js';
 import {render, request} from './simulate';
 
+// eslint-disable-next-line jest/no-export
 export {createRequestContext, createRenderContext} from './mock-context';
 
 declare var __BROWSER__: boolean;
 
 type ExtractFusionAppReturnType = <R>((FusionApp) => R) => R;
+// eslint-disable-next-line jest/no-export
 export type Simulator = {
   request: $Call<ExtractFusionAppReturnType, typeof request>,
   render: $Call<ExtractFusionAppReturnType, typeof render>,
   getService<T>(token: Token<T>): T,
 };
+// eslint-disable-next-line jest/no-export
 export function getSimulator(
   app: FusionApp,
   testPlugin?: FusionPlugin<*, *>
@@ -46,6 +49,7 @@ export function getSimulator(
   };
 }
 
+// eslint-disable-next-line jest/no-export
 export function getService<TDeps, TService>(
   appCreator: () => FusionApp,
   plugin: FusionPlugin<TDeps, TService>
@@ -93,18 +97,18 @@ type TestType = (
 
 // eslint-disable-next-line import/no-mutable-exports
 let mockFunction: MockFunctionType<*, *>, test: any;
-// $FlowFixMe
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
   // $FlowFixMe
   assert.matchSnapshot = (tree, snapshotName) =>
-    // $FlowFixMe
-    expect(tree).toMatchSnapshot(snapshotName);
+    // For some reason jest@25 fails when snapshotName=undefined is passed
+    snapshotName
+      ? expect(tree).toMatchSnapshot(snapshotName)
+      : expect(tree).toMatchSnapshot();
 
   /* eslint-env node, jest */
   test = (description, callback, ...rest) =>
     it(description, () => callback(assert), ...rest);
-  // $FlowFixMe
   mockFunction = (...args) => jest.fn(...args);
 } else {
   const notSupported = () => {
@@ -117,4 +121,5 @@ if (typeof it !== 'undefined') {
 const mockFunctionExport = ((mockFunction: any): MockFunctionType<*, *>);
 const testExport = ((test: any): TestType);
 
+// eslint-disable-next-line jest/no-export
 export {mockFunctionExport as mockFunction, testExport as test};

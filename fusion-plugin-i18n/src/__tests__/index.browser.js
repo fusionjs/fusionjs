@@ -89,18 +89,16 @@ test('hydration parse error', done => {
     return;
   }
 
-  try {
-    const mockContext: Context = ({}: any);
+  const mockContext: Context = ({}: any);
+  expect(() => {
+    // $FlowFixMe
     const plugin = I18n.provides({});
     plugin.from(mockContext);
-  } catch (e) {
-    expect(e.message).toBe(
-      '[fusion-plugin-i18n] - Error parsing __TRANSLATIONS__ element content'
-    );
-  } finally {
-    document.body && document.body.removeChild(translations);
-    done();
-  }
+  }).toThrowError(
+    '[fusion-plugin-i18n] - Error parsing __TRANSLATIONS__ element content'
+  );
+  document.body && document.body.removeChild(translations);
+  done();
 });
 
 test('hydration missing element error', done => {
@@ -110,17 +108,15 @@ test('hydration missing element error', done => {
     return;
   }
 
-  try {
-    const mockContext: Context = ({}: any);
+  const mockContext: Context = ({}: any);
+  expect(() => {
+    // $FlowFixMe
     const plugin = I18n.provides({});
     plugin.from(mockContext);
-  } catch (e) {
-    expect(e.message).toBe(
-      '[fusion-plugin-i18n] - Could not find a __TRANSLATIONS__ element'
-    );
-  } finally {
-    done();
-  }
+  }).toThrowError(
+    '[fusion-plugin-i18n] - Could not find a __TRANSLATIONS__ element'
+  );
+  done();
 });
 
 test('load', done => {

@@ -26,6 +26,7 @@ test('renders', () => {
 });
 
 test('client side app', async done => {
+  expect.assertions(5);
   const root = setup();
 
   const app = new App(React.createElement('span', null, 'hello'));
@@ -38,12 +39,10 @@ test('client side app', async done => {
     const firstChild = ((root.firstChild: any): Node);
     expect(firstChild.nodeName).toBe('SPAN');
     expect(firstChild.textContent).toBe('hello');
-  } catch (e) {
-    expect(e).toBeFalsy();
   } finally {
     cleanup(root);
-    done();
   }
+  done();
 });
 
 function setup() {

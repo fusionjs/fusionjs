@@ -39,18 +39,15 @@ test('context composition', async () => {
 
   const app = new App(element, render);
   app.middleware(wrap);
-  try {
-    app.resolve();
-    const middleware = compose(app.plugins);
+  app.resolve();
+  const middleware = compose(app.plugins);
+  await expect(
     // $FlowFixMe
-    await middleware(context, () => Promise.resolve());
-    // $FlowFixMe
-    expect(typeof context.rendered).toBe('string');
-    // $FlowFixMe
-    expect(context.rendered.includes('<h1>HELLO</h1>')).toBeTruthy();
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+    middleware(context, () => Promise.resolve())
+  ).resolves.not.toThrow();
+  expect(typeof context.rendered).toBe('string');
+  // $FlowFixMe
+  expect(context.rendered.includes('<h1>HELLO</h1>')).toBeTruthy();
 });
 
 test('context composition with a cdn', async () => {
@@ -83,13 +80,11 @@ test('context composition with a cdn', async () => {
   app.middleware(wrap());
   app.resolve();
   const middleware = compose(app.plugins);
-  try {
-    await middleware(((context: any): Context), () => Promise.resolve());
-    expect(
-      // $FlowFixMe
-      context.body.includes('https://something.com/lol/es5-file.js')
-    ).toBeTruthy();
-  } catch (e) {
-    expect(e).toBeFalsy();
-  }
+  await expect(
+    middleware(((context: any): Context), () => Promise.resolve())
+  ).resolves.not.toThrow();
+  expect(
+    // $FlowFixMe
+    context.body.includes('https://something.com/lol/es5-file.js')
+  ).toBeTruthy();
 });
