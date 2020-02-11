@@ -43,7 +43,11 @@ const findChangedBazelTargets = async ({root, files}) => {
     if (lines.includes('WORKSPACE')) {
       const cmd = `${bazel} query 'kind(".*_test rule", "...")'`;
       const result = await exec(cmd, opts);
-      const targets = result.split('\n').filter(Boolean);
+      const unfiltered = result.split('\n').filter(Boolean);
+      const targets = unfiltered.filter(target => {
+        const path = target.replace(/\/\/(.+?):.+/, '$1');
+        return projects.includes(path);
+      });
       return {workspace, targets};
     } else {
       const queried = await batch(root, lines, async file => {
