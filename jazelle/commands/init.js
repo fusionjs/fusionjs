@@ -1,14 +1,14 @@
 // @flow
-const {spawn, read, write} = require('./node-helpers.js');
+const {spawn, read, write} = require('../utils/node-helpers.js');
 const {version} = require('../package.json');
 
 /*::
-export type ScaffoldArgs = {
+export type InitArgs = {
   cwd: string,
 };
-export type Scaffold = (ScaffoldArgs) => Promise<void>;
+export type Init = (InitArgs) => Promise<void>;
 */
-const scaffold /*: Scaffold */ = async ({cwd}) => {
+const init /*: Init */ = async ({cwd}) => {
   try {
     await spawn('cp', ['-rn', `${__dirname}/../templates/scaffold/.`, cwd]);
   } catch (e) {
@@ -19,4 +19,4 @@ const scaffold /*: Scaffold */ = async ({cwd}) => {
   await write(`${cwd}/WORKSPACE`, versioned, 'utf8');
 };
 
-module.exports = {scaffold};
+module.exports = {init};

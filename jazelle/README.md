@@ -327,6 +327,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle --help`](#jazelle---help)
 - [`jazelle version`](#jazelle-version)
 - [`jazelle init`](#jazelle-init)
+- [`jazelle scaffold`](#jazelle-scaffold)
 - [`jazelle install`](#jazelle-install)
 - [`jazelle ci`](#jazelle-ci)
 - [`jazelle add`](#jazelle-add)
@@ -373,6 +374,19 @@ Displays installed version. You may see two values: `actual` is the version of J
 ### `jazelle init`
 
 Scaffolds required workspace files
+
+### `jazelle scaffold`
+
+- Copies a template into another folder
+- Generates [Bazel](https://bazel.build/) BUILD files if they don't already exist for the relevant projects.
+- Aligns dependency versions and regenerates lockfiles if needed
+- Runs `prescaffold` and `postscaffold` hooks
+
+`jazelle scaffold --from from --to to --name name`
+
+- `--from` - Folder to copy from. Can be an absolute path or relative to `process.cwd()`
+- `--to` - Folder to copy to. Can be an absolute path or relative to `process.cwd()`
+- `--name` - The name field in package.json
 
 ### `jazelle install`
 
@@ -674,6 +688,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 
 - [runCLI](#runcli)
 - [version](#version)
+- [init](#init)
 - [scaffold](#scaffold)
 - [install](#install)
 - [add](#add)
@@ -715,13 +730,29 @@ The currently installed version. Note: this is a property, not a function.
 
 `let version: string`
 
-### `scaffold`
+### `init`
 
 Generates Bazel files required to make Jazelle run in a workspace
 
 `let version: ({cwd: string}) => Promise<void>`
 
 - `cwd` - Project folder (absolute path)
+
+
+### `scaffold`
+
+- Copies a template into another folder
+- Generates [Bazel](https://bazel.build/) BUILD files if they don't already exist for the relevant projects.
+- Aligns dependency versions and regenerates lockfiles if needed
+- Runs `prescaffold` and `postscaffold` hooks
+
+`let scaffold: ({root: string, cwd: string, from: string, to: string, name?: string})`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
+- `from` - Folder to copy from. Can be an absolute path or relative to `process.cwd()`
+- `to` - Folder to copy to. Can be an absolute path or relative to `process.cwd()`
+- `name` - The name field in package.json
 
 ### `install`
 
@@ -1061,6 +1092,7 @@ Finds the absolute path of the monorepo root folder
 
 - [Projects](#projects)
 - [Workspace](#workspace)
+- [Scaffold hooks](#scaffold-hooks)
 - [Installation hooks](#installation-hooks)
 - [Version policy](#version-policy)
 - [Build file template](#build-file-template)
@@ -1080,6 +1112,8 @@ Note: The `manifest.json` file does **not** allow comments; they are present her
   "workspace": "sandbox",
   // Optional installation hooks
   "hooks": {
+    "prescaffold": "echo before",
+    "postscaffold": "echo after",
     "preinstall": "echo before",
     "postinstall": "echo after",
   },
@@ -1120,6 +1154,18 @@ Also note that currently, `jazelle changes` will only report changes that Bazel 
 
 It's strongly recommended that you use `sandbox` mode.
 
+### Scaffold hooks
+
+Scaffold hooks run shell scripts before/after a project is scaffolded.
+
+```json
+{
+  "hooks": {
+    "prescaffold": "echo before",
+    "postscaffold": "echo after"
+  }
+}
+```
 ### Installation hooks
 
 Installation hooks run shell scripts before/after dependency installation.
@@ -1128,7 +1174,7 @@ Installation hooks run shell scripts before/after dependency installation.
 {
   "hooks": {
     "preinstall": "echo before",
-    "postinstall": "echo after",
+    "postinstall": "echo after"
   }
 }
 ```

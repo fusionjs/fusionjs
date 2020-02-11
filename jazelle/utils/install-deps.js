@@ -6,6 +6,7 @@ const {merge} = require('./lockfile.js');
 const {read, exec, spawn, write, exists, remove} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {setupSymlinks} = require('./setup-symlinks.js');
+const {executeHook} = require('./execute-hook.js');
 
 /*::
 import type {Metadata} from './get-local-dependencies.js';
@@ -51,7 +52,7 @@ const installDeps /*: InstallDeps */ = async ({
   await generateLockfile({root, bin, deps, ignore});
 
   // jazelle hook
-  await executeJazelleHook(preinstall, root);
+  await executeHook(preinstall, root);
   await executeNpmHooks(deps, 'preinstall');
 
   // install external deps
@@ -64,7 +65,7 @@ const installDeps /*: InstallDeps */ = async ({
   await setupSymlinks({root, deps});
 
   await executeNpmHooks(deps, 'postinstall');
-  await executeJazelleHook(postinstall, root);
+  await executeHook(postinstall, root);
 
   // record the source of this node_modules so we are able to recycle on future installs if needed
   const sourceFile = `${modulesDir}/.jazelle-source`;
@@ -86,19 +87,6 @@ const executeNpmHooks = async (deps, type) => {
     if (dep.meta.scripts && dep.meta.scripts[type]) {
       await exec(dep.meta.scripts[type], options, stdio);
     }
-  }
-};
-
-const executeJazelleHook = async (hook, root) => {
-  const nodePath = dirname(node);
-  if (typeof hook === 'string') {
-    // prioritize hermetic Node version over system version
-    const options = {
-      env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
-      cwd: root,
-    };
-    const stdio = [process.stdout, process.stderr];
-    await exec(hook, options, stdio);
   }
 };
 
