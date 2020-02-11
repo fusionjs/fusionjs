@@ -144,7 +144,6 @@ const ApolloClientPlugin: FusionPlugin<
         ? getApolloLinks([...(customLinks || []), connectionLink], ctx)
         : [...(customLinks || []), connectionLink];
 
-
       const client = new ApolloClient({
         ssrMode: __NODE__,
         connectToDevTools: __BROWSER__ && __DEV__,
