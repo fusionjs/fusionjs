@@ -39,7 +39,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     target: resolve(root, cwd),
   });
 
-  if (!projects.find(dir => `${root}/${dir}` === cwd)) {
+  if (!projects.find(dir => resolve(`${root}/${dir}`) === cwd)) {
     const registrationError = `The package at ${cwd} should be registered in the projects field in manifest.json.`;
     throw new Error(registrationError);
   }
