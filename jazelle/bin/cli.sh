@@ -30,9 +30,9 @@ then
 fi
 
 # setup other binaries
-if [ ! -f $ROOT/.bazelversion ]
+if [ ! -f "$ROOT/.bazelversion" ]
 then
-  USE_BAZEL_VERSION=$(cat $BIN/../templates/scaffold/.bazelversion)
+  USE_BAZEL_VERSION=$(cat "$BIN/../templates/scaffold/.bazelversion")
 fi
 "$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
 
@@ -47,11 +47,15 @@ then
   if [ -f "$ROOT/WORKSPACE" ]
   then
     echo "Error: Invalid \`jazelle\` configuration in WORKSPACE file. Check the Jazelle download URL and the checksums for Node and Yarn"
-    echo "Node" $(node --version) "size:" $(cat $NODE | wc -c)
-    echo "Yarn" $(yarn --version) "size:" $(cat $YARN | wc -c)
-    echo "Jazelle" "size:" $(cat $JAZELLE | wc -c)
+    echo "Monorepo root: $ROOT"
+    echo "Jazelle bin path root: $BIN"
+    cat "$ROOT/WORKSPACE"
+    echo "Node" $("$NODE" --version) "size:" $(wc -c "$NODE")
+    echo "Yarn" $("$YARN" --version) "size:" $(wc -c "$YARN")
+    echo "Jazelle" "size:" $(wc -c "$JAZELLE")
+    echo "Bazel" "$BIN/bazelisk" version
     "$BIN/bazelisk" run //:jazelle -- setup
-    exit 1
+    echo "Attempting to use system Node/Yarn/Jazelle versions..."
   fi
   if [ ! -f "$BIN/yarn.js" ]
   then
