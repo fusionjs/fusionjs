@@ -503,7 +503,8 @@ async function testBazelBuild() {
     name: 'test',
     stdio: ['ignore', runStream, 'ignore'],
   });
-  assert((await read(runStreamFile, 'utf8')).includes('\nb\nv8.15.1'));
+  const runData = await read(runStreamFile, 'utf8');
+  assert(runData.includes('\nb\nv8.15.1'));
 
   // lint
   const lintStreamFile = `${__dirname}/tmp/bazel-rules/lint-stream.txt`;
@@ -515,7 +516,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
-  assert((await read(lintStreamFile, 'utf8')).includes('\n111\n'));
+  const lintData = await read(lintStreamFile, 'utf8');
+  assert(lintData.includes('\n111\n'));
 
   // flow
   const flowStreamFile = `${__dirname}/tmp/bazel-rules/flow-stream.txt`;
@@ -527,7 +529,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', flowStream, flowStream],
   });
-  assert((await read(flowStreamFile, 'utf8')).includes('a:flow'));
+  const flowData = await read(flowStreamFile, 'utf8');
+  assert(flowData.includes('a:flow'));
 
   // start
   const startStreamFile = `${__dirname}/tmp/bazel-rules/start-stream.txt`;
@@ -539,7 +542,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', startStream, startStream],
   });
-  assert((await read(startStreamFile, 'utf8')).includes('\n333\n'));
+  const startData = await read(startStreamFile, 'utf8');
+  assert(startData.includes('\n333\n'));
 }
 
 async function testBinaryPaths() {
@@ -831,6 +835,8 @@ async function testGenerateDepLockfiles() {
         depth: 1,
       },
     ],
+    frozenLockfile: false,
+    conservative: true,
   });
   const lockfile = `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`;
   assert((await read(lockfile, 'utf8')).includes('has@'));

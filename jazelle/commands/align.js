@@ -38,7 +38,7 @@ const align /*: Align */ = async ({root, cwd}) => {
       await write(`${cwd}/package.json`, modified, 'utf8');
     }
   }
-  await install({root, cwd});
+  await install({root, cwd, conservative: true});
 };
 
 module.exports = {align};

@@ -8,7 +8,8 @@ export type GenerateDepLockfilesArgs = {
   root: string,
   deps: Array<Metadata>,
   ignore: Array<Metadata>,
-  frozenLockfile?: boolean,
+  frozenLockfile: boolean,
+  conservative: boolean,
 };
 export type GenerateDepLockfiles = (GenerateDepLockfilesArgs) => Promise<void>
 */
@@ -17,6 +18,7 @@ const generateDepLockfiles /*: GenerateDepLockfiles */ = async ({
   deps,
   ignore,
   frozenLockfile = false,
+  conservative = false,
 }) => {
   const roots = deps.map(dep => dep.dir);
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
@@ -25,6 +27,7 @@ const generateDepLockfiles /*: GenerateDepLockfiles */ = async ({
     ignore: ignore.map(dep => dep.meta.name),
     tmp,
     frozenLockfile,
+    conservative,
   });
 };
 

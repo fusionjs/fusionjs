@@ -9,7 +9,7 @@ export type CiArgs = {
 export type Ci = (CiArgs) => Promise<void>
 */
 const ci /*: Ci */ = async ({root, cwd}) => {
-  await install({root, cwd, frozenLockfile: true});
+  await install({root, cwd, frozenLockfile: true, conservative: true});
 };
 
 module.exports = {ci};

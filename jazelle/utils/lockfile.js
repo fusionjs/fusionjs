@@ -102,7 +102,9 @@ export type Sync = (SyncArgs) => Promise<void>;
 */
 const sync /*: Sync */ = async ({roots, ignore}) => {
   const sets = await readVersionSets({roots});
-  await syncLockfiles({sets, ignore, frozenLockfile: false});
+  const changed = new Map();
+  for (const {dir} of sets) changed.set(dir, true);
+  await syncLockfiles({sets, changed, ignore, frozenLockfile: false});
   await writeVersionSets({sets});
 };
 
@@ -111,7 +113,8 @@ export type RegenerateArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  frozenLockfile?: boolean,
+  frozenLockfile: boolean,
+  conservative: boolean,
 };
 export type Regenerate = (RegenerateArgs) => Promise<void>;
 */
@@ -119,7 +122,8 @@ const regenerate /*: Regenerate */ = async ({
   roots,
   ignore,
   tmp,
-  frozenLockfile = false,
+  frozenLockfile,
+  conservative,
 }) => {
   await diff({roots, ignore, tmp, frozenLockfile});
 };
@@ -157,6 +161,7 @@ type DiffArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   frozenLockfile?: boolean,
+  conservative?: boolean,
   tmp?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
@@ -168,6 +173,7 @@ const diff /*: Diff */ = async ({
   upgrades = [],
   ignore = [],
   frozenLockfile = false,
+  conservative = false,
   tmp = '/tmp',
 }) => {
   const sets = await readVersionSets({roots});
@@ -178,6 +184,7 @@ const diff /*: Diff */ = async ({
     upgrades,
     ignore,
     frozenLockfile,
+    conservative,
     tmp,
   });
   if (!frozenLockfile) await writeVersionSets({sets: updated});
@@ -256,7 +263,8 @@ export type UpdateArgs = {
   removals?: Array<string>,
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
-  frozenLockfile?: boolean,
+  frozenLockfile: boolean,
+  conservative: boolean,
   tmp?: string,
 };
 export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
@@ -267,7 +275,8 @@ const update /*: Update */ = async ({
   removals = [],
   upgrades = [],
   ignore = [],
-  frozenLockfile = false,
+  frozenLockfile,
+  conservative,
   tmp = '/tmp',
 }) => {
   // note: this function mutates metadata and lockfile structures in `sets` if:
@@ -284,25 +293,30 @@ const update /*: Update */ = async ({
 
   let shouldSyncLockfiles = false;
   const cache = {};
+  const changed = new Map();
   for (const {dir, meta, lockfile} of sets) {
     applyMetadataChanges({meta, removals, additions, upgrades});
     const hasLockfileChanges = await installMissingDeps({
       dir,
       meta,
       lockfile,
+      sets,
       ignore,
       tmp,
       cache,
+      conservative,
     });
+    changed.set(dir, hasLockfileChanges); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
+
     const hasRemovals = removals.length > 0;
     const hasAdditions = additions.length > 0;
     const hasUpgrades = upgrades.length > 0;
     const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
-    if (hasMetadataChanges || hasLockfileChanges) shouldSyncLockfiles = true;
+    if (hasMetadataChanges || hasLockfileChanges) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
   }
 
   if (shouldSyncLockfiles) {
-    await syncLockfiles({sets, ignore, frozenLockfile});
+    await syncLockfiles({sets, changed, ignore, frozenLockfile});
   }
 
   return sets;
@@ -385,9 +399,11 @@ const installMissingDeps = async ({
   dir,
   meta,
   lockfile,
+  sets,
   ignore,
   tmp,
   cache,
+  conservative,
 }) => {
   let edited = false;
 
@@ -415,9 +431,13 @@ const installMissingDeps = async ({
           `${JSON.stringify(missing, null, 2)}\n`,
           'utf8'
         );
+        if (conservative) {
+          const merged = Object.assign({}, ...sets.map(set => set.lockfile));
+          await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
+        }
         await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
-        const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
+        const install = `${node} ${yarn} install --no-bin-links --non-interactive --ignore-scripts --ignore-engines --silent --link-duplicates`;
         await exec(install, {cwd}, [process.stdout, process.stderr]);
         return cwd;
       };
@@ -460,11 +480,15 @@ const installMissingDeps = async ({
     if (!cache[cacheKey]) {
       const add = async () => {
         await exec(`mkdir -p ${cwd}`);
+        if (conservative) {
+          const merged = Object.assign({}, ...sets.map(set => set.lockfile));
+          await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
+        }
         await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
         await write(`${cwd}/package.json`, '{}\n', 'utf8');
         const deps = missingTransitives.join(' ');
-        const add = `yarn add ${deps} --ignore-engines`;
+        const add = `yarn add ${deps} --ignore-engines`; // use add instead of install because we may need to add more than one version of one dep
         await exec(add, {cwd}, [process.stdout, process.stderr]);
         return cwd;
       };
@@ -512,7 +536,7 @@ const indexLockfiles = ({sets}) => {
   return index;
 };
 
-const syncLockfiles = async ({sets, ignore, frozenLockfile}) => {
+const syncLockfiles = async ({sets, changed, ignore, frozenLockfile}) => {
   const log = s => process.stdout.write(s);
   log('Checking lockfiles');
 
@@ -520,6 +544,8 @@ const syncLockfiles = async ({sets, ignore, frozenLockfile}) => {
 
   for (const item of sets) {
     const {dir, meta} = item;
+    if (!changed.get(dir)) continue; // bail out if the lockfile doesn't need to be checked
+
     const registry = await getRegistry(dir);
     const graph = {};
     log('.');
