@@ -1,6 +1,8 @@
 // @flow
 const assert = require('assert');
 const {readFileSync, createWriteStream} = require('fs');
+const {init} = require('../commands/init.js');
+const {scaffold} = require('../commands/scaffold.js');
 const {install} = require('../commands/install.js');
 const {add} = require('../commands/add.js');
 const {upgrade} = require('../commands/upgrade.js');
@@ -49,7 +51,6 @@ const {populateGraph} = require('../utils/lockfile.js');
 const {
   reportMismatchedTopLevelDeps,
 } = require('../utils/report-mismatched-top-level-deps.js');
-const {scaffold} = require('../utils/scaffold.js');
 const {
   getCallArgItems,
   addCallArgItem,
@@ -81,6 +82,8 @@ async function runTests() {
   await exec(`mkdir -p ${__dirname}/tmp`);
 
   await Promise.all([
+    t(testInit),
+    t(testScaffold),
     t(testCi),
     t(testDedupe),
     t(testUpgrade),
@@ -114,7 +117,6 @@ async function runTests() {
     t(testParse),
     t(testGetPassThroughArgs),
     t(testReportMismatchedTopLevelDeps),
-    t(testScaffold),
     t(testStarlark),
     t(testVersionOnboarding),
     t(testYarnCommands),
@@ -136,6 +138,42 @@ async function runTests() {
 }
 
 // commands
+async function testInit() {
+  await exec(`mkdir ${__dirname}/tmp/init`);
+  await init({cwd: `${__dirname}/tmp/init`});
+  assert(await exists(`${__dirname}/tmp/init/WORKSPACE`));
+  assert(await exists(`${__dirname}/tmp/init/BUILD.bazel`));
+  assert(await exists(`${__dirname}/tmp/init/.bazelversion`));
+  assert(await exists(`${__dirname}/tmp/init/manifest.json`));
+  assert(await exists(`${__dirname}/tmp/init/.gitignore`));
+}
+
+async function testScaffold() {
+  await exec(`cp -r ${__dirname}/fixtures/scaffold/ ${__dirname}/tmp/scaffold`);
+  const root = `${__dirname}/tmp/scaffold`;
+  const cwd = `${__dirname}/tmp/scaffold`;
+  const from = 'template';
+  const to = 'foo';
+  const name = '@foo/foo';
+  await scaffold({root, cwd, from, to, name});
+
+  assert(await exists(`${__dirname}/tmp/scaffold/foo/BUILD.bazel`));
+  assert(await exists(`${__dirname}/tmp/scaffold/foo/package.json`));
+  assert(await exists(`${__dirname}/tmp/scaffold/foo/test.txt`));
+
+  const buildFile = `${__dirname}/tmp/scaffold/foo/BUILD.bazel`;
+  const build = await read(buildFile, 'utf8');
+  assert(build.includes('name = "foo"'));
+
+  const metaFile = `${__dirname}/tmp/scaffold/foo/package.json`;
+  const meta = JSON.parse(await read(metaFile, 'utf8'));
+  assert.equal(meta.name, '@foo/foo');
+
+  const manifestFile = `${__dirname}/tmp/scaffold/manifest.json`;
+  const {projects} = JSON.parse(await read(manifestFile, 'utf8'));
+  assert(projects.includes('foo'));
+}
+
 async function testInstallAddUpgradeRemove() {
   const buildFile = `${__dirname}/tmp/commands/a/BUILD.bazel`;
   const meta = `${__dirname}/tmp/commands/a/package.json`;
@@ -465,7 +503,8 @@ async function testBazelBuild() {
     name: 'test',
     stdio: ['ignore', runStream, 'ignore'],
   });
-  assert((await read(runStreamFile, 'utf8')).includes('\nb\nv8.15.1'));
+  const runData = await read(runStreamFile, 'utf8');
+  assert(runData.includes('\nb\nv8.15.1'));
 
   // lint
   const lintStreamFile = `${__dirname}/tmp/bazel-rules/lint-stream.txt`;
@@ -477,7 +516,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', lintStream, 'ignore'],
   });
-  assert((await read(lintStreamFile, 'utf8')).includes('\n111\n'));
+  const lintData = await read(lintStreamFile, 'utf8');
+  assert(lintData.includes('\n111\n'));
 
   // flow
   const flowStreamFile = `${__dirname}/tmp/bazel-rules/flow-stream.txt`;
@@ -489,7 +529,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', flowStream, flowStream],
   });
-  assert((await read(flowStreamFile, 'utf8')).includes('a:flow'));
+  const flowData = await read(flowStreamFile, 'utf8');
+  assert(flowData.includes('a:flow'));
 
   // start
   const startStreamFile = `${__dirname}/tmp/bazel-rules/start-stream.txt`;
@@ -501,7 +542,8 @@ async function testBazelBuild() {
     args: [],
     stdio: ['ignore', startStream, startStream],
   });
-  assert((await read(startStreamFile, 'utf8')).includes('\n333\n'));
+  const startData = await read(startStreamFile, 'utf8');
+  assert(startData.includes('\n333\n'));
 }
 
 async function testBinaryPaths() {
@@ -793,6 +835,8 @@ async function testGenerateDepLockfiles() {
         depth: 1,
       },
     ],
+    frozenLockfile: false,
+    conservative: true,
   });
   const lockfile = `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`;
   assert((await read(lockfile, 'utf8')).includes('has@'));
@@ -1352,16 +1396,6 @@ async function testReportMismatchedTopLevelDeps() {
     policy: {lockstep: true, exceptions: ['no-bugs', '@uber/mismatched']},
     reported: {},
   });
-}
-
-async function testScaffold() {
-  await exec(`mkdir ${__dirname}/tmp/scaffold`);
-  await scaffold({cwd: `${__dirname}/tmp/scaffold`});
-  assert(await exists(`${__dirname}/tmp/scaffold/WORKSPACE`));
-  assert(await exists(`${__dirname}/tmp/scaffold/BUILD.bazel`));
-  assert(await exists(`${__dirname}/tmp/scaffold/.bazelversion`));
-  assert(await exists(`${__dirname}/tmp/scaffold/manifest.json`));
-  assert(await exists(`${__dirname}/tmp/scaffold/.gitignore`));
 }
 
 async function testStarlark() {

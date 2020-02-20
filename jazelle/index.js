@@ -4,6 +4,8 @@ const {getRootDir} = require('./utils/get-root-dir.js');
 const {parse} = require('./utils/parse-argv.js');
 const {cli} = require('./utils/cli.js');
 const {version} = require('./commands/version.js');
+const {init} = require('./commands/init.js');
+const {scaffold} = require('./commands/scaffold.js');
 const {install} = require('./commands/install.js');
 const {ci} = require('./commands/ci.js');
 const {add} = require('./commands/add.js');
@@ -39,7 +41,6 @@ const {getBinaryPath} = require('./utils/binary-paths.js');
 const {getChunkPattern} = require('./utils/get-chunk-pattern.js');
 const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {getTestGroups} = require('./utils/get-test-groups.js');
-const {scaffold} = require('./utils/scaffold.js');
 
 /*::
 export type RunCLI = (Array<string>) => Promise<void>;
@@ -54,12 +55,23 @@ const runCLI /*: RunCLI */ = async argv => {
     {
       version: [`Display the version number`, version],
       init: [
-        `Scaffolds a workspace`,
-        async () => scaffold({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
+        `Initializes a workspace`,
+        async () => init({cwd: process.cwd()}), // actually runs from bin/cli.sh because it needs to generate Bazel files
       ],
       setup: [
         `Installs Jazelle hermetically`, // installation happens in bin/cli.sh, nothing to do here
         async () => {},
+      ],
+      scaffold: [
+        `Scaffolds a project from a template`,
+        async ({from, to, name}) =>
+          scaffold({
+            root: await rootOf(args),
+            cwd: process.cwd(),
+            from,
+            to,
+            name,
+          }),
       ],
       install: [
         `Install all dependencies for a project, modifying lockfiles and Bazel BUILD files if necessary
@@ -269,6 +281,7 @@ async function rootOf(args) {
 module.exports = {
   runCLI,
   version: require('./package.json').version,
+  init,
   scaffold,
   install,
   ci,

@@ -2,7 +2,15 @@
 const proc = require('child_process');
 const {promisify} = require('util');
 const {tmpdir} = require('os');
-const {readFile, writeFile, access, readdir, lstat, realpath} = require('fs');
+const {
+  readFile,
+  writeFile,
+  access,
+  readdir,
+  mkdir: makeDir,
+  lstat,
+  realpath,
+} = require('fs');
 
 /*::
 import {Writable, Readable, Duplex} from 'stream';
@@ -92,6 +100,7 @@ const exists /*: Exists */ = filename =>
 const read = promisify(readFile);
 const write = promisify(writeFile);
 const ls = promisify(readdir);
+const mkdir = promisify(makeDir);
 const lstatP = promisify(lstat);
 const realpathP = promisify(realpath);
 
@@ -122,6 +131,7 @@ module.exports = {
   write,
   remove,
   ls,
+  mkdir,
   lstat: lstatP,
   realpath: realpathP,
 };

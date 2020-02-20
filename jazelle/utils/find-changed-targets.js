@@ -40,10 +40,14 @@ const findChangedBazelTargets = async ({root, files}) => {
   const {projects, workspace} = await getManifest({root});
   const opts = {cwd: root, maxBuffer: 1e8};
   if (workspace === 'sandbox') {
-    if (lines.includes('WORKSPACE')) {
+    if (lines.includes('WORKSPACE') || lines.includes('.bazelversion')) {
       const cmd = `${bazel} query 'kind(".*_test rule", "...")'`;
       const result = await exec(cmd, opts);
-      const targets = result.split('\n').filter(Boolean);
+      const unfiltered = result.split('\n').filter(Boolean);
+      const targets = unfiltered.filter(target => {
+        const path = target.replace(/\/\/(.+?):.+/, '$1');
+        return projects.includes(path);
+      });
       return {workspace, targets};
     } else {
       const queried = await batch(root, lines, async file => {

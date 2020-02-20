@@ -20,11 +20,17 @@ const {installDeps} = require('../utils/install-deps.js');
 export type InstallArgs = {
   root: string,
   cwd: string,
-  frozenLockfile?: boolean
+  frozenLockfile?: boolean,
+  conservative?: boolean,
 }
 export type Install = (InstallArgs) => Promise<void>
 */
-const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
+const install /*: Install */ = async ({
+  root,
+  cwd,
+  frozenLockfile = false,
+  conservative = false,
+}) => {
   await assertProjectDir({dir: cwd});
 
   const {
@@ -39,7 +45,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     target: resolve(root, cwd),
   });
 
-  if (!projects.find(dir => `${root}/${dir}` === cwd)) {
+  if (!projects.find(dir => resolve(`${root}/${dir}`) === cwd)) {
     const registrationError = `The package at ${cwd} should be registered in the projects field in manifest.json.`;
     throw new Error(registrationError);
   }
@@ -64,6 +70,7 @@ const install /*: Install */ = async ({root, cwd, frozenLockfile = false}) => {
     deps: all,
     ignore: all,
     frozenLockfile,
+    conservative,
   });
   if (workspace === 'sandbox' && frozenLockfile === false) {
     await generateBazelignore({root, projects: projects});

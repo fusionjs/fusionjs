@@ -70,6 +70,23 @@ export default () => {
 }
 ```
 
+### Usage with React
+
+Assuming this plugin has already been registered, `fetch` can be consumed from React via `useService` (React v16.8+ required):
+
+```js
+import {useService} from 'fusion-react';
+import {FetchToken} from 'fusion-tokens';
+
+function Component() {
+  const fetch = useService(FetchToken);
+
+  // ...
+}
+```
+
+See `useService` docs in `fusion-react` for more information.
+
 ### API
 
 #### Registration API
