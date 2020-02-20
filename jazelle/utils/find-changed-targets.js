@@ -40,7 +40,7 @@ const findChangedBazelTargets = async ({root, files}) => {
   const {projects, workspace} = await getManifest({root});
   const opts = {cwd: root, maxBuffer: 1e8};
   if (workspace === 'sandbox') {
-    if (lines.includes('WORKSPACE')) {
+    if (lines.includes('WORKSPACE') || lines.includes('.bazelversion')) {
       const cmd = `${bazel} query 'kind(".*_test rule", "...")'`;
       const result = await exec(cmd, opts);
       const unfiltered = result.split('\n').filter(Boolean);
