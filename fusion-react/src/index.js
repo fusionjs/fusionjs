@@ -17,6 +17,7 @@ import FusionApp, {
 } from 'fusion-core';
 import {prepare} from './async/index.js';
 import PrepareProvider from './async/prepare-provider';
+import {LoggerToken} from 'fusion-tokens';
 
 import serverRender from './server';
 import clientRender from './client';
@@ -61,19 +62,22 @@ export default class App extends FusionApp {
       deps: {
         criticalChunkIds: CriticalChunkIdsToken.optional,
         skipPrepare: SkipPrepareToken.optional,
+        logger: LoggerToken.optional,
       },
-      provides({skipPrepare}) {
+      provides({skipPrepare, logger}) {
         return (el: React.Element<*>, ctx) => {
-          return (skipPrepare ? Promise.resolve() : prepare(el)).then(() => {
-            if (render) {
-              return render(el, ctx);
-            }
-            if (__NODE__) {
-              return serverRender(el);
-            } else {
-              return clientRender(el);
-            }
-          });
+          return (skipPrepare ? Promise.resolve() : prepare(el))
+            .catch(() => {}) // recover from failed `prepare`
+            .then(() => {
+              if (render) {
+                return render(el, ctx);
+              }
+              if (__NODE__) {
+                return serverRender(el, logger);
+              } else {
+                return clientRender(el);
+              }
+            });
         };
       },
       middleware({criticalChunkIds}) {

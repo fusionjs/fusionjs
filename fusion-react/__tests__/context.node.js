@@ -46,13 +46,14 @@ test('context#useService - unregistered token', async () => {
     const TestToken = createToken('test');
     useService(TestToken);
     didRender = true;
-    return React.createElement('div', null, 'hello');
+    return React.createElement('div', null, 'successful render');
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
   const sim = getSimulator(app);
-  await expect(sim.render('/')).rejects.toThrow(/Token .* not registered/);
-  expect(didRender).toBeFalsy();
+  const ctx = await sim.render('/');
+  expect(ctx.rendered).not.toContain('successful render'); // falls back to client render
+  expect(didRender).toBeFalsy(); // error thrown within component is caught and logged
 });
 
 test('context#useService - optional token', async () => {
