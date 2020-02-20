@@ -1,7 +1,7 @@
 // @flow
 const {satisfies, minVersion, compare, gt} = require('semver');
 const {parse, stringify} = require('@yarnpkg/lockfile');
-const {read, exec, write} = require('./node-helpers.js');
+const {read, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
 
@@ -94,17 +94,36 @@ const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
 };
 
 /*::
-export type SyncArgs = {
+export type PruneArgs = {
   roots: Array<string>,
   ignore: Array<string>,
 };
-export type Sync = (SyncArgs) => Promise<void>;
+export type Prune = (PruneArgs) => Promise<void>;
 */
-const sync /*: Sync */ = async ({roots, ignore}) => {
+const prune /*: Prune */ = async ({roots, ignore}) => {
+  const log = s => process.stdout.write(s);
+  log('Pruning lockfiles');
+
   const sets = await readVersionSets({roots});
-  const changed = new Map();
-  for (const {dir} of sets) changed.set(dir, true);
-  await syncLockfiles({sets, changed, ignore, frozenLockfile: false});
+  const index = indexLockfiles({sets});
+
+  for (const item of sets) {
+    log('.');
+    const {dir, meta} = item;
+
+    const registry = await getRegistry(dir);
+    const graph = {};
+    for (const {name, range} of getDepEntries(meta)) {
+      const ignored = ignore.find(dep => dep === name);
+      if (!ignored) {
+        populateGraph({graph, name, range, index, registry});
+      }
+    }
+
+    item.lockfile = graphToLockfile({graph});
+  }
+  log('\n');
+
   await writeVersionSets({sets});
 };
 
@@ -139,14 +158,15 @@ export type Merge = (MergeArgs) => Promise<void>;
 */
 const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
   const sets = await readVersionSets({roots});
+  // $FlowFixMe incorrect type backpropagation from writeVersionSets for `meta`
   const merged = {dir: out, meta: {}, lockfile: {}};
   for (const {meta, lockfile} of sets) {
     for (const {name, range, type} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (ignored) continue;
 
-      if (!merged.meta[type]) merged.meta[type] = {};
-      merged.meta[type][name] = range;
+      if (!merged.meta[type]) merged.meta[type] = {[name]: range};
+      else merged.meta[type][name] = range;
     }
     Object.assign(merged.lockfile, lockfile);
   }
@@ -176,18 +196,88 @@ const diff /*: Diff */ = async ({
   conservative = false,
   tmp = '/tmp',
 }) => {
+  // populate missing ranges w/ latest
+  await ensureInsertionRanges([...additions, ...upgrades]);
+
   const sets = await readVersionSets({roots});
-  const updated = /*:: await */ await update({
-    sets,
-    additions,
-    removals,
-    upgrades,
-    ignore,
-    frozenLockfile,
-    conservative,
-    tmp,
-  });
-  if (!frozenLockfile) await writeVersionSets({sets: updated});
+
+  // note: this function mutates metadata and lockfile structures in `sets` if:
+  // - the originating command was either `add`, `remove` or `upgrade`
+  // - a dep was added to or upgraded in a package.json manually
+  // - a resolution was manually added or modified
+  //
+  // it does not sync lockfiles if:
+  // - a dep was removed from package.json manually (use the dedupe command to clean up in that case)
+  // - a dep (top-level or transitive) has a new compatible version in the registry but there are no changes locally
+
+  let shouldSyncLockfiles = false;
+  const cache = {};
+  const changed = new Map();
+  await Promise.all(
+    sets.map(async ({dir, meta, lockfile}) => {
+      applyMetadataChanges({meta, removals, additions, upgrades});
+      const changes = await installMissingDeps({
+        dir,
+        meta,
+        lockfile,
+        sets,
+        ignore,
+        tmp,
+        cache,
+        conservative,
+      });
+      changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
+
+      const hasRemovals = removals.length > 0;
+      const hasAdditions = additions.length > 0;
+      const hasUpgrades = upgrades.length > 0;
+      const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
+      if (hasMetadataChanges || changes.length > 0) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
+    })
+  );
+
+  if (shouldSyncLockfiles) {
+    const index = indexLockfiles({sets});
+
+    const filtered = sets.filter(item => changed.get(item.dir));
+    const registries = await Promise.all(
+      filtered.map(({dir}) => getRegistry(dir))
+    );
+    for (let i = 0; i < filtered.length; i++) {
+      const item = filtered[i];
+      const registry = registries[i];
+      const {dir} = item;
+
+      const graph = {};
+      const deps = changed.get(dir);
+      if (deps) {
+        for (const {name, range} of deps) {
+          const ignored = ignore.find(dep => dep === name);
+          if (!ignored) {
+            populateGraph({graph, name, range, index, registry});
+          }
+        }
+      }
+
+      const lockfile = {...item.lockfile, ...graphToLockfile({graph})};
+      if (frozenLockfile) {
+        const oldKeys = Object.keys(item.lockfile);
+        const newKeys = Object.keys(lockfile);
+        if (oldKeys.sort().join() !== newKeys.sort().join()) {
+          throw new Error(
+            `Updating lockfile is not allowed with frozenLockfile. ` +
+              `This error is most likely happening if you have committed ` +
+              `out-of-date lockfiles and tried to install deps in CI. ` +
+              `Install your deps again locally.`
+          );
+        }
+      } else {
+        item.lockfile = lockfile;
+      }
+    }
+  }
+
+  if (!frozenLockfile) await writeVersionSets({sets});
 };
 
 const readVersionSets = async ({roots}) => {
@@ -207,7 +297,7 @@ const readVersionSets = async ({roots}) => {
 const writeVersionSets = async ({sets}) => {
   await Promise.all(
     sets.map(async ({dir, meta, lockfile}) => {
-      await exec(`mkdir -p ${dir}`);
+      await mkdir(dir, {recursive: true});
       await write(
         `${dir}/package.json`,
         `${JSON.stringify(meta, null, 2)}\n`,
@@ -237,89 +327,6 @@ const getDepEntries = meta => {
     }
   }
   return entries;
-};
-
-/*::
-import type {PackageJson} from './get-local-dependencies.js';
-
-export type LockfileEntry = {
-  version: string,
-  resolved: string,
-  dependencies?: {
-    [string]: string,
-  }
-};
-export type Lockfile = {
-  [string]: LockfileEntry,
-};
-export type VersionSet = {
-  dir: string,
-  meta: PackageJson,
-  lockfile: Lockfile,
-};
-export type UpdateArgs = {
-  sets: Array<VersionSet>,
-  additions?: Array<Addition>,
-  removals?: Array<string>,
-  upgrades?: Array<Upgrading>,
-  ignore?: Array<string>,
-  frozenLockfile: boolean,
-  conservative: boolean,
-  tmp?: string,
-};
-export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
-*/
-const update /*: Update */ = async ({
-  sets,
-  additions = [],
-  removals = [],
-  upgrades = [],
-  ignore = [],
-  frozenLockfile,
-  conservative,
-  tmp = '/tmp',
-}) => {
-  // note: this function mutates metadata and lockfile structures in `sets` if:
-  // - the originating command was either `add`, `remove` or `upgrade`
-  // - a dep was added to or upgraded in a package.json manually
-  // - a resolution was manually added or modified
-  //
-  // it does not sync lockfiles if:
-  // - a dep was removed from package.json manually (use the dedupe command to clean up in that case)
-  // - a dep (top-level or transitive) has a new compatible version in the registry but there are no changes locally
-
-  // populate missing ranges w/ latest
-  await ensureInsertionRanges([...additions, ...upgrades]);
-
-  let shouldSyncLockfiles = false;
-  const cache = {};
-  const changed = new Map();
-  for (const {dir, meta, lockfile} of sets) {
-    applyMetadataChanges({meta, removals, additions, upgrades});
-    const hasLockfileChanges = await installMissingDeps({
-      dir,
-      meta,
-      lockfile,
-      sets,
-      ignore,
-      tmp,
-      cache,
-      conservative,
-    });
-    changed.set(dir, hasLockfileChanges); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
-
-    const hasRemovals = removals.length > 0;
-    const hasAdditions = additions.length > 0;
-    const hasUpgrades = upgrades.length > 0;
-    const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
-    if (hasMetadataChanges || hasLockfileChanges) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
-  }
-
-  if (shouldSyncLockfiles) {
-    await syncLockfiles({sets, changed, ignore, frozenLockfile});
-  }
-
-  return sets;
 };
 
 const ensureInsertionRanges = async insertions => {
@@ -405,7 +412,7 @@ const installMissingDeps = async ({
   cache,
   conservative,
 }) => {
-  let edited = false;
+  let changes = new Map();
 
   // generate lockfile entries for missing top level deps
   const missing = {};
@@ -425,7 +432,7 @@ const installMissingDeps = async ({
     const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
     if (!cache[cacheKey]) {
       const install = async () => {
-        await exec(`mkdir -p ${cwd}`);
+        await mkdir(cwd, {recursive: true});
         await write(
           `${cwd}/package.json`,
           `${JSON.stringify(missing, null, 2)}\n`,
@@ -447,14 +454,16 @@ const installMissingDeps = async ({
 
     // copy newly installed deps back to original package.json/yarn.lock
     const [added] = await readVersionSets({roots: [cachedCwd]});
-    for (const {name, range, type} of getDepEntries(added.meta)) {
-      if (!meta[type]) meta[type] = {};
-      if (meta[type]) meta[type][name] = range;
+    for (const {name, range, type} of getDepEntries(missing)) {
+      if (!meta[type]) meta[type] = {[name]: range};
+      else meta[type][name] = range;
     }
     for (const key in added.lockfile) {
       if (!lockfile[key]) {
         lockfile[key] = added.lockfile[key];
-        edited = true;
+
+        const [, name, range] = key.match(/(.+?)@(.+)/) || [];
+        changes.set(key, {name, range});
       }
     }
   }
@@ -479,7 +488,7 @@ const installMissingDeps = async ({
     const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
     if (!cache[cacheKey]) {
       const add = async () => {
-        await exec(`mkdir -p ${cwd}`);
+        await mkdir(cwd, {recursive: true});
         if (conservative) {
           const merged = Object.assign({}, ...sets.map(set => set.lockfile));
           await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
@@ -501,11 +510,13 @@ const installMissingDeps = async ({
     for (const key in added.lockfile) {
       if (!lockfile[key]) {
         lockfile[key] = added.lockfile[key];
-        edited = true;
+
+        const [, name, range] = key.match(/(.+?)@(.+)/) || [];
+        changes.set(key, {name, range});
       }
     }
   }
-  return edited;
+  return [...changes.values()];
 };
 
 const indexLockfiles = ({sets}) => {
@@ -536,76 +547,29 @@ const indexLockfiles = ({sets}) => {
   return index;
 };
 
-const syncLockfiles = async ({sets, changed, ignore, frozenLockfile}) => {
-  const log = s => process.stdout.write(s);
-  log('Checking lockfiles');
-
-  const index = indexLockfiles({sets});
-
-  for (const item of sets) {
-    const {dir, meta} = item;
-    if (!changed.get(dir)) continue; // bail out if the lockfile doesn't need to be checked
-
-    const registry = await getRegistry(dir);
-    const graph = {};
-    log('.');
-    for (const {name, range} of getDepEntries(meta)) {
-      const ignored = ignore.find(dep => dep === name);
-      if (!ignored) {
-        populateGraph({
-          graph,
-          name,
-          range,
-          index,
-          registry,
-        });
-      }
-    }
-
-    // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
-    // so we need to ensure that they are
-    const map = {};
-    const lockfile = {};
-    for (const key in graph) {
-      const [, name] = key.match(/(.+?)@(.+)/) || [];
-      map[`${name}@${graph[key].resolved}`] = graph[key];
-    }
-    for (const key in graph) {
-      const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = map[`${name}@${graph[key].resolved}`];
-    }
-
-    if (frozenLockfile) {
-      const oldKeys = Object.keys(item.lockfile);
-      const newKeys = Object.keys(lockfile);
-      if (oldKeys.sort().join() !== newKeys.sort().join()) {
-        throw new Error(
-          `Updating lockfile is not allowed with frozenLockfile. ` +
-            `This error is most likely happening if you have committed ` +
-            `out-of-date lockfiles and tried to install deps in CI. ` +
-            `Install your deps again locally.`
-        );
-      }
-    } else {
-      item.lockfile = lockfile;
-    }
-  }
-  log('\n');
-};
-
 /*::
+export type LockfileEntry = {
+  version: string,
+  resolved: string,
+  dependencies?: {
+    [string]: string,
+  }
+};
+export type Lockfile = {
+  [string]: LockfileEntry,
+};
 type IndexEntry = {
   key: string,
   lockfile: Lockfile,
   isExact: boolean,
-}
+};
 type PopulateGraphArgs = {
   graph: Lockfile,
   name: string,
   range: string,
   index: {[string]: Array<IndexEntry>},
   registry: string,
-}
+};
 type PopulateGraph = (PopulateGraphArgs) => void;
 */
 const populateGraph /*: PopulateGraph */ = ({
@@ -649,6 +613,22 @@ const populateDeps = ({graph, deps, index, registry}) => {
   }
 };
 
+const graphToLockfile = ({graph}) => {
+  // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
+  // so we need to ensure that they are
+  const map = {};
+  const lockfile = {};
+  for (const key in graph) {
+    const [, name] = key.match(/(.+?)@(.+)/) || [];
+    map[`${name}@${graph[key].resolved}`] = graph[key];
+  }
+  for (const key in graph) {
+    const [, name] = key.match(/(.+?)@(.+)/) || [];
+    lockfile[key] = map[`${name}@${graph[key].resolved}`];
+  }
+  return lockfile;
+};
+
 const isBetterVersion = (version, range, graph, key) => {
   return (
     satisfies(version, range) &&
@@ -676,7 +656,7 @@ module.exports = {
   add,
   remove,
   upgrade,
-  sync,
+  prune,
   regenerate,
   merge,
   populateGraph,
