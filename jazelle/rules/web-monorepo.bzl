@@ -3,7 +3,10 @@ load("//:rules/filter-files.bzl", _filter_files = "filter_files")
 def _web_library_impl(ctx):
   build_deps = depset(
     direct = _filter_files(ctx.files.srcs),
-    transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
+    transitive =
+      [dep[DefaultInfo].files for dep in ctx.attr.deps] +
+      [dep[DefaultInfo].default_runfiles.files for dep in ctx.attr.deps] +
+      [dep[DefaultInfo].data_runfiles.files for dep in ctx.attr.deps]
   )
 
   return [
