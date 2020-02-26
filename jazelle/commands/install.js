@@ -29,7 +29,7 @@ const install /*: Install */ = async ({
   root,
   cwd,
   frozenLockfile = false,
-  conservative = false,
+  conservative = true,
 }) => {
   await assertProjectDir({dir: cwd});
 

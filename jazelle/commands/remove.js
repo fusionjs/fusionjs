@@ -51,7 +51,7 @@ const remove /*: Remove */ = async ({root, cwd, name}) => {
   }
   await rm(`${cwd}/node_modules`);
   await rm(`${root}/node_modules`);
-  await install({root, cwd});
+  await install({root, cwd, conservative: false});
 };
 
 module.exports = {remove};

@@ -54,6 +54,7 @@ async function runMaster() {
         root,
         cwd: `${root}/${data[0].dir}`,
         frozenLockfile: true,
+        conservative: true,
       });
 
       // setup symlinks

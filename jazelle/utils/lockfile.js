@@ -59,7 +59,7 @@ export type AddArgs = {
 export type Add = (AddArgs) => Promise<void>;
 */
 const add /*: Add */ = async ({roots, additions, ignore, tmp}) => {
-  await diff({roots, additions, ignore, tmp});
+  await diff({roots, additions, ignore, tmp, conservative: false});
 };
 
 /*::
@@ -72,7 +72,7 @@ export type RemoveArgs = {
 export type Remove = (RemoveArgs) => Promise<void>;
 */
 const remove /*: Remove */ = async ({roots, removals, ignore, tmp}) => {
-  await diff({roots, removals, ignore, tmp});
+  await diff({roots, removals, ignore, tmp, conservative: false});
 };
 
 /*::
@@ -90,7 +90,7 @@ export type UpgradeArgs = {
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
 const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
-  await diff({roots, upgrades, ignore, tmp});
+  await diff({roots, upgrades, ignore, tmp, conservative: false});
 };
 
 /*::
@@ -144,7 +144,7 @@ const regenerate /*: Regenerate */ = async ({
   frozenLockfile,
   conservative,
 }) => {
-  await diff({roots, ignore, tmp, frozenLockfile});
+  await diff({roots, ignore, tmp, frozenLockfile, conservative});
 };
 
 /*::
@@ -181,7 +181,7 @@ type DiffArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   frozenLockfile?: boolean,
-  conservative?: boolean,
+  conservative: boolean,
   tmp?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
@@ -193,7 +193,7 @@ const diff /*: Diff */ = async ({
   upgrades = [],
   ignore = [],
   frozenLockfile = false,
-  conservative = false,
+  conservative,
   tmp = '/tmp',
 }) => {
   // populate missing ranges w/ latest

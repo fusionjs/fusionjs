@@ -97,7 +97,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
     });
   }
 
-  await install({root, cwd});
+  await install({root, cwd, conservative: false});
 };
 
 module.exports = {add};
