@@ -23,18 +23,35 @@ findroot() {
 }
 ROOT=$(findroot)
 
-# setup bazelisk
-if [ ! -f "$BIN/bazelisk" ]
-then
-  "$BIN/download-bazelisk.sh"
-fi
-
-# setup other binaries
+# determine required bazel version
 if [ ! -f "$ROOT/.bazelversion" ]
 then
   USE_BAZEL_VERSION=$(cat "$BIN/../templates/scaffold/.bazelversion")
 fi
-"$BIN/bazelisk" run //:jazelle -- setup 2>/dev/null
+
+# setup bazelisk
+BAZELISK_PATH="$BIN/bazelisk"
+if [ "$BAZEL_PATH" = "" ]
+then
+  BAZEL_PATH=$(which bazel)
+fi
+if [ "$BAZEL_PATH" != "" ]
+then
+  COMPATIBLE_SYSTEM_BAZEL_VERSION=$("$BAZEL_PATH" version 2>/dev/null | grep "Build label: $USE_BAZEL_VERSION")
+fi
+if [ "$COMPATIBLE_SYSTEM_BAZEL_VERSION" != "" ]
+then
+  # if system bazel exists and is the correct version, just use that
+  ln -sf "$BAZEL_PATH" "$BAZELISK_PATH"
+else
+  if [ ! -f "$BAZELISK_PATH" ]
+  then
+    "$BIN/download-bazelisk.sh"
+  fi
+fi
+
+# setup other binaries
+"$BAZELISK_PATH" run //:jazelle -- setup 2>/dev/null
 
 NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
 YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
@@ -53,8 +70,8 @@ then
     echo "Node" $("$NODE" --version) "size:" $(wc -c "$NODE")
     echo "Yarn" $("$YARN" --version) "size:" $(wc -c "$YARN")
     echo "Jazelle" "size:" $(wc -c "$JAZELLE")
-    echo "Bazel" "$BIN/bazelisk" version
-    "$BIN/bazelisk" run //:jazelle -- setup
+    echo "Bazel" "$BAZELISK_PATH" version
+    "$BAZELISK_PATH" run //:jazelle -- setup
     echo "Attempting to use system Node/Yarn/Jazelle versions..."
   fi
   if [ ! -f "$BIN/yarn.js" ]

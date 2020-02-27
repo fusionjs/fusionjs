@@ -217,7 +217,8 @@ const runCLI /*: RunCLI */ = async argv => {
         `Run a Bazel command
 
         [args...]                  A space separated list of arguments`,
-        async ({cwd}) => bazel({root: await rootOf(args), args: rest}),
+        async ({cwd}) =>
+          bazel({root: await rootOf(args).catch(() => cwd), args: rest}),
       ],
       node: [
         `Runs Node

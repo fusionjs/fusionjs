@@ -18,6 +18,7 @@ Incremental, cacheable builds for large Javascript monorepos. Uses [Bazel](https
 - Misc
   - [Yarn equivalents](#yarn-equivalents)
   - [Bazel equivalents](#bazel-equivalents)
+  - [Using a preinstalled version of Bazel](#using-a-preinstalled-version-of-bazel)
   - [Monorepo-wide static analysis](#monorepo-wide-static-analysis)
   - [Contributing](CONTRIBUTING.md)
 
@@ -1541,6 +1542,18 @@ Jazelle allows using Bazel directly for building targets. Here's a table showing
 You can use either Jazelle commands or Bazel commands interchangeably. This is helpful if your team is already invested into a Bazel-centric workflow.
 
 It's recommended that you use Jazelle commands instead of Bazel, because Jazelle uses [Bazelisk](https://github.com/bazelbuild/bazelisk/) to enforce a Bazel version. You could also use Bazelisk itself.
+
+## Using a preinstalled version of Bazel
+
+Jazelle supports using a preinstalled Bazel binary (for example, you may want to preinstall it in a docker layer for CI)
+
+If Jazelle detects that Bazel is installed via `which bazel` and the installed version matches the version specified in the `.bazelversion` file, Jazelle will use the installed version instead of attempting to download it.
+
+If you want to use a Bazel binary that is not in your `PATH`, you can also specify it via the `BAZEL_PATH` environment variable:
+
+```sh
+BAZEL_PATH=/path/to/my/bazel jazelle ...
+```
 
 ## Monorepo-wide static analysis
 
