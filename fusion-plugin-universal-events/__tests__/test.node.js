@@ -10,7 +10,7 @@ import App, {createPlugin, compose} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
 import UniversalEventsPlugin, {GlobalEmitter} from '../src/server.js';
-import {UniversalEventsToken} from '../src/index';
+import {UniversalEventsToken, UniversalEventsEndpointToken} from '../src/index';
 import type {IEmitter} from '../src/types.js';
 
 test('Instantiation', () => {
@@ -45,6 +45,51 @@ test('Server EventEmitter - events from browser', async () => {
   };
   const app = new App('el', el => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    events.on('a', ({x}, ctx) => {
+      expect(x).toBe(1);
+      expect(ctx).toBeTruthy();
+      globalCalled = true;
+    });
+    return (ctx, next) => {
+      const ctxEmitter = events.from(ctx);
+      ctxEmitter.on('a', ({x}, ctx) => {
+        expect(x).toBe(1);
+        expect(ctx).toBeTruthy();
+        called = true;
+      });
+      return next();
+    };
+  });
+  app.resolve();
+  await expect(
+    // $FlowFixMe
+    compose(app.plugins)(mockCtx, () => Promise.resolve())
+  ).resolves.not.toThrow();
+  expect(called).toBeTruthy();
+  expect(globalCalled).toBeTruthy();
+});
+
+test('Server EventEmitter - events with a custom endpoint', async () => {
+  const customEndpoint = '/_custom_events';
+  let called = false;
+  let globalCalled = false;
+  const mockCtx = {
+    headers: {},
+    method: 'POST',
+    path: customEndpoint,
+    request: {
+      body: {
+        items: [{type: 'a', payload: {x: 1}}],
+      },
+    },
+    timing: {
+      end: Promise.resolve(5),
+    },
+  };
+  const app = new App('el', el => el);
+  app.register(UniversalEventsToken, UniversalEventsPlugin);
+  app.register(UniversalEventsEndpointToken, customEndpoint);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     events.on('a', ({x}, ctx) => {
       expect(x).toBe(1);

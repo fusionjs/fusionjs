@@ -15,6 +15,7 @@ import type {
   IEmitter,
   UniversalEventsPluginDepsType as DepsType,
 } from './types.js';
+import {UniversalEventsEndpointToken} from './index';
 
 export class GlobalEmitter extends Emitter {
   from: any;
@@ -79,6 +80,7 @@ const plugin =
   createPlugin({
     deps: {
       RouteTags: RouteTagsToken,
+      endpoint: UniversalEventsEndpointToken.optional,
     },
     provides: () => new GlobalEmitter(),
     middleware: (deps, globalEmitter) => {
@@ -86,7 +88,10 @@ const plugin =
       const parseBody = bodyParser();
       return async function universalEventsMiddleware(ctx, next) {
         const emitter = globalEmitter.from(ctx);
-        if (ctx.method === 'POST' && ctx.path === '/_events') {
+        if (
+          ctx.method === 'POST' &&
+          ctx.path === (deps.endpoint || '/_events')
+        ) {
           deps.RouteTags.from(ctx).name = 'universal_events';
           await parseBody(ctx, async () => {});
           // $FlowFixMe

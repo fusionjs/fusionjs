@@ -21,6 +21,7 @@ import {
   UniversalEventsBatchStorageToken,
   localBatchStorage,
 } from './storage/index.js';
+import {UniversalEventsEndpointToken} from './index';
 
 export class UniversalEmitter extends Emitter {
   flush: any;
@@ -28,12 +29,14 @@ export class UniversalEmitter extends Emitter {
   interval: any;
   storage: BatchStorage;
   limit: number;
+  endpoint: string;
 
   constructor(
     fetch: Fetch,
     storage: BatchStorage,
     interval?: number = 5000,
-    limit?: number = 1000
+    limit?: number = 1000,
+    endpoint?: string = '/_events'
   ): void {
     super();
     //privates
@@ -42,6 +45,7 @@ export class UniversalEmitter extends Emitter {
     this.fetch = fetch;
     this.setFrequency(interval);
     this.limit = limit;
+    this.endpoint = endpoint;
     window.addEventListener('visibilitychange', this.flushBeforeTerminated);
   }
   setFrequency(frequency: number): void {
@@ -63,7 +67,7 @@ export class UniversalEmitter extends Emitter {
     const items = this.storage.getAndClear(this.limit);
     if (items.length === 0) return;
     try {
-      const res = await this.fetch('/_events', {
+      const res = await this.fetch(this.endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,9 +101,17 @@ const plugin =
     deps: {
       fetch: FetchToken,
       storage: UniversalEventsBatchStorageToken.optional,
+      endpoint: UniversalEventsEndpointToken.optional,
     },
-    provides: ({fetch, storage}) => {
-      return new UniversalEmitter(fetch, storage || localBatchStorage);
+    provides: ({fetch, storage, endpoint = '/_events'}) => {
+      return new UniversalEmitter(
+        fetch,
+        storage || localBatchStorage,
+        // have to pass undefined for defaults to behave as expected
+        undefined,
+        undefined,
+        endpoint
+      );
     },
     cleanup: async emitter => {
       return emitter.teardown();

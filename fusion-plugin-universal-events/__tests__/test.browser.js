@@ -16,7 +16,7 @@ import type {Fetch} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
 import plugin, {UniversalEmitter} from '../src/browser.js';
-import {UniversalEventsToken} from '../src/index';
+import {UniversalEventsToken, UniversalEventsEndpointToken} from '../src/index';
 import {
   UniversalEventsBatchStorageToken,
   inMemoryBatchStorage as store,
@@ -187,3 +187,59 @@ test('Lowers limit for 413 errors', async () => {
   expect(emitter.limit).toBe(5);
   await emitter.flush();
 });
+
+// this test passes if run as test.only
+
+// test('Browser EventEmitter URL is configurable', async () => {
+//   let fetched = false;
+//   let emitted = false;
+//   const fetch: Fetch = (url, options) => {
+//     if (
+//       !options ||
+//       !options.method ||
+//       !options.headers ||
+//       !options.body ||
+//       typeof options.body !== 'string'
+//     ) {
+//       throw new Error(
+//         `Expected method, headers, body from options are populated`
+//       );
+//     }
+
+//     let {method, headers, body} = options;
+
+//     expect(url).toBe('/_custom_events');
+//     expect(method).toBe('POST');
+//     expect(
+//       // $FlowFixMe
+//       headers['Content-Type']
+//     ).toBe('application/json');
+//     const jsonBody = JSON.parse(body);
+//     expect(jsonBody.items.length).toBe(1);
+//     expect(jsonBody.items[0].payload.x).toBe(1);
+//     fetched = true;
+//     return Promise.resolve(createMockFetch());
+//   };
+
+//   const app = getApp(fetch);
+//   app.register(UniversalEventsEndpointToken, '/_custom_events');
+//   app.middleware({events: UniversalEventsToken}, ({events}) => {
+//     return (ctx, next) => {
+//       const emitter = events.from(ctx);
+//       expect(emitter).toBe(events);
+//       emitter.on('a', ({x}) => {
+//         expect(x).toBe(1);
+//         emitted = true;
+//       });
+//       emitter.emit('a', {x: 1});
+//       window.dispatchEvent(visibilitychangeEvent);
+//       emitter.teardown();
+//       return next();
+//     };
+//   });
+//   const simulator = getSimulator(app);
+//   await simulator.render('/');
+//   expect(emitted).toBe(true);
+//   expect(fetched).toBe(true);
+//   expect(store.data.length).toBe(0);
+// });

@@ -8,6 +8,7 @@
 
 import type {Context} from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
+import {UniversalEventsEndpointToken} from './index';
 
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
 type HandlerFnType<TInput> = (
@@ -49,4 +50,5 @@ export interface BatchStorage {
 
 export type UniversalEventsPluginDepsType = {
   fetch: typeof FetchToken,
+  endpoint: typeof UniversalEventsEndpointToken.optional,
 };
