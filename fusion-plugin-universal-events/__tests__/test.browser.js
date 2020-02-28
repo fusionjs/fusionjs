@@ -16,7 +16,9 @@ import type {Fetch} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
 import plugin, {UniversalEmitter} from '../src/browser.js';
-import {UniversalEventsToken, UniversalEventsEndpointToken} from '../src/index';
+import {
+  UniversalEventsToken /* UniversalEventsEndpointToken */,
+} from '../src/index';
 import {
   UniversalEventsBatchStorageToken,
   inMemoryBatchStorage as store,
@@ -188,9 +190,9 @@ test('Lowers limit for 413 errors', async () => {
   await emitter.flush();
 });
 
-// this test passes if run as test.only
+// this test passes if run as test.only. need to uncomment the import statement
 
-// test('Browser EventEmitter URL is configurable', async () => {
+// test.only('Browser EventEmitter URL is configurable', async () => {
 //   let fetched = false;
 //   let emitted = false;
 //   const fetch: Fetch = (url, options) => {
