@@ -146,6 +146,9 @@ async function testInit() {
   assert(await exists(`${__dirname}/tmp/init/.bazelversion`));
   assert(await exists(`${__dirname}/tmp/init/manifest.json`));
   assert(await exists(`${__dirname}/tmp/init/.gitignore`));
+
+  const workspace = await read(`${__dirname}/tmp/init/WORKSPACE`, 'utf8');
+  assert(workspace.includes('0.0.0-monorepo'));
 }
 
 async function testScaffold() {
