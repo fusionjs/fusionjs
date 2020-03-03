@@ -38,6 +38,10 @@ const plugin =
           keys.forEach(key => {
             ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));
           });
+          Object.assign(
+            ctx.template.htmlAttrs,
+            helmet.htmlAttributes.toComponent()
+          );
         }
       };
     },
