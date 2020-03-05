@@ -40,29 +40,16 @@ const install /*: Install */ = async ({
     workspace,
     dependencySyncRule,
   } = /*:: await */ await getManifest({root});
+
+  validateRegistration({root, cwd, projects});
+
   const deps = /*:: await */ await getLocalDependencies({
     dirs: projects.map(dir => `${root}/${dir}`),
     target: resolve(root, cwd),
   });
 
-  if (!projects.find(dir => resolve(`${root}/${dir}`) === cwd)) {
-    const registrationError = `The package at ${cwd} should be registered in the projects field in manifest.json.`;
-    throw new Error(registrationError);
-  }
-
-  const result = await reportMismatchedTopLevelDeps({
-    root,
-    projects,
-    versionPolicy,
-  });
-  if (!result.valid) throw new Error(getErrorMessage(result, false));
-
-  const cycles = detectCyclicDeps({deps});
-  if (cycles.length > 0) {
-    const cycleError =
-      'Cyclic local dependencies detected. Run `jazelle doctor` for more info';
-    throw new Error(cycleError);
-  }
+  validateDeps({deps});
+  await validateVersionPolicy({root, projects, versionPolicy});
 
   const all = await getAllDependencies({root, projects});
   await generateDepLockfiles({
@@ -77,6 +64,49 @@ const install /*: Install */ = async ({
     await generateBazelBuildRules({root, deps, projects, dependencySyncRule});
   }
   await installDeps({root, cwd, deps, ignore: all, hooks});
+};
+
+const validateRegistration = ({root, cwd, projects}) => {
+  if (!projects.find(dir => resolve(`${root}/${dir}`) === cwd)) {
+    const registrationError = `The package at ${cwd} should be registered in the projects field in manifest.json.`;
+    throw new Error(registrationError);
+  }
+};
+
+const validateDeps = ({deps}) => {
+  // ensure packages have names
+  const nameless = deps.find(dep => !dep.meta.name);
+  if (nameless) {
+    throw new Error(`${nameless.dir}/package.json is missing a name field`);
+  }
+
+  // ensure package names are not duplicated
+  const names = {};
+  for (const dep of deps) {
+    if (names[dep.meta.name]) {
+      const dupeDir = names[dep.meta.name];
+      const error = `Duplicate project name in ${dep.dir} and ${dupeDir}`;
+      throw new Error(error);
+    }
+    names[dep.meta.name] = dep.dir;
+  }
+
+  // ensure there's no cyclical deps
+  const cycles = detectCyclicDeps({deps});
+  if (cycles.length > 0) {
+    const cycleError =
+      'Cyclic local dependencies detected. Run `jazelle doctor` for more info';
+    throw new Error(cycleError);
+  }
+};
+
+const validateVersionPolicy = async ({root, projects, versionPolicy}) => {
+  const result = await reportMismatchedTopLevelDeps({
+    root,
+    projects,
+    versionPolicy,
+  });
+  if (!result.valid) throw new Error(getErrorMessage(result, false));
 };
 
 module.exports = {install};

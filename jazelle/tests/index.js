@@ -1805,7 +1805,7 @@ async function testBazelCommand() {
   const bazelStream = createWriteStream(bazelStreamFile);
   await new Promise(resolve => bazelStream.on('open', resolve));
   await exec(`${jazelle} bazel version`, {cwd}, [bazelStream]);
-  assert((await read(bazelStreamFile, 'utf8')).includes('Bazelisk version:'));
+  assert((await read(bazelStreamFile, 'utf8')).includes('Build label:'));
 }
 
 async function testStartCommand() {
