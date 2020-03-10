@@ -7,7 +7,6 @@
     "fusion-react",
     "fusion-plugin-universal-logger",
     "fusion-plugin-universal-events",
-    "fusion-plugin-universal-events-react",
     "fusion-plugin-styletron-react",
     "fusion-plugin-service-worker",
     "fusion-plugin-service-worker-tests",
