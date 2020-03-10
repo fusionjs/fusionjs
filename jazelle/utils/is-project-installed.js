@@ -12,7 +12,9 @@ const isProjectInstalled /*: IsProjectInstalled */ = async ({root, cwd}) => {
   const sourceFile = `${root}/node_modules/.jazelle-source`;
   if (await exists(sourceFile)) {
     const source = JSON.parse(await read(sourceFile, 'utf8'));
-    const dir = source.dir.replace(/\/node_modules$/, '');
+    const dir = source.dir
+      .replace(/third_party\/jazelle\/temp\//, '')
+      .replace(/\/node_modules$/, '');
     return dir === cwd;
   }
   return false;
