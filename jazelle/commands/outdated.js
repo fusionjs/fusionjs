@@ -3,7 +3,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 const {exec} = require('../utils/node-helpers.js');
 const {node, yarn} = require('../utils/binary-paths.js');
-const {minVersion, gt} = require('semver');
+const {minVersion, gt} = require('../vendor/semver/index.js');
 
 /*::
 type OutdatedArgs = {

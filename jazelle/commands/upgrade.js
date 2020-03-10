@@ -1,5 +1,5 @@
 // @flow
-const {minVersion, satisfies} = require('semver');
+const {minVersion, satisfies} = require('../vendor/semver/index.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {upgrade: upgradeDep} = require('../utils/lockfile.js');

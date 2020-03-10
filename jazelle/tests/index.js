@@ -35,7 +35,6 @@ const {
 } = require('../utils/generate-bazel-build-rules.js');
 const {generateBazelignore} = require('../utils/generate-bazelignore.js');
 const {generateDepLockfiles} = require('../utils/generate-dep-lockfiles.js');
-const {getChunkPattern} = require('../utils/get-chunk-pattern.js');
 const {getDownstreams} = require('../utils/get-downstreams.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
@@ -103,7 +102,6 @@ async function runTests() {
     t(testGenerateBazelBuildRules),
     t(testGenerateBazelBuildRulesUpdate),
     t(testGenerateDepLockfiles),
-    t(testGetChunkPattern),
     t(testGetDownstreams),
     t(testGetManifest),
     t(testGetLocalDependencies),
@@ -843,40 +841,6 @@ async function testGenerateDepLockfiles() {
   });
   const lockfile = `${__dirname}/tmp/generate-dep-lockfiles/a/yarn.lock`;
   assert((await read(lockfile, 'utf8')).includes('has@'));
-}
-
-async function testGetChunkPattern() {
-  const cmd = `cp -r ${__dirname}/fixtures/get-chunk-pattern/ ${__dirname}/tmp/get-chunk-pattern`;
-  await exec(cmd);
-  assert.equal(
-    await getChunkPattern({
-      root: `${__dirname}/fixtures/get-chunk-pattern`,
-      patterns: ['tests/**/*', '!tests/fixtures/**/*'],
-      jobs: 2,
-      index: 0,
-    }),
-    '.*/tests/test-1.js|.*/tests/test-3.js'
-  );
-
-  assert.equal(
-    await getChunkPattern({
-      root: `${__dirname}/fixtures/get-chunk-pattern`,
-      patterns: ['tests/**/*', '!tests/fixtures/**/*'],
-      jobs: 2,
-      index: 1,
-    }),
-    '.*/tests/test-2.js'
-  );
-
-  assert.equal(
-    await getChunkPattern({
-      root: `${__dirname}/fixtures/get-chunk-pattern`,
-      patterns: ['tests/**/*', '!tests/fixtures/**/*'],
-      jobs: 4,
-      index: 3,
-    }),
-    ''
-  );
 }
 
 async function testGetDownstreams() {

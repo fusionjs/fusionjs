@@ -1,6 +1,11 @@
 // @flow
-const {satisfies, minVersion, compare, gt} = require('semver');
-const {parse, stringify} = require('@yarnpkg/lockfile');
+const {
+  satisfies,
+  minVersion,
+  compare,
+  gt,
+} = require('../vendor/semver/index.js');
+const {parse, stringify} = require('../vendor/@yarnpkg/lockfile/index.js');
 const {read, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');

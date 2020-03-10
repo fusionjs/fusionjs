@@ -16,7 +16,6 @@ const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
 const {outdated} = require('./commands/outdated.js');
 const {align} = require('./commands/align.js');
-const {chunk} = require('./commands/chunk.js');
 const {changes} = require('./commands/changes.js');
 const {plan} = require('./commands/plan.js');
 const {batch} = require('./commands/batch.js');
@@ -38,7 +37,6 @@ const {
   reportMismatchedTopLevelDeps,
 } = require('./utils/report-mismatched-top-level-deps.js');
 const {getBinaryPath} = require('./utils/binary-paths.js');
-const {getChunkPattern} = require('./utils/get-chunk-pattern.js');
 const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {getTestGroups} = require('./utils/get-test-groups.js');
 
@@ -136,15 +134,6 @@ const runCLI /*: RunCLI */ = async argv => {
 
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => await align({root: await rootOf(args), cwd}),
-      ],
-      chunk: [
-        `Print a glob pattern representing a chunk of a set of files
-
-        --patterns [patterns]      Glob patterns, separated by |
-        --jobs [count]             Total number of chunks to divide files into
-        --index [index]            Which chunk to display`,
-        async ({patterns, jobs, index}) =>
-          chunk({root: await rootOf(args), patterns, jobs, index}),
       ],
       changes: [
         `Lists Bazel test targets that changed given a list of changed files
@@ -293,7 +282,6 @@ module.exports = {
   purge,
   check: reportMismatchedTopLevelDeps,
   align,
-  chunk: getChunkPattern,
   changes: findChangedTargets,
   plan: getTestGroups,
   batch,

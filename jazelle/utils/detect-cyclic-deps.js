@@ -1,5 +1,5 @@
 // @flow
-const {satisfies} = require('semver');
+const {satisfies} = require('../vendor/semver/index.js');
 
 /*::
 import type {Metadata} from './get-local-dependencies.js';

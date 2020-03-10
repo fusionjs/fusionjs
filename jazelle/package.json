@@ -14,11 +14,7 @@
     "preinstall": "bin/download-bazelisk.sh && bin/download-yarn.sh",
     "build": "yarn preinstall"
   },
-  "dependencies": {
-    "@yarnpkg/lockfile": "^1.1.0",
-    "globby": "^11.0.0",
-    "semver": "^6.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
