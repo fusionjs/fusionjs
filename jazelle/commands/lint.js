@@ -1,10 +1,9 @@
 // @flow
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
+const {isProjectInstalled} = require('../utils/is-project-installed.js');
+const {install} = require('./install.js');
 const {getPassThroughArgs} = require('../utils/parse-argv.js');
-const {getManifest} = require('../utils/get-manifest.js');
-const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
-const bazel = require('../utils/bazel-commands.js');
-const yarn = require('../utils/yarn-commands.js');
+const {executeProjectCommand} = require('../utils/execute-project-command.js');
 
 /*::
 import type {Stdio} from '../utils/node-helpers.js';
@@ -19,17 +18,12 @@ export type Lint = (LintArgs) => Promise<void>
 const lint /*: Lint */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await assertProjectDir({dir: cwd});
 
-  const params = getPassThroughArgs(args);
-  const {projects, workspace} = await getManifest({root});
-  if (workspace === 'sandbox') {
-    await bazel.lint({root, cwd, args: params, stdio});
-  } else {
-    const deps = await getLocalDependencies({
-      dirs: projects.map(dir => `${root}/${dir}`),
-      target: cwd,
-    });
-    await yarn.lint({root, deps, args: params, stdio});
+  if (!(await isProjectInstalled({root, cwd}))) {
+    await install({root, cwd, conservative: true});
   }
+
+  const params = getPassThroughArgs(args);
+  await executeProjectCommand({root, cwd, command: 'lint', args: params});
 };
 
 module.exports = {lint};

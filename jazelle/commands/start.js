@@ -1,10 +1,9 @@
 // @flow
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
+const {isProjectInstalled} = require('../utils/is-project-installed.js');
+const {install} = require('./install.js');
 const {getPassThroughArgs} = require('../utils/parse-argv.js');
-const {getManifest} = require('../utils/get-manifest.js');
-const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
-const bazel = require('../utils/bazel-commands.js');
-const yarn = require('../utils/yarn-commands.js');
+const {executeProjectCommand} = require('../utils/execute-project-command.js');
 
 /*::
 export type StartArgs = {
@@ -17,17 +16,12 @@ export type Start = (StartArgs) => Promise<void>
 const start /*: Start */ = async ({root, cwd, args}) => {
   await assertProjectDir({dir: cwd});
 
-  const params = getPassThroughArgs(args);
-  const {projects, workspace} = await getManifest({root});
-  if (workspace === 'sandbox') {
-    await bazel.start({root, cwd, args: params});
-  } else {
-    const deps = await getLocalDependencies({
-      dirs: projects.map(dir => `${root}/${dir}`),
-      target: cwd,
-    });
-    await yarn.start({root, deps, args: params});
+  if (!(await isProjectInstalled({root, cwd}))) {
+    await install({root, cwd, conservative: true});
   }
+
+  const params = getPassThroughArgs(args);
+  await executeProjectCommand({root, cwd, command: 'start', args: params});
 };
 
 module.exports = {start};

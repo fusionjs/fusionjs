@@ -3,7 +3,15 @@ const {dirname, relative} = require('path');
 
 const {getHash} = require('./checksum-cache.js');
 const {merge} = require('./lockfile.js');
-const {read, exec, spawn, write, exists, remove} = require('./node-helpers.js');
+const {
+  read,
+  move,
+  exec,
+  spawn,
+  write,
+  exists,
+  remove,
+} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {setupSymlinks} = require('./setup-symlinks.js');
 const {executeHook} = require('./execute-hook.js');
@@ -40,7 +48,7 @@ const installDeps /*: InstallDeps */ = async ({
     const data = await read(`${modulesDir}/.jazelle-source`, 'utf8');
     const prev = JSON.parse(data);
     if (await exists(prev.dir)) await remove(prev.dir);
-    await spawn('mv', [`${modulesDir}/`, prev.dir], {cwd: root});
+    await move(modulesDir, prev.dir);
 
     if (await exists(`${bin}/node_modules/.jazelle-source`)) {
       const data = await read(`${bin}/node_modules/.jazelle-source`, 'utf8');
@@ -59,9 +67,9 @@ const installDeps /*: InstallDeps */ = async ({
   if (needsInstall) await generateNodeModules(bin);
 
   if (await exists(modulesDir)) {
-    await remove(`${root}/${modulesDir}`);
+    await remove(modulesDir);
   }
-  await spawn('mv', [`${bin}/node_modules/`, modulesDir], {cwd: root});
+  await move(`${bin}/node_modules`, modulesDir);
   await setupSymlinks({root, deps});
 
   await executeNpmHooks(deps, 'postinstall');

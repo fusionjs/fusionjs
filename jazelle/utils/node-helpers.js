@@ -8,6 +8,7 @@ const {
   access,
   readdir,
   mkdir: makeDir,
+  rename,
   lstat,
   realpath,
 } = require('fs');
@@ -101,6 +102,7 @@ const read = promisify(readFile);
 const write = promisify(writeFile);
 const ls = promisify(readdir);
 const mkdir = promisify(makeDir);
+const move = promisify(rename);
 const lstatP = promisify(lstat);
 const realpathP = promisify(realpath);
 
@@ -132,6 +134,7 @@ module.exports = {
   remove,
   ls,
   mkdir,
+  move,
   lstat: lstatP,
   realpath: realpathP,
 };
