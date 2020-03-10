@@ -8,7 +8,7 @@ It's useful for when you want to collect data about user actions or other metric
 
 For convenience, this plugin automatically flushes its queue before page unload on `document.visibilityState === 'hidden'`.
 
-If you need to use the universal event emitter from React, use [`fusion-plugin-universal-events-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events-react)
+If you need to use the universal event emitter from React, use `useService` from [`fusion-react`](https://github.com/fusionjs/fusionjs/tree/master/fusion-react)
 
 ### Differences between UniversalEvents and other event emitter libraries
 
