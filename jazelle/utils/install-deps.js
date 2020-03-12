@@ -118,6 +118,7 @@ const generateNodeModules = async bin => {
     '--pure-lockfile',
     '--non-interactive',
     '--ignore-optional',
+    '--color=always',
   ];
   const options = {
     env: {
