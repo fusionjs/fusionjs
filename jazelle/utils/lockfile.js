@@ -38,7 +38,6 @@ const check /*: Check */ = async ({roots}) => {
       const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
       collectVersions(meta, 'dependencies');
       collectVersions(meta, 'devDependencies');
-      collectVersions(meta, 'peerDependencies');
       collectVersions(meta, 'optionalDependencies');
     })
   );
