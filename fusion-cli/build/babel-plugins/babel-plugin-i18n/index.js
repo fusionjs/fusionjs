@@ -60,6 +60,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
             refPath.parentPath.scope.bindings[localName].referencePaths;
           translationPaths.forEach(translationPath => {
             if (
+              // translate()
               t.isCallExpression(translationPath.parentPath) &&
               translationPath.parentKey === 'callee'
             ) {
@@ -78,6 +79,35 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
                 }
               } else {
                 throw new Error(errorMessage);
+              }
+            } else if (
+              // React.useEffect(() => {}, [translate])
+              t.isArrayExpression(translationPath.parentPath) &&
+              t.isCallExpression(translationPath.parentPath.parentPath)
+            ) {
+              const reactHooksWithCallbacks = [
+                'useEffect',
+                'useCallback',
+                'useMemo',
+              ];
+              const arrayArg = translationPath.parentPath.node;
+              const hookCall = translationPath.parentPath.parentPath.node;
+              const isSecondArg =
+                hookCall.arguments &&
+                hookCall.arguments.length > 1 &&
+                hookCall.arguments[1] === arrayArg;
+              const isValidIdentifierCall =
+                t.isIdentifier(hookCall.callee) &&
+                reactHooksWithCallbacks.includes(hookCall.callee.name);
+              const isValidMemberCall =
+                t.isMemberExpression(hookCall.callee) &&
+                reactHooksWithCallbacks.includes(hookCall.callee.property.name);
+              if (
+                !(isSecondArg && (isValidIdentifierCall || isValidMemberCall))
+              ) {
+                throw new Error(
+                  'Unexpected usage of useTranslations return function'
+                );
               }
             } else {
               throw new Error(

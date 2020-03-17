@@ -5,6 +5,11 @@ import {useTranslations} from 'fusion-plugin-i18n-react';
 
 export default () => {
   const translate = useTranslations();
+
+  React.useEffect(() => {
+    translate('translations.hook');
+  }, [translate]);
+
   return (
     <div id="hook-translation">
       <p>
