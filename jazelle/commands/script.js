@@ -7,15 +7,22 @@ const {executeProjectCommand} = require('../utils/execute-project-command.js');
 
 /*::
 import type {Stdio} from '../utils/node-helpers.js';
-export type FlowArgs = {
+type ScriptArgs = {
   root: string,
   cwd: string,
+  command: string,
   args: Array<string>,
   stdio?: Stdio,
-}
-export type Flow = (FlowArgs) => Promise<void>
+};
+type Script = (ScriptArgs) => Promise<void>;
 */
-const flow /*: Flow */ = async ({root, cwd, args, stdio = 'inherit'}) => {
+const script /*: Script */ = async ({
+  root,
+  cwd,
+  command,
+  args,
+  stdio = 'inherit',
+}) => {
   await assertProjectDir({dir: cwd});
 
   if (!(await isProjectInstalled({root, cwd}))) {
@@ -23,13 +30,7 @@ const flow /*: Flow */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   }
 
   const params = getPassThroughArgs(args);
-  await executeProjectCommand({
-    root,
-    cwd,
-    command: 'flow',
-    args: params,
-    stdio,
-  });
+  await executeProjectCommand({root, cwd, command, args: params, stdio});
 };
 
-module.exports = {flow};
+module.exports = {script};

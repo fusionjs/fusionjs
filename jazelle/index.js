@@ -33,6 +33,7 @@ const {binPath} = require('./commands/bin-path.js');
 const {bazel} = require('./commands/bazel.js');
 const {bump} = require('./commands/bump.js');
 const {doctor} = require('./commands/doctor.js');
+const {script} = require('./commands/script.js');
 const {
   reportMismatchedTopLevelDeps,
 } = require('./utils/report-mismatched-top-level-deps.js');
@@ -257,8 +258,26 @@ const runCLI /*: RunCLI */ = async argv => {
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => doctor({root: await rootOf(args), cwd}),
       ],
+      script: [
+        `Runs a npm script
+
+        --cwd [cwd]                Project directory to use`,
+        async ({cwd}) =>
+          script({
+            root: await rootOf(args),
+            cwd,
+            command: rest[0],
+            args: rest.slice(1),
+          }),
+      ],
     },
-    async () => {}
+    async ({cwd}) =>
+      script({
+        root: await rootOf(args),
+        cwd,
+        command,
+        args: rest,
+      })
   );
 };
 
@@ -297,5 +316,6 @@ module.exports = {
   yarn,
   bump,
   doctor,
+  script,
   getRootDir,
 };

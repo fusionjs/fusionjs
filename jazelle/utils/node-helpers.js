@@ -8,7 +8,6 @@ const {
   access,
   readdir,
   mkdir: makeDir,
-  rename,
   lstat,
   realpath,
 } = require('fs');
@@ -102,9 +101,15 @@ const read = promisify(readFile);
 const write = promisify(writeFile);
 const ls = promisify(readdir);
 const mkdir = promisify(makeDir);
-const move = promisify(rename);
 const lstatP = promisify(lstat);
 const realpathP = promisify(realpath);
+
+/*::
+export type Move = (string, string) => Promise<void>
+*/
+const move /*: Move */ = async (from, to) => {
+  await spawn('mv', [from, to]); // fs.rename can't move across devices/partitions so it can die w/ EXDEV error
+};
 
 /*::
 export type Remove = (string) => Promise<void>;

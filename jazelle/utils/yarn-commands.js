@@ -173,4 +173,30 @@ const exec /*: Exec */ = async ({root, deps, args, stdio = 'inherit'}) => {
   await spawn(command, params, {stdio, env, cwd});
 };
 
-module.exports = {build, test, lint, flow, dev, start, exec};
+/*::
+export type ScriptArgs = {
+  root: string,
+  deps: Array<Metadata>,
+  command: string,
+  args: Array<string>,
+  stdio?: Stdio,
+};
+export type Script = (ScriptArgs) => Promise<void>;
+*/
+const script /*: Script */ = async ({
+  root,
+  deps,
+  command,
+  args,
+  stdio = 'inherit',
+}) => {
+  const main = deps.slice(-1).pop();
+  await batchBuild({root, deps, self: false, stdio: errorsOnly});
+  await spawn(node, [yarn, command, ...args], {
+    stdio,
+    env: process.env,
+    cwd: main.dir,
+  });
+};
+
+module.exports = {build, test, lint, flow, dev, start, exec, script};

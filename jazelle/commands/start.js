@@ -6,14 +6,16 @@ const {getPassThroughArgs} = require('../utils/parse-argv.js');
 const {executeProjectCommand} = require('../utils/execute-project-command.js');
 
 /*::
+import type {Stdio} from '../utils/node-helpers.js';
 export type StartArgs = {
   root: string,
   cwd: string,
   args: Array<string>,
+  stdio?: Stdio,
 }
 export type Start = (StartArgs) => Promise<void>
 */
-const start /*: Start */ = async ({root, cwd, args}) => {
+const start /*: Start */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await assertProjectDir({dir: cwd});
 
   if (!(await isProjectInstalled({root, cwd}))) {
@@ -21,7 +23,13 @@ const start /*: Start */ = async ({root, cwd, args}) => {
   }
 
   const params = getPassThroughArgs(args);
-  await executeProjectCommand({root, cwd, command: 'start', args: params});
+  await executeProjectCommand({
+    root,
+    cwd,
+    command: 'start',
+    args: params,
+    stdio,
+  });
 };
 
 module.exports = {start};

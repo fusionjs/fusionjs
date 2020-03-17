@@ -23,7 +23,13 @@ const lint /*: Lint */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   }
 
   const params = getPassThroughArgs(args);
-  await executeProjectCommand({root, cwd, command: 'lint', args: params});
+  await executeProjectCommand({
+    root,
+    cwd,
+    command: 'lint',
+    args: params,
+    stdio,
+  });
 };
 
 module.exports = {lint};

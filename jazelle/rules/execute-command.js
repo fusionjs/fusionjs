@@ -46,6 +46,9 @@ function runCommands() {
 }
 
 function runCommand(command, args = []) {
+  if (command === 'run') {
+    command = args.shift();
+  }
   if (scripts[command]) {
     const payload = scripts[command];
     const nodeDir = dirname(node);

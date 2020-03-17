@@ -161,4 +161,24 @@ const exec /*: Exec */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await spawn(command, params, {cwd, env, stdio});
 };
 
-module.exports = {build, test, lint, flow, dev, start, run, exec};
+/*::
+export type ScriptArgs = {
+  root: string,
+  cwd: string,
+  command: string,
+  args: Array<string>,
+  stdio?: Stdio,
+};
+type Script = (ScriptArgs) => Promise<void>;
+*/
+const script /*: Script */ = async ({
+  root,
+  cwd,
+  command,
+  args,
+  stdio = 'inherit',
+}) => {
+  await run({root, cwd, args: [command, ...args], name: 'script', stdio});
+};
+
+module.exports = {build, test, lint, flow, dev, start, run, exec, script};

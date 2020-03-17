@@ -23,7 +23,13 @@ const test /*: Test */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   }
 
   const params = getPassThroughArgs(args);
-  await executeProjectCommand({root, cwd, command: 'test', args: params});
+  await executeProjectCommand({
+    root,
+    cwd,
+    command: 'test',
+    args: params,
+    stdio,
+  });
 };
 
 module.exports = {test};

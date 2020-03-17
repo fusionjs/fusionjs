@@ -348,6 +348,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle lint`](#jazelle-lint)
 - [`jazelle flow`](#jazelle-flow)
 - [`jazelle start`](#jazelle-start)
+- [`jazelle script`](#jazelle-script)
 - [`jazelle bazel`](#jazelle-bazel)
 - [`jazelle node`](#jazelle-node)
 - [`jazelle yarn`](#jazelle-yarn)
@@ -594,6 +595,18 @@ Runs a project. Calls `scripts.start` in package.json
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 - `args` - A space separated list of arguments to pass to the start script
 
+### `jazelle script`
+
+Runs a npm script. Calls `scripts[command]` in package.json
+
+`jazelle script [command] [args...] --cwd [cwd]`
+
+- `command` - A npm script to run
+- `args` - A space separated list of arguments to pass to the script
+- `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+
+Npm scripts can also be called by omitting the `script` command, for example `jazelle [command]`.
+
 ### `jazelle bin-path`
 
 Print the local path of a binary
@@ -708,6 +721,8 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [test](#test)
 - [lint](#lint)
 - [flow](#flow)
+- [start](#start)
+- [script](#script)
 - [bazel](#bazel)
 - [node](#node)
 - [yarn](#yarn)
@@ -1000,6 +1015,17 @@ Runs a project. Calls `scripts.start` in package.json
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
 - `args` - A list of arguments to pass to the start script
+
+### `script`
+
+Runs a npm script. Calls `scripts[command]` in package.json
+
+`let script: ({root: string, cwd: string, command: string, args: Array<string>}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+- `cwd` - Project folder (absolute path)
+- `command` - A npm script name
+- `args` - A list of arguments to pass to the script
 
 ### `binPath`
 
@@ -1454,7 +1480,7 @@ web_binary(
 ```
 
 - `build` - The npm script to build the project. Defaults to `build`
-- `command` - The npm script to run the project. Defaults to `start`
+- `command` - The npm script to run the project. Defaults to `start`. If the command is `run`, the rule acts like `yarn run [command]`
 - `deps` - A list of target labels that are dependencies of this rule
 - `dist` - The name of the output folder where compiled assets are saved to
 
@@ -1519,6 +1545,7 @@ Jazelle commands are similar to yarn commands, but **not** exactly equivalent. H
 | `jazelle build`   | `yarn run build` | The Jazelle command also builds (and caches) local dependencies              |
 | `jazelle test`    | `yarn run test`  | The Jazelle command caches tests for projects whose code didn't change       |
 | `jazelle add x`   | `yarn add x`     | The Jazelle command also manages deps declared in BUILD.bazel files          |
+| `jazelle foo`     | `yarn run foo`   | The Jazelle command also manages deps declared in BUILD.bazel files          |
 
 You should always use Jazelle commands instead of Yarn commands.
 
@@ -1528,16 +1555,17 @@ You should always use Jazelle commands instead of Yarn commands.
 
 Jazelle allows using Bazel directly for building targets. Here's a table showing equivalent commands:
 
-| Jazelle                    | Bazel                 |
-| -------------------------- | --------------------- |
-| `cd a && jazelle install`  | N/A                   |
-| `cd a && jazelle add x`    | N/A                   |
-| `cd a && jazelle build`    | `bazel build //a:a`   |
-| `cd a && jazelle start`    | `bazel run //a:a`     |
-| `cd a && jazelle dev`      | `bazel run //a:dev`   |
-| `cd a && jazelle test`     | `bazel test //a:test` |
-| `cd a && jazelle lint`     | `bazel run //a:lint`  |
-| `cd a && jazelle flow`     | `bazel run //a:flow`  |
+| Jazelle                    | Bazel                         |
+| -------------------------- | ----------------------------- |
+| `cd a && jazelle install`  | N/A                           |
+| `cd a && jazelle add x`    | N/A                           |
+| `cd a && jazelle build`    | `bazel build //a:a`           |
+| `cd a && jazelle start`    | `bazel run //a:a`             |
+| `cd a && jazelle dev`      | `bazel run //a:dev`           |
+| `cd a && jazelle test`     | `bazel test //a:test`         |
+| `cd a && jazelle lint`     | `bazel run //a:lint`          |
+| `cd a && jazelle flow`     | `bazel run //a:flow`          |
+| `cd a && jazelle foo`      | `bazel run //a:script -- foo` |
 
 You can use either Jazelle commands or Bazel commands interchangeably. This is helpful if your team is already invested into a Bazel-centric workflow.
 

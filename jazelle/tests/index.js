@@ -12,6 +12,7 @@ const {dedupe} = require('../commands/dedupe.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
+const {script} = require('../commands/script.js');
 
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {batchTestGroup} = require('../utils/batch-test-group');
@@ -129,6 +130,7 @@ async function runTests() {
   await t(testYarnCommand);
   await t(testBazelCommand);
   await t(testStartCommand);
+  await t(testScriptCommand);
 
   await exec(`rm -rf ${__dirname}/tmp`);
 
@@ -364,6 +366,28 @@ async function testBump() {
   // downstream is greenkept
   const meta = JSON.parse(await read(downstreamMeta));
   assert(meta.dependencies['not-a-real-project'], '0.1.0-0');
+}
+
+async function testScriptCommand() {
+  await exec(`cp -r ${__dirname}/fixtures/script/ ${__dirname}/tmp/script`);
+
+  const root = `${__dirname}/tmp/script`;
+  const cwd = `${__dirname}/tmp/script/a`;
+  const command = 'foo';
+
+  const streamFile = `${__dirname}/tmp/script/build-stream.txt`;
+  const stream = createWriteStream(streamFile);
+  await new Promise(resolve => stream.on('open', resolve));
+  await script({
+    root,
+    cwd,
+    command,
+    args: ['hello', 'world'],
+    stdio: ['ignore', stream, stream],
+  });
+
+  const output = await read(streamFile, 'utf8');
+  assert(output.includes('hello world'));
 }
 
 // utils
