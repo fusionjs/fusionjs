@@ -143,10 +143,15 @@ function Compiler(
     maxWorkers,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
+  const root = path.resolve(dir);
+  const fusionConfig = loadFusionRC(root);
+  const legacyPkgConfig = loadLegacyPkgConfig(root);
+
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    (forceLegacyBuild || !watch || env === 'production') && !modernBuildOnly
+    (forceLegacyBuild || !watch || env === 'production') &&
+      !(modernBuildOnly || fusionConfig.modernBuildOnly)
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [
@@ -164,9 +169,6 @@ function Compiler(
     i18nDeferredManifest: new DeferredState(),
     legacyBuildEnabled,
   };
-  const root = path.resolve(dir);
-  const fusionConfig = loadFusionRC(root);
-  const legacyPkgConfig = loadLegacyPkgConfig(root);
 
   let worker = createWorker(maxWorkers);
 

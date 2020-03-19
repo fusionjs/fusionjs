@@ -19,6 +19,7 @@ type TransformResult = 'all' | 'spec' | 'none';
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   splitChunks?: any,
+  modernBuildOnly?: boolean,
   assumeNoImportSideEffects?: boolean,
   defaultImportSideEffects?: boolean | Array<string>,
   experimentalCompile?: boolean,
@@ -60,6 +61,7 @@ function isValid(config, silent) {
       [
         'babel',
         'splitChunks',
+        'modernBuildOnly',
         'defaultImportSideEffects',
         'assumeNoImportSideEffects',
         'experimentalCompile',
