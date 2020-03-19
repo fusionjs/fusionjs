@@ -10,19 +10,12 @@ import type {Stdio} from '../utils/node-helpers.js';
 type ScriptArgs = {
   root: string,
   cwd: string,
-  command: string,
   args: Array<string>,
   stdio?: Stdio,
 };
 type Script = (ScriptArgs) => Promise<void>;
 */
-const script /*: Script */ = async ({
-  root,
-  cwd,
-  command,
-  args,
-  stdio = 'inherit',
-}) => {
+const script /*: Script */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   await assertProjectDir({dir: cwd});
 
   if (!(await isProjectInstalled({root, cwd}))) {
@@ -30,7 +23,13 @@ const script /*: Script */ = async ({
   }
 
   const params = getPassThroughArgs(args);
-  await executeProjectCommand({root, cwd, command, args: params, stdio});
+  await executeProjectCommand({
+    root,
+    cwd,
+    command: 'script',
+    args: params,
+    stdio,
+  });
 };
 
 module.exports = {script};

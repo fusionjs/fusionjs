@@ -373,7 +373,6 @@ async function testScriptCommand() {
 
   const root = `${__dirname}/tmp/script`;
   const cwd = `${__dirname}/tmp/script/a`;
-  const command = 'foo';
 
   const streamFile = `${__dirname}/tmp/script/build-stream.txt`;
   const stream = createWriteStream(streamFile);
@@ -381,12 +380,12 @@ async function testScriptCommand() {
   await script({
     root,
     cwd,
-    command,
-    args: ['hello', 'world'],
+    args: ['--cwd', '.', 'foo', 'hello', 'world'],
     stdio: ['ignore', stream, stream],
   });
 
   const output = await read(streamFile, 'utf8');
+  assert(output.includes('hi'));
   assert(output.includes('hello world'));
 }
 

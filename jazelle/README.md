@@ -1020,12 +1020,11 @@ Runs a project. Calls `scripts.start` in package.json
 
 Runs a npm script. Calls `scripts[command]` in package.json
 
-`let script: ({root: string, cwd: string, command: string, args: Array<string>}) => Promise<void>`
+`let script: ({root: string, cwd: string, args: Array<string>}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
-- `command` - A npm script name
-- `args` - A list of arguments to pass to the script
+- `args` - A list of arguments to pass to the script. The first argument should be a command name
 
 ### `binPath`
 

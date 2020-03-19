@@ -39,8 +39,10 @@ const executeProjectCommand /*: ExecuteProjectCommand */ = async ({
         return bazel.start({root, cwd, args});
       case 'exec':
         return bazel.exec({root, cwd, args, stdio});
-      default:
-        return bazel.script({root, cwd, command, args, stdio});
+      case 'script': {
+        const [cmd, ...rest] = args;
+        return bazel.script({root, cwd, command: cmd, args: rest, stdio});
+      }
     }
   } else {
     const deps = await getLocalDependencies({
@@ -62,8 +64,10 @@ const executeProjectCommand /*: ExecuteProjectCommand */ = async ({
         return yarn.start({root, deps, args});
       case 'exec':
         return yarn.exec({root, deps, args, stdio});
-      default:
-        return yarn.script({root, deps, command, args, stdio});
+      case 'script': {
+        const [cmd, ...rest] = args;
+        return yarn.script({root, deps, command: cmd, args: rest, stdio});
+      }
     }
   }
 };

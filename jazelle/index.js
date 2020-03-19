@@ -261,13 +261,13 @@ const runCLI /*: RunCLI */ = async argv => {
       script: [
         `Runs a npm script
 
+        [args...]                  A space separated list of arguments
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) =>
           script({
             root: await rootOf(args),
             cwd,
-            command: rest[0],
-            args: rest.slice(1),
+            args: rest,
           }),
       ],
     },
@@ -275,8 +275,7 @@ const runCLI /*: RunCLI */ = async argv => {
       script({
         root: await rootOf(args),
         cwd,
-        command,
-        args: rest,
+        args: [command, ...rest],
       })
   );
 };

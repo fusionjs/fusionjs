@@ -26,12 +26,12 @@ if (out) {
   for (const dist of dists) {
     exec(`mkdir -p "${dist}"`, {cwd: main});
   }
-  runCommands();
+  runCommands(command, args);
   const dirs = dists.map(dist => `"${dist}"`).join(' ');
   exec(`tar czf "${out}" ${dirs}`, {cwd: main});
 } else {
   try {
-    runCommands();
+    runCommands(command, args);
   } catch (e) {
     // we don't want the failed `exec` call to print a stack trace to stderr
     // because we are piping the NPM script's stderr to the user
@@ -39,16 +39,16 @@ if (out) {
   }
 }
 
-function runCommands() {
+function runCommands(command, args) {
+  if (command === 'run') {
+    command = args.shift();
+  }
   runCommand(`pre${command}`);
   runCommand(command, args);
   runCommand(`post${command}`);
 }
 
 function runCommand(command, args = []) {
-  if (command === 'run') {
-    command = args.shift();
-  }
   if (scripts[command]) {
     const payload = scripts[command];
     const nodeDir = dirname(node);
