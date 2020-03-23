@@ -17,6 +17,7 @@ import {createPlugin, unescape} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
+import {deserialize} from './codec.js';
 import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
 import type {
   StoreWithContextType,
@@ -46,7 +47,9 @@ const getPlugin = () => {
             if (!preloadedState) {
               const stateElement = document.getElementById('__REDUX_STATE__');
               if (stateElement) {
-                preloadedState = JSON.parse(unescape(stateElement.textContent));
+                preloadedState = deserialize(
+                  unescape(stateElement.textContent)
+                );
               }
             }
             const devTool =

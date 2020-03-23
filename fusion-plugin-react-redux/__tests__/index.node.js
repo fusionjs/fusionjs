@@ -8,10 +8,13 @@
 
 import React from 'react';
 import type {Reducer, StoreEnhancer} from 'redux';
+import {JSDOM} from 'jsdom';
 
-import App, {consumeSanitizedHTML, createPlugin} from 'fusion-core';
+import App, {consumeSanitizedHTML, createPlugin, unescape} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
 import {getSimulator, getService} from 'fusion-test-utils';
+
+import {deserialize} from '../src/codec.js';
 
 import Redux from '../src/index.js';
 import {
@@ -224,5 +227,40 @@ test('serialization', async done => {
     'test'
   );
   expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
+  done();
+});
+
+test('serialization and deserialization', async done => {
+  // A redux state with encoded chars
+  const obj = {
+    backslashes: '\\u0026',
+    crazy_combo: 'zz%5C%\\25aa%%%%asdf\\u0026%25asdf%5C%\\a%25%%25',
+  };
+
+  const reducer = (state, action) => obj;
+  const element = React.createElement('div');
+  const ctx: any = {element, template: {body: []}, memoized: new Map()};
+  const Plugin = getService(appCreator(reducer), Redux);
+
+  expect.assertions(4);
+  if (!Redux.middleware) {
+    done();
+    return;
+  }
+
+  // $FlowFixMe
+  await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
+
+  expect(Plugin.from(ctx).store).toBeTruthy();
+  expect(ctx.element).not.toBe(element);
+  expect(ctx.template.body.length).toBe(1);
+
+  const body = consumeSanitizedHTML(ctx.template.body[0]);
+  const dom = new JSDOM(`<!DOCTYPE html>${body}`);
+
+  const content = dom.window.document.getElementById('__REDUX_STATE__')
+    .textContent;
+  expect(deserialize(unescape(content))).toStrictEqual(obj);
+
   done();
 });
