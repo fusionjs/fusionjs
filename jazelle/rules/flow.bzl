@@ -11,7 +11,7 @@ def _web_binary_impl(ctx):
     content = """
     CWD=$(cd `dirname {srcdir}` && pwd)
     NODE=$(cd `dirname "{node}"` && pwd)/$(basename {node})
-    $NODE "{build}" "$CWD" "$(pwd)" $@
+    $NODE --max_old_space_size=65536 "{build}" "$CWD" "$(pwd)" $@
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,

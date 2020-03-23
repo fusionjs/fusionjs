@@ -99,5 +99,5 @@ else
     JAZELLE="$BIN/../cli.js"
   fi
 
-  "$NODE" "$JAZELLE" "$@"
+  "$NODE" --max_old_space_size=65536 "$JAZELLE" "$@"
 fi
