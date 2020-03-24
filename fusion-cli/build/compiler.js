@@ -125,6 +125,7 @@ type CompilerOpts = {
   minify?: boolean,
   modernBuildOnly?: boolean,
   maxWorkers?: number,
+  skipSourceMaps?: boolean,
 };
 */
 
@@ -140,6 +141,7 @@ function Compiler(
     minify = true,
     serverless = false,
     modernBuildOnly = false,
+    skipSourceMaps = false,
     maxWorkers,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
@@ -180,6 +182,7 @@ function Compiler(
     state,
     fusionConfig,
     legacyPkgConfig,
+    skipSourceMaps,
     preserveNames,
     // TODO: Remove redundant zopfli option
     zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,

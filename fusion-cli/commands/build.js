@@ -22,6 +22,7 @@ exports.run = async function(
     minify,
     experimentalServerless,
     modernBuildOnly,
+    skipSourceMaps,
   } /*: {
     experimentalServerless: boolean,
     dir: string,
@@ -31,6 +32,7 @@ exports.run = async function(
     logLevel: string,
     minify: boolean,
     modernBuildOnly: boolean,
+    skipSourceMaps: boolean,
   }*/
 ) {
   const logger = winston.createLogger({
@@ -52,6 +54,7 @@ exports.run = async function(
     serverless: experimentalServerless,
     modernBuildOnly,
     maxWorkers,
+    skipSourceMaps,
   });
 
   await compiler.clean();

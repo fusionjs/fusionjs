@@ -48,6 +48,11 @@ module.exports = {
         describe:
           'Build the application only for modern browsers. Will serve the modern bundles on legacy browsers.',
       },
+      skipSourceMaps: {
+        type: 'boolean',
+        default: false,
+        describe: 'Build without source maps.',
+      },
     },
   },
   dev: {

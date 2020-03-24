@@ -88,6 +88,7 @@ export type WebpackConfigOpts = {|
   gzip: boolean,
   brotli: boolean,
   minify: boolean,
+  skipSourceMaps: boolean,
   state: {
     clientChunkMetadata: ClientChunkMetadataState,
     legacyClientChunkMetadata: ClientChunkMetadataState,
@@ -127,6 +128,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     gzip,
     brotli,
     minify,
+    skipSourceMaps,
     legacyPkgConfig = {},
     worker,
   } = opts;
@@ -235,12 +237,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
      * We only use it for generating nice stack traces
      */
     // TODO(#6): what about node v8 inspector?
-    devtool:
-      runtime === 'client' && !dev
-        ? 'source-map'
-        : runtime === 'sw'
-        ? 'hidden-source-map'
-        : 'cheap-module-source-map',
+    devtool: skipSourceMaps
+      ? false
+      : runtime === 'client' && !dev
+      ? 'source-map'
+      : runtime === 'sw'
+      ? 'hidden-source-map'
+      : 'cheap-module-source-map',
     output: {
       path: path.join(dir, `.fusion/dist/${env}/${runtime}`),
       filename:
@@ -593,7 +596,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       minimizer: shouldMinify
         ? [
             new TerserPlugin({
-              sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
+              sourceMap: skipSourceMaps ? false : true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
               cache: true, // default from webpack
               parallel: true, // default from webpack
               extractComments: false,

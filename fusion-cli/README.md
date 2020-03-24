@@ -31,6 +31,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   - `--production`: Build production assets
   - `--log-level`: Log level to output to console `[default: "info"]`
+  - `--skipSourceMaps`: Skip building source maps
   - `--maxWorkers`: Maximum number of workers create by webpack during build process
 
 - `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild]`
@@ -62,14 +63,14 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   Tests are run with Jest
 
-  - `--dir`: Root path for the application relative to CLI CWD.  (default .)
-  - `--debug`: Debug tests using --inspect-brk and --runInBand.  (default false)
+  - `--dir`: Root path for the application relative to CLI CWD. (default .)
+  - `--debug`: Debug tests using --inspect-brk and --runInBand. (default false)
   - `--match`: Runs test files that match a given string
-  - `--env`: Comma-separated list of environments to run tests in. Defaults to running both node and browser tests.  (default jsdom,node)
+  - `--env`: Comma-separated list of environments to run tests in. Defaults to running both node and browser tests. (default jsdom,node)
   - `--testFolder`: Which folder to look for tests in. Deprecated, use testMatch or testRegex instead.
   - `--testMatch`: Which folder to look for tests in. A comma-separated list of glob patterns.
   - `--testRegex`: Which folder to look for tests in. A comma-separated list of regexp strings.
-  - `--configPath`: Path to the jest configuration, used for testing.  (default [path-to-fusion-cli]/build/jest/jest-config.js)
+  - `--configPath`: Path to the jest configuration, used for testing. (default [path-to-fusion-cli]/build/jest/jest-config.js)
   - `--updateSnapshot`, `-u`: Updates snapshots
 
   Jest pass-through options
@@ -110,4 +111,3 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 ### Webpack stats.json file
 
 Building an app generates a `.fusion/stats.json` file, which can be used with [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer)
-
