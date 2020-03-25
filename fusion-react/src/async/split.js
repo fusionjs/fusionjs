@@ -72,7 +72,27 @@ export default function withAsyncComponent<Config>({
             context.markAsCritical(chunkId);
           });
         }
-        return Promise.resolve(AsyncComponent);
+        if (__DEV__) {
+          // In case promise instrumentation has changed, call
+          // splitComponentLoaders again
+          let componentPromise;
+          try {
+            componentPromise = load();
+          } catch (e) {
+            componentPromise = (Promise.reject(e): any);
+          }
+          // $FlowFixMe
+          metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
+          // $FlowFixMe
+          metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
+          return Promise.all(
+            context.splitComponentLoaders.map(loader =>
+              loader(metadata.chunkIds, metadata)
+            )
+          ).then(() => AsyncComponent);
+        } else {
+          return Promise.resolve(AsyncComponent);
+        }
       }
 
       let componentPromise;

@@ -30,15 +30,25 @@ function BundleSplitConsumer(props, {splitComponentLoaders}) {
   const ctx = React.useContext(FusionContext);
   const service: I18nServiceType = useService(I18nToken);
   const i18n = service.from(ctx);
+  // Keep track of i18n instance in case of hot-reloading
+  const [callbacks, setCallbacks] = React.useState({
+    i18n,
+    // `i18nKeys` comes from fusion-react/async/split
+    load: (_, {i18nKeys}) => i18n.load(i18nKeys),
+  });
+  // `splitComponentLoaders` comes from fusion-react/async/prepare-provider
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useMemo(() => splitComponentLoaders.push(callbacks.load), []);
   React.useMemo(() => {
-    // `splitComponentLoaders` comes from fusion-react/async/prepare-provider
-    // `ids` comes from fusion-react/async/split
-    if (splitComponentLoaders) {
-      splitComponentLoaders.push((_, {i18nKeys}) => i18n.load(i18nKeys));
+    if (i18n !== callbacks.i18n) {
+      const index = splitComponentLoaders.find(fn => fn === callbacks.load);
+      const load = (_, {i18nKeys}) => i18n.load(i18nKeys);
+      splitComponentLoaders.splice(index, 1, load);
+      setCallbacks({i18n, load});
     }
-  }, [splitComponentLoaders, i18n]);
+  }, [i18n]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <I18nContext.Provider value={i18n}>
+    <I18nContext.Provider value={callbacks.i18n}>
       {React.Children.only(props.children)}
     </I18nContext.Provider>
   );

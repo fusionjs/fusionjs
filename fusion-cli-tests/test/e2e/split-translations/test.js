@@ -148,19 +148,38 @@ test('`fusion dev` app with split translations integration', async () => {
     'renders second, hot split translation'
   );
 
+  // go back to first route
+  await Promise.all([
+    page.click('#split1-link'),
+    page.waitForSelector('#split1-translation'),
+  ]);
+
+  fs.writeFileSync(split2Path, original);
+
+  // go to second route again
+  // make sure promise-intrumented translations are updated
+  await Promise.all([
+    page.click('#split2-link'),
+    page.waitForSelector('#split2-translation'),
+    new Promise(r => setTimeout(r, 1000)), // component is initally rendered without translation
+  ]);
+  const content4 = await page.content();
+  t.ok(
+    content4.includes('__SPLIT2_TRANSLATED__'),
+    'translations are re-fetched when promise instrumentation is hot-reloaded'
+  );
+
   await page.goto(`${url}/`, {waitUntil: 'load'});
 
   await Promise.all([
     page.click('#split1-link'),
     page.waitForSelector('#split1-translation'),
   ]);
-  const content4 = await page.content();
+  const content5 = await page.content();
   t.ok(
-    content4.includes('__SPLIT1_TRANSLATED__'),
+    content5.includes('__SPLIT1_TRANSLATED__'),
     'renders translation from unmodified file after rebuild'
   );
-
-  fs.writeFileSync(split2Path, original);
 
   await app.teardown();
 }, 100000);
