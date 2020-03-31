@@ -46,7 +46,7 @@ def _get_runfiles(ctx):
     content = """
     CWD=$(cd `dirname '{srcdir}'` && pwd)
     NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
-    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '' $@
+    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '' "$@"
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,

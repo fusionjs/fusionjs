@@ -380,13 +380,14 @@ async function testScriptCommand() {
   await script({
     root,
     cwd,
-    args: ['--cwd', '.', 'foo', 'hello', 'world'],
+    args: ['--cwd', '.', 'foo', 'hello world', 'foo'],
     stdio: ['ignore', stream, stream],
   });
 
-  const output = await read(streamFile, 'utf8');
-  assert(output.includes('hi'));
-  assert(output.includes('hello world'));
+  const lines = (await read(streamFile, 'utf8')).split('\n');
+  assert(lines.includes('hi'));
+  assert(lines.includes('hello world'));
+  assert(lines.includes('hello world foo'));
 }
 
 // utils

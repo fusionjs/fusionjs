@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "prefoo": "echo hi",
-    "foo": "echo $@"
+    "foo": "./echo.sh"
   }
 }
