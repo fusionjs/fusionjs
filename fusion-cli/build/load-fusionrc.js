@@ -30,6 +30,7 @@ export type FusionRC = {
   zopfli?: boolean,
   gzip?: boolean,
   brotli?:boolean,
+  main?:string,
 };
 */
 
@@ -72,6 +73,7 @@ function isValid(config, silent) {
         'brotli',
         'zopfli', // TODO: Remove redundant zopfli option
         'gzip',
+        'main',
       ].includes(key)
     )
   ) {

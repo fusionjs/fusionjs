@@ -132,9 +132,14 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     legacyPkgConfig = {},
     worker,
   } = opts;
-  const main = 'src/main.js';
+  const main = fusionConfig.main || 'src/main.js';
 
   if (!fs.existsSync(path.join(dir, main))) {
+    if (fusionConfig.main) {
+      throw new Error(
+        `File configured as main entry point in .fusionrc.js '${fusionConfig.main}' could not be found in ${dir}`
+      );
+    }
     throw new Error(`Project directory must contain a ${main} file`);
   }
 
