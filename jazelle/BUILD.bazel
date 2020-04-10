@@ -2,6 +2,7 @@ package(default_visibility = ["//visibility:public"])
 
 exports_files([
   "cli.js",
+  "rules/untar.js",
   "rules/execute-command.js",
   "rules/flow-check.js",
 ])

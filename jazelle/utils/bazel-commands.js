@@ -21,7 +21,7 @@ const build /*: Build */ = async ({
   stdio = 'inherit',
 }) => {
   cwd = relative(root, cwd);
-  await spawn(bazel, ['build', `//${cwd}:${name}`, '--verbose_failures'], {
+  await spawn(bazel, ['build', `//${cwd}:${name}`, '--sandbox_debug'], {
     stdio,
     env: process.env,
     cwd: root,
@@ -49,7 +49,7 @@ const test /*: Test */ = async ({
   const testParams = args.map(arg => `--test_arg=${arg}`);
   await spawn(
     bazel,
-    ['run', `//${cwd}:${name}`, '--verbose_failures', ...testParams],
+    ['run', `//${cwd}:${name}`, '--sandbox_debug', ...testParams],
     {
       stdio,
       env: process.env,
@@ -79,7 +79,7 @@ const run /*: Run */ = async ({
   const runParams = args.length > 0 ? ['--', ...args] : [];
   await spawn(
     bazel,
-    ['run', `//${cwd}:${name}`, '--verbose_failures', ...runParams],
+    ['run', `//${cwd}:${name}`, '--sandbox_debug', ...runParams],
     {
       stdio,
       env: process.env,

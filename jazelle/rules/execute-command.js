@@ -1,25 +1,17 @@
 // @flow
 const {readFileSync: read} = require('fs');
 const {execSync: exec} = require('child_process');
-const {dirname, basename} = require('path');
+const {dirname} = require('path');
+
+// we don't want the failed `exec` call to print a stack trace to stderr
+// because we are piping the NPM script's stderr to the user
+process.on('uncaughtException', () => {});
+process.on('unhandledRejection', () => {});
 
 const root = process.cwd();
-const [node, , main, bin, command, distPaths, out, ...args] = process.argv;
+const [node, , main, , command, distPaths, out, ...args] = process.argv;
 const dists = distPaths.split('|');
 
-const files = exec(`find . -name output.tgz`, {cwd: bin, encoding: 'utf8'})
-  .split('\n')
-  .filter(Boolean);
-files.map(f => {
-  const target = `${root}/${dirname(f)}`;
-  exec(`tar xzf "${f}" -C "${target}"`, {cwd: bin});
-
-  const {name} = JSON.parse(read(`${target}/package.json`, 'utf8'));
-  const label = basename(name);
-  const dir = dirname(`node_modules/${name}`);
-  exec(`mkdir -p ${dir}`, {cwd: main});
-  exec(`ln -sfn "${target}" "${label}"`, {cwd: `${main}/${dir}`});
-});
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 
 if (out) {
@@ -30,13 +22,7 @@ if (out) {
   const dirs = dists.map(dist => `"${dist}"`).join(' ');
   exec(`tar czf "${out}" ${dirs}`, {cwd: main});
 } else {
-  try {
-    runCommands(command, args);
-  } catch (e) {
-    // we don't want the failed `exec` call to print a stack trace to stderr
-    // because we are piping the NPM script's stderr to the user
-    process.exit(1);
-  }
+  runCommands(command, args);
 }
 
 function runCommands(command, args) {
@@ -56,7 +42,7 @@ function runCommand(command, args = []) {
 
     // prioritize hermetic Node version over system version
     const binPath = `:${root}/node_modules/.bin`;
-    const script = `export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
+    const script = `export NODE_PRESERVE_SYMLINKS=1; export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
 }

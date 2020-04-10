@@ -32,25 +32,27 @@ web_library = rule(
   }
 )
 
-
-def _get_runfiles(ctx):
+def _get_runfiles(ctx, outputs):
   executable = ctx.outputs.executable
 
+  direct = ctx.files._node + ctx.files._script + ctx.files._untar_script + outputs
   run_deps = depset(
-    direct = ctx.files._node + ctx.files._script,
+    direct = direct,
     transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps],
   )
 
   ctx.actions.write(
     output = ctx.outputs.executable,
     content = """
-    CWD=$(cd `dirname '{srcdir}'` && pwd)
-    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
+    export CWD=$(cd `dirname '{srcdir}'` && pwd)
+    export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
+    $NODE '{untar_script}' --runtime;
     $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '' "$@"
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
       command = ctx.attr.command,
+      untar_script = ctx.files._untar_script[0].path,
       build = ctx.files._script[0].path,
     )
   )
@@ -60,40 +62,42 @@ def _get_runfiles(ctx):
   )
 
 def _web_binary_impl(ctx):
-  build_ouput = ctx.outputs.out
+  build_output = ctx.outputs.out
 
   build_deps = depset(
-    direct = _filter_files(ctx.files._script),
+    direct = ctx.files._script + ctx.files._untar_script,
     transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
   )
 
   ctx.actions.run_shell(
     command = """
-    CWD=$(cd `dirname '{srcdir}'` && pwd)
-    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
-    OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}')
-    BAZEL_BIN_DIR=$(cd '{bindir}' && pwd)
-    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' "$OUT" $@
+    CWD=$(cd `dirname '{srcdir}'` && pwd);
+    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
+    OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}');
+    BAZEL_BIN_DIR=$(cd '{bindir}' && pwd);
+    $NODE '{untar_script}';
+    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' "$OUT" $@;
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
       command = ctx.attr.build,
       dist = "|".join(ctx.attr.dist),
-      output = build_ouput.path,
+      output = build_output.path,
       bindir = ctx.bin_dir.path,
+      untar_script = ctx.files._untar_script[0].path,
       build = ctx.files._script[0].path,
     ),
     tools = ctx.files._node,
     inputs = build_deps,
-    outputs = [build_ouput],
+    outputs = [build_output],
   )
   return [
     DefaultInfo(
       files = depset(
-        direct = [build_ouput],
+        direct = [build_output],
         transitive = [build_deps]
       ),
-      runfiles = _get_runfiles(ctx),
+      runfiles = _get_runfiles(ctx, [build_output]),
     )
   ]
 
@@ -117,21 +121,25 @@ web_binary = rule(
       cfg = "host",
       default = Label("@jazelle_dependencies//:node"),
     ),
+    "_untar_script": attr.label(
+      allow_files = True,
+      default = Label("//:rules/untar.js"),
+    ),
     "_script": attr.label(
       allow_files = True,
       default = Label("//:rules/execute-command.js"),
-    )
+    ),
   },
   executable = True,
   outputs = {
-    "out": "output.tgz"
+    "out": "__jazelle__%{name}.tgz"
   },
 )
 
 def _web_executable_impl(ctx):
   return [
     DefaultInfo(
-      runfiles = _get_runfiles(ctx),
+      runfiles = _get_runfiles(ctx, []),
     )
   ]
 
@@ -150,6 +158,10 @@ _WEB_EXECUTABLE_ATTRS = {
   "_script": attr.label(
     allow_files = True,
     default = Label("//:rules/execute-command.js"),
+  ),
+  "_untar_script": attr.label(
+    allow_files = True,
+    default = Label("//:rules/untar.js"),
   )
 }
 

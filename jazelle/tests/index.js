@@ -91,8 +91,6 @@ async function runTests() {
     t(testYarn),
     t(testBump),
     t(testEach),
-    t(testBazelDummy),
-    t(testBazelBuild),
     t(testAssertProjectDir),
     t(testBinaryPaths),
     t(testCLI),
@@ -124,6 +122,8 @@ async function runTests() {
     t(testPopulateGraph),
   ]);
   // run separately to avoid CI error
+  await t(testBazelDummy);
+  await t(testBazelBuild);
   await t(testInstallAddUpgradeRemove);
   await t(testBatchTestGroup);
   await t(testCommand);
@@ -131,6 +131,8 @@ async function runTests() {
   await t(testBazelCommand);
   await t(testStartCommand);
   await t(testScriptCommand);
+  await t(testBazelDependentBuilds);
+  await t(testBazelDependentFailure);
 
   await exec(`rm -rf ${__dirname}/tmp`);
 
@@ -501,20 +503,25 @@ async function testBazelBuild() {
     cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
     name: 'a',
   });
-  const output = `${__dirname}/tmp/bazel-rules/bazel-bin/projects/a/output.tgz`;
+  const output = `${__dirname}/tmp/bazel-rules/bazel-bin/projects/a/__jazelle__a.tgz`;
   assert(await exists(output));
 
   // test
   const testStreamFile = `${__dirname}/tmp/bazel-rules/test-stream.txt`;
   const testStream = createWriteStream(testStreamFile);
   await new Promise(resolve => testStream.on('open', resolve));
-  await bazelCmds.test({
-    root: `${__dirname}/tmp/bazel-rules`,
-    cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
-    args: [],
-    name: 'test',
-    stdio: ['ignore', testStream, 'ignore'],
-  });
+  try {
+    await bazelCmds.test({
+      root: `${__dirname}/tmp/bazel-rules`,
+      cwd: `${__dirname}/tmp/bazel-rules/projects/a`,
+      args: [],
+      name: 'test',
+      stdio: ['ignore', testStream, testStream],
+    });
+  } catch (e) {
+    console.log(await read(testStreamFile, 'utf8'));
+    throw e;
+  }
   assert((await read(testStreamFile, 'utf8')).includes('\nb\nv8.15.1'));
 
   // run
@@ -1808,4 +1815,47 @@ async function testStartCommand() {
   await new Promise(resolve => startStream.on('open', resolve));
   await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
   assert((await read(startStreamFile, 'utf8')).includes('\nstart\n'));
+}
+
+async function testBazelDependentBuilds() {
+  const cmd = `cp -r ${__dirname}/fixtures/bazel-dependent-builds ${__dirname}/tmp/bazel-dependent-builds`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bazel-dependent-builds`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const startStreamFile = `${__dirname}/tmp/bazel-dependent-builds/start-stream.txt`;
+  const startStream = createWriteStream(startStreamFile);
+  await new Promise(resolve => startStream.on('open', resolve));
+
+  const a = `${cwd}/a/package.json`;
+  const b = `${cwd}/b/package.json`;
+  const c = `${cwd}/c/package.json`;
+  assert((await read(c)).includes('module.exports = 222'));
+  assert((await read(b)).includes('module.exports = 111'));
+  assert((await read(a)).includes('require(\\"b\\") + require(\\"c\\")'));
+  await exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream]);
+  assert((await read(startStreamFile, 'utf8')).includes('\n333\n'));
+  assert(await exists(`${cwd}/a/foo/foo.js`));
+  assert(await exists(`${cwd}/b/compiled/foo.js`));
+  assert(await exists(`${cwd}/c/dist/foo.js`));
+}
+
+async function testBazelDependentFailure() {
+  const cmd = `cp -r ${__dirname}/fixtures/bazel-dependent-failure ${__dirname}/tmp/bazel-dependent-failure`;
+  await exec(cmd);
+
+  const cwd = `${__dirname}/tmp/bazel-dependent-failure`;
+  const jazelle = `${__dirname}/../bin/cli.sh`;
+
+  const startStreamFile = `${__dirname}/tmp/bazel-dependent-failure/start-stream.txt`;
+  const startStream = createWriteStream(startStreamFile);
+  await new Promise(resolve => startStream.on('open', resolve));
+
+  const c = `${cwd}/c/package.json`;
+  assert((await read(c)).includes('mkdir -p dist && mkdir dist'));
+  // $FlowFixMe `assert` typedef is missing `rejects` method
+  await assert.rejects(
+    exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream, startStream])
+  );
 }
