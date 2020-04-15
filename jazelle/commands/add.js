@@ -1,5 +1,6 @@
 // @flow
 const {resolve} = require('path');
+const {getPassThroughArgs} = require('../utils/parse-argv.js');
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getAllDependencies} = require('../utils/get-all-dependencies.js');
@@ -35,8 +36,9 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
   // group by whether the dep is local (listed in manifest.json) or external (from registry)
   const locals = [];
   const externals = [];
-  for (const arg of args) {
-    let [, name, version] = arg.match(/(@?[^@]*)@?(.*)/) || [];
+  const params = getPassThroughArgs(args);
+  for (const param of params) {
+    let [, name, version] = param.match(/(@?[^@]*)@?(.*)/) || [];
     const local = await findLocalDependency({root, name});
     if (local) locals.push({local, name});
     else externals.push({name, range: version, type});

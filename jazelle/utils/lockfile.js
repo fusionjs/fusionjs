@@ -217,33 +217,33 @@ const diff /*: Diff */ = async ({
   let shouldSyncLockfiles = false;
   const cache = {};
   const changed = new Map();
-  await Promise.all(
-    sets.map(async ({dir, meta, lockfile}) => {
-      applyMetadataChanges({meta, removals, additions, upgrades});
-      const changes = await installMissingDeps({
-        dir,
-        meta,
-        lockfile,
-        sets,
-        ignore,
-        tmp,
-        cache,
-        conservative,
-      });
-      changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
+  for (const {dir, meta, lockfile} of sets) {
+    applyMetadataChanges({meta, removals, additions, upgrades});
+    const changes = await installMissingDeps({
+      dir,
+      meta,
+      lockfile,
+      sets,
+      ignore,
+      tmp,
+      cache,
+      conservative,
+    });
+    changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
 
-      const hasRemovals = removals.length > 0;
-      const hasAdditions = additions.length > 0;
-      const hasUpgrades = upgrades.length > 0;
-      const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
-      if (hasMetadataChanges || changes.length > 0) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
-    })
-  );
+    const hasRemovals = removals.length > 0;
+    const hasAdditions = additions.length > 0;
+    const hasUpgrades = upgrades.length > 0;
+    const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
+    if (hasMetadataChanges || changes.length > 0) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
+  }
 
   if (shouldSyncLockfiles) {
     const index = indexLockfiles({sets});
 
-    const filtered = sets.filter(item => changed.get(item.dir));
+    const filtered = sets.filter(item => {
+      return (changed.get(item.dir) || []).length > 0;
+    });
     const registries = await Promise.all(
       filtered.map(({dir}) => getRegistry(dir))
     );
@@ -422,6 +422,11 @@ const installMissingDeps = async ({
   const missing = {};
   const cacheKeyParts = [];
   for (const {name, range, type} of getDepEntries(meta)) {
+    // don't consider peers and optional as missing
+    if (type === 'peerDependencies' || type === 'optionalDependencies') {
+      continue;
+    }
+
     if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
       if (!missing[type]) missing[type] = {};
       missing[type][name] = range;
@@ -443,13 +448,20 @@ const installMissingDeps = async ({
           'utf8'
         );
         if (conservative) {
-          const merged = Object.assign({}, ...sets.map(set => set.lockfile));
+          const registry = await getRegistry(cwd);
+          const relevant = sets.filter(set => {
+            for (const key in set.lockfile) {
+              return set.lockfile[key].resolved.startsWith(registry);
+            }
+          });
+          const merged = Object.assign({}, ...relevant.map(s => s.lockfile));
           await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
         }
         await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
         const install = `${node} ${yarn} install --no-bin-links --non-interactive --ignore-scripts --ignore-engines --silent --link-duplicates`;
-        await exec(install, {cwd}, [process.stdout, process.stderr]);
+        console.error(`Registering ${cacheKeyParts.join()} in ${dir}`);
+        await exec(install, {cwd});
         return cwd;
       };
       cache[cacheKey] = install(); // cache the promise
@@ -494,7 +506,13 @@ const installMissingDeps = async ({
       const add = async () => {
         await mkdir(cwd, {recursive: true});
         if (conservative) {
-          const merged = Object.assign({}, ...sets.map(set => set.lockfile));
+          const registry = await getRegistry(cwd);
+          const relevant = sets.filter(set => {
+            for (const key in set.lockfile) {
+              return set.lockfile[key].resolved.startsWith(registry);
+            }
+          });
+          const merged = Object.assign({}, ...relevant.map(s => s.lockfile));
           await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
         }
         await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
@@ -502,7 +520,8 @@ const installMissingDeps = async ({
         await write(`${cwd}/package.json`, '{}\n', 'utf8');
         const deps = missingTransitives.join(' ');
         const add = `yarn add ${deps} --ignore-engines`; // use add instead of install because we may need to add more than one version of one dep
-        await exec(add, {cwd}, [process.stdout, process.stderr]);
+        console.error(`Registering ${missingTransitives.join()} in ${dir}`);
+        await exec(add, {cwd});
         return cwd;
       };
       cache[cacheKey] = add(); // cache promise
@@ -642,8 +661,7 @@ const isBetterVersion = (version, range, graph, key) => {
 
 const getRegistry = async cwd => {
   const getRegistry = `${node} ${yarn} config get registry`;
-  const registry = await exec(getRegistry, {cwd});
-  return registry ? registry.trim() : '';
+  return (await exec(getRegistry, {cwd})).trim();
 };
 
 const getYarnRc = async packageDir => {
