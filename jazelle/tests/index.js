@@ -205,8 +205,10 @@ async function testInstallAddUpgradeRemove() {
   await add({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    args: ['c'],
+    args: ['b', 'c'],
   });
+  assert(await exists(`${__dirname}/tmp/commands/node_modules/b`));
+  assert((await read(buildFile, 'utf8')).includes('//b:b'));
   assert(await exists(`${__dirname}/tmp/commands/node_modules/c`));
   assert((await read(buildFile, 'utf8')).includes('//c:c'));
 
@@ -239,8 +241,10 @@ async function testInstallAddUpgradeRemove() {
   await remove({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'c',
+    args: ['b', 'c'],
   });
+  assert(!JSON.parse(await read(meta, 'utf8')).dependencies.b);
+  assert(!(await exists(`${__dirname}/tmp/commands/node_modules/b`)));
   assert(!JSON.parse(await read(meta, 'utf8')).dependencies.c);
   assert(!(await exists(`${__dirname}/tmp/commands/node_modules/c`)));
 
@@ -248,7 +252,7 @@ async function testInstallAddUpgradeRemove() {
   await remove({
     root: `${__dirname}/tmp/commands`,
     cwd: `${__dirname}/tmp/commands/a`,
-    name: 'has',
+    args: ['has'],
   });
   assert(!(await exists(`${__dirname}/tmp/commands/node_modules/has`)));
 }

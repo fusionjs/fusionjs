@@ -412,10 +412,9 @@ Downloads external dependencies and links local dependencies. Does not create or
 
 Adds a dependency to the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`jazelle add --name [name] --dev --cwd [cwd]`
-`jazelle add [name] --dev --cwd [cwd]`
+`jazelle add [deps...] --dev --cwd [cwd]`
 
-- `--name` - Name of dependency and it's version to add. ie., `foo@1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
+- `[deps...]` - Name(s) of dependency and it's version to add. ie., `foo@1.2.3`. If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
 - `--dev` - Whether to install as a devDependency. Default to `false`
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
@@ -423,10 +422,9 @@ Adds a dependency to the project's package.json, syncing the `yarn.lock` file, a
 
 Removes a dependency from the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`jazelle remove --name [name] --cwd [cwd]`
-`jazelle remove [name] --cwd [cwd]`
+`jazelle remove [deps...] --cwd [cwd]`
 
-- `--name` - Name of dependency to remove
+- `[deps...]` - Name(s) of dependency to remove
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
 
 ### `jazelle upgrade`
@@ -794,10 +792,10 @@ Downloads external dependencies and links local dependencies. Does not create or
 
 Adds a dependency to the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`let add: ({root: string, cwd: string, name: string, version: string, dev: boolean}) => Promise<void>`
+`let add: ({root: string, cwd: string, args: string[], version: string, dev: boolean}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
-- `name` - Name of dependency to add and its version (e.g. `foo@^1.2.3`). If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
+- `args` - Array of dependency names to add with their version (e.g. `foo@^1.2.3`). If version is not specified, defaults to `npm info [name] version` for 3rd party packages, or the local version for local packages.
 - `dev` - Whether to install as a devDependency
 - `cwd` - Project folder (absolute path)
 
@@ -805,10 +803,10 @@ Adds a dependency to the project's package.json, syncing the `yarn.lock` file, a
 
 Removes a dependency from the project's package.json, syncing the `yarn.lock` file, and the matching `web_library` rule in the relevant BUILD.bazel file if needed
 
-`let remove: ({root: string, cwd: string, name: string}) => Promise<void>`
+`let remove: ({root: string, cwd: string, args: string[]}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
-- `name` - Name of dependency to remove
+- `args` - Array of dependency names to remove
 - `cwd` - Project folder (absolute path)
 
 ### `upgrade`

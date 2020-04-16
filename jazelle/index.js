@@ -87,7 +87,7 @@ const runCLI /*: RunCLI */ = async argv => {
       add: [
         `Install a package and any packages that it depends on
 
-        [name]                     Package to add at a specific version. ie., foo@1.2.3
+        [deps...]                  Package(s) to add at a specific version. ie., foo@1.2.3
         --dev                      Whether to install as devDependency
         --cwd [cwd]                Project directory to use`,
         async ({cwd, dev}) =>
@@ -101,9 +101,10 @@ const runCLI /*: RunCLI */ = async argv => {
       remove: [
         `Remove a package
 
-        [name]                     Package to remove
+        [deps...]                  Package(s) to remove
         --cwd [cwd]                Project directory to use`,
-        async ({cwd, name}) => remove({root: await rootOf(args), cwd, name}),
+        async ({cwd, name}) =>
+          remove({root: await rootOf(args), cwd, args: rest}),
       ],
       upgrade: [
         `Upgrade a package version across all projects
