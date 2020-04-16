@@ -3,7 +3,7 @@ const {getManifest} = require('./get-manifest.js');
 const {exec} = require('./node-helpers.js');
 const {bazel} = require('./binary-paths.js');
 const {getDownstreams} = require('../utils/get-downstreams.js');
-const {read} = require('../utils/node-helpers.js');
+const {exists, read} = require('../utils/node-helpers.js');
 
 /*::
 export type FindChangedTargetsArgs = {
@@ -33,6 +33,25 @@ const findChangedTargets /*: FindChangedTargets */ = async ({
   return targets;
 };
 
+const scan = async lines => {
+  const result = await Promise.all(
+    lines.map(async file => [file, await exists(file)])
+  );
+  return [
+    result.filter(r => !r[1]).map(r => r[0]),
+    result.filter(r => r[1]).map(r => r[0]),
+  ];
+};
+
+const batches = (q, size) => {
+  const result = [];
+  const copy = [...q];
+  while (copy.length) {
+    result.push(copy.splice(0, size));
+  }
+  return result;
+};
+
 const findChangedBazelTargets = async ({root, files}) => {
   // if no file, fallback to reading from stdin (fd=0)
   const data = await read(files || 0, 'utf8').catch(() => '');
@@ -50,7 +69,12 @@ const findChangedBazelTargets = async ({root, files}) => {
       });
       return {workspace, targets};
     } else {
-      const queried = await batch(root, lines, async file => {
+      /*
+        Separate files into two categories: files that exist and files that have been deleted
+        For files that have been deleted, try to recover some other file in the package
+      */
+      const [missing, exists] = await scan(lines);
+      const recoveredMissing = await batch(root, missing, async file => {
         const find = `${bazel} query "${file}"`;
         const result = await exec(find, opts).catch(async e => {
           // if file doesn't exist, find which package it would've belong to, and find another file in the same package
@@ -63,17 +87,19 @@ const findChangedBazelTargets = async ({root, files}) => {
           const cmd = `${bazel} query 'kind("source file", //${pkg}:*)' | head -n 1`;
           return exec(cmd).catch(() => '');
         });
-        const target = result.trim();
-        if (target === '') return '';
-        const all = target.replace(/:.+/, ':*');
-        const cmd = `${bazel} query "attr('srcs', '${target}', '${all}')"`;
-        const project = await exec(cmd, opts);
-        return project;
+        return result;
       });
-      const unfiltered = await batch(root, queried, async project => {
-        const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", "${project}")) in $graph except filter("node_modules", $graph)'`;
-        return exec(cmd, opts);
-      });
+      const queryables = [...exists, ...recoveredMissing];
+      const unfiltered = await batch(
+        root,
+        batches(queryables, 1000), // batching required, else E2BIG errors
+        async q => {
+          const innerQuery = q.join(' union ');
+          const cmd = `${bazel} query 'let graph = kind(".*_test rule", rdeps("...", ${innerQuery})) in $graph except filter("node_modules", $graph)' --output label`;
+          return exec(cmd, opts);
+        }
+      );
+
       const targets = unfiltered.filter(target => {
         const path = target.replace(/\/\/(.+?):.+/, '$1');
         return projects.includes(path);
