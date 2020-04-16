@@ -3,7 +3,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 const {exec} = require('../utils/node-helpers.js');
 const {node, yarn} = require('../utils/binary-paths.js');
-const {minVersion, gt} = require('../vendor/semver/index.js');
+const {minVersion, gt, validRange} = require('../vendor/semver/index.js');
 
 /*::
 type OutdatedArgs = {
@@ -11,6 +11,7 @@ type OutdatedArgs = {
 };
 type Outdated = (OutdatedArgs) => Promise<void>
 */
+
 const outdated /*: Outdated */ = async ({root}) => {
   const {projects} = await getManifest({root});
   const locals = await getAllDependencies({root, projects});
@@ -45,6 +46,9 @@ const outdated /*: Outdated */ = async ({root}) => {
       if (registryVersion) {
         const latest = JSON.parse(registryVersion).data;
         for (const range of map[name]) {
+          if (!validRange(range) || !validRange(latest)) {
+            continue;
+          }
           if (gt(latest, minVersion(range))) console.log(name, range, latest);
         }
       }
