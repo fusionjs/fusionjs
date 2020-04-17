@@ -4,6 +4,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {spawn, exists, read, write} = require('../utils/node-helpers.js');
 const {executeHook} = require('../utils/execute-hook.js');
 const {align} = require('./align.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 type ScaffoldArgs = {
@@ -31,7 +32,7 @@ const scaffold /*: Scaffold */ = async ({root, cwd, from, to, name}) => {
   const metaFile = `${absoluteTo}/package.json`;
   const meta = JSON.parse(await read(metaFile, 'utf8'));
   meta.name = name || basename(relativeTo);
-  await write(metaFile, JSON.stringify(meta, null, 2), 'utf8');
+  await write(metaFile, sortPackageJson(meta), 'utf8');
 
   const buildFile = `${absoluteTo}/BUILD.bazel`;
   if (await exists(buildFile)) {

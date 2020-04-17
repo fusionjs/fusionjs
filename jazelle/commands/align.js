@@ -4,6 +4,7 @@ const {getAllDependencies} = require('../utils/get-all-dependencies.js');
 const {read, write} = require('../utils/node-helpers.js');
 const {shouldSync, getVersion} = require('../utils/version-onboarding.js');
 const {install} = require('./install.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 type AlignArgs = {
@@ -34,8 +35,7 @@ const align /*: Align */ = async ({root, cwd}) => {
       }
     }
     if (changed) {
-      const modified = JSON.stringify(meta, null, 2) + '\n';
-      await write(`${cwd}/package.json`, modified, 'utf8');
+      await write(`${cwd}/package.json`, sortPackageJson(meta), 'utf8');
     }
   }
   await install({root, cwd, conservative: true});

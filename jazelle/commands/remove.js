@@ -8,6 +8,7 @@ const {read, write, remove: rm} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {remove: removeDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 export type RemoveArgs = {
@@ -33,11 +34,7 @@ const remove /*: Remove */ = async ({root, cwd, args}) => {
         delete meta.peerDependencies[name];
       if (meta.optionalDependencies && meta.optionalDependencies[name])
         delete meta.optionalDependencies[name];
-      await write(
-        `${cwd}/package.json`,
-        `${JSON.stringify(meta, null, 2)}\n`,
-        'utf8'
-      );
+      await write(`${cwd}/package.json`, sortPackageJson(meta), 'utf8');
     } else {
       const {projects} = await getManifest({root});
       const deps = await getLocalDependencies({

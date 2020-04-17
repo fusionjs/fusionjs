@@ -9,6 +9,7 @@ const {parse, stringify} = require('../vendor/@yarnpkg/lockfile/index.js');
 const {read, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 export type Report = {
@@ -302,11 +303,7 @@ const writeVersionSets = async ({sets}) => {
   await Promise.all(
     sets.map(async ({dir, meta, lockfile}) => {
       await mkdir(dir, {recursive: true});
-      await write(
-        `${dir}/package.json`,
-        `${JSON.stringify(meta, null, 2)}\n`,
-        'utf8'
-      );
+      await write(`${dir}/package.json`, sortPackageJson(meta), 'utf8');
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
     })
   );

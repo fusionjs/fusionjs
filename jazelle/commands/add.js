@@ -10,6 +10,7 @@ const {read, write} = require('../utils/node-helpers.js');
 const {findLocalDependency} = require('../utils/find-local-dependency.js');
 const {add: addDep} = require('../utils/lockfile.js');
 const {install} = require('./install.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*
 adding local dep should:
@@ -65,11 +66,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
       }
       meta[type][name] = local.meta.version;
     }
-    await write(
-      `${cwd}/package.json`,
-      `${JSON.stringify(meta, null, 2)}\n`,
-      'utf8'
-    );
+    await write(`${cwd}/package.json`, sortPackageJson(meta), 'utf8');
   }
 
   // add external deps

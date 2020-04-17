@@ -58,6 +58,7 @@ const {
 } = require('../utils/starlark.js');
 const {shouldSync, getVersion} = require('../utils/version-onboarding.js');
 const yarnCmds = require('../utils/yarn-commands.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 process.on('unhandledRejection', e => {
   console.error(e.stack);
@@ -120,6 +121,7 @@ async function runTests() {
     t(testLockfileRegistryResolution),
     t(testLockfileRegistryResolutionMultirepo),
     t(testPopulateGraph),
+    t(testSortPackageJSON),
   ]);
   // run separately to avoid CI error
   await t(testBazelDummy);
@@ -1862,4 +1864,50 @@ async function testBazelDependentFailure() {
   await assert.rejects(
     exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream, startStream])
   );
+}
+
+async function testSortPackageJSON() {
+  const pkg = {
+    description: 'description',
+    name: 'name',
+    author: 'author',
+    version: 'version',
+    scripts: {
+      test: 'test',
+      lint: 'lint',
+      cover: 'cover',
+    },
+    dependencies: {
+      a: '0.0.0',
+      c: '0.0.0',
+      '@uber/test': '0.0.0',
+      asdf: '0.0.0',
+      '@uber/asdf': '0.0.0',
+    },
+  };
+
+  const sortedPkg =
+    JSON.stringify(
+      {
+        name: 'name',
+        description: 'description',
+        version: 'version',
+        author: 'author',
+        dependencies: {
+          '@uber/asdf': '0.0.0',
+          '@uber/test': '0.0.0',
+          a: '0.0.0',
+          asdf: '0.0.0',
+          c: '0.0.0',
+        },
+        scripts: {
+          cover: 'cover',
+          lint: 'lint',
+          test: 'test',
+        },
+      },
+      null,
+      2
+    ) + '\n';
+  assert.equal(sortPackageJson(pkg), sortedPkg);
 }
