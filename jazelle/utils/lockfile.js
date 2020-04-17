@@ -336,10 +336,16 @@ const ensureInsertionRanges = async insertions => {
     await Promise.all(
       insertions.map(async insertion => {
         if (!insertion.range) {
-          const cmd = `yarn info ${insertion.name} version --json`;
-          const info = await exec(cmd, {env: process.env});
-          const {data} = JSON.parse(info);
-          insertion.range = `^${data}`; // eslint-disable-line require-atomic-updates
+          try {
+            const cmd = `yarn info ${insertion.name} version --json`;
+            const info = await exec(cmd, {env: process.env});
+            const {data} = JSON.parse(info);
+            insertion.range = `^${data}`; // eslint-disable-line require-atomic-updates
+          } catch (e) {
+            throw new Error(
+              `Package ${insertion.name} does not exist in NPM registry`
+            );
+          }
         }
       })
     );
