@@ -43,7 +43,7 @@ function runCommand(command, args = []) {
 
     // prioritize hermetic Node version over system version
     const binPath = `:${root}/node_modules/.bin`;
-    const script = `export NODE_PRESERVE_SYMLINKS=1; export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
+    const script = `export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
 }
