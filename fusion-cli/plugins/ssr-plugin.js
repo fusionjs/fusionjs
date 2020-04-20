@@ -155,6 +155,11 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 
 export {SSRBodyTemplate};
 
+const embeddedBrowserVersions = {
+  chrome: 80,
+  safari: 605, // mobile safari v13
+};
+
 /*
 Edge must get transpiled classes due to:
 - https://github.com/Microsoft/ChakraCore/issues/5030
@@ -175,6 +180,10 @@ function checkModuleSupport({name, version}) {
   }
   if (name === 'Chrome' || name === 'Chrome Headless' || name === 'Chromium') {
     if (majorVersion(version) >= modernBrowserVersions.chrome) return true;
+  } else if (name === 'Chrome WebView') {
+    if (majorVersion(version) >= embeddedBrowserVersions.chrome) return true;
+  } else if (name === 'WebKit') {
+    if (majorVersion(version) >= embeddedBrowserVersions.safari) return true;
   } else if (name === 'Mobile Safari' || name === 'Safari') {
     if (majorVersion(version) >= modernBrowserVersions.safari) return true;
   } else if (name === 'Firefox') {
