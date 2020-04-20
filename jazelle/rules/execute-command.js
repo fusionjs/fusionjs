@@ -3,11 +3,6 @@ const {readFileSync: read} = require('fs');
 const {execSync: exec} = require('child_process');
 const {dirname} = require('path');
 
-// we don't want the failed `exec` call to print a stack trace to stderr
-// because we are piping the NPM script's stderr to the user
-process.on('uncaughtException', () => {});
-process.on('unhandledRejection', () => {});
-
 const root = process.cwd();
 const [node, , main, , command, distPaths, out, ...args] = process.argv;
 const dists = distPaths.split('|');
@@ -26,12 +21,18 @@ if (out) {
 }
 
 function runCommands(command, args) {
-  if (command === 'run') {
-    command = args.shift();
+  // we don't want the failed `exec` call to print a stack trace to stderr
+  // because we are piping the NPM script's stderr to the user
+  try {
+    if (command === 'run') {
+      command = args.shift();
+    }
+    runCommand(`pre${command}`);
+    runCommand(command, args);
+    runCommand(`post${command}`);
+  } catch (e) {
+    process.exit(1);
   }
-  runCommand(`pre${command}`);
-  runCommand(command, args);
-  runCommand(`post${command}`);
 }
 
 function runCommand(command, args = []) {
