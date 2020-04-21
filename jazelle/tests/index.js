@@ -1877,6 +1877,7 @@ async function testSortPackageJSON() {
       lint: 'lint',
       cover: 'cover',
     },
+    list: ['zzz', 'a', 'ab', 'b'],
     dependencies: {
       a: '0.0.0',
       c: '0.0.0',
@@ -1900,6 +1901,7 @@ async function testSortPackageJSON() {
           asdf: '0.0.0',
           c: '0.0.0',
         },
+        list: ['a', 'ab', 'b', 'zzz'],
         scripts: {
           cover: 'cover',
           lint: 'lint',

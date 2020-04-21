@@ -15,7 +15,9 @@ module.exports = function sortPackageJson(pkg /*: Object */) /*: string */ {
     .filter(key => !specialKeys.includes(key))
     .sort();
   specialKeys.concat(pkgKeys).forEach(key => {
-    if (pkg[key] && typeof pkg[key] === 'object') {
+    if (Array.isArray(pkg[key])) {
+      nextPkg[key] = pkg[key].sort();
+    } else if (pkg[key] && typeof pkg[key] === 'object') {
       nextPkg[key] = sortObject(pkg[key]);
     } else {
       nextPkg[key] = pkg[key];
