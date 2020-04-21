@@ -19,6 +19,8 @@ import RouterPlugin, {
   RouterProviderToken,
   RouterToken,
   GetStaticContextToken,
+  BrowserHistoryToken,
+  browserHistoryPlugin,
 } from '../src/plugin';
 
 const addRoutePrefix = (ctx, next) => {
@@ -411,6 +413,51 @@ if (__BROWSER__) {
     app.register(UniversalEventsToken, UniversalEvents);
     const simulator = setup(app);
     await simulator.render('/');
+  });
+
+  test('Browser History Provider', async () => {
+    const element = <div />;
+
+    const app = getApp(element);
+    const UniversalEvents = getMockEvents({
+      title: '/',
+      page: '/',
+    });
+
+    let middlewareHistory;
+    let providerHistory;
+
+    app.register(UniversalEventsToken, UniversalEvents);
+    app.register(BrowserHistoryToken, browserHistoryPlugin);
+    app.register(
+      createPlugin({
+        deps: {
+          history: BrowserHistoryToken,
+        },
+        provides({history}) {
+          expect(history).toBeTruthy();
+          providerHistory = history;
+        },
+      })
+    );
+
+    app.middleware(
+      {
+        router: RouterToken,
+      },
+      ({router}) => (ctx, next) => {
+        const {history} = router.from(ctx);
+        expect(history).toBeTruthy();
+        middlewareHistory = history;
+        return next();
+      }
+    );
+    const simulator = setup(app);
+    await simulator.render('/');
+
+    expect(middlewareHistory).toBe(providerHistory);
+
+    cleanup();
   });
 }
 
