@@ -174,23 +174,6 @@ app.register(GetStaticContextToken, (ctx: Context) => {
 });
 ```
 
-##### `BrowserHistoryToken`
-
-```js
-import {BrowserHistoryToken} from 'fusion-plugin-react-router';
-```
-
-Token for exposing the browser's history to providers. See "Accessing History" below for more.
-
-
-##### `browserHistoryPlugin`
-
-```jsx
-import {browserHistoryPlugin} from 'fusion-plugin-react-router';
-```
-
-Plugin for exposing the browser's history to providers. See "Accessing History" below for more.
-
 ---
 
 #### Routing Events and Timing Metrics
@@ -236,26 +219,6 @@ app.register(createPlugin({
   }
 }));
 ```
-
-Alternatively, you can access the history on the browser using `BrowserHistoryToken` and `browserHistoryPlugin`.
-
-```js
-import {createPlugin} from 'fusion-core';
-import {BrowserHistoryToken, browserHistoryPlugin} from 'fusion-plugin-react-router';
-
-app.register(BrowserHistoryToken, browserHistoryPlugin);
-app.register(createPlugin({
-  deps: {
-    history: BrowserHistoryToken
-  },
-  provides: ({history}) => {
-    // ...
-  }
-}))
-```
-
-This is useful if you want to get the browser's history within a provider.
-
 
 #### Router
 
