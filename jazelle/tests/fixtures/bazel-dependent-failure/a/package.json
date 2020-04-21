@@ -1,0 +1,12 @@
+{
+  "name": "a",
+  "version": "0.0.0",
+  "dependencies": {
+    "b": "0.0.0",
+    "c": "0.0.0"
+  },
+  "scripts": {
+    "build": "mkdir -p foo && echo 'console.log(require(\"b\") + require(\"c\"))' > foo/foo.js",
+    "start": "node foo/foo.js"
+  }
+}
