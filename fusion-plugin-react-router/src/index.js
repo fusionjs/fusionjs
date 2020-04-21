@@ -10,6 +10,8 @@ import plugin, {
   RouterProviderToken,
   RouterToken,
   GetStaticContextToken,
+  BrowserHistoryToken,
+  browserHistoryPlugin,
 } from './plugin';
 import * as server from './server';
 import * as browser from './browser';
@@ -20,7 +22,13 @@ declare var __BROWSER__: Boolean;
 
 export default plugin;
 
-export {RouterProviderToken, RouterToken, GetStaticContextToken};
+export {
+  RouterProviderToken,
+  RouterToken,
+  GetStaticContextToken,
+  BrowserHistoryToken,
+  browserHistoryPlugin,
+};
 
 export const BrowserRouter = __BROWSER__
   ? browser.BrowserRouter
