@@ -31,7 +31,9 @@ function sortObject(obj) {
   Object.keys(obj)
     .sort()
     .forEach(key => {
-      if (obj[key] && typeof obj[key] === 'object') {
+      if (Array.isArray(obj[key])) {
+        nextObj[key] = obj[key].sort();
+      } else if (obj[key] && typeof obj[key] === 'object') {
         nextObj[key] = sortObject(obj[key]);
       } else {
         nextObj[key] = obj[key];

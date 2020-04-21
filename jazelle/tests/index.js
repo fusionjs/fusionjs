@@ -1878,6 +1878,9 @@ async function testSortPackageJSON() {
       cover: 'cover',
     },
     list: ['zzz', 'a', 'ab', 'b'],
+    nestedList: {
+      list: ['zzz', 'a', 'ab', 'b'],
+    },
     dependencies: {
       a: '0.0.0',
       c: '0.0.0',
@@ -1902,6 +1905,9 @@ async function testSortPackageJSON() {
           c: '0.0.0',
         },
         list: ['a', 'ab', 'b', 'zzz'],
+        nestedList: {
+          list: ['a', 'ab', 'b', 'zzz'],
+        },
         scripts: {
           cover: 'cover',
           lint: 'lint',
