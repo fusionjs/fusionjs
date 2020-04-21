@@ -1,0 +1,8 @@
+{
+  "name": "c",
+  "version": "0.0.0",
+  "main": "dist/foo.js",
+  "scripts": {
+    "build": "mkdir -p dist && mkdir dist && echo 'module.exports = 222' > dist/foo.js"
+  }
+}

@@ -1,0 +1,61 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@jazelle//:build-rules.bzl", "web_library", "web_binary", "web_executable", "web_test", "flow_test")
+
+web_library(
+    name = "library",
+    deps = [
+        "//:node_modules",
+        
+    ],
+    srcs = glob(["**"], exclude = ["dist/**"]),
+)
+
+web_binary(
+    name = "c",
+    build = "build",
+    command = "start",
+    deps = [
+        "//c:library",
+    ],
+    dist = ["dist"],
+)
+
+web_executable(
+    name = "dev",
+    command = "dev",
+    deps = [
+        "//c:library",
+    ],
+)
+
+web_executable(
+    name = "script",
+    command = "run",
+    deps = [
+        "//c:library",
+    ],
+)
+
+web_test(
+    name = "test",
+    command = "test",
+    deps = [
+        "//c:library",
+    ],
+)
+
+web_test(
+    name = "lint",
+    command = "lint",
+    deps = [
+        "//c:library",
+    ],
+)
+
+flow_test(
+    name = "flow",
+    deps = [
+        "//c:library",
+    ],
+)

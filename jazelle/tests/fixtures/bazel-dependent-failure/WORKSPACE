@@ -1,0 +1,16 @@
+local_repository(
+    name = "jazelle",
+    path = "../../../",
+)
+
+load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
+jazelle_dependencies(
+  node_version = "12.16.1",
+  node_sha256 = {
+    "mac": "",
+    "linux": "",
+    "windows": "",
+  },
+  yarn_version = "1.22.0",
+  yarn_sha256 = "",
+)
