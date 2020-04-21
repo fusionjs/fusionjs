@@ -18,6 +18,7 @@ import {
   unescape,
   memoize,
   RouteTagsToken,
+  RoutePrefixToken,
 } from 'fusion-core';
 import type {Token, Context, FusionPlugin} from 'fusion-core';
 
@@ -62,6 +63,33 @@ type PluginDepsType = {
 
 // Preserve browser history instance across HMR
 let browserHistory;
+
+function getBrowserHistory(basename = '') {
+  // Note that for a given client, the route prefix is static.
+  // That makes it safe to do this caching.
+  if (__BROWSER__) {
+    if (!browserHistory || (__DEV__ && typeof window.jsdom !== 'undefined')) {
+      browserHistory = createBrowserHistory({basename});
+    }
+  }
+  return browserHistory;
+}
+
+export const BrowserHistoryToken = createToken<RouterHistoryType>(
+  'BrowserHistory'
+);
+
+type BrowserHistoryDepsType = {
+  prefix: typeof RoutePrefixToken.optional,
+};
+
+export const browserHistoryPlugin = createPlugin<
+  BrowserHistoryDepsType,
+  RouterHistoryType
+>({
+  deps: {prefix: RoutePrefixToken.optional},
+  provides: ({prefix}) => getBrowserHistory(prefix || ''),
+});
 
 const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
@@ -174,7 +202,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
           !browserHistory ||
           (__DEV__ && typeof window.jsdom !== 'undefined')
         ) {
-          browserHistory = createBrowserHistory({basename: ctx.prefix});
+          browserHistory = getBrowserHistory(ctx.prefix);
         }
         // Expose the history object
         myAPI.history = browserHistory;
