@@ -63,7 +63,7 @@ const EXCLUDE_TRANSPILATION_PATTERNS = [
   /node_modules\/react\//,
   /node_modules\/core-js\//,
 ];
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
+const JS_EXT_PATTERN = /\.(mjs|js|jsx|ts|tsx)$/;
 
 /*::
 import type {
