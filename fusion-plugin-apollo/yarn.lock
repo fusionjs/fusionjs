@@ -1717,9 +1717,9 @@ copy-to@^2.0.1:
   integrity sha1-JoD7uAaKSNCGVrYJgJK9r8kG9KU=
 
 core-js@^3.0.1:
-  version "3.6.4"
-  resolved "https://registry.npmjs.org/core-js/-/core-js-3.6.4.tgz#440a83536b458114b9cb2ac1580ba377dc470647"
-  integrity sha512-4paDGScNgZP2IXXilaffL9X7968RuvwlkK3xWtZRVqgd8SYNiVKRJvkFd1aqqEuPfN7E68ZHEp9hDj6lHj4Hyw==
+  version "3.6.5"
+  resolved "https://registry.npmjs.org/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
+  integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -2636,17 +2636,10 @@ graphql-upload@^8.0.2:
     http-errors "^1.7.3"
     object-path "^0.11.4"
 
-graphql@^14.5.3:
+graphql@^14.5.3, graphql@^14.5.8:
   version "14.5.8"
   resolved "https://registry.npmjs.org/graphql/-/graphql-14.5.8.tgz#504f3d3114cb9a0a3f359bbbcf38d9e5bf6a6b3c"
   integrity sha512-MMwmi0zlVLQKLdGiMfWkgQD7dY/TUKt4L+zgJ/aR0Howebod3aNgP5JkgvAULiR2HPVZaP2VEElqtdidHweLkg==
-  dependencies:
-    iterall "^1.2.2"
-
-graphql@^14.5.8:
-  version "14.5.8"
-  resolved "https://unpm.uberinternal.com/graphql/-/graphql-14.5.8.tgz#504f3d3114cb9a0a3f359bbbcf38d9e5bf6a6b3c"
-  integrity sha1-UE89MRTLmgo/NZu7zzjZ5b9qazw=
   dependencies:
     iterall "^1.2.2"
 
