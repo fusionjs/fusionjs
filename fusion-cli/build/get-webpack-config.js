@@ -381,6 +381,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           loader: require.resolve('./loaders/json-loader.js'),
         },
         {
+          test: /\.ya?ml$/,
+          type: 'json',
+          loader: require.resolve('yaml-loader'),
+        },
+        {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },

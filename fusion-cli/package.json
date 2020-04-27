@@ -77,7 +77,8 @@
     "webpack": "4.41.2",
     "webpack-sources": "^1.4.3",
     "webpack-hot-middleware": "^2.24.3",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "yaml-loader": "0.6.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
