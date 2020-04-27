@@ -5,7 +5,7 @@ const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {ci} = require('../commands/ci.js');
 const {read, exists} = require('../utils/node-helpers.js');
-const {satisfies} = require('../vendor/semver/index.js');
+const {satisfies} = require('../utils/cached-semver');
 
 /*::
 export type DoctorArgs = {

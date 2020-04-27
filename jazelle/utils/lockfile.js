@@ -1,10 +1,5 @@
 // @flow
-const {
-  satisfies,
-  minVersion,
-  compare,
-  gt,
-} = require('../vendor/semver/index.js');
+const {satisfies, minVersion, compare, gt} = require('./cached-semver');
 const {parse, stringify} = require('../vendor/@yarnpkg/lockfile/index.js');
 const {read, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
@@ -100,12 +95,13 @@ const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
 
 /*::
 export type PruneArgs = {
+  registry?: string,
   roots: Array<string>,
   ignore: Array<string>,
 };
 export type Prune = (PruneArgs) => Promise<void>;
 */
-const prune /*: Prune */ = async ({roots, ignore}) => {
+const prune /*: Prune */ = async ({roots, ignore, registry}) => {
   const log = s => process.stdout.write(s);
   log('Pruning lockfiles');
 
@@ -116,12 +112,13 @@ const prune /*: Prune */ = async ({roots, ignore}) => {
     log('.');
     const {dir, meta} = item;
 
-    const registry = await getRegistry(dir);
+    const projectRegistry = registry || (await getRegistry(dir));
     const graph = {};
+
     for (const {name, range} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (!ignored) {
-        populateGraph({graph, name, range, index, registry});
+        populateGraph({graph, name, range, index, registry: projectRegistry});
       }
     }
 

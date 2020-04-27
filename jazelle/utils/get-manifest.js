@@ -7,6 +7,7 @@ export type GetManifestArgs = {
 };
 export type GetManifest = (GetManifestArgs) => Promise<Manifest>
 export type Manifest = {
+  registry?: string,
   projects: Array<string>,
   versionPolicy?: VersionPolicy,
   hooks?: Hooks,

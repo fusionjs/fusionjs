@@ -1,6 +1,6 @@
 // @flow
 
-const {validRange, intersects} = require('../vendor/semver/index.js');
+const {validRange, intersects} = require('./cached-semver');
 
 /*::
 import type {PackageJson} from './get-local-dependencies.js';

@@ -10,8 +10,9 @@ export type DedupeArgs = {
 export type Dedupe = (DedupeArgs) => Promise<void>;
 */
 const dedupe /*: Dedupe */ = async ({root}) => {
-  const {projects} = await getManifest({root});
+  const {projects, registry} = await getManifest({root});
   await prune({
+    registry,
     roots: projects.map(project => `${root}/${project}`),
     ignore: await Promise.all(
       projects.map(async project => {
