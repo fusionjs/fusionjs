@@ -10,7 +10,9 @@
 const fs = require('fs');
 const {dirname} = require('path');
 
-const rootDir = dirname(fs.realpathSync(`${process.cwd()}/package.json`));
+const rootDir = process.env.NODE_PRESERVE_SYMLINKS
+  ? dirname(`${process.cwd()}/package.json`)
+  : dirname(fs.realpathSync(`${process.cwd()}/package.json`));
 
 const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
 const matchValue = process.env.TEST_FOLDER
