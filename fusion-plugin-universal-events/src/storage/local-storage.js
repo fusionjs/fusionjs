@@ -26,7 +26,7 @@ const set = (events: BatchType[]) => {
 
 class LocalBatchStorage implements BatchStorage {
   add = (...toBeAdded: BatchType[]) => {
-    set(toBeAdded.concat(get()));
+    set(get().concat(toBeAdded));
   };
 
   addToStart = (...toBeAdded: BatchType[]) => {

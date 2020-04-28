@@ -19,10 +19,13 @@ Object.keys(toBeTested).forEach(storageType => {
   // eslint-disable-next-line jest/valid-describe
   describe(storageType, () => {
     test('add', () => {
-      const data = {type: 'nick', payload: 'test'};
+      const data1 = {type: 'nick', payload: 'test'};
+      const data2 = {type: '2', payload: 'test'};
       getAndClear();
-      add(data);
-      expect(getAndClear()).toEqual([data]);
+      add(data1);
+      add(data2);
+
+      expect(getAndClear()).toEqual([data1, data2]);
     });
 
     test('addToStart', () => {

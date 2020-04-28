@@ -187,3 +187,31 @@ test('Lowers limit for 413 errors', async () => {
   expect(emitter.limit).toBe(5);
   await emitter.flush();
 });
+
+const sleep = ms => setTimeout(() => {}, ms);
+
+test('Browser EventEmitter does not start a new flush while another one is in progress', async () => {
+  store.getAndClear();
+  let resolveFetch: (result: any) => void = () => {};
+  const fetch: Fetch = jest.fn().mockReturnValue(
+    new Promise(resolve => {
+      resolveFetch = resolve;
+    })
+  );
+  const emitter = new UniversalEmitter(fetch, store, 2000, 20);
+  emitter.emit('a', {x: 1});
+  emitter.flush();
+  emitter.emit('b', {y: 1});
+  emitter.flush();
+  emitter.flush();
+  // first request is not resolved, only one request at the moment
+  expect(fetch).toBeCalledTimes(1);
+  resolveFetch(createMockFetch());
+  await sleep(1);
+  // scheduled flush should be started after first request/flush is resolved
+  expect(fetch).toBeCalledTimes(2);
+  resolveFetch(createMockFetch());
+  await sleep(1);
+  // no more additional flush is needed as far as no events were emitted
+  expect(fetch).toBeCalledTimes(2);
+});
