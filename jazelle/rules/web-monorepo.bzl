@@ -44,6 +44,7 @@ def _get_runfiles(ctx, outputs):
   ctx.actions.write(
     output = ctx.outputs.executable,
     content = """
+    export NODE_PRESERVE_SYMLINKS='{preserve_symlinks}'
     export CWD=$(cd `dirname '{srcdir}'` && pwd)
     export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
     $NODE '{untar_script}' --runtime;
@@ -53,6 +54,7 @@ def _get_runfiles(ctx, outputs):
       srcdir = ctx.build_file_path,
       command = ctx.attr.command,
       untar_script = ctx.files._untar_script[0].path,
+      preserve_symlinks = ctx.attr.preserve_symlinks,
       build = ctx.files._script[0].path,
     )
   )
@@ -71,6 +73,7 @@ def _web_binary_impl(ctx):
 
   ctx.actions.run_shell(
     command = """
+    NODE_PRESERVE_SYMLINKS='{preserve_symlinks}';
     CWD=$(cd `dirname '{srcdir}'` && pwd);
     NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
     OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}');
@@ -84,6 +87,7 @@ def _web_binary_impl(ctx):
       dist = "|".join(ctx.attr.dist),
       output = build_output.path,
       bindir = ctx.bin_dir.path,
+      preserve_symlinks = ctx.attr.preserve_symlinks,
       untar_script = ctx.files._untar_script[0].path,
       build = ctx.files._script[0].path,
     ),
@@ -121,6 +125,7 @@ web_binary = rule(
       cfg = "host",
       default = Label("@jazelle_dependencies//:node"),
     ),
+    "preserve_symlinks": attr.string(default=''),
     "_untar_script": attr.label(
       allow_files = True,
       default = Label("//:rules/untar.js"),
@@ -145,6 +150,7 @@ def _web_executable_impl(ctx):
 
 _WEB_EXECUTABLE_ATTRS = {
   "command": attr.string(),
+  "preserve_symlinks": attr.string(default=''),
   "deps": attr.label_list(
     allow_files = True,
     default = [],
