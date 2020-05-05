@@ -71,7 +71,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
 
   // add external deps
   if (externals.length > 0) {
-    const {projects, versionPolicy} = await getManifest({root});
+    const {projects, versionPolicy, registry} = await getManifest({root});
     const unversioned = externals.filter(({range}) => !range);
     if (unversioned.length > 0 && versionPolicy) {
       const deps = await getAllDependencies({root, projects});
@@ -89,6 +89,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
     });
     const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
     await addDep({
+      registry,
       roots: [cwd],
       additions: externals,
       ignore: deps.map(d => d.meta.name),

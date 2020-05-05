@@ -14,7 +14,7 @@ export type UpgradeArgs = {
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
 const upgrade /*: Upgrade */ = async ({root, args}) => {
-  const {projects} = /*:: await */ await getManifest({root}); // FIXME: double await is due to Flow bug
+  const {projects, registry} = /*:: await */ await getManifest({root}); // FIXME: double await is due to Flow bug
   const roots = projects.map(dir => `${root}/${dir}`);
 
   // group by whether the dep is local (listed in manifest.json) or external (from registry)
@@ -63,6 +63,7 @@ const upgrade /*: Upgrade */ = async ({root, args}) => {
         })
       ),
       tmp,
+      registry,
     });
   }
 };

@@ -36,13 +36,14 @@ const remove /*: Remove */ = async ({root, cwd, args}) => {
         delete meta.optionalDependencies[name];
       await write(`${cwd}/package.json`, sortPackageJson(meta), 'utf8');
     } else {
-      const {projects} = await getManifest({root});
+      const {projects, registry} = await getManifest({root});
       const deps = await getLocalDependencies({
         dirs: projects.map(dir => `${root}/${dir}`),
         target: resolve(root, cwd),
       });
       const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
       await removeDep({
+        registry,
         roots: [cwd],
         removals: [name],
         ignore: deps.map(d => d.meta.name),

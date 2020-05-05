@@ -55,11 +55,12 @@ export type AddArgs = {
   additions?: Array<Addition>,
   ignore?: Array<string>,
   tmp?: string,
+  registry?: string,
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({roots, additions, ignore, tmp}) => {
-  await diff({roots, additions, ignore, tmp, conservative: false});
+const add /*: Add */ = async ({roots, additions, ignore, tmp, registry}) => {
+  await diff({roots, additions, ignore, tmp, conservative: false, registry});
 };
 
 /*::
@@ -68,11 +69,18 @@ export type RemoveArgs = {
   removals?: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
+  registry?: string,
 };
 export type Remove = (RemoveArgs) => Promise<void>;
 */
-const remove /*: Remove */ = async ({roots, removals, ignore, tmp}) => {
-  await diff({roots, removals, ignore, tmp, conservative: false});
+const remove /*: Remove */ = async ({
+  roots,
+  removals,
+  ignore,
+  tmp,
+  registry,
+}) => {
+  await diff({roots, removals, ignore, tmp, conservative: false, registry});
 };
 
 /*::
@@ -86,11 +94,18 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
+  registry?: string, 
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
-const upgrade /*: Upgrade */ = async ({roots, upgrades, ignore, tmp}) => {
-  await diff({roots, upgrades, ignore, tmp, conservative: false});
+const upgrade /*: Upgrade */ = async ({
+  roots,
+  upgrades,
+  ignore,
+  tmp,
+  registry,
+}) => {
+  await diff({roots, upgrades, ignore, tmp, conservative: false, registry});
 };
 
 /*::
@@ -136,6 +151,7 @@ export type RegenerateArgs = {
   tmp?: string,
   frozenLockfile: boolean,
   conservative: boolean,
+  registry?: string,
 };
 export type Regenerate = (RegenerateArgs) => Promise<void>;
 */
@@ -145,8 +161,9 @@ const regenerate /*: Regenerate */ = async ({
   tmp,
   frozenLockfile,
   conservative,
+  registry,
 }) => {
-  await diff({roots, ignore, tmp, frozenLockfile, conservative});
+  await diff({roots, ignore, tmp, frozenLockfile, conservative, registry});
 };
 
 /*::
@@ -185,6 +202,7 @@ type DiffArgs = {
   frozenLockfile?: boolean,
   conservative: boolean,
   tmp?: string,
+  registry?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
 */
@@ -196,6 +214,7 @@ const diff /*: Diff */ = async ({
   ignore = [],
   frozenLockfile = false,
   conservative,
+  registry,
   tmp = '/tmp',
 }) => {
   // populate missing ranges w/ latest
@@ -226,6 +245,7 @@ const diff /*: Diff */ = async ({
       tmp,
       cache,
       conservative,
+      registry,
     });
     changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
 
@@ -415,6 +435,7 @@ const installMissingDeps = async ({
   tmp,
   cache,
   conservative,
+  registry,
 }) => {
   let changes = new Map();
 
@@ -435,7 +456,7 @@ const installMissingDeps = async ({
   }
   if (Object.keys(missing).length > 0) {
     const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-    const yarnrc = await getYarnRc(dir);
+    const yarnrc = await getYarnRc(dir, registry);
 
     // install missing deps and reuse promise in parallel runs if possible
     const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
@@ -498,7 +519,7 @@ const installMissingDeps = async ({
   }
   if (missingTransitives.length > 0) {
     const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-    const yarnrc = await getYarnRc(dir);
+    const yarnrc = await getYarnRc(dir, registry);
 
     // add missing transitives and reuse promise in parallel runs if possible
     const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
@@ -664,9 +685,9 @@ const getRegistry = async cwd => {
   return (await exec(getRegistry, {cwd})).trim();
 };
 
-const getYarnRc = async packageDir => {
+const getYarnRc = async (packageDir, registry) => {
   const yarnrc = ['"--install.frozen-lockfile" false'];
-  const registry = await getRegistry(packageDir);
+  registry = registry || (await getRegistry(packageDir));
   if (registry) {
     yarnrc.push(`--registry "${registry}"`);
   }
