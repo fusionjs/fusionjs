@@ -39,7 +39,8 @@
     "jest": "^25.1.0"
   },
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo"
   },
   "scripts": {
     "clean": "cup-clean",
