@@ -24,26 +24,28 @@ function runCommands(command, args) {
   // we don't want the failed `exec` call to print a stack trace to stderr
   // because we are piping the NPM script's stderr to the user
   try {
+    if (command.startsWith('yarn ')) {
+      runCommand(command.substr(5), args);
+      return;
+    }
     if (command === 'run') {
       command = args.shift();
     }
-    runCommand(`pre${command}`);
-    runCommand(command, args);
-    runCommand(`post${command}`);
+    runCommand(scripts[`pre${command}`]);
+    runCommand(scripts[command], args);
+    runCommand(scripts[`post${command}`]);
   } catch (e) {
     process.exit(1);
   }
 }
 
 function runCommand(command, args = []) {
-  if (scripts[command]) {
-    const payload = scripts[command];
+  if (command) {
     const nodeDir = dirname(node);
     const params = args.map(arg => `'${arg}'`).join(' ');
-
     // prioritize hermetic Node version over system version
     const binPath = `:${root}/node_modules/.bin`;
-    const script = `export PATH=${nodeDir}${binPath}:$PATH; ${payload} ${params}`;
+    const script = `export PATH=${nodeDir}${binPath}:$PATH; ${command} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
 }
