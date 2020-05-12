@@ -68,6 +68,11 @@ module.exports = {
         default: false,
         describe: 'Debug application',
       },
+      exitOnError: {
+        type: 'boolean',
+        default: false,
+        describe: 'Exits the development server if an error occurs.',
+      },
       port: {
         type: 'number',
         default: 3000,

@@ -25,6 +25,7 @@ exports.run = async function(
     hmr,
     open,
     logLevel,
+    exitOnError,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -77,10 +78,16 @@ exports.run = async function(
     } catch (e) {} // eslint-disable-line
   };
 
-  const watcher = await new Promise(resolve => {
+  const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
       if (err || stats.hasErrors()) {
-        return resolve(watcher);
+        if (exitOnError) {
+          return reject(
+            new Error('Compilation error exiting due to exitOnError parameter.')
+          );
+        } else {
+          return resolve(watcher);
+        }
       }
       return runAll().then(() => resolve(watcher));
     });

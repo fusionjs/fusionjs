@@ -44,7 +44,8 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--test`: Run tests as well as application
   - `--log-level`: Log level to output to console `[default: "info"]`
   - `--forceLegacyBuild`: Force enable legacy build. By default not compiled in dev.
-  - `--perserve-names`: Disable name mangling during script minification
+  - `--exitOnError`: Exit the process if a compiliation error occurs.
+  - `--preserveNames`: Disable name mangling during script minification
 
 <!--
 * `fusion profile [--environment] [--watch] [--file-count]`: Profile your application
