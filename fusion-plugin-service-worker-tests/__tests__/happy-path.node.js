@@ -54,21 +54,25 @@ test('/happy path', async done => {
         ).toBeTruthy();
         expect(cacheKeys.includes(`${hostname}${port}/`)).toBeTruthy();
       } else if (msg._text.startsWith('[TEST] cache dates after first load:')) {
-        originalCacheDates = msg._text.split('#')[1].split(',');
+        originalCacheDates = msg._text
+          .split('#')[1]
+          .split(',')
+          .map(n => parseInt(n));
         expect(originalCacheDates.length === precachePaths.length).toBeTruthy();
       } else if (
         msg._text.startsWith('[TEST] cache dates after second load:')
       ) {
-        const newCacheDates = msg._text.split('#')[1].split(',');
+        const newCacheDates = msg._text
+          .split('#')[1]
+          .split(',')
+          .map(n => parseInt(n));
         expect(
           // add one for HTML
           newCacheDates.length === cacheablePaths.length + 1
         ).toBeTruthy();
         expect(
           newCacheDates.every(cacheDate =>
-            originalCacheDates.every(
-              oldCacheDate => cacheDate > originalCacheDates
-            )
+            originalCacheDates.every(oldCacheDate => cacheDate > oldCacheDate)
           )
         ).toBeTruthy();
       }

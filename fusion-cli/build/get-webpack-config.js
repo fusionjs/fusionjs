@@ -22,7 +22,7 @@ const {
   brotliWebpackPlugin,
   svgoWebpackPlugin,
 } = require('../lib/compression');
-const resolveFrom = require('resolve-from');
+const resolveFrom = require('../lib/resolve-from');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const {
@@ -410,7 +410,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           if (/^[@a-z\-0-9]+/.test(request)) {
             const absolutePath = resolveFrom.silent(context, request);
             // do not bundle external packages and those not whitelisted
-            if (absolutePath === null) {
+            if (typeof absolutePath !== 'string') {
               // if module is missing, skip rewriting to absolute path
               return callback(null, request);
             }
@@ -438,6 +438,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         }),
     ].filter(Boolean),
     resolve: {
+      symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
       aliasFields: [
         (runtime === 'client' || runtime === 'sw') && 'browser',
         'es2015',
@@ -450,6 +451,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       },
     },
     resolveLoader: {
+      symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
       alias: {
         [fileLoader.alias]: fileLoader.path,
         [chunkIdsLoader.alias]: chunkIdsLoader.path,
