@@ -9,5 +9,5 @@ exports_files([
 
 filegroup(
   name = "files",
-  srcs = glob(["**/*"])
+  srcs = glob(["**/*"], exclude = ["tests/**"])
 )

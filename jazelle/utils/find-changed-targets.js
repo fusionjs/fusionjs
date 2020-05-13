@@ -33,9 +33,9 @@ const findChangedTargets /*: FindChangedTargets */ = async ({
   return targets;
 };
 
-const scan = async lines => {
+const scan = async (root, lines) => {
   const result = await Promise.all(
-    lines.map(async file => [file, await exists(file)])
+    lines.map(async file => [file, await exists(`${root}/${file}`)])
   );
   return [
     result.filter(r => !r[1]).map(r => r[0]),
@@ -73,7 +73,7 @@ const findChangedBazelTargets = async ({root, files}) => {
         Separate files into two categories: files that exist and files that have been deleted
         For files that have been deleted, try to recover some other file in the package
       */
-      const [missing, exists] = await scan(lines);
+      const [missing, exists] = await scan(root, lines);
       const recoveredMissing = await batch(root, missing, async file => {
         const find = `${bazel} query "${file}"`;
         const result = await exec(find, opts).catch(async e => {

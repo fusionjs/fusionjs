@@ -1,5 +1,3 @@
-bin/bazelisk
-bin/yarn.js
 node_modules
 tests/tmp
 yarn-error.log

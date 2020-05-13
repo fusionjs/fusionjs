@@ -11,8 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "node tests/index.js",
-    "preinstall": "bin/download-bazelisk.sh && bin/download-yarn.sh",
-    "build": "yarn preinstall"
+    "build": "echo ok"
   },
   "dependencies": {},
   "devDependencies": {

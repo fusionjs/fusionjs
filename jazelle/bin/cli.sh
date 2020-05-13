@@ -59,11 +59,6 @@ else
   then
     # if system bazel exists and is the correct version, just use that
     ln -sf "$BAZEL_PATH" "$BAZELISK_PATH"
-  else
-    if [ ! -f "$BAZELISK_PATH" ]
-    then
-      "$BIN/download-bazelisk.sh"
-    fi
   fi
 
   # setup other binaries
@@ -89,10 +84,6 @@ else
       echo "Bazel" "$BAZELISK_PATH" version
       "$BAZELISK_PATH" run //:jazelle -- setup
       echo "Attempting to use system Node/Yarn/Jazelle versions..."
-    fi
-    if [ ! -f "$BIN/yarn.js" ]
-    then
-      "$BIN/download-yarn.sh"
     fi
     NODE="$(which node)"
     YARN="$BIN/yarn.js"
