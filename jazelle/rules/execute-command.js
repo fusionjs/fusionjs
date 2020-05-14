@@ -1,7 +1,11 @@
 // @flow
-const {readFileSync: read} = require('fs');
+const {
+  readFileSync: read,
+  readdirSync: readdir,
+  realpathSync: realpath,
+} = require('fs');
 const {execSync: exec} = require('child_process');
-const {dirname} = require('path');
+const {dirname, join} = require('path');
 
 const root = process.cwd();
 const [node, , main, , command, distPaths, out, ...args] = process.argv;
@@ -45,6 +49,37 @@ function runCommand(command, args = []) {
     const params = args.map(arg => `'${arg}'`).join(' ');
     // prioritize hermetic Node version over system version
     const binPath = `:${root}/node_modules/.bin`;
+    if (process.env.NODE_PRESERVE_SYMLINKS) {
+      const bins = readdir('node_modules/.bin');
+      const items = command.split(' ');
+      let matchingBin = null;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (bins.includes(item)) {
+          if (
+            read(join('node_modules/.bin', item), 'utf-8')
+              .split('\n')[0]
+              .trim()
+              .endsWith('node')
+          ) {
+            matchingBin = item;
+            break;
+          }
+        }
+      }
+      if (matchingBin) {
+        const realBin = realpath(join('node_modules/.bin', matchingBin));
+        const pathToUse = join(
+          process.cwd(),
+          'node_modules',
+          realBin.split('node_modules').pop()
+        );
+        command = command.replace(
+          matchingBin,
+          `node --preserve-symlinks-main ${pathToUse}`
+        );
+      }
+    }
     const script = `export PATH=${nodeDir}${binPath}:$PATH; ${command} ${params}`;
     exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
   }
