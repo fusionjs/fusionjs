@@ -1,4 +1,3 @@
-bin/bazelisk
 node_modules
 tests
 .yarn-error.log
