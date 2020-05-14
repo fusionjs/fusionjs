@@ -16,6 +16,7 @@ const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
 const {outdated} = require('./commands/outdated.js');
 const {align} = require('./commands/align.js');
+const {localize} = require('./commands/localize.js');
 const {changes} = require('./commands/changes.js');
 const {plan} = require('./commands/plan.js');
 const {batch} = require('./commands/batch.js');
@@ -136,6 +137,10 @@ const runCLI /*: RunCLI */ = async argv => {
 
         --cwd [cwd]                Project directory to use`,
         async ({cwd}) => await align({root: await rootOf(args), cwd}),
+      ],
+      localize: [
+        `Align dependency versions to local versions, if a local version exists`,
+        async () => await localize({root: await rootOf(args)}),
       ],
       changes: [
         `Lists Bazel test targets that changed given a list of changed files
@@ -301,6 +306,7 @@ module.exports = {
   purge,
   check: reportMismatchedTopLevelDeps,
   align,
+  localize,
   changes: findChangedTargets,
   plan: getTestGroups,
   batch,

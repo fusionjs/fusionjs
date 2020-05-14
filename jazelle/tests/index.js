@@ -13,6 +13,7 @@ const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
 const {script} = require('../commands/script.js');
+const {localize} = require('../commands/localize.js');
 
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {batchTestGroup} = require('../utils/batch-test-group');
@@ -122,6 +123,7 @@ async function runTests() {
     t(testLockfileRegistryResolutionMultirepo),
     t(testPopulateGraph),
     t(testSortPackageJSON),
+    t(testLocalize),
   ]);
   // run separately to avoid CI error
   await t(testBazelDummy);
@@ -1918,4 +1920,15 @@ async function testSortPackageJSON() {
       2
     ) + '\n';
   assert.equal(sortPackageJson(pkg), sortedPkg);
+}
+
+async function testLocalize() {
+  const cmd = `cp -r ${__dirname}/fixtures/localize ${__dirname}/tmp/localize`;
+  await exec(cmd);
+
+  const root = `${__dirname}/tmp/localize`;
+  await localize({root});
+  const meta = JSON.parse(await read(`${root}/b/package.json`, 'utf8'));
+  assert.equal(meta.dependencies.a, '0.0.0-monorepo');
+  assert.equal(meta.devDependencies.a, '0.0.0-monorepo');
 }

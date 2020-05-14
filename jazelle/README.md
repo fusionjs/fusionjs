@@ -338,6 +338,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
 - [`jazelle align`](#jazelle-align)
+- [`jazelle localize`](#jazelle-localize)
 - [`jazelle chunk`](#jazelle-chunk)
 - [`jazelle changes`](#jazelle-changes)
 - [`jazelle plan`](#jazelle-plan)
@@ -483,6 +484,12 @@ Align a project's dependency versions to respect the version policy, if there is
 `jazelle align --cwd [cwd]`
 
 - `--cwd` - Project folder (absolute or relative to shell `cwd`). Defaults to `process.cwd()`
+
+### `jazelle localize`
+
+Align dependency versions to local versions, if a local version exists
+
+`jazelle localize`
 
 ### `jazelle chunk`
 
@@ -710,6 +717,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [purge](#purge)
 - [check](#check)
 - [align](#align)
+- [localize](#localize)
 - [chunk](#chunk)
 - [changes](#changes)
 - [plan](#plan)
@@ -883,6 +891,14 @@ Align a project's dependency versions to respect the version policy, if there is
 
 - `root` - Monorepo root folder (absolute path)
 - `cwd` - Project folder (absolute path)
+
+### `localize`
+
+Align dependency versions to local versions, if a local version exists
+
+`let localize: ({root: string}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
 
 ### `chunk`
 
