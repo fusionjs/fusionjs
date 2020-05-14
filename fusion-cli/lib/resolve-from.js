@@ -24,7 +24,7 @@ const resolveFrom = (
     );
   }
 
-  if (process.env.NODE_PRESERVE_SYMLINKS) {
+  if (!process.env.NODE_PRESERVE_SYMLINKS) {
     try {
       fromDirectory = fs.realpathSync(fromDirectory);
     } catch (error) {
