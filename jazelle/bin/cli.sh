@@ -67,7 +67,7 @@ else
   JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
   if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
   then
-    time "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup #2>/dev/null
+    "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup 2>/dev/null
   fi
 
   # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
