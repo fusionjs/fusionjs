@@ -60,7 +60,7 @@ const install /*: Install */ = async ({
     conservative,
   });
   if (workspace === 'sandbox' && frozenLockfile === false) {
-    await generateBazelignore({root, projects: projects});
+    await generateBazelignore({root, projects});
     await generateBazelBuildRules({root, deps, projects, dependencySyncRule});
   }
   await installDeps({root, cwd, deps, ignore: all, hooks});

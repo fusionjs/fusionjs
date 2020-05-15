@@ -62,11 +62,13 @@ else
   fi
 
   # setup other binaries
-  "$BAZELISK_PATH" run //:jazelle -- setup 2>/dev/null
-
   NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
   YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
   JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
+  if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
+  then
+    time "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup #2>/dev/null
+  fi
 
   # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
   if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
@@ -82,7 +84,7 @@ else
       echo "Yarn" $("$YARN" --version) "size:" $(wc -c "$YARN")
       echo "Jazelle" "size:" $(wc -c "$JAZELLE")
       echo "Bazel" "$BAZELISK_PATH" version
-      "$BAZELISK_PATH" run //:jazelle -- setup
+      "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup
       echo "Attempting to use system Node/Yarn/Jazelle versions..."
     fi
     NODE="$(which node)"

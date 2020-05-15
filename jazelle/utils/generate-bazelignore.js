@@ -24,7 +24,10 @@ const generateBazelignore /*: GenerateBazelignore */ = async ({
       ...projects.map(p => `${p}/node_modules`),
     ]),
   ];
-  const updated = ignorePaths.sort().join('\n');
+  const updated = ignorePaths
+    .sort()
+    .filter(Boolean)
+    .join('\n');
   if (bazelignore !== updated)
     await write(`${root}/.bazelignore`, updated, 'utf8');
 };

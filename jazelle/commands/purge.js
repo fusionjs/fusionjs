@@ -11,15 +11,15 @@ export type Purge = (PurgeArgs) => Promise<void>;
 */
 const purge /*: Purge */ = async ({root}) => {
   const {projects = []} = await getManifest({root});
-  projects.map(project => {
-    remove(`${root}/${project}/node_modules`);
-  });
-  remove(`${root}/third_party/jazelle/temp`);
-  remove(`${root}/node_modules`);
-  await spawn(bazel, ['clean', '--expunge'], {
-    cwd: root,
-    stdio: 'inherit',
-  }).catch(() => {}); // user doesn't care for our stack trace, just pipe bazel output instead
+  await Promise.all([
+    ...projects.map(project => remove(`${root}/${project}/node_modules`)),
+    remove(`${root}/third_party/jazelle/temp`),
+    remove(`${root}/node_modules`),
+    spawn(bazel, ['clean', '--expunge'], {
+      cwd: root,
+      stdio: 'inherit',
+    }).catch(() => {}), // user doesn't care for our stack trace, just pipe bazel output instead
+  ]);
 };
 
 module.exports = {purge};
