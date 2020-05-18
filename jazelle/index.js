@@ -124,9 +124,14 @@ const runCLI /*: RunCLI */ = async argv => {
       check: [
         `Display deps w/ multiple versions installed across projects
 
-        --json                     Whether to print as JSON (e.g. for piping to jq)`,
-        async ({json}) =>
-          check({root: await rootOf(args), json: Boolean(json)}),
+        --json                     Whether to print as JSON (e.g. for piping to jq)
+        --all                      Includes all dependencies, including those with only a single version installed`,
+        async ({json, all}) =>
+          check({
+            root: await rootOf(args),
+            json: Boolean(json),
+            all: Boolean(all),
+          }),
       ],
       outdated: [
         `Displays deps whose version is behind the latest version`,

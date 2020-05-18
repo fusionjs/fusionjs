@@ -4,7 +4,7 @@ import type {Args} from './parse-argv.js';
 
 export type Cli = (string, Args, CliOptions, CliAction) => Promise<void>;
 export type CliOptions = {[string]: [string, CliAction]};
-export type CliAction = (Args) => Promise<void>;
+export type CliAction = (Args) => Promise<?mixed>;
 */
 const cli /*: Cli */ = async (command, args, options, fallback) => {
   if (command == null || ['-h', '--help', 'help'].includes(command)) {

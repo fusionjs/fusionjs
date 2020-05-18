@@ -14,6 +14,7 @@ const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
 const {script} = require('../commands/script.js');
 const {localize} = require('../commands/localize.js');
+const {check} = require('../commands/check.js');
 
 const {assertProjectDir} = require('../utils/assert-project-dir.js');
 const {batchTestGroup} = require('../utils/batch-test-group');
@@ -124,6 +125,7 @@ async function runTests() {
     t(testPopulateGraph),
     t(testSortPackageJSON),
     t(testLocalize),
+    t(testCheck),
   ]);
   // run separately to avoid CI error
   await t(testBazelDummy);
@@ -1931,4 +1933,53 @@ async function testLocalize() {
   const meta = JSON.parse(await read(`${root}/b/package.json`, 'utf8'));
   assert.equal(meta.dependencies.a, '0.0.0-monorepo');
   assert.equal(meta.devDependencies.a, '0.0.0-monorepo');
+}
+
+async function testCheck() {
+  const cmd = `cp -r ${__dirname}/fixtures/check ${__dirname}/tmp/check`;
+  await exec(cmd);
+
+  const root = `${__dirname}/tmp/check`;
+
+  // Check default
+  let result = await check({
+    root,
+    json: true,
+    all: false,
+  });
+  if (!result) {
+    assert.ok(result);
+    return;
+  }
+  assert.equal(
+    JSON.stringify(JSON.parse(result)), // resolve formatting
+    JSON.stringify({
+      a: {
+        '0.0.1': ['a'],
+        '0.0.0': ['b'],
+      },
+    })
+  );
+
+  // Check with --all
+  result = await check({root, json: true, all: true});
+  if (!result) {
+    assert.ok(result);
+    return;
+  }
+  assert.equal(
+    JSON.stringify(JSON.parse(result)), // resolve formatting
+    JSON.stringify({
+      a: {
+        '0.0.1': ['a'],
+        '0.0.0': ['b'],
+      },
+      b: {
+        '1.0.0': ['a'],
+      },
+      c: {
+        '0.0.0': ['b'],
+      },
+    })
+  );
 }

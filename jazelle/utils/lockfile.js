@@ -8,16 +8,17 @@ const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 export type Report = {
-  [string]: {
-    [string]: Array<string>
+  [dependency: string]: {
+    [version: string]: Array<string> // list of projects
   }
 };
 export type CheckArgs = {
   roots: Array<string>,
+  all?: boolean
 };
 export type Check = (CheckArgs) => Promise<Report>;
 */
-const check /*: Check */ = async ({roots}) => {
+const check /*: Check */ = async ({roots, all}) => {
   const versions = {};
   function collectVersions(meta, type) {
     Object.keys(meta[type] || {}).forEach(name => {
@@ -37,9 +38,12 @@ const check /*: Check */ = async ({roots}) => {
       collectVersions(meta, 'optionalDependencies');
     })
   );
-  Object.keys(versions).forEach(name => {
-    if (Object.keys(versions[name]).length === 1) delete versions[name];
-  });
+
+  if (!all) {
+    Object.keys(versions).forEach(name => {
+      if (Object.keys(versions[name]).length === 1) delete versions[name];
+    });
+  }
 
   return versions;
 };
@@ -94,7 +98,7 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
-  registry?: string, 
+  registry?: string,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
