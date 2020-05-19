@@ -12,6 +12,7 @@ const {add} = require('./commands/add.js');
 const {remove} = require('./commands/remove.js');
 const {upgrade} = require('./commands/upgrade.js');
 const {dedupe} = require('./commands/dedupe.js');
+const {prune} = require('./commands/prune.js');
 const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
 const {outdated} = require('./commands/outdated.js');
@@ -116,6 +117,10 @@ const runCLI /*: RunCLI */ = async argv => {
       dedupe: [
         `Dedupe transitive deps across all projects`,
         async () => dedupe({root: await rootOf(args)}),
+      ],
+      prune: [
+        `Prune unused transitive deps`,
+        async () => prune({root: await rootOf(args)}),
       ],
       purge: [
         `Remove generated files (i.e. node_modules folders and bazel output files)`,
@@ -308,6 +313,7 @@ module.exports = {
   remove,
   upgrade,
   dedupe,
+  prune,
   purge,
   check: reportMismatchedTopLevelDeps,
   align,

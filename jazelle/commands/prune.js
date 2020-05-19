@@ -1,17 +1,17 @@
 // @flow
-const {dedupe: dedupeDeps} = require('../utils/lockfile.js');
+const {prune: pruneDeps} = require('../utils/lockfile.js');
 const {getManifest} = require('../utils/get-manifest.js');
 const {read} = require('../utils/node-helpers.js');
 
 /*::
-export type DedupeArgs = {
+export type PruneArgs = {
   root: string,
 };
-export type Dedupe = (DedupeArgs) => Promise<void>;
+export type Prune = (PruneArgs) => Promise<void>;
 */
-const dedupe /*: Dedupe */ = async ({root}) => {
+const prune /*: Prune */ = async ({root}) => {
   const {projects, registry} = await getManifest({root});
-  await dedupeDeps({
+  await pruneDeps({
     registry,
     roots: projects.map(project => `${root}/${project}`),
     ignore: await Promise.all(
@@ -23,4 +23,4 @@ const dedupe /*: Dedupe */ = async ({root}) => {
   });
 };
 
-module.exports = {dedupe};
+module.exports = {prune};

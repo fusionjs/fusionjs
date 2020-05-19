@@ -113,6 +113,43 @@ const upgrade /*: Upgrade */ = async ({
 };
 
 /*::
+export type DedupeArgs = {
+  registry?: string,
+  roots: Array<string>,
+  ignore: Array<string>,
+};
+export type Dedupe = (DedupeArgs) => Promise<void>;
+*/
+const dedupe /*: Dedupe */ = async ({roots, ignore, registry}) => {
+  const log = s => process.stdout.write(s);
+  log('Deduping lockfiles');
+
+  const sets = await readVersionSets({roots});
+  const index = indexLockfiles({sets});
+
+  for (const item of sets) {
+    log('.');
+    const {dir, meta} = item;
+
+    const projectRegistry = registry || (await getRegistry(dir));
+    const graph = {};
+
+    for (const {type, name, range} of getDepEntries(meta)) {
+      if (type === 'peerDependencies') continue;
+      const ignored = ignore.find(dep => dep === name);
+      if (!ignored) {
+        populateGraph({graph, name, range, index, registry: projectRegistry});
+      }
+    }
+
+    item.lockfile = graphToLockfile({graph});
+  }
+  log('\n');
+
+  await writeVersionSets({sets});
+};
+
+/*::
 export type PruneArgs = {
   registry?: string,
   roots: Array<string>,
@@ -125,16 +162,17 @@ const prune /*: Prune */ = async ({roots, ignore, registry}) => {
   log('Pruning lockfiles');
 
   const sets = await readVersionSets({roots});
-  const index = indexLockfiles({sets});
 
   for (const item of sets) {
     log('.');
+    const index = indexLockfiles({sets: [item]});
     const {dir, meta} = item;
 
     const projectRegistry = registry || (await getRegistry(dir));
     const graph = {};
 
-    for (const {name, range} of getDepEntries(meta)) {
+    for (const {type, name, range} of getDepEntries(meta)) {
+      if (type === 'peerDependencies') continue;
       const ignored = ignore.find(dep => dep === name);
       if (!ignored) {
         populateGraph({graph, name, range, index, registry: projectRegistry});
@@ -289,7 +327,7 @@ const diff /*: Diff */ = async ({
       if (frozenLockfile) {
         const oldKeys = Object.keys(item.lockfile);
         const newKeys = Object.keys(lockfile);
-        if (oldKeys.sort().join() !== newKeys.sort().join()) {
+        if (oldKeys.sort().join() < newKeys.sort().join()) {
           throw new Error(
             `Updating lockfile is not allowed with frozenLockfile. ` +
               `This error is most likely happening if you have committed ` +
@@ -703,6 +741,7 @@ module.exports = {
   add,
   remove,
   upgrade,
+  dedupe,
   prune,
   regenerate,
   merge,

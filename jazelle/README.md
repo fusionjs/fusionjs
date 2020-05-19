@@ -335,6 +335,7 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle remove`](#jazelle-remove)
 - [`jazelle upgrade`](#jazelle-upgrade)
 - [`jazelle dedupe`](#jazelle-dedupe)
+- [`jazelle prune`](#jazelle-prune)
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
 - [`jazelle align`](#jazelle-align)
@@ -441,6 +442,12 @@ Upgrades a dependency across all local projects that use it
 Dedupe transitive dependencies in projects' yarn.lock files
 
 `jazelle dedupe`
+
+### `jazelle prune`
+
+Deletes unused transitive dependencies in projects' yarn.lock files
+
+`jazelle prune`
 
 ### `jazelle purge`
 
@@ -714,6 +721,7 @@ If you want commands to display colorized output, run their respective NPM scrip
 - [remove](#remove)
 - [upgrade](#upgrade)
 - [dedupe](#dedupe)
+- [prune](#prune)
 - [purge](#purge)
 - [check](#check)
 - [align](#align)
@@ -830,6 +838,14 @@ Upgrades a dependency across all local projects that use it
 Dedupe transitive dependencies in projects' yarn.lock files
 
 `let dedupe: ({root: string}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+
+### `prune`
+
+Removes unused transitive dependencies in projects' yarn.lock files
+
+`let prune: ({root: string}) => Promise<void>`
 
 - `root` - Monorepo root folder (absolute path)
 

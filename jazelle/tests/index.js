@@ -9,6 +9,7 @@ const {upgrade} = require('../commands/upgrade.js');
 const {remove} = require('../commands/remove.js');
 const {ci} = require('../commands/ci.js');
 const {dedupe} = require('../commands/dedupe.js');
+const {prune} = require('../commands/prune.js');
 const {purge} = require('../commands/purge.js');
 const {yarn: yarnCmd} = require('../commands/yarn.js');
 const {bump} = require('../commands/bump.js');
@@ -89,6 +90,7 @@ async function runTests() {
     t(testScaffold),
     t(testCi),
     t(testDedupe),
+    t(testPrune),
     t(testUpgrade),
     t(testPurge),
     t(testYarn),
@@ -283,6 +285,18 @@ async function testDedupe() {
     root: `${__dirname}/tmp/dedupe`,
   });
   assert((await read(lockfile, 'utf8')).includes('version "1.0.3"'));
+}
+
+async function testPrune() {
+  const lockfile = `${__dirname}/tmp/prune/a/yarn.lock`;
+  const cmd = `cp -r ${__dirname}/fixtures/prune/ ${__dirname}/tmp/prune`;
+  await exec(cmd);
+
+  await prune({
+    root: `${__dirname}/tmp/prune`,
+  });
+  const data = await read(lockfile, 'utf8');
+  assert(!data.includes('has@^1.0.0'));
 }
 
 async function testUpgrade() {
