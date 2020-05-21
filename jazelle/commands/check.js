@@ -26,7 +26,6 @@ const check /*: Check */ = async args => {
     const ok = Object.keys(reported).length === 0;
     output = ok ? 'No problems found' : `Violations:\n${result}`;
   }
-  console.log(output);
   return output;
 };
 
