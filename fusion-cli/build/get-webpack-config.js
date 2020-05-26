@@ -13,6 +13,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const DefaultNoImportSideEffectsPlugin = require('default-no-import-side-effects-webpack-plugin');
@@ -449,6 +450,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         __FUSION_ENTRY_PATH__: path.join(dir, main),
         __ENV__: env,
       },
+      plugins: [PnpWebpackPlugin],
     },
     resolveLoader: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
@@ -462,6 +464,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [swLoader.alias]: swLoader.path,
         [workerLoader.alias]: workerLoader.path,
       },
+      plugins: [PnpWebpackPlugin.moduleLoader(module)],
     },
 
     plugins: [
