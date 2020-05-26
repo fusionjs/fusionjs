@@ -55,7 +55,14 @@ const batches = (q, size) => {
 const findChangedBazelTargets = async ({root, files}) => {
   // if no file, fallback to reading from stdin (fd=0)
   const data = await read(files || 0, 'utf8').catch(() => '');
-  const lines = data.split('\n').filter(Boolean);
+  const lines = data
+    .split('\n')
+    .filter(Boolean)
+    .map(line => line.trim());
+
+  const invalid = lines.find(line => line.includes(' '));
+  if (invalid) throw new Error(`File path cannot contain spaces: ${invalid}`);
+
   const {projects, workspace} = await getManifest({root});
   const opts = {cwd: root, maxBuffer: 1e8};
   if (workspace === 'sandbox') {
