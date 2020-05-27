@@ -45,23 +45,8 @@ else
     USE_BAZEL_VERSION=$(cat "$BIN/../templates/scaffold/.bazelversion")
   fi
 
-  # setup bazelisk
-  BAZELISK_PATH="$BIN/bazelisk"
-  if [ "$BAZEL_PATH" = "" ]
-  then
-    BAZEL_PATH=$(which bazel)
-  fi
-  if [ "$BAZEL_PATH" != "" ]
-  then
-    COMPATIBLE_SYSTEM_BAZEL_VERSION=$("$BAZEL_PATH" version 2>/dev/null | grep "Build label: $USE_BAZEL_VERSION")
-  fi
-  if [ "$COMPATIBLE_SYSTEM_BAZEL_VERSION" != "" ]
-  then
-    # if system bazel exists and is the correct version, just use that
-    ln -sf "$BAZEL_PATH" "$BAZELISK_PATH"
-  fi
-
   # setup other binaries
+  BAZELISK_PATH="$BIN/bazelisk"
   NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
   YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
   JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
@@ -76,14 +61,6 @@ else
     # if we're in a repo, jazelle declaration in WORKSPACE is wrong, so we should error out
     if [ -f "$ROOT/WORKSPACE" ]
     then
-      echo "Error: Invalid \`jazelle\` configuration in WORKSPACE file. Check the Jazelle download URL and the checksums for Node and Yarn"
-      echo "Monorepo root: $ROOT"
-      echo "Jazelle bin path root: $BIN"
-      cat "$ROOT/WORKSPACE"
-      echo "Node" $("$NODE" --version) "size:" $(wc -c "$NODE")
-      echo "Yarn" $("$YARN" --version) "size:" $(wc -c "$YARN")
-      echo "Jazelle" "size:" $(wc -c "$JAZELLE")
-      echo "Bazel" "$BAZELISK_PATH" version
       "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup
       echo "Attempting to use system Node/Yarn/Jazelle versions..."
     fi
