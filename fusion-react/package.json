@@ -31,7 +31,7 @@
     "fusion-tokens": "0.0.0-monorepo",
     "prop-types": "^15.7.2",
     "react-is": "^16.8.0",
-    "react-ssr-prepass": "^1.1.0"
+    "react-ssr-prepass": "^1.2.0"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.8.3",
