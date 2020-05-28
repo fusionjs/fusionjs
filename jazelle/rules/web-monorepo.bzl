@@ -45,8 +45,8 @@ def _get_runfiles(ctx, outputs):
     output = ctx.outputs.executable,
     content = """
     export NODE_PRESERVE_SYMLINKS='{preserve_symlinks}'
-    export CWD=$(cd `dirname '{srcdir}'` && pwd)
-    export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}')
+    export CWD=$(cd `dirname '{srcdir}'` && pwd);
+    export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
     $NODE '{untar_script}' --runtime;
     $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '' "$@"
     """.format(
@@ -73,11 +73,11 @@ def _web_binary_impl(ctx):
 
   ctx.actions.run_shell(
     command = """
-    NODE_PRESERVE_SYMLINKS='{preserve_symlinks}';
-    CWD=$(cd `dirname '{srcdir}'` && pwd);
-    NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
-    OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}');
-    BAZEL_BIN_DIR=$(cd '{bindir}' && pwd);
+    export NODE_PRESERVE_SYMLINKS='{preserve_symlinks}';
+    export CWD=$(cd `dirname '{srcdir}'` && pwd);
+    export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
+    export OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}');
+    export BAZEL_BIN_DIR=$(cd '{bindir}' && pwd);
     $NODE '{untar_script}';
     $NODE --max_old_space_size=65536 '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' "$OUT" $@;
     """.format(

@@ -1,5 +1,6 @@
 // @flow
 const {
+  existsSync: exists,
   readFileSync: read,
   readdirSync: readdir,
   realpathSync: realpath,
@@ -14,11 +15,13 @@ const dists = distPaths.split('|');
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 
 if (out) {
-  for (const dist of dists) {
-    exec(`mkdir -p "${dist}"`, {cwd: main});
-  }
   runCommands(command, args);
   const dirs = dists.map(dist => `"${dist}"`).join(' ');
+  for (const dist of dists) {
+    if (!exists(join(main, dist))) {
+      exec(`mkdir -p "${dist}"`, {cwd: main});
+    }
+  }
   exec(`tar czf "${out}" ${dirs}`, {cwd: main});
 } else {
   runCommands(command, args);
@@ -27,20 +30,16 @@ if (out) {
 function runCommands(command, args) {
   // we don't want the failed `exec` call to print a stack trace to stderr
   // because we are piping the NPM script's stderr to the user
-  try {
-    if (command.startsWith('yarn ')) {
-      runCommand(command.substr(5), args);
-      return;
-    }
-    if (command === 'run') {
-      command = args.shift();
-    }
-    runCommand(scripts[`pre${command}`]);
-    runCommand(scripts[command], args);
-    runCommand(scripts[`post${command}`]);
-  } catch (e) {
-    process.exit(1);
+  if (command.startsWith('yarn ')) {
+    runCommand(command.substr(5), args);
+    return;
   }
+  if (command === 'run') {
+    command = args.shift();
+  }
+  runCommand(scripts[`pre${command}`]);
+  runCommand(scripts[command], args);
+  runCommand(scripts[`post${command}`]);
 }
 
 function runCommand(command, args = []) {
@@ -69,18 +68,25 @@ function runCommand(command, args = []) {
       }
       if (matchingBin) {
         const realBin = realpath(join('node_modules/.bin', matchingBin));
-        const pathToUse = join(
+        let pathToUse = join(
           process.cwd(),
           'node_modules',
           realBin.split('node_modules').pop()
         );
-        command = command.replace(
-          matchingBin,
-          `node --preserve-symlinks-main ${pathToUse}`
-        );
+
+        if (exists(pathToUse)) {
+          command = command.replace(
+            matchingBin,
+            `node --preserve-symlinks-main ${pathToUse}`
+          );
+        }
       }
     }
     const script = `export PATH=${nodeDir}${binPath}:$PATH; ${command} ${params}`;
-    exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
+    try {
+      exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
+    } catch (e) {
+      process.exit(1);
+    }
   }
 }
