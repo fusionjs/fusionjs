@@ -16,6 +16,7 @@ const {prune} = require('./commands/prune.js');
 const {purge} = require('./commands/purge.js');
 const {check} = require('./commands/check.js');
 const {outdated} = require('./commands/outdated.js');
+const {resolutions} = require('./commands/resolutions.js');
 const {align} = require('./commands/align.js');
 const {localize} = require('./commands/localize.js');
 const {changes} = require('./commands/changes.js');
@@ -141,6 +142,10 @@ const runCLI /*: RunCLI */ = async argv => {
       outdated: [
         `Displays deps whose version is behind the latest version`,
         async () => outdated({root: await rootOf(args)}),
+      ],
+      resolutions: [
+        `Displays list of yarn resolutions`,
+        async () => console.log(await resolutions({root: await rootOf(args)})),
       ],
       align: [
         `Align a project's dependency versions to respect the version policy, if there is one
@@ -316,6 +321,8 @@ module.exports = {
   prune,
   purge,
   check: reportMismatchedTopLevelDeps,
+  outdated,
+  resolutions,
   align,
   localize,
   changes: findChangedTargets,

@@ -338,6 +338,8 @@ If you get into a bad state, here are some things you can try:
 - [`jazelle prune`](#jazelle-prune)
 - [`jazelle purge`](#jazelle-purge)
 - [`jazelle check`](#jazelle-check)
+- [`jazelle outdated`](#jazelle-outdated)
+- [`jazelle resolutions`](#jazelle-resolutions)
 - [`jazelle align`](#jazelle-align)
 - [`jazelle localize`](#jazelle-localize)
 - [`jazelle chunk`](#jazelle-chunk)
@@ -483,6 +485,18 @@ Shows a report of out-of-sync top level dependencies across projects
   }
 }
 ```
+
+### `jazelle outdated`
+
+List packages that are outdated and their versions
+
+`jazelle outdated`
+
+### `jazelle resolutions`
+
+List yarn resolutions per package in JSON format
+
+`jazelle resolutions`
 
 ### `jazelle align`
 
@@ -898,6 +912,18 @@ let check: ({root: string, projects: Array<string>, versionPolicy: VersionPolicy
 ```
 
 - `root` - Monorepo root folder (absolute path)
+
+### `outdated`
+
+List packages that are outdated and their versions
+
+`let outdated = ({root: string}) => Promise<void>`
+
+### `resolutions`
+
+List yarn resolutions per package in JSON format
+
+`let resolutions = ({root: string}) => Promise<{[string]: {[string]: string}}>`
 
 ### `align`
 
