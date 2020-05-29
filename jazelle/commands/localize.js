@@ -29,7 +29,7 @@ const localize /*: Localize */ = async ({root}) => {
         }
       }
       const file = `${dep.dir}/package.json`;
-      await write(file, JSON.stringify(dep.meta, null, 2), 'utf8');
+      await write(file, JSON.stringify(dep.meta, null, 2) + '\n', 'utf8');
     })
   );
 };

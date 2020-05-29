@@ -156,8 +156,7 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 export {SSRBodyTemplate};
 
 const embeddedBrowserVersions = {
-  chrome: 80,
-  safari: 605, // mobile safari v13
+  ios_webkit: 605, // mobile safari v13
 };
 
 /*
@@ -181,11 +180,14 @@ function checkModuleSupport({name, version}) {
   if (name === 'Chrome' || name === 'Chrome Headless' || name === 'Chromium') {
     if (majorVersion(version) >= modernBrowserVersions.chrome) return true;
   } else if (name === 'Chrome WebView') {
-    if (majorVersion(version) >= embeddedBrowserVersions.chrome) return true;
+    if (majorVersion(version) >= modernBrowserVersions.android) return true;
   } else if (name === 'WebKit') {
-    if (majorVersion(version) >= embeddedBrowserVersions.safari) return true;
-  } else if (name === 'Mobile Safari' || name === 'Safari') {
+    if (majorVersion(version) >= embeddedBrowserVersions.ios_webkit)
+      return true;
+  } else if (name === 'Safari') {
     if (majorVersion(version) >= modernBrowserVersions.safari) return true;
+  } else if (name === 'Mobile Safari') {
+    if (majorVersion(version) >= modernBrowserVersions.ios) return true;
   } else if (name === 'Firefox') {
     if (majorVersion(version) >= modernBrowserVersions.firefox) return true;
   }
