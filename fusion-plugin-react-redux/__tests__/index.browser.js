@@ -21,12 +21,13 @@ import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
+  ReduxDevtoolsConfigToken,
 } from '../src/tokens.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
 /* Test fixtures */
-const appCreator = (reducer, preloadedState, enhancer) => {
+const appCreator = (reducer, preloadedState, enhancer, reduxDevToolsConfig) => {
   const app = new App('test', el => el);
   if (reducer) {
     app.register(ReducerToken, reducer);
@@ -36,6 +37,9 @@ const appCreator = (reducer, preloadedState, enhancer) => {
   }
   if (enhancer) {
     app.register(EnhancerToken, enhancer);
+  }
+  if (reduxDevToolsConfig !== undefined && reduxDevToolsConfig !== null) {
+    app.register(ReduxDevtoolsConfigToken, reduxDevToolsConfig);
   }
   return () => app;
 };
@@ -170,6 +174,66 @@ test('browser with devtools enhancer', () => {
   store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState().test).toBe(2);
   expect(enhancerCalls).toBe(1);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser with devtools enhancer with custom devToolsConfig', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  let devToolsInitArg = null;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = initArg => createStore => {
+    devToolsInitArg = initArg;
+    enhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      return createStore(...args);
+    };
+  };
+  // https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#actionsanitizer--statesanitizer
+  const customReduxDevtoolsConfig = {
+    actionSanitizer: action => action,
+  };
+  const {store} = getService(
+    appCreator(reducer, null, null, customReduxDevtoolsConfig),
+    Redux
+  ).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(devToolsInitArg).toEqual(
+    expect.objectContaining(customReduxDevtoolsConfig)
+  );
+  expect(enhancerCalls).toBe(1);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser with devtools enhancer, and devToolsConfig set to false', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
+    enhancerCalls++;
+  };
+  const {store} = getService(
+    appCreator(reducer, null, null, false),
+    Redux
+  ).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(0);
   delete window.__REDUX_DEVTOOLS_EXTENSION__;
 });
 

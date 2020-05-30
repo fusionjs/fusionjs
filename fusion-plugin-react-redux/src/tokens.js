@@ -23,6 +23,9 @@ export const PreloadedStateToken: Token<Object> = createToken(
 export const EnhancerToken: Token<StoreEnhancer<*, *, *>> = createToken(
   'EnhancerToken'
 );
+export const ReduxDevtoolsConfigToken: Token<{} | false> = createToken(
+  'ReduxDevtoolsConfigToken'
+);
 export const GetInitialStateToken: Token<GetInitialStateType<*>> = createToken(
   'GetInitialStateToken'
 );
