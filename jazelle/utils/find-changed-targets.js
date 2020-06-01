@@ -53,12 +53,22 @@ const batches = (q, size) => {
 };
 
 const findChangedBazelTargets = async ({root, files}) => {
+  const bazelignore = await read(`${root}/.bazelignore`, 'utf8').catch(
+    () => ''
+  );
+  const ignored = bazelignore
+    .split('\n')
+    .filter(Boolean)
+    .filter(line => !line.endsWith('node_modules'))
+    .map(line => line.trim());
+
   // if no file, fallback to reading from stdin (fd=0)
   const data = await read(files || 0, 'utf8').catch(() => '');
   const lines = data
     .split('\n')
     .filter(Boolean)
-    .map(line => line.trim());
+    .map(line => line.trim())
+    .filter(line => !ignored.find(i => line.startsWith(i)));
 
   const invalid = lines.find(line => line.includes(' '));
   if (invalid) throw new Error(`File path cannot contain spaces: ${invalid}`);
