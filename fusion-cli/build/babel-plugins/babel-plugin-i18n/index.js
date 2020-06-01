@@ -34,24 +34,25 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
 
   function refsHandler(t, context, refs = [], specifierName) {
     refs.forEach(refPath => {
+      const parentPath = refPath.parentPath;
       if (t.isCallExpression(refPath.parent)) {
         const firstArg = refPath.parent.arguments[0];
         if (specifierName === 'withTranslations') {
           const errorMessage =
             'The withTranslations hoc must be called with an array of string literal translation keys';
           if (!t.isArrayExpression(firstArg)) {
-            throw new Error(errorMessage);
+            throw parentPath.buildCodeFrameError(errorMessage);
           }
           const elements = firstArg.elements;
           elements.forEach(element => {
             if (!t.isStringLiteral(element)) {
-              throw new Error(errorMessage);
+              throw parentPath.buildCodeFrameError(errorMessage);
             }
             translationIds.add(element.value);
           });
         } else if (specifierName === 'useTranslations') {
           if (!t.isVariableDeclarator(refPath.parentPath.parent)) {
-            throw new Error(
+            throw parentPath.buildCodeFrameError(
               'Unexpected assignment of useTranslations return function'
             );
           }
@@ -73,12 +74,16 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
                 const literalSections = arg.quasis.map(q => q.value.cooked);
                 if (literalSections.join('') === '') {
                   // template literal not hinted, i.e. translate(`${foo}`)
-                  throw new Error(errorMessage);
+                  throw translationPath.parentPath.buildCodeFrameError(
+                    errorMessage
+                  );
                 } else {
                   translationIds.add(literalSections);
                 }
               } else {
-                throw new Error(errorMessage);
+                throw translationPath.parentPath.buildCodeFrameError(
+                  errorMessage
+                );
               }
             } else if (
               // React.useEffect(() => {}, [translate])
@@ -105,12 +110,12 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               if (
                 !(isSecondArg && (isValidIdentifierCall || isValidMemberCall))
               ) {
-                throw new Error(
+                throw translationPath.parentPath.buildCodeFrameError(
                   'Unexpected usage of useTranslations return function'
                 );
               }
             } else {
-              throw new Error(
+              throw translationPath.parentPath.buildCodeFrameError(
                 'Unexpected usage of useTranslations return function'
               );
             }
@@ -132,7 +137,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
           return;
         }
         if (!t.isStringLiteral(attr.value)) {
-          throw new Error(
+          throw parentPath.buildCodeFrameError(
             'The translate component must have props.id be a string literal.'
           );
         }
