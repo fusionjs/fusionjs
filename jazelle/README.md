@@ -1530,7 +1530,8 @@ web_binary(
   build = string,
   command = string,
   deps = [string],
-  dist = string
+  dist = string,
+  preserve_symlinks = string,
 )
 ```
 
@@ -1538,6 +1539,7 @@ web_binary(
 - `command` - The npm script to run the project. Defaults to `start`. If the command is `run`, the rule acts like `yarn run [command]`
 - `deps` - A list of target labels that are dependencies of this rule
 - `dist` - The name of the output folder where compiled assets are saved to
+- `preserve_symlinks` - Whether to use the Node PRESERVE_SYMLINKS flag. Set to `"1"` for true or `""` for false.
 
 This rule consumes transitive files from the `DefaultInfo(files)` provider of targets specified by `deps`. If the transitive files include `output.tgz` files, they are extracted into the root folder of their respective project (in the Bazel sandbox).
 
@@ -1554,6 +1556,8 @@ web_test(
 
 - `command` - The npm script to execute
 - `deps` - A list of target labels that are dependencies of this rule
+- `gen_srcs` - A list of regexp strings for files or folders that should be copied back to the source folder after sandbox execution. Useful for code generation (e.g. jest snapshots)
+- `preserve_symlinks` - Whether to use the Node PRESERVE_SYMLINKS flag. Set to `"1"` for true or `""` for false.
 
 This rule consumes transitive files from the `DefaultInfo(files)` provider of targets specified by `deps`. If the transitive files include `output.tgz` files, they are extracted into the root folder of their respective project (in the Bazel sandbox).
 
@@ -1570,6 +1574,8 @@ web_test(
 
 - `command` - The npm script to execute
 - `deps` - A list of target labels that are dependencies of this rule
+- `gen_srcs` - A list of regexp strings for files or folders that should be copied back to the source folder after sandbox execution. Useful for code generation (e.g. jest snapshots)
+- `preserve_symlinks` - Whether to use the Node PRESERVE_SYMLINKS flag. Set to `"1"` for true or `""` for false.
 
 This rule consumes transitive files from the `DefaultInfo(files)` provider of targets specified by `deps`. If the transitive files include `output.tgz` files, they are extracted into the root folder of their respective project (in the Bazel sandbox).
 

@@ -48,7 +48,7 @@ def _get_runfiles(ctx, outputs):
     export CWD=$(cd `dirname '{srcdir}'` && pwd);
     export NODE=$(cd `dirname '{node}'` && pwd)/$(basename '{node}');
     $NODE '{untar_script}' --runtime;
-    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '' "$@"
+    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$(pwd)" '{command}' '' '{gen_srcs}' '' "$@"
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
@@ -56,6 +56,7 @@ def _get_runfiles(ctx, outputs):
       untar_script = ctx.files._untar_script[0].path,
       preserve_symlinks = ctx.attr.preserve_symlinks,
       build = ctx.files._script[0].path,
+      gen_srcs = "|".join(ctx.attr.gen_srcs),
     )
   )
   return ctx.runfiles(
@@ -79,7 +80,7 @@ def _web_binary_impl(ctx):
     export OUT=$(cd `dirname '{output}'` && pwd)/$(basename '{output}');
     export BAZEL_BIN_DIR=$(cd '{bindir}' && pwd);
     $NODE '{untar_script}';
-    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' "$OUT" $@;
+    $NODE --max_old_space_size=65536 '{build}' "$CWD" "$BAZEL_BIN_DIR" '{command}' '{dist}' '' "$OUT" $@;
     """.format(
       node = ctx.files._node[0].path,
       srcdir = ctx.build_file_path,
@@ -119,6 +120,9 @@ web_binary = rule(
       default = [],
     ),
     "dist": attr.string_list(),
+    "gen_srcs": attr.string_list(
+      default = [],
+    ),
     "_node": attr.label(
       executable = True,
       allow_files = True,
@@ -153,6 +157,9 @@ _WEB_EXECUTABLE_ATTRS = {
   "preserve_symlinks": attr.string(default=''),
   "deps": attr.label_list(
     allow_files = True,
+    default = [],
+  ),
+  "gen_srcs": attr.string_list(
     default = [],
   ),
   "_node": attr.label(

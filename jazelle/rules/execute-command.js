@@ -4,12 +4,13 @@ const {
   readFileSync: read,
   readdirSync: readdir,
   realpathSync: realpath,
+  statSync: stat,
 } = require('fs');
 const {execSync: exec} = require('child_process');
-const {dirname, join} = require('path');
+const {dirname, join, relative} = require('path');
 
 const root = process.cwd();
-const [node, , main, , command, distPaths, out, ...args] = process.argv;
+const [node, , main, , command, distPaths, gen, out, ...args] = process.argv;
 const dists = distPaths.split('|');
 
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
@@ -25,11 +26,14 @@ if (out) {
   exec(`tar czf "${out}" ${dirs}`, {cwd: main});
 } else {
   runCommands(command, args);
+
+  // handle `gen_srcs`:
+  // - if the command generates file (e.g. jest snapshots), copy them back to the source dir
+  // - if the files already exist, they are updated through Bazel's symlink and the copy is not needed
+  generateSources({root, main, regexes: gen.split('|').filter(Boolean)});
 }
 
 function runCommands(command, args) {
-  // we don't want the failed `exec` call to print a stack trace to stderr
-  // because we are piping the NPM script's stderr to the user
   if (command.startsWith('yarn ')) {
     runCommand(command.substr(5), args);
     return;
@@ -88,5 +92,34 @@ function runCommand(command, args = []) {
     } catch (e) {
       process.exit(1);
     }
+  }
+}
+
+function generateSources({root, main, regexes}) {
+  const dir = dirname(relative(root, `${main}/package.json`));
+  const realDir = dirname(realpath(`${main}/package.json`));
+  const relSandbox = relative(root, dir);
+  const real = realDir.replace(`/${relSandbox}`, '');
+  for (const regex of regexes) {
+    const sandboxed = find({root, regex: new RegExp(regex)});
+    for (const item of sandboxed) {
+      const rel = relative(root, item);
+      const sandboxedPath = `${root}/${rel}`;
+      const gensrcPath = `${real}/${rel}`;
+      const copy = `cp -rf ${sandboxedPath} ${gensrcPath}`;
+      if (!exists(gensrcPath)) {
+        exec(copy, {cwd: root});
+      }
+    }
+  }
+}
+
+function* find({root, regex}) {
+  const dirs = readdir(root);
+  for (const dir of dirs) {
+    const path = `${root}/${dir}`;
+    const s = stat(`${root}/${dir}`);
+    if (path.match(regex)) yield path;
+    if (s.isDirectory()) yield* find({root: path, regex});
   }
 }

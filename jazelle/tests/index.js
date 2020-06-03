@@ -550,6 +550,11 @@ async function testBazelBuild() {
   }
   assert((await read(testStreamFile, 'utf8')).includes('\nb\nv8.15.1'));
 
+  const generated = `${__dirname}/tmp/bazel-rules/projects/a/generated/foo.txt`;
+  assert((await read(generated, 'utf8')).includes('hello'));
+  const notSrc = `${__dirname}/tmp/bazel-rules/projects/a/generated_but_not_src/foo.txt`;
+  assert(!(await exists(notSrc)));
+
   // run
   const runStreamFile = `${__dirname}/tmp/bazel-rules/run-stream.txt`;
   const runStream = createWriteStream(runStreamFile);
