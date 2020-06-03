@@ -77,7 +77,11 @@ const installDeps /*: InstallDeps */ = async ({
 
   // record the source of this node_modules so we are able to recycle on future installs if needed
   const sourceFile = `${modulesDir}/.jazelle-source`;
-  const data = {dir: `${bin}/node_modules`, hash};
+  const data = {
+    dir: `${bin}/node_modules`,
+    hash,
+    upstreams: deps.map(d => d.dir),
+  };
   await write(sourceFile, JSON.stringify(data, null, 2), 'utf8');
 };
 

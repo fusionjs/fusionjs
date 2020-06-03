@@ -50,6 +50,7 @@ const {isDepsetSubset} = require('../utils/is-depset-subset.js');
 const {isYarnResolution} = require('../utils/is-yarn-resolution.js');
 const {parse, getPassThroughArgs} = require('../utils/parse-argv.js');
 const {populateGraph} = require('../utils/lockfile.js');
+const {isProjectInstalled} = require('../utils/is-project-installed.js');
 
 const {
   reportMismatchedTopLevelDeps,
@@ -128,6 +129,7 @@ async function runTests() {
     t(testSortPackageJSON),
     t(testLocalize),
     t(testCheck),
+    t(testIsProjectInstalled),
   ]);
   // run separately to avoid CI error
   await t(testBazelDummy);
@@ -1995,5 +1997,62 @@ async function testCheck() {
         '0.0.0': ['b'],
       },
     }
+  );
+}
+
+async function testIsProjectInstalled() {
+  const cmd = `cp -r ${__dirname}/fixtures/install-deps/ ${__dirname}/tmp/install-deps-2`;
+  await exec(cmd);
+  const root = `${__dirname}/tmp/install-deps-2`;
+  const deps = {
+    root,
+    cwd: `${root}/a`,
+    deps: [
+      {
+        meta: JSON.parse(await read(`${root}/b/package.json`, 'utf8')),
+        dir: `${root}/b`,
+        depth: 2,
+      },
+      {
+        meta: JSON.parse(await read(`${root}/a/package.json`, 'utf8')),
+        dir: `${root}/a`,
+        depth: 1,
+      },
+    ],
+    ignore: [
+      {
+        meta: JSON.parse(await read(`${root}/b/package.json`, 'utf8')),
+        dir: `${root}/b`,
+        depth: 2,
+      },
+      {
+        meta: JSON.parse(await read(`${root}/a/package.json`, 'utf8')),
+        dir: `${root}/a`,
+        depth: 1,
+      },
+    ],
+  };
+  await installDeps(deps);
+
+  // a and b should be installed
+  assert.ok(
+    await isProjectInstalled({
+      root,
+      cwd: `${root}/a`,
+    })
+  );
+  assert.ok(
+    await isProjectInstalled({
+      root,
+      cwd: `${root}/b`,
+    })
+  );
+
+  // c is not installed
+  assert.ok(
+    !(await isProjectInstalled({
+      root,
+      cwd: `${root}/c`,
+    }))
   );
 }
