@@ -180,6 +180,28 @@ test('events with no tracking id', async () => {
   cleanup();
 });
 
+test('no matching route', async () => {
+  if (__NODE__) {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Route path="/" component={Hello} />
+        <Route path="/lol" component={Hello} />
+      </div>
+    );
+
+    const app = getApp(element);
+    const UniversalEvents = getMockEvents({
+      title: 'no-matching-route',
+      page: '/haha',
+    });
+    app.register(UniversalEventsToken, UniversalEvents);
+    const simulator = setup(app);
+    await simulator.render('/haha');
+    cleanup();
+  }
+});
+
 test('Custom Provider', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (

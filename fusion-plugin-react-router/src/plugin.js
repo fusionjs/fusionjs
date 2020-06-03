@@ -112,6 +112,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
               pageData = d;
               tags.name = pageData.title;
               tags.page = pageData.page;
+              pageData.routeMatched = true;
             }}
             basename={prefix}
             context={context}
@@ -132,7 +133,9 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             const scopedEmitter = emitter.from(ctx);
             const emitTiming = type => timing => {
               scopedEmitter.emit(type, {
-                title: pageData.title,
+                title: pageData.routeMatched
+                  ? pageData.title
+                  : 'no-matching-route',
                 page: pageData.page,
                 status: ctx.status,
                 timing,
