@@ -6,12 +6,14 @@
  * @flow
  */
 
+/* eslint-disable import/no-extraneous-dependencies */
+
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import {Redirect as RedirectComponent} from 'react-router-dom';
 
 // `react-router` installed by `react-router-dom`
-// eslint-disable-next-line import/no-extraneous-dependencies
+// $FlowFixMe
 import {__RouterContext as RouterContext} from 'react-router';
 
 import type {
