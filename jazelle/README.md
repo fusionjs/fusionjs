@@ -455,7 +455,9 @@ Deletes unused transitive dependencies in projects' yarn.lock files
 
 Removes generated files (i.e. `node_modules` folders and bazel output files)
 
-`jazelle purge`
+`jazelle purge --force`
+
+- `--force` - Whether to also purge Bazel cache. Defaults to false
 
 ### `jazelle check`
 
@@ -867,7 +869,10 @@ Removes unused transitive dependencies in projects' yarn.lock files
 
 Removes generated files (i.e. `node_modules` folders and bazel output files)
 
-`let purge: ({root: string}) => Promise<void>`
+`let purge: ({root: string, force?: boolean}) => Promise<void>`
+
+- `root` - Monorepo root folder (absolute path)
+- `force` - Whether to also clear bazel cache. Defaults to false
 
 ### `check`
 
