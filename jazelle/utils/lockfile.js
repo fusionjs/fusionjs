@@ -1,22 +1,24 @@
 // @flow
-const {satisfies, minVersion, compare, gt} = require('semver');
-const {parse, stringify} = require('@yarnpkg/lockfile');
-const {read, exec, write} = require('./node-helpers.js');
+const {satisfies, minVersion, compare, gt} = require('./cached-semver');
+const {parse, stringify} = require('../vendor/@yarnpkg/lockfile/index.js');
+const {read, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
+const sortPackageJson = require('../utils/sort-package-json');
 
 /*::
 export type Report = {
-  [string]: {
-    [string]: Array<string>
+  [dependency: string]: {
+    [version: string]: Array<string> // list of projects
   }
 };
 export type CheckArgs = {
   roots: Array<string>,
+  all?: boolean
 };
 export type Check = (CheckArgs) => Promise<Report>;
 */
-const check /*: Check */ = async ({roots}) => {
+const check /*: Check */ = async ({roots, all}) => {
   const versions = {};
   function collectVersions(meta, type) {
     Object.keys(meta[type] || {}).forEach(name => {
@@ -33,19 +35,20 @@ const check /*: Check */ = async ({roots}) => {
       const meta = JSON.parse(await read(`${dir}/package.json`, 'utf8'));
       collectVersions(meta, 'dependencies');
       collectVersions(meta, 'devDependencies');
-      collectVersions(meta, 'peerDependencies');
       collectVersions(meta, 'optionalDependencies');
     })
   );
-  Object.keys(versions).forEach(name => {
-    if (Object.keys(versions[name]).length === 1) delete versions[name];
-  });
+
+  if (!all) {
+    Object.keys(versions).forEach(name => {
+      if (Object.keys(versions[name]).length === 1) delete versions[name];
+    });
+  }
 
   return versions;
 };
 
 /*::
-type Cache = {[string]: Promise<string>};
 export type Addition = {
   name: string,
   range: string,
@@ -56,12 +59,12 @@ export type AddArgs = {
   additions?: Array<Addition>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
+  registry?: string,
 };
 export type Add = (AddArgs) => Promise<void>;
 */
-const add /*: Add */ = async ({roots, additions, ignore, tmp, cache}) => {
-  await diff({roots, additions, ignore, tmp, cache});
+const add /*: Add */ = async ({roots, additions, ignore, tmp, registry}) => {
+  await diff({roots, additions, ignore, tmp, conservative: false, registry});
 };
 
 /*::
@@ -70,12 +73,18 @@ export type RemoveArgs = {
   removals?: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
+  registry?: string,
 };
 export type Remove = (RemoveArgs) => Promise<void>;
 */
-const remove /*: Remove */ = async ({roots, removals, ignore, tmp, cache}) => {
-  await diff({roots, removals, ignore, tmp, cache});
+const remove /*: Remove */ = async ({
+  roots,
+  removals,
+  ignore,
+  tmp,
+  registry,
+}) => {
+  await diff({roots, removals, ignore, tmp, conservative: false, registry});
 };
 
 /*::
@@ -89,7 +98,7 @@ export type UpgradeArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
+  registry?: string,
 };
 export type Upgrade = (UpgradeArgs) => Promise<void>;
 */
@@ -98,29 +107,105 @@ const upgrade /*: Upgrade */ = async ({
   upgrades,
   ignore,
   tmp,
-  cache,
+  registry,
 }) => {
-  await diff({roots, upgrades, ignore, tmp, cache});
+  await diff({roots, upgrades, ignore, tmp, conservative: false, registry});
 };
 
 /*::
-export type SyncArgs = {
+export type DedupeArgs = {
+  registry?: string,
+  roots: Array<string>,
+  ignore: Array<string>,
+};
+export type Dedupe = (DedupeArgs) => Promise<void>;
+*/
+const dedupe /*: Dedupe */ = async ({roots, ignore, registry}) => {
+  const log = s => process.stdout.write(s);
+  log('Deduping lockfiles');
+
+  const sets = await readVersionSets({roots});
+  const index = indexLockfiles({sets});
+
+  for (const item of sets) {
+    log('.');
+    const {dir, meta} = item;
+
+    const projectRegistry = registry || (await getRegistry(dir));
+    const graph = {};
+
+    for (const {type, name, range} of getDepEntries(meta)) {
+      if (type === 'peerDependencies') continue;
+      const ignored = ignore.find(dep => dep === name);
+      if (!ignored) {
+        populateGraph({graph, name, range, index, registry: projectRegistry});
+      }
+    }
+
+    item.lockfile = graphToLockfile({graph});
+  }
+  log('\n');
+
+  await writeVersionSets({sets});
+};
+
+/*::
+export type PruneArgs = {
+  registry?: string,
+  roots: Array<string>,
+  ignore: Array<string>,
+};
+export type Prune = (PruneArgs) => Promise<void>;
+*/
+const prune /*: Prune */ = async ({roots, ignore, registry}) => {
+  const log = s => process.stdout.write(s);
+  log('Pruning lockfiles');
+
+  const sets = await readVersionSets({roots});
+
+  for (const item of sets) {
+    log('.');
+    const index = indexLockfiles({sets: [item]});
+    const {dir, meta} = item;
+
+    const projectRegistry = registry || (await getRegistry(dir));
+    const graph = {};
+
+    for (const {type, name, range} of getDepEntries(meta)) {
+      if (type === 'peerDependencies') continue;
+      const ignored = ignore.find(dep => dep === name);
+      if (!ignored) {
+        populateGraph({graph, name, range, index, registry: projectRegistry});
+      }
+    }
+
+    item.lockfile = graphToLockfile({graph});
+  }
+  log('\n');
+
+  await writeVersionSets({sets});
+};
+
+/*::
+export type RegenerateArgs = {
   roots: Array<string>,
   ignore?: Array<string>,
   tmp?: string,
-  cache?: Cache,
-  frozenLockfile?: boolean,
+  frozenLockfile: boolean,
+  conservative: boolean,
+  registry?: string,
 };
-export type Sync = (SyncArgs) => Promise<void>;
+export type Regenerate = (RegenerateArgs) => Promise<void>;
 */
-const sync /*: Sync */ = async ({
+const regenerate /*: Regenerate */ = async ({
   roots,
   ignore,
   tmp,
-  cache,
-  frozenLockfile = false,
+  frozenLockfile,
+  conservative,
+  registry,
 }) => {
-  await diff({roots, ignore, tmp, cache, frozenLockfile});
+  await diff({roots, ignore, tmp, frozenLockfile, conservative, registry});
 };
 
 /*::
@@ -133,15 +218,16 @@ export type MergeArgs = {
 export type Merge = (MergeArgs) => Promise<void>;
 */
 const merge /*: Merge */ = async ({roots, out, ignore = [], tmp = '/tmp'}) => {
-  const sets = await getVersionSets({roots});
+  const sets = await readVersionSets({roots});
+  // $FlowFixMe incorrect type backpropagation from writeVersionSets for `meta`
   const merged = {dir: out, meta: {}, lockfile: {}};
   for (const {meta, lockfile} of sets) {
     for (const {name, range, type} of getDepEntries(meta)) {
       const ignored = ignore.find(dep => dep === name);
       if (ignored) continue;
 
-      if (!merged.meta[type]) merged.meta[type] = {};
-      merged.meta[type][name] = range;
+      if (!merged.meta[type]) merged.meta[type] = {[name]: range};
+      else merged.meta[type][name] = range;
     }
     Object.assign(merged.lockfile, lockfile);
   }
@@ -156,8 +242,9 @@ type DiffArgs = {
   upgrades?: Array<Upgrading>,
   ignore?: Array<string>,
   frozenLockfile?: boolean,
+  conservative: boolean,
   tmp?: string,
-  cache?: Cache,
+  registry?: string,
 };
 type Diff = (DiffArgs) => Promise<void>;
 */
@@ -168,24 +255,96 @@ const diff /*: Diff */ = async ({
   upgrades = [],
   ignore = [],
   frozenLockfile = false,
+  conservative,
+  registry,
   tmp = '/tmp',
-  cache,
 }) => {
-  const sets = await getVersionSets({roots});
-  const updated = /*:: await */ await update({
-    sets,
-    additions,
-    removals,
-    upgrades,
-    ignore,
-    frozenLockfile,
-    tmp,
-    cache,
-  });
-  if (!frozenLockfile) await writeVersionSets({sets: updated});
+  // populate missing ranges w/ latest
+  await ensureInsertionRanges([...additions, ...upgrades]);
+
+  const sets = await readVersionSets({roots});
+
+  // note: this function mutates metadata and lockfile structures in `sets` if:
+  // - the originating command was either `add`, `remove` or `upgrade`
+  // - a dep was added to or upgraded in a package.json manually
+  // - a resolution was manually added or modified
+  //
+  // it does not sync lockfiles if:
+  // - a dep was removed from package.json manually (use the dedupe command to clean up in that case)
+  // - a dep (top-level or transitive) has a new compatible version in the registry but there are no changes locally
+
+  let shouldSyncLockfiles = false;
+  const cache = {};
+  const changed = new Map();
+  for (const {dir, meta, lockfile} of sets) {
+    applyMetadataChanges({meta, removals, additions, upgrades});
+    const changes = await installMissingDeps({
+      dir,
+      meta,
+      lockfile,
+      sets,
+      ignore,
+      tmp,
+      cache,
+      conservative,
+      registry,
+    });
+    changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
+
+    const hasRemovals = removals.length > 0;
+    const hasAdditions = additions.length > 0;
+    const hasUpgrades = upgrades.length > 0;
+    const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
+    if (hasMetadataChanges || changes.length > 0) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
+  }
+
+  if (shouldSyncLockfiles) {
+    const index = indexLockfiles({sets});
+
+    const filtered = sets.filter(item => {
+      return (changed.get(item.dir) || []).length > 0;
+    });
+    const registries = await Promise.all(
+      filtered.map(({dir}) => getRegistry(dir))
+    );
+    for (let i = 0; i < filtered.length; i++) {
+      const item = filtered[i];
+      const registry = registries[i];
+      const {dir} = item;
+
+      const graph = {};
+      const deps = changed.get(dir);
+      if (deps) {
+        for (const {name, range} of deps) {
+          const ignored = ignore.find(dep => dep === name);
+          if (!ignored) {
+            populateGraph({graph, name, range, index, registry});
+          }
+        }
+      }
+
+      const lockfile = {...item.lockfile, ...graphToLockfile({graph})};
+      if (frozenLockfile) {
+        const oldKeys = Object.keys(item.lockfile);
+        const newKeys = Object.keys(lockfile);
+        if (oldKeys.sort().join() < newKeys.sort().join()) {
+          throw new Error(
+            `Updating lockfile is not allowed with frozenLockfile. ` +
+              `This error is most likely happening if you have committed ` +
+              `out-of-date lockfiles and tried to install deps in CI. ` +
+              `Install your deps again locally.`
+          );
+        }
+      } else {
+        item.lockfile = lockfile;
+      }
+    }
+  }
+
+  if (!frozenLockfile) await writeVersionSets({sets});
 };
 
-const getVersionSets = async ({roots}) => {
+const readVersionSets = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
@@ -202,12 +361,8 @@ const getVersionSets = async ({roots}) => {
 const writeVersionSets = async ({sets}) => {
   await Promise.all(
     sets.map(async ({dir, meta, lockfile}) => {
-      await exec(`mkdir -p ${dir}`);
-      await write(
-        `${dir}/package.json`,
-        `${JSON.stringify(meta, null, 2)}\n`,
-        'utf8'
-      );
+      await mkdir(dir, {recursive: true});
+      await write(`${dir}/package.json`, sortPackageJson(meta), 'utf8');
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
     })
   );
@@ -234,196 +389,224 @@ const getDepEntries = meta => {
   return entries;
 };
 
-/*::
-import type {PackageJson} from './get-local-dependencies.js';
-
-export type LockfileEntry = {
-  version: string,
-  resolved: string,
-  dependencies?: {
-    [string]: string,
-  }
-};
-export type Lockfile = {
-  [string]: LockfileEntry,
-};
-export type VersionSet = {
-  dir: string,
-  meta: PackageJson,
-  lockfile: Lockfile,
-};
-export type UpdateArgs = {
-  sets: Array<VersionSet>,
-  additions?: Array<Addition>,
-  removals?: Array<string>,
-  upgrades?: Array<Upgrading>,
-  ignore?: Array<string>,
-  frozenLockfile?: boolean,
-  tmp?: string,
-  cache?: Cache,
-};
-export type Update = (UpdateArgs) => Promise<Array<VersionSet>>;
-*/
-const update /*: Update */ = async ({
-  sets,
-  additions = [],
-  removals = [],
-  upgrades = [],
-  ignore = [],
-  frozenLockfile = false,
-  tmp = '/tmp',
-  cache = {},
-}) => {
-  // populate missing ranges w/ latest
-  const insertions = [...additions, ...upgrades];
+const ensureInsertionRanges = async insertions => {
+  // this function mutates `insertions`
   if (insertions.length > 0) {
     await Promise.all(
       insertions.map(async insertion => {
         if (!insertion.range) {
-          const cmd = `yarn info ${insertion.name} version --json`;
-          const info = await exec(cmd, {env: process.env});
-          const {data} = JSON.parse(info);
-          insertion.range = `^${data}`; // eslint-disable-line require-atomic-updates
+          try {
+            const cmd = `yarn info ${insertion.name} version --json`;
+            const info = await exec(cmd, {env: process.env});
+            const {data} = JSON.parse(info);
+            insertion.range = `^${data}`; // eslint-disable-line require-atomic-updates
+          } catch (e) {
+            throw new Error(
+              `Package ${insertion.name} does not exist in NPM registry`
+            );
+          }
         }
       })
     );
   }
+};
 
-  for (const {dir, meta, lockfile} of sets) {
-    // handle removals
-    if (removals.length > 0) {
-      for (const name of removals) {
-        const types = [
-          'dependencies',
-          'devDependencies',
-          'peerDependencies',
-          'optionalDependencies',
-          'resolutions',
-        ];
-        for (const type of types) {
-          if (meta[type]) {
-            if (meta[type][name]) delete meta[type][name];
-            if (Object.keys(meta[type]).length === 0) delete meta[type];
+const applyMetadataChanges = ({meta, removals, additions, upgrades}) => {
+  // this function mutates `meta.dependencies`, `.devDependencies`, etc, then returns `meta`
+  applyMetadataRemovals({meta, removals});
+  applyMetadataAdditions({meta, additions});
+  applyMetadataUpgrades({meta, upgrades});
+};
+
+const applyMetadataRemovals = ({meta, removals}) => {
+  if (removals.length > 0) {
+    for (const name of removals) {
+      const types = [
+        'dependencies',
+        'devDependencies',
+        'peerDependencies',
+        'optionalDependencies',
+        'resolutions',
+      ];
+      for (const type of types) {
+        if (meta[type]) {
+          if (meta[type][name]) delete meta[type][name];
+          if (Object.keys(meta[type]).length === 0) delete meta[type];
+        }
+      }
+    }
+  }
+};
+
+const applyMetadataAdditions = ({meta, additions}) => {
+  if (additions.length > 0) {
+    for (const {name, range, type} of additions) {
+      if (!meta[type]) meta[type] = {};
+      meta[type][name] = range;
+    }
+  }
+};
+
+const applyMetadataUpgrades = ({meta, upgrades}) => {
+  if (upgrades.length > 0) {
+    for (const {name, range, from} of upgrades) {
+      const types = [
+        'dependencies',
+        'devDependencies',
+        'peerDependencies',
+        'optionalDependencies',
+        'resolutions',
+      ];
+      for (const type of types) {
+        if (meta[type] && meta[type][name] && range) {
+          if (!from || satisfies(minVersion(meta[type][name]), from)) {
+            meta[type][name] = range;
           }
         }
       }
     }
+  }
+};
 
-    // list additions in package.json
-    if (additions.length > 0) {
-      for (const {name, range, type} of additions) {
-        if (!meta[type]) meta[type] = {};
-        meta[type][name] = range;
-      }
+const installMissingDeps = async ({
+  dir,
+  meta,
+  lockfile,
+  sets,
+  ignore,
+  tmp,
+  cache,
+  conservative,
+  registry,
+}) => {
+  let changes = new Map();
+
+  // generate lockfile entries for missing top level deps
+  const missing = {};
+  const cacheKeyParts = [];
+  for (const {name, range, type} of getDepEntries(meta)) {
+    // don't consider peers and optional as missing
+    if (type === 'peerDependencies' || type === 'optionalDependencies') {
+      continue;
     }
 
-    // handle upgrades
-    if (upgrades.length > 0) {
-      for (const {name, range, from} of upgrades) {
-        const types = [
-          'dependencies',
-          'devDependencies',
-          'peerDependencies',
-          'optionalDependencies',
-          'resolutions',
-        ];
-        for (const type of types) {
-          if (meta[type] && meta[type][name] && range) {
-            if (!from || satisfies(minVersion(meta[type][name]), from)) {
-              meta[type][name] = range;
+    if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
+      if (!missing[type]) missing[type] = {};
+      missing[type][name] = range;
+      cacheKeyParts.push(`${name}@${range}`);
+    }
+  }
+  if (Object.keys(missing).length > 0) {
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const yarnrc = await getYarnRc(dir, registry);
+
+    // install missing deps and reuse promise in parallel runs if possible
+    const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
+    if (!cache[cacheKey]) {
+      const install = async () => {
+        await mkdir(cwd, {recursive: true});
+        await write(
+          `${cwd}/package.json`,
+          `${JSON.stringify(missing, null, 2)}\n`,
+          'utf8'
+        );
+        if (conservative) {
+          const registry = await getRegistry(cwd);
+          const relevant = sets.filter(set => {
+            for (const key in set.lockfile) {
+              return set.lockfile[key].resolved.startsWith(registry);
             }
-          }
+          });
+          const merged = Object.assign({}, ...relevant.map(s => s.lockfile));
+          await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
         }
-      }
+        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+        const install = `${node} ${yarn} install --no-bin-links --non-interactive --ignore-scripts --ignore-engines --silent --link-duplicates`;
+        console.error(`Registering ${cacheKeyParts.join()} in ${dir}`);
+        await exec(install, {cwd});
+        return cwd;
+      };
+      cache[cacheKey] = install(); // cache the promise
     }
+    const cachedCwd = await cache[cacheKey];
 
-    // install missing deps
-    const missing = {};
-    const cacheKeyParts = [];
-    for (const {name, range, type} of getDepEntries(meta)) {
-      if (!lockfile[`${name}@${range}`] && !ignore.find(dep => dep === name)) {
-        if (!missing[type]) missing[type] = {};
-        missing[type][name] = range;
-        cacheKeyParts.push(`${name}@${range}`);
-      }
+    // copy newly installed deps back to original package.json/yarn.lock
+    const [added] = await readVersionSets({roots: [cachedCwd]});
+    for (const {name, range, type} of getDepEntries(missing)) {
+      if (!meta[type]) meta[type] = {[name]: range};
+      else meta[type][name] = range;
     }
-    if (Object.keys(missing).length > 0) {
-      const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const yarnrc = await getYarnRc(dir);
+    for (const key in added.lockfile) {
+      if (!lockfile[key]) {
+        lockfile[key] = added.lockfile[key];
 
-      // install missing deps and reuse promise in parallel runs if possible
-      const cacheKey = `${cacheKeyParts.join(' ')} | ${yarnrc}`;
-      if (!cache[cacheKey]) {
-        const install = async () => {
-          await exec(`mkdir -p ${cwd}`);
-          await write(
-            `${cwd}/package.json`,
-            `${JSON.stringify(missing, null, 2)}\n`,
-            'utf8'
-          );
-          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-
-          const install = `${node} ${yarn} install --ignore-scripts --ignore-engines`;
-          await exec(install, {cwd}, [process.stdout, process.stderr]);
-          return cwd;
-        };
-        cache[cacheKey] = install(); // cache the promise
-      }
-      const cachedCwd = await cache[cacheKey];
-
-      // copy newly installed deps back to original package.json/yarn.lock
-      const [added] = await getVersionSets({roots: [cachedCwd]});
-      for (const {name, range, type} of getDepEntries(added.meta)) {
-        if (!meta[type]) meta[type] = {};
-        if (meta[type]) meta[type][name] = range;
-      }
-      for (const key in added.lockfile) {
-        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
-      }
-    }
-
-    // install missing transitives
-    const missingTransitives = [];
-    for (const key in lockfile) {
-      if (lockfile[key].dependencies) {
-        for (const name in lockfile[key].dependencies) {
-          const range = lockfile[key].dependencies[name];
-          if (!lockfile[`${name}@${range}`]) {
-            missingTransitives.push(`${name}@${range}`);
-          }
-        }
-      }
-    }
-    if (missingTransitives.length > 0) {
-      const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
-      const yarnrc = await getYarnRc(dir);
-
-      // add missing transitives and reuse promise in parallel runs if possible
-      const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
-      if (!cache[cacheKey]) {
-        const add = async () => {
-          await exec(`mkdir -p ${cwd}`);
-          await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
-
-          await write(`${cwd}/package.json`, '{}\n', 'utf8');
-          const deps = missingTransitives.join(' ');
-          const add = `yarn add ${deps} --ignore-engines`;
-          await exec(add, {cwd}, [process.stdout, process.stderr]);
-          return cwd;
-        };
-        cache[cacheKey] = add(); // cache promise
-      }
-      const cachedCwd = await cache[cacheKey];
-
-      // copy newly installed deps back to original yarn.lock
-      const [added] = await getVersionSets({roots: [cachedCwd]});
-      for (const key in added.lockfile) {
-        if (!lockfile[key]) lockfile[key] = added.lockfile[key];
+        const [, name, range] = key.match(/(.+?)@(.+)/) || [];
+        changes.set(key, {name, range});
       }
     }
   }
 
-  // index lockfiles
+  // generate lockfile entries for missing transitives
+  const missingTransitives = [];
+  for (const key in lockfile) {
+    if (lockfile[key].dependencies) {
+      for (const name in lockfile[key].dependencies) {
+        const range = lockfile[key].dependencies[name];
+        if (!lockfile[`${name}@${range}`]) {
+          missingTransitives.push(`${name}@${range}`);
+        }
+      }
+    }
+  }
+  if (missingTransitives.length > 0) {
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const yarnrc = await getYarnRc(dir, registry);
+
+    // add missing transitives and reuse promise in parallel runs if possible
+    const cacheKey = `${missingTransitives.join(' ')} | ${yarnrc}`;
+    if (!cache[cacheKey]) {
+      const add = async () => {
+        await mkdir(cwd, {recursive: true});
+        if (conservative) {
+          const registry = await getRegistry(cwd);
+          const relevant = sets.filter(set => {
+            for (const key in set.lockfile) {
+              return set.lockfile[key].resolved.startsWith(registry);
+            }
+          });
+          const merged = Object.assign({}, ...relevant.map(s => s.lockfile));
+          await write(`${cwd}/yarn.lock`, stringify(merged), 'utf8');
+        }
+        await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
+
+        await write(`${cwd}/package.json`, '{}\n', 'utf8');
+        const deps = missingTransitives.join(' ');
+        const add = `yarn add ${deps} --ignore-engines`; // use add instead of install because we may need to add more than one version of one dep
+        console.error(`Registering ${missingTransitives.join()} in ${dir}`);
+        await exec(add, {cwd});
+        return cwd;
+      };
+      cache[cacheKey] = add(); // cache promise
+    }
+    const cachedCwd = await cache[cacheKey];
+
+    // copy newly installed deps back to original yarn.lock
+    const [added] = await readVersionSets({roots: [cachedCwd]});
+    for (const key in added.lockfile) {
+      if (!lockfile[key]) {
+        lockfile[key] = added.lockfile[key];
+
+        const [, name, range] = key.match(/(.+?)@(.+)/) || [];
+        changes.set(key, {name, range});
+      }
+    }
+  }
+  return [...changes.values()];
+};
+
+const indexLockfiles = ({sets}) => {
+  // "index" in the dababase sense: makes it fast to lookup items in `sets` based on package name
   const index = {};
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
@@ -447,69 +630,32 @@ const update /*: Update */ = async ({
       return b.isExact - a.isExact || compare(bVersion, aVersion);
     });
   }
-
-  // sync
-  for (const item of sets) {
-    const {dir, meta} = item;
-    const registry = await getRegistry(dir);
-    const graph = {};
-    for (const {name, range} of getDepEntries(meta)) {
-      const ignored = ignore.find(dep => dep === name);
-      if (!ignored)
-        populateGraph({
-          graph,
-          name,
-          range,
-          index,
-          registry,
-        });
-    }
-
-    // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
-    // so we need to ensure that they are
-    const map = {};
-    const lockfile = {};
-    for (const key in graph) {
-      const [, name] = key.match(/(.+?)@(.+)/) || [];
-      map[`${name}@${graph[key].resolved}`] = graph[key];
-    }
-    for (const key in graph) {
-      const [, name] = key.match(/(.+?)@(.+)/) || [];
-      lockfile[key] = map[`${name}@${graph[key].resolved}`];
-    }
-
-    if (frozenLockfile) {
-      const oldKeys = Object.keys(item.lockfile);
-      const newKeys = Object.keys(lockfile);
-      if (oldKeys.sort().join() !== newKeys.sort().join()) {
-        console.error(
-          `Updating lockfile is not allowed with frozenLockfile. ` +
-            `This error is most likely happening if you have committed ` +
-            `out-of-date lockfiles and tried to install deps in CI. ` +
-            `Install your deps again locally.`
-        );
-      }
-    } else {
-      item.lockfile = lockfile;
-    }
-  }
-
-  return sets;
+  return index;
 };
 
 /*::
+export type LockfileEntry = {
+  version: string,
+  resolved: string,
+  dependencies?: {
+    [string]: string,
+  }
+};
+export type Lockfile = {
+  [string]: LockfileEntry,
+};
 type IndexEntry = {
   key: string,
   lockfile: Lockfile,
   isExact: boolean,
-}
+};
 type PopulateGraphArgs = {
   graph: Lockfile,
   name: string,
   range: string,
   index: {[string]: Array<IndexEntry>},
   registry: string,
-}
+};
 type PopulateGraph = (PopulateGraphArgs) => void;
 */
 const populateGraph /*: PopulateGraph */ = ({
@@ -553,6 +699,22 @@ const populateDeps = ({graph, deps, index, registry}) => {
   }
 };
 
+const graphToLockfile = ({graph}) => {
+  // @yarnpkg/lockfile generates separate entries if entry bodies aren't referentially equal
+  // so we need to ensure that they are
+  const map = {};
+  const lockfile = {};
+  for (const key in graph) {
+    const [, name] = key.match(/(.+?)@(.+)/) || [];
+    map[`${name}@${graph[key].resolved}`] = graph[key];
+  }
+  for (const key in graph) {
+    const [, name] = key.match(/(.+?)@(.+)/) || [];
+    lockfile[key] = map[`${name}@${graph[key].resolved}`];
+  }
+  return lockfile;
+};
+
 const isBetterVersion = (version, range, graph, key) => {
   return (
     satisfies(version, range) &&
@@ -562,17 +724,26 @@ const isBetterVersion = (version, range, graph, key) => {
 
 const getRegistry = async cwd => {
   const getRegistry = `${node} ${yarn} config get registry`;
-  const registry = await exec(getRegistry, {cwd});
-  return registry ? registry.trim() : '';
+  return (await exec(getRegistry, {cwd})).trim();
 };
 
-const getYarnRc = async packageDir => {
+const getYarnRc = async (packageDir, registry) => {
   const yarnrc = ['"--install.frozen-lockfile" false'];
-  const registry = await getRegistry(packageDir);
+  registry = registry || (await getRegistry(packageDir));
   if (registry) {
     yarnrc.push(`--registry "${registry}"`);
   }
   return yarnrc.join('\n');
 };
 
-module.exports = {check, add, remove, upgrade, sync, merge, populateGraph};
+module.exports = {
+  check,
+  add,
+  remove,
+  upgrade,
+  dedupe,
+  prune,
+  regenerate,
+  merge,
+  populateGraph,
+};

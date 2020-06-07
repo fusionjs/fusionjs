@@ -9,63 +9,53 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
     "redux-reactors": "^1.0.3"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "create-universal-package": "^3.4.7",
-    "eslint": "^6.0.1",
+    "@babel/preset-env": "^7.8.4",
+    "babel-eslint": "^10.0.3",
+    "create-universal-package": "^4.1.0",
+    "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^22.7.2",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.14.2",
-    "eslint-plugin-react-hooks": "^1.6.1",
+    "eslint-plugin-cup": "^2.0.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "execa": "^1.0.0",
     "flow-bin": "^0.109.0",
-    "nyc": "^14.1.0",
-    "prettier": "^1.18.2",
-    "redux": "^4.0.1",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1"
+    "prettier": "^1.19.1",
+    "redux": "^4.0.5",
+    "jest": "^25.1.0"
   },
   "peerDependencies": {
-    "redux": "^4.0.1"
+    "redux": "^4.0.5"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint .",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-rpc-redux"
+  "homepage": "https://fusionjs.com/api/fusion-rpc-redux",
+  "sideEffects": false
 }

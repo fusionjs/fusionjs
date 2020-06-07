@@ -19,13 +19,13 @@ const SW_OUTPUT_FILENAME = 'sw.js';
 module.exports = swLoader;
 
 function swLoader() {
-  if (!this['optsContext']) {
+  if (!this.optsContext) {
     return '// not supported';
   }
 
   this.cacheable(false);
   const callback = this.async();
-  const opts /*: WebpackConfigOpts*/ = this['optsContext'];
+  const opts /*: WebpackConfigOpts*/ = this.optsContext;
 
   const compiler = getCompiler(opts);
 

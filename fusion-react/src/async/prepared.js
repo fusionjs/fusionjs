@@ -19,7 +19,7 @@ type PreparedOpts = {
 };
 
 const prepared = (
-  sideEffect: (any, any) => Promise<any>,
+  sideEffect: (any, any) => any | Promise<any>,
   opts?: PreparedOpts = {}
 ) => <Config>(
   OriginalComponent: React.ComponentType<Config>

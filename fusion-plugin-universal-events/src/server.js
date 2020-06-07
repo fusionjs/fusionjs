@@ -7,7 +7,7 @@
  */
 
 /* eslint-env node */
-import {memoize, createPlugin} from 'fusion-core';
+import {memoize, createPlugin, RouteTagsToken} from 'fusion-core';
 import type {FusionPlugin, Context} from 'fusion-core';
 
 import Emitter from './emitter.js';
@@ -77,6 +77,9 @@ class ScopedEmitter extends Emitter {
 const plugin =
   __NODE__ &&
   createPlugin({
+    deps: {
+      RouteTags: RouteTagsToken,
+    },
     provides: () => new GlobalEmitter(),
     middleware: (deps, globalEmitter) => {
       const bodyParser = require('koa-bodyparser');
@@ -84,6 +87,7 @@ const plugin =
       return async function universalEventsMiddleware(ctx, next) {
         const emitter = globalEmitter.from(ctx);
         if (ctx.method === 'POST' && ctx.path === '/_events') {
+          deps.RouteTags.from(ctx).name = 'universal_events';
           await parseBody(ctx, async () => {});
           // $FlowFixMe
           const {items} = ctx.request.body;

@@ -13,15 +13,17 @@ const path = require('path');
 
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const DefaultNoImportSideEffectsPlugin = require('default-no-import-side-effects-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const {
   gzipWebpackPlugin,
   brotliWebpackPlugin,
   svgoWebpackPlugin,
 } = require('../lib/compression');
-const resolveFrom = require('resolve-from');
+const resolveFrom = require('../lib/resolve-from');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const {
@@ -44,6 +46,7 @@ const {
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
+const SourceMapPlugin = require('./plugins/source-map-plugin.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -86,6 +89,7 @@ export type WebpackConfigOpts = {|
   gzip: boolean,
   brotli: boolean,
   minify: boolean,
+  skipSourceMaps: boolean,
   state: {
     clientChunkMetadata: ClientChunkMetadataState,
     legacyClientChunkMetadata: ClientChunkMetadataState,
@@ -125,6 +129,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     gzip,
     brotli,
     minify,
+    skipSourceMaps,
     legacyPkgConfig = {},
     worker,
   } = opts;
@@ -227,17 +232,20 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
      * `cheap-module-source-map` is best supported by Chrome DevTools
      * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
      *
-     * We use `hidden-source-map` in production to produce a source map but
-     * omit the source map comment in the source file.
+     * We use `source-map` in production but effectively create a
+     * `hidden-source-map` using SourceMapPlugin to strip the comment.
      *
      * Chrome DevTools support doesn't matter in these case.
      * We only use it for generating nice stack traces
      */
     // TODO(#6): what about node v8 inspector?
-    devtool:
-      (runtime === 'client' && !dev) || runtime === 'sw'
-        ? 'hidden-source-map'
-        : 'cheap-module-source-map',
+    devtool: skipSourceMaps
+      ? false
+      : runtime === 'client' && !dev
+      ? 'source-map'
+      : runtime === 'sw'
+      ? 'hidden-source-map'
+      : 'cheap-module-source-map',
     output: {
       path: path.join(dir, `.fusion/dist/${env}/${runtime}`),
       filename:
@@ -375,6 +383,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           loader: require.resolve('./loaders/json-loader.js'),
         },
         {
+          test: /\.ya?ml$/,
+          type: 'json',
+          loader: require.resolve('yaml-loader'),
+        },
+        {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },
@@ -399,7 +412,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           if (/^[@a-z\-0-9]+/.test(request)) {
             const absolutePath = resolveFrom.silent(context, request);
             // do not bundle external packages and those not whitelisted
-            if (absolutePath === null) {
+            if (typeof absolutePath !== 'string') {
               // if module is missing, skip rewriting to absolute path
               return callback(null, request);
             }
@@ -427,6 +440,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         }),
     ].filter(Boolean),
     resolve: {
+      symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
       aliasFields: [
         (runtime === 'client' || runtime === 'sw') && 'browser',
         'es2015',
@@ -438,8 +452,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         __ENV__: env,
       },
       extensions: fusionConfig.resolveExtensions,
+      plugins: [PnpWebpackPlugin],
     },
     resolveLoader: {
+      symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
       alias: {
         [fileLoader.alias]: fileLoader.path,
         [chunkIdsLoader.alias]: chunkIdsLoader.path,
@@ -450,13 +466,22 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [swLoader.alias]: swLoader.path,
         [workerLoader.alias]: workerLoader.path,
       },
+      plugins: [PnpWebpackPlugin.moduleLoader(module)],
     },
 
     plugins: [
+      runtime === 'client' && !dev && new SourceMapPlugin(),
       runtime === 'client' &&
         new webpack.optimize.RuntimeChunkPlugin({
           name: 'runtime',
         }),
+      (fusionConfig.defaultImportSideEffects === false ||
+        Array.isArray(fusionConfig.defaultImportSideEffects)) &&
+        new DefaultNoImportSideEffectsPlugin(
+          Array.isArray(fusionConfig.defaultImportSideEffects)
+            ? {ignoredPackages: fusionConfig.defaultImportSideEffects}
+            : {}
+        ),
       new webpack.optimize.SideEffectsFlagPlugin(),
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
@@ -583,9 +608,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       minimizer: shouldMinify
         ? [
             new TerserPlugin({
-              sourceMap: true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
+              sourceMap: skipSourceMaps ? false : true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
               cache: true, // default from webpack
               parallel: true, // default from webpack
+              extractComments: false,
               terserOptions: {
                 compress: {
                   // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
@@ -654,6 +680,9 @@ function getNodeConfig(runtime) {
 
 function getSrcPath(dir) {
   // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
+  if (process.env.NODE_PRESERVE_SYMLINKS) {
+    return path.resolve(dir, 'src');
+  }
   try {
     const real = path.dirname(
       fs.realpathSync(path.resolve(dir, 'package.json'))

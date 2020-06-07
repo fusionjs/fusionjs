@@ -13,10 +13,7 @@ const {getManifest} = require('../utils/get-manifest.js');
 const {read, write, remove, exists} = require('../utils/node-helpers.js');
 const {groupByDepsets} = require('../utils/group-by-depsets.js');
 const {install} = require('../commands/install.js');
-const {test} = require('../commands/test.js');
-const {lint} = require('../commands/lint.js');
-const {flow} = require('../commands/flow.js');
-const {exec} = require('../commands/exec.js');
+const {executeProjectCommand} = require('../utils/execute-project-command.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {setupSymlinks} = require('../utils/setup-symlinks.js');
 
@@ -48,12 +45,13 @@ async function runMaster() {
   for (const data of payload) {
     if (data.length > 0) {
       const requiredCores = Math.min(availableCores, data.length);
-      const workers = [...Array(requiredCores)].map(() => fork());
+      const workers = [...Array(requiredCores)].map(() => fork(process.env));
 
       await install({
         root,
         cwd: `${root}/${data[0].dir}`,
         frozenLockfile: true,
+        conservative: true,
       });
 
       // setup symlinks
@@ -79,7 +77,7 @@ async function runMaster() {
                 const command = data.shift();
                 const log = `${tmpdir()}/${Math.random() * 1e17}`;
 
-                if (worker.state === 'dead') worker = fork();
+                if (worker.state === 'dead') worker = fork(process.env);
 
                 worker.send({command, log});
                 worker.once('exit', async () => {
@@ -121,10 +119,7 @@ async function runWorker() {
 
   try {
     // 1) if the command fails, throw from this block...
-    if (action === 'test') await test({root, cwd, args, stdio});
-    else if (action === 'lint') await lint({root, cwd, args, stdio});
-    else if (action === 'flow') await flow({root, cwd, args, stdio});
-    else if (action === 'exec') await exec({root, cwd, args, stdio});
+    await executeProjectCommand({root, cwd, command: action, args, stdio});
 
     if (await exists(log)) await remove(log); // if command succeeds, don't log errors
     process.exit(0);

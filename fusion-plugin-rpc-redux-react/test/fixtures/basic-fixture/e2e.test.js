@@ -4,11 +4,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @noflow
+ * @jest-environment node
  */
 
-const {Runtime} = require('../../utils.js');
-
 /* eslint-env node */
+import {Runtime} from '../../utils.js';
+
 test('browser plugin integration test withRPCRedux', async done => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();

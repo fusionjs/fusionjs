@@ -9,6 +9,18 @@
 /* eslint-env node */
 import * as React from 'react';
 import {renderToString} from 'react-dom/server';
+import type {Logger} from 'fusion-tokens';
 
-export default (el: React.Element<*>) =>
-  `<div id='root'>${renderToString(el)}</div>`;
+export default (el: React.Element<*>, logger?: Logger) => {
+  try {
+    return `<div id='root'>${renderToString(el)}</div>`;
+  } catch (e) {
+    if (__DEV__) {
+      console.error(
+        'Server-side render failed. Falling back to client-side render'
+      );
+    }
+    logger && logger.error('SSR Failed with Error', e);
+    return '<div id="root" data-fusion-render="client"></div>';
+  }
+};

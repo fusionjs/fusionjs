@@ -2,7 +2,15 @@
 const proc = require('child_process');
 const {promisify} = require('util');
 const {tmpdir} = require('os');
-const {readFile, writeFile, access, readdir, lstat, realpath} = require('fs');
+const {
+  readFile,
+  writeFile,
+  access,
+  readdir,
+  mkdir: makeDir,
+  lstat,
+  realpath,
+} = require('fs');
 
 /*::
 import {Writable, Readable, Duplex} from 'stream';
@@ -92,8 +100,16 @@ const exists /*: Exists */ = filename =>
 const read = promisify(readFile);
 const write = promisify(writeFile);
 const ls = promisify(readdir);
+const mkdir = promisify(makeDir);
 const lstatP = promisify(lstat);
 const realpathP = promisify(realpath);
+
+/*::
+export type Move = (string, string) => Promise<void>
+*/
+const move /*: Move */ = async (from, to) => {
+  await spawn('mv', [from, to]); // fs.rename can't move across devices/partitions so it can die w/ EXDEV error
+};
 
 /*::
 export type Remove = (string) => Promise<void>;
@@ -122,6 +138,8 @@ module.exports = {
   write,
   remove,
   ls,
+  mkdir,
+  move,
   lstat: lstatP,
   realpath: realpathP,
 };

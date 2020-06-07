@@ -17,7 +17,18 @@ export default (el: React.Element<*>) => {
     throw new Error("Could not find 'root' element");
   }
 
-  return ReactDOM.hydrate
-    ? ReactDOM.hydrate(el, domElement)
-    : ReactDOM.render(el, domElement);
+  const ssrFailed = document.querySelector('[data-fusion-render="client"]');
+
+  if (ssrFailed) {
+    if (__DEV__) {
+      console.error(
+        'Server-side render failed. Falling back to client-side render'
+      );
+    }
+    ReactDOM.render(el, domElement);
+  } else {
+    return ReactDOM.hydrate
+      ? ReactDOM.hydrate(el, domElement)
+      : ReactDOM.render(el, domElement);
+  }
 };

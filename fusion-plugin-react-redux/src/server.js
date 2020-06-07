@@ -14,6 +14,7 @@ import {createPlugin, memoize, html} from 'fusion-core';
 import type {FusionPlugin, Context} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
+import {serialize} from './codec.js';
 import {
   ReducerToken,
   PreloadedStateToken,
@@ -79,7 +80,7 @@ const plugin =
         ctx.element = <Provider store={store}>{ctx.element}</Provider>;
         await next();
 
-        const serialized = JSON.stringify(store.getState());
+        const serialized = serialize(store.getState());
         const script = html`
           <script type="application/json" id="__REDUX_STATE__">
             ${serialized}

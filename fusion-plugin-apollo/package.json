@@ -8,26 +8,19 @@
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "apollo-cache-inmemory": "^1.6.2",
-    "apollo-client": "^2.6.3",
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.12",
     "apollo-link-http": "^1.5.15",
     "apollo-link-schema": "^1.2.3",
@@ -35,61 +28,55 @@
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.0.0",
-    "@apollo/react-common": "^3.0.1",
-    "@apollo/react-components": "^3.0.1",
-    "@apollo/react-ssr": "^3.0.1",
-    "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
-    "eslint": "^6.0.1",
+    "@babel/preset-react": "^7.8.3",
+    "@apollo/react-common": "^3.1.3",
+    "@apollo/react-components": "^3.1.3",
+    "@apollo/react-ssr": "^3.1.3",
+    "babel-eslint": "^10.0.3",
+    "create-universal-package": "^4.1.0",
+    "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^22.7.2",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.14.2",
-    "eslint-plugin-react-hooks": "^1.6.1",
+    "eslint-plugin-cup": "^2.0.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
-    "get-port": "^5.0.0",
+    "get-port": "^5.1.1",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
-    "graphql-tools": "^4.0.5",
-    "node-fetch": "^2.3.0",
-    "nyc": "^14.1.0",
-    "prettier": "^1.18.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "redux": "^4.0.1",
-    "tape-cup": "^4.7.1",
+    "graphql-tools": "^4.0.6",
+    "node-fetch": "^2.6.0",
+    "prettier": "^1.19.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "redux": "^4.0.5",
     "unfetch": "^4.1.0",
-    "unitest": "^2.1.1"
+    "jest": "^25.1.0"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "@apollo/react-common": "^3.0.1",
-    "@apollo/react-components": "^3.0.1",
-    "@apollo/react-ssr": "^3.0.1"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "@apollo/react-common": "^3.1.3",
+    "@apollo/react-components": "^3.1.3",
+    "@apollo/react-ssr": "^3.1.3"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint src/",
-    "build-test": "rm -rf dist-tests && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "cover": "npm run build-test && npm run just-cover",
-    "just-cover": "nyc --reporter=cobertura --reporter=text npm run just-test",
-    "test": "npm run build-test && npm run just-test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

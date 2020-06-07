@@ -28,6 +28,8 @@ export class UniversalEmitter extends Emitter {
   interval: any;
   storage: BatchStorage;
   limit: number;
+  isFlushInProgress = false;
+  hasFlushBeenScheduled = false;
 
   constructor(
     fetch: Fetch,
@@ -60,9 +62,14 @@ export class UniversalEmitter extends Emitter {
   flushBeforeTerminated = () =>
     document.visibilityState === 'hidden' && this.flushInternal();
   async flushInternal(): Promise<void> {
+    if (!this.startFlush()) {
+      return;
+    }
+    // this is workaround to 'get' items and keep them in the storage
     const items = this.storage.getAndClear(this.limit);
-    if (items.length === 0) return;
+    this.storage.addToStart(...items);
 
+    if (items.length === 0) return;
     try {
       const res = await this.fetch('/_events', {
         method: 'POST',
@@ -71,24 +78,43 @@ export class UniversalEmitter extends Emitter {
         },
         body: JSON.stringify({items}),
       });
-      if (!res.ok) {
+
+      if (res.ok) {
+        // clear only events that were sent, preserve ones that might be added while request was executed
+        this.storage.getAndClear(items.length);
+        this.finishFlush();
+      } else {
         // If the server responds with a 413, it means the size of the payload was too large.
         // We handle this by cutting our limit in half for the next attempt.
         if (res.status === 413) {
           this.limit = this.limit / 2;
         }
-        // sending failed so put the logs back into storage
-        this.storage.addToStart(...items);
+        this.finishFlush();
       }
     } catch (e) {
-      // sending failed so put the logs back into storage
-      this.storage.addToStart(...items);
+      // do nothing here, items are still in the storage and will be sent on the next attempt
+      this.finishFlush();
     }
   }
   teardown(): void {
     window.removeEventListener('visibilitychange', this.flushBeforeTerminated);
     clearInterval(this.interval);
     this.interval = null;
+  }
+  startFlush() {
+    if (this.isFlushInProgress) {
+      this.hasFlushBeenScheduled = true;
+      return false;
+    }
+    this.isFlushInProgress = true;
+    return true;
+  }
+  finishFlush() {
+    this.isFlushInProgress = false;
+    if (this.hasFlushBeenScheduled) {
+      this.hasFlushBeenScheduled = false;
+      this.flushInternal();
+    }
   }
 }
 

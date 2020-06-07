@@ -11,7 +11,7 @@ def _jazelle_impl(ctx):
     then
       $NODE $YARN --cwd $ROOT --ignore-engines --production=true
     fi
-    cd $CWD && $NODE $CLI $@
+    cd $CWD && $NODE --max_old_space_size=65536 $CLI $@
     """.format(
       node = ctx.files._node[0].path,
       yarn = ctx.files._yarn[0].path,

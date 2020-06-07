@@ -51,12 +51,10 @@ function createActionNames(rpcId: string): ActionNamesType {
   }, {});
 }
 
-type Action<TType, TPayload> =
-  | {
-      type: TType,
-      payload: TPayload,
-    }
-  | TType;
+type Action<TType, TPayload> = {
+  type: TType,
+  payload: TPayload,
+};
 type ConvertToAction = <T>(T) => (payload: any) => Action<T, *>;
 type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
 export function createRPCActions(rpcId: string): RPCActionsType {
@@ -137,8 +135,8 @@ export function createRPCHandler({
   store: Store<*, *, *>,
   rpc: any,
   rpcId: string,
-  mapStateToParams?: any,
-  transformParams?: any,
+  mapStateToParams?: (state: any, args?: any) => any,
+  transformParams?: (params: any) => any,
 }): RPCHandlerType {
   if (!actions) {
     actions = createRPCActions(rpcId);

@@ -7,7 +7,6 @@
  */
 import type App from 'fusion-core';
 import path from 'path';
-import process from 'process';
 
 import type {Dep} from './cli/types.js';
 

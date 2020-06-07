@@ -1,5 +1,5 @@
 // @flow
-const {satisfies} = require('semver');
+const {satisfies} = require('./cached-semver');
 const {read} = require('./node-helpers.js');
 
 /*::

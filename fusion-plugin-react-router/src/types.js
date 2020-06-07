@@ -40,6 +40,14 @@ export type LocationShapeType = {
   hash?: string,
   state?: any,
 };
+
+export type StaticContextType = {
+  action?: ?string,
+  location?: ?LocationType,
+  status?: ?number,
+  url?: ?string,
+};
+
 export type BrowserRouterType = React.ComponentType<{|
   basename?: string,
   forceRefresh?: boolean,

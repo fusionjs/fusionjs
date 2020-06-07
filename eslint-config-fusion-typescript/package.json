@@ -1,0 +1,42 @@
+{
+  "name": "eslint-config-fusion-typescript",
+  "version": "0.0.0-monorepo",
+  "description": "eslint-config-fusion-typescript is an eslint config recommended for use with FusionJS.",
+  "license": "MIT",
+  "repository": {
+    "directory": "eslint-config-fusion-typescript",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "files": [
+    "rules",
+    "index.js"
+  ],
+  "main": "index.js",
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.0.1",
+    "flow-bin": "^0.109.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "echo ok",
+    "build": "echo ok",
+    "flow": "flow check"
+  },
+  "engines": {
+    "node": ">=8.9.4",
+    "npm": ">=5.0.0",
+    "yarn": ">=1.0.0"
+  },
+  "homepage": "https://fusionjs.com/api/eslint-config-fusion"
+}

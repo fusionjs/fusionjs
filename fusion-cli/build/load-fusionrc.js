@@ -19,7 +19,9 @@ type TransformResult = 'all' | 'spec' | 'none';
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   splitChunks?: any,
+  modernBuildOnly?: boolean,
   assumeNoImportSideEffects?: boolean,
+  defaultImportSideEffects?: boolean | Array<string>,
   experimentalCompile?: boolean,
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
   experimentalBundleTest?: (modulePath: string, defaults: BundleResult) => BundleResult,
@@ -61,6 +63,8 @@ function isValid(config, silent) {
       [
         'babel',
         'splitChunks',
+        'modernBuildOnly',
+        'defaultImportSideEffects',
         'assumeNoImportSideEffects',
         'experimentalCompile',
         'experimentalTransformTest',
@@ -158,5 +162,29 @@ function isValid(config, silent) {
   ) {
     throw new Error('brotli must be true, false, or undefined in fusionrc.js');
   }
+
+  if (
+    !(
+      config.defaultImportSideEffects === void 0 ||
+      config.defaultImportSideEffects === true ||
+      config.defaultImportSideEffects === false ||
+      (Array.isArray(config.defaultImportSideEffects) &&
+        config.defaultImportSideEffects.every(item => typeof item === 'string'))
+    )
+  ) {
+    throw new Error(
+      'defaultImportSideEffects must be true, false, or an array of strings in fusionrc.js'
+    );
+  }
+
+  if (
+    config.defaultImportSideEffects !== void 0 &&
+    config.assumeNoImportSideEffects !== void 0
+  ) {
+    throw new Error(
+      `Cannot use both defaultImportSideEffects and assumeNoImportSideEffects in .fusionrc.js`
+    );
+  }
+
   return true;
 }

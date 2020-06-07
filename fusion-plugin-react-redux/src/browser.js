@@ -17,7 +17,13 @@ import {createPlugin, unescape} from 'fusion-core';
 import type {Context, FusionPlugin} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
-import {ReducerToken, PreloadedStateToken, EnhancerToken} from './tokens.js';
+import {deserialize} from './codec.js';
+import {
+  ReducerToken,
+  PreloadedStateToken,
+  EnhancerToken,
+  ReduxDevtoolsConfigToken,
+} from './tokens.js';
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
@@ -31,8 +37,9 @@ const getPlugin = () => {
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
       enhancer: EnhancerToken.optional,
+      reduxDevToolsConfig: ReduxDevtoolsConfigToken.optional,
     },
-    provides({reducer, preloadedState, enhancer}) {
+    provides({reducer, preloadedState, enhancer, reduxDevToolsConfig}) {
       class Redux {
         store: StoreWithContextType<*, *, *>;
 
@@ -46,14 +53,23 @@ const getPlugin = () => {
             if (!preloadedState) {
               const stateElement = document.getElementById('__REDUX_STATE__');
               if (stateElement) {
-                preloadedState = JSON.parse(unescape(stateElement.textContent));
+                preloadedState = deserialize(
+                  unescape(stateElement.textContent)
+                );
               }
             }
             const devTool =
+              reduxDevToolsConfig !== false &&
               __DEV__ &&
               window.__REDUX_DEVTOOLS_EXTENSION__ &&
               // $FlowFixMe
-              __REDUX_DEVTOOLS_EXTENSION__({trace: true, traceLimit: 25});
+              __REDUX_DEVTOOLS_EXTENSION__({
+                trace: true,
+                traceLimit: 25,
+                ...((typeof reduxDevToolsConfig === 'object' &&
+                  reduxDevToolsConfig) ||
+                  {}),
+              });
             const enhancers = [enhancer, ctxEnhancer(ctx), devTool].filter(
               Boolean
             );

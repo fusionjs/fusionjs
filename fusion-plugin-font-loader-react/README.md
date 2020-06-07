@@ -67,12 +67,14 @@ import App from 'fusion-core';
 import FontLoaderReactPlugin, {
   FontLoaderReactConfigToken,
 } from 'fusion-plugin-font-loader-react';
+import getFontConfig from './config/fonts';
 
 export default () => {
   const app = new App(<div />);
   // ...
-  app.register(FontLoaderReactConfigToken, fontConfig);
-  app.register(FontLoaderReact);
+  app.register(FontLoaderReactToken, FontLoaderPlugin);
+  // pass true for styled fonts, false (or empty) for performance mode
+  app.register(FontLoaderReactConfigToken, getFontConfig(true));
   // ...
   return app;
 };

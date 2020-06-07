@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/@uber/node-rosetta/.*
+.*/templates/.*
+
+[include]
+../node_modules
+../../node_modules
+
+[libs]
+../flow-typed/
+
+[lints]
+
+[options]
+
+[strict]

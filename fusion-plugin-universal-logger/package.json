@@ -10,62 +10,50 @@
   "keywords": [],
   "license": "MIT",
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "winston": "^3.1.0",
+    "winston": "^3.2.1",
     "winston-transport": "^4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "create-universal-package": "^3.4.7",
-    "eslint": "^6.0.1",
+    "babel-eslint": "^10.0.3",
+    "create-universal-package": "^4.1.0",
+    "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^22.7.2",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-cup": "^2.0.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
-    "nyc": "^14.1.0",
-    "prettier": "^1.18.2",
-    "tape-cup": "^4.7.1",
-    "unitest": "^2.1.1",
-    "eslint-plugin-react-hooks": "^1.6.1"
+    "prettier": "^1.19.1",
+    "jest": "^25.1.0",
+    "eslint-plugin-react-hooks": "^2.3.0"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build-test": "rm -rf dist-test && cup build-tests",
-    "just-test": "node_modules/.bin/unitest --browser=dist-tests/browser.js --node=dist-tests/node.js",
-    "test": "npm run build-test && npm run just-test",
-    "cover": "nyc npm test",
+    "test": "jest",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

@@ -6,7 +6,7 @@
  * @flow
  */
 
-import type {FusionPlugin, Context} from 'fusion-core';
+import {type FusionPlugin, type Context, RouteTagsToken} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {type Fetch, FetchToken} from 'fusion-tokens';
 import {I18nToken} from 'fusion-plugin-i18n';
@@ -21,6 +21,7 @@ import {
 type ExtractReturnType = <V>(() => V) => V;
 
 export type RPCDepsType = {
+  RouteTags?: typeof RouteTagsToken.optional,
   emitter: typeof UniversalEventsToken,
   handlers?: typeof RPCHandlersToken,
   bodyParserOptions?: typeof BodyParserOptionsToken.optional,

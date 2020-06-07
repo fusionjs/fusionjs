@@ -8,108 +8,60 @@
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.es5.js",
-    "./dist/index.es.js": "./dist/browser.es5.es.js"
-  },
-  "es2015": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2015.es.js"
-  },
-  "es2017": {
-    "./dist/browser.es5.es.js": "./dist/browser.es2017.es.js",
-    "./dist/browser.es2015.es.js": "./dist/browser.es2017.es.js"
+    "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
+    "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "bin": {
     "fusion-run-introspect": "src/cli/index.js"
   },
   "files": [
-    "dist",
-    "src"
+    "src/",
+    "dist-*/"
   ],
   "dependencies": {
     "koa-bodyparser": "^4.2.1",
     "sade": "^1.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.4",
+    "@babel/core": "^7.8.4",
     "@babel/plugin-transform-modules-commonjs": "^7.5.0",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-flow": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.8.0",
-    "create-universal-package": "^3.4.7",
-    "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.12.1",
-    "eslint": "^6.0.1",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.1.0",
+    "create-universal-package": "^4.1.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.1",
-    "eslint-plugin-flowtype": "^3.11.1",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jest": "^22.7.2",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.14.2",
-    "eslint-plugin-react-hooks": "^1.6.1",
+    "eslint-plugin-cup": "^2.0.2",
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
-    "jest": "^24.8.0",
-    "prettier": "^1.18.2"
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1"
   },
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "cup-clean",
     "lint": "eslint .",
     "test": "jest",
-    "cover": "jest --coverage",
     "view-cover": "npm run cover && open coverage/index.html",
     "prepublish": "npm run build",
-    "build": "npm run clean && cup build",
-    "flow": "flow check"
-  },
-  "jest": {
-    "projects": [
-      {
-        "name": "node",
-        "displayName": "node",
-        "browser": false,
-        "testEnvironment": "node",
-        "testRegex": ".*\\.node\\.js$",
-        "globals": {
-          "__BROWSER__": false,
-          "__NODE__": true,
-          "__DEV__": false
-        }
-      },
-      {
-        "name": "browser",
-        "displayName": "browser",
-        "browser": true,
-        "testEnvironment": "jsdom",
-        "testRegex": ".*\\.browser\\.js$",
-        "globals": {
-          "__BROWSER__": true,
-          "__NODE__": false,
-          "__DEV__": false
-        }
-      }
-    ]
-  },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "@babel/preset-flow"
-        ],
-        "plugins": [
-          "@babel/plugin-transform-modules-commonjs"
-        ]
-      }
-    }
+    "build": "npm run clean && cup-build",
+    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",

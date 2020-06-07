@@ -21,7 +21,7 @@ const build /*: Build */ = async ({
   stdio = 'inherit',
 }) => {
   cwd = relative(root, cwd);
-  await spawn(bazel, ['build', `//${cwd}:${name}`, '--verbose_failures'], {
+  await spawn(bazel, ['build', `//${cwd}:${name}`], {
     stdio,
     env: process.env,
     cwd: root,
@@ -47,15 +47,11 @@ const test /*: Test */ = async ({
 }) => {
   cwd = relative(root, cwd);
   const testParams = args.map(arg => `--test_arg=${arg}`);
-  await spawn(
-    bazel,
-    ['run', `//${cwd}:${name}`, '--verbose_failures', ...testParams],
-    {
-      stdio,
-      env: process.env,
-      cwd: root,
-    }
-  );
+  await spawn(bazel, ['run', `//${cwd}:${name}`, ...testParams], {
+    stdio,
+    env: process.env,
+    cwd: root,
+  });
 };
 
 /*::
@@ -77,15 +73,11 @@ const run /*: Run */ = async ({
 }) => {
   cwd = relative(root, cwd);
   const runParams = args.length > 0 ? ['--', ...args] : [];
-  await spawn(
-    bazel,
-    ['run', `//${cwd}:${name}`, '--verbose_failures', ...runParams],
-    {
-      stdio,
-      env: process.env,
-      cwd: root,
-    }
-  );
+  await spawn(bazel, ['run', `//${cwd}:${name}`, ...runParams], {
+    stdio,
+    env: process.env,
+    cwd: root,
+  });
 };
 
 /*::
@@ -154,8 +146,31 @@ const exec /*: Exec */ = async ({root, cwd, args, stdio = 'inherit'}) => {
   const path = process.env.PATH || '';
   const bazelDir = dirname(bazel);
   const nodeDir = dirname(node);
-  const env = {PATH: `${bazelDir}:${nodeDir}:${path}:${cwd}/node_modules/.bin`};
+  const env = {
+    ...process.env,
+    PATH: `${bazelDir}:${nodeDir}:${path}:${cwd}/node_modules/.bin`,
+  };
   await spawn(command, params, {cwd, env, stdio});
 };
 
-module.exports = {build, test, lint, flow, dev, start, run, exec};
+/*::
+export type ScriptArgs = {
+  root: string,
+  cwd: string,
+  command: string,
+  args: Array<string>,
+  stdio?: Stdio,
+};
+type Script = (ScriptArgs) => Promise<void>;
+*/
+const script /*: Script */ = async ({
+  root,
+  cwd,
+  command,
+  args,
+  stdio = 'inherit',
+}) => {
+  await run({root, cwd, args: [command, ...args], name: 'script', stdio});
+};
+
+module.exports = {build, test, lint, flow, dev, start, run, exec, script};

@@ -373,7 +373,7 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
 * `ctx: Object`
   * `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
   * `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
-  * `request: Request` - [Koa's `request` object](https://koajs.com/#request): <details><summary>View Koa request details</summary>
+  * `request: Request` - [Koa's `request` object](https://koajs.com/#request): View Koa request details
     * `header: Object` - alias of `request.headers`
     * `headers: Object` - map of parsed HTTP headers
     * `method: string` - HTTP method
@@ -401,9 +401,8 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
     * `acceptsCharset: (...charsets: ...string) => boolean` - check if charsets are acceptable
     * `acceptsLanguages: (...languages: ...string) => boolean` - check if langs are acceptable
     * `get: (name: String) => string` - returns a header field
-  </details>
 
-  * `response: Response` - [Koa's `response` object](https://koajs.com/#response): <details><summary>View Koa response details</summary>
+  * `response: Response` - [Koa's `response` object](https://koajs.com/#response): View Koa response details
     * `header: Object` - alias of `request.headers`
     * `headers: Object` - map of parsed HTTP headers
     * `socket: Socket` - response socket
@@ -425,9 +424,8 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
     * `etag: String` - set the ETag of a response including the wrapped `"`s.
     * `vary: (field: String) => String` - vary on `field`
     * `flushHeaders () => undefined` - flush any set headers, and begin the body
-    </details>
 
-  * `cookies: {get, set}` - cookies based on [Cookie Module](https://github.com/pillarjs/cookies): <details><summary>View Koa cookies details</summary>
+  * `cookies: {get, set}` - cookies based on [Cookie Module](https://github.com/pillarjs/cookies): View Koa cookies details
     * `get: (name: string, options: ?Object) => string` - get a cookie
       * `name: string`
       * `options: {signed: boolean}`
@@ -443,7 +441,6 @@ In the server, `ctx` also exposes the same properties as a [Koa context](http://
         * `secure: boolean` - secure cookie
         * `httpOnly: boolean` - server-accessible cookie, true by default
         * `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
-  </details>
 
   * `state: Object` - recommended namespace for passing information through middleware and to your frontend views `ctx.state.user = await User.find(id)`
   * `throw: (status: ?number, message: ?string, properties: ?Object) => void` - throws an error

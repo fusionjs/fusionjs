@@ -1,0 +1,10 @@
+{
+  "name": "b",
+  "version": "0.0.0-monorepo",
+  "dependencies": {
+    "a": "0.0.0"
+  },
+  "devDependencies": {
+    "a": "0.0.0"
+  }
+}

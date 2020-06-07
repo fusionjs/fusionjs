@@ -3,9 +3,18 @@ const {dirname, relative} = require('path');
 
 const {getHash} = require('./checksum-cache.js');
 const {merge} = require('./lockfile.js');
-const {read, exec, spawn, write, exists, remove} = require('./node-helpers.js');
+const {
+  read,
+  move,
+  exec,
+  spawn,
+  write,
+  exists,
+  remove,
+} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {setupSymlinks} = require('./setup-symlinks.js');
+const {executeHook} = require('./execute-hook.js');
 
 /*::
 import type {Metadata} from './get-local-dependencies.js';
@@ -39,7 +48,7 @@ const installDeps /*: InstallDeps */ = async ({
     const data = await read(`${modulesDir}/.jazelle-source`, 'utf8');
     const prev = JSON.parse(data);
     if (await exists(prev.dir)) await remove(prev.dir);
-    await spawn('mv', [`${modulesDir}/`, prev.dir], {cwd: root});
+    await move(modulesDir, prev.dir);
 
     if (await exists(`${bin}/node_modules/.jazelle-source`)) {
       const data = await read(`${bin}/node_modules/.jazelle-source`, 'utf8');
@@ -51,24 +60,28 @@ const installDeps /*: InstallDeps */ = async ({
   await generateLockfile({root, bin, deps, ignore});
 
   // jazelle hook
-  await executeJazelleHook(preinstall);
+  await executeHook(preinstall, root);
   await executeNpmHooks(deps, 'preinstall');
 
   // install external deps
   if (needsInstall) await generateNodeModules(bin);
 
   if (await exists(modulesDir)) {
-    await remove(`${root}/${modulesDir}`);
+    await remove(modulesDir);
   }
-  await spawn('mv', [`${bin}/node_modules/`, modulesDir], {cwd: root});
+  await move(`${bin}/node_modules`, modulesDir);
   await setupSymlinks({root, deps});
 
   await executeNpmHooks(deps, 'postinstall');
-  await executeJazelleHook(postinstall, root);
+  await executeHook(postinstall, root);
 
   // record the source of this node_modules so we are able to recycle on future installs if needed
   const sourceFile = `${modulesDir}/.jazelle-source`;
-  const data = {dir: `${bin}/node_modules`, hash};
+  const data = {
+    dir: `${bin}/node_modules`,
+    hash,
+    upstreams: deps.map(d => d.dir),
+  };
   await write(sourceFile, JSON.stringify(data, null, 2), 'utf8');
 };
 
@@ -89,19 +102,6 @@ const executeNpmHooks = async (deps, type) => {
   }
 };
 
-const executeJazelleHook = async (hook, root) => {
-  const nodePath = dirname(node);
-  if (typeof hook === 'string') {
-    // prioritize hermetic Node version over system version
-    const options = {
-      env: {...process.env, PATH: `${nodePath}:${String(process.env.PATH)}`},
-      cwd: root,
-    };
-    const stdio = [process.stdout, process.stderr];
-    await exec(hook, options, stdio);
-  }
-};
-
 const generateLockfile = async ({root, bin, deps, ignore}) => {
   const tmp = `${root}/third_party/jazelle/temp/yarn-utilities-tmp`;
   await spawn('rm', ['-f', `${bin}/yarn.lock`], {cwd: root});
@@ -119,9 +119,10 @@ const generateNodeModules = async bin => {
   const args = [
     yarn,
     'install',
-    '--frozen-lockfile',
+    '--pure-lockfile',
     '--non-interactive',
     '--ignore-optional',
+    '--color=always',
   ];
   const options = {
     env: {

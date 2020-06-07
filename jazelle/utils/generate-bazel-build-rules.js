@@ -65,7 +65,10 @@ const generateBazelBuildRules /*: GenerateBazelBuildRules */ = async ({
         dependencies
           .map(d => `"${d}"`)
           .forEach(dependency => {
-            if (!items.includes(dependency)) {
+            // only add if no related target exists
+            const [path] = dependency.split(':');
+            const paths = items.map(item => item.split(':').shift());
+            if (!paths.includes(path)) {
               code = addCallArgItem(
                 code,
                 dependencySyncRule,

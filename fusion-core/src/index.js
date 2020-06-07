@@ -6,6 +6,7 @@
  * @flow
  */
 import type {
+  ExtractDepsType,
   Context,
   ExtractTokenType,
   FusionPlugin,
@@ -70,4 +71,5 @@ export type {
   SSRBodyTemplate,
   Render,
   RouteTagsType,
+  ExtractDepsType,
 };

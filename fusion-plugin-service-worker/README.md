@@ -56,9 +56,6 @@ if (__BROWSER__) {
 }
 if (__NODE__) {
   app.register(SWTemplateFunctionToken, swTemplateFunction);
-  // optional (default 24 hours)
-  // The time (in ms) before the service worker cache will automatically expire
-  app.register(SWcacheDuration, expiry);
 }
 ```
 
@@ -66,7 +63,7 @@ The browser will automatically register the service worker on page load.
 
 ## Options
 
-The SWOptionsToken accepts an object with several optional configuration properties:
+The SWOptionsToken  (__NODE__ only) accepts an object with several optional configuration properties:
 
 ```ts
 type Options = {

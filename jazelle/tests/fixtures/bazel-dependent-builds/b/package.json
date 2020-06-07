@@ -1,0 +1,8 @@
+{
+  "name": "b",
+  "version": "0.0.0",
+  "main": "compiled/foo.js",
+  "scripts": {
+    "build": "mkdir -p compiled && echo 'module.exports = 111' > compiled/foo.js"
+  }
+}

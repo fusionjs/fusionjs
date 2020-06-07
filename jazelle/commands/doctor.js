@@ -1,11 +1,11 @@
 // @flow
-const {satisfies} = require('semver');
 const {resolve} = require('path');
 const {getManifest} = require('../utils/get-manifest.js');
 const {getLocalDependencies} = require('../utils/get-local-dependencies.js');
 const {detectCyclicDeps} = require('../utils/detect-cyclic-deps.js');
 const {ci} = require('../commands/ci.js');
 const {read, exists} = require('../utils/node-helpers.js');
+const {satisfies} = require('../utils/cached-semver');
 
 /*::
 export type DoctorArgs = {

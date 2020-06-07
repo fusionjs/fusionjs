@@ -46,6 +46,7 @@ web_test(
     deps = [
         "//${path}:library",
     ],
+    gen_srcs = ["generated$"],
 )
 
 web_test(

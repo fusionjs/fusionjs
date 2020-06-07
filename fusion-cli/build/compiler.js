@@ -124,6 +124,8 @@ type CompilerOpts = {
   preserveNames?: boolean,
   minify?: boolean,
   modernBuildOnly?: boolean,
+  maxWorkers?: number,
+  skipSourceMaps?: boolean,
 };
 */
 
@@ -139,12 +141,19 @@ function Compiler(
     minify = true,
     serverless = false,
     modernBuildOnly = false,
+    skipSourceMaps = false,
+    maxWorkers,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
+  const root = path.resolve(dir);
+  const fusionConfig = loadFusionRC(root);
+  const legacyPkgConfig = loadLegacyPkgConfig(root);
+
   const clientChunkMetadata = new DeferredState();
   const legacyClientChunkMetadata = new DeferredState();
   const legacyBuildEnabled = new SyncState(
-    (forceLegacyBuild || !watch || env === 'production') && !modernBuildOnly
+    (forceLegacyBuild || !watch || env === 'production') &&
+      !(modernBuildOnly || fusionConfig.modernBuildOnly)
   );
   const mergedClientChunkMetadata /*: any */ = new MergedDeferredState(
     [
@@ -162,11 +171,8 @@ function Compiler(
     i18nDeferredManifest: new DeferredState(),
     legacyBuildEnabled,
   };
-  const root = path.resolve(dir);
-  const fusionConfig = loadFusionRC(root);
-  const legacyPkgConfig = loadLegacyPkgConfig(root);
 
-  let worker = createWorker();
+  let worker = createWorker(maxWorkers);
 
   const sharedOpts = {
     dir: root,
@@ -176,6 +182,7 @@ function Compiler(
     state,
     fusionConfig,
     legacyPkgConfig,
+    skipSourceMaps,
     preserveNames,
     // TODO: Remove redundant zopfli option
     zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
@@ -200,7 +207,7 @@ function Compiler(
 
   if (watch) {
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
-      if (worker === void 0) worker = createWorker();
+      if (worker === void 0) worker = createWorker(maxWorkers);
     });
     compiler.hooks.watchClose.tap('KillWorkers', stats => {
       if (worker !== void 0) worker.end();
@@ -281,11 +288,12 @@ function loadLegacyPkgConfig(dir) {
   return legacyPkgConfig;
 }
 
-function createWorker() {
+function createWorker(maxWorkers /* maxWorkers?: number */) {
   if (require('os').cpus().length < 2) return void 0;
   return new Worker(require.resolve('./loaders/babel-worker.js'), {
     exposedMethods: ['runTransformation'],
     forkOptions: {stdio: 'inherit'},
+    numWorkers: maxWorkers,
   });
 }
 

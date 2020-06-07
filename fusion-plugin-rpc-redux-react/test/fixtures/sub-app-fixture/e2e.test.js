@@ -4,11 +4,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @noflow
+ * @jest-environment node
  */
 
-const {Runtime} = require('../../utils.js');
-
 /* eslint-env node */
+import {Runtime} from '../../utils.js';
+
 test('browser plugin integration test withRPCRedux', async done => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
@@ -22,7 +23,7 @@ test('browser plugin integration test withRPCRedux', async done => {
   // child component is not rendered until after parent component is mounted,
   // so `prepared` will only be called in the browser
   // need to wait for rpc call to resolve
-  await sleep(1000);
+  await runtime.page.waitForSelector('[data-testid="child-trip-id"]');
 
   const childTripId = await runtime.page.$eval(
     '[data-testid="child-trip-id"]',
@@ -33,7 +34,3 @@ test('browser plugin integration test withRPCRedux', async done => {
   await runtime.end();
   done();
 }, 30000);
-
-function sleep(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}

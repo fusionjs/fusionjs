@@ -15,7 +15,7 @@ function Root() {
 }
 
 export default () => {
-  const app = new App(<Root />);
+  const app = new App((<Root />));
   app.register(Styletron);
   app.register(AtomicPrefixToken, '__atomic_prefix__');
   return app;

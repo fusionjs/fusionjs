@@ -12,15 +12,15 @@ fi
 
 # Get the change set
 git diff-tree --no-commit-id --name-only -r $SHA1 $SHA2 | grep -v "\.md$" > changes.txt
-CHANGES=$(jazelle changes ./changes.txt)
+CHANGES=$(jazelle changes --format dirs ./changes.txt)
 
 for DIR in $CHANGES ; do (
   PROJECT=$(basename "$DIR");
   if [ -d "$DIR" ] && [ $PROJECT != "common" ] && [ $PROJECT != "scripts" ] && [ $PROJECT != "flow-typed" ] && [ $PROJECT != "rfcs" ] && [ $PROJECT != "docs" ]; then
-    if [ $PROJECT = "fusion-cli" ]; then
-      echo "  - label: 'fusion-cli'";
+    if [ $PROJECT = "fusion-cli-tests" ]; then
+      echo "  - label: 'fusion-cli-tests'";
       echo "    commands:";
-      echo "    - 'cd fusion-cli'";
+      echo "    - 'cd fusion-cli-tests'";
       echo "    - 'jazelle ci'";
       echo "    - 'jazelle build'";
       echo "    - '.buildkite/nodeTests'";
@@ -32,7 +32,7 @@ for DIR in $CHANGES ; do (
       echo "        pull_retries: 5";
       echo "    agents:";
       echo "      queue: workers";
-      echo "  - label: 'fusion-cli lint flow'";
+      echo "  - label: 'fusion-cli-tests lint flow'";
       echo "    commands:";
       echo "    - 'jazelle ci --cwd $DIR'";
       echo "    - 'jazelle build --cwd $DIR'";
