@@ -62,6 +62,7 @@ type PluginDepsType = {
 
 // Preserve browser history instance across HMR
 let browserHistory;
+let noMatchingRoute = 'no-matching-route';
 
 const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
@@ -133,9 +134,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             const scopedEmitter = emitter.from(ctx);
             const emitTiming = type => timing => {
               scopedEmitter.emit(type, {
-                title: pageData.routeMatched
-                  ? pageData.title
-                  : 'no-matching-route',
+                title: pageData.routeMatched ? pageData.title : noMatchingRoute,
                 page: pageData.page,
                 status: ctx.status,
                 timing,
@@ -165,8 +164,14 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         emitter &&
           emitter.map(payload => {
             if (payload && typeof payload === 'object') {
-              payload.__url__ = pageData.title;
-              payload.__urlParams__ = pageData.params;
+              if (pageData.routeMatched) {
+                payload.__url__ = pageData.title;
+                payload.__urlParams__ = pageData.params;
+                delete pageData.routeMatched;
+              } else {
+                payload.__url__ = noMatchingRoute;
+                payload.__urlParams__ = {};
+              }
             }
             return payload;
           });
@@ -187,6 +192,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             Provider={Provider}
             basename={ctx.prefix}
             onRoute={payload => {
+              payload.routeMatched = true;
               pageData = payload;
               tags.name = pageData.title;
               tags.page = pageData.page;

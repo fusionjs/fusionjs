@@ -407,8 +407,13 @@ if (__BROWSER__) {
     );
     const app = getApp(element);
     const expectedPayloads = [
-      {page: '/', params: {}, title: '/'},
-      {page: '/user/:uuid', params: {uuid: '1234'}, title: '/user/:uuid'},
+      {page: '/', params: {}, title: '/', routeMatched: true},
+      {
+        page: '/user/:uuid',
+        params: {uuid: '1234'},
+        title: '/user/:uuid',
+        routeMatched: true,
+      },
     ];
     let mapper;
     const UniversalEvents: FusionPlugin<any, any> = createPlugin({
