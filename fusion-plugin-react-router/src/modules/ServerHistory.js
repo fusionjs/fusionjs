@@ -21,7 +21,22 @@ const createLocation = (
   prefix: string
 ): LocationType => {
   const unprefixed = removeRoutePrefix(path, prefix);
-  return defaultCreateLocation(unprefixed);
+  try {
+    return defaultCreateLocation(unprefixed);
+  } catch (e) {
+    if (e instanceof URIError) {
+      return defaultCreateLocation(
+        typeof unprefixed === 'string'
+          ? encodeURI(unprefixed)
+          : {
+              ...unprefixed,
+              pathname: encodeURI(unprefixed.pathname),
+            }
+      );
+    } else {
+      throw e;
+    }
+  }
 };
 
 const createPrefixedURL = (

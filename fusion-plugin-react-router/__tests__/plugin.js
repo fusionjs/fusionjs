@@ -139,6 +139,25 @@ if (__NODE__) {
     expect(ctx.res.getHeader('Location')).toBe('/test/lol');
     cleanup();
   });
+  test('handles url with invalid URI encoding', async () => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Route path="/" component={Hello} />
+      </div>
+    );
+    const app = getApp(element);
+    const UniversalEvents = getMockEvents({
+      title: 'no-matching-route',
+      page: '/%C0%AE%C0%AE/',
+    });
+    app.register(UniversalEventsToken, UniversalEvents);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/%C0%AE%C0%AE/');
+
+    expect(ctx.response.status).toBe(200);
+    cleanup();
+  });
 }
 
 test('events with trackingId', async () => {
@@ -213,7 +232,7 @@ test('Custom Provider', async () => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    title: '/',
+    title: 'no-matching-route',
     page: '/',
   });
   app.register(UniversalEventsToken, UniversalEvents);
@@ -438,6 +457,29 @@ if (__BROWSER__) {
     app.register(UniversalEventsToken, UniversalEvents);
     const simulator = setup(app);
     await simulator.render('/');
+  });
+  test('handles url with invalid URI encoding', async () => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Route path="/" component={Hello} />
+      </div>
+    );
+    const app = getApp(element);
+    const UniversalEvents = getMockEvents({
+      title: 'no-matching-route',
+      page: '/%C0%AE%C0%AE/',
+    });
+    app.register(UniversalEventsToken, UniversalEvents);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/%C0%AE%C0%AE/');
+
+    const node = document.getElementById('root');
+    if (!node || !node.textContent) {
+      throw new Error('Could not find node.');
+    }
+    expect(node && node.textContent).toBe('Hello');
+    cleanup();
   });
 }
 
