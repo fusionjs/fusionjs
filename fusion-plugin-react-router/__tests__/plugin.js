@@ -472,7 +472,7 @@ if (__BROWSER__) {
     });
     app.register(UniversalEventsToken, UniversalEvents);
     const simulator = setup(app);
-    const ctx = await simulator.render('/%C0%AE%C0%AE/');
+    await simulator.render('/%C0%AE%C0%AE/');
 
     const node = document.getElementById('root');
     if (!node || !node.textContent) {
