@@ -139,7 +139,7 @@ if (__NODE__) {
     expect(ctx.res.getHeader('Location')).toBe('/test/lol');
     cleanup();
   });
-  test('handles url with invalid URI encoding', async () => {
+  test('handles url with invalid URI encoding on server', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
@@ -458,7 +458,7 @@ if (__BROWSER__) {
     const simulator = setup(app);
     await simulator.render('/');
   });
-  test('handles url with invalid URI encoding', async () => {
+  test('handles url with invalid URI encoding in browser', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
