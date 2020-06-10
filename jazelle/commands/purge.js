@@ -23,6 +23,7 @@ const purge /*: Purge */ = async ({root, force = false}) => {
         }).catch(() => {}) // user doesn't care for our stack trace, just pipe bazel output instead
       : null,
   ]);
+  await spawn(bazel, ['shutdown']);
 };
 
 module.exports = {purge};

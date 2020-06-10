@@ -11,10 +11,7 @@ def _web_library_impl(ctx):
 
   return [
     DefaultInfo(
-      files = depset(
-        direct = [],
-        transitive = [build_deps]
-      ),
+      files = build_deps,
     )
   ]
 
@@ -36,9 +33,10 @@ def _get_runfiles(ctx, outputs):
   executable = ctx.outputs.executable
 
   direct = ctx.files._node + ctx.files._script + ctx.files._untar_script + outputs
+  transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
   run_deps = depset(
     direct = direct,
-    transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps],
+    transitive = transitive,
   )
 
   ctx.actions.write(
@@ -67,9 +65,11 @@ def _get_runfiles(ctx, outputs):
 def _web_binary_impl(ctx):
   build_output = ctx.outputs.out
 
+  direct = ctx.files._script + ctx.files._untar_script
+  transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
   build_deps = depset(
-    direct = ctx.files._script + ctx.files._untar_script,
-    transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]
+    direct = direct,
+    transitive = transitive
   )
 
   ctx.actions.run_shell(
@@ -100,7 +100,7 @@ def _web_binary_impl(ctx):
     DefaultInfo(
       files = depset(
         direct = [build_output],
-        transitive = [build_deps]
+        transitive = [build_deps],
       ),
       runfiles = _get_runfiles(ctx, [build_output]),
     )

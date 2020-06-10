@@ -15,7 +15,11 @@ export type Bazel = (BazelArgs) => Promise<void>
 */
 const runBazel /*: Bazel */ = async ({root, args, stdio = 'inherit'}) => {
   const params = getPassThroughArgs(args);
-  await spawn(bazel, params, {stdio, env: process.env, cwd: root});
+  await spawn(bazel, ['--host_jvm_args=-Xmx15g', ...params], {
+    stdio,
+    env: process.env,
+    cwd: root,
+  });
 };
 
 module.exports = {bazel: runBazel};

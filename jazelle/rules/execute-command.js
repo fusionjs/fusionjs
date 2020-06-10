@@ -118,8 +118,18 @@ function* find({root, regex}) {
   const dirs = readdir(root);
   for (const dir of dirs) {
     const path = `${root}/${dir}`;
-    const s = stat(`${root}/${dir}`);
+    const s = getStat(path);
     if (path.match(regex)) yield path;
     if (s.isDirectory()) yield* find({root: path, regex});
+  }
+}
+
+function getStat(path) {
+  try {
+    return stat(path);
+  } catch (e) {
+    return {
+      isDirectory: () => false,
+    };
   }
 }
