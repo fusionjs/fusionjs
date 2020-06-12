@@ -122,7 +122,6 @@ const generateNodeModules = async bin => {
     '--production=false',
     '--pure-lockfile',
     '--non-interactive',
-    '--ignore-optional',
     '--color=always',
   ];
   const options = {
