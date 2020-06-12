@@ -4187,6 +4187,14 @@ styletron-engine-atomic@^1.4.1:
     inline-style-prefixer "^5.1.0"
     styletron-standard "^3.0.4"
 
+styletron-engine-monolithic@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/styletron-engine-monolithic/-/styletron-engine-monolithic-0.0.3.tgz#b84c58695005464f54598dc7db682d67c03087e0"
+  integrity sha512-BjkC5Kl+ygt3/oM21VVfD7pGdVTQd8khJdjl2XSQ/f6oSaGwBlcWZ4oAoIrKg+m/wrX9QCdwf2CuXX0u8BWjsg==
+  dependencies:
+    inline-style-prefixer "^5.1.0"
+    styletron-standard "^3.0.4"
+
 styletron-react@^5.2.6:
   version "5.2.6"
   resolved "https://registry.npmjs.org/styletron-react/-/styletron-react-5.2.6.tgz#253def83ec06fc06022da21665719c243d403612"

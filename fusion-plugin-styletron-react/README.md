@@ -32,6 +32,24 @@ export default () => {
 }
 ```
 
+### Using monolithic CSS rendering engine
+The default Styletron plugin export uses atomic CSS rendeding engine. If you'd like to use [monolithic CSS rendering engine](https://github.com/styletron/styletron/tree/master/packages/styletron-engine-monolithic) you'd need to use a named plugin export instead as it's shown below.
+```js
+// src/main.js
+import App from 'fusion-react';
+import {StyletronMonolithicPlugin} from 'fusion-plugin-styletron-react';
+
+import root from './components/root';
+
+export default () => {
+  const app = new App(root);
+
+  app.register(StyletronMonolithicPlugin);
+
+  return app;
+}
+```
+
 ### Atomic class prefix
 
 By default, it is assumed there is no global CSS that will result in collisions with the generated atomic class names. If this is not the case, collisions can be avoided by adding a prefix to the generated atomic class names via `AtomicPrefixToken`.
