@@ -174,6 +174,21 @@ test('Respects the limit when flushing', async () => {
   emitter.teardown();
 });
 
+test('Calling flush even no items works as expected', async () => {
+  store.getAndClear();
+  const fetch: Fetch = () => Promise.resolve(createMockFetch());
+  const emitter = new UniversalEmitter(fetch, store, 100, 20);
+  await emitter.flush();
+  await emitter.flush();
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  for (let index = 0; index < 20; index++) {
+    emitter.emit('a', {x: 1});
+  }
+  await emitter.flush();
+  expect(store.data.length).toBe(0);
+  emitter.teardown();
+});
+
 test('Lowers limit for 413 errors', async () => {
   store.getAndClear();
   const fetch: Fetch = () =>
