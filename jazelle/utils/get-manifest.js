@@ -20,6 +20,7 @@ export type VersionPolicy = {
 export type Hooks = {
   preinstall?: string,
   postinstall?: string,
+  postcommand?: string,
 }
 */
 const getManifest /*: GetManifest */ = async ({root}) => {

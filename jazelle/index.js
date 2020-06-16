@@ -43,6 +43,8 @@ const {
 const {getBinaryPath} = require('./utils/binary-paths.js');
 const {findChangedTargets} = require('./utils/find-changed-targets.js');
 const {getTestGroups} = require('./utils/get-test-groups.js');
+const {getManifest} = require('./utils/get-manifest.js');
+const {executeHook} = require('./utils/execute-hook.js');
 
 /*::
 export type RunCLI = (Array<string>) => Promise<void>;
@@ -300,6 +302,17 @@ const runCLI /*: RunCLI */ = async argv => {
         args: [command, ...rest],
       })
   );
+
+  const root = await rootOf(args);
+  const {hooks} = await getManifest({root});
+  if (hooks && hooks.postcommand) {
+    await executeHook(hooks.postcommand, root, {
+      DURATION: process.uptime() * 1000,
+      COMMAND: command,
+      COMMAND_ARGS: rest.join(' '),
+      VERSION: require('./package.json').version,
+    });
+  }
 };
 
 async function rootOf(args) {
