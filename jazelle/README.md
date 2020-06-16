@@ -1203,6 +1203,7 @@ Note: The `manifest.json` file does **not** allow comments; they are present her
     "postscaffold": "echo after",
     "preinstall": "echo before",
     "postinstall": "echo after",
+    "postcommand": "echo after command",
   },
   // Optional version policy
   "versionPolicy": {
@@ -1261,7 +1262,8 @@ Installation hooks run shell scripts before/after dependency installation.
 {
   "hooks": {
     "preinstall": "echo before",
-    "postinstall": "echo after"
+    "postinstall": "echo after",
+    "postcommand": "echo after command",
   }
 }
 ```
