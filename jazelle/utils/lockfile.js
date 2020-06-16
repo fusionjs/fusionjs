@@ -1,7 +1,7 @@
 // @flow
 const {satisfies, minVersion, compare, gt} = require('./cached-semver');
 const {parse, stringify} = require('../vendor/@yarnpkg/lockfile/index.js');
-const {read, exec, write, mkdir} = require('./node-helpers.js');
+const {read, exists, exec, write, mkdir} = require('./node-helpers.js');
 const {node, yarn} = require('./binary-paths.js');
 const {isYarnResolution} = require('./is-yarn-resolution.js');
 const sortPackageJson = require('../utils/sort-package-json');
@@ -275,10 +275,11 @@ const diff /*: Diff */ = async ({
 
   let shouldSyncLockfiles = false;
   const cache = {};
+  const missing = new Map();
   const changed = new Map();
   for (const {dir, meta, lockfile} of sets) {
     applyMetadataChanges({meta, removals, additions, upgrades});
-    const changes = await installMissingDeps({
+    const missed = await installMissingDeps({
       dir,
       meta,
       lockfile,
@@ -289,20 +290,23 @@ const diff /*: Diff */ = async ({
       conservative,
       registry,
     });
-    changed.set(dir, changes); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
+    missing.set(dir, missed); // individually track whether each lockfile changed so we can exit early out of lockfile check loop in
 
     const hasRemovals = removals.length > 0;
     const hasAdditions = additions.length > 0;
     const hasUpgrades = upgrades.length > 0;
     const hasMetadataChanges = hasRemovals || hasAdditions || hasUpgrades;
-    if (hasMetadataChanges || changes.length > 0) shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
+    if (hasMetadataChanges || missed.length > 0) {
+      changed.set(dir, true);
+      shouldSyncLockfiles = true; // collect top level checks so we can exit early if nothing changed
+    }
   }
 
   if (shouldSyncLockfiles) {
     const index = indexLockfiles({sets});
 
     const filtered = sets.filter(item => {
-      return (changed.get(item.dir) || []).length > 0;
+      return (missing.get(item.dir) || []).length > 0;
     });
     const registries = await Promise.all(
       filtered.map(({dir}) => getRegistry(dir))
@@ -313,7 +317,7 @@ const diff /*: Diff */ = async ({
       const {dir} = item;
 
       const graph = {};
-      const deps = changed.get(dir);
+      const deps = missing.get(dir);
       if (deps) {
         for (const {name, range} of deps) {
           const ignored = ignore.find(dep => dep === name);
@@ -341,17 +345,31 @@ const diff /*: Diff */ = async ({
     }
   }
 
-  if (!frozenLockfile) await writeVersionSets({sets});
+  if (!frozenLockfile) {
+    await Promise.all(
+      sets.map(async ({dir, meta, lockfile}) => {
+        const metaPath = `${dir}/package.json`;
+        const lockfilePath = `${dir}/yarn.lock`;
+        if (changed.get(dir) || !(await exists(lockfilePath))) {
+          if (!(await exists(dir))) await mkdir(dir, {recursive: true});
+          await write(metaPath, sortPackageJson(meta), 'utf8');
+          await write(lockfilePath, stringify(lockfile), 'utf8');
+        }
+      })
+    );
+  }
 };
 
 const readVersionSets = async ({roots}) => {
   return Promise.all(
     roots.map(async dir => {
       const metaFile = `${dir}/package.json`;
-      const meta = JSON.parse(await read(metaFile, 'utf8').catch(() => '{}'));
+      const metaSrc = await read(metaFile, 'utf8').catch(() => '{}');
+      const meta = JSON.parse(metaSrc);
 
       const yarnLock = `${dir}/yarn.lock`;
-      const {object} = parse(await read(yarnLock, 'utf8').catch(() => ''));
+      const lockSrc = await read(yarnLock, 'utf8').catch(() => '');
+      const {object} = parse(lockSrc);
 
       return {dir, meta, lockfile: object};
     })
@@ -361,7 +379,7 @@ const readVersionSets = async ({roots}) => {
 const writeVersionSets = async ({sets}) => {
   await Promise.all(
     sets.map(async ({dir, meta, lockfile}) => {
-      await mkdir(dir, {recursive: true});
+      if (!(await exists(dir))) await mkdir(dir, {recursive: true});
       await write(`${dir}/package.json`, sortPackageJson(meta), 'utf8');
       await write(`${dir}/yarn.lock`, stringify(lockfile), 'utf8');
     })
@@ -479,7 +497,7 @@ const installMissingDeps = async ({
   conservative,
   registry,
 }) => {
-  let changes = new Map();
+  let missed = new Map();
 
   // generate lockfile entries for missing top level deps
   const missing = {};
@@ -542,7 +560,7 @@ const installMissingDeps = async ({
         lockfile[key] = added.lockfile[key];
 
         const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-        changes.set(key, {name, range});
+        missed.set(key, {name, range});
       }
     }
   }
@@ -598,11 +616,11 @@ const installMissingDeps = async ({
         lockfile[key] = added.lockfile[key];
 
         const [, name, range] = key.match(/(.+?)@(.+)/) || [];
-        changes.set(key, {name, range});
+        missed.set(key, {name, range});
       }
     }
   }
-  return [...changes.values()];
+  return [...missed.values()];
 };
 
 const indexLockfiles = ({sets}) => {

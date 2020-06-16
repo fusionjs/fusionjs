@@ -1972,14 +1972,14 @@ async function testCheck() {
     assert.ok(result);
     return;
   }
-  assert.equal(
-    JSON.stringify(JSON.parse(result)), // resolve formatting
-    JSON.stringify({
+  assert.deepEqual(
+    JSON.parse(result), // resolve formatting
+    {
       a: {
         '0.0.1': ['a'],
         '0.0.0': ['b'],
       },
-    })
+    }
   );
 
   // Check with --all
