@@ -28,8 +28,9 @@ const generateBazelignore /*: GenerateBazelignore */ = async ({
     .sort()
     .filter(Boolean)
     .join('\n');
-  if (bazelignore !== updated)
-    await write(`${root}/.bazelignore`, updated, 'utf8');
+  if (bazelignore.trim() !== updated.trim()) {
+    await write(`${root}/.bazelignore`, updated + '\n', 'utf8');
+  }
 };
 
 module.exports = {generateBazelignore};

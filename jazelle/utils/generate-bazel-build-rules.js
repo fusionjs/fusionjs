@@ -60,7 +60,8 @@ const generateBazelBuildRules /*: GenerateBazelBuildRules */ = async ({
         await write(build, rules.trim(), 'utf8');
       } else {
         // sync web_library deps list in BUILD.bazel with local dependencies in package.json
-        let code = await read(build, 'utf8');
+        const src = await read(build, 'utf8');
+        let code = src;
         const items = getCallArgItems(code, dependencySyncRule, 'deps');
         dependencies
           .map(d => `"${d}"`)
@@ -85,7 +86,7 @@ const generateBazelBuildRules /*: GenerateBazelBuildRules */ = async ({
             }
           }
         });
-        await write(build, code, 'utf8');
+        if (src.trim() !== code.trim()) await write(build, code, 'utf8');
       }
     })
   );
