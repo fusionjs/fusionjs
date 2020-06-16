@@ -41,7 +41,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
   for (const param of params) {
     let [, name, version] = param.match(/(@?[^@]*)@?(.*)/) || [];
     const local = await findLocalDependency({root, name});
-    if (local) locals.push({local, name});
+    if (local) locals.push({local, range: version, name});
     else externals.push({name, range: version, type});
   }
 
@@ -50,7 +50,7 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
     const meta = JSON.parse(await read(`${cwd}/package.json`, 'utf8'));
     if (!meta[type]) meta[type] = {};
 
-    for (const {local, name} of locals) {
+    for (const {local, range, name} of locals) {
       // update existing entries
       const types = [
         'dependencies',
@@ -61,10 +61,10 @@ const add /*: Add */ = async ({root, cwd, args, dev = false}) => {
       ];
       for (const t of types) {
         if (meta[t] && meta[t][name]) {
-          meta[t][name] = local.meta.version;
+          meta[t][name] = range || local.meta.version;
         }
       }
-      meta[type][name] = local.meta.version;
+      meta[type][name] = range || local.meta.version;
     }
     await write(`${cwd}/package.json`, sortPackageJson(meta), 'utf8');
   }
