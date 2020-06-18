@@ -688,16 +688,18 @@ const populateGraph /*: PopulateGraph */ = ({
 
   // Prefer newer versions of packages that adhere to the local registry of the package
   // If this fails, then disregard the registry check and loop
-  for (const ptr of index[name]) {
-    const version = ptr.lockfile[ptr.key].version;
-    if (!ptr.isExact && isBetterVersion(version, range, graph, key)) {
-      const {resolved} = ptr.lockfile[ptr.key];
-      if (resolved.indexOf(registry) > -1) {
+  if (index[name]) {
+    for (const ptr of index[name]) {
+      const version = ptr.lockfile[ptr.key].version;
+      if (!ptr.isExact && isBetterVersion(version, range, graph, key)) {
+        const {resolved} = ptr.lockfile[ptr.key];
+        if (resolved.indexOf(registry) > -1) {
+          graph[key] = ptr.lockfile[ptr.key];
+        }
+      } else if (ptr.isExact && key === ptr.key) {
         graph[key] = ptr.lockfile[ptr.key];
+        break;
       }
-    } else if (ptr.isExact && key === ptr.key) {
-      graph[key] = ptr.lockfile[ptr.key];
-      break;
     }
   }
 
