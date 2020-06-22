@@ -162,10 +162,10 @@ const prune /*: Prune */ = async ({roots, ignore, registry}) => {
   log('Pruning lockfiles');
 
   const sets = await readVersionSets({roots});
+  const index = indexLockfiles({sets});
 
   for (const item of sets) {
     log('.');
-    const index = indexLockfiles({sets: [item]});
     const {dir, meta} = item;
 
     const projectRegistry = registry || (await getRegistry(dir));
@@ -515,7 +515,7 @@ const installMissingDeps = async ({
     }
   }
   if (Object.keys(missing).length > 0) {
-    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e18}`;
     const yarnrc = await getYarnRc(dir, registry);
 
     // install missing deps and reuse promise in parallel runs if possible
@@ -578,7 +578,7 @@ const installMissingDeps = async ({
     }
   }
   if (missingTransitives.length > 0) {
-    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e17}`;
+    const cwd = `${tmp}/yarn-utils-${Math.random() * 1e18}`;
     const yarnrc = await getYarnRc(dir, registry);
 
     // add missing transitives and reuse promise in parallel runs if possible
@@ -624,7 +624,7 @@ const installMissingDeps = async ({
 };
 
 const indexLockfiles = ({sets}) => {
-  // "index" in the dababase sense: makes it fast to lookup items in `sets` based on package name
+  // "index" in the database sense: makes it fast to lookup items in `sets` based on package name
   const index = {};
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {

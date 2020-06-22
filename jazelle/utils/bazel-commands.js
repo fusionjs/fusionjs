@@ -3,6 +3,8 @@ const {relative, basename, dirname} = require('path');
 const {bazel, node} = require('./binary-paths.js');
 const {spawn} = require('./node-helpers.js');
 
+const startupFlags = ['--host_jvm_args=-Xmx15g'];
+
 /*::
 import type {Stdio} from './node-helpers.js';
 
@@ -21,7 +23,7 @@ const build /*: Build */ = async ({
   stdio = 'inherit',
 }) => {
   cwd = relative(root, cwd);
-  await spawn(bazel, ['--host_jvm_args=-Xmx15g', 'build', `//${cwd}:${name}`], {
+  await spawn(bazel, [...startupFlags, 'build', `//${cwd}:${name}`], {
     stdio,
     env: process.env,
     cwd: root,
@@ -49,7 +51,7 @@ const test /*: Test */ = async ({
   const testParams = args.map(arg => `--test_arg=${arg}`);
   await spawn(
     bazel,
-    ['--host_jvm_args=-Xmx15g', 'run', `//${cwd}:${name}`, ...testParams],
+    [...startupFlags, 'run', `//${cwd}:${name}`, ...testParams],
     {
       stdio,
       env: process.env,
@@ -77,11 +79,15 @@ const run /*: Run */ = async ({
 }) => {
   cwd = relative(root, cwd);
   const runParams = args.length > 0 ? ['--', ...args] : [];
-  await spawn(bazel, ['run', `//${cwd}:${name}`, ...runParams], {
-    stdio,
-    env: process.env,
-    cwd: root,
-  });
+  await spawn(
+    bazel,
+    [...startupFlags, 'run', `//${cwd}:${name}`, ...runParams],
+    {
+      stdio,
+      env: process.env,
+      cwd: root,
+    }
+  );
 };
 
 /*::
@@ -177,4 +183,15 @@ const script /*: Script */ = async ({
   await run({root, cwd, args: [command, ...args], name: 'script', stdio});
 };
 
-module.exports = {build, test, lint, flow, dev, start, run, exec, script};
+module.exports = {
+  startupFlags,
+  build,
+  test,
+  lint,
+  flow,
+  dev,
+  start,
+  run,
+  exec,
+  script,
+};

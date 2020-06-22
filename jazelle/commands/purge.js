@@ -16,14 +16,11 @@ const purge /*: Purge */ = async ({root, force = false}) => {
     ...projects.map(project => remove(`${root}/${project}/node_modules`)),
     remove(`${root}/third_party/jazelle/temp`),
     remove(`${root}/node_modules`),
-    force
-      ? spawn(bazel, ['clean', '--expunge'], {
-          cwd: root,
-          stdio: 'inherit',
-        }).catch(() => {}) // user doesn't care for our stack trace, just pipe bazel output instead
-      : null,
+    spawn(bazel, force ? ['clean', '--expunge'] : ['clean'], {
+      cwd: root,
+      stdio: 'inherit',
+    }).catch(() => {}), // user doesn't care for our stack trace, just pipe bazel output instead
   ]);
-  await spawn(bazel, ['shutdown']);
 };
 
 module.exports = {purge};

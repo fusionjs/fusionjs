@@ -1,0 +1,8 @@
+#!/bin/bash
+# the following executables are compiled from ./native/now.go
+BIN=$(dirname "$0")
+case $OSTYPE in
+  darwin*) "$BIN/now-darwin-amd64" "$@" ;;
+  linux*) "$BIN/now-linux-amd64" "$@" ;;
+  *) "$BIN/now-linux-amd64" "$@" ;;
+esac

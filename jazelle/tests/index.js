@@ -1791,7 +1791,7 @@ async function testCommand() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bin`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const streamFile = `${__dirname}/tmp/bin/stream.txt`;
   const stream = createWriteStream(streamFile);
@@ -1805,7 +1805,7 @@ async function testYarnCommand() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bin`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const yarnStreamFile = `${__dirname}/tmp/bin/yarn-stream.txt`;
   const yarnStream = createWriteStream(yarnStreamFile);
@@ -1825,7 +1825,7 @@ async function testBazelCommand() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bin`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const bazelStreamFile = `${__dirname}/tmp/bin/bazel-stream.txt`;
   const bazelStream = createWriteStream(bazelStreamFile);
@@ -1839,7 +1839,7 @@ async function testStartCommand() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bin`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const startStreamFile = `${__dirname}/tmp/bin/start-stream.txt`;
   const startStream = createWriteStream(startStreamFile);
@@ -1853,7 +1853,7 @@ async function testBazelDependentBuilds() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bazel-dependent-builds`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const startStreamFile = `${__dirname}/tmp/bazel-dependent-builds/start-stream.txt`;
   const startStream = createWriteStream(startStreamFile);
@@ -1877,14 +1877,14 @@ async function testBazelDependentFailure() {
   await exec(cmd);
 
   const cwd = `${__dirname}/tmp/bazel-dependent-failure`;
-  const jazelle = `${__dirname}/../bin/cli.sh`;
+  const jazelle = `${__dirname}/../bin/bootstrap.sh`;
 
   const startStreamFile = `${__dirname}/tmp/bazel-dependent-failure/start-stream.txt`;
   const startStream = createWriteStream(startStreamFile);
   await new Promise(resolve => startStream.on('open', resolve));
 
   const c = `${cwd}/c/package.json`;
-  assert((await read(c)).includes('mkdir -p dist && mkdir dist'));
+  assert((await read(c, 'utf8')).includes('mkdir -p dist && mkdir dist'));
   // $FlowFixMe `assert` typedef is missing `rejects` method
   await assert.rejects(
     exec(`${jazelle} start`, {cwd: `${cwd}/a`}, [startStream, startStream])

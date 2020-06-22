@@ -1,10 +1,5 @@
 #!/bin/bash
 
-DEFAULT_BAZEL_VERSION=2.1.0
-DEFAULT_NODE_VERSION=12.16.1
-DEFAULT_YARN_VERSION=1.22.0
-
-# find dirname of cli.sh file
 realpath() {
   DIR="$PWD"
   cd "$(dirname "$1")"
@@ -18,42 +13,30 @@ realpath() {
   cd "$DIR"
 }
 
-BIN=$(dirname $(realpath "$0"))
+findroot() {
+  if [ -f "manifest.json" ]
+  then
+    echo "$PWD"
+  elif [ "$PWD" = "/" ]
+  then
+    echo ""
+  else
+    # a subshell so that we don't affect the caller's $PWD
+    (cd .. && findroot)
+  fi
+}
+
+ROOT=$(findroot)
+BIN="$ROOT/bazel-bin/jazelle.runfiles/jazelle/bin"
+START=$(bash -p "$BIN/now")
 
 if [ "$1" = "init" ]
 then
   source "$BIN/init.sh"
 else
-  # find project root
-  findroot() {
-    if [ -f "manifest.json" ]
-    then
-      echo "$PWD"
-    elif [ "$PWD" = "/" ]
-    then
-      echo ""
-    else
-      # a subshell so that we don't affect the caller's $PWD
-      (cd .. && findroot)
-    fi
-  }
-  ROOT=$(findroot)
-
-  # determine required bazel version
-  if [ ! -f "$ROOT/.bazelversion" ]
-  then
-    USE_BAZEL_VERSION=$(cat "$BIN/../templates/scaffold/.bazelversion")
-  fi
-
-  # setup other binaries
-  BAZELISK_PATH="$BIN/bazelisk"
   NODE="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/node"
   YARN="$ROOT/bazel-bin/jazelle.runfiles/jazelle_dependencies/bin/yarn.js"
   JAZELLE="$ROOT/bazel-bin/jazelle.runfiles/jazelle/cli.js"
-  if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
-  then
-    "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup 2>/dev/null
-  fi
 
   # if we can't find Bazel workspace, fall back to system node and jazelle's pinned yarn
   if [ ! -f "$NODE" ] || [ ! -f "$YARN" ] || [ ! -f "$JAZELLE" ]
@@ -61,7 +44,7 @@ else
     # if we're in a repo, jazelle declaration in WORKSPACE is wrong, so we should error out
     if [ -f "$ROOT/WORKSPACE" ]
     then
-      "$BAZELISK_PATH" --host_jvm_args=-Xmx15g run //:jazelle -- setup
+      cat /tmp/jazelle.log 2>/dev/null # logged by bootstrap.sh
       echo "Attempting to use system Node/Yarn/Jazelle versions..."
     fi
     NODE="$(which node)"
@@ -69,5 +52,19 @@ else
     JAZELLE="$BIN/../cli.js"
   fi
 
+  # prep for postcommand (needs to be done before payload because `jazelle prune` deletes node
+  POSTCOMMAND=$("$NODE" -p '(require("./manifest.json").hooks || {}).postcommand || ":"')
+  VERSION=$("$NODE" -p "require('$BIN/../package.json').version")
+
+  # payload
   "$NODE" --max_old_space_size=65536 "$JAZELLE" "$@"
+  EXIT_CODE=$?
+
+  # postcommand hook
+  BOOTSTRAP_TIME=${BOOTSTRAP_TIME-0} # default to zero
+  END=$(bash -p "$BIN/now") # we don't use `time` because otherwise it would mess w/ stdio piping of the main command
+  DURATION=$((END - START + BOOTSTRAP_TIME))
+  VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE $POSTCOMMAND
+
+  exit $EXIT_CODE
 fi
