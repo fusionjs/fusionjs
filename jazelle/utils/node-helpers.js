@@ -47,6 +47,10 @@ const exec /*: Exec */ = (cmd, opts = {}, stdio = []) => {
       if (stdio[0]) child.stdout.pipe(stdio[0]);
       if (stdio[1]) child.stderr.pipe(stdio[1]);
     }
+    process.on('exit', () => {
+      // $FlowFixMe flow typedef is missing .exitCode
+      if (child.exitCode === null) child.kill();
+    });
   });
 };
 
@@ -83,6 +87,10 @@ const spawn /*: Spawn */ = (cmd, argv, opts) => {
         reject(errorWithSyncStackTrace);
       }
       resolve();
+    });
+    process.on('exit', () => {
+      // $FlowFixMe flow typedef is missing .exitCode
+      if (child.exitCode === null) child.kill();
     });
   });
 };

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# kill child process if jazelle command is killed
+trap 'jobs -p | xargs kill' EXIT
+
 realpath() {
   DIR="$PWD"
   cd "$(dirname "$1")"
@@ -30,6 +33,11 @@ ROOT=$(findroot)
 BIN="$ROOT/bazel-bin/jazelle.runfiles/jazelle/bin"
 START=$(bash -p "$BIN/now")
 
+if [ ! -d "$BIN" ]
+then
+  BIN=$(dirname $(realpath "$0"))
+fi
+
 if [ "$1" = "init" ]
 then
   source "$BIN/init.sh"
@@ -53,7 +61,7 @@ else
   fi
 
   # prep for postcommand (needs to be done before payload because `jazelle prune` deletes node
-  POSTCOMMAND=$("$NODE" -p '(require("./manifest.json").hooks || {}).postcommand || ":"')
+  POSTCOMMAND=$("$NODE" -p "(require('$ROOT/manifest.json').hooks || {}).postcommand || ':'")
   VERSION=$("$NODE" -p "require('$BIN/../package.json').version")
 
   # payload
