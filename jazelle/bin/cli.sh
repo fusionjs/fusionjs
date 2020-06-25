@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# kill child process if jazelle command is killed
-trap 'jobs -p | xargs kill' EXIT
-
 realpath() {
   DIR="$PWD"
   cd "$(dirname "$1")"
