@@ -1,3 +1,6 @@
 {
-  "projects": ["a"]
+  "projects": ["a"],
+  "hooks": {
+    "postcommand": "exit 1"
+  }
 }
