@@ -69,7 +69,7 @@ else
   BOOTSTRAP_TIME=${BOOTSTRAP_TIME-0} # default to zero
   END=$(bash -p "$BIN/now") # we don't use `time` because otherwise it would mess w/ stdio piping of the main command
   DURATION=$((END - START + BOOTSTRAP_TIME))
-  (VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE eval "$POSTCOMMAND")
+  (cd "$ROOT" && VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE eval "$POSTCOMMAND")
 
   exit $EXIT_CODE
 fi

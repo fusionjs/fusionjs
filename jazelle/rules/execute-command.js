@@ -110,7 +110,33 @@ function generateSources({root, main, regexes}) {
       if (!exists(gensrcPath)) {
         exec(copy, {cwd: root});
       }
+      deleteExtraneousFiles({sandboxedPath, gensrcPath});
     }
+  }
+}
+
+function deleteExtraneousFiles({sandboxedPath, gensrcPath}) {
+  const sandboxed = ls(sandboxedPath);
+  const generated = ls(gensrcPath);
+  const extraneous = [];
+  for (const item of generated) {
+    if (!sandboxed.includes(item)) {
+      extraneous.push(item);
+    }
+  }
+  if (extraneous.length > 0) {
+    exec(`rm -rf ${extraneous.join(' ')}`, {cwd: gensrcPath});
+  }
+}
+
+function ls(dir) {
+  try {
+    return exec('ls', {cwd: dir, encoding: 'utf8'})
+      .trim()
+      .split('\n')
+      .filter(Boolean);
+  } catch (e) {
+    return [];
   }
 }
 
