@@ -68,7 +68,7 @@ const install /*: Install */ = async ({
 
 const validateRegistration = ({root, cwd, projects}) => {
   if (!projects.find(dir => resolve(`${root}/${dir}`) === cwd)) {
-    const registrationError = `The package at ${cwd} should be registered in the projects field in manifest.json.`;
+    const registrationError = `Your cwd ${cwd} is not listed in manifest.json. If you are at the wrong directory, cd into your desired directory or use the --cwd flag. If you are in the desired directory, make sure it is listed in the projects field in manifest.json`;
     throw new Error(registrationError);
   }
 };
