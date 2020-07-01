@@ -95,6 +95,7 @@ def _web_binary_impl(ctx):
     tools = ctx.files._node,
     inputs = build_deps,
     outputs = [build_output],
+    use_default_shell_env = True
   )
   return [
     DefaultInfo(
