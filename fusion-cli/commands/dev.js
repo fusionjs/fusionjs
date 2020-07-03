@@ -99,7 +99,7 @@ exports.run = async function(
       // make the default node debug port available for attaching by killing the
       // old attached process
       try {
-        exec('kill -9 $(lsof -n -t -i:9229)');
+        exec("kill -9 $(lsof -n -i:9229 | grep node | awk '{print $2}')");
       } catch (e) {} // eslint-disable-line
     }
     runAll();
