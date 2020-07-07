@@ -34,7 +34,7 @@ function copyToSourceFolder(file) {
   for (const file of files) {
     if (stat(`${target}/${file}`).isDirectory()) {
       exec(
-        `mkdir -p ${real}/${file} && cp -rf ${target}/${file}/ ${real}/${file}`
+        `mkdir -p ${real}/${file} && cp -rf ${target}/${file}/ ${real}/${file}/`
       );
     } else {
       // only overwrite file if it's not identical
