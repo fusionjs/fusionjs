@@ -1,5 +1,13 @@
 // @flow
-const {realpathSync: realpath, statSync: stat, readFileSync} = require('fs');
+const {
+  realpathSync: realpath,
+  statSync: stat,
+  readFileSync,
+  existsSync: exists,
+  mkdirSync: mkdir,
+  readdirSync: ls,
+  copyFileSync: cp,
+} = require('fs');
 const {execSync: exec} = require('child_process');
 const {dirname, resolve} = require('path');
 
@@ -32,15 +40,21 @@ function copyToSourceFolder(file) {
     .split('\n')
     .map(line => line.replace(/\/$/, ''));
   for (const file of files) {
-    if (stat(`${target}/${file}`).isDirectory()) {
-      exec(
-        `mkdir -p ${real}/${file} && cp -Rf ${target}/${file}/. ${real}/${file}/`
-      );
-    } else {
-      // only overwrite file if it's not identical
-      if (read(`${target}/${file}`) !== read(`${real}/${file}`)) {
-        exec(`cp -rf ${target}/${file} ${real}/${file}`);
-      }
+    copy(target, real, file);
+  }
+}
+
+function copy(target, real, file) {
+  if (stat(`${target}/${file}`).isDirectory()) {
+    const srcPath = `${real}/${file}`;
+    if (!exists(srcPath)) mkdir(srcPath);
+    for (const child of ls(srcPath)) {
+      copy(target, real, `${file}/${child}`);
+    }
+  } else {
+    // only overwrite file if it's not identical
+    if (read(`${target}/${file}`) !== read(`${real}/${file}`)) {
+      cp(`${target}/${file}`, `${real}/${file}`);
     }
   }
 }
