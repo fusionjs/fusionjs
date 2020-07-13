@@ -78,6 +78,7 @@
     "webpack-hot-middleware": "^2.24.3",
     "winston": "^3.2.1",
     "yaml-loader": "0.6.0",
+    "enhanced-resolve": "5.0.0-beta.4",
     "pnp-webpack-plugin": "^1.6.4"
   },
   "devDependencies": {
