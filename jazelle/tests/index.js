@@ -781,8 +781,8 @@ async function testGenerateBazelignore() {
   });
   const bazelignoreFile = `${__dirname}/tmp/generate-bazelignore/.bazelignore`;
   const bazelignore = await read(bazelignoreFile, 'utf8');
-  assert(bazelignore.includes('a/node_modules'));
-  assert(bazelignore.includes('b/node_modules'));
+  assert(bazelignore.includes('node_modules'));
+  assert(bazelignore.includes('third_party/jazelle/temp'));
 }
 
 async function testGenerateBazelBuildRules() {
