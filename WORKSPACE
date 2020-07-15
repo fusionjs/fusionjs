@@ -1,10 +1,9 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
   name = "jazelle",
-  url = "https://registry.yarnpkg.com/jazelle/-/jazelle-0.0.0-canary.9d17ba2.0.tgz",
-  sha256 = "d102f4b30379da4a4d865ca6aee49dd2b0dd956be862d3be577ac89f081d1b01",
+  url = "https://registry.yarnpkg.com/jazelle/-/jazelle-0.0.0-canary.9d3d9dc.0.tgz",
+  sha256 = "6cc894334793942d8b8dd2900d4115654e2af58fa86d47c74e00acf21772ccdd",
   strip_prefix = "package",
-  patch_cmds = ["npm install"],
 )
 
 load("@jazelle//:workspace-rules.bzl", "jazelle_dependencies")
