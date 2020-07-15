@@ -27,8 +27,9 @@ findroot() {
 }
 
 ROOT=$(findroot)
+GLOBAL_BIN="$BIN"
 BIN="$ROOT/bazel-bin/jazelle.runfiles/jazelle/bin"
-START=$(bash -p "$BIN/now")
+START=$(bash -p "$GLOBAL_BIN/now")
 
 if [ ! -d "$BIN" ]
 then
@@ -67,7 +68,7 @@ else
 
   # postcommand hook
   BOOTSTRAP_TIME=${BOOTSTRAP_TIME-0} # default to zero
-  END=$(bash -p "$BIN/now") # we don't use `time` because otherwise it would mess w/ stdio piping of the main command
+  END=$(bash -p "$GLOBAL_BIN/now") # we don't use `time` because otherwise it would mess w/ stdio piping of the main command
   DURATION=$((END - START + BOOTSTRAP_TIME))
   (cd "$ROOT" && VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE eval "$POSTCOMMAND")
 
