@@ -53,5 +53,10 @@ export type ConfigTokenType = Token<ConfigType>;
 type DepsType = {
   config: ConfigTokenType,
 };
-export type PluginType = FusionPlugin<DepsType, *>;
-export type PluginTokenType = Token<PluginType>;
+type ProviderType = {
+  getFontDetails: ?Function,
+  atomicFonts: ?AtomicFontsObjectType,
+};
+
+export type PluginType = FusionPlugin<DepsType, ProviderType>;
+export type FontLoaderPluginType = Token<PluginType>;
