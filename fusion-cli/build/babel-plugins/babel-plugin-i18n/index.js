@@ -20,15 +20,18 @@ const COMPONENT_IDENTIFIER = [
 module.exports = i18nPlugin;
 
 /*::
-type PluginOpts = {translationIds: Set<string>}
+type PluginOpts = {translationIds: Set<string>, packageNames: Array<string>}
 */
 
-function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
+function i18nPlugin(
+  babel /*: Object */,
+  {translationIds, packageNames} /*: PluginOpts */
+) {
   const t /*: Object */ = babel.types;
   const visitor = createModuleVisitor(
     t,
     COMPONENT_IDENTIFIER,
-    PACKAGE_NAME,
+    PACKAGE_NAME.concat(packageNames),
     refsHandler
   );
 

@@ -89,7 +89,11 @@ test('able to do simple translations in React 16 - leverages React.Fragment', as
   const content = await page.content();
 
   // No wrapping <span>s due to leveraging React.Fragment
-  t.ok(content.includes(`<div id="root"><div>hello world</div></div>`));
+  t.ok(
+    content.includes(
+      `<div id="root"><div><div>hello world.</div><div>You look great!</div></div>`
+    )
+  );
 
   await browser.close();
   proc.kill('SIGKILL');
