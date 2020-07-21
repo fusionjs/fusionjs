@@ -900,9 +900,13 @@ Returns a report of out-of-sync top level dependencies across projects
 ```
 
 ```js
+type ExceptionMetadata = {
+  name: string,
+  versions: Array<string>
+};
 type VersionPolicy = {
   lockstep: boolean,
-  exceptions: Array<string>,
+  exceptions: Array<string | ExceptionMetadata>,
 }
 type Report = {
   valid: string,
@@ -1209,7 +1213,8 @@ Note: The `manifest.json` file does **not** allow comments; they are present her
   "versionPolicy": {
     "lockstep": true,
     "exceptions": [
-      "foo"
+      "foo",
+      { "name": "bar", "versions": ["1.0.0", "2.3.7"] },
     ]
   },
   // Optional rule name to use when auto-updating target `deps` in BUILD.bazel
@@ -1312,6 +1317,20 @@ Here's an alternative policy that may be more pragmatic for large existing codeb
     "exceptions": [
       "foo",
       "bar"
+    ]
+  }
+}
+```
+
+The `exceptions` field may also identify specific versions for dependencies.  These must match the declared versions in `package.json` exactly (i.e. `1.4.0` and `^1.4.0` are considered two separate versions).
+
+```json
+{
+  "versionPolicy": {
+    "lockstep": true,
+    "exceptions": [
+      "foo",
+      { "name": "bar", "versions": [ "1.4.0", "2.3.7" ] }
     ]
   }
 }

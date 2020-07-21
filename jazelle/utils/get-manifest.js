@@ -13,9 +13,13 @@ export type Manifest = {
   hooks?: Hooks,
   workspace: "host" | "sandbox",
 }
+export type ExceptionMetadata = {
+  name: string,
+  versions: Array<string>
+};
 export type VersionPolicy = {
   lockstep: boolean,
-  exceptions: Array<string>,
+  exceptions: Array<string | ExceptionMetadata>,
 }
 export type Hooks = {
   preinstall?: string,

@@ -1,5 +1,7 @@
 // @flow
 
+const {compare, minVersion} = require('../utils/cached-semver.js');
+
 /*::
 import type {VersionPolicy} from './get-manifest.js'
 
@@ -10,10 +12,14 @@ type ShouldSyncArgs = {
 type ShouldSync = (ShouldSyncArgs) => boolean;
 */
 const shouldSync /*: ShouldSync */ = ({versionPolicy, name}) => {
-  const {lockstep = false, exceptions = []} = versionPolicy;
+  const {
+    lockstep = false,
+    exceptions = [],
+  } /*: VersionPolicy */ = versionPolicy;
   return (
     (lockstep && !exceptions.includes(name)) ||
-    (!lockstep && exceptions.includes(name))
+    (!lockstep &&
+      exceptions.map(e => (typeof e === 'string' ? e : e.name)).includes(name))
   );
 };
 
@@ -28,14 +34,20 @@ type GetVersion = (GetVersionArgs) => string
 */
 const getVersion /*: GetVersion */ = ({name, deps}) => {
   const types = ['dependencies', 'devDependencies', 'resolutions'];
+  const versions = [];
   for (const {meta} of deps) {
     for (const type of types) {
       for (const key in meta[type]) {
-        if (name === key) return meta[type][key];
+        if (name === key) versions.push(meta[type][key]);
       }
     }
   }
-  return '';
+  /* Sort all used versions according to SemVer and select the largest
+   * version.  Ranges are reduced to their minimum satisfying version. */
+  versions.sort(
+    (a, b) => -1 * compare(minVersion(a).version, minVersion(b).version)
+  );
+  return versions.length === 0 ? '' : versions[0];
 };
 
 module.exports = {shouldSync, getVersion};

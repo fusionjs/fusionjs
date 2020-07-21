@@ -1375,7 +1375,8 @@ async function testGetPassThroughArgs() {
 async function testReportMismatchedTopLevelDeps() {
   const cmd = `cp -r ${__dirname}/fixtures/report-mismatched-top-level-deps/ ${__dirname}/tmp/report-mismatched-top-level-deps`;
   await exec(cmd);
-  const result = await reportMismatchedTopLevelDeps({
+
+  const withoutLockstep = await reportMismatchedTopLevelDeps({
     root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
     projects: ['packages/a', 'packages/b', 'packages/c'],
     versionPolicy: {
@@ -1383,8 +1384,7 @@ async function testReportMismatchedTopLevelDeps() {
       exceptions: ['no-bugs', '@uber/mismatched'],
     },
   });
-
-  assert.deepEqual(result, {
+  assert.deepEqual(withoutLockstep, {
     valid: false,
     policy: {lockstep: false, exceptions: ['no-bugs', '@uber/mismatched']},
     reported: {
@@ -1392,6 +1392,22 @@ async function testReportMismatchedTopLevelDeps() {
         '^1.0.0': ['@uber/a', '@uber/b'],
         'npm:function-bind': ['@uber/c'],
       },
+      '@uber/mismatched': {'^2.0.0': ['@uber/b'], '^1.0.0': ['@uber/a']},
+    },
+  });
+
+  const withoutPartialLockstep = await reportMismatchedTopLevelDeps({
+    root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+    projects: ['packages/a', 'packages/b', 'packages/c'],
+    versionPolicy: {
+      lockstep: false,
+      exceptions: ['@uber/mismatched'],
+    },
+  });
+  assert.deepEqual(withoutPartialLockstep, {
+    valid: false,
+    policy: {lockstep: false, exceptions: ['@uber/mismatched']},
+    reported: {
       '@uber/mismatched': {'^2.0.0': ['@uber/b'], '^1.0.0': ['@uber/a']},
     },
   });
@@ -1423,6 +1439,82 @@ async function testReportMismatchedTopLevelDeps() {
   assert.deepEqual(withAllExceptions, {
     valid: true,
     policy: {lockstep: true, exceptions: ['no-bugs', '@uber/mismatched']},
+    reported: {},
+  });
+
+  const withVersionedExceptions = await reportMismatchedTopLevelDeps({
+    root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+    projects: ['packages/a', 'packages/b', 'packages/c'],
+    versionPolicy: {
+      lockstep: false,
+      exceptions: [{name: '@uber/mismatched', versions: ['^1.0.0']}],
+    },
+  });
+  assert.deepEqual(withVersionedExceptions, {
+    valid: false,
+    policy: {
+      lockstep: false,
+      exceptions: [{name: '@uber/mismatched', versions: ['^1.0.0']}],
+    },
+    reported: {'@uber/mismatched': {'^2.0.0': ['@uber/b']}},
+  });
+
+  const withAllVersionedExceptions = await reportMismatchedTopLevelDeps({
+    root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+    projects: ['packages/a', 'packages/b', 'packages/c'],
+    versionPolicy: {
+      lockstep: false,
+      exceptions: [{name: '@uber/mismatched', versions: ['^1.0.0', '^2.0.0']}],
+    },
+  });
+  assert.deepEqual(withAllVersionedExceptions, {
+    valid: true,
+    policy: {
+      lockstep: false,
+      exceptions: [{name: '@uber/mismatched', versions: ['^1.0.0', '^2.0.0']}],
+    },
+    reported: {},
+  });
+
+  const withLockstepVersionedExceptions = await reportMismatchedTopLevelDeps({
+    root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+    projects: ['packages/a', 'packages/b', 'packages/c'],
+    versionPolicy: {
+      lockstep: true,
+      exceptions: ['no-bugs', {name: '@uber/mismatched', versions: ['^1.0.0']}],
+    },
+  });
+  assert.deepEqual(withLockstepVersionedExceptions, {
+    valid: false,
+    policy: {
+      lockstep: true,
+      exceptions: ['no-bugs', {name: '@uber/mismatched', versions: ['^1.0.0']}],
+    },
+    reported: {'@uber/mismatched': {'^2.0.0': ['@uber/b']}},
+  });
+
+  const withLockstepAllVersionedExceptions = await reportMismatchedTopLevelDeps(
+    {
+      root: `${__dirname}/tmp/report-mismatched-top-level-deps`,
+      projects: ['packages/a', 'packages/b', 'packages/c'],
+      versionPolicy: {
+        lockstep: true,
+        exceptions: [
+          'no-bugs',
+          {name: '@uber/mismatched', versions: ['^1.0.0', '^2.0.0']},
+        ],
+      },
+    }
+  );
+  assert.deepEqual(withLockstepAllVersionedExceptions, {
+    valid: true,
+    policy: {
+      lockstep: true,
+      exceptions: [
+        'no-bugs',
+        {name: '@uber/mismatched', versions: ['^1.0.0', '^2.0.0']},
+      ],
+    },
     reported: {},
   });
 }
@@ -1542,6 +1634,58 @@ async function testVersionOnboarding() {
     assert(!shouldSync({versionPolicy, name}));
   }
   {
+    const versionPolicy = {
+      lockstep: true,
+      exceptions: [
+        {
+          name: 'foo',
+          versions: ['^1.0.0'],
+        },
+      ],
+    };
+    const name = 'foo';
+    assert(shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: false,
+      exceptions: [
+        {
+          name: 'foo',
+          versions: ['^1.0.0'],
+        },
+      ],
+    };
+    const name = 'foo';
+    assert(shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: true,
+      exceptions: [
+        {
+          name: 'foo',
+          versions: ['^1.0.0'],
+        },
+      ],
+    };
+    const name = 'bar';
+    assert(shouldSync({versionPolicy, name}));
+  }
+  {
+    const versionPolicy = {
+      lockstep: false,
+      exceptions: [
+        {
+          name: 'foo',
+          versions: ['^1.0.0'],
+        },
+      ],
+    };
+    const name = 'bar';
+    assert(!shouldSync({versionPolicy, name}));
+  }
+  {
     const name = 'foo';
     const deps = [
       {
@@ -1557,6 +1701,45 @@ async function testVersionOnboarding() {
       },
     ];
     assert.equal(getVersion({name, deps}), '^1.0.0');
+  }
+  {
+    const name = 'foo';
+    const deps = [
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '~1.0.0',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '^2.0.0',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: 'x.1.0',
+          },
+        },
+        depth: 0,
+      },
+    ];
+    assert.equal(getVersion({name, deps}), '^2.0.0');
   }
 }
 
