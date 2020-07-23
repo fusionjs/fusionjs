@@ -49,7 +49,8 @@ class RPC {
   request<TArgs, TResult>(
     rpcId: string,
     args: TArgs,
-    headers: ?{[string]: string}
+    headers: ?{[string]: string},
+    options: ?RequestOptions
   ): Promise<TResult> {
     if (!this.fetch) {
       throw new Error('fusion-plugin-rpc requires `fetch`');
@@ -68,6 +69,7 @@ class RPC {
       `${apiPath}${rpcId}${localeParam}`,
       args instanceof FormData
         ? {
+            ...options,
             method: 'POST',
             headers: {
               // Content-Type will be set automatically
@@ -76,6 +78,7 @@ class RPC {
             body: args,
           }
         : {
+            ...options,
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

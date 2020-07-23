@@ -259,7 +259,7 @@ const rpc: RPC = Rpc.from((ctx: Context));
 
 - `ctx: Context` - Required. A
   [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context)
-- returns `rpc: {request: (method: string, args: any) => Promise<any>}`
+- returns `rpc: {request: (method: string, args: any, headers: Object, options: RequestOptions) => Promise<any>}`
 
   - `request: (method: string, args: any) => Promise<any>` - Makes an RPC call
     via an HTTP request. If on the server, this will directly call the `method`
@@ -272,7 +272,12 @@ const rpc: RPC = Rpc.from((ctx: Context));
 
     - `method: string` - Required. The RPC method name
     - `args: any` - Optional. Arguments to pass to the server-side RPC handler.
-      Must be JSON-serializable.
+      Must be JSON-serializable or an instance of
+      [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData).
+    - `headers: Object` - Optional. Browser only. HTTP headers to use when
+      making the request from the browser to the server.
+    - `options: RequestOptions` - Optional. Browser only. Additional request
+      options to pass to the underlying `fetch` call.
 
 ### mock
 

@@ -215,6 +215,53 @@ test('success status request w/args and header', done => {
   expect(wasResolved).toBeTruthy();
 });
 
+test('success status request w/args and options', done => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
+    },
+  });
+  const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
+        rpc
+          .request('test', {args: 1}, null, {credentials: 'omit'})
+          .then(([url, options]) => {
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.credentials).toBe('omit');
+            expect(options.body).toBe('{"args":1}');
+            done();
+          })
+          .catch(e => {
+            // $FlowFixMe
+            done.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  expect(wasResolved).toBeTruthy();
+});
+
 test('success status request w/form data', done => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
