@@ -1,6 +1,6 @@
 // @flow
 
-const {compare, minVersion} = require('../utils/cached-semver.js');
+const {compare, minVersion, validRange} = require('../utils/cached-semver.js');
 
 /*::
 import type {VersionPolicy} from './get-manifest.js'
@@ -42,11 +42,20 @@ const getVersion /*: GetVersion */ = ({name, deps}) => {
       }
     }
   }
-  /* Sort all used versions according to SemVer and select the largest
-   * version.  Ranges are reduced to their minimum satisfying version. */
-  versions.sort(
-    (a, b) => -1 * compare(minVersion(a).version, minVersion(b).version)
-  );
+  // Sort all used versions according to SemVer and select the largest version.
+  // Ranges are reduced to their minimum satisfying version.
+  // If a version isn't valid semver, assume it takes precedence
+  versions.sort((a, b) => {
+    const aValid = validRange(a);
+    const bValid = validRange(b);
+    if (!aValid && !bValid && a === b) return 0;
+    if (!aValid) return -1;
+    if (!bValid) return 1;
+
+    const aVersion = minVersion(a).version;
+    const bVersion = minVersion(b).version;
+    return compare(aVersion, bVersion) * -1;
+  });
   return versions.length === 0 ? '' : versions[0];
 };
 

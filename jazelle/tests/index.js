@@ -1760,6 +1760,45 @@ async function testVersionOnboarding() {
         meta: {
           name: '',
           version: '',
+          dependencies: {
+            foo: 'npm:foo@3',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '^2.0.0',
+          },
+        },
+        depth: 0,
+      },
+    ];
+    assert.equal(getVersion({name, deps}), 'npm:foo@3');
+  }
+  {
+    const name = 'foo';
+    const deps = [
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '~1.0.0',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
           devDependencies: {
             foo: '^2.0.0',
           },
