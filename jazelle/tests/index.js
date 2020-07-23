@@ -1741,6 +1741,45 @@ async function testVersionOnboarding() {
     ];
     assert.equal(getVersion({name, deps}), '^2.0.0');
   }
+  {
+    const name = 'foo';
+    const deps = [
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          dependencies: {
+            foo: '~1.0.0',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          devDependencies: {
+            foo: '^2.0.0',
+          },
+        },
+        depth: 0,
+      },
+      {
+        dir: '',
+        meta: {
+          name: '',
+          version: '',
+          resolutions: {
+            foo: '^3.1.0',
+          },
+        },
+        depth: 0,
+      },
+    ];
+    assert.equal(getVersion({name, deps}), '^2.0.0'); // do not use 'resolutions' version
+  }
 }
 
 async function testYarnCommands() {

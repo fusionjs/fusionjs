@@ -33,7 +33,7 @@ type GetVersionArgs = {
 type GetVersion = (GetVersionArgs) => string
 */
 const getVersion /*: GetVersion */ = ({name, deps}) => {
-  const types = ['dependencies', 'devDependencies', 'resolutions'];
+  const types = ['dependencies', 'devDependencies'];
   const versions = [];
   for (const {meta} of deps) {
     for (const type of types) {
