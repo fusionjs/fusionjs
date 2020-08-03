@@ -59,15 +59,21 @@ else
   fi
 
   # prep for postcommand (needs to be done before payload because `jazelle prune` deletes node
+  PRECOMMAND=$("$NODE" -p "(require('$ROOT/manifest.json').hooks || {}).precommand || ':'")
   POSTCOMMAND=$("$NODE" -p "(require('$ROOT/manifest.json').hooks || {}).postcommand || ':'")
   VERSION=$("$NODE" -p "require('$BIN/../package.json').version")
+  BOOTSTRAP_TIME=${BOOTSTRAP_TIME-0} # default to zero
+
+  # precommand hook
+  NOW=$(bash -p "$GLOBAL_BIN/now")
+  DURATION=$((NOW - START + BOOTSTRAP_TIME))
+  (cd "$ROOT" && VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE eval "$PRECOMMAND")
 
   # payload
   "$NODE" --max_old_space_size=65536 "$JAZELLE" "$@"
   EXIT_CODE=$?
 
   # postcommand hook
-  BOOTSTRAP_TIME=${BOOTSTRAP_TIME-0} # default to zero
   END=$(bash -p "$GLOBAL_BIN/now") # we don't use `time` because otherwise it would mess w/ stdio piping of the main command
   DURATION=$((END - START + BOOTSTRAP_TIME))
   (cd "$ROOT" && VERSION="$VERSION" DURATION="$DURATION" COMMAND="$1" COMMAND_ARGS="${@:2}" EXIT_CODE=$EXIT_CODE eval "$POSTCOMMAND")
