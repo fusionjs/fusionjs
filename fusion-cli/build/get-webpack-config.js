@@ -449,6 +449,12 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         // we replace need to set the path to user application at build-time
         __FUSION_ENTRY_PATH__: path.join(dir, main),
         __ENV__: env,
+        ...(process.env.ENABLE_REACT_PROFILER === 'true'
+          ? {
+              'react-dom$': 'react-dom/profiling',
+              'scheduler/tracing': 'scheduler/tracing-profiling',
+            }
+          : {}),
       },
       plugins: [PnpWebpackPlugin],
     },

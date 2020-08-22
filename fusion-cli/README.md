@@ -34,6 +34,10 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--skipSourceMaps`: Skip building source maps
   - `--maxWorkers`: Maximum number of workers create by webpack during build process
 
+  Builds where the ENABLE_REACT_PROFILER environment variable is set to `'true'` will enable the [Fusion React Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) in apps deployed to production. (NOTE: using the react profiler will itself slightly degrade performance):
+
+  - `ENABLE_REACT_PROFILER=true fusion build`
+
 - `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild]`
   Builds development assets and runs the application in development mode
 
