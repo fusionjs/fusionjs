@@ -149,4 +149,4 @@ if (__BROWSER__) {
 
 ## Service Worker Plugin Guide
 
-For more information on how to use the Fusion Service Worker Plugin and an explanation of Service Workers in general, please see the [Service Workers section in the Fusion.js Guide](https://fusionjs.com/docs/guides/performance/service-workers)
+For more information on how to use the Fusion Service Worker Plugin and an explanation of Service Workers in general, please see the [Service Workers section in the Fusion.js Guide](https://fusionjs.com/docs/recipes/service-workers)
