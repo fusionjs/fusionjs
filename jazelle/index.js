@@ -51,6 +51,7 @@ const runCLI /*: RunCLI */ = async argv => {
   const [command, ...rest] = argv;
   const args = parse(rest);
   args.cwd = args.cwd ? resolve(process.cwd(), args.cwd) : process.cwd();
+  setGlobalEnvVars(args);
   await cli(
     command,
     args,
@@ -301,6 +302,11 @@ const runCLI /*: RunCLI */ = async argv => {
       })
   );
 };
+
+function setGlobalEnvVars(args) {
+  // INIT_CWD allows all subprocess to access the initial working directory.
+  process.env.INIT_CWD = args.cwd;
+}
 
 async function rootOf(args) {
   return getRootDir({dir: args.cwd});

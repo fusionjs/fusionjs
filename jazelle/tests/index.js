@@ -1,6 +1,7 @@
 // @flow
 const assert = require('assert');
 const {readFileSync, createWriteStream} = require('fs');
+const {runCLI} = require('../index');
 const {init} = require('../commands/init.js');
 const {scaffold} = require('../commands/scaffold.js');
 const {install} = require('../commands/install.js');
@@ -87,6 +88,7 @@ async function runTests() {
   await exec(`mkdir -p ${__dirname}/tmp`);
 
   await Promise.all([
+    t(testRunCLI),
     t(testInit),
     t(testScaffold),
     t(testCi),
@@ -147,6 +149,16 @@ async function runTests() {
   await exec(`rm -rf ${__dirname}/tmp`);
 
   console.log('All tests pass');
+}
+
+// cli
+async function testRunCLI() {
+  const oldInitCwd = process.env.INIT_CWD;
+  const path = `${__dirname}/tmp/runCLI`;
+  await exec(`mkdir ${path}`);
+  await runCLI(['setup', `--cwd=${path}`]);
+  assert.equal(process.env.INIT_CWD, path);
+  process.env.INIT_CWD = oldInitCwd;
 }
 
 // commands
