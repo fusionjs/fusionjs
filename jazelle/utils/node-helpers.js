@@ -42,15 +42,19 @@ const exec /*: Exec */ = (cmd, opts = {}, stdio = []) => {
       } else {
         resolve(String(stdout));
       }
+      process.off('exit', onExit);
     });
     if (stdio) {
       if (stdio[0]) child.stdout.pipe(stdio[0]);
       if (stdio[1]) child.stderr.pipe(stdio[1]);
     }
-    process.on('exit', () => {
+
+    function onExit() {
       // $FlowFixMe flow typedef is missing .exitCode
       if (child.exitCode === null) child.kill();
-    });
+    }
+
+    process.on('exit', onExit);
   });
 };
 
