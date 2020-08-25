@@ -1,3 +1,2 @@
 b/package.json
 non-jazelle/BUILD.bazel
-a/test+patch@1.0.0.patch
