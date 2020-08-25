@@ -281,9 +281,31 @@ type ConfigType = {
 };
 ```
 
+## Using useFontLoading Hook
+
+To use the font loader in performance mode you can take davanatge of the `useFontLoading` react hook that comes with this package.
+
+```js
+export default function Hello() {
+  const fontStyles = useFontLoading('Lato-Bold');
+  const [css] = useStyletron();
+  const header = css({
+    fontWeight: '100',
+    fontSize: '96px',
+    margin: '0px',
+    ...fontStyles,
+  });
+  return (
+    <div>
+      <h1 className={header}>Welcome</h1>
+    </div>
+  );
+}
+```
+
 ## Using withFontLoading HOC
 
-To use the font loader in performance mode you should wrap styletron directives in the `withFontLoading` higher order component that comes with this package.
+Alternatively you can use an HOC:
 
 ```js
 import {withFontLoading} from 'fusion-plugin-font-loader-react';
@@ -313,6 +335,8 @@ const hoc: HOC = withFontLoading((font: string));
 
 - `font: string` - The name of the font whose loading should be managed by the plugin
 - returns `hoc: Component => Component`
+
+This will work identically to the `withFontLoadingHOC`, including dynamically switching between fallback font and true font based on what is currently loaded.
 
 ## How Performance Mode Works
 
