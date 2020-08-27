@@ -2,17 +2,6 @@
   "name": "fusion-plugin-http-handler",
   "description": "Allows integration of an existing http handler into the fusion request lifecycle",
   "version": "0.0.0-monorepo",
-  "repository": {
-    "directory": "fusion-plugin-http-handler",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "src/",
-    "dist-*/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
@@ -26,37 +15,48 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "express": "^4.16.4",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "get-port": "^5.1.1",
+    "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "jest": "^25.1.0"
-  },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint . --ignore-path .gitignore",
-    "build": "cup-build",
-    "build-tests": "cup-build-tests",
-    "test": "jest",
-    "prepublish": "npm run build",
-    "flow": "flow"
+    "request-promise": "^4.2.4"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "src/"
+  ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-http-handler",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo"
+  },
+  "repository": {
+    "directory": "fusion-plugin-http-handler",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "cup-build",
+    "build-tests": "cup-build-tests",
+    "clean": "cup-clean",
+    "flow": "flow",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
+    "test": "jest"
+  },
   "sideEffects": false
 }

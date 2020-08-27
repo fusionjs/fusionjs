@@ -2,18 +2,6 @@
   "name": "fusion-plugin-web-app-manifest",
   "description": "A Fusion.js plugin for handling web app manifest files",
   "version": "0.0.0-monorepo",
-  "license": "MIT",
-  "files": [
-    "src/",
-    "dist-*/"
-  ],
-  "repository": {
-    "directory": "fusion-plugin-web-app-manifest",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
@@ -27,34 +15,46 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
+    "jest": "^25.1.0",
     "prettier": "^1.19.1",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "jest": "^25.1.0",
-    "eslint-plugin-jest": "^23.6.0",
-    "eslint-plugin-react-hooks": "^2.3.0"
+    "react-dom": "^16.12.0"
   },
+  "engines": {
+    "node": ">=8.9.4"
+  },
+  "files": [
+    "dist-*/",
+    "src/"
+  ],
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
     "react": "^16.12.0"
   },
+  "repository": {
+    "directory": "fusion-plugin-web-app-manifest",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
   "scripts": {
+    "build": "yarn clean && cup-build",
     "clean": "cup-clean",
     "lint": "eslint . --ignore-path .gitignore",
-    "build": "yarn clean && cup-build",
-    "test": "jest",
-    "view-cover": "npm run cover && open coverage/index.html",
     "prepare": "npm run build",
-    "prepublish": "npm run build"
-  },
-  "engines": {
-    "node": ">=8.9.4"
+    "prepublish": "npm run build",
+    "test": "jest",
+    "view-cover": "npm run cover && open coverage/index.html"
   },
   "sideEffects": false
 }

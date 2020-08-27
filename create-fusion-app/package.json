@@ -1,8 +1,6 @@
 {
   "name": "create-fusion-app",
   "version": "0.0.0-monorepo",
-  "main": "index.js",
-  "license": "MIT",
   "bin": {
     "create-fusion-app": "bin/cli.js"
   },
@@ -18,10 +16,10 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "get-port": "^5.1.1",
     "isomorphic-fetch": "^2.2.1",
@@ -29,22 +27,24 @@
     "prettier": "^1.19.1",
     "puppeteer": "^2.1.1"
   },
-  "scripts": {
-    "clean": "rm -rf test-artifacts",
-    "lint": "eslint .",
-    "test": "yarn clean && jest",
-    "build": "echo ok",
-    "flow": "flow"
-  },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
   "homepage": "https://fusionjs.com/api/create-fusion-app",
+  "license": "MIT",
+  "main": "index.js",
   "repository": {
     "directory": "create-fusion-app",
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "echo ok",
+    "clean": "rm -rf test-artifacts",
+    "flow": "flow",
+    "lint": "eslint .",
+    "test": "yarn clean && jest"
   }
 }

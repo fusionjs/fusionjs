@@ -1,55 +1,29 @@
 {
   "name": "fusion-plugin-styletron-react",
-  "version": "0.0.0-monorepo",
   "description": "The Fusion plugin for Styletron, which, in addition to providing a easy-to-use styled-component-like interface, provides powerful server-side CSS optimizations, yielding less CSS code down the wire.",
-  "repository": {
-    "directory": "fusion-plugin-styletron-react",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "dist-browser-cjs",
-    "dist-browser-esm",
-    "dist-node-cjs",
-    "dist-node-esm",
-    "src/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
+  "version": "0.0.0-monorepo",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint . --ignore-path .gitignore",
-    "test": "jest",
-    "prepublish": "npm run build",
-    "build": "npm run clean && cup-build",
-    "flow": "flow"
   },
   "dependencies": {
     "css-to-js-sourcemap-worker": "^2.0.4",
     "styletron-engine-atomic": "^1.4.1",
     "styletron-engine-monolithic": "^0.0.3"
   },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "react": "^16.12.0",
-    "styletron-react": "^5.2.6"
-  },
   "devDependencies": {
     "@babel/preset-react": "^7.8.3",
-    "create-universal-package": "^4.1.0",
     "babel-eslint": "^10.0.3",
+    "create-universal-package": "^4.1.0",
     "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
@@ -60,15 +34,41 @@
     "puppeteer": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "styletron-react": "^5.2.6",
-    "eslint-plugin-react-hooks": "^2.3.0"
+    "styletron-react": "^5.2.7"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "license": "MIT",
+  "files": [
+    "dist-browser-cjs",
+    "dist-browser-esm",
+    "dist-node-cjs",
+    "dist-node-esm",
+    "src/"
+  ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-styletron-react",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo",
+    "react": "^16.12.0",
+    "styletron-react": "^5.2.7"
+  },
+  "repository": {
+    "directory": "fusion-plugin-styletron-react",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "npm run clean && cup-build",
+    "clean": "cup-clean",
+    "flow": "flow",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
+    "test": "jest"
+  },
   "sideEffects": false
 }

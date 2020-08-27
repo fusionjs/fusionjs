@@ -1,27 +1,9 @@
 {
   "name": "eslint-config-fusion",
-  "version": "0.0.0-monorepo",
   "description": "eslint-config-fusion is an eslint config recommended for use with FusionJS.",
-  "license": "MIT",
-  "repository": {
-    "directory": "eslint-config-fusion",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "rules",
-    "index.js"
-  ],
-  "main": "index.js",
+  "version": "0.0.0-monorepo",
   "dependencies": {
     "eslint-config-uber-universal-stage-3": "^3.0.1"
-  },
-  "peerDependencies": {
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
@@ -29,23 +11,41 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "prettier": "^1.19.1"
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "test": "echo ok",
-    "build": "echo ok",
-    "flow": "flow"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/eslint-config-fusion"
+  "files": [
+    "index.js",
+    "rules"
+  ],
+  "homepage": "https://fusionjs.com/api/eslint-config-fusion",
+  "license": "MIT",
+  "main": "index.js",
+  "peerDependencies": {
+    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.20.0",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^4.1.0"
+  },
+  "repository": {
+    "directory": "eslint-config-fusion",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "echo ok",
+    "flow": "flow",
+    "lint": "eslint .",
+    "test": "echo ok"
+  }
 }

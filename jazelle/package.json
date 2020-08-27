@@ -1,17 +1,10 @@
 {
   "name": "jazelle",
   "version": "0.0.0-monorepo",
-  "license": "UNLICENSED",
-  "main": "index.js",
   "bin": {
+    "barn": "bin/bootstrap.sh",
     "jazelle": "bin/bootstrap.sh",
-    "jz": "bin/bootstrap.sh",
-    "barn": "bin/bootstrap.sh"
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "test": "node tests/index.js",
-    "build": "echo ok"
+    "jz": "bin/bootstrap.sh"
   },
   "dependencies": {},
   "devDependencies": {
@@ -21,8 +14,15 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3"
+  },
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo ok",
+    "lint": "eslint .",
+    "test": "node tests/index.js"
   }
 }
