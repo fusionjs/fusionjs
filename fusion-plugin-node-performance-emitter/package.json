@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "assert": "^1.4.1",
-    "gc-stats": "^1.2.1"
+    "gc-stats": "^1.4.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
