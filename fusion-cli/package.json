@@ -30,7 +30,6 @@
     "get-port": "^5.1.1",
     "graphql-tag": "^2.10.1",
     "http-proxy": "^1.17.0",
-    "iltorb": "^2.4.1",
     "imagemin": "^6.0.0",
     "imagemin-svgo": "^7.0.0",
     "istanbul-api": "2.1.6",
