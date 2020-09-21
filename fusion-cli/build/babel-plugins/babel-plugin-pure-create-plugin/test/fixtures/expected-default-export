@@ -1,7 +1,5 @@
 import { createPlugin } from 'fusion-core';
 
-var _default =
-/*#__PURE__*/
-createPlugin({});
+var _default = /*#__PURE__*/createPlugin({});
 
 export default _default;

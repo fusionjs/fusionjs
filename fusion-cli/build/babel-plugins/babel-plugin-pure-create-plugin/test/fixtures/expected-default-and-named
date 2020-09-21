@@ -1,10 +1,6 @@
 import { createPlugin } from 'fusion-core';
-export const p =
-/*#__PURE__*/
-createPlugin({});
+export const p = /*#__PURE__*/createPlugin({});
 
-var _default =
-/*#__PURE__*/
-createPlugin({});
+var _default = /*#__PURE__*/createPlugin({});
 
 export default _default;
