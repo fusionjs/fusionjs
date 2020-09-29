@@ -86,6 +86,8 @@ module.exports.DevelopmentRuntime = function(
     proxy: null,
   };
 
+  const resolvedChalkPath = require.resolve('chalk');
+
   this.run = async function reloadProc() {
     const childPort = await getPort();
     const command = `
@@ -94,7 +96,7 @@ module.exports.DevelopmentRuntime = function(
 
       const fs = require('fs');
       const path = require('path');
-      const chalk = require('chalk');
+      const chalk = require(${JSON.stringify(resolvedChalkPath)});
 
       const logErrors = e => {
         //eslint-disable-next-line no-console
