@@ -2,7 +2,7 @@
   "name": "fusion-cli-tests",
   "version": "0.0.0-monorepo",
   "dependencies": {
-    "@babel/core": "^7.11.6",
+    "@babel/core": "^7.8.4",
     "fusion-cli": "0.0.0-monorepo",
     "get-port": "^5.1.1",
     "http-proxy": "^1.17.0"
