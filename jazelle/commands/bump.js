@@ -39,9 +39,10 @@ const bump /*: Bump */ = async ({
     );
   }
 
+  const options = {cwd: root, env: process.env};
   for (const dep of deps) {
     const query = `${node} ${yarn} info ${dep.meta.name} versions --json`;
-    const data = await exec(query, {cwd: root, env: process.env});
+    const data = await exec(query, options).catch(() => null);
     const version = parseVersion(data);
     const old = dep.meta.version;
     const next = type === 'none' ? version : inc(version, type);
@@ -53,7 +54,11 @@ const bump /*: Bump */ = async ({
         );
       }
 
-      dep.meta.version = next;
+      if (!dep.meta.private) dep.meta.version = next;
+      else
+        console.log(
+          `${dep.meta.name} is a dependency of ${cwd} but it is marked as private, thus cannot be published.`
+        );
       await write(`${dep.dir}/package.json`, sortPackageJson(dep.meta), 'utf8');
 
       await upgrade({

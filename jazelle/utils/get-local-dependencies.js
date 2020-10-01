@@ -23,6 +23,7 @@ export type PackageJson = {
   peerDependencies?: {[string]: string},
   optionalDependencies?: {[string]: string},
   resolutions?: {[string]: string},
+  private?: boolean,
 };
 */
 const getLocalDependencies /*: GetLocalDependencies */ = async ({
