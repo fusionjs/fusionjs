@@ -11,22 +11,45 @@ const {dirname, join, relative} = require('path');
 
 const root = process.cwd();
 const [node, , main, , command, distPaths, gen, out, ...args] = process.argv;
-const dists = distPaths.split('|');
 
 const {scripts = {}} = JSON.parse(read(`${main}/package.json`, 'utf8'));
 
 if (out) {
   runCommands(command, args);
-  const dirs = dists.map(dist => `"${dist}"`).join(' ');
+  const dists = distPaths.split('|').reduce((acc, next) => {
+    // This adds support for very simple folder globbing. For example: "src/**/__generated__".
+    // We should revisit this with a better long term solution that potentially can handle both dist and gen_srcs attrs.
+    if (next.includes('/**/')) {
+      const split = next.split('/**/');
+      if (split.length > 2) {
+        throw new Error(
+          `Invalid dist config: ${next}. Multiple ** not supported`
+        );
+      }
+      const [baseDir, regexSource] = split;
+      return acc.concat(
+        Array.from(
+          findMatchingDirs({
+            root: join(main, baseDir),
+            regex: new RegExp(regexSource),
+          })
+        ).map(p => relative(main, p))
+      );
+    }
+    acc.push(next);
+    return acc;
+  }, []);
+
+  const dirsString = dists.map(item => `"${item}"`).join(' ');
+
   for (const dist of dists) {
     if (!exists(join(main, dist))) {
       exec(`mkdir -p "${dist}"`, {cwd: main});
     }
   }
-  exec(`tar czf "${out}" ${dirs}`, {cwd: main});
+  exec(`tar czf "${out}" ${dirsString}`, {cwd: main, stdio: 'inherit'});
 } else {
   runCommands(command, args);
-
   // handle `gen_srcs`:
   // - if the command generates file (e.g. jest snapshots), copy them back to the source dir
   // - if the files already exist, they are updated through Bazel's symlink and the copy is not needed
@@ -147,6 +170,16 @@ function* find({root, regex}) {
     const s = getStat(path);
     if (path.match(regex)) yield path;
     if (s.isDirectory()) yield* find({root: path, regex});
+  }
+}
+
+function* findMatchingDirs({root, regex}) {
+  const dirs = readdir(root);
+  for (const dir of dirs) {
+    const path = `${root}/${dir}`;
+    const s = getStat(path);
+    if (path.match(regex)) yield path;
+    else if (s.isDirectory()) yield* findMatchingDirs({root: path, regex});
   }
 }
 
