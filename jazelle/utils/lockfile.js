@@ -629,6 +629,7 @@ const indexLockfiles = ({sets}) => {
   for (const {lockfile, meta} of sets) {
     for (const key in lockfile) {
       const [, name, range] = key.match(/(.+?)@(.+)/) || [];
+      if (!range) continue;
       const isExact =
         range.includes(':') ||
         range.includes('/') ||
