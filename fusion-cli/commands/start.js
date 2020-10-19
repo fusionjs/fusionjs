@@ -12,6 +12,28 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 
+// Gracefully shuts down server when it receives signals
+function listenForShutdown(server, ...signals) {
+  let closing = false;
+
+  const shutDown = (signalName, signal) => {
+    if (closing) {
+      return;
+    }
+    closing = true;
+
+    console.info(`Received ${signalName}, draining open connections`);
+    server.close(() => {
+      console.info(`Drained connections, stopping server`);
+      process.exit(128 + signal);
+    });
+  };
+
+  signals.forEach(signal => {
+    process.once(signal, shutDown);
+  });
+}
+
 exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
   if (debug && !process.env.__FUSION_DEBUGGING__) {
     const command = process.argv.shift();
@@ -39,7 +61,14 @@ exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
     const entry = getEntry(env);
     // $FlowFixMe
     const {start} = require(entry);
-    return start({dir, port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
+    const server = await start({
+      dir,
+      port: port || process.env.PORT_HTTP || 3000,
+    }); // handle server bootstrap errors (e.g. port already in use)
+
+    listenForShutdown(server, 'SIGTERM', 'SIGINT');
+
+    return server;
   } else {
     throw new Error(`App can't start. JS isn't compiled`); // handle compilation errors
   }
