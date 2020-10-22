@@ -461,6 +461,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           : {}),
       },
       plugins: [PnpWebpackPlugin],
+      extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     },
     resolveLoader: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
