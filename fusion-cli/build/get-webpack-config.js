@@ -47,6 +47,7 @@ const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-m
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
 const SourceMapPlugin = require('./plugins/source-map-plugin.js');
+const {getMain} = require('./get-main.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -64,7 +65,7 @@ const EXCLUDE_TRANSPILATION_PATTERNS = [
   /node_modules\/react\//,
   /node_modules\/core-js\//,
 ];
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
+const JS_EXT_PATTERN = /\.(mjs|js|jsx|ts|tsx)$/;
 
 /*::
 import type {
@@ -133,10 +134,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     legacyPkgConfig = {},
     worker,
   } = opts;
-  const main = 'src/main.js';
 
-  if (!fs.existsSync(path.join(dir, main))) {
-    throw new Error(`Project directory must contain a ${main} file`);
+  const main = getMain({dir});
+
+  if (!main) {
+    throw new Error(
+      `Project directory must contain a src/main.js or src/main.ts file`
+    );
   }
 
   const runtime = COMPILATIONS[id];

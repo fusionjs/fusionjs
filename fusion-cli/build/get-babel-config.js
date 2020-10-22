@@ -71,6 +71,9 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       },
     ]);
     config.plugins.unshift(
+      require.resolve('@babel/plugin-transform-typescript')
+    );
+    config.plugins.unshift(
       require.resolve('@babel/plugin-transform-flow-strip-types')
     );
     if (fusionTransforms) {
