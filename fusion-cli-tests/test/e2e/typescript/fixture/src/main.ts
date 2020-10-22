@@ -1,9 +1,9 @@
 // @noflow
-import App from 'fusion-core';
+import App from 'fusion-react';
+
+import root from './root'
 
 export default async function() {
-    const e: string = 'element'
-
-    const app = new App(e, el => el);
+    const app = new App(root);
     return app;
 }
