@@ -599,7 +599,7 @@ const installMissingDeps = async ({
         await write(`${cwd}/.yarnrc`, yarnrc, 'utf8');
 
         await write(`${cwd}/package.json`, '{}\n', 'utf8');
-        const deps = missingTransitives.join(' ');
+        const deps = missingTransitives.map(d => `"${d}"`).join(' ');
         const add = `yarn add ${deps} --ignore-engines`; // use add instead of install because we may need to add more than one version of one dep
         console.error(`Registering ${missingTransitives.join()} in ${dir}`);
         await exec(add, {cwd});
