@@ -7,6 +7,7 @@
  */
 
 import type {FusionPlugin} from './types.js';
+import {captureStackTrace} from './stack-trace.js';
 
 // eslint-disable-next-line flowtype/generic-spacing
 type FusionPluginNoHidden<TDeps, TService> = $Diff<
@@ -19,7 +20,7 @@ export function createPlugin<TDeps, TService>(
 ): FusionPlugin<TDeps, TService> {
   return {
     __plugin__: true,
-    stack: new Error().stack,
+    stack: captureStackTrace(createPlugin),
     ...opts,
   };
 }
