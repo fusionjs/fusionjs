@@ -19,7 +19,7 @@ module.exports = {
   runTransformation,
 };
 
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
+const JS_EXT_PATTERN = /\.(mjs|js|jsx|ts|tsx)$/;
 
 let cache;
 
