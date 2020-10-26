@@ -88,6 +88,8 @@ const spawn /*: Spawn */ = (cmd, argv, opts) => {
         const args = argv.join(' ');
         const cwd = opts && opts.cwd ? `at ${opts.cwd} ` : '';
         errorWithSyncStackTrace.message = `Process failed ${cwd}with exit code ${code}: ${cmd} ${args}`;
+        // $FlowFixMe - maybe create specific error class to contain exit code?
+        errorWithSyncStackTrace.status = code;
         reject(errorWithSyncStackTrace);
       }
       resolve();
