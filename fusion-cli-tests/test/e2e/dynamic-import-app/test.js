@@ -259,7 +259,8 @@ test('`fusion build` app with Safari user agent and same-origin', async () => {
   await cmd(`build --dir=${dir} --production`, {env});
 
   // Run puppeteer test to ensure that page loads with dynamic content.
-  const {proc, port} = await start(`--dir=${dir}`, {env});
+  const {proc, port, promise} = await start(`--dir=${dir}`, {env});
+  promise.catch(console.error);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],

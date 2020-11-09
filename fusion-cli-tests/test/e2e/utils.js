@@ -66,10 +66,11 @@ function cmd(args /*: any */, options /*: any */) {
 
 async function start(args /*: any */, options /*: any */) {
   const port = await getPort();
+  const promise = cmd(`start --port=${port} ${args}`, options);
   // $FlowFixMe
-  const {proc} = cmd(`start --port=${port} ${args}`, options);
+  const {proc} = promise;
   const res = await waitForServer(port);
-  return {proc, res, port};
+  return {proc, res, port, promise};
 }
 
 async function dev(args /*: any */, options /*: any */) {
