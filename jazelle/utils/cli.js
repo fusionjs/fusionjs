@@ -20,24 +20,35 @@ const cli /*: Cli */ = async (command, args, options, fallback) => {
     });
     console.log('');
   } else {
-    if (!options[command]) {
-      await fallback(args);
-    } else {
-      const [docs, fn] = options[command];
-      if (args.help) {
-        const [description, ...lines] = docs
-          .split('\n')
-          .map(line => line.trim())
-          .filter(Boolean);
-        const args = lines
-          .map(line => (line.trim().match(/(.+?)\s{2,}/) || [])[1])
-          .join(' ');
-        const usage = `Usage: jazelle ${command} ${args}`;
-        console.log(`\n${description}\n\n${usage}\n`);
-        if (lines.length)
-          console.log(`Args:\n${lines.map(line => `  ${line}`).join('\n')}\n`);
+    try {
+      if (!options[command]) {
+        await fallback(args);
       } else {
-        await fn(args);
+        const [docs, fn] = options[command];
+        if (args.help) {
+          const [description, ...lines] = docs
+            .split('\n')
+            .map(line => line.trim())
+            .filter(Boolean);
+          const args = lines
+            .map(line => (line.trim().match(/(.+?)\s{2,}/) || [])[1])
+            .join(' ');
+          const usage = `Usage: jazelle ${command} ${args}`;
+          console.log(`\n${description}\n\n${usage}\n`);
+          if (lines.length)
+            console.log(
+              `Args:\n${lines.map(line => `  ${line}`).join('\n')}\n`
+            );
+        } else {
+          await fn(args);
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      if (typeof error.status === 'number') {
+        process.exit(error.status);
+      } else {
+        process.exit(1);
       }
     }
   }

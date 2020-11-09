@@ -113,7 +113,11 @@ function runCommand(command, args = []) {
     try {
       exec(script, {cwd: main, env: process.env, stdio: 'inherit'});
     } catch (e) {
-      process.exit(1);
+      if (typeof e.status === 'number') {
+        process.exit(e.status);
+      } else {
+        process.exit(1);
+      }
     }
   }
 }

@@ -17,6 +17,7 @@ import {
 } from './tokens';
 import {SSRDecider} from './plugins/ssr';
 import RouteTagsPlugin from './plugins/route-tags';
+import {captureStackTrace} from './stack-trace.js';
 
 import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
@@ -81,7 +82,10 @@ class FusionApp {
         },
       };
     }
-    token.stacks.push({type: 'register', stack: new Error().stack});
+    token.stacks.push({
+      type: 'register',
+      stack: captureStackTrace(this.register),
+    });
     if (value && value.__plugin__) {
       token.stacks.push({type: 'plugin', stack: value.stack});
     }
@@ -107,7 +111,7 @@ class FusionApp {
       token,
     });
     const alias = (sourceToken, destToken) => {
-      const stack = new Error().stack;
+      const stack = captureStackTrace(alias);
       sourceToken.stacks.push({type: 'alias-from', stack});
       destToken.stacks.push({type: 'alias-to', stack});
       this._dependedOn.add(getTokenRef(destToken));
@@ -125,7 +129,10 @@ class FusionApp {
     this.register(createPlugin({deps, middleware}));
   }
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function) {
-    token.stacks.push({type: 'enhance', stack: new Error().stack});
+    token.stacks.push({
+      type: 'enhance',
+      stack: captureStackTrace(this.enhance),
+    });
     const {value, aliases, enhancers} = this.registered.get(
       getTokenRef(token)
     ) || {
