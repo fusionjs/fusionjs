@@ -276,7 +276,7 @@ test('enhancement with a plugin with missing deps', () => {
     return (ctx, next) => next();
   });
   expect(() => app.resolve()).toThrow(
-    /This token is required by plugins registered with tokens: "EnhancerOf<FnType>"/
+    /Token is required dependency of plugins registered to "EnhancerOf<FnType>" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });

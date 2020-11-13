@@ -591,7 +591,7 @@ test('dependency configuration with missing deps', () => {
   app.register(StringToken, 'string-a');
   expect(() => app.resolve()).toThrow();
   expect(() => app.resolve()).toThrow(
-    /required by plugins registered with tokens: "parent-token"/
+    /Token is required dependency of plugins registered to "parent-token" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });
@@ -615,7 +615,7 @@ test('error message when dependent plugin does not have token', () => {
   );
   app.register(StringToken, 'string-a');
   expect(() => app.resolve()).toThrow(
-    /required by plugins registered with tokens: "UnnamedPlugin"/
+    /Token is required dependency of plugins registered to "UnnamedPlugin" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });

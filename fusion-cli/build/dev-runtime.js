@@ -109,7 +109,8 @@ module.exports.DevelopmentRuntime = function(
           message: e.message,
           name: e.name,
           stack: e.stack,
-          type: e.type
+          type: e.type,
+          link: e.link
         }});
       }
 
