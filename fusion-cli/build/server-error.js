@@ -10,6 +10,7 @@
 
 function renderError(error /*: any */ = {}) {
   let displayError;
+  let {link} = error;
   if (error instanceof Error) {
     displayError = error;
   } else if (typeof error === 'string') {
@@ -28,6 +29,10 @@ function renderError(error /*: any */ = {}) {
       </head>
       <body>
         <pre>${(displayError.stack || '').replace(/\[\d\dm/gm, '')}</pre>
+        <pre>
+        ${link &&
+          `<br>For help with this error, visit <a style="color:white;" target="_blank" href="${link}">this troubleshooting document</a>`}
+        </pre>
       </body>
     </html>
   `;
