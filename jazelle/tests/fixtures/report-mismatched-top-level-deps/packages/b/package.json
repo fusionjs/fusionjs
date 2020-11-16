@@ -1,9 +1,0 @@
-{
-  "name": "@uber/b",
-  "version": "0.0.0",
-  "dependencies": {
-    "@uber/a": "0.0.0",
-    "no-bugs": "^1.0.0",
-    "@uber/mismatched": "^2.0.0"
-  }
-}

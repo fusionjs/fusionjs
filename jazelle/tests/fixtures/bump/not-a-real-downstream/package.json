@@ -1,7 +1,0 @@
-{
-  "name": "not-a-real-downstream",
-  "version": "0.0.0",
-  "dependencies": {
-    "not-a-real-project": "0.0.0"
-  }
-}

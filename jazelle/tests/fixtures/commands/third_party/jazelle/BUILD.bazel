@@ -1,8 +1,0 @@
-load("@jazelle//:build-rules.bzl", "web_library")
-
-package(default_visibility = ["//visibility:public"])
-
-web_library(
-  name = "node_modules",
-  srcs = glob(["**/*"]),
-)

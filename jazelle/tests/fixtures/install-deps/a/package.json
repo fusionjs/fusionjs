@@ -1,9 +1,0 @@
-{
-  "name": "a",
-  "version": "0.0.0",
-  "dependencies": {
-    "b": "0.0.0",
-    "no-bugs": "1.0.0",
-    "noop": "npm:@kevingorg/noop"
-  }
-}

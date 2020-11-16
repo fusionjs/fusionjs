@@ -1,4 +1,0 @@
-web_library(
-  name = "foo",
-  deps = ["//a:a", "//b:b"]
-)
