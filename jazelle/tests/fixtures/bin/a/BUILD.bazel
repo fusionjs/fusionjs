@@ -1,6 +1,0 @@
-load("//:rules.bzl", "foo_test")
-
-foo_test(
-  name = "a",
-  output = "target.sh",
-)

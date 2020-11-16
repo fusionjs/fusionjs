@@ -1,9 +1,0 @@
-{
-  "name": "a",
-  "version": "0.0.0",
-  "scripts": {
-    "test": "echo ok",
-    "lint": "echo ok",
-    "flow": "echo ok"
-  }
-}

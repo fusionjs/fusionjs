@@ -1,7 +1,0 @@
-#!/bin/bash
-BIN=$(dirname "$0")
-case $OSTYPE in
-  darwin*) "$BIN/bazelisk-darwin-amd64" "$@" ;;
-  linux*) "$BIN/bazelisk-linux-amd64" "$@" ;;
-  *) "$BIN/bazelisk-linux-amd64" "$@" ;;
-esac

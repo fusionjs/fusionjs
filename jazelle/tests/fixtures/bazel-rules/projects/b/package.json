@@ -1,9 +1,0 @@
-{
-  "name": "@uber/b",
-  "version": "0.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "/bin/mkdir -p dist && cp index.js dist/index.js",
-    "dev": "node dist/index.js"
-  }
-}

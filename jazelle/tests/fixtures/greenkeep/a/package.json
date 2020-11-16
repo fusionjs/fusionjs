@@ -1,9 +1,0 @@
-{
-  "name": "a",
-  "version": "0.0.0",
-  "dependencies": {
-    "has": "0.0.1",
-    "b": "0.0.0",
-    "is-number": "1.0.0"
-  }
-}

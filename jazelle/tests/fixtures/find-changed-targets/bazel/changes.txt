@@ -1,2 +1,0 @@
-b/package.json
-non-jazelle/BUILD.bazel

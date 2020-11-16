@@ -34,8 +34,7 @@
     "eslint-config-fusion",
     "create-fusion-plugin",
     "create-fusion-app",
-    "fusion-plugin-web-app-manifest",
-    "jazelle"
+    "fusion-plugin-web-app-manifest"
   ],
   "versionPolicy": {
     "lockstep": true

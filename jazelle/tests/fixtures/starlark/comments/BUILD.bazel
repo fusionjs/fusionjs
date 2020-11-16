@@ -1,7 +1,0 @@
-web_library(    # comment
-  name = "foo", # comment
-  deps = [      # comment
-    "//a:a",    # comment
-    "//b:b"     # comment
-  ]             # comment
-)               # comment
