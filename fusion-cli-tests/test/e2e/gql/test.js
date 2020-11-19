@@ -74,7 +74,7 @@ type User {
 
 test('`fusion build --production` works with gql', async () => {
   let browser;
-  await await cmd(`build --dir=${dir} --production`);
+  await cmd(`build --dir=${dir} --production`);
   const {proc, port} = await start(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {NODE_ENV: 'production'}),
   });

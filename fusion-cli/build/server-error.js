@@ -7,8 +7,67 @@
  */
 
 /* eslint-env node */
+const path = require('path');
+const {readFileSync} = require('fs');
+const {codeFrameColumns} = require('@babel/code-frame');
+const AnsiToHtml = require('ansi-to-html');
+const chalk = require('chalk');
 
-function renderError(error /*: any */ = {}) {
+function parseCodeFrame(error /*: Error */) {
+  const match = error.stack
+    .split('\n')[1]
+    .match(/at (.+) \((.+):(\d+):(\d+)\)/);
+  const [, functionName, file, line, column] = match || [];
+  if (!(line && column && file)) {
+    return {};
+  }
+  let fileContents;
+  try {
+    fileContents = readFileSync(file, 'utf-8');
+  } catch (e) {
+    // Errors could originate in node internals that do not exist in filesystem
+    return {};
+  }
+  const whitespace = fileContents.split('\n')[parseInt(line) - 1].search(/\S/);
+  const padding = whitespace === -1 ? 0 : whitespace;
+  const codeFrame = codeFrameColumns(
+    fileContents,
+    {
+      start: {
+        line: parseInt(line),
+        column: parseInt(column) + padding,
+      },
+    },
+    {
+      highlightCode: true,
+      linesAbove: 2,
+      linesBelow: 2,
+      message: error.message,
+    }
+  );
+  return {
+    codeFrame,
+    file,
+    line,
+    column,
+    functionName,
+  };
+}
+
+function renderTerminalError(error /*: Error */) {
+  const {codeFrame, file, line, column} = parseCodeFrame(error);
+  if (!file) {
+    return chalk.red(error.stack);
+  }
+  const location = chalk.blue(
+    `${path.relative(process.cwd(), file)} ${line}:${column}`
+  );
+  return [location, codeFrame, '', chalk.red(error.stack)].join('\n');
+}
+
+module.exports.renderTerminalError = renderTerminalError;
+
+function renderHtmlError(error /*: any */ = {}) {
   let displayError;
   let {link} = error;
   if (error instanceof Error) {
@@ -20,22 +79,61 @@ function renderError(error /*: any */ = {}) {
     displayError.stack = error.stack;
     displayError.name = error.name;
   }
+  const {codeFrame, file, line, column, functionName} = parseCodeFrame(error);
+  let displayCodeFrame;
+  if (file) {
+    const ansi = new AnsiToHtml({fg: '#ccc'});
+    const htmlCodeFrame = ansi.toHtml(codeFrame);
+    const relativeFile = path.relative(process.cwd(), file);
+    displayCodeFrame = `
+      <p>
+        <b>${functionName}</b>
+        <br>
+        <span style="color:rgb(100, 149, 237);">${relativeFile} ${line}:${column}</span>
+      </p>
+      <pre style="background-color: #111;padding: 0 5px;">${htmlCodeFrame}</pre>
+    `;
+  }
   return `
     <!DOCTYPE html>
     <html>
       <head>
         <title>Server error</title>
-        <style>html {background:red;color:white;line-height:2;}</style>
+        <style>
+          html {
+            background-color: #222;
+            color: white;
+            line-height: 2;
+            font-family: monospace;
+          }
+          a { color: white; }
+          @media (prefers-color-scheme: light) {
+            html {
+              background-color: rgb(240, 233, 231);
+              color: rgb(47, 79, 79);
+            }
+            a { color: rgb(47, 79, 79); }
+          }
+        </style>
       </head>
       <body>
-        <pre>${(displayError.stack || '').replace(/\[\d\dm/gm, '')}</pre>
-        <pre>
-        ${link &&
-          `<br>For help with this error, visit <a style="color:white;" target="_blank" href="${link}">this troubleshooting document</a>`}
-        </pre>
+        <div style="width:1024px;margin:20px auto;">
+          <h1 style="color:rgb(232,59,70);font-size:large;">${
+            displayError.message
+          }</h1>
+          ${displayCodeFrame ? displayCodeFrame : ''}
+          <pre>${displayError.stack}</pre>
+          <p>
+          ${
+            link
+              ? `<br>For help with this error, visit <a target="_blank" href="${link}">this troubleshooting document</a>`
+              : ''
+          }
+          </p>
+        <div>
       </body>
     </html>
   `;
 }
 
-module.exports.renderError = renderError;
+module.exports.renderHtmlError = renderHtmlError;

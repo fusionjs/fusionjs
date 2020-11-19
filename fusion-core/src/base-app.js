@@ -327,9 +327,11 @@ class FusionApp {
         token !== RenderToken &&
         !this._dependedOn.has(getTokenRef(token))
       ) {
+        const registerStack = token.stacks.find(t => t.type === 'register');
         throw new DIError({
           message: `Registered token without depending on it: ${token.name}`,
           errorDoc: 'registered-without-depending',
+          stack: registerStack && registerStack.stack,
         });
       }
     }

@@ -17,7 +17,7 @@ const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
 const httpProxy = require('http-proxy');
 
-const renderError = require('./server-error').renderError;
+const renderHtmlError = require('./server-error').renderHtmlError;
 
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
@@ -87,6 +87,7 @@ module.exports.DevelopmentRuntime = function(
   };
 
   const resolvedChalkPath = require.resolve('chalk');
+  const resolvedServerErrorPath = require.resolve('./server-error');
 
   this.run = async function reloadProc() {
     const childPort = await getPort();
@@ -97,10 +98,13 @@ module.exports.DevelopmentRuntime = function(
       const fs = require('fs');
       const path = require('path');
       const chalk = require(${JSON.stringify(resolvedChalkPath)});
+      const renderTerminalError = require(${JSON.stringify(
+        resolvedServerErrorPath
+      )}).renderTerminalError;
 
       const logErrors = e => {
         //eslint-disable-next-line no-console
-        console.error(chalk.red(e.stack))
+        console.error(renderTerminalError(e));
       }
 
       const logAndSend = e => {
@@ -203,14 +207,14 @@ module.exports.DevelopmentRuntime = function(
             state.proxy.web(req, res, e => {
               if (res.finished) return;
 
-              res.write(renderError(e));
+              res.write(renderHtmlError(e));
               res.end();
             });
           },
           error => {
             if (res.finished) return;
 
-            res.write(renderError(error));
+            res.write(renderHtmlError(error));
             res.end();
           }
         );
