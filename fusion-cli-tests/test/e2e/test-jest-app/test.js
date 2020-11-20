@@ -9,7 +9,7 @@ const CDP = require('chrome-remote-interface');
 const spawn = require('child_process').spawn;
 
 const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const {cmd} = require('../utils.js');
 
 const readFile = promisify(fs.readFile);
 
@@ -23,125 +23,128 @@ const dir = path.resolve(__dirname, './fixture');
 jest.setTimeout(20000);
 
 test('`fusion test` passes', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=passes`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=passes`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` failure', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=fails`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --match=fails`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
     t.fail('should not succeed');
   } catch (e) {
-    t.equal(countTests(e.message), 2, 'ran 2 tests');
+    t.equal(countTests(e.stderr), 2, 'ran 2 tests');
     t.notEqual(e.code, 0, 'exits with non-zero status code');
   }
 });
 
 test('`fusion test` all passing tests', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=pass`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=pass`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 4, 'ran 4 tests');
 });
 
 test('`fusion test` expected test passes in browser/node', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=pass-`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=pass-`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` expected tests fail when run in browser/node', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=fail-`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --match=fail-`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
     t.fail('should not succeed');
   } catch (e) {
     t.notEqual(e.code, 0, 'exits with non-zero status code');
-    t.equal(countTests(e.message), 2, 'ran 2 tests');
+    t.equal(countTests(e.stderr), 2, 'ran 2 tests');
   }
 });
 
 test('`fusion test --testFolder=integration` runs correct tests', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testFolder=__integration__`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testFolder=__integration__`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
 });
 
 test('`fusion test --testMatch=**/__foo__/**/*js` runs correct tests', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
 });
 
 test('`fusion test --testMatch=**/__foo__/**/*js,**/__integration__/**/*.js` runs correct tests', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js,**/__integration__/**/*.js`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js,**/__integration__/**/*.js`,
+    {stdio: 'pipe'}
+  );
 
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test --testRegex=/__foo__/.*` runs correct tests', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testRegex=.*/__foo__/.*`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testRegex=.*/__foo__/.*`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 1, 'ran 1 test');
 });
 
 test('`fusion test --testRegex and --testMatch cannot occur at same time', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js --testRegex=.*/__foo__/.*`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-
-  await exec(`node -e "${cmd}"`).catch(e => t.ok('ok'));
+  try {
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js --testRegex=.*/__foo__/.*`,
+      {stdio: 'pipe'}
+    );
+  } catch (e) {
+    t.ok('ok');
+  }
 });
 
 test('`fusion test --testFolder and --testMatch cannot occur at same time', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js --testFolder=__foo__`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-
-  await exec(`node -e "${cmd}"`).then(
+  try {
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testMatch=**/__foo__/**/*.js --testFolder=__foo__`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
-    () => t.fail(),
-    e => t.ok('ok')
-  );
+    t.fail('Should throw');
+  } catch (e) {
+    t.ok('ok');
+  }
 });
 
 test('`fusion test --testFolder and --testRegex cannot occur at same time', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testRegex=.*/__foo__/.* --testFolder=__foo__`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-
-  await exec(`node -e "${cmd}"`).then(
+  try {
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --env=node --testRegex=.*/__foo__/.* --testFolder=__foo__`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
-    () => t.fail(),
-    e => t.ok('ok')
-  );
+    t.fail('Should throw');
+  } catch (e) {
+    t.ok('ok');
+  }
 });
 
 test('`fusion test` snapshotting', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match`;
-
   const snapshotFile = path.join(
     dir,
     'src/__tests__/__snapshots__/snapshot-no-match.js.fixture'
@@ -156,18 +159,21 @@ test('`fusion test` snapshotting', async () => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
     t.fail('should not succeed');
   } catch (e) {
     t.notEqual(e.code, 0, 'exits with non-zero status code');
-    t.equal(countTests(e.message), 2, 'ran 2 tests');
+    t.equal(countTests(e.stderr), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} --updateSnapshot')`;
-  await exec(`node -e "${updateSnapshot}"`);
+  await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match -u`
+  );
 
   const newSnapshotCode = await readFile(snapshotFile);
   const originalSnapshotCode = await readFile(backupSnapshot);
@@ -177,8 +183,6 @@ test('`fusion test` snapshotting', async () => {
 }, 60000);
 
 test('`fusion test` snapshotting with -u option', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match`;
-
   const snapshotFile = path.join(
     dir,
     'src/__tests__/__snapshots__/snapshot-no-match.js.fixture'
@@ -194,18 +198,21 @@ test('`fusion test` snapshotting with -u option', async () => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
     t.fail('should not succeed');
   } catch (e) {
     t.notEqual(e.code, 0, 'exits with non-zero status code');
-    t.equal(countTests(e.message), 2, 'ran 2 tests');
+    t.equal(countTests(e.stderr), 2, 'ran 2 tests');
   }
 
-  const updateSnapshot = `require('${runnerPath}').run('node ${runnerPath} ${args} -u')`;
-  await exec(`node -e "${updateSnapshot}"`);
+  await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-no-match -u`
+  );
 
   const newSnapshotCode = await readFile(snapshotFile);
   const originalSnapshotCode = await readFile(backupSnapshot);
@@ -215,8 +222,6 @@ test('`fusion test` snapshotting with -u option', async () => {
 }, 60000);
 
 test('`fusion test` snapshotting - enzyme serializer', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-enzyme-no-match`;
-
   const snapshotFile = path.join(
     dir,
     'src/__tests__/__snapshots__/snapshot-enzyme-no-match.js.fixture'
@@ -232,17 +237,22 @@ test('`fusion test` snapshotting - enzyme serializer', async () => {
     fs.createWriteStream(snapshotFile.replace(/fixture$/, 'snap'))
   );
 
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
   try {
-    await exec(`node -e "${cmd}"`);
+    await cmd(
+      `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-enzyme-no-match`,
+      {stdio: 'pipe'}
+    );
     // $FlowFixMe
     t.fail('should not succeed');
   } catch (e) {
     t.notEqual(e.code, 0, 'exits with non-zero status code');
-    t.equal(countTests(e.message), 2, 'ran 2 tests');
+    t.equal(countTests(e.stderr), 2, 'ran 2 tests');
   }
 
-  await exec(`node ${runnerPath} ${args} --updateSnapshot`);
+  await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=snapshot-enzyme-no-match -u`,
+    {stdio: 'pipe'}
+  );
 
   const newSnapshotCode = await readFile(snapshotFile);
   const originalSnapshotCode = await readFile(backupSnapshot);
@@ -252,18 +262,18 @@ test('`fusion test` snapshotting - enzyme serializer', async () => {
 });
 
 test('`fusion test` dynamic imports', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=dynamic-imports`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=dynamic-imports`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` coverage', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js`,
+    {stdio: 'pipe'}
+  );
 
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 
@@ -287,10 +297,10 @@ test('`fusion test` coverage', async () => {
 });
 
 test('`fusion test` coverage ignore multiple globs from collectCoverageFrom', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js --collectCoverageFrom=!**/class-props.js`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes --collectCoverageFrom=!**/istanbul-ignore-coverage-cli.js --collectCoverageFrom=!**/class-props.js`,
+    {stdio: 'pipe'}
+  );
 
   // Ignored by the CLI flags
   t.ok(!response.stdout.includes('istanbul-ignore-coverage-cli.js'));
@@ -298,18 +308,18 @@ test('`fusion test` coverage ignore multiple globs from collectCoverageFrom', as
 });
 
 test('`fusion test` class properties', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=class-props`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=class-props`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` cobertura coverage reports', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args} --env=jsdom')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes --env=jsdom`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 1, 'ran 1 tests');
 
   const cobertunaReport = await readFile(
@@ -326,8 +336,10 @@ test('`fusion test` cobertura coverage reports', async () => {
   );
 
   // Assert that there's two hits when combining coverage
-  const cmd2 = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response2 = await exec(`node -e "${cmd2}"`);
+  const response2 = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --coverage --match=passes`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response2.stderr), 2, 'ran 2 tests');
 
   const combinedReport = await readFile(
@@ -344,28 +356,29 @@ test('`fusion test` cobertura coverage reports', async () => {
 }, 60000);
 
 test('`fusion test` environment variables', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=environment-variables`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`, {
-    env: Object.assign({}, process.env, {
-      NODE_ENV: 'development',
-    }),
-  });
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=environment-variables`,
+    {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'development',
+      }),
+      stdio: 'pipe',
+    }
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` writes results to disk based on env var', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --match=passes`;
-
   const testMetadataPath = path.join(dir, 'test-results.json');
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`, {
-    env: Object.assign({}, process.env, {
-      FUSION_TEST_METADATA_PATH: testMetadataPath,
-    }),
-  });
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --match=passes`,
+    {
+      env: Object.assign({}, process.env, {
+        FUSION_TEST_METADATA_PATH: testMetadataPath,
+      }),
+      stdio: 'pipe',
+    }
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
   const results = require(testMetadataPath);
   t.equal(results.numTotalTests, 2, 'two tests in results json');
