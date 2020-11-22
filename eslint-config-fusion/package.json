@@ -1,7 +1,7 @@
 {
-  "name": "eslint-config-fusion",
-  "description": "eslint-config-fusion is an eslint config recommended for use with FusionJS.",
-  "version": "0.0.0-monorepo",
+  "name": "@gutenye/eslint-config-fusion",
+  "description": "Removed flow for FusionJS.",
+  "version": "6.2.2",
   "dependencies": {
     "eslint-config-uber-universal-stage-3": "^3.0.1"
   },
@@ -9,7 +9,6 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
@@ -31,7 +30,6 @@
   "license": "MIT",
   "main": "index.js",
   "peerDependencies": {
-    "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-react": "^7.18.3",

@@ -1,6 +1,6 @@
 {
-  "name": "eslint-config-fusion-typescript",
-  "version": "0.0.0-monorepo",
+  "name": "@gutenye/eslint-config-fusion-typescript",
+  "version": "6.2.2",
   "description": "eslint-config-fusion-typescript is an eslint config recommended for use with FusionJS.",
   "license": "MIT",
   "repository": {
