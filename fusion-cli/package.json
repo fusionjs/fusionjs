@@ -1,7 +1,7 @@
 {
-  "name": "fusion-cli",
-  "description": "CLI",
-  "version": "0.0.0-monorepo",
+  "name": "@gutenye/fusion-cli",
+  "description": "TypeScript Support for Fusion.js / FusionJS",
+  "version": "2.15.6",
   "bin": {
     "fusion": "bin/cli.js"
   },
