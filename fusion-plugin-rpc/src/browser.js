@@ -14,14 +14,18 @@ import {I18nToken} from 'fusion-plugin-i18n';
 import {FetchToken} from 'fusion-tokens';
 import type {Fetch} from 'fusion-tokens';
 
-import {type HandlerType, RPCHandlersConfigToken} from './tokens.js';
+import {
+  type HandlerType,
+  RPCHandlersConfigToken,
+  RPCQueryParamsToken,
+} from './tokens.js';
 import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
 import {formatApiPath} from './utils.js';
 
 type InitializationOpts = {
   fetch: Fetch,
   emitter: IEmitter,
-  localeCode: string,
+  queryParams: Array<[string, string]>,
   rpcConfig: ?RPCConfigType,
 };
 
@@ -31,15 +35,15 @@ class RPC {
   ctx: ?Context;
   emitter: ?IEmitter;
   handlers: ?HandlerType;
-  localeCode: ?string;
+  queryParams: Array<[string, string]>;
   fetch: ?Fetch;
   config: ?RPCConfigType;
   apiPath: string;
-  constructor({fetch, emitter, rpcConfig, localeCode}: InitializationOpts) {
+  constructor({fetch, emitter, rpcConfig, queryParams}: InitializationOpts) {
     this.fetch = fetch;
     this.config = rpcConfig || {};
     this.emitter = emitter;
-    this.localeCode = localeCode;
+    this.queryParams = queryParams;
 
     this.apiPath = formatApiPath(
       rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
@@ -63,10 +67,15 @@ class RPC {
     const apiPath = this.apiPath;
 
     const startTime = Date.now();
-    const localeParam = this.localeCode ? `?localeCode=${this.localeCode}` : '';
+    const queryParams =
+      this.queryParams.length > 0
+        ? `?${this.queryParams
+            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+            .join('&')}`
+        : '';
 
     return fetch(
-      `${apiPath}${rpcId}${localeParam}`,
+      `${apiPath}${rpcId}${queryParams}`,
       args instanceof FormData
         ? {
             ...options,
@@ -117,19 +126,30 @@ const pluginFactory: () => RPCPluginType = () =>
       emitter: UniversalEventsToken,
       i18n: I18nToken.optional,
       rpcConfig: RPCHandlersConfigToken.optional,
+      queryParams: RPCQueryParamsToken.optional,
     },
     provides: deps => {
-      const {fetch = window.fetch, emitter, rpcConfig, i18n} = deps;
+      const {
+        fetch = window.fetch,
+        emitter,
+        rpcConfig,
+        i18n,
+        queryParams,
+      } = deps;
 
       return {
         from: memoize(ctx => {
+          const queryParamsValue = (queryParams && queryParams.from(ctx)) || [];
           const locale = (i18n && i18n.from(ctx).locale) || '';
           const localeCode = typeof locale === 'string' ? locale : locale.code;
+          if (localeCode) {
+            queryParamsValue.push(['localeCode', localeCode]);
+          }
           return new RPC({
             fetch,
             emitter,
             rpcConfig,
-            localeCode,
+            queryParams: queryParamsValue,
           });
         }),
       };

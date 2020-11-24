@@ -20,6 +20,7 @@ export {
   RPCToken,
   RPCHandlersToken,
   RPCHandlersConfigToken,
+  RPCQueryParamsToken,
 } from './tokens';
 
 export {default as getMockRpcHandlers} from './mock-rpc-handlers';
