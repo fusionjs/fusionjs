@@ -62,6 +62,8 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     if (!jsx) {
       jsx = {};
     }
+    config.presets.push('@babel/preset-typescript');
+
     config.presets.push([
       require.resolve('@babel/preset-react'),
       {
