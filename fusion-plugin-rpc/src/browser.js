@@ -70,7 +70,9 @@ class RPC {
     const queryParams =
       this.queryParams.length > 0
         ? `?${this.queryParams
-            .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+            .map(
+              ([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+            )
             .join('&')}`
         : '';
 
