@@ -4,6 +4,18 @@ Fusion supports a `.fusionrc.js` in the root directory of your application. This
 
 This configuration object supports the following fields:
 
+## `Entry point`
+
+By default fusion-cli will use `src/main.js` as the entry point when building your application. You can override this by setting the `main` field.
+
+For example, when using fusion with Typescript you could:
+
+```js
+module.exports = {
+  main: 'src/main.ts'
+}
+```
+
 ## `babel`
 
 ### Adding plugins/presets
