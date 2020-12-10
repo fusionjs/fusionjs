@@ -37,6 +37,7 @@ exports.run = async function(
   logger.add(new winston.transports.Console({level: logLevel}));
 
   const compiler = new Compiler({
+    command: 'dev',
     env: 'development',
     dir,
     hmr,

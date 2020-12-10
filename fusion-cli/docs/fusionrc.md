@@ -97,3 +97,15 @@ module.exports = {
   brotli: false,
 };
 ```
+
+## `onBuildEnd`
+
+This is an optional property that can be used to invoke a callback function when a build is completed. The function is passed metadata about the build including the build time, build target, and other build options.
+
+```js
+module.exports = {
+  onBuildEnd: function (stats) {
+    console.log(stats.buildTime);
+  }
+};
+```

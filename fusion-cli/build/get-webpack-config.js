@@ -102,7 +102,9 @@ export type WebpackConfigOpts = {|
   legacyPkgConfig?: {
     node?: Object
   },
-  worker: Object
+  worker: Object,
+  onBuildEnd: Function,
+  command?: 'dev' | 'build',
 |};
 */
 const isProjectCode = (modulePath /*:string*/, dir /*:string*/) =>
@@ -132,6 +134,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     skipSourceMaps,
     legacyPkgConfig = {},
     worker,
+    onBuildEnd,
+    command,
   } = opts;
   const main = 'src/main.js';
 
@@ -197,6 +201,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         }
       }
     : JS_EXT_PATTERN;
+
+  // Used to determine if this is an initial or incremental build
+  let isIncrementalBuild = false;
 
   return {
     name: runtime,
@@ -489,7 +496,26 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       new webpack.optimize.SideEffectsFlagPlugin(),
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
-      new ProgressBarPlugin(),
+      onBuildEnd
+        ? new ProgressBarPlugin({
+            callback: progressBar => {
+              const buildTime = new Date() - progressBar.start;
+              const buildStats = {
+                command,
+                target: id,
+                mode: dev ? 'development' : 'production',
+                path: dir,
+                watch,
+                minify,
+                skipSourceMaps,
+                buildTime,
+                isIncrementalBuild,
+              };
+              isIncrementalBuild = true;
+              return onBuildEnd(buildStats);
+            },
+          })
+        : new ProgressBarPlugin(),
       runtime === 'server' &&
         new LoaderContextProviderPlugin('optsContext', opts),
       new LoaderContextProviderPlugin(devContextKey, dev),
