@@ -2,6 +2,7 @@
   "name": "fusion-plugin-service-worker-tests",
   "version": "0.0.0-monorepo",
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
