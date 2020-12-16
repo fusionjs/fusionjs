@@ -96,8 +96,10 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--listTests`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#listtests
   - `--logHeapUsage`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#logheapusage
   - `--noStackTrace`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#nostacktrace
+  - `--noVerbose`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#verbose
   - `--notify`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#notify
   - `--onlyChanged`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#onlychanged
+  - `--outputPath`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#outputpath
   - `--passWithNoTests`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#passwithnotests
   - `--reporters`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#reporters
   - `--showConfig`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#showconfig
