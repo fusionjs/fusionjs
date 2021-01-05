@@ -93,11 +93,11 @@ function renderHtmlError(error /*: any */ = {}) {
     const relativeFile = path.relative(process.cwd(), file);
     displayCodeFrame = `
       <p>
-        <b>${functionName}</b>
+        <b>${escapeHtml(functionName)}</b>
         <br>
         <span style="color:rgb(100, 149, 237);">${relativeFile} ${line}:${column}</span>
       </p>
-      <pre style="background-color: #111;padding: 0 5px;">${htmlCodeFrame}</pre>
+      <pre style="background-color: #111;padding: 0 5px;white-space:break-spaces;">${htmlCodeFrame}</pre>
     `;
   }
   return `
@@ -123,12 +123,14 @@ function renderHtmlError(error /*: any */ = {}) {
         </style>
       </head>
       <body>
-        <div style="width:1024px;margin:20px auto;">
+        <div style="width:1200px;margin:20px auto;">
           <h1 style="color:rgb(232,59,70);font-size:large;">${
             displayError.message
           }</h1>
           ${displayCodeFrame ? displayCodeFrame : ''}
-          <pre>${displayError.stack}</pre>
+          <pre style="white-space:break-spaces;">${escapeHtml(
+            displayError.stack
+          )}</pre>
           <p>
           ${
             link
@@ -143,3 +145,7 @@ function renderHtmlError(error /*: any */ = {}) {
 }
 
 module.exports.renderHtmlError = renderHtmlError;
+
+function escapeHtml(str = '') {
+  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
