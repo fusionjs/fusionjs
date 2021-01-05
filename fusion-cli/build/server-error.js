@@ -28,7 +28,13 @@ function parseCodeFrame(error /*: Error */) {
     // Errors could originate in node internals that do not exist in filesystem
     return {};
   }
-  const whitespace = fileContents.split('\n')[parseInt(line) - 1].search(/\S/);
+  const srcLines = fileContents.split('\n');
+  const errorLineNumber = parseInt(line) - 1;
+  if (srcLines.length <= errorLineNumber) {
+    // This may happen if sourcemaps reference the wrong file
+    return {};
+  }
+  const whitespace = (srcLines[errorLineNumber] || '').search(/\S/);
   const padding = whitespace === -1 ? 0 : whitespace;
   const codeFrame = codeFrameColumns(
     fileContents,
