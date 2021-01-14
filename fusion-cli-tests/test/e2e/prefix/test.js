@@ -4,7 +4,7 @@
 const t = require('assert');
 const path = require('path');
 
-const request = require('request-promise');
+const request = require('axios');
 const puppeteer = require('puppeteer');
 
 const {start, cmd} = require('../utils.js');
@@ -19,13 +19,13 @@ test('`fusion dev` with route prefix and custom routes', async () => {
   });
   await app.setup();
   const url = app.url();
-  const rootRes = await request(`${url}/test-prefix`);
+  const {data: rootRes} = await request(`${url}/test-prefix`);
   t.equal(
     rootRes,
     'ROOT REQUEST',
     'strips route prefix correctly for root requests'
   );
-  const testRes = await request(`${url}/test-prefix/test`);
+  const {data: testRes} = await request(`${url}/test-prefix/test`);
   t.equal(
     testRes,
     'TEST REQUEST',
@@ -42,20 +42,22 @@ test('`fusion build/start with ROUTE_PREFIX and custom routes`', async () => {
       NODE_ENV: 'production',
     }),
   });
-  const rootRes = await request(`http://localhost:${port}/test-prefix`);
+  const {data: rootRes} = await request(`http://localhost:${port}/test-prefix`);
   t.equal(
     rootRes,
     'ROOT REQUEST',
     'strips route prefix correctly for root requests'
   );
-  const testRes = await request(`http://localhost:${port}/test-prefix/test`);
+  const {data: testRes} = await request(
+    `http://localhost:${port}/test-prefix/test`
+  );
   t.equal(
     testRes,
     'TEST REQUEST',
     'strips route prefix correctly for deep path requests'
   );
 
-  const tokenRes = await request(
+  const {data: tokenRes} = await request(
     `http://localhost:${port}/test-prefix/server-token`
   );
   t.equal(tokenRes, '/test-prefix', 'server-side RoutePrefixToken is set');

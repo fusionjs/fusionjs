@@ -4,7 +4,7 @@
 const t = require('assert');
 const fs = require('fs');
 const path = require('path');
-const request = require('request-promise');
+const request = require('axios');
 
 const {cmd, start} = require('../utils.js');
 
@@ -30,38 +30,27 @@ test('source maps for JS static assets are not served in production', async () =
       const jsPath = `/_static/${bundle}`;
       const mapPath = `${jsPath}.map`;
 
-      const asset = await request(`http://localhost:${port}${jsPath}`, {
-        resolveWithFullResponse: true,
-        simple: false,
-      });
-      t.equal(
-        asset.statusCode,
-        200,
-        'Request for JS bundle yields OK response'
-      );
-
+      const asset = await request(`http://localhost:${port}${jsPath}`);
+      t.equal(asset.status, 200, 'Request for JS bundle yields OK response');
       const assetMap = await request(`http://localhost:${port}${mapPath}`, {
-        resolveWithFullResponse: true,
-        simple: false,
+        validateStatus: () => true,
       });
-      t.equal(
-        assetMap.statusCode,
-        404,
-        'Request for associated source map 404s'
-      );
-      t.equal(assetMap.body, 'Not Found');
+      t.equal(assetMap.status, 404, 'Request for associated source map 404s');
+      t.equal(assetMap.data, 'Not Found');
     }
 
-    const assetPath = await request(`http://localhost:${port}/asset-url`, {
-      headers: {
-        Accept: 'text/html',
-      },
-    });
+    const {data: assetPath} = await request(
+      `http://localhost:${port}/asset-url`,
+      {
+        headers: {
+          Accept: 'text/html',
+        },
+      }
+    );
     const asset = await request(`http://localhost:${port}${assetPath}`, {
-      resolveWithFullResponse: true,
-      simple: false,
+      validateStatus: () => true,
     });
-    t.equal(asset.statusCode, 200, 'Request for sourcemap via assetUrl works');
+    t.equal(asset.status, 200, 'Request for sourcemap via assetUrl works');
 
     proc.kill('SIGKILL');
   } catch (e) {

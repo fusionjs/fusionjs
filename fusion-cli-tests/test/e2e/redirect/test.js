@@ -4,7 +4,7 @@
 const t = require('assert');
 const path = require('path');
 
-const request = require('request-promise');
+const request = require('axios');
 
 const dev = require('../setup.js');
 
@@ -18,10 +18,10 @@ test('`fusion dev` with server side redirects', async () => {
   const url = await app.url();
   try {
     await request({
-      uri: `${url}/redirect`,
-      followRedirect: false,
+      url: `${url}/redirect`,
+      maxRedirects: 0,
     });
   } catch (e) {
-    t.equal(e.statusCode, 302, 'responds with a 302 status code');
+    t.equal(e.response.status, 302, 'responds with a 302 status code');
   }
 });

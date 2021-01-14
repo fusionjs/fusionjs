@@ -7,7 +7,7 @@
  */
 
 /* eslint-env node */
-import App, {createPlugin} from 'fusion-core';
+import App from 'fusion-core';
 import {FetchToken} from 'fusion-tokens';
 import {getSimulator} from 'fusion-test-utils';
 
@@ -106,20 +106,4 @@ test('does not verify ignored paths', async () => {
     method: 'POST',
   });
   expect(ctx.status).toBe(200);
-});
-
-test('throws if fetch is used on server', async done => {
-  const app = getApp();
-  app.register(
-    createPlugin({
-      deps: {fetch: FetchToken},
-      provides: ({fetch}) => {
-        fetch('/test').catch(e => {
-          expect(e).toBeTruthy();
-          done();
-        });
-      },
-    })
-  );
-  getSimulator(app);
 });

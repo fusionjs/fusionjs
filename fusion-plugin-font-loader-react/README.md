@@ -101,11 +101,12 @@ const Li = styled('li', {
 
 ## Styled Mode Config
 
-To use this plugin in Styled Mode your config object should have `withStyleOverloads` set to `true` and pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-font-loader-react/blob/master/src/types.js) for more details on this data structure)
+**NOTE:** As of version 2.2.0 it is no longer necessary to include a `withStyleOverloads` property. Fusion will detect when font descriptors are for styled mode. You can also supply both styled and atomic font descriptors in the same config file and Fusion will infer which is which.
+
+To use this plugin in Styled Mode your config object should pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-font-loader-react/blob/master/src/types.js) for more details on this data structure)
 
 ```js
 {
-  withStyleOverloads: true,
   'Lato': [
     {
       urls: {
@@ -159,7 +160,7 @@ To use this plugin in Styled Mode your config object should have `withStyleOverl
 
 ```ts
 type ConfigType = {
-  withStyleOverloads: boolean, // set to true for styled mode
+  withStyleOverloads?: boolean, // deprecated: optionally set to true for styled mode
   fonts: {
     [string]: Array<{
       urls:   {woff?: string, woff2: string},
@@ -181,7 +182,7 @@ For example, if you're using the `Lato` font family, you can preload `Lato-Regul
 
 ## Performance Mode Config
 
-To use the font loader in performance mode `withStyleOverloads` should be omited (or set to `false`). The `fonts` object should contain an property for each font name. Each entry includes a `urls` property (referencing the font file paths) and (optionally) a `fallback` property. Finally you need to specify a `preloadDepth` which tells the font loader how many levels of fallbacks to preload.
+The `fonts` object should contain an property for each font name. Each entry includes a `urls` property (referencing the font file paths) and (optionally) a `fallback` property. Finally you need to specify a `preloadDepth` which tells the font loader how many levels of fallbacks to preload.
 
 ```js
 // src/font-config.js
@@ -265,7 +266,7 @@ Use this when page load performance is more important than font-load smoothness
 ```ts
 type ConfigType = {
   preloadDepth?: number, // default 0
-  withStyleOverloads?: boolean, // default false
+  withStyleOverloads?: boolean, // deprecated: defaults to false
   fonts: {
     [string]: {
       urls:   {woff?: string, woff2: string},
@@ -280,9 +281,31 @@ type ConfigType = {
 };
 ```
 
+## Using useFontLoading Hook
+
+To use the font loader in performance mode you can take davanatge of the `useFontLoading` react hook that comes with this package.
+
+```js
+export default function Hello() {
+  const fontStyles = useFontLoading('Lato-Bold');
+  const [css] = useStyletron();
+  const header = css({
+    fontWeight: '100',
+    fontSize: '96px',
+    margin: '0px',
+    ...fontStyles,
+  });
+  return (
+    <div>
+      <h1 className={header}>Welcome</h1>
+    </div>
+  );
+}
+```
+
 ## Using withFontLoading HOC
 
-To use the font loader in performance mode you should wrap styletron directives in the `withFontLoading` higher order component that comes with this package.
+Alternatively you can use an HOC:
 
 ```js
 import {withFontLoading} from 'fusion-plugin-font-loader-react';
@@ -313,6 +336,8 @@ const hoc: HOC = withFontLoading((font: string));
 - `font: string` - The name of the font whose loading should be managed by the plugin
 - returns `hoc: Component => Component`
 
+This will work identically to the `withFontLoadingHOC`, including dynamically switching between fallback font and true font based on what is currently loaded.
+
 ## How Performance Mode Works
 
 1. An in-memory font fallback tree is generated at runtime based on the defintitions provided in `font-config.js`
@@ -337,4 +362,8 @@ When the true font is loaded the font loader removes font styles and switches th
   fontFamily: 'Lato-Bold',
 }
 ```
+
+## Mixed Mode Config
+
+As of version 2.2.0 you can mix styled mode and performance mode descriptors in the same config file. Fusion will infer which is which.
 

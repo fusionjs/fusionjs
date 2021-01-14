@@ -1,9 +1,0 @@
-{
-  "name": "@uber/c",
-  "version": "0.0.0",
-  "dependencies": {
-    "@uber/b": "0.0.0",
-    "has": "^1.0.3",
-    "no-bugs": "npm:function-bind"
-  }
-}

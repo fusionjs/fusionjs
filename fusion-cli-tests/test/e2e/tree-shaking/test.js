@@ -6,7 +6,7 @@ const path = require('path');
 
 const fs = require('fs');
 const {promisify} = require('util');
-const request = require('request-promise');
+const request = require('axios');
 
 const readdir = promisify(fs.readdir);
 
@@ -20,9 +20,9 @@ test('`fusion dev` works with fs', async () => {
   const app = dev(dir);
   await app.setup();
   const url = app.url();
-  const res = await request(`${url}/fs`);
+  const {data: res} = await request(`${url}/fs`);
   t.ok(res.includes('writeFile'), 'supports fs api on the server');
-  const mainRes = await request(`${url}/_static/client-main.js`);
+  const {data: mainRes} = await request(`${url}/_static/client-main.js`);
   t.ok(
     mainRes.includes('node-libs-browser/mock/empty.js'),
     'includes empty fs for browser in dev'

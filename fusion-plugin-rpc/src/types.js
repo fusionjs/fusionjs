@@ -15,6 +15,7 @@ import {
   RPCHandlersToken,
   BodyParserOptionsToken,
   RPCHandlersConfigToken,
+  RPCQueryParamsToken,
   type HandlerType,
 } from './tokens.js';
 
@@ -28,6 +29,7 @@ export type RPCDepsType = {
   fetch?: typeof FetchToken,
   i18n?: typeof I18nToken.optional,
   rpcConfig?: typeof RPCHandlersConfigToken.optional,
+  queryParams?: typeof RPCQueryParamsToken.optional,
 };
 
 export type RPCScopedServiceType = {

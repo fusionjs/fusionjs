@@ -11,23 +11,26 @@
 // brotli compressor (gzip alternative w/ better compression, but less browser support)
 
 const CompressionPlugin = require('compression-webpack-plugin');
-const brotliCompress = require('iltorb').compress;
+const zlib = require('zlib');
 
-module.exports = new CompressionPlugin({
+class NoopPlugin {
+  apply() {}
+}
+
+const BrotliPlugin = new CompressionPlugin({
   filename: '[path].br',
-  algorithm: function(buf, options, callback) {
-    brotliCompress(
-      buf,
-      {
-        mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)
-        quality: 11, // 0 - 11
-        lgwin: 22, // window size
-        lgblock: 0, // block size
-      },
-      callback
-    );
+  algorithm: 'brotliCompress',
+  test: /\.(js|css|html|svg)$/,
+  compressionOptions: {
+    // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
+    level: 11,
   },
-  test: /\.js$/,
   threshold: 0,
   minRatio: 1,
+  deleteOriginalAssets: false,
 });
+
+// Flow internal libdef isn't aware brotli exists yet
+const hasBrotli = (zlib /*: any */).createBrotliCompress !== void 0;
+
+module.exports = hasBrotli ? BrotliPlugin : NoopPlugin;

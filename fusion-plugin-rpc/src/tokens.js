@@ -7,7 +7,7 @@
  */
 
 import {createToken} from 'fusion-core';
-import type {Token} from 'fusion-core';
+import type {Token, Context} from 'fusion-core';
 import type {Options} from 'koa-bodyparser';
 import type {RPCConfigType} from './types';
 
@@ -23,3 +23,7 @@ export const BodyParserOptionsToken: Token<Options> = createToken(
 export const RPCHandlersConfigToken: Token<RPCConfigType> = createToken(
   'RPCHandlersConfigToken'
 );
+
+export const RPCQueryParamsToken: Token<{
+  from: (ctx: Context) => Array<[string, string]>,
+}> = createToken('RPCQueryParamsToken');

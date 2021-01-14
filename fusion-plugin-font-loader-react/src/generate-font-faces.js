@@ -9,37 +9,45 @@
 import toKebabCase from 'just-kebab-case';
 import type {AtomicFontsObjectType, StyledFontsObjectType} from './types';
 
-export function generateAtomicFontFaces(fonts: AtomicFontsObjectType) {
-  const faces = [];
+export function generateFontFaces(
+  fonts: AtomicFontsObjectType | StyledFontsObjectType
+) {
+  // first sort atomic and styled font faces so font-faces will be well ordered
+  const atomicDescriptors = [];
+  const styledDescriptors = [];
   Object.keys(fonts).forEach(fontName => {
     const font = fonts[fontName];
-    if (font) {
-      faces.push(
-        `@font-face {
-          font-family: "${fontName}";
-          font-display: fallback;
-          src: ${String(asFontFaceSrc(font.urls))};
-        }`
-      );
+    if (Array.isArray(font)) {
+      styledDescriptors.push({fontName, font});
+    } else if (font) {
+      atomicDescriptors.push({fontName, font});
     }
   });
-  return '\n' + faces.join('\n');
-}
 
-export function generateStyledFontFaces(fonts: StyledFontsObjectType) {
-  const faces = [];
-  Object.keys(fonts).forEach(fontName => {
-    fonts[fontName].forEach(fontInstance => {
-      faces.push(
-        `@font-face {
+  const atomicFaces = atomicDescriptors.map(
+    ({fontName, font}) =>
+      `@font-face {
+  font-family: "${fontName}";
+  font-display: fallback;
+  src: ${String(asFontFaceSrc(font.urls))};
+}`
+  );
+
+  const styledFaces = [];
+  styledDescriptors.forEach(({fontName, font}) =>
+    styledFaces.push(
+      ...font.map(
+        fontInstance =>
+          `@font-face {
 font-family: "${fontName}";
 font-display: fallback;
 src: ${asFontFaceSrc(fontInstance.urls).join(',\n')};
 ${asFontFaceStyles(fontInstance.styles).join('')}}`
-      );
-    });
-  });
-  return '\n' + faces.join('\n');
+      )
+    )
+  );
+
+  return '\n' + atomicFaces.concat(styledFaces).join('\n');
 }
 
 function asFontFaceSrc(urls) {

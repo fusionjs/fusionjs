@@ -3,7 +3,7 @@
 
 const t = require('assert');
 const path = require('path');
-const request = require('request-promise');
+const request = require('axios');
 const {printSchema, buildASTSchema} = require('graphql/utilities');
 const {validate} = require('graphql/validation');
 
@@ -11,12 +11,8 @@ const puppeteer = require('puppeteer');
 
 const {cmd, start} = require('../utils.js');
 
-const runnerPath = require.resolve('fusion-cli/bin/cli-runner');
 const jestConfigPath = require.resolve('fusion-cli/build/jest/jest-config.js');
 const countTests = require('../test-jest-app/fixture/src/count-tests');
-
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
 
 const dev = require('../setup.js');
 
@@ -30,10 +26,8 @@ test('`fusion dev` works with gql', async () => {
   const url = app.url();
 
   try {
-    const serverSchema = buildASTSchema(
-      JSON.parse(await request(`${url}/schema`))
-    );
-    const serverQuery = JSON.parse(await request(`${url}/query`));
+    const serverSchema = buildASTSchema((await request(`${url}/schema`)).data);
+    const serverQuery = (await request(`${url}/query`)).data;
     expect(validate(serverSchema, serverQuery)).toHaveLength(0);
     expect(printSchema(serverSchema)).toMatchInlineSnapshot(`
 "type Query {
@@ -74,16 +68,14 @@ type User {
 
 test('`fusion build --production` works with gql', async () => {
   let browser;
-  await await cmd(`build --dir=${dir} --production`);
+  await cmd(`build --dir=${dir} --production`);
   const {proc, port} = await start(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {NODE_ENV: 'production'}),
   });
   const url = `http://localhost:${port}`;
   try {
-    const serverSchema = buildASTSchema(
-      JSON.parse(await request(`${url}/schema`))
-    );
-    const serverQuery = JSON.parse(await request(`${url}/query`));
+    const serverSchema = buildASTSchema((await request(`${url}/schema`)).data);
+    const serverQuery = (await request(`${url}/query`)).data;
     expect(validate(serverSchema, serverQuery)).toHaveLength(0);
     expect(printSchema(serverSchema)).toMatchInlineSnapshot(`
 "type Query {
@@ -128,17 +120,17 @@ type User {
 });
 
 test('`fusion test` with gql macro', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath}`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath}`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });
 
 test('`fusion test` coverage with gql', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --coverage`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
-  const response = await exec(`node -e "${cmd}"`);
+  const response = await cmd(
+    `test --dir=${dir} --configPath=${jestConfigPath} --coverage`,
+    {stdio: 'pipe'}
+  );
   t.equal(countTests(response.stderr), 2, 'ran 2 tests');
 });

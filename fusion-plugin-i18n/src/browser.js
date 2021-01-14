@@ -97,7 +97,14 @@ const pluginFactory: () => PluginType = () =>
               }`,
               fetchOpts
             )
-              .then(r => r.json())
+              .then(r => {
+                try {
+                  return r.json();
+                } catch (err) {
+                  events && events.emit('i18n-load-error', {text: r.text()});
+                  throw err;
+                }
+              })
               .then((data: {[string]: string}) => {
                 for (const key in data) {
                   this.translations[key] = data[key];
@@ -111,7 +118,6 @@ const pluginFactory: () => PluginType = () =>
                 unloaded.forEach(key => {
                   this.requestedKeys.delete(key);
                 });
-                throw err;
               });
           }
         }

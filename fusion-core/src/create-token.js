@@ -7,6 +7,7 @@
  */
 
 import type {Token} from './types.js';
+import {captureStackTrace} from './stack-trace.js';
 
 export const TokenType = Object.freeze({
   Required: 0,
@@ -27,7 +28,7 @@ export class TokenImpl<TResolved> {
     this.name = name;
     this.ref = ref || new Ref();
     this.type = ref ? TokenType.Optional : TokenType.Required;
-    this.stacks = [{type: 'token', stack: new Error().stack}];
+    this.stacks = [{type: 'token', stack: captureStackTrace(createToken)}];
     if (!ref) {
       this.optional = new TokenImpl(name, this.ref);
     }

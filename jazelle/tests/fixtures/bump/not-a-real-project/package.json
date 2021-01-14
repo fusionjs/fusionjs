@@ -1,7 +1,0 @@
-{
-  "name": "not-a-real-project",
-  "version": "0.0.0",
-  "dependencies": {
-    "not-a-real-dep": "0.0.0"
-  }
-}

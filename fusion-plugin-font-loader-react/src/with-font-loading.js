@@ -34,11 +34,11 @@ const withFontLoading = (fontName: string) => {
 
     function FontLoader(props: any, ref: any) {
       const mounted: {current: ?boolean} = useRef(null);
-      const getFontDetails = useService(FontLoaderReactToken);
+      // $FlowFixMe
+      const {getFontDetails} = useService(FontLoaderReactToken);
       if (typeof getFontDetails !== 'function') {
         throw new Error(
-          `withFontLoading not supported. This might be because you set \`withStyleOverloads\`
-    to true in the font loader config`
+          `withFontLoading not supported. This might be because you only have styled fonts (see https://github.com/fusionjs/fusionjs/blob/master/fusion-plugin-font-loader-react/README.md#styled-mode)`
         );
       }
       const {fallbackName, styles} = getFontDetails(fontName);

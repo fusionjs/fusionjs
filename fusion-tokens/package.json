@@ -2,17 +2,12 @@
   "name": "fusion-tokens",
   "description": "Dependency injection tokens for FusionJS",
   "version": "0.0.0-monorepo",
-  "files": [
-    "src/",
-    "dist-*/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-flow-strip-types": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
@@ -21,38 +16,44 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
-    "prettier": "^1.19.1",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1"
   },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint . --ignore-path .gitignore",
-    "test": "jest",
-    "view-cover": "npm run cover && open coverage/index.html",
-    "prepublish": "npm run build",
-    "build": "npm run clean && cup-build",
-    "flow": "flow"
-  },
-  "license": "MIT",
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
+  "files": [
+    "dist-*/",
+    "src/"
+  ],
   "homepage": "https://fusionjs.com/api/fusion-tokens",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo"
+  },
   "repository": {
     "directory": "fusion-tokens",
     "type": "git",
     "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "npm run clean && cup-build",
+    "clean": "cup-clean",
+    "flow": "flow",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
+    "test": "jest",
+    "view-cover": "npm run cover && open coverage/index.html"
   },
   "sideEffects": false
 }

@@ -12,6 +12,7 @@ const baseJestConfig = require('../base-jest-config.js');
 
 module.exports = {
   ...baseJestConfig,
+  resolver: require.resolve('../resolver.js'),
   displayName: 'node',
   browser: false,
   name: 'node',

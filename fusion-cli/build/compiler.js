@@ -126,6 +126,7 @@ type CompilerOpts = {
   modernBuildOnly?: boolean,
   maxWorkers?: number,
   skipSourceMaps?: boolean,
+  command?: 'dev' | 'build',
 };
 */
 
@@ -143,6 +144,7 @@ function Compiler(
     modernBuildOnly = false,
     skipSourceMaps = false,
     maxWorkers,
+    command,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const root = path.resolve(dir);
@@ -190,6 +192,8 @@ function Compiler(
     brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
     minify,
     worker,
+    command,
+    onBuildEnd: fusionConfig.onBuildEnd,
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),

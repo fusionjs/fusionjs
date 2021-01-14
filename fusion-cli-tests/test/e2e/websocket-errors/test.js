@@ -3,7 +3,7 @@
 
 const path = require('path');
 const WebSocket = require('ws');
-const request = require('request-promise');
+const request = require('axios');
 
 const {dev, cmd, start} = require('../utils.js');
 

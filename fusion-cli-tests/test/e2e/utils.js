@@ -10,7 +10,7 @@
 
 const {spawn} = require('child_process');
 const getPort = require('get-port');
-const request = require('request-promise');
+const request = require('axios');
 
 const binPath = require.resolve('fusion-cli/bin/cli.js');
 
@@ -24,13 +24,15 @@ function makeCommand(args) /*: Array<string> */ {
   return [args];
 }
 
-function run(args /*: any */, options /*: any */) /*: Promise<{}> */ {
+function run(
+  args /*: any */,
+  options /*: any */
+) /*: Promise<{stderr: string, stdout: string, code?: number}> */ {
   const opts = {
     stdio: 'inherit',
     ...options,
   };
   const child = spawn('node', makeCommand(args), opts);
-  // console.log('SPAWN', args);
   const stdoutLines = [];
   const stderrLines = [];
   const promise = new Promise((resolve, reject) => {
@@ -97,9 +99,9 @@ async function waitForServer(port /*: any */) /*: any */ {
       started = true;
     } catch (e) {
       // Allow returning true for 500 status code errors to test error states
-      if (e.statusCode === 500) {
+      if (e.status === 500) {
         started = true;
-        res = e.response.body;
+        res = e;
       } else {
         numTries++;
       }
@@ -108,7 +110,7 @@ async function waitForServer(port /*: any */) /*: any */ {
   if (!started) {
     throw new Error('Failed to start server');
   }
-  return res;
+  return (res /*: any */).data;
 }
 
 module.exports.start = start;

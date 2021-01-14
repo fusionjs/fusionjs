@@ -47,18 +47,26 @@ module.exports.TestAppRuntime = function(
       }
 
       args = args.concat(['--config', configPath]);
+
+      if (jestArgs.noVerbose) {
+        delete jestArgs.noVerbose;
+      } else {
+        args.push('--verbose');
+      }
+
       Object.keys(jestArgs).forEach(arg => {
         const value = jestArgs[arg];
         if (value && typeof value === 'boolean') {
           args.push(`--${arg}`);
+        }
+        if (typeof value === 'number' || typeof value === 'string') {
+          args.push(`--${arg}="${value}"`);
         }
       });
 
       if (match && match.length > 0) {
         args.push(match);
       }
-
-      args.push('--verbose');
       return args;
     };
 

@@ -2,28 +2,16 @@
   "name": "fusion-plugin-node-performance-emitter",
   "description": "A tool for collecting, aggregating, and emitting Node.js performance stats",
   "version": "0.0.0-monorepo",
-  "license": "MIT",
-  "repository": {
-    "directory": "fusion-plugin-node-performance-emitter",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "src/",
-    "dist-*/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
-  "sideEffects": false,
   "dependencies": {
     "assert": "^1.4.1",
-    "gc-stats": "^1.2.1"
+    "gc-stats": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "create-universal-package": "^4.1.0",
@@ -32,45 +20,58 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
-    "prettier": "^1.19.1",
-    "react": "^16.12.0",
     "jest": "^25.1.0",
-    "eslint-plugin-react-hooks": "^2.3.0"
-  },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-universal-events": "0.0.0-monorepo"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint . --ignore-path .gitignore",
-    "test": "jest",
-    "cover-flow": "flow-coverage-report",
-    "prepublish": "npm run build",
-    "build": "npm run clean && cup-build",
-    "flow": "flow"
-  },
-  "flow-coverage-report": {
-    "includeGlob": [
-      "src/**/*.js"
-    ],
-    "type": [
-      "text",
-      "html"
-    ]
+    "prettier": "^1.19.1",
+    "react": "^16.12.0"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "homepage": "https://fusionjs.com/api/fusion-plugin-node-performance-emitter"
+  "files": [
+    "dist-*/",
+    "src/"
+  ],
+  "flow-coverage-report": {
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "html",
+      "text"
+    ]
+  },
+  "homepage": "https://fusionjs.com/api/fusion-plugin-node-performance-emitter",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo"
+  },
+  "repository": {
+    "directory": "fusion-plugin-node-performance-emitter",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "npm run clean && cup-build",
+    "clean": "cup-clean",
+    "cover-flow": "flow-coverage-report",
+    "flow": "flow",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
+    "test": "jest"
+  },
+  "sideEffects": false
 }

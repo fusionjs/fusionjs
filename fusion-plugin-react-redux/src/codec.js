@@ -5,7 +5,14 @@ export function serialize(obj: any) {
 }
 
 export function deserialize(str: string) {
-  return JSON.parse(decode(str));
+  return parseJSONWithUndefined(decode(str));
+}
+
+export function parseJSONWithUndefined(str: string) {
+  if (str === 'undefined') {
+    return undefined;
+  }
+  return JSON.parse(str);
 }
 
 // Escaped characters inside strings can break JSON.parse

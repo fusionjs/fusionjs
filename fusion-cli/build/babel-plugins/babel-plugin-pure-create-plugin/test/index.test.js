@@ -27,17 +27,17 @@ function readExpected(file) {
 test('createPlugin default export', () => {
   const output = getOutput('/fixtures/create-plugin-default-export');
   const expected = readExpected('/fixtures/expected-default-export');
-  t.equal(output, expected);
+  t.equal(output + '\n', expected);
 });
 
 test('createPlugin default and named export', () => {
   const output = getOutput('/fixtures/create-plugin-default-and-named');
   const expected = readExpected('/fixtures/expected-default-and-named');
-  t.equal(output, expected);
+  t.equal(output + '\n', expected);
 });
 
 test('createPlugin default export multiline', () => {
   const output = getOutput('/fixtures/create-plugin-default-multiline');
   const expected = readExpected('/fixtures/expected-default-multiline');
-  t.equal(output, expected);
+  t.equal(output + '\n', expected);
 });

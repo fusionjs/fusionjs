@@ -11,18 +11,6 @@ import type {
   StyledFontsObjectType,
 } from '../../../src/types.js';
 
-export function getFontConfig(
-  withStyleOverloads: boolean,
-  preloadOverrides?: {}
-) {
-  return {
-    withStyleOverloads,
-    preloadDepth: 0,
-    fonts: withStyleOverloads ? styledFonts : atomicFonts,
-    preloadOverrides,
-  };
-}
-
 const atomicFonts: AtomicFontsObjectType = {
   'Lato-Regular': {
     urls: {
@@ -93,3 +81,32 @@ const styledFonts: StyledFontsObjectType = {
     },
   ],
 };
+
+const fontsByType = {
+  styled: styledFonts,
+  atomic: atomicFonts,
+  both: Object.assign({}, atomicFonts, styledFonts),
+};
+
+export function getFontConfig(
+  withStyleOverloads: boolean,
+  preloadOverrides?: {}
+) {
+  return {
+    withStyleOverloads,
+    preloadDepth: 0,
+    fonts: withStyleOverloads ? styledFonts : atomicFonts,
+    preloadOverrides,
+  };
+}
+
+export function getUniversalFontConfig(
+  type?: string = 'both',
+  preloadOverrides?: {}
+) {
+  return {
+    preloadDepth: 0,
+    fonts: fontsByType[type],
+    preloadOverrides,
+  };
+}

@@ -8,9 +8,9 @@
 
 import {createToken} from 'fusion-core';
 
-import type {ConfigTokenType, PluginTokenType} from './types.js';
+import type {ConfigTokenType, FontLoaderPluginType} from './types.js';
 
-export const FontLoaderReactToken: PluginTokenType = createToken(
+export const FontLoaderReactToken: FontLoaderPluginType = createToken(
   'FontLoaderReactToken'
 );
 

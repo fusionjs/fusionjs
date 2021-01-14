@@ -46,6 +46,7 @@ exports.run = async function(
   const env = production ? 'production' : 'development';
 
   const compiler = new Compiler({
+    command: 'build',
     env,
     dir,
     logger,

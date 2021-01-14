@@ -15,19 +15,14 @@ type PluginDepsType = {
   ignored: typeof CsrfIgnoreRoutesToken.optional,
 };
 
-type ServiceType = () => Promise<void>;
-
-const enhancer = (
-  oldFetch: Fetch
-): FusionPlugin<PluginDepsType, ServiceType> => {
+const enhancer = (oldFetch: Fetch): FusionPlugin<PluginDepsType, Fetch> => {
   return createPlugin({
     deps: {
       ignored: CsrfIgnoreRoutesToken.optional,
     },
     provides: deps => {
-      return function serverFetch() {
-        return Promise.reject(new Error('Cannot use fetch on the server'));
-      };
+      // Pass through the old implementation
+      return oldFetch;
     },
     middleware: deps => {
       const {ignored = []} = deps;

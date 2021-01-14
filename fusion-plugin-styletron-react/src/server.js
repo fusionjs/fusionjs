@@ -13,12 +13,9 @@ import fs from 'fs';
 
 import React from 'react';
 import {createPlugin, dangerouslySetHTML} from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
 
 import {Provider as StyletronProvider} from 'styletron-react';
-import {Server as Styletron} from 'styletron-engine-atomic';
 
-import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
 import {workerRoute, wasmRoute, AtomicPrefixToken} from './constants.js';
 
 let workerPath;
@@ -30,42 +27,43 @@ if (__DEV__ && __NODE__) {
   wasmPath = path.resolve(base, 'mappings.wasm');
 }
 
-const StyletronCompat = injectDeclarationCompatMixin(Styletron);
+function getPlugin(getStyletronEngine: any): any {
+  const plugin =
+    __NODE__ &&
+    createPlugin({
+      deps: {
+        prefix: AtomicPrefixToken.optional,
+      },
+      middleware: ({prefix}) => (ctx, next) => {
+        if (__DEV__) {
+          if (ctx.url === workerRoute) {
+            ctx.body = fs.createReadStream(workerPath);
+            return next();
+          }
+          if (ctx.url === wasmRoute) {
+            ctx.body = fs.createReadStream(wasmPath);
+            return next();
+          }
+        }
 
-const plugin =
-  __NODE__ &&
-  createPlugin({
-    deps: {
-      prefix: AtomicPrefixToken.optional,
-    },
-    middleware: ({prefix}) => (ctx, next) => {
-      if (__DEV__) {
-        if (ctx.url === workerRoute) {
-          ctx.body = fs.createReadStream(workerPath);
+        if (ctx.element) {
+          const config = prefix === void 0 ? void 0 : {prefix};
+          const engine = getStyletronEngine(config);
+
+          ctx.element = (
+            <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
+          );
+
+          return next().then(() => {
+            const stylesForHead = engine.getStylesheetsHtml();
+            ctx.template.head.push(dangerouslySetHTML(stylesForHead));
+          });
+        } else {
           return next();
         }
-        if (ctx.url === wasmRoute) {
-          ctx.body = fs.createReadStream(wasmPath);
-          return next();
-        }
-      }
+      },
+    });
+  return plugin;
+}
 
-      if (ctx.element) {
-        const config = prefix === void 0 ? void 0 : {prefix};
-        const engine = new StyletronCompat(config);
-
-        ctx.element = (
-          <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
-        );
-
-        return next().then(() => {
-          const stylesForHead = engine.getStylesheetsHtml();
-          ctx.template.head.push(dangerouslySetHTML(stylesForHead));
-        });
-      } else {
-        return next();
-      }
-    },
-  });
-
-export default ((plugin: any): FusionPlugin<*, *>);
+export default getPlugin;

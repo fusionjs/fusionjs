@@ -69,7 +69,10 @@ export class UniversalEmitter extends Emitter {
     const items = this.storage.getAndClear(this.limit);
     this.storage.addToStart(...items);
 
-    if (items.length === 0) return;
+    if (items.length === 0) {
+      this.finishFlush();
+      return;
+    }
     try {
       const res = await this.fetch('/_events', {
         method: 'POST',

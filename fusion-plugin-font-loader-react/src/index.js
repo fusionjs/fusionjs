@@ -6,6 +6,7 @@
  * @flow
  */
 
+import useFontLoading from './use-font-loading';
 import withFontLoading from './with-font-loading';
 import FontLoaderReactPlugin from './plugin';
 import {FontLoaderReactToken, FontLoaderReactConfigToken} from './tokens';
@@ -16,5 +17,10 @@ import type {
 } from './types';
 
 export default FontLoaderReactPlugin;
-export {withFontLoading, FontLoaderReactToken, FontLoaderReactConfigToken};
+export {
+  useFontLoading,
+  withFontLoading,
+  FontLoaderReactToken,
+  FontLoaderReactConfigToken,
+};
 export type {ConfigType, AtomicFontsObjectType, StyledFontsObjectType};

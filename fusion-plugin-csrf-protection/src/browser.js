@@ -16,7 +16,7 @@ const enhancer = (fetch: Fetch) => {
     if (!options) options = {};
     const isCsrfMethod = verifyMethod(options.method || 'GET');
     if (!isCsrfMethod) {
-      return fetch(url, options);
+      return fetch(prefix + String(url), options);
     }
     return fetch(prefix + String(url), {
       ...options,

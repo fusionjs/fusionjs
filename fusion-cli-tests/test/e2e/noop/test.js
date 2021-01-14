@@ -8,7 +8,7 @@ const fs = require('fs');
 const getPort = require('get-port');
 const getHandler = require('fusion-cli/serverless.js');
 const http = require('http');
-const request = require('request-promise');
+const request = require('axios');
 
 const puppeteer = require('puppeteer');
 
@@ -41,7 +41,7 @@ test('`fusion dev` works', async () => {
 
   const {proc, port} = await dev(`--dir=${dir}`);
   const resp = await request(`http://localhost:${port}/_static/client-main.js`);
-  expect(resp.includes(`longVariableNameForElement`)).toEqual(true);
+  expect(resp.data.includes(`longVariableNameForElement`)).toEqual(true);
   t.ok(await exists(entry), 'Entry file gets compiled');
   proc.kill('SIGKILL');
 });
@@ -154,8 +154,8 @@ test('`fusion build --experimentalServerless` works', async () => {
       accept: 'text/html',
     },
   });
-  t.ok(response);
-  t.ok(renderResponse);
+  t.ok(response.data);
+  t.ok(renderResponse.data);
   server.close();
 }, 100000);
 
@@ -199,7 +199,7 @@ test('`fusion build --experimentalServerless --production` works', async () => {
       accept: 'text/html',
     },
   });
-  t.ok(renderResponse);
+  t.ok(renderResponse.data);
   server.close();
   process.env.NODE_ENV = oldEnv;
 }, 100000);

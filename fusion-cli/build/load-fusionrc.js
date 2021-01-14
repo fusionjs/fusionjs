@@ -16,6 +16,17 @@ const path = require('path');
 
 type BundleResult =  'universal' | 'browser-only';
 type TransformResult = 'all' | 'spec' | 'none';
+type BuildStats = {
+  command: 'dev' | 'build',
+  buildTime: number,
+  mode: 'development' | 'production',
+  path: string,
+  target: string,
+  isIncrementalBuild: boolean,
+  minify: boolean,
+  skipSourceMaps: boolean,
+  watch: boolean,
+};
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   splitChunks?: any,
@@ -30,6 +41,7 @@ export type FusionRC = {
   zopfli?: boolean,
   gzip?: boolean,
   brotli?:boolean,
+  onBuildEnd?:(stats: BuildStats) => void,
 };
 */
 
@@ -72,6 +84,7 @@ function isValid(config, silent) {
         'brotli',
         'zopfli', // TODO: Remove redundant zopfli option
         'gzip',
+        'onBuildEnd',
       ].includes(key)
     )
   ) {
@@ -180,6 +193,10 @@ function isValid(config, silent) {
     throw new Error(
       `Cannot use both defaultImportSideEffects and assumeNoImportSideEffects in .fusionrc.js`
     );
+  }
+
+  if (config.onBuildEnd !== void 0 && typeof config.onBuildEnd !== 'function') {
+    throw new Error('onBuildEnd must be function');
   }
 
   return true;

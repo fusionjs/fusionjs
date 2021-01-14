@@ -1,41 +1,17 @@
 {
   "name": "fusion-plugin-i18n-react",
-  "version": "0.0.0-monorepo",
   "description": "Adds I18n (Internationalization) support to a FusionJS app",
-  "repository": {
-    "directory": "fusion-plugin-i18n-react",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "dist-*/",
-    "singleton.js",
-    "src/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
+  "version": "0.0.0-monorepo",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint src",
-    "test": "jest",
-    "prepublish": "npm run build",
-    "build": "npm run clean && cup-build",
-    "flow": "flow"
   },
   "dependencies": {
     "fusion-plugin-i18n": "0.0.0-monorepo",
     "prop-types": "^15.7.2"
   },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-react": "0.0.0-monorepo",
-    "react": "^16.12.0"
-  },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-modules-commonjs": "^7.5.0",
     "@babel/preset-flow": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
@@ -49,9 +25,10 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
@@ -62,15 +39,39 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "request-promise": "^4.2.4",
-    "unfetch": "^4.1.0",
-    "eslint-plugin-react-hooks": "^2.3.0"
+    "unfetch": "^4.1.0"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
-  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "singleton.js",
+    "src/"
+  ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-i18n-react",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo",
+    "fusion-react": "0.0.0-monorepo",
+    "react": "^16.12.0"
+  },
+  "repository": {
+    "directory": "fusion-plugin-i18n-react",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "npm run clean && cup-build",
+    "clean": "cup-clean",
+    "flow": "flow",
+    "lint": "eslint src",
+    "prepublish": "npm run build",
+    "test": "jest"
+  },
   "sideEffects": false
 }

@@ -3,7 +3,7 @@
 
 const path = require('path');
 
-const request = require('request-promise');
+const request = require('axios');
 
 const {cmd, start} = require('../utils.js');
 
@@ -17,7 +17,7 @@ test('sw bundle works with serialized/deserialized arguments', async () => {
     }),
   });
 
-  const result = await request(`http://localhost:${port}/sw.js`);
+  const {data: result} = await request(`http://localhost:${port}/sw.js`);
   expect(eval(result)).toStrictEqual([{foo: 'bar'}, 'browser.es2017.es.js']); // 'arguments serialized/deserialized correctly'
 
   proc.kill('SIGKILL');

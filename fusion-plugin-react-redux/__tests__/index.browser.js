@@ -24,6 +24,8 @@ import {
   ReduxDevtoolsConfigToken,
 } from '../src/tokens.js';
 
+import {serialize} from '../src/codec';
+
 Enzyme.configure({adapter: new Adapter()});
 
 /* Test fixtures */
@@ -115,6 +117,19 @@ test('browser with preloadedState and a __REDUX_STATE__ element', () => {
   expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
   store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
+  document.body && document.body.removeChild(reduxState);
+});
+
+test('browser with undefined __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reduxState = document.createElement('script');
+  reduxState.setAttribute('type', 'application/json');
+  reduxState.setAttribute('id', '__REDUX_STATE__');
+  reduxState.textContent = serialize(undefined);
+  document.body && document.body.appendChild(reduxState);
+  const reducer = state => state;
+  const {store} = getService(appCreator(reducer), Redux).from();
+  expect(store.getState()).toStrictEqual(undefined);
   document.body && document.body.removeChild(reduxState);
 });
 

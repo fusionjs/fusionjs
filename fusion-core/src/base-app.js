@@ -1,7 +1,5 @@
 /** Copyright (c) 2018 Uber Technologies, Inc.
  *
-
-
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
@@ -17,6 +15,7 @@ import {
 } from './tokens';
 import {SSRDecider} from './plugins/ssr';
 import RouteTagsPlugin from './plugins/route-tags';
+import {captureStackTrace, DIError} from './stack-trace.js';
 
 import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
@@ -62,26 +61,33 @@ class FusionApp {
       : createToken('UnnamedPlugin');
     const value: any = hasToken ? maybeValue : tokenOrValue;
     if (!hasToken && (value == null || !value.__plugin__)) {
-      throw new Error(
-        __DEV__
+      throw new DIError({
+        message: __DEV__
           ? `Cannot register ${String(
               tokenOrValue
             )} without a token. Did you accidentally register a ${
               __NODE__ ? 'browser' : 'server'
             } plugin on the ${__NODE__ ? 'server' : 'browser'}?`
-          : 'Invalid configuration registration'
-      );
+          : 'Invalid configuration registration',
+        errorDoc: 'value-without-token',
+        caller: this.register,
+      });
     }
     // the renderer is a special case, since it needs to be always run last
     if (token === RenderToken) {
       this.renderer = value;
-      return {
-        alias: () => {
-          throw new Error('Aliasing for RenderToken not supported.');
-        },
+      const alias = () => {
+        throw new DIError({
+          message: 'Aliasing for RenderToken not supported',
+          caller: alias,
+        });
       };
+      return {alias};
     }
-    token.stacks.push({type: 'register', stack: new Error().stack});
+    token.stacks.push({
+      type: 'register',
+      stack: captureStackTrace(this.register),
+    });
     if (value && value.__plugin__) {
       token.stacks.push({type: 'plugin', stack: value.stack});
     }
@@ -107,7 +113,7 @@ class FusionApp {
       token,
     });
     const alias = (sourceToken, destToken) => {
-      const stack = new Error().stack;
+      const stack = captureStackTrace(alias);
       sourceToken.stacks.push({type: 'alias-from', stack});
       destToken.stacks.push({type: 'alias-to', stack});
       this._dependedOn.add(getTokenRef(destToken));
@@ -125,7 +131,10 @@ class FusionApp {
     this.register(createPlugin({deps, middleware}));
   }
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function) {
-    token.stacks.push({type: 'enhance', stack: new Error().stack});
+    token.stacks.push({
+      type: 'enhance',
+      stack: captureStackTrace(this.enhance),
+    });
     const {value, aliases, enhancers} = this.registered.get(
       getTokenRef(token)
     ) || {
@@ -173,7 +182,12 @@ class FusionApp {
 
       // Base: if currently resolving the same type, we have a circular dependency
       if (resolving.has(getTokenRef(token))) {
-        throw new Error(`Cannot resolve circular dependency: ${token.name}`);
+        const registerStack = token.stacks.find(t => t.type === 'register');
+        throw new DIError({
+          message: `Cannot resolve circular dependency: ${token.name}`,
+          errorDoc: 'circular-dependencies',
+          stack: registerStack && registerStack.stack,
+        });
       }
 
       // Base: the type was never registered, throw error or provide undefined if optional
@@ -222,32 +236,31 @@ class FusionApp {
           ...findDependentEnhancers(),
         ];
 
-        const base =
-          'A plugin depends on a token, but the token was not registered';
-        const downstreams =
-          'This token is required by plugins registered with tokens: ' +
-          dependentTokens.map(token => `"${token}"`).join(', ');
-        const stack = token.stacks.find(t => t.type === 'token');
-        const meta = `Required token: ${
-          token ? token.name : ''
-        }\n${downstreams}\n${stack ? stack.stack : ''}`;
-        const clue = 'Different tokens with the same name were detected:\n\n';
-        const suggestions = token
-          ? this.plugins
-              .filter(p => p.name === token.name)
-              .map(p => {
-                const stack = p.stacks.find(t => t.type === 'token');
-                return `${p.name}\n${stack ? stack.stack : ''}\n\n`;
-              })
-              .join('\n\n')
-          : '';
-        const help =
-          'You may have multiple versions of the same plugin installed.\n' +
-          'Ensure that `yarn list [the-plugin]` results in one version, ' +
-          'and use a yarn resolution or merge package version in your lock file to consolidate versions.\n\n';
-        throw new Error(
-          `${base}\n\n${meta}\n\n${suggestions && clue + suggestions + help}`
-        );
+        const duplicates = this.plugins
+          .filter(p => p.name === token.name)
+          .map(p => {
+            const stack = p.stacks.find(t => t.type === 'token');
+            return stack.stack;
+          });
+        const tokenStack = token.stacks.find(t => t.type === 'token');
+        if (duplicates.length) {
+          // Note: Update when string token equality is implemented
+          throw new DIError({
+            message: `Missing registration for token "${token.name}". Other tokens with this name have been registered`,
+            stack: tokenStack && tokenStack.stack,
+            errorDoc: 'duplicate-token-names',
+          });
+        } else {
+          const dependentList = dependentTokens
+            .map(token => `"${token}"`)
+            .join(', ');
+          const plural = dependentTokens.length > 1 ? 's' : '';
+          throw new DIError({
+            message: `Missing registration for token "${token.name}". Token is required dependency of plugins registered to ${dependentList} token${plural}`,
+            stack: tokenStack && tokenStack.stack,
+            errorDoc: 'missing-registration',
+          });
+        }
       }
 
       // Recursive: get the registered type and resolve it
@@ -314,9 +327,12 @@ class FusionApp {
         token !== RenderToken &&
         !this._dependedOn.has(getTokenRef(token))
       ) {
-        throw new Error(
-          `Registered token without depending on it: "${token.name}". See https://github.com/fusionjs/fusionjs/tree/master/fusion-core#registered-without-depending.`
-        );
+        const registerStack = token.stacks.find(t => t.type === 'register');
+        throw new DIError({
+          message: `Registered token without depending on it: ${token.name}`,
+          errorDoc: 'registered-without-depending',
+          stack: registerStack && registerStack.stack,
+        });
       }
     }
 
@@ -325,7 +341,10 @@ class FusionApp {
   }
   getService<TResolved>(token: Token<TResolved>): any {
     if (!this._getService) {
-      throw new Error('Cannot get service from unresolved app');
+      throw new DIError({
+        message: 'Cannot get service from unresolved app',
+        caller: this.getService,
+      });
     }
     return this._getService(token);
   }

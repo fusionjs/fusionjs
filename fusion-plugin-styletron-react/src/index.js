@@ -16,11 +16,18 @@ import {
 
 import {AtomicPrefixToken} from './constants.js';
 
-import server from './server';
-import browser from './browser';
+import serverAtomic from './server-atomic';
+import serverMonolithic from './server-monolithic';
+import browserAtomic from './browser-atomic';
+import browserMonolithic from './browser-monolithic';
 
 declare var __NODE__: Boolean;
 
-export default __NODE__ ? server : browser;
+const StyletronMonolithicPlugin = __NODE__
+  ? serverMonolithic
+  : browserMonolithic;
+
+export default __NODE__ ? serverAtomic : browserAtomic;
 export {styled, withStyle, withStyleDeep, withTransform, withWrapper};
 export {AtomicPrefixToken};
+export {StyletronMonolithicPlugin};

@@ -18,7 +18,7 @@ import {I18nToken} from 'fusion-plugin-i18n';
 import RPCPlugin from '../src/browser.js';
 import type {IEmitter} from '../src/types.js';
 import createMockEmitter from './create-mock-emitter';
-import {RPCHandlersConfigToken} from '../src/tokens.js';
+import {RPCHandlersConfigToken, RPCQueryParamsToken} from '../src/tokens.js';
 
 const MockPluginToken: Token<any> = createToken('test-plugin-token');
 function createTestFixture() {
@@ -74,6 +74,56 @@ test('success status request', done => {
           .request('test')
           .then(([url, options]) => {
             expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
+            done();
+          })
+          .catch(e => {
+            // $FlowFixMe
+            done.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  expect(wasResolved).toBeTruthy();
+});
+
+test('success status request with additional query params', done => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
+    },
+  });
+  const app = createTestFixture();
+  app.register(UniversalEventsToken, mockEmitter);
+  app.register(RPCQueryParamsToken, {
+    from() {
+      return [['hello', 'world']];
+    },
+  });
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
+        rpc
+          .request('test')
+          .then(([url, options]) => {
+            expect(url).toBe('/api/test?hello=world&localeCode=el-GR');
             expect(options.method).toBe('POST');
             expect(options.headers['Content-Type']).toBe('application/json');
             expect(options.body).toBe('{}');
@@ -199,6 +249,53 @@ test('success status request w/args and header', done => {
             expect(options.method).toBe('POST');
             expect(options.headers['Content-Type']).toBe('application/json');
             expect(options.headers['test-header']).toBe('header value');
+            expect(options.body).toBe('{"args":1}');
+            done();
+          })
+          .catch(e => {
+            // $FlowFixMe
+            done.fail(e);
+          });
+
+        wasResolved = true;
+      },
+    })
+  );
+
+  expect(wasResolved).toBeTruthy();
+});
+
+test('success status request w/args and options', done => {
+  const mockEmitter = createMockEmitter({
+    emit(type, payload) {
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
+    },
+  });
+  const app = createTestFixture();
+  // $FlowFixMe
+  app.register(UniversalEventsToken, mockEmitter);
+
+  let wasResolved = false;
+  getSimulator(
+    app,
+    createPlugin({
+      deps: {rpcFactory: MockPluginToken},
+      provides: deps => {
+        const rpc = deps.rpcFactory.from({
+          memoized: new Map(),
+        });
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
+        rpc
+          .request('test', {args: 1}, null, {credentials: 'omit'})
+          .then(([url, options]) => {
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.credentials).toBe('omit');
             expect(options.body).toBe('{"args":1}');
             done();
           })

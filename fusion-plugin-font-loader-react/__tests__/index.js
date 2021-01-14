@@ -6,19 +6,20 @@
  * @flow
  */
 
-import {getFontConfig} from './fixtures/static/font-config';
+import {
+  getFontConfig,
+  getUniversalFontConfig,
+} from './fixtures/static/font-config';
 import {
   fallbackLookup as expectedFallbackLookup,
   atomicFontFaces as expectedAtomicFontFaces,
   styledFontFaces as expectedStyledFontFaces,
+  mixedFontFaces as expectedMixedFontFaces,
   preloadLinks as expectedPreloadLinks,
 } from './fixtures/expected';
 
 import generateFallbackMap from '../src/generate-fallback-map';
-import {
-  generateAtomicFontFaces,
-  generateStyledFontFaces,
-} from '../src/generate-font-faces';
+import {generateFontFaces} from '../src/generate-font-faces';
 import type {AtomicFontsObjectType, StyledFontsObjectType} from '../src/types';
 import generatePreloadLinks from '../src/generate-preload-links';
 
@@ -35,20 +36,32 @@ test('generateFallbackMap with atomic config', () => {
   );
 });
 
-test('generateAtomicFontFaces', () => {
+test('generateAtomicFontFaces using withStyleOverloads flag', () => {
   const atomicFonts: AtomicFontsObjectType = (getFontConfig(false).fonts: any);
-  equalWithoutSpaces(
-    generateAtomicFontFaces(atomicFonts),
-    expectedAtomicFontFaces
-  );
+  equalWithoutSpaces(generateFontFaces(atomicFonts), expectedAtomicFontFaces);
 });
 
-test('generateStyledFontFaces', () => {
+test('generateStyledFontFaces using withStyleOverloads flag', () => {
   const styledFonts: StyledFontsObjectType = (getFontConfig(true).fonts: any);
-  equalWithoutSpaces(
-    generateStyledFontFaces(styledFonts),
-    expectedStyledFontFaces
-  );
+  equalWithoutSpaces(generateFontFaces(styledFonts), expectedStyledFontFaces);
+});
+
+test('generateAtomicFontFaces using inferrence', () => {
+  const atomicFonts: AtomicFontsObjectType = (getUniversalFontConfig('atomic')
+    .fonts: any);
+  equalWithoutSpaces(generateFontFaces(atomicFonts), expectedAtomicFontFaces);
+});
+
+test('generateStyledFontFaces using inferrence', () => {
+  const styledFonts: StyledFontsObjectType = (getUniversalFontConfig('styled')
+    .fonts: any);
+  equalWithoutSpaces(generateFontFaces(styledFonts), expectedStyledFontFaces);
+});
+
+test('generateMixedFontFaces using inferrence', () => {
+  const styledFonts: StyledFontsObjectType = (getUniversalFontConfig()
+    .fonts: any);
+  equalWithoutSpaces(generateFontFaces(styledFonts), expectedMixedFontFaces);
 });
 
 test('generatePreloadLinks', () => {

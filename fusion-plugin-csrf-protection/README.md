@@ -4,7 +4,7 @@
 
 Provides a modified `fetch` that is automatically secure against CSRF attacks for non-idempotent HTTP methods.
 
-This enhancer handles csrf protection by adding a server side middleware that checks for a valid csrf token on
+This enhancer handles CSRF protection by adding a server side middleware that checks for a valid CSRF token on
 requests for non-idempotent HTTP methods (e.g. POST).
 ---
 
@@ -91,21 +91,22 @@ See `useService` docs in `fusion-react` for more information.
 
 #### Registration API
 
-##### `CsrfProtection`
+##### `CsrfProtectionEnhancer`
 
 ```js
-import CsrfProtection from 'fusion-plugin-csrf-protection';
+import CsrfProtectionEnhancer from 'fusion-plugin-csrf-protection';
 ```
 
-The csrf protection plugin. Typically, it should be registered to the [`FetchToken`](#fetchtoken). Provides the [fetch api](#service-api) and
-a server side middleware for validating csrf requests.
+The CSRF protection enhancer. Typically, it should be used to enhance the [`FetchToken`](#fetchtoken).
+
+This enhances the `FetchToken` and provides the [fetch api](#service-api) and a server side middleware for validating CSRF requests.
 
 ##### `FetchToken`
 
 ```js
 import {FetchToken} from 'fusion-tokens';
 ```
-The canonical token for an implementation of `fetch`. This plugin is generally registered on that token.
+The canonical token for an implementation of `fetch`. This CSRF plugin is generally registered as an enhancer on that token.
 For more, see [the fusion-tokens repo](https://github.com/fusionjs/fusionjs/tree/master/fusion-tokens#fetchtoken).
 
 #### Dependencies

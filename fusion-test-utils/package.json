@@ -2,23 +2,18 @@
   "name": "fusion-test-utils",
   "description": "Test utilities for FusionJS",
   "version": "0.0.0-monorepo",
-  "license": "MIT",
-  "repository": {
-    "directory": "fusion-test-utils",
-    "type": "git",
-    "url": "https://github.com/fusionjs/fusionjs"
-  },
-  "files": [
-    "src/",
-    "dist-*/"
-  ],
-  "main": "./dist-node-cjs/index.js",
-  "module": "./dist-node-esm/index.js",
   "browser": {
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
+  "dependencies": {
+    "assert": "^1.4.1",
+    "express": "^4.16.4",
+    "koa": "^2.7.0",
+    "node-mocks-http": "^1.7.5"
+  },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-flow-strip-types": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
@@ -29,39 +24,45 @@
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^4.6.0",
     "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-react-hooks": "^4.1.0",
+    "express": "^4.16.4",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
-    "jest": "^25.1.0",
-    "prettier": "^1.19.1",
     "fusion-plugin-http-handler": "0.0.0-monorepo",
-    "express": "^4.16.4"
-  },
-  "scripts": {
-    "clean": "cup-clean",
-    "lint": "eslint . --ignore-path .gitignore",
-    "test": "jest",
-    "prepublish": "npm run build",
-    "build": "npm run clean && cup-build",
-    "flow": "flow"
-  },
-  "dependencies": {
-    "assert": "^1.4.1",
-    "koa": "^2.7.0",
-    "node-mocks-http": "^1.7.5",
-    "express": "^4.16.4"
-  },
-  "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1"
   },
   "engines": {
     "node": ">=8.9.4",
     "npm": ">=5.0.0",
     "yarn": ">=1.0.0"
   },
+  "files": [
+    "dist-*/",
+    "src/"
+  ],
   "homepage": "https://fusionjs.com/api/fusion-test-utils",
+  "license": "MIT",
+  "main": "./dist-node-cjs/index.js",
+  "module": "./dist-node-esm/index.js",
+  "peerDependencies": {
+    "fusion-core": "0.0.0-monorepo"
+  },
+  "repository": {
+    "directory": "fusion-test-utils",
+    "type": "git",
+    "url": "https://github.com/fusionjs/fusionjs"
+  },
+  "scripts": {
+    "build": "npm run clean && cup-build",
+    "clean": "cup-clean",
+    "flow": "flow",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
+    "test": "jest"
+  },
   "sideEffects": false
 }

@@ -12,64 +12,57 @@ import {createPlugin, html, dangerouslySetHTML} from 'fusion-core';
 import PreloadSession from './preload-session';
 import generateFallbackMap from './generate-fallback-map';
 import generatePreloadLinks from './generate-preload-links';
-import {
-  generateAtomicFontFaces,
-  generateStyledFontFaces,
-} from './generate-font-faces';
+import {generateFontFaces} from './generate-font-faces';
 import {FontLoaderReactConfigToken as ConfigToken} from './tokens';
-import type {
-  PluginType,
-  AtomicFontsObjectType,
-  StyledFontsObjectType,
-} from './types.js';
+import type {PluginType, AtomicFontsObjectType} from './types.js';
 
 let preloadSession;
 
+// TODO dedupe etc.
 const plugin = createPlugin({
   deps: {
     config: ConfigToken,
   },
   provides: ({config}) => {
-    if (!preloadSession) {
-      const {fonts, preloadDepth} = config;
-      const atomicFonts: AtomicFontsObjectType = (fonts: any);
+    const {fonts, preloadDepth} = config;
+    let hasAtomicFonts = false;
+    const atomicFonts: AtomicFontsObjectType = Object.keys(fonts).reduce(
+      (result, fontName) => {
+        const thisFont = fonts[fontName];
+        if (!Array.isArray(thisFont)) {
+          hasAtomicFonts = true;
+          result[fontName] = thisFont;
+        }
+        return result;
+      },
+      {}
+    );
+    if (hasAtomicFonts) {
       const fallbackLookup = generateFallbackMap(
         atomicFonts,
         preloadDepth || 0
       );
       preloadSession = new PreloadSession(fallbackLookup);
+      return {
+        getFontDetails: preloadSession.getFontDetails,
+        atomicFonts,
+      };
     }
-    return preloadSession.getFontDetails;
+    return {getFontDetails: null, atomicFonts: null};
   },
-  middleware: ({config}) => {
-    const {fonts, preloadDepth, withStyleOverloads, preloadOverrides} = config;
-    const atomicFonts: AtomicFontsObjectType = (fonts: any);
-    const styledFonts: StyledFontsObjectType = (fonts: any);
-    if (!preloadSession) {
-      const fallbackLookup = generateFallbackMap(
-        atomicFonts,
-        preloadDepth || 0
-      );
-      preloadSession = new PreloadSession(fallbackLookup);
-    }
+  middleware: ({config}, {atomicFonts}) => {
+    const {fonts, preloadOverrides} = config;
 
     return (ctx, next) => {
       if (ctx.element) {
         return next().then(() => {
           if (__NODE__) {
             ctx.template.head.push(html`<style>`);
-            if (withStyleOverloads) {
-              ctx.template.head.push(
-                dangerouslySetHTML(generateStyledFontFaces(styledFonts))
-              );
-            } else {
-              ctx.template.head.push(
-                dangerouslySetHTML(generateAtomicFontFaces(atomicFonts))
-              );
-            }
+            ctx.template.head.push(
+              dangerouslySetHTML(generateFontFaces(fonts))
+            );
             ctx.template.head.push(html`</style>`);
-            if (!withStyleOverloads) {
-              const atomicFonts: AtomicFontsObjectType = (fonts: any);
+            if (atomicFonts) {
               ctx.template.head.push(
                 dangerouslySetHTML(
                   generatePreloadLinks(
