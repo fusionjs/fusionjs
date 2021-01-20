@@ -10,8 +10,10 @@
     "redux-reactors": "^1.0.3"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
     "eslint": "^6.8.0",
@@ -51,11 +53,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
     "lint": "eslint .",
-    "prepublish": "npm run build",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

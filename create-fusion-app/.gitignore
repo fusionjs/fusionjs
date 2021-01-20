@@ -1,6 +1,0 @@
-node_modules/
-yarn-error.log
-test-artifacts/
-
-package-deps.json
-*.build.log

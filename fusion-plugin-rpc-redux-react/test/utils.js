@@ -11,7 +11,7 @@ import puppeteer from 'puppeteer';
 import getPort from 'get-port';
 import child_process from 'child_process';
 import {promisify} from 'util';
-import request from 'request-promise';
+import axios from 'axios';
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
@@ -78,7 +78,7 @@ export const Runtime = class Runtime {
   }
   request(path) {
     const url = `${this.url}${path.startsWith('/') ? path : `/${path}`}`;
-    return request(url);
+    return axios(url);
   }
   async end() {
     if (this.started) {

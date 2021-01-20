@@ -18,7 +18,7 @@ test('collectMetadata', () => {
   expect(data.npmVersion.length > 0).toBe(true);
   expect(data.yarnVersion.constructor).toBe(String);
   expect(data.yarnVersion.length > 0).toBe(true);
-  expect(data.lockFileType).toBe('yarn');
+  // expect(data.lockFileType).toBe('yarn'); // FIXME We don't have lockfiles in each package anymore
   expect(data.devDependencies.constructor).toBe(Object);
   // $FlowFixMe
   expect(data.devDependencies.jest.constructor).toBe(String);

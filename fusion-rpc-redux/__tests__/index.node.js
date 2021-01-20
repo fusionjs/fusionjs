@@ -14,15 +14,17 @@ import {
   createRPCReducer,
 } from '../src/index';
 
-test('Flow tests', async done => {
-  const failurePath = 'src/fixtures/failure';
-  const successPath = 'src/fixtures/success';
-  await expect(execa.shell(`flow check ${failurePath}`)).rejects.toThrow(
-    'Found 5 errors'
-  );
-  await execa.shell(`flow check ${successPath}`);
-  done();
-});
+// With monolothic Flow job, need to refactor error tests. Probably using
+// --max-warnings=0 and erroring on unused supressions.
+// test('Flow tests', async done => {
+//   const failurePath = 'src/fixtures/failure';
+//   const successPath = 'src/fixtures/success';
+//   await expect(execa.shell(`flow check ${failurePath}`)).rejects.toThrow(
+//     'Found 5 errors'
+//   );
+//   await execa.shell(`flow check ${successPath}`);
+//   done();
+// });
 
 test('api', () => {
   expect(typeof createRPCHandler).toBe('function');

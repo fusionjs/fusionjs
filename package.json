@@ -1,5 +1,7 @@
 {
-  "projects": [
+  "name": "fusionjs-monorepo",
+  "private": true,
+  "workspaces": [
     "fusion-tokens",
     "fusion-test-utils",
     "fusion-scaffolder",
@@ -31,13 +33,14 @@
     "fusion-core",
     "fusion-cli",
     "fusion-cli-tests",
+    "fusion-cli-tests-fixtures",
     "eslint-config-fusion",
-    "create-fusion-plugin",
-    "create-fusion-app",
     "fusion-plugin-web-app-manifest",
     "jest-resolver-fusion"
   ],
-  "versionPolicy": {
-    "lockstep": true
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1"
   }
 }

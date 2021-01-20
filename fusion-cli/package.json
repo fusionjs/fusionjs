@@ -61,6 +61,7 @@
     "yaml-loader": "0.6.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
     "eslint": "^6.8.0",
     "eslint-config-fusion": "0.0.0-monorepo",
     "flow-bin": "^0.109.0",
@@ -86,7 +87,10 @@
   "homepage": "https://fusionjs.com/api/fusion-cli",
   "license": "MIT",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "0.0.0-monorepo",
+    "graphql": "*",
+    "react": "*",
+    "react-dom": "*"
   },
   "repository": {
     "directory": "fusion-cli",

@@ -7,13 +7,13 @@ module.exports = {
         reuseExistingChunk: true,
       },
       vendor_mapbox: {
-        test: /.*\/node_modules\/mapbox-gl\/index\.js/,
+        test: /\/node_modules\/mapbox-gl\//,
         name: 'vendor-mapbox',
         chunks: 'initial',
         enforce: true,
       },
       vendor_react: {
-        test: /.*\/node_modules\/react\/index\.js/,
+        test: /\/node_modules\/react\//,
         name: 'vendor-react',
         chunks: 'initial',
         enforce: true,

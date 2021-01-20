@@ -161,7 +161,7 @@ test('`fusion dev` app with split translations integration', async () => {
   await Promise.all([
     page.click('#split2-link'),
     page.waitForSelector('#split2-translation'),
-    new Promise(r => setTimeout(r, 1000)), // component is initally rendered without translation
+    new Promise(r => setTimeout(r, 2000)), // component is initally rendered without translation
   ]);
   const content4 = await page.content();
   t.ok(

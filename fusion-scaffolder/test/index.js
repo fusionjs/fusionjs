@@ -107,8 +107,9 @@ test('scaffolding example/', async t => {
     'handles additional context from index.js correctly'
   );
 
-  const nodeModulesStat = await stat(join(projectDir, 'node_modules'));
-  t.ok(nodeModulesStat.isDirectory(), 'installs node_modules correctly');
+  // With yarn v2, no node_modules created.
+  // const nodeModulesStat = await stat(join(projectDir, 'node_modules'));
+  // t.ok(nodeModulesStat.isDirectory(), 'installs node_modules correctly');
 
   await rimraf(projectDir);
   await t.end();

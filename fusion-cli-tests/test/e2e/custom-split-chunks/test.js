@@ -61,15 +61,15 @@ test('compiles with custom splitChunks config', async () => {
     'utf8'
   );
   t.ok(
-    clientVendorReactEntry.includes('./node_modules/react/index.js'),
+    clientVendorReactEntry.includes('/node_modules/react/'),
     'react vendor bundle includes react'
   );
   t.ok(
-    clientVendorMapboxEntry.includes('./node_modules/mapbox-gl/index.js'),
+    clientVendorMapboxEntry.includes('/node_modules/mapbox-gl/'),
     'mapbox vendor bundle includes mapbox'
   );
   t.ok(
-    clientNodeModuleChunkEntry.includes('./node_modules/other/index.js'),
+    clientNodeModuleChunkEntry.includes('/node_modules/other/'),
     'node module chunk includes other'
   );
 }, 100000);

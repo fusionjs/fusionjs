@@ -24,7 +24,11 @@ test('`fusion build` app with split translations integration', async () => {
   });
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  await new Promise(res => setTimeout(res, 5000));
   const content = await page.content();
+
+  console.log(content);
   t.ok(
     content.includes('__MAIN_TRANSLATED__'),
     'app content contains translated main chunk'

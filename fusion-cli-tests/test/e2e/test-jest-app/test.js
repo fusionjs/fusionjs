@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CDP = require('chrome-remote-interface');
-const spawn = require('child_process').spawn;
+const {spawn} = require('child_process');
 
 const {promisify} = require('util');
 const {cmd} = require('../utils.js');
@@ -15,7 +15,6 @@ const readFile = promisify(fs.readFile);
 
 const countTests = require('./fixture/src/count-tests');
 
-const runnerPath = require.resolve('fusion-cli/bin/cli-runner');
 const jestConfigPath = require.resolve('fusion-cli/build/jest/jest-config.js');
 
 const dir = path.resolve(__dirname, './fixture');
@@ -398,12 +397,16 @@ async function triggerCodeStep() {
   });
 }
 
-test('`fusion test --debug --env=jsdom,node`', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --debug --env=jsdom,node  --match=passes`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+test('`fusion test --env=jsdom,node`', async () => {
+  const binPath = require.resolve('fusion-cli/bin/cli.js');
   const stderrLines = [];
-  const child = spawn('node', ['-e', cmd]);
+  const child = spawn(
+    'node',
+    `${binPath} test --dir=${dir} --configPath=${jestConfigPath} --debug --env=jsdom,node  --match=passes`.split(
+      ' '
+    ),
+    {stdio: 'pipe'}
+  );
 
   const listenAddresses = {};
   let numResults = 0;

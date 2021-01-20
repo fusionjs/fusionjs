@@ -6,9 +6,9 @@
     "./dist-node-cjs/index.js": "./dist-browser-cjs/index.js",
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
     "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
     "eslint": "^6.8.0",
@@ -51,12 +51,11 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "cup-build",
+    "prepack": "cup-build --force-flow",
     "build-tests": "cup-build-tests",
     "clean": "cup-clean",
     "flow": "flow",
     "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
     "test": "jest"
   },
   "sideEffects": false

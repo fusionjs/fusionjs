@@ -20,8 +20,8 @@ export async function startServer(customEnvVariables: any) {
   };
 
   const proc = spawn(
-    path.resolve(__dirname, '../node_modules/.bin/fusion'),
-    ['dev', '--port', port, '--no-open'],
+    'yarn',
+    ['fusion', 'dev', '--port', port, '--no-open'],
     opts
   );
   const stdoutLines = [];

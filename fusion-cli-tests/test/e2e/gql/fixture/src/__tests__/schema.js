@@ -1,5 +1,5 @@
 // @noflow
-import { gql } from "fusion-apollo";
+import { gql } from "fusion-plugin-apollo";
 import { test } from "fusion-test-utils";
 import { printSchema, buildASTSchema } from "graphql/utilities";
 import { validate } from "graphql/validation";

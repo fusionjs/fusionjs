@@ -8,6 +8,7 @@ module.exports = {
     {
       displayName: 'node',
       testEnvironment: 'node',
+      resolver: require.resolve("jest-resolver-fusion"),
       testPathIgnorePatterns: ['/node_modules/', '.browser.js', 'dist'],
       globals: {
         __NODE__: true,
@@ -18,6 +19,7 @@ module.exports = {
     {
       displayName: 'browser',
       testEnvironment: 'jsdom',
+      resolver: require.resolve("jest-resolver-fusion"),
       browser: true,
       testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
       globals: {

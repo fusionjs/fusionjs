@@ -1,7 +1,6 @@
 // @noflow
 import App from 'fusion-core';
-// $FlowFixMe
-import {gql} from 'fusion-apollo';
+import {gql} from 'fusion-plugin-apollo';
 const schema = gql('./schema.graphql');
 const query = gql('./query.gql');
 

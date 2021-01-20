@@ -14,7 +14,7 @@ const {promisify} = require('util');
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
-const request = require('request-promise');
+const request = require('axios');
 
 /* Test helpers */
 module.exports.createMockEmitter = function createMockEmitter(props) {

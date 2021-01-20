@@ -13,9 +13,10 @@
     "node-mocks-http": "^1.7.5"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-transform-flow-strip-types": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
@@ -33,6 +34,7 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-http-handler": "0.0.0-monorepo",
     "jest": "^25.1.0",
+    "jest-resolver-fusion": "0.0.0-monorepo",
     "prettier": "^1.19.1"
   },
   "engines": {
@@ -57,11 +59,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
     "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

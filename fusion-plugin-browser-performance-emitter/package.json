@@ -7,7 +7,10 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "babel-eslint": "^10.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "create-universal-package": "^4.1.0",
@@ -59,12 +62,11 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "cover-flow": "flow-coverage-report",
     "flow": "flow",
     "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

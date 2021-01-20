@@ -4,6 +4,7 @@
 module.exports = {
   projects: [
     {
+      resolver: require.resolve("jest-resolver-fusion"),
       displayName: 'node',
       testEnvironment: 'node',
       testPathIgnorePatterns: ['/node_modules/', '.browser.js', 'dist'],
@@ -14,6 +15,7 @@ module.exports = {
       },
     },
     {
+      resolver: require.resolve("jest-resolver-fusion"),
       displayName: 'browser',
       testEnvironment: 'jsdom',
       browser: true,
