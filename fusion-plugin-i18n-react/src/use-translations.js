@@ -6,11 +6,11 @@
  * @flow
  */
 
-import {useContext} from 'react';
+import {useContext, useMemo} from 'react';
 import {I18nContext} from './plugin.js';
 
 export function useTranslations() {
   const i18n = useContext(I18nContext);
 
-  return i18n.translate.bind(i18n);
+  return useMemo(() => i18n.translate.bind(i18n), [i18n]);
 }
