@@ -32,12 +32,14 @@ test('`fusion dev` calls onBuildEnd', async () => {
     expect(stat.isIncrementalBuild).toBe(false);
     stat.path = 'path';
     stat.buildTime = 'buildTime';
+    stat.buildToolVersion = 'buildToolVersion';
     return stat;
   });
   expect(statsOutput).toMatchInlineSnapshot(`
     Array [
       Object {
         "buildTime": "buildTime",
+        "buildToolVersion": "buildToolVersion",
         "command": "dev",
         "isIncrementalBuild": false,
         "minify": true,
@@ -45,10 +47,12 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "path": "path",
         "skipSourceMaps": false,
         "target": "client-modern",
+        "version": "0.0.0-monorepo",
         "watch": true,
       },
       Object {
         "buildTime": "buildTime",
+        "buildToolVersion": "buildToolVersion",
         "command": "dev",
         "isIncrementalBuild": false,
         "minify": true,
@@ -56,6 +60,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "path": "path",
         "skipSourceMaps": false,
         "target": "server",
+        "version": "0.0.0-monorepo",
         "watch": true,
       },
     ]
@@ -81,12 +86,14 @@ test('`fusion dev` calls onBuildEnd', async () => {
     expect(stat.isIncrementalBuild).toBe(true);
     stat.path = 'path';
     stat.buildTime = 'buildTime';
+    stat.buildToolVersion = 'buildToolVersion';
     return stat;
   });
   expect(incStatsOutput).toMatchInlineSnapshot(`
     Array [
       Object {
         "buildTime": "buildTime",
+        "buildToolVersion": "buildToolVersion",
         "command": "dev",
         "isIncrementalBuild": true,
         "minify": true,
@@ -94,10 +101,12 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "path": "path",
         "skipSourceMaps": false,
         "target": "client-modern",
+        "version": "0.0.0-monorepo",
         "watch": true,
       },
       Object {
         "buildTime": "buildTime",
+        "buildToolVersion": "buildToolVersion",
         "command": "dev",
         "isIncrementalBuild": true,
         "minify": true,
@@ -105,6 +114,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "path": "path",
         "skipSourceMaps": false,
         "target": "server",
+        "version": "0.0.0-monorepo",
         "watch": true,
       },
     ]

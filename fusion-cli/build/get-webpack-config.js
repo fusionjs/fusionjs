@@ -47,6 +47,7 @@ const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-m
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
 const SourceMapPlugin = require('./plugins/source-map-plugin.js');
+const {version: fusionCLIVersion} = require('../package.json');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -510,6 +511,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 skipSourceMaps,
                 buildTime,
                 isIncrementalBuild,
+                version: fusionCLIVersion,
+                buildToolVersion: 'webpack v4',
               };
               isIncrementalBuild = true;
               return onBuildEnd(buildStats);

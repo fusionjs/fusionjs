@@ -26,6 +26,8 @@ type BuildStats = {
   minify: boolean,
   skipSourceMaps: boolean,
   watch: boolean,
+  version: string,
+  buildToolVersion: 'webpack v4',
 };
 export type FusionRC = {
   babel?: {plugins?: Array<any>, presets?: Array<any>},
