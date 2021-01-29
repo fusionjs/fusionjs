@@ -12,9 +12,13 @@ import type {Context} from '../types.js';
 
 export default function createClientHydrate({element}: {element: any}) {
   return function clientHydrate(ctx: Context, next: () => Promise<void>) {
-    ctx.prefix = window.__ROUTE_PREFIX__ || ''; // serialized by ./server
+    ctx.prefix = getSerializedRoutePrefix();
     ctx.element = element;
     ctx.preloadChunks = [];
     return next();
   };
+}
+
+export function getSerializedRoutePrefix() {
+  return window.__ROUTE_PREFIX__ || ''; // serialized by ./server
 }
