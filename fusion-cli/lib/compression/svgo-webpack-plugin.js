@@ -10,7 +10,7 @@
 
 // svg compressor
 
-const CompressionPlugin = require('compression-webpack-plugin');
+const CompressionPlugin = require('@micburks/compression-webpack-plugin');
 const imagemin = require('imagemin');
 const svgo = require('imagemin-svgo');
 

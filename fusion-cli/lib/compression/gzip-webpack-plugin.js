@@ -10,7 +10,7 @@
 
 // gzip compressor
 
-const CompressionPlugin = require('compression-webpack-plugin');
+const CompressionPlugin = require('@micburks/compression-webpack-plugin');
 
 module.exports = new CompressionPlugin({
   filename: '[path].gz',

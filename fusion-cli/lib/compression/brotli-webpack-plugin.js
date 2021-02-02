@@ -10,7 +10,7 @@
 
 // brotli compressor (gzip alternative w/ better compression, but less browser support)
 
-const CompressionPlugin = require('compression-webpack-plugin');
+const CompressionPlugin = require('@micburks/compression-webpack-plugin');
 const zlib = require('zlib');
 
 class NoopPlugin {
