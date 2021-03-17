@@ -15,6 +15,10 @@ import {withRPCRedux} from '../../../../..';
 const CHILD_TRIP_ID = 456;
 
 function Child(props) {
+  if (props.isLoading) {
+    return 'Loading...';
+  }
+
   return (
     <div data-testid="child-trip-id">
       {props.lastTrip ? props.lastTrip.id : 'no trips'}
@@ -24,7 +28,10 @@ function Child(props) {
 
 export default compose(
   withRPCRedux('getLastTrip'),
-  connect(({lastTrip}) => ({lastTrip: lastTrip.data})),
+  connect(({ lastTrip }) => ({
+    lastTrip: lastTrip.data,
+    isLoading: lastTrip.loading
+  })),
   prepared(props =>
     props.lastTrip
       ? Promise.resolve()
