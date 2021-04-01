@@ -16,52 +16,16 @@ import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import bodyparser from 'koa-bodyparser';
 import querystring from 'querystring';
 
-import {I18nLoaderToken} from './tokens.js';
+import {I18nLoaderToken, I18nTranslateFnsToken} from './tokens.js';
 import createLoader from './loader.js';
 import type {
   I18nDepsType,
   I18nServiceType,
   TranslationsObjectType,
   IEmitter,
+  OptionalTranslateFnsType,
 } from './types.js';
-
-// exported for testing
-export function matchesLiteralSections(literalSections: Array<string>) {
-  return (translation: string) => {
-    let lastMatchIndex = 0;
-
-    if (literalSections.length === 1) {
-      const literal = literalSections[0];
-      return literal !== '' && translation === literal;
-    }
-
-    return literalSections.every((literal, literalIndex) => {
-      if (literal === '') {
-        // literal section either:
-        // - starts/ends the literal
-        // - is the result of two adjacent interpolations
-        return true;
-      } else if (literalIndex === 0 && translation.startsWith(literal)) {
-        lastMatchIndex += literal.length;
-        return true;
-      } else if (
-        literalIndex === literalSections.length - 1 &&
-        translation.endsWith(literal)
-      ) {
-        return true;
-      } else {
-        // start search from `lastMatchIndex`
-        const matchIndex = translation.indexOf(literal, lastMatchIndex);
-        if (matchIndex !== -1) {
-          lastMatchIndex = matchIndex + literal.length;
-          return true;
-        }
-      }
-      // matching failed
-      return false;
-    });
-  };
-}
+import {translateKey, translateKeys} from './translate'
 
 function getKeysFromContext(ctx: Context): string[] {
   if (ctx.request.body && Array.isArray(ctx.request.body)) {
@@ -87,12 +51,14 @@ const pluginFactory: () => PluginType = () =>
     deps: {
       loader: I18nLoaderToken.optional,
       events: UniversalEventsToken.optional,
+      translateFns: I18nTranslateFnsToken.optional
     },
-    provides: ({loader, events}) => {
+    provides: ({loader, events, translateFns}) => {
       class I18n {
         translations: TranslationsObjectType;
         locale: string | Locale;
         emitter: ?IEmitter;
+        translateFns: OptionalTranslateFnsType;
 
         constructor(ctx) {
           if (!loader) {
@@ -102,10 +68,15 @@ const pluginFactory: () => PluginType = () =>
           this.emitter = events && events.from(ctx);
           this.translations = translations;
           this.locale = locale;
+          if (translateFns) {
+            this.translateFns = translateFns;
+          } else {
+            this.translateFns = {translateKey, translateKeys}
+          }
         }
         async load() {} //mirror client API
         translate(key, interpolations = {}) {
-          const template = this.translations[key];
+          const template = this.translateFns.translateKey(this.translations, this.locale, key)
 
           if (typeof template !== 'string') {
             this.emitter && this.emitter.emit('i18n-translate-miss', {key});
@@ -139,32 +110,21 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.syncChunks,
             ...ctx.preloadChunks,
           ];
-          const translations = {};
-          const possibleTranslations = i18n.translations
-            ? Object.keys(i18n.translations)
-            : [];
+          let keys = [];
           chunks.forEach(id => {
-            const keys = Array.from(
-              chunkTranslationMap.translationsForChunk(id)
-            );
-            keys.forEach(key => {
-              if (Array.isArray(key)) {
-                const matches = possibleTranslations.filter(
-                  matchesLiteralSections(key)
-                );
-                for (const match of matches) {
-                  translations[match] =
-                    i18n.translations && i18n.translations[match];
-                }
-              } else {
-                translations[key] = i18n.translations && i18n.translations[key];
-              }
-            });
+            keys = [...keys, ...chunkTranslationMap.translationsForChunk(id)];
           });
+
+
+          const sources = i18n.translations || {};
+          const locale = i18n.locale || {};
+          const translations = i18n.translateFns && i18n.translateFns.translateKeys(sources, locale, keys);
+
           // i18n.locale is actually a locale.Locale instance
           if (!i18n.locale) {
             throw new Error('i18n.locale was empty');
           }
+
           const localeCode =
             typeof i18n.locale === 'string' ? i18n.locale : i18n.locale.code;
           const serialized = JSON.stringify({localeCode, translations});
@@ -185,23 +145,12 @@ const pluginFactory: () => PluginType = () =>
           } catch (e) {
             ctx.request.body = [];
           }
+
           const keys = getKeysFromContext(ctx);
-          const possibleTranslations = i18n.translations
-            ? Object.keys(i18n.translations)
-            : [];
-          const translations = keys.reduce((acc, key) => {
-            if (Array.isArray(key)) {
-              const matches = possibleTranslations.filter(
-                matchesLiteralSections(key)
-              );
-              for (const match of matches) {
-                acc[match] = i18n.translations && i18n.translations[match];
-              }
-            } else {
-              acc[key] = i18n.translations && i18n.translations[key];
-            }
-            return acc;
-          }, {});
+          const sources = i18n.translations || {};
+          const localeCode = i18n.locale || {};
+
+          const translations = i18n.translateFns && i18n.translateFns.translateKeys(sources, localeCode, keys);
           ctx.body = translations;
           ctx.set('cache-control', 'public, max-age=3600'); // cache translations for up to 1 hour
           return next();

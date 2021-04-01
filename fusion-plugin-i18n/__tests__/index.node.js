@@ -13,7 +13,8 @@ import App, {consumeSanitizedHTML} from 'fusion-core';
 import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import I18n, {matchesLiteralSections} from '../src/node';
+import I18n from '../src/node';
+import {matchesLiteralSections} from '../src/translate'
 import {I18nLoaderToken} from '../src/tokens.js';
 import {I18nToken} from '../src/index';
 

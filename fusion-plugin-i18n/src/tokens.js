@@ -11,6 +11,10 @@ import type {Token} from 'fusion-core';
 
 import type {I18nLoaderType} from './loader.js';
 
-export const I18nLoaderToken: Token<I18nLoaderType> = createToken(
+export const I18nLoaderToken = createToken<*>(
   'I18nLoaderToken'
+);
+
+export const I18nTranslateFnsToken = createToken<*>(
+  'I18nTranslateFnsToken'
 );
