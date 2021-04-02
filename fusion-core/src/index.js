@@ -54,6 +54,7 @@ export {
   RoutePrefixToken,
   CriticalChunkIdsToken,
   RouteTagsToken,
+  EnableMiddlewareTimingToken,
 } from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';

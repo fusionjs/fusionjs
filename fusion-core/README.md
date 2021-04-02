@@ -190,6 +190,16 @@ to a stable name for a given route. This is useful for situations where you need
 default, the route name is set to 'unknown_route' by fusion-core. If you are using `fusion-plugin-react-router` it will automatically
 set the route name to the matched react route.
 
+##### EnableMiddlewareTimingToken
+
+```js
+import App, {EnableMiddlewareTimingToken} from 'fusion-core';
+app.register(EnableMiddlewareTimingToken, true);
+```
+
+If `EnableMiddlewareTimingToken` is set to `true`, Fusion.js will emit middleware timing information that can be retrieved by inspecting
+the `ctx.timing.middleware` property from within middleware. See the RFC [here](https://github.com/uber/fusionjs/blob/master/public/rfcs/text/0000-middleware-timing.md).
+
 ---
 
 #### Plugin

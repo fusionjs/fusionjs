@@ -12,12 +12,21 @@ import {
   RenderToken,
   SSRDeciderToken,
   RouteTagsToken,
+  EnableMiddlewareTimingToken,
 } from './tokens';
 import {SSRDecider} from './plugins/ssr';
 import RouteTagsPlugin from './plugins/route-tags';
 import {captureStackTrace, DIError} from './stack-trace.js';
+import wrapMiddleware from './utils/wrap-middleware.js';
 
-import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
+import type {
+  aliaser,
+  cleanupFn,
+  Context,
+  FusionPlugin,
+  Middleware,
+  Token,
+} from './types.js';
 
 interface Register<T> {
   (Token<T>, mixed): aliaser<Token<T>>;
@@ -168,6 +177,9 @@ class FusionApp {
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
     const appliedEnhancers = [];
+    const enableMiddlewareTiming = this.registered.has(
+      getTokenRef(EnableMiddlewareTimingToken)
+    );
     const resolveToken = (token: Token<TResolved>, tokenAliases) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(getTokenRef(token))) {
@@ -277,7 +289,12 @@ class FusionApp {
         let provides =
           plugin && plugin.provides ? plugin.provides(resolvedDeps) : undefined;
         if (plugin && plugin.middleware) {
-          resolvedPlugins.push(plugin.middleware(resolvedDeps, provides));
+          const resolvedMiddleware = plugin.middleware(resolvedDeps, provides);
+          resolvedPlugins.push(
+            enableMiddlewareTiming
+              ? wrapMiddleware(resolvedMiddleware, token, plugin)
+              : resolvedMiddleware
+          );
         }
         return provides;
       }
@@ -325,6 +342,7 @@ class FusionApp {
       if (
         token !== ElementToken &&
         token !== RenderToken &&
+        token !== EnableMiddlewareTimingToken &&
         !this._dependedOn.has(getTokenRef(token))
       ) {
         const registerStack = token.stacks.find(t => t.type === 'register');

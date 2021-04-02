@@ -9,7 +9,9 @@
 import {compose} from './compose.js';
 import timing, {TimingToken} from './plugins/timing';
 import BaseApp from './base-app';
-import createClientHydrate, {getSerializedRoutePrefix} from './plugins/client-hydrate';
+import createClientHydrate, {
+  getSerializedRoutePrefix,
+} from './plugins/client-hydrate';
 import createClientRenderer from './plugins/client-renderer';
 import {RenderToken, ElementToken} from './tokens';
 
@@ -32,8 +34,10 @@ export default function(): typeof BaseApp {
         const routePrefix = getSerializedRoutePrefix();
         const replaceRouteRegex = new RegExp(`^${routePrefix}`);
         const ctx: any = {
-          url: (window.location.pathname + window.location.search)
-            .replace(replaceRouteRegex, ''),
+          url: (window.location.pathname + window.location.search).replace(
+            replaceRouteRegex,
+            ''
+          ),
           element: null,
           body: null,
         };
