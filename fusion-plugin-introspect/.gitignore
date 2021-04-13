@@ -2,6 +2,7 @@ node_modules/
 dist-*/
 coverage/
 .nyc_output/
+.fusion/
 
 .DS_Store
 npm-debug.log

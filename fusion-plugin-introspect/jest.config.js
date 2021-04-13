@@ -11,6 +11,7 @@ module.exports = {
         '.browser.js',
         'dist',
         'mockFs.js',
+        '__fixtures__',
       ],
       globals: {
         __NODE__: true,
@@ -26,6 +27,7 @@ module.exports = {
         '.node.js',
         'dist',
         'mockFs.js',
+        '__fixtures__',
       ],
       globals: {
         __NODE__: false,
