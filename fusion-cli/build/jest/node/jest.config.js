@@ -9,6 +9,10 @@
 /* eslint-env node */
 
 const baseJestConfig = require('../base-jest-config.js');
+const loadFusionRC = require('../../load-fusionrc.js');
+
+const {jsExtPattern} = loadFusionRC(process.cwd());
+const testFileExt = jsExtPattern ? jsExtPattern.source : '\\.js$';
 
 module.exports = {
   ...baseJestConfig,
@@ -17,5 +21,5 @@ module.exports = {
   browser: false,
   name: 'node',
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['.*\\.browser\\.js'],
+  testPathIgnorePatterns: ['.*\\.browser' + testFileExt],
 };

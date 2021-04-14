@@ -147,6 +147,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const runtime = COMPILATIONS[id];
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
+  const jsExtPattern = fusionConfig.jsExtPattern || JS_EXT_PATTERN;
 
   // Both options default to true, but if `--zopfli=false`
   // it should be respected for backwards compatibility
@@ -184,7 +185,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
   const babelTester = experimentalTransformTest
     ? modulePath => {
-        if (!JS_EXT_PATTERN.test(modulePath)) {
+        if (!jsExtPattern.test(modulePath)) {
           return false;
         }
         const transform = experimentalTransformTest(
@@ -201,7 +202,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           );
         }
       }
-    : JS_EXT_PATTERN;
+    : jsExtPattern;
 
   // Used to determine if this is an initial or incremental build
   let isIncrementalBuild = false;
@@ -464,6 +465,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             }
           : {}),
       },
+      extensions: fusionConfig.resolveExtensions,
       plugins: [PnpWebpackPlugin],
     },
     resolveLoader: {

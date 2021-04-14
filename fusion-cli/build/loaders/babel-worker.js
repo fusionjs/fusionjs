@@ -48,6 +48,8 @@ async function runTransformation(
     overrides: [],
   };
 
+  const {jsExtPattern = JS_EXT_PATTERN} = loadFusionRC(rootContext);
+
   if (loaderOptions.overrides != undefined) {
     for (let i = 0; i < loaderOptions.overrides.length; i++) {
       let override = getBabelConfigFromCache(
@@ -57,7 +59,7 @@ async function runTransformation(
       );
       //$FlowFixMe
       override.test = modulePath => {
-        if (!JS_EXT_PATTERN.test(modulePath)) {
+        if (!jsExtPattern.test(modulePath)) {
           return false;
         }
 

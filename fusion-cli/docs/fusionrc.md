@@ -21,6 +21,31 @@ module.exports = {
 
 ## Import side effects, import pruning, and tree shaking
 
+## `jsExtPattern`
+
+ By default this is `/\.(mjs|js|jsx)$/`
+
+ For example, this enables Typescript support by adding the appropriate Babel preset:
+
+ ```js
+module.exports = {
+  jsExtPattern: /[jt]sx?$/,
+  babel: {
+    presets: ["@babel/preset-typescript"],
+  }
+};
+```
+	
+ ```js
+module.exports = {
+  resolveExtensions: ['.wasm', '.mjs', '.js', '.json', '.ts', '.tsx'],
+};
+```
+
+ ## `resolveExtensions`
+
+ By default this is the Webpack default which is: `['.wasm', '.mjs', '.js', '.json']`
+
 ### `defaultImportSideEffects`
 
 This option controls how `fusion-cli` handles pruning of unused/unreachable import statements.
@@ -75,6 +100,35 @@ module.exports = {
   },
 };
 ```
+
+## `jest`
+
+```
+  globFileExt?: string
+  transformIgnorePatterns?: Array<string>
+  setupFilesAfterEnv?: Array<string>
+```
+
+#### globFileExt
+default: `.js`
+
+This glob file extension pattern is used by jest to find test files and
+aggregate coverage raport.
+
+#### transformIgnorePatterns
+default: `['/node_modules/(?!(fusion-cli.*build))']`
+
+An array of regexp pattern strings that are matched against all source file
+paths before transformation. If the test path matches any of the patterns, it
+will not be transformed.
+
+#### setupFilesAfterEnv
+default: `undefined`
+
+A list of paths to modules that run some code to configure or set up the
+testing framework before each test. This script file presents you the
+opportunity of running some code immediately after the test framework has been
+installed in the environment.
 
 ## `gzip`
 
