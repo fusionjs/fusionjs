@@ -107,7 +107,13 @@ async function runTransformation(
     // This only does side effects, so it is ok this doesn't affect cache key
     // This plugin is here because webpack config -> loader options
     // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+    options.plugins.unshift([
+      TranslationsExtractor,
+      {
+        translationIds,
+        packageNames: loaderOptions.translationPackageNames || [],
+      },
+    ]);
 
     const transformed = transform(source, options);
 

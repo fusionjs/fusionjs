@@ -306,6 +306,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 configCacheKey: 'server-config',
                 overrideCacheKey: 'server-override',
                 babelConfigData: {...babelConfigData},
+                translationPackageNames: fusionConfig.translationPackageNames,
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
                  */

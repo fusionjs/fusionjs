@@ -16,7 +16,7 @@ import Plugin, {I18nToken, I18nLoaderToken} from 'fusion-plugin-i18n-react';
 import Root from './root.js';
 
 // Translation details
-const data = {test: 'hello ${value}'};
+const data = {test: 'hello ${value}', 'test.two': 'You look great!'};
 const locale = new Locale('en-US');
 
 export default () => {

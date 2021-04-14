@@ -6,4 +6,5 @@
 
 module.exports = {
   experimentalCompile: true,
+  translationPackageNames: ['./translate-wrapper']
 };
