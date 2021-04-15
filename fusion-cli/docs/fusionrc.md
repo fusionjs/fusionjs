@@ -48,7 +48,7 @@ module.exports = {
 
 Note: `defaultImportSideEffects` applies to packages but *not* your application code. Use the standard `sideEffects` field in your app `package.json` to specify which project code files, when imported, cause side effects to happen.
 
-### `assumeNoImportSideEffects` (deprecated in favor of `defaultImportSideEffects`)
+### `assumeNoImportSideEffects`
 
 By default this is `false`.
 
