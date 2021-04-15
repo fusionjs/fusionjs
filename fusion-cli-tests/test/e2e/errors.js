@@ -41,12 +41,12 @@ function testDev(title, dir) {
             return resolve(err || new Error('Compiler stats included errors.'));
           }
 
-          expect(logger.warn.mock.calls.length).toMatchSnapshot(`dev-warn`);
-          expect(logger.error.mock.calls.length).toMatchSnapshot(`dev-error`);
           return resolve(false);
         });
       });
       t.ok(compilationError, 'Should produce compilation error');
+      expect(logger.warn.mock.calls.length).toMatchSnapshot('dev-warn');
+      expect(logger.error.mock.calls.length).toMatchSnapshot('dev-error');
       // $FlowFixMe
       t.throws(() => require(entry), 'Should throw');
     },
@@ -78,9 +78,9 @@ function testProd(title, dir) {
         });
       });
       t.ok(compilationError, 'Should produce compilation error');
-      expect(logger.warn.mock.calls.length).toMatchSnapshot(`production-warn`);
+      expect(logger.warn.mock.calls.length).toMatchSnapshot('production-warn');
       expect(logger.error.mock.calls.length).toMatchSnapshot(
-        `production-error`
+        'production-error'
       );
 
       // $FlowFixMe

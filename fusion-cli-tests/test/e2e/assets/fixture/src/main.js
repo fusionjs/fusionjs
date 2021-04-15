@@ -1,6 +1,6 @@
 // @noflow
 import App, {assetUrl} from 'fusion-core';
-import {key as jsonField} from './static/test.json';
+import testJson from './static/test.json';
 import {RouteTagsToken} from 'fusion-core';
 
 import serverAsset from './server-asset.js';
@@ -31,7 +31,7 @@ export default async function() {
         } else if (ctx.url === '/json') {
           ctx.body = assetUrl('./static/test.json');
         } else if (ctx.url === '/json-import') {
-          ctx.body = jsonField;
+          ctx.body = testJson.key;
         } else if (ctx.url === '/server-asset') {
           ctx.body = serverAsset;
         }

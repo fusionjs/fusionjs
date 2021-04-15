@@ -28,33 +28,67 @@ const loadFusionRC = require('./load-fusionrc.js');
 
 const Worker = require('jest-worker').default;
 
-function getErrors(info) {
-  let errors = [].concat(info.errors);
-  if (info.children.length) {
-    errors = errors.concat(
-      info.children.reduce((x, child) => {
-        return x.concat(getErrors(child));
-      }, [])
-    );
+function ensureCompilerStatsInfo(stats) {
+  return function handleErrorOrWarning(errorOrWarning) {
+    return {
+      compilerPath: stats.name,
+      ...errorOrWarning,
+    };
   }
-  return dedupeErrors(errors);
 }
 
-function getWarnings(info) {
-  let warnings = [].concat(info.warnings);
-  if (info.children.length) {
-    warnings = warnings.concat(
+function getErrors(info, depth = 0) {
+  let errors = info.errors.map(ensureCompilerStatsInfo(info));
+  if (info.children && info.children.length) {
+    errors = errors.concat(
       info.children.reduce((x, child) => {
-        return x.concat(getWarnings(child));
+        return x.concat(getErrors(child, depth + 1));
       }, [])
     );
   }
-  return dedupeErrors(warnings);
+  return depth === 0 ? dedupeErrors(errors) : errors;
+}
+
+function getWarnings(info, depth = 0) {
+  let warnings = info.warnings.map(ensureCompilerStatsInfo(info));
+  if (info.children && info.children.length) {
+    warnings = warnings.concat(
+      info.children.reduce((x, child) => {
+        return x.concat(getWarnings(child, depth + 1));
+      }, [])
+    );
+  }
+  return depth === 0 ? dedupeErrors(warnings) : warnings;
 }
 
 function dedupeErrors(items) {
   const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  const set = new Set(items.map(item => item.replace(re, '$2')));
+  const set = new Set(items.map(item => (
+    [
+      [
+        `${item.compilerPath}:`,
+        item.moduleName,
+        item.loc,
+      ]
+        .filter(Boolean)
+        .join(' '),
+      item.message,
+      ...(item.moduleTrace || [])
+        .map(module => (
+          [
+            ` @ ${module.originName}`,
+            ...(module.dependencies || [])
+              .map(dep => dep.loc)
+          ]
+            .filter(Boolean)
+            .join(' ')
+        )),
+      item.details
+    ]
+      .filter(Boolean)
+      .join('\n')
+      .replace(re, '$2')
+  )));
   return Array.from(set);
 }
 
@@ -73,12 +107,28 @@ function getStatsLogger({dir, logger, env}) {
     }
 
     const file = path.resolve(dir, '.fusion/stats.json');
-    const info = stats.toJson({context: path.resolve(dir)});
+    const info = stats.toJson({
+      // Note: need to reduce memory and disk space usage to help with some faulty builds (OOMs)
+      children: {
+        // None of the analyzers inspect child compilations, so we can keep it to a minimum
+        children: {
+          all: false,
+          timings: true,
+          builtAt: true,
+          errors: true,
+          errorsCount: true,
+          errorDetails: true,
+          errorStack: true,
+          warnings: true,
+          warningsCount: true,
+        }
+      },
+      // No need to include all modules, as they are also grouped by chunk,
+      // and this is enough for most bundle analyzers to generate report
+      modules: false,
+    });
     fs.writeFile(file, JSON.stringify(info, null, 2), () => {});
 
-    if (stats.hasErrors()) {
-      getErrors(info).forEach(e => logger.error(e));
-    }
     // TODO(#13): These logs seem to be kinda noisy for dev.
     if (isProd) {
       info.children.forEach(child => {
@@ -97,8 +147,13 @@ function getStatsLogger({dir, logger, env}) {
           });
       });
     }
+
     if (stats.hasWarnings()) {
       getWarnings(info).forEach(e => logger.warn(e));
+    }
+
+    if (stats.hasErrors()) {
+      getErrors(info).forEach(e => logger.error(e));
     }
   };
 }
@@ -127,6 +182,7 @@ type CompilerOpts = {
   maxWorkers?: number,
   skipSourceMaps?: boolean,
   command?: 'dev' | 'build',
+  disableBuildCache?: boolean,
 };
 */
 
@@ -145,6 +201,7 @@ function Compiler(
     skipSourceMaps = false,
     maxWorkers,
     command,
+    disableBuildCache,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const root = path.resolve(dir);
@@ -176,6 +233,11 @@ function Compiler(
 
   let worker = createWorker(maxWorkers);
 
+  const disableBuildCacheOption = typeof disableBuildCache === 'undefined'
+    ? fusionConfig.disableBuildCache
+    : disableBuildCache;
+  const isBuildCacheEnabled = disableBuildCacheOption !== true
+
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -190,6 +252,7 @@ function Compiler(
     zopfli: fusionConfig.zopfli != undefined ? fusionConfig.zopfli : true,
     gzip: fusionConfig.gzip != undefined ? fusionConfig.gzip : true,
     brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
+    isBuildCacheEnabled,
     minify,
     worker,
     command,
@@ -239,10 +302,16 @@ function Compiler(
         cb(err, stats);
       }
     };
+
+    const watchOptions = compiler.options.map(options => options.watchOptions || {})
     if (watch) {
-      return compiler.watch({}, handler);
+      return compiler.watch(watchOptions, handler);
     } else {
-      compiler.run(handler);
+      compiler.run((err, stats) => {
+        compiler.close(closeErr => {
+          handler(err || closeErr, stats);
+        })
+      });
       // mimic watcher interface for API consistency
       return {
         close() {},
@@ -264,7 +333,11 @@ function Compiler(
 
   this.clean = () => {
     return new Promise((resolve, reject) => {
-      rimraf(`${dir}/.fusion`, e => (e ? reject(e) : resolve()));
+      // Need to persist build cache from previous builds
+      rimraf(
+        `${dir}/.fusion/${isBuildCacheEnabled ? '!(.build-cache)' : ''}`,
+        e => (e ? reject(e) : resolve())
+      );
     });
   };
 

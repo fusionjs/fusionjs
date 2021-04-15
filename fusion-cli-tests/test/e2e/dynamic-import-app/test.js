@@ -13,6 +13,7 @@ const getPort = require('get-port');
 const httpProxy = require('http-proxy');
 
 const {cmd, start} = require('../utils.js');
+const persistScriptTags = require('../persist-script-tags');
 
 const dir = path.resolve(__dirname, './fixture');
 
@@ -38,7 +39,7 @@ async function getDistFiles(dir) {
 test('`fusion build` app with dynamic imports chunk hashing', async () => {
   await cmd(`build --dir=${dir} --production`);
 
-  const splitChunkId = 2;
+  const splitChunkId = 1;
   const distFiles = await getDistFiles(dir);
   const dynamicFileBundlePath = path.resolve(
     dir,
@@ -123,6 +124,7 @@ test('`fusion build` app with dynamic imports integration', async () => {
   });
 
   await page.goto(`http://localhost:${proxyPort}/`, {waitUntil: 'load'});
+  await page.evaluate(persistScriptTags);
 
   // eslint-disable-next-line
   t.ok(await page.evaluate(() => window.__MAIN_EXECUTED__));
@@ -271,6 +273,7 @@ test('`fusion build` app with Safari user agent and same-origin', async () => {
   );
 
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+  await page.evaluate(persistScriptTags);
 
   // eslint-disable-next-line
   t.ok(await page.evaluate(() => window.__MAIN_EXECUTED__));

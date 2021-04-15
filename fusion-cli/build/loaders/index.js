@@ -16,6 +16,9 @@ const loaderIndex = {
     alias: '__SECRET_FILE_LOADER__',
     path: require.resolve('./file-loader.js'),
   },
+  svgoLoader: {
+    path: require.resolve('./svgo-loader.js'),
+  },
   babelLoader: {
     path: require.resolve('./babel-loader.js'),
   },

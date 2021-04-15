@@ -28,6 +28,19 @@ type ClientPluginOpts = {
   compilation: "client",
   i18nManifest: TranslationsManifest
 };
+
+type InstrumentationTemplateOpts = ServerTemplateOpts | ClientTemplateOpts;
+
+type ClientChunkIndex = $PropertyType<ClientChunkMetadata, 'fileManifest'>;
+
+type ServerTemplateOpts = {|
+  clientChunkIndex: ClientChunkIndex
+|}
+
+type ClientTemplateOpts = {|
+  i18nManifest: TranslationsManifest
+|}
+
 */
 
 const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule.js');
@@ -35,49 +48,7 @@ const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
 
-class InstrumentedImportDependency extends ImportDependency {
-  constructor(dep, opts, moduleIdent) {
-    super(dep.request, dep.originModule, dep.block);
-    this.module = dep.module;
-    this.loc = dep.loc;
-    if (opts.compilation === 'client') {
-      this.translationsManifest = opts.i18nManifest;
-    }
-    /**
-     * Production builds may have no id at this point
-     * This compilation phase is earlier than moduleIds, so
-     *  we must create our own and cache it based on the module identifier
-     */
-    dep.module.id = createCachedModuleId(moduleIdent);
-  }
-  getInstrumentation() {
-    // client-side, use built-in values
-    this.chunkIds = getChunkGroupIds(this.block.chunkGroup);
-    this.translationKeys = new Set();
-    if (this.translationsManifest) {
-      const modules = getChunkGroupModules(this);
-      for (const module of modules) {
-        if (this.translationsManifest.has(module)) {
-          const keys = this.translationsManifest.get(module);
-          for (const key of keys) {
-            this.translationKeys.add(key);
-          }
-        }
-      }
-    }
-    return {
-      chunkIds: this.chunkIds,
-      translationKeys: Array.from(this.translationKeys),
-    };
-  }
-  updateHash(hash) {
-    super.updateHash(hash);
-    const {translationKeys} = this.getInstrumentation();
-    // Invalidate this dependency when the translation keys change
-    // Necessary for HMR
-    hash.update(JSON.stringify(translationKeys));
-  }
-}
+const isInstrumentedSymbol = Symbol('InstrumentedImportDependency');
 
 /**
  * We create an extension to the original ImportDependency template
@@ -94,30 +65,39 @@ class InstrumentedImportDependency extends ImportDependency {
  * Object.defineProperties(import('./foo.js'), {__CHUNK_IDS: [5], __MODULE_ID: "abc", __I18N_KEYS: ['key1']})
  * // Also returns a promise, but with extra non-enumerable properties
  */
-InstrumentedImportDependency.Template = class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
-  constructor(clientChunkIndex) {
+class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
+  /*:: clientChunkIndex: ClientChunkIndex */
+  /*:: i18nManifest: TranslationsManifest */
+
+  constructor(opts /*: InstrumentationTemplateOpts */) {
     super();
-    if (clientChunkIndex) {
-      this.clientChunkIndex = clientChunkIndex;
+
+    if (opts.clientChunkIndex) {
+      this.clientChunkIndex = opts.clientChunkIndex;
+    }
+
+    if (opts.i18nManifest) {
+      this.i18nManifest = opts.i18nManifest;
     }
   }
   /**
    * It may be possible to avoid duplicating code by extending `super`, but
    * for now, we'll just override this method entirely with a modified version
-   * Based on https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/ImportDependency.js
+   * Based on https://github.com/webpack/webpack/blob/e1a405e3c248b142894568163b331761e737d6ea/lib/dependencies/ImportDependency.js
    */
-  apply(dep /*: any */, source /*: any */, runtime /*: any */) {
-    const depBlock = dep.block;
-    let chunkIds = [];
+  apply(dep /*: any */, source /*: any */, { runtimeTemplate, module, moduleGraph, chunkGraph, runtimeRequirements }) {
+    const block = moduleGraph.getParentBlock(dep);
+    const depModule = moduleGraph.getModule(dep);
+
     let translationKeys = [];
-    if (dep instanceof InstrumentedImportDependency) {
-      const instrumentation = dep.getInstrumentation();
-      chunkIds = instrumentation.chunkIds;
-      translationKeys = instrumentation.translationKeys;
+    let chunkIds = [];
+    if (dep[isInstrumentedSymbol]) {
+      translationKeys = getTranslationKeys(chunkGraph, moduleGraph, this.i18nManifest, dep);
+      chunkIds = getChunkGroupIds(chunkGraph.getBlockChunkGroup(block));
     } else if (this.clientChunkIndex) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      const ids = this.clientChunkIndex.get(getModuleResource(dep.module));
+      const ids = this.clientChunkIndex.get(getModuleResource(depModule));
       chunkIds = ids ? Array.from(ids) : [];
     } else {
       // Prevent future developers from creating a broken webpack state
@@ -125,12 +105,14 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
         'Dependency is not Instrumented and lacks a clientChunkIndex'
       );
     }
-    const content = runtime.moduleNamespacePromise({
-      block: dep.block,
-      module: dep.module,
+    const content = runtimeTemplate.moduleNamespacePromise({
+      chunkGraph,
+      block,
+      module: depModule,
       request: dep.request,
-      strict: dep.originModule.buildMeta.strictHarmonyModule,
+      strict: module.buildMeta.strictHarmonyModule,
       message: 'import()',
+      runtimeRequirements
     });
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
@@ -139,12 +121,12 @@ InstrumentedImportDependency.Template = class InstrumentedImportDependencyTempla
     const customContent = chunkIds
       ? `Object.defineProperties(${content}, {
         "__CHUNK_IDS": {value:${JSON.stringify(chunkIds)}},
-        "__MODULE_ID": {value:${JSON.stringify(dep.module.id)}},
+        "__MODULE_ID": {value:${JSON.stringify(chunkGraph.getModuleId(depModule))}},
         "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
       : content;
     // replace with `customContent` instead of `content`
-    source.replace(depBlock.range[0], depBlock.range[1] - 1, customContent);
+    source.replace(dep.range[0], dep.range[1] - 1, customContent);
   }
 };
 
@@ -167,43 +149,56 @@ class InstrumentedImportDependencyTemplatePlugin {
         clientChunkMetadata.result.then(metadata => {
           compilation.dependencyTemplates.set(
             ImportDependency,
-            new InstrumentedImportDependency.Template(metadata.fileManifest)
+            new InstrumentedImportDependencyTemplate({
+              clientChunkIndex: metadata.fileManifest
+            })
           );
           done();
         });
       });
     }
     if (this.opts.compilation === 'client') {
-      // Add a new template and factory for IntrumentedImportDependency
-      compiler.hooks.compilation.tap(name, (compilation, params) => {
-        compilation.dependencyFactories.set(
-          InstrumentedImportDependency,
-          params.normalModuleFactory
-        );
+      const i18nManifest = this.opts.i18nManifest;
+
+      // Override ImportDependency.Template
+      compiler.hooks.make.tap(name, compilation => {
         compilation.dependencyTemplates.set(
-          InstrumentedImportDependency,
-          new InstrumentedImportDependency.Template()
+          ImportDependency,
+          new InstrumentedImportDependencyTemplate({
+            i18nManifest
+          })
         );
+      });
+
+      compiler.hooks.compilation.tap(name, (compilation, params) => {
         compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
-          // Replace ImportDependency with our Instrumented dependency
+          // Instrument ImportDependency
           for (const module of modules) {
             if (module.blocks) {
               module.blocks.forEach(block => {
                 block.dependencies.forEach((dep, index) => {
                   if (dep instanceof ImportDependency) {
-                    let moduleId = dep.module.id;
-                    if (dep.module.id === null && dep.module.libIdent) {
-                      moduleId = dep.module.libIdent({
+                    const depModule = compilation.moduleGraph.getModule(dep)
+                    const depModuleId = compilation.chunkGraph.getModuleId(depModule);
+                    if (depModuleId === null && depModule.libIdent) {
+                      const moduleId = depModule.libIdent({
                         context: compiler.options.context,
                       });
+                      compilation.chunkGraph.setModuleId(depModule, createCachedModuleId(moduleId))
                     }
-                    block.dependencies[
-                      index
-                    ] = new InstrumentedImportDependency(
-                      dep,
-                      this.opts,
-                      moduleId
-                    );
+
+                    const originalUpdateHash = dep.updateHash;
+                    dep.updateHash = function (...args) {
+                      originalUpdateHash.apply(this, args);
+
+                      const [hash] = args;
+                      const translationKeys = getTranslationKeys(compilation.chunkGraph, compilation.moduleGraph, i18nManifest, dep);
+                      // Invalidate this dependency when the translation keys change
+                      // Necessary for HMR
+                      hash.update(JSON.stringify(translationKeys));
+                    }
+
+                    dep[isInstrumentedSymbol] = true;
                   }
                 });
               });
@@ -220,15 +215,16 @@ class InstrumentedImportDependencyTemplatePlugin {
     compiler.hooks.compilation.tap(name, (compilation, params) => {
       compilation.hooks.beforeModuleIds.tap(name, modules => {
         for (const module of modules) {
-          if (module.id === null && module.libIdent) {
+          const moduleId = compilation.chunkGraph.getModuleId(module);
+          if (moduleId === null && module.libIdent) {
             // Some modules lose their id by this point
             // Reassign the cached module id so it matches the id used in the instrumentation
             const id = module.libIdent({
               context: compiler.options.context,
             });
-            const moduleId = getCachedModuleId(id);
-            if (moduleId) {
-              module.id = moduleId;
+            const cachedModuleId = getCachedModuleId(id);
+            if (cachedModuleId) {
+              compilation.chunkGraph.setModuleId(module, cachedModuleId);
             }
           }
         }
@@ -263,6 +259,25 @@ function getCachedModuleId(ident) {
   return customModuleIds.get(ident);
 }
 
+function getTranslationKeys(chunkGraph, moduleGraph, i18nManifest, dep) {
+  const translationKeys = new Set();
+  if (i18nManifest) {
+    const modules = getChunkGroupModules(chunkGraph, moduleGraph, dep);
+    for (const module of modules) {
+      if (i18nManifest.has(module)) {
+        const keys = i18nManifest.get(module);
+        if (keys) {
+          for (const key of keys) {
+            translationKeys.add(key);
+          }
+        }
+      }
+    }
+  }
+
+  return Array.from(translationKeys);
+}
+
 /**
  * Adapted from
  * https://github.com/webpack/webpack/blob/5e38646f589b5b6325556f3127e7b61df33d3cb9/lib/dependencies/DepBlockHelpers.js
@@ -284,24 +299,26 @@ function getModuleResource(module) {
   }
 }
 
-function getChunkGroupModules(dep) {
+function getChunkGroupModules(chunkGraph, moduleGraph, dep) {
   const modulesSet = new Set();
-  if (dep.module && dep.module.dependencies) {
-    modulesSet.add(getModuleResource(dep.module));
-    dep.module.dependencies.forEach(dependency => {
-      if (dependency.module) {
-        modulesSet.add(getModuleResource(dependency.module));
+  const depModule = moduleGraph.getModule(dep);
+  if (depModule && depModule.dependencies) {
+    modulesSet.add(getModuleResource(depModule));
+    depModule.dependencies.forEach(dependency => {
+      const dependencyModule = moduleGraph.getModule(dependency);
+      if (dependencyModule) {
+        modulesSet.add(getModuleResource(dependencyModule));
       }
     });
   }
-  const {chunkGroup} = dep.block;
+  const chunkGroup = chunkGraph.getBlockChunkGroup(moduleGraph.getParentBlock(dep));
   if (chunkGroup && Array.isArray(chunkGroup.chunks)) {
     chunkGroup.chunks.forEach(chunk => {
-      for (const module of chunk.getModules()) {
+      for (const module of chunkGraph.getChunkModulesIterable(chunk)) {
         modulesSet.add(getModuleResource(module));
         if (module instanceof ConcatenatedModule) {
-          module.buildInfo.fileDependencies.forEach(fileDep => {
-            modulesSet.add(fileDep);
+          module.modules.forEach(module => {
+            modulesSet.add(getModuleResource(module));
           });
         }
       }

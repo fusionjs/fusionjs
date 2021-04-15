@@ -65,6 +65,6 @@ test('transpiles node_modules', async () => {
   t.ok(clientVendor.includes(`'fixturepkg_string'`));
   t.equal(serverMain.includes(`'fixturepkg_string'`), false);
   t.ok(
-    serverMain.includes(`__SECRET_FILE_LOADER__?assetUrl=true!./package.json`)
+    serverMain.includes(`__SECRET_FILE_LOADER__!./package.json?assetUrl=true`)
   );
 }, 100000);

@@ -7,5 +7,6 @@
   "translations.hoc": "__HOC_TRANSLATED__",
   "translations.hook": "__HOOK_TRANSLATED__",
   "pattern.abc": "__ABC_TRANSLATED__",
-  "pattern.def": "__DEF_TRANSLATED__"
+  "pattern.def": "__DEF_TRANSLATED__",
+  "other-component-key": "__OTHER_COMPONENT__"
 }

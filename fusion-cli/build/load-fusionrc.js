@@ -16,24 +16,27 @@ const path = require('path');
 
 type BundleResult =  'universal' | 'browser-only';
 type TransformResult = 'all' | 'spec' | 'none';
-type BuildStats = {
-  command: 'dev' | 'build',
+export type BuildStats = {
+  command?: 'dev' | 'build',
   buildTime: number,
   mode: 'development' | 'production',
   path: string,
   target: string,
+  isBuildCacheEnabled: boolean,
+  isBuildCachePersistent: boolean,
   isIncrementalBuild: boolean,
   minify: boolean,
   skipSourceMaps: boolean,
   watch: boolean,
   version: string,
-  buildToolVersion: 'webpack v4',
+  buildToolVersion: 'webpack v5',
 };
 export type FusionRC = {
+  configPath?: string,
   babel?: {plugins?: Array<any>, presets?: Array<any>},
   splitChunks?: any,
   modernBuildOnly?: boolean,
-  assumeNoImportSideEffects?: boolean,
+  assumeNoImportSideEffects?: boolean | Array<string>,
   defaultImportSideEffects?: boolean | Array<string>,
   experimentalCompile?: boolean,
   experimentalTransformTest?: (modulePath: string, defaults: TransformResult) => TransformResult,
@@ -42,8 +45,9 @@ export type FusionRC = {
   jest?: {transformIgnorePatterns?: Array<string>},
   zopfli?: boolean,
   gzip?: boolean,
-  brotli?:boolean,
-  onBuildEnd?:(stats: BuildStats) => void,
+  brotli?: boolean,
+  onBuildEnd?: (stats: BuildStats) => void,
+  disableBuildCache?: boolean,
 };
 */
 
@@ -54,8 +58,15 @@ module.exports = function validateConfig(
   const configPath = path.join(dir, '.fusionrc.js');
   let config;
   if (fs.existsSync(configPath)) {
-    // $FlowFixMe
-    config = require(configPath);
+    config = {
+      // $FlowFixMe
+      ...require(configPath)
+    };
+
+    // Store path to config, needed to invalidate build cache
+    Object.defineProperty(config, 'configPath', {
+      value: configPath
+    });
     if (!isValid(config, silent)) {
       throw new Error('.fusionrc.js is invalid');
     }
@@ -87,6 +98,7 @@ function isValid(config, silent) {
         'zopfli', // TODO: Remove redundant zopfli option
         'gzip',
         'onBuildEnd',
+        'disableBuildCache',
       ].includes(key)
     )
   ) {
@@ -134,13 +146,15 @@ function isValid(config, silent) {
 
   if (
     !(
-      config.assumeNoImportSideEffects === false ||
+      config.assumeNoImportSideEffects === void 0 ||
       config.assumeNoImportSideEffects === true ||
-      config.assumeNoImportSideEffects === void 0
+      config.assumeNoImportSideEffects === false ||
+      (Array.isArray(config.assumeNoImportSideEffects) &&
+        config.assumeNoImportSideEffects.every(item => typeof item === 'string'))
     )
   ) {
     throw new Error(
-      'assumeNoImportSideEffects must be true, false, or undefined in fusionrc.js config'
+      'assumeNoImportSideEffects must be true, false, or an array of strings in fusionrc.js'
     );
   }
 
@@ -199,6 +213,16 @@ function isValid(config, silent) {
 
   if (config.onBuildEnd !== void 0 && typeof config.onBuildEnd !== 'function') {
     throw new Error('onBuildEnd must be function');
+  }
+
+  if (
+    !(
+      config.disableBuildCache === false ||
+      config.disableBuildCache === true ||
+      config.disableBuildCache === void 0
+    )
+  ) {
+    throw new Error('disableBuildCache must be true, false, or undefined in fusionrc.js');
   }
 
   return true;

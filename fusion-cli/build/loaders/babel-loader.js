@@ -7,8 +7,6 @@
  */
 /* eslint-env node */
 
-const crypto = require('crypto');
-const PersistentDiskCache = require('../persistent-disk-cache.js');
 const path = require('path');
 
 const babel = require('@babel/core');
@@ -42,44 +40,30 @@ async function loader(
 ) {
   const filename = this.resourcePath;
   let loaderOptions = loaderUtils.getOptions(this);
-  const cacheKey = crypto
-    // non-cryptographic purposes
-    // md4 is the fastest built-in algorithm
-    .createHash('md4')
-    // Changing any of the following values should yield a new cache key,
-    // thus our hash should take into account them all
-    .update(source)
-    .update(filename) // Analysis/transforms might depend on filenames
-    .update(JSON.stringify(loaderOptions))
-    .update(babel.version)
-    .update(fusionCLIVersion)
-    .digest('hex');
   // Use worker farm if provided, otherwise require the worker code and execute it in the same thread
   const worker = this[workerKey] || require('./babel-worker.js');
-  const cacheDir = path.join(
-    loaderOptions.dir,
-    'node_modules/.fusion_babel-cache'
+
+  const result = await worker.runTransformation(
+    source,
+    inputSourceMap,
+    filename,
+    loaderOptions,
+    this.rootContext,
+    this.sourceMap
   );
-
-  const diskCache = getCache(cacheDir);
-
-  const result = diskCache.exists(cacheKey)
-    ? await diskCache.read(cacheKey)
-    : await worker.runTransformation(
-        source,
-        inputSourceMap,
-        cacheKey,
-        filename,
-        loaderOptions,
-        this.rootContext,
-        this.sourceMap
-      );
 
   if (result) {
     const {code, map, metadata} = result;
 
-    if (discoveryState && metadata.translationIds) {
-      discoveryState.set(filename, new Set(metadata.translationIds));
+    if (discoveryState) {
+      if (metadata.translationIds) {
+        discoveryState.set(filename, new Set(metadata.translationIds));
+      } else {
+        // Need to update persisted cache when translations keys are no longer used
+        if (discoveryState.has(filename)) {
+          discoveryState.delete(filename);
+        }
+      }
     }
 
     return [code, map];
@@ -87,13 +71,4 @@ async function loader(
 
   // If the file was ignored, pass through the original content.
   return [source, inputSourceMap];
-}
-
-let cache;
-
-function getCache(cacheDir) {
-  if (!cache) {
-    cache = new PersistentDiskCache(cacheDir);
-  }
-  return cache;
 }

@@ -13,6 +13,14 @@ allowedJestOptions.forEach(arg => {
   };
 });
 
+const disableBuildCacheOption = {
+  disableBuildCache: {
+    type: 'boolean',
+    default: undefined,
+    describe: 'Disable persistent build cache.'
+  }
+};
+
 module.exports = {
   build: {
     descr: 'Build your app',
@@ -53,6 +61,7 @@ module.exports = {
         default: false,
         describe: 'Build without source maps.',
       },
+      ...disableBuildCacheOption,
     },
   },
   dev: {
@@ -98,6 +107,7 @@ module.exports = {
         default: 'info',
         describe: 'Log level to show',
       },
+      ...disableBuildCacheOption,
     },
   },
   profile: {
@@ -118,6 +128,7 @@ module.exports = {
         default: '4000',
         describe: 'Port for the bundle analyzer server',
       },
+      ...disableBuildCacheOption,
     },
   },
   start: {

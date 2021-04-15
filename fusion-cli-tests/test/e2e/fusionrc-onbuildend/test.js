@@ -8,8 +8,6 @@ const fs = require('fs');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
-const exists = util.promisify(fs.exists);
-const unlink = util.promisify(fs.unlink);
 
 const dev = require('../setup.js');
 
@@ -18,12 +16,39 @@ const app = dev(dir);
 
 const statsFile = path.resolve(dir, 'stats-output.json');
 
-beforeAll(() => app.setup(), 100000);
+async function clearStats() {
+  await writeFile(statsFile, JSON.stringify([]));
+}
+
+async function readStats() {
+  try {
+    return JSON.parse(await readFile(statsFile));
+  } catch (e) {
+    return [];
+  }
+}
+
+beforeAll(async () => {
+  // This is crucial for the test to pass in CI inside docker container.
+  // Upon write to the dir the whole tree gets new btime, which triggers
+  // unneccessary builds in watch mode with webpack v5, hence need to write
+  // a file before the test runs.
+  await clearStats();
+  await app.setup();
+}, 100000);
 afterAll(() => app.teardown());
 
 test('`fusion dev` calls onBuildEnd', async () => {
+  function statsReady() {
+    return tryTimes(async () => {
+      const stats = await readStats();
+
+      return stats.length >= 2;
+    }, 5);
+  }
+
   // build should be done now
-  t.ok(await tryTimes(() => exists(statsFile), 5));
+  t.ok(await statsReady());
 
   let statsOutput = JSON.parse(await readFile(statsFile, 'utf-8'));
   t.ok(Array.isArray(statsOutput));
@@ -41,6 +66,8 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "buildTime": "buildTime",
         "buildToolVersion": "buildToolVersion",
         "command": "dev",
+        "isBuildCacheEnabled": true,
+        "isBuildCachePersistent": false,
         "isIncrementalBuild": false,
         "minify": true,
         "mode": "development",
@@ -54,6 +81,8 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "buildTime": "buildTime",
         "buildToolVersion": "buildToolVersion",
         "command": "dev",
+        "isBuildCacheEnabled": true,
+        "isBuildCachePersistent": false,
         "isIncrementalBuild": false,
         "minify": true,
         "mode": "development",
@@ -66,8 +95,8 @@ test('`fusion dev` calls onBuildEnd', async () => {
     ]
   `);
 
-  // Clear build stats
-  await unlink(statsFile);
+  // Clear previous build stats
+  await clearStats();
 
   // Make change for incremental build
   const mainContent = await readFile(path.resolve(dir, 'src/main.js'), 'utf-8');
@@ -77,7 +106,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
   );
   await writeFile(path.resolve(dir, 'src/main.js'), updatedContent);
 
-  t.ok(await tryTimes(() => exists(statsFile), 5));
+  t.ok(await statsReady());
 
   let incStatsOutput = JSON.parse(await readFile(statsFile, 'utf-8'));
   t.ok(Array.isArray(incStatsOutput));
@@ -95,6 +124,8 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "buildTime": "buildTime",
         "buildToolVersion": "buildToolVersion",
         "command": "dev",
+        "isBuildCacheEnabled": true,
+        "isBuildCachePersistent": false,
         "isIncrementalBuild": true,
         "minify": true,
         "mode": "development",
@@ -108,6 +139,8 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "buildTime": "buildTime",
         "buildToolVersion": "buildToolVersion",
         "command": "dev",
+        "isBuildCacheEnabled": true,
+        "isBuildCachePersistent": false,
         "isIncrementalBuild": true,
         "minify": true,
         "mode": "development",

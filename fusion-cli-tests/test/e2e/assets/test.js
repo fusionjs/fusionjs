@@ -17,14 +17,18 @@ const dir = path.resolve(__dirname, './fixture');
 
 test('`fusion build` with assets', async () => {
   await cmd(`build --dir=${dir}`);
-  const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
+  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
   try {
     const {proc, port} = await start(`--dir=${dir}`);
     const res = await request(`http://localhost:${port}${expectedAssetPath}`);
     const contents = fs
       .readFileSync(path.resolve(dir, 'src/static/test.css'))
       .toString();
-    t.equal(res.headers['cache-control'], 'public, max-age=31536000');
+    t.equal(
+      res.headers['cache-control'],
+      'max-age=0',
+      'should not cache build assets for non-production builds'
+    );
     t.equal(res.headers['x-route-name'], 'static_asset');
     t.equal(res.data, contents);
     t.equal(res.headers['x-test'], 'test');
@@ -56,11 +60,56 @@ test('`fusion build` with assets', async () => {
   }
 }, 100000);
 
+test('`fusion build --production` with assets', async () => {
+  const env = {...process.env, NODE_ENV: 'production'};
+  await cmd(`build --production --dir=${dir}`, {env});
+  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  try {
+    const {proc, port} = await start(`--dir=${dir}`, {env});
+    const res = await request(`http://localhost:${port}${expectedAssetPath}`);
+    const contents = fs
+      .readFileSync(path.resolve(dir, 'src/static/test.css'))
+      .toString();
+    t.equal(
+      res.headers['cache-control'],
+      'public, max-age=31536000',
+      'should cache build assets for production builds'
+    );
+    t.equal(res.headers['x-route-name'], 'static_asset');
+    t.equal(res.data, contents);
+    t.equal(res.headers['x-test'], 'test');
+    proc.kill('SIGKILL');
+  } catch (e) {
+    t.ifError(e);
+  }
+
+  // with route prefix
+  try {
+    const {proc, port} = await start(`--dir=${dir}`, {
+      env: Object.assign({}, env, {
+        ROUTE_PREFIX: '/test-prefix',
+      }),
+    });
+    const res = await request(
+      `http://localhost:${port}/test-prefix${expectedAssetPath}`
+    );
+    const contents = fs
+      .readFileSync(path.resolve(dir, 'src/static/test.css'))
+      .toString();
+    t.equal(res.data, contents);
+    t.equal(res.headers['x-test'], 'test');
+    t.equal(res.headers['x-route-name'], 'static_asset');
+    proc.kill('SIGKILL');
+  } catch (e) {
+    t.ifError(e);
+  }
+}, 100000);
+
 test('`fusion dev` works with assets', async () => {
   const app = dev(dir);
   await app.setup();
   const url = await app.url();
-  const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
+  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
   try {
     const {data: clientMain} = await request(`${url}/_static/client-main.js`);
     t.ok(clientMain, 'serves client-main from memory correctly');
@@ -74,7 +123,7 @@ test('`fusion dev` works with assets', async () => {
       'serves css file from memory correctly'
     );
     t.equal(
-      (await request(`${url}/_static/b78cb0eaf8604dad0108350cb5149457.txt`))
+      (await request(`${url}/_static/513b30e20d8764530352254b5d7693b1.txt`))
         .data,
       fs
         .readFileSync(path.resolve(dir, 'src/static/test-server-asset.txt'))
@@ -89,7 +138,7 @@ test('`fusion dev` works with assets', async () => {
     const jsonAsset = await request(url + jsonAssetRes.data);
     t.equal(
       jsonAssetRes.data,
-      '/_static/8dc83113b16a107e573e02bd18468b22.json'
+      '/_static/5c2541248f36989929204695d12a0cad.json'
     );
     expect(jsonAsset.data).toStrictEqual({key: 'value', unused_key: ''}); // 'assetUrl saves original json file'
 
@@ -140,11 +189,11 @@ test('`fusion dev` assets work with route prefix', async () => {
     '.fusion/dist/development/server/server-main.js'
   );
 
-  const expectedAssetPath = '/_static/c300a7df05c8142598558365dbdaa451.css';
+  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   t.equal(
     (await request(`${url}/test-prefix/test`)).data,
-    '/test-prefix/_static/c300a7df05c8142598558365dbdaa451.css',
+    '/test-prefix/_static/20ae62de101a89a2c832407dc0ee0bbf.css',
     'sets correct route prefix in path'
   );
   t.ok((await request(`${url}/test-prefix/_static/client-main.js`)).data);
@@ -175,7 +224,7 @@ test('`fusion dev` works with assets with cdnUrl', async () => {
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   t.equal(
     (await request(`${url}/test`)).data,
-    'https://cdn.com/c300a7df05c8142598558365dbdaa451.css',
+    'https://cdn.com/20ae62de101a89a2c832407dc0ee0bbf.css',
     'sets correct asset path'
   );
   await app.teardown();

@@ -31,7 +31,7 @@ function swLoader() {
 
   compiler.run((err, stats) => {
     if (err || stats.hasErrors()) {
-      const info = stats.toJson();
+      const info = stats.toJson('errors-only');
 
       for (let err of info.errors) {
         return void callback(new Error(err));

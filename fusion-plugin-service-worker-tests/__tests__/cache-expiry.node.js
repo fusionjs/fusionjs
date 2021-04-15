@@ -107,4 +107,4 @@ test('/cache expiry', async done => {
     proc.kill();
     done();
   }
-}, 15000);
+}, 25000);

@@ -308,7 +308,7 @@ test('source maps are not served when CDN_URL is set', async () => {
       },
     })
   ).data;
-  t.equal(assetPath, '/_static/d41d8cd98f00b204e9800998ecf8427e.map');
+  t.equal(assetPath, '/_static/31d6cfe0d16ae931b73c59d7e0c089c0.map');
 
   proc.kill('SIGKILL');
 }, 100000);

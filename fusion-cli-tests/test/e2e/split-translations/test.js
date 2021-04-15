@@ -64,6 +64,15 @@ test('`fusion build` app with split translations integration', async () => {
     content2.includes('__SPLIT1_TRANSLATED__'),
     'renders first split translation'
   );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
+  );
+
   await Promise.all([
     page.click('#split2-link'),
     page.waitForSelector('#split2-translation'),
@@ -118,7 +127,15 @@ test('`fusion dev` app with split translations integration', async () => {
   const content2 = await page.content();
   t.ok(
     content2.includes('__SPLIT1_TRANSLATED__'),
-    'renders first  split translation'
+    'renders first split translation'
+  );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
   );
 
   const reloaded = page.evaluate(() => {
@@ -180,6 +197,14 @@ test('`fusion dev` app with split translations integration', async () => {
     content5.includes('__SPLIT1_TRANSLATED__'),
     'renders translation from unmodified file after rebuild'
   );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split unmodified child translations after rebuild'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split unmodified child missing translations after rebuild'
+  );
 
   await app.teardown();
 }, 100000);
@@ -210,7 +235,15 @@ test('`fusion dev` app with split translations integration (cached)', async () =
   const content2 = await page.content();
   t.ok(
     content2.includes('__SPLIT1_TRANSLATED__'),
-    'renders first  split translation'
+    'renders first split translation'
+  );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
   );
 
   app.teardown();

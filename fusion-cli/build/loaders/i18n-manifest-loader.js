@@ -49,5 +49,5 @@ function generateSource(manifest) {
 }
 
 function chunkIdsForPath(path) {
-  return `require("__SECRET_CHUNK_ID_LOADER__!${path}")`;
+  return `require("__SECRET_CHUNK_ID_LOADER__?path=${path}!")`;
 }

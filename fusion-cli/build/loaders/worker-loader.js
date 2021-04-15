@@ -64,7 +64,7 @@ module.exports.pitch = function(request /* : any*/) {
 
   const filename = loaderUtils.interpolateName(
     this,
-    options.name || '[hash].worker.js',
+    options.name || '[contenthash].worker.js',
     {
       context: options.context || this.rootContext || this.options.context,
       regExp: options.regExp,

@@ -24,7 +24,7 @@ test('`fusion dev` works with fs', async () => {
   t.ok(res.includes('writeFile'), 'supports fs api on the server');
   const {data: mainRes} = await request(`${url}/_static/client-main.js`);
   t.ok(
-    mainRes.includes('node-libs-browser/mock/empty.js'),
+    mainRes.includes('fs (ignored)'),
     'includes empty fs for browser in dev'
   );
   app.teardown();

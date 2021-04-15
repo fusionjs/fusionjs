@@ -29,6 +29,8 @@ By default this is `true`. In other words, import statements to other packages a
 
 Setting this to `false` means that unreachable/unused imports to packages into your app may be pruned (unless they explicitly specify import side effects in their `package.json` via the `sideEffects` field). Note that this only applies to imports to other packages from within your application source code. Imports within other packages to other packages will not be affected by this configuration. This is the recommended setting because it allows for a greater degree of import pruning with respect to imports used only in `__BROWSER__` or `__NODE__`.
 
+Note: `defaultImportSideEffects` applies to packages but *not* your application code. Use the standard `sideEffects` field in your app `package.json` to specify which project code files, when imported, cause side effects to happen.
+
 ```js
 module.exports = {
   // All packages omitting a sideEffects field are assumed to be free of import side effects
@@ -46,7 +48,7 @@ module.exports = {
 };
 ```
 
-Note: `defaultImportSideEffects` applies to packages but *not* your application code. Use the standard `sideEffects` field in your app `package.json` to specify which project code files, when imported, cause side effects to happen.
+Note: Fusion.js automatically excludes `core-js`, `regenerator-runtime` from this optimization.
 
 ### `assumeNoImportSideEffects`
 
@@ -55,6 +57,18 @@ By default this is `false`.
 Setting this to `true` enables the assumption that modules in your code do not have any import side effects. This assumption allows for more powerful tree shaking and pruning of unused imports.
 
 This option may be useful if you import modules that use Node.js built-ins. This option makes it easier to avoid unintentionally including server-specific code in the browser bundle.
+
+Setting this to an array of package names is the same as `true` with the exception of the specified packages.
+
+```js
+module.exports = {
+  // All packages omitting a sideEffects field are assumed to be free of import side effects
+  // *except* core-js, which is assumed to have import side effects.
+  assumeNoImportSideEffects: ["core-js"],
+};
+```
+
+Note: Fusion.js automatically excludes `core-js`, `regenerator-runtime` from this optimization.
 
 For specifics regarding implementation details, see:
 
@@ -66,7 +80,7 @@ In the future, it is possible that some form of this behavior may be turned on b
 
 ## `nodeBuiltins`
 
-This is an optional property that can be used to override the Fusion.js defaults for https://webpack.js.org/configuration/node/ in the browser bundle.
+This is an optional property that can be used to override the Fusion.js defaults for https://v4.webpack.js.org/configuration/node/ in the browser bundle.
 
 ```js
 module.exports = {
@@ -107,5 +121,16 @@ module.exports = {
   onBuildEnd: function (stats) {
     console.log(stats.buildTime);
   }
+};
+```
+
+## `disableBuildCache`
+
+This is an optional property that can be used to override the Fusion.js defaults for enabling persistent build cache.
+If left undefined, this property will default to false.
+
+```js
+module.exports = {
+  disableBuildCache: true,
 };
 ```

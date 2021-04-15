@@ -11,33 +11,17 @@ const path = require('path');
 const fs = require('fs');
 const loaderUtils = require('loader-utils');
 
-module.exports = function fileLoader(content /*: string */) {
-  const done = assetContents => {
-    const url = loaderUtils.interpolateName(this, '[hash].[ext]', {
-      context: this.rootContext,
-      content: assetContents,
-    });
+module.exports = function fileLoader(content /*: Buffer */) {
+  const url = loaderUtils.interpolateName(this, '[contenthash].[ext]', {
+    context: this.rootContext,
+    content,
+  });
 
-    // Assets should always go into client dist directory, regardless of source
-    const outputPath = path.posix.join('../client', url);
-    this.emitFile(outputPath, assetContents);
-    return `module.exports = __webpack_public_path__ + ${JSON.stringify(url)};`;
-  };
+  // Assets should always go into client dist directory, regardless of source
+  const outputPath = path.posix.join('../client', url);
+  this.emitFile(outputPath, content);
 
-  // Webpack produces a JS module from JSON automatically.
-  // However, assetURL should yield the raw JSON instead.
-  if (path.extname(this.resourcePath) === '.json') {
-    const callback = this.async();
-
-    fs.readFile(this.resourcePath, 'utf8', (err, result) => {
-      if (err) {
-        return void callback(err);
-      }
-      return void callback(null, done(result));
-    });
-  }
-
-  return done(content);
+  return `module.exports = __webpack_public_path__ + ${JSON.stringify(url)};`;
 };
 
 module.exports.raw = true;

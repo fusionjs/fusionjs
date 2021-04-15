@@ -26,6 +26,7 @@ exports.run = async function(
     open,
     logLevel,
     exitOnError,
+    disableBuildCache,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -44,6 +45,7 @@ exports.run = async function(
     forceLegacyBuild,
     watch: true,
     logger,
+    disableBuildCache,
   });
 
   const devRuntime = new DevelopmentRuntime(

@@ -43,8 +43,7 @@ export default function(dir /*: string */) {
             // setting the response. This allows composition with user middleware
             defer: true,
             setHeaders: res => {
-              // $FlowFixMe
-              if (!module.hot) {
+              if (!__DEV__) {
                 res.setHeader('Cache-Control', 'public, max-age=31536000');
               }
               res.setHeader('Timing-Allow-Origin', '*');

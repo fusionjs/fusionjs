@@ -7,8 +7,9 @@
  */
 /*eslint-env node */
 
-const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin.js');
-const JsonpTemplatePlugin = require('webpack/lib/web/JsonpTemplatePlugin.js');
+const webpack = require('webpack');
+const EntryOptionPlugin = require('webpack/lib/EntryOptionPlugin');
+const JsonpTemplatePlugin = require('webpack/lib/web/JsonpTemplatePlugin');
 /*::
 
 import type {SyncState} from "../shared-state-containers.js";
@@ -31,9 +32,13 @@ class ChildCompilationPlugin {
   outputOptions: Object;
   */
   constructor(opts /*: Opts*/) {
+    const { entry } = webpack.config.getNormalizedWebpackOptions({
+      entry: opts.entry,
+    });
+
     this.name = opts.name;
     this.enabledState = opts.enabledState;
-    this.entry = opts.entry;
+    this.entry = entry;
     this.plugins = opts.plugins;
     this.outputOptions = opts.outputOptions;
   }
@@ -48,13 +53,11 @@ class ChildCompilationPlugin {
         this.name,
         this.outputOptions,
         [
-          // "main" is default chunk name for string/array entries, see:
-          // https://github.com/webpack/webpack/blob/c2e03951f46bf56397a9b2039309a0c7bbc1991f/lib/EntryOptionPlugin.js#L34
-          new MultiEntryPlugin(compiler.context, this.entry, 'main'),
           new JsonpTemplatePlugin(),
           ...this.plugins(compilation.options),
         ]
       );
+      EntryOptionPlugin.applyEntryOption(childCompiler, compiler.context, this.entry);
 
       childCompiler.runAsChild((err, entries, childCompilation) => {
         callback(err);

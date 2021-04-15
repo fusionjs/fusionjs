@@ -19,10 +19,10 @@ test('`fusion dev` CHUNK_ID instrumentation', async () => {
   const {data: resB} = await request(`${url}/test-b`);
   const {data: resCombined} = await request(`${url}/test-combined`);
   const {data: resTransitive} = await request(`${url}/test-transitive`);
-  expect(resA).toStrictEqual([0, 2]);
-  expect(resB).toStrictEqual([0, 3]);
-  expect(resCombined).toStrictEqual([0]);
-  expect(resTransitive).toStrictEqual([1]);
+  expect(resA).toStrictEqual(['src_test-a_js', 'src_test-combined_js']);
+  expect(resB).toStrictEqual(['src_test-b_js', 'src_test-combined_js']);
+  expect(resCombined).toStrictEqual(['src_test-combined_js']);
+  expect(resTransitive).toStrictEqual(['src_test-transitive_js']);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -30,7 +30,7 @@ test('`fusion dev` CHUNK_ID instrumentation', async () => {
   const page = await browser.newPage();
   await page.goto(`${url}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  t.ok(csrContent.includes('<div id="csr">1</div>'));
+  t.ok(csrContent.includes('<div id="csr">src_test-transitive_js</div>'));
 
   browser.close();
   app.teardown();
@@ -52,10 +52,10 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const {data: resTransitive} = await request(
     `http://localhost:${port}/test-transitive`
   );
-  expect(resA).toStrictEqual([10003, 10004, 3, 4]);
-  expect(resB).toStrictEqual([10003, 10005, 3, 5]);
-  expect(resCombined).toStrictEqual([10003, 3]);
-  expect(resTransitive).toStrictEqual([10006, 6]);
+  expect(resA).toStrictEqual(['legacy-809', 'legacy-649', 838, 967]);
+  expect(resB).toStrictEqual(['legacy-893', 'legacy-649', 439, 967]);
+  expect(resCombined).toStrictEqual(['legacy-649', 967]);
+  expect(resTransitive).toStrictEqual(['legacy-542', 638]);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -63,7 +63,7 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  t.ok(csrContent.includes('<div id="csr">6</div>'));
+  t.ok(csrContent.includes('<div id="csr">638</div>'));
 
   browser.close();
   proc.kill('SIGKILL');

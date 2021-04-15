@@ -33,7 +33,7 @@ test('compiles with custom splitChunks config', async () => {
   );
   const clientNodeModuleChunkPath = path.resolve(
     dir,
-    `.fusion/dist/development/client/client-0.js`
+    `.fusion/dist/development/client/client-node_modules_other_index_js.js`
   );
 
   t.ok(await exists(clientEntryPath), 'Client file gets compiled');

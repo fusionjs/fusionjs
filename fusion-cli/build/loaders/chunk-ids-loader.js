@@ -19,12 +19,13 @@ async function chunkIdsLoader() {
    */
   this.cacheable(false);
   const callback = this.async();
+  const options = this.getOptions();
 
   const chunkMetadataState /*: ClientChunkMetadataContext*/ = this[
     clientChunkMetadataContextKey
   ];
 
-  const filename = this.resourcePath;
+  const filename = options.path;
 
   if (!chunkMetadataState) {
     return void callback('Chunk index context missing from chunk ids loader.');

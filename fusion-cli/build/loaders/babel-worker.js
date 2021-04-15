@@ -7,7 +7,6 @@
  */
 /* eslint-env node */
 
-const PersistentDiskCache = require('../persistent-disk-cache.js');
 const TranslationsExtractor = require('../babel-plugins/babel-plugin-i18n');
 const path = require('path');
 const babel = require('@babel/core');
@@ -19,21 +18,17 @@ module.exports = {
   runTransformation,
 };
 
+/*::
+type TransformationMetadata = {
+  translationIds: string[]
+};
+*/
+
 const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
-
-let cache;
-
-function getCache(cacheDir) {
-  if (!cache) {
-    cache = new PersistentDiskCache(cacheDir);
-  }
-  return cache;
-}
 
 async function runTransformation(
   source /*: string */,
   inputSourceMap /*: Object */,
-  cacheKey /*: string */,
   filename /*: string */,
   loaderOptions /*: Object*/,
   rootContext /*: Object*/,
@@ -93,36 +88,26 @@ async function runTransformation(
 
   const options = config.options;
 
-  const cacheDir = path.join(
-    loaderOptions.dir,
-    'node_modules/.fusion_babel-cache'
-  );
+  let metadata/*: TransformationMetadata*/ = {};
 
-  const diskCache = getCache(cacheDir);
-  const result = await diskCache.get(cacheKey, () => {
-    let metadata = {};
+  let translationIds = new Set();
+  // Add the discovery plugin
+  // This only does side effects, so it is ok this doesn't affect cache key
+  // This plugin is here because webpack config -> loader options
+  // requires serialization. But we want to pass translationsIds directly.
+  options.plugins.unshift([TranslationsExtractor, {translationIds}]);
 
-    let translationIds = new Set();
-    // Add the discovery plugin
-    // This only does side effects, so it is ok this doesn't affect cache key
-    // This plugin is here because webpack config -> loader options
-    // requires serialization. But we want to pass translationsIds directly.
-    options.plugins.unshift([TranslationsExtractor, {translationIds}]);
+  const transformed = transform(source, options);
 
-    const transformed = transform(source, options);
+  if (translationIds.size > 0) {
+    metadata.translationIds = Array.from(translationIds);
+  }
 
-    if (translationIds.size > 0) {
-      metadata.translationIds = Array.from(translationIds.values());
-    }
+  if (!transformed) {
+    return null;
+  }
 
-    if (!transformed) {
-      return null;
-    }
-
-    return {metadata, ...transformed};
-  });
-
-  return result;
+  return {metadata, ...transformed};
 }
 
 function transform(source, options) {

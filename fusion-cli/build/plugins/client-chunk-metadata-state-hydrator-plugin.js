@@ -27,8 +27,9 @@ class ClientChunkMetadataStateHydrator {
     });
 
     compiler.hooks.thisCompilation.tap(name, compilation => {
-      compilation.hooks.afterOptimizeChunkAssets.tap(name, chunks => {
-        const fileManifest = chunkIndexFromWebpackChunks(chunks);
+      compilation.hooks.afterProcessAssets.tap(name, () => {
+        const chunks = compilation.chunks;
+        const fileManifest = chunkIndexFromWebpackChunks(compilation.chunkGraph, chunks);
         const urlMap = chunkMapFromWebpackChunks(chunks);
         const {criticalPaths, criticalIds} = criticalChunkInfo(
           compilation,
@@ -49,7 +50,7 @@ class ClientChunkMetadataStateHydrator {
 
 module.exports = ClientChunkMetadataStateHydrator;
 
-function chunkIndexFromWebpackChunks(chunks) {
+function chunkIndexFromWebpackChunks(chunkGraph, chunks) {
   const chunkIdsByFile = new Map();
 
   for (const c of chunks) {
@@ -60,7 +61,7 @@ function chunkIndexFromWebpackChunks(chunks) {
     // Iterate through the groups this chunk belongs to, adding the files of the other chunks in that group as well
     for (const g of c.groupsIterable) {
       for (const cc of g.chunks) {
-        for (const m of cc.modulesIterable) {
+        for (const m of chunkGraph.getChunkModulesIterable(cc)) {
           if (m.resource) {
             files.push(m.resource);
           } else if (m.modules) {
@@ -87,7 +88,7 @@ function chunkIndexFromWebpackChunks(chunks) {
 function chunkMapFromWebpackChunks(chunks) {
   const chunkMap = new Map();
   chunks.forEach(chunk => {
-    const [filename] = chunk.files;
+    const filename = chunk.files.values().next().value;
     const inner = new Map();
     inner.set('es5', filename);
     chunkMap.set(chunk.id, inner);
@@ -105,7 +106,7 @@ function getChunkInfo(compilation, chunks) {
   const initialChunkIds = new Set();
 
   for (const chunk of chunks) {
-    allChunks.set(chunk.id, chunk.files[0]);
+    allChunks.set(chunk.id, chunk.files.values().next().value);
     if (chunk.hasRuntime()) {
       runtimeChunkIds.add(chunk.id);
     } else if (chunk.canBeInitial()) {
@@ -128,7 +129,7 @@ function getChunkInfo(compilation, chunks) {
 function criticalChunkInfo(compilation, chunks) {
   const mainEntrypoint = compilation.entrypoints.get('main');
   const chunkIds = mainEntrypoint.chunks.map(c => c.id);
-  const chunkPaths = mainEntrypoint.chunks.map(c => c.files[0]);
+  const chunkPaths = mainEntrypoint.chunks.map(c => c.files.values().next().value);
   return {
     criticalIds: chunkIds,
     criticalPaths: chunkPaths,

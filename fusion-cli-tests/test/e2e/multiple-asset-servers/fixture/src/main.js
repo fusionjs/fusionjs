@@ -1,7 +1,7 @@
 // @noflow
 import App from 'fusion-core';
 import {assetUrl} from 'fusion-core';
-import * as jsonData from './static/test.json';
+import jsonData from './static/test.json';
 
 import serverAsset from './server-asset.js';
 

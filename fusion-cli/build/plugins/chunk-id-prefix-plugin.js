@@ -8,14 +8,28 @@
 /*eslint-env node */
 
 class ChunkIdPrefixPlugin {
+  /*::
+  prefix: string;
+  */
+  constructor(prefix /*: string */) {
+    this.prefix = prefix;
+  }
+
   apply(compiler /*: Object */) {
     const name = this.constructor.name;
-    compiler.hooks.thisCompilation.tap(name, compilation => {
-      compilation.hooks.beforeChunkIds.tap(name, chunks => {
-        let idx = 0;
-        for (const chunk of chunks) {
-          chunk.id = 10000 + idx++;
-        }
+    compiler.hooks.thisCompilation.tap(name, () => {
+      // NOTE: Need to let webpack assign ids first, before appending custom
+      // prefix. Therefore we tap into .compilation hook in .thisCompilation(),
+      // this ensures our logic runs after webpack assigned reqired chunk ids.
+      compiler.hooks.compilation.tap(name, (compilation) => {
+        compilation.hooks.chunkIds.tap(name, chunks => {
+          for (const chunk of chunks) {
+            const chunkId = `${this.prefix}-${chunk.id}`;
+
+            chunk.id = chunkId;
+            chunk.ids = [chunkId];
+          }
+        });
       });
     });
   }

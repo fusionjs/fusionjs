@@ -13,22 +13,20 @@ const path = require('path');
 
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const DefaultNoImportSideEffectsPlugin = require('default-no-import-side-effects-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const {
   gzipWebpackPlugin,
   brotliWebpackPlugin,
-  svgoWebpackPlugin,
 } = require('../lib/compression');
 const resolveFrom = require('../lib/resolve-from');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
+const NodeSourcePlugin = require('./plugins/node-source-plugin.js');
 const {
   chunkIdsLoader,
   fileLoader,
+  svgoLoader,
   babelLoader,
   i18nManifestLoader,
   chunkUrlMapLoader,
@@ -76,6 +74,7 @@ import type {
 } from "./types.js";
 
 import type {
+  BuildStats,
   FusionRC
 } from "./load-fusionrc.js";
 
@@ -104,9 +103,16 @@ export type WebpackConfigOpts = {|
     node?: Object
   },
   worker: Object,
-  onBuildEnd: Function,
+  onBuildEnd?: $PropertyType<FusionRC, 'onBuildEnd'>,
   command?: 'dev' | 'build',
+  isBuildCacheEnabled: boolean,
 |};
+
+type JsonValue = boolean | number | string | null | void | $Shape<{ [string]: JsonValue }> | $ReadOnlyArray<JsonValue>;
+
+type SerializableConfigOpts = {
+  [string]: JsonValue
+};
 */
 const isProjectCode = (modulePath /*:string*/, dir /*:string*/) =>
   modulePath.startsWith(getSrcPath(dir)) ||
@@ -118,6 +124,8 @@ module.exports = {
   getWebpackConfig,
   getTransformDefault,
 };
+
+const WEBPACK_NODE_OPTIONS = new Set(['__filename', '__dirname', 'global']);
 
 function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const {
@@ -137,6 +145,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     worker,
     onBuildEnd,
     command,
+    preserveNames,
+    isBuildCacheEnabled,
+    // ACHTUNG:
+    // Adding new config option? Please do not forget to add it to `cacheVersionVars`
   } = opts;
   const main = 'src/main.js';
 
@@ -145,8 +157,12 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   }
 
   const runtime = COMPILATIONS[id];
+  const mode = dev ? 'development' : 'production';
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
+  const isHMREnabled = dev && hmr && watch;
+  const target = {server: 'node', client: 'web', sw: 'webworker'}[runtime];
+  const fusionBuildFolder = path.resolve(dir, '.fusion');
 
   // Both options default to true, but if `--zopfli=false`
   // it should be respected for backwards compatibility
@@ -165,20 +181,26 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         : [],
   };
 
+  const isAssumeNoImportSideEffectsEnabled =
+    fusionConfig.assumeNoImportSideEffects === true ||
+    Array.isArray(fusionConfig.assumeNoImportSideEffects);
+
+  const isDefaultImportSideEffectsEnabled = !(
+    fusionConfig.defaultImportSideEffects === false ||
+    Array.isArray(fusionConfig.defaultImportSideEffects)
+  );
+
   const babelOverridesData = {
     dev: dev,
     fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    assumeNoImportSideEffects: isAssumeNoImportSideEffectsEnabled,
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: false,
   };
 
   const legacyBabelOverridesData = {
-    dev: dev,
-    fusionTransforms: true,
-    assumeNoImportSideEffects: fusionConfig.assumeNoImportSideEffects,
+    ...babelOverridesData,
     target: runtime === 'server' ? 'node-bundled' : 'browser-legacy',
-    specOnly: false,
   };
 
   const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
@@ -203,36 +225,101 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       }
     : JS_EXT_PATTERN;
 
+  const nodeBuiltins = Object.assign(
+    {
+      // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
+      process: false,
+      // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
+      Buffer: false,
+      // This is required until we have better tree shaking. See https://github.com/fusionjs/fusion-cli/issues/254
+      child_process: 'empty',
+      cluster: 'empty',
+      crypto: 'empty',
+      dgram: 'empty',
+      dns: 'empty',
+      fs: 'empty',
+      http2: 'empty',
+      module: 'empty',
+      net: 'empty',
+      readline: 'empty',
+      repl: 'empty',
+      tls: 'empty',
+    },
+    legacyPkgConfig.node,
+    fusionConfig.nodeBuiltins
+  );
+
   // Used to determine if this is an initial or incremental build
   let isIncrementalBuild = false;
 
+  // Invalidate cache when any of these values change
+  const cacheVersionVars/*: SerializableConfigOpts */ = {
+    id,
+    dev,
+    dir,
+    hmr,
+    watch,
+    zopfli,
+    gzip,
+    brotli,
+    minify,
+    skipSourceMaps,
+    preserveNames,
+    nodeBuiltins,
+    fusionCLIVersion,
+  };
+  const cacheDirectory = path.join(fusionBuildFolder, '.build-cache');
+  const isBuildCachePersistent =
+    isBuildCacheEnabled && !isEmptyDir(cacheDirectory);
+
   return {
+    ...(isBuildCacheEnabled
+      ? {
+          cache: {
+            type: 'filesystem',
+            cacheDirectory,
+            name: `${runtime}-${mode}${isHMREnabled ? '-hmr' : ''}`,
+            version: JSON.stringify(cacheVersionVars),
+            buildDependencies: {
+              // Invalidate cache when any of these files, or any of their dependencies change
+              config: [
+                __filename,
+                // .fusionrc contains some non-serializable options (e.g. functions), so we need to
+                // tell webpack to track any changes to this file to invalidate the build cache
+                fusionConfig && fusionConfig.configPath,
+              ].filter(Boolean),
+            },
+          },
+        }
+      : null),
+    watchOptions: {
+      // Ignore Yarn PnP immutable paths, as well as invalid virtual paths
+      // @see: https://github.com/yarnpkg/berry/blob/5869e5934dcd7491422c2045675bcea2944708cc/packages/yarnpkg-fslib/sources/VirtualFS.ts#L8-L14
+      ignored: /(\/\.yarn(\/[^/]+)*\/cache\/[^\/]+\.zip|\/\.yarn\/(?:\$\$virtual|__virtual__)(?!(\/[^/]+){2}\/.+$))/,
+    },
     name: runtime,
-    target: {server: 'node', client: 'web', sw: 'webworker'}[runtime],
+    target,
     entry: {
       main: [
         runtime === 'client' &&
           path.join(__dirname, '../entries/client-public-path.js'),
         runtime === 'server' &&
           path.join(__dirname, '../entries/server-public-path.js'),
-        dev &&
-          hmr &&
-          watch &&
+        isHMREnabled &&
           runtime !== 'server' &&
           `${require.resolve('webpack-hot-middleware/client')}?name=client`,
+        // TODO: revisit server-side HMR (we currently restart the server)
         // TODO(#46): use 'webpack/hot/signal' instead
-        dev &&
-          hmr &&
-          watch &&
-          runtime === 'server' &&
-          `${require.resolve('webpack/hot/poll')}?1000`,
+        // isHMREnabled &&
+        //   runtime === 'server' &&
+        //   `${require.resolve('webpack/hot/poll')}?1000`,
         runtime === 'server' &&
           path.join(__dirname, `../entries/${id}-entry.js`), // server-entry or serverless-entry
         runtime === 'client' &&
           path.join(__dirname, '../entries/client-entry.js'),
       ].filter(Boolean),
     },
-    mode: dev ? 'development' : 'production',
+    mode,
     // TODO(#47): Do we need to do something different here for production?
     stats: 'minimal',
     /**
@@ -254,14 +341,19 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       ? 'hidden-source-map'
       : 'cheap-module-source-map',
     output: {
-      path: path.join(dir, `.fusion/dist/${env}/${runtime}`),
+      uniqueName: 'Fusion',
+      path: path.join(fusionBuildFolder, 'dist', env, runtime),
       filename:
         runtime === 'server'
           ? 'server-main.js'
           : dev
           ? 'client-[name].js'
           : 'client-[name]-[chunkhash].js',
-      libraryTarget: runtime === 'server' ? 'commonjs2' : 'var',
+      ...(runtime === 'server'
+        ? {
+            libraryTarget: 'commonjs2',
+          }
+        : null),
       // This is the recommended default.
       // See https://webpack.js.org/configuration/output/#output-sourcemapfilename
       sourceMapFilename: `[file].map`,
@@ -275,22 +367,41 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           : path.join(dir, info.absoluteResourcePath);
       },
     },
-    performance: {
-      hints: false,
-    },
+    performance: false,
     context: dir,
     node: Object.assign(
-      getNodeConfig(runtime),
-      legacyPkgConfig.node,
-      fusionConfig.nodeBuiltins
+      {
+        // We want these to resolve to the original file source location, not the compiled location
+        // in the future, we may want to consider using `import.meta`
+        __filename: true,
+        __dirname: true,
+      },
+      Object.entries(nodeBuiltins)
+        .filter(([key]) => WEBPACK_NODE_OPTIONS.has(key))
+        .reduce((acc, [key, val]) => {
+          acc[key] = val;
+
+          return acc;
+        }, {})
     ),
     module: {
-      /**
-       * Compile-time error for importing a non-existent export
-       * https://github.com/facebookincubator/create-react-app/issues/1559
-       */
-      strictExportPresence: true,
+      // NOTE: Breaking change in webpack v5
+      // Webpack v5 does not allow named imports from JSON-modules, that makes it
+      // hard to resolve for some apps dependent on packages with such imports.
+      // Hence need to relax this rule to produce a warning instead of an error
+      // @see: https://webpack.js.org/blog/2020-10-10-webpack-5-release/#json-modules
+      strictExportPresence: false,
       rules: [
+        // NOTE: Breaking change in webpack v5
+        // Webpack aligns with the spec for ECMAScript module,
+        // where import paths need to be fully specified
+        // @see: https://github.com/webpack/webpack/issues/11467#issuecomment-691702706
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         /**
          * Global transforms (including ES2017+ transpilations)
          */
@@ -384,10 +495,16 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             },
           ],
         },
+        // Need to disable auto-parsing JSON loaded via `assetUrl()` construct
         {
           test: /\.json$/,
+          resourceQuery: /assetUrl=true/,
           type: 'javascript/auto',
-          loader: require.resolve('./loaders/json-loader.js'),
+        },
+        {
+          test: /\.svg$/,
+          resourceQuery: /assetUrl=true/,
+          loader: svgoLoader.path,
         },
         {
           test: /\.ya?ml$/,
@@ -398,24 +515,54 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           test: /\.graphql$|.gql$/,
           loader: require.resolve('graphql-tag/loader'),
         },
-        fusionConfig.assumeNoImportSideEffects && {
-          sideEffects: false,
-          test: modulePath => {
-            if (
-              modulePath.includes('core-js/modules') ||
-              modulePath.includes('regenerator-runtime/runtime')
-            ) {
-              return false;
-            }
+        (isAssumeNoImportSideEffectsEnabled ||
+          !isDefaultImportSideEffectsEnabled) && {
+            sideEffects: false,
+            ...(isAssumeNoImportSideEffectsEnabled
+              ? null
+              : {
+                  // `defaultImportSideEffects: false` only applies to imports to other packages from within
+                  // application. Imports within other packages to other packages will not be affected.
+                  issuer: dir,
+                }),
+            test: modulePath =>
+              // NOTE: Breaking change in webpack v5
+              // Need to skip modules generated via custom webpack loaders, for which there's no module resource set
+              // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/RuleSet.js#L487
+              Boolean(modulePath) &&
+              // `defaultImportSideEffects: false` does not apply to application code,
+              // in which case we defer to the `sideEffects` in app-root package.json
+              (isAssumeNoImportSideEffectsEnabled ||
+                modulePath.startsWith(dir)),
+            descriptionData: {
+              // We need to respect the value set in package.json whenever possible, hence
+              // only set module as sideEffects free if sideEffects field was not defined.
+              sideEffects: val => !Boolean(val),
+              ...(function () {
+                const ignoredPackages = new Set([
+                  'core-js',
+                  'regenerator-runtime',
+                  ...(isAssumeNoImportSideEffectsEnabled &&
+                    Array.isArray(fusionConfig.assumeNoImportSideEffects)
+                    ? fusionConfig.assumeNoImportSideEffects
+                    : []),
+                  ...(!isDefaultImportSideEffectsEnabled &&
+                    Array.isArray(fusionConfig.defaultImportSideEffects)
+                    ? fusionConfig.defaultImportSideEffects
+                    : []),
+                ]);
 
-            return true;
+                return {
+                  name: packageName => !ignoredPackages.has(packageName),
+                };
+              })(),
+            },
           },
-        },
       ].filter(Boolean),
     },
     externals: [
       runtime === 'server' &&
-        ((context, request, callback) => {
+        (({ context, request }, callback) => {
           if (/^[@a-z\-0-9]+/.test(request)) {
             const absolutePath = resolveFrom.silent(context, request);
             // do not bundle external packages and those not whitelisted
@@ -464,7 +611,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             }
           : {}),
       },
-      plugins: [PnpWebpackPlugin],
+      // NOTE: Breaking change in webpack v5
+      // Need to prioritize .mjs extension to keep similar behavior to
+      // webpack v4, also some packages lack fully specified path in esm
+      // @see: https://github.com/webpack/webpack/issues/11467#issuecomment-691702706
+      extensions: ['.mjs', '...'],
     },
     resolveLoader: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
@@ -478,41 +629,49 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [swLoader.alias]: swLoader.path,
         [workerLoader.alias]: workerLoader.path,
       },
-      plugins: [PnpWebpackPlugin.moduleLoader(module)],
     },
-
     plugins: [
       runtime === 'client' && !dev && new SourceMapPlugin(),
-      runtime === 'client' &&
-        new webpack.optimize.RuntimeChunkPlugin({
-          name: 'runtime',
+      // NOTE: Breaking change in webpack v5
+      // Need to provide same API to source node modules in client bundles
+      // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L83-L94
+      target !== 'node' &&
+        new webpack.ProvidePlugin({
+          ...(nodeBuiltins.Buffer
+            ? {
+                Buffer: ['buffer', 'Buffer'],
+              }
+            : null),
+          ...(nodeBuiltins.process
+            ? {
+                process: 'process',
+              }
+            : null),
         }),
-      (fusionConfig.defaultImportSideEffects === false ||
-        Array.isArray(fusionConfig.defaultImportSideEffects)) &&
-        new DefaultNoImportSideEffectsPlugin(
-          Array.isArray(fusionConfig.defaultImportSideEffects)
-            ? {ignoredPackages: fusionConfig.defaultImportSideEffects}
-            : {}
-        ),
-      new webpack.optimize.SideEffectsFlagPlugin(),
+      // NOTE: Breaking change in webpack v5
+      // Need to provide same API to source node modules in client bundles
+      // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L21-L36
+      target !== 'node' && new NodeSourcePlugin(nodeBuiltins),
       runtime === 'server' &&
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
       onBuildEnd
         ? new ProgressBarPlugin({
             callback: progressBar => {
               const buildTime = new Date() - progressBar.start;
-              const buildStats = {
+              const buildStats/*: BuildStats*/ = {
                 command,
                 target: id,
-                mode: dev ? 'development' : 'production',
+                mode,
                 path: dir,
                 watch,
                 minify,
                 skipSourceMaps,
                 buildTime,
                 isIncrementalBuild,
+                isBuildCacheEnabled,
+                isBuildCachePersistent,
                 version: fusionCLIVersion,
-                buildToolVersion: 'webpack v4',
+                buildToolVersion: 'webpack v5',
               };
               isIncrementalBuild = true;
               return onBuildEnd(buildStats);
@@ -539,13 +698,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       new LoaderContextProviderPlugin(workerKey, worker),
       !dev && shouldGzip && gzipWebpackPlugin,
       !dev && brotli && brotliWebpackPlugin,
-      !dev && svgoWebpackPlugin,
-      // In development, skip the emitting phase on errors to ensure there are
-      // no assets emitted that include errors. This fixes an issue with hot reloading
-      // server side code and recovering from errors correctly. We only want to do this
-      // in dev because the CLI will not exit with an error code if the option is enabled,
-      // so failed builds would look like successful ones.
-      watch && new webpack.NoEmitOnErrorsPlugin(),
       runtime === 'server'
         ? // Server
           new InstrumentedImportDependencyTemplatePlugin({
@@ -561,11 +713,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             compilation: 'client',
             i18nManifest: state.i18nManifest,
           }),
-      dev && hmr && watch && new webpack.HotModuleReplacementPlugin(),
-      !dev && runtime === 'client' && new webpack.HashedModuleIdsPlugin(),
-      runtime === 'client' &&
-        // case-insensitive paths can cause problems
-        new CaseSensitivePathsPlugin(),
+      // @TODO: revisit server-side HMR (we currently restart the server)
+      isHMREnabled &&
+        runtime !== 'server' &&
+        new webpack.HotModuleReplacementPlugin(),
       runtime === 'server' &&
         new webpack.BannerPlugin({
           raw: true,
@@ -584,12 +735,24 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             path.resolve(__dirname, '../entries/client-entry.js'),
             // EVENTUALLY HAVE HMR
           ],
-          enabledState: opts.state.legacyBuildEnabled,
+          enabledState: state.legacyBuildEnabled,
           outputOptions: {
-            filename: opts.dev
+            // Can not change target properties for child compiler
+            // Need to downgrade the environment options manually
+            // @see: https://webpack.js.org/configuration/output/#outputenvironment
+            environment: {
+              arrowFunction: false,
+              bigIntLiteral: false,
+              const: false,
+              destructuring: false,
+              dynamicImport: false,
+              forOf: false,
+              module: false,
+            },
+            filename: dev
               ? 'client-legacy-[name].js'
               : 'client-legacy-[name]-[chunkhash].js',
-            chunkFilename: opts.dev
+            chunkFilename: dev
               ? 'client-legacy-[name].js'
               : 'client-legacy-[name]-[chunkhash].js',
           },
@@ -608,11 +771,21 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             new ClientChunkMetadataStateHydratorPlugin(
               state.legacyClientChunkMetadata
             ),
-            new ChunkIdPrefixPlugin(),
+            new ChunkIdPrefixPlugin('legacy'),
           ],
         }),
     ].filter(Boolean),
     optimization: {
+      // In development, skip the emitting phase on errors to ensure there are
+      // no assets emitted that include errors. This fixes an issue with hot reloading
+      // server side code and recovering from errors correctly. We only want to do this
+      // in dev because the CLI will not exit with an error code if the option is enabled,
+      // so failed builds would look like successful ones.
+      ...(watch
+        ? {
+            emitOnErrors: false,
+          }
+        : null),
       runtimeChunk: runtime === 'client' && {name: 'runtime'},
       splitChunks:
         runtime !== 'client'
@@ -641,9 +814,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       minimizer: shouldMinify
         ? [
             new TerserPlugin({
-              sourceMap: skipSourceMaps ? false : true, // default from webpack (see https://github.com/webpack/webpack/blob/aab3554cad2ebc5d5e9645e74fb61842e266da34/lib/WebpackOptionsDefaulter.js#L290-L297)
-              cache: true, // default from webpack
-              parallel: true, // default from webpack
               extractComments: false,
               terserOptions: {
                 compress: {
@@ -657,8 +827,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                   inline: 1,
                 },
 
-                keep_fnames: opts.preserveNames,
-                keep_classnames: opts.preserveNames,
+                keep_fnames: preserveNames,
+                keep_classnames: preserveNames,
               },
             }),
           ]
@@ -683,34 +853,6 @@ if (process.env.NODE_ENV && process.env.NODE_ENV !== '${env}') {
   `;
 }
 
-function getNodeConfig(runtime) {
-  const emptyForWeb = runtime === 'client' ? 'empty' : false;
-  return {
-    // Polyfilling process involves lots of cruft. Better to explicitly inline env value statically
-    process: false,
-    // We definitely don't want automatic Buffer polyfills. This should be explicit and in userland code
-    Buffer: false,
-    // We definitely don't want automatic setImmediate polyfills. This should be explicit and in userland code
-    setImmediate: false,
-    // We want these to resolve to the original file source location, not the compiled location
-    // in the future, we may want to consider using `import.meta`
-    __filename: true,
-    __dirname: true,
-    // This is required until we have better tree shaking. See https://github.com/fusionjs/fusion-cli/issues/254
-    child_process: emptyForWeb,
-    cluster: emptyForWeb,
-    crypto: emptyForWeb,
-    dgram: emptyForWeb,
-    dns: emptyForWeb,
-    fs: emptyForWeb,
-    module: emptyForWeb,
-    net: emptyForWeb,
-    readline: emptyForWeb,
-    repl: emptyForWeb,
-    tls: emptyForWeb,
-  };
-}
-
 function getSrcPath(dir) {
   // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
   if (process.env.NODE_PRESERVE_SYMLINKS) {
@@ -723,5 +865,13 @@ function getSrcPath(dir) {
     return path.resolve(real, 'src');
   } catch (e) {
     return path.resolve(dir, 'src');
+  }
+}
+
+function isEmptyDir(dir) {
+  try {
+    return fs.readdirSync(dir).length === 0;
+  } catch (e) {
+    return true;
   }
 }

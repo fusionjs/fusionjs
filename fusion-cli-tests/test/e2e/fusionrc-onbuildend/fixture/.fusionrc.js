@@ -4,7 +4,6 @@ const path = require('path');
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
-const exists = util.promisify(fs.exists);
 
 module.exports = {
   async onBuildEnd(stats) {
@@ -15,9 +14,9 @@ module.exports = {
 };
 
 async function readStats(file) {
-  if (await exists(file)) {
+  try {
     return JSON.parse(await readFile(file, 'utf-8'));
-  } else {
+  } catch (e) {
     return [];
   }
 }
