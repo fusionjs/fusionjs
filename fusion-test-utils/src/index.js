@@ -109,12 +109,15 @@ if (typeof it !== 'undefined') {
   /* eslint-env node, jest */
   test = (description, callback, ...rest) =>
     it(description, () => callback(assert), ...rest);
+  test.skip = (description, callback, ...rest) =>
+    it.skip(description, () => callback(assert), ...rest);
   mockFunction = (...args) => jest.fn(...args);
 } else {
   const notSupported = () => {
     throw new Error('Can’t import test() when not using the test-app target.');
   };
   test = notSupported;
+  test.skip = notSupported;
   mockFunction = notSupported;
 }
 
