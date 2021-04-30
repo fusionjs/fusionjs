@@ -16,8 +16,12 @@ const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
 const httpProxy = require('http-proxy');
+const { statSync, existsSync } = require('fs');
 
 const renderHtmlError = require('./server-error').renderHtmlError;
+
+const entryFile = '.fusion/dist/development/server/server-main.js';
+let entryFileLastModifiedTime = Date.now();
 
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
@@ -118,9 +122,7 @@ module.exports.DevelopmentRuntime = function(
         }});
       }
 
-      const entry = path.resolve(
-        '.fusion/dist/development/server/server-main.js'
-      );
+      const entry = path.resolve('${entryFile}');
 
       if (fs.existsSync(entry)) {
         try {
@@ -139,6 +141,21 @@ module.exports.DevelopmentRuntime = function(
         logAndSend(new Error(\`No entry found at \${entry}\`));
       }
     `;
+
+    /**
+     * An escape hatch to not respawn the server if the server bundle never changed.
+     * This saves substantial times for CSR apps, who rarely change code in their server bundle.
+     */
+    if (existsSync(entryFile)) {
+      const entryFileStats = statSync(entryFile);
+      if (entryFileStats.mtime === entryFileLastModifiedTime) {
+        console.log('Server bundle never changed, skipping respawn');
+        lifecycle.start();
+        return Promise.resolve();
+      } else {
+        entryFileLastModifiedTime = entryFileStats.mtime;
+      }
+    }   
 
     killProc();
 
