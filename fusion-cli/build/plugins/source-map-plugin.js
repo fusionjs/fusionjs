@@ -47,14 +47,12 @@ class SourceMapPlugin {
 
           for (const name of jsAssetNames) {
             try {
-              const sourceMapName = `${name}.map`;
-              if (!assets[sourceMapName]) continue;
-
-              const sources = assets[name].getChildren();
-              if (!sources || sources.length !== 2) continue;
+              const sources = assets[name] instanceof ConcatSource
+                ? assets[name].getChildren()
+                : [assets[name]];
 
               const source = sources[0];
-              const sourceMapComment = sources[1];
+              const sourceMapComment = sources[1] || '';
               const withMapFileName = name.replace(/\.js$/, '-with-map.js');
               const { info: assetInfo } = compilation.getAsset(name);
 
