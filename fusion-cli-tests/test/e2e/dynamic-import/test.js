@@ -25,10 +25,19 @@ test('`fusion build` with dynamic imports', async () => {
     testContent.dynamicContent.includes('loaded dynamic import'),
     'dynamic import is executed'
   );
-  expect(testContent.chunkIds).toStrictEqual([
-    ['legacy-src_dynamic_js', 'src_dynamic_js'],
-    ['legacy-src_dynamic2_js', 'src_dynamic2_js'],
-  ]); // 'Chunk IDs are populated'
+  // 'Chunk IDs are populated'
+  expect(testContent.chunkIds).toMatchInlineSnapshot(`
+    Array [
+      Array [
+        "legacy-src_dynamic_js",
+        "src_dynamic_js",
+      ],
+      Array [
+        "legacy-src_dynamic2_js",
+        "src_dynamic2_js",
+      ],
+    ]
+  `);
 
   t.ok(
     await exists(

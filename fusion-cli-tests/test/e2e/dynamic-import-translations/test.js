@@ -29,7 +29,7 @@ test('`fusion build` app with split translations integration', async () => {
   t.ok(
     content.includes(
       '<div data-testid="split-with-child">' +
-        '["__SPLIT_WITH_CHILD__","__SPLIT_CHILD__"]' +
+        '["__SPLIT_CHILD__","__SPLIT_WITH_CHILD__"]' +
         '</div>'
     ),
     'translation keys contain keys from child imports'

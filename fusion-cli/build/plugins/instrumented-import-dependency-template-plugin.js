@@ -48,7 +48,8 @@ const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
   .Template;
 
-const isInstrumentedSymbol = Symbol('InstrumentedImportDependency');
+const isInstrumentedSymbolClient = Symbol('InstrumentedImportDependencyClient');
+const isInstrumentedSymbolServer = Symbol('InstrumentedImportDependencyServer');
 
 /**
  * We create an extension to the original ImportDependency template
@@ -91,18 +92,17 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
 
     let translationKeys = [];
     let chunkIds = [];
-    if (dep[isInstrumentedSymbol]) {
+    if (dep[isInstrumentedSymbolClient]) {
       translationKeys = getTranslationKeys(chunkGraph, moduleGraph, this.i18nManifest, dep);
       chunkIds = getChunkGroupIds(chunkGraph.getBlockChunkGroup(block));
-    } else if (this.clientChunkIndex) {
+    } else if (dep[isInstrumentedSymbolServer]) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      const ids = this.clientChunkIndex.get(getModuleResource(depModule));
-      chunkIds = ids ? Array.from(ids) : [];
+      chunkIds = getModuleClientChunkIds(this.clientChunkIndex, depModule);
     } else {
       // Prevent future developers from creating a broken webpack state
       throw new Error(
-        'Dependency is not Instrumented and lacks a clientChunkIndex'
+        'Dependency is not instrumented'
       );
     }
     const content = runtimeTemplate.moduleNamespacePromise({
@@ -145,15 +145,49 @@ class InstrumentedImportDependencyTemplatePlugin {
     const name = this.constructor.name;
     if (this.opts.compilation === 'server') {
       const {clientChunkMetadata} = this.opts;
+
+      let clientChunkIndex;
       compiler.hooks.make.tapAsync(name, (compilation, done) => {
         clientChunkMetadata.result.then(metadata => {
+          clientChunkIndex = metadata.fileManifest;
+
           compilation.dependencyTemplates.set(
             ImportDependency,
             new InstrumentedImportDependencyTemplate({
-              clientChunkIndex: metadata.fileManifest
+              clientChunkIndex
             })
           );
           done();
+        });
+      });
+
+      compiler.hooks.compilation.tap(name, (compilation, params) => {
+        compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
+          // Instrument ImportDependency
+          for (const module of modules) {
+            if (module.blocks) {
+              module.blocks.forEach(block => {
+                block.dependencies.forEach((dep, index) => {
+                  if (dep instanceof ImportDependency && !dep[isInstrumentedSymbolServer]) {
+                    const depModule = compilation.moduleGraph.getModule(dep);
+
+                    const originalUpdateHash = dep.updateHash;
+                    dep.updateHash = function (...args) {
+                      originalUpdateHash.apply(this, args);
+
+                      const [hash] = args;
+                      const chunkIds = getModuleClientChunkIds(clientChunkIndex, depModule);
+                      // Invalidate this dependency when the client chunk ids change
+                      // Necessary for HMR, and to invalidate build cache
+                      hash.update(chunkIds.join(','));
+                    }
+
+                    dep[isInstrumentedSymbolServer] = true;
+                  }
+                });
+              });
+            }
+          }
         });
       });
     }
@@ -177,14 +211,14 @@ class InstrumentedImportDependencyTemplatePlugin {
             if (module.blocks) {
               module.blocks.forEach(block => {
                 block.dependencies.forEach((dep, index) => {
-                  if (dep instanceof ImportDependency) {
-                    const depModule = compilation.moduleGraph.getModule(dep)
+                  if (dep instanceof ImportDependency && !dep[isInstrumentedSymbolClient]) {
+                    const depModule = compilation.moduleGraph.getModule(dep);
                     const depModuleId = compilation.chunkGraph.getModuleId(depModule);
                     if (depModuleId === null && depModule.libIdent) {
                       const moduleId = depModule.libIdent({
                         context: compiler.options.context,
                       });
-                      compilation.chunkGraph.setModuleId(depModule, createCachedModuleId(moduleId))
+                      compilation.chunkGraph.setModuleId(depModule, createCachedModuleId(moduleId));
                     }
 
                     const originalUpdateHash = dep.updateHash;
@@ -194,11 +228,11 @@ class InstrumentedImportDependencyTemplatePlugin {
                       const [hash] = args;
                       const translationKeys = getTranslationKeys(compilation.chunkGraph, compilation.moduleGraph, i18nManifest, dep);
                       // Invalidate this dependency when the translation keys change
-                      // Necessary for HMR
-                      hash.update(JSON.stringify(translationKeys));
+                      // Necessary for HMR, and to invalidate build cache
+                      hash.update(translationKeys.join(','));
                     }
 
-                    dep[isInstrumentedSymbol] = true;
+                    dep[isInstrumentedSymbolClient] = true;
                   }
                 });
               });
@@ -275,7 +309,17 @@ function getTranslationKeys(chunkGraph, moduleGraph, i18nManifest, dep) {
     }
   }
 
-  return Array.from(translationKeys);
+  return Array.from(translationKeys).sort();
+}
+
+function getModuleClientChunkIds(clientChunkIndex, module) {
+  const clientChunkIds = clientChunkIndex.get(getModuleResource(module));
+
+  if (clientChunkIds) {
+    return Array.from(clientChunkIds).sort();
+  }
+
+  return [];
 }
 
 /**
