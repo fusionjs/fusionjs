@@ -816,7 +816,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             new TerserPlugin({
               extractComments: false,
               terserOptions: {
+                parse: {
+                  ecma: 2017,
+                },
                 compress: {
+                  ecma: 5,
                   // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
                   // This mangles mapbox-gl creating an error when used alongside with window global mangling:
                   // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
@@ -826,7 +830,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                   // https://github.com/mishoo/UglifyJS2/issues/2842
                   inline: 1,
                 },
-
+                format: {
+                  ecma: 5,
+                },
                 keep_fnames: preserveNames,
                 keep_classnames: preserveNames,
               },
