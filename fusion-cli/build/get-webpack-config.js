@@ -631,7 +631,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       },
     },
     plugins: [
-      runtime === 'client' && !dev && new SourceMapPlugin(),
+      runtime === 'client' && !dev && !skipSourceMaps && new SourceMapPlugin(),
       // NOTE: Breaking change in webpack v5
       // Need to provide same API to source node modules in client bundles
       // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L83-L94
