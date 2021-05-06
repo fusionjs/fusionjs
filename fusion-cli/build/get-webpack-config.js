@@ -357,8 +357,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // This is the recommended default.
       // See https://webpack.js.org/configuration/output/#output-sourcemapfilename
       sourceMapFilename: `[file].map`,
-      // We will set __webpack_public_path__ at runtime, so this should be set to undefined
-      publicPath: void 0,
+      // NOTE: Breaking change in webpack v5
+      // Webpack 5 has new default automatic `publicPath`, which is not well supported in
+      // legacy browsers. Setting it to a static value makes it bypass this new behavior.
+      // Fusion.js will set __webpack_public_path__ at runtime based on ENV variables.
+      publicPath: '',
       crossOriginLoading: 'anonymous',
       devtoolModuleFilenameTemplate: (info /*: Object */) => {
         // always return absolute paths in order to get sensible source map explorer visualization
