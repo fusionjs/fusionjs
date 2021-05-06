@@ -9,7 +9,6 @@
 /* eslint-env node */
 
 const webpack = require('webpack');
-const {translationsDiscoveryKey} = require('../loaders/loader-context.js');
 
 /*::
 import type {TranslationsManifestState, TranslationsManifest} from "../types.js";
@@ -34,90 +33,34 @@ class I18nDiscoveryPlugin {
   }
   apply(compiler /*: any */) {
     const name = this.constructor.name;
-    // "thisCompilation" is not run in child compilations
-    compiler.hooks.thisCompilation.tap(name, compilation => {
-      webpack.NormalModule.getCompilationHooks(compilation).loader.tap(name, (context, module) => {
-        context[translationsDiscoveryKey] = this.manifest;
-      });
-    });
 
-    const manifestCache/*: I18nManifestCache*/ = compiler
-      .getCache(name)
-      .getItemCache('manifest', null);
-
-    let cachedManifest/*: TranslationsManifest | void*/;
-    let isCacheRestored = false;
-    compiler.hooks.beforeCompile.tapPromise(name, async () => {
-      // This same hook triggers for child compilation, but we
-      // need to restore the cached manfiest only once on each run
-      if (isCacheRestored) {
-        return;
-      }
-
-      cachedManifest = await manifestCache.getPromise();
-      if (cachedManifest) {
-        // i18n manifest might be stored in cache by reference from previous compilation,
-        // in which case we don't need to copy its values as it's pointing to the same object
-        if (cachedManifest !== this.manifest) {
-          for (const [filename, keys] of cachedManifest) {
-            this.manifest.set(filename, keys);
+    compiler.hooks.compilation.tap(name, compilation => {
+      // NOTE: This hook will execute twice when legacy bundle is enabled,
+      // in which case it should not cause any conflicts, considering that
+      // same i18n keys should be discovered in both cases.
+      compilation.hooks.afterOptimizeTree.tap(name, (chunks, modules) => {
+        modules.forEach(module => {
+          if (
+            module.buildMeta.fusionTranslationIds &&
+            module.buildMeta.fusionTranslationIds.size > 0
+          ) {
+            this.manifest.set(
+              module.resource,
+              module.buildMeta.fusionTranslationIds
+            );
           }
-        }
-      }
-
-      isCacheRestored = true;
-    });
-    compiler.hooks.afterCompile.tapPromise(name, async () => {
-      if (!isCacheRestored) {
-        return;
-      }
-
-      if (!cachedManifest || shouldWriteManifestToCache(this.manifest, cachedManifest)) {
-        await manifestCache.storePromise(this.manifest);
-      }
-
-      isCacheRestored = false;
+        });
+      });
     });
 
     compiler.hooks.done.tap(name, () => {
       this.manifestState.resolve(this.manifest);
     });
     compiler.hooks.invalid.tap(name, () => {
+      this.manifest.clear();
       this.manifestState.reset();
     });
   }
-}
-
-function shouldWriteManifestToCache(manifest/*: TranslationsManifest*/, cachedManifest/*: TranslationsManifest*/)/*: boolean*/ {
-  if (manifest !== cachedManifest) {
-    if (manifest.size !== cachedManifest.size) {
-      return true;
-    }
-
-    for (const [file, translationKeys] of manifest) {
-      if (cachedManifest.has(file)) {
-        const cachedTranslationKeys = cachedManifest.get(file);
-
-        if (cachedTranslationKeys) {
-          if (translationKeys.size !== cachedTranslationKeys.size) {
-            return true;
-          }
-
-          for (const translationKey of translationKeys) {
-            if (!cachedTranslationKeys.has(translationKey)) {
-              return true;
-            }
-          }
-        } else {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
-  }
-
-  return false;
 }
 
 module.exports = I18nDiscoveryPlugin;

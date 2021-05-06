@@ -248,3 +248,166 @@ test('`fusion dev` app with split translations integration (cached)', async () =
 
   app.teardown();
 }, 100000);
+
+describe('i18n manifest caching', () => {
+  const splitFilePath = path.join(dir, 'src/split1.js');
+  const otherComponentFilePath = path.join(dir, 'src/other-component.js');
+  const otherComponentRenamedFilePath = otherComponentFilePath.replace(
+    'other-component.js',
+    'other-component-renamed.js'
+  );
+
+  let splitFileContents;
+  beforeEach(() => {
+    splitFileContents = fs.readFileSync(splitFilePath, 'utf-8');
+    fs.copyFileSync(otherComponentFilePath, otherComponentRenamedFilePath);
+  });
+
+  afterEach(() => {
+    fs.writeFileSync(splitFilePath, splitFileContents);
+    fs.unlinkSync(otherComponentRenamedFilePath);
+  });
+
+  function changeOtherComponentImportPath() {
+    fs.writeFileSync(
+      splitFilePath,
+      splitFileContents.replace(
+        './other-component.js',
+        './other-component-renamed.js'
+      )
+    );
+  }
+
+  function verifyBuiltWithoutErrors() {
+    const stats = JSON.parse(
+      fs.readFileSync(path.join(dir, '.fusion/stats.json'), 'utf-8')
+    );
+
+    return !stats.errors || !stats.errors.length;
+  }
+
+  test('`fusion dev` should build fine from memory cache after file name change', async () => {
+    const app = dev(dir);
+    await app.setup();
+    t.ok(verifyBuiltWithoutErrors(), 'built without errors');
+
+    const page = await app.browser().newPage();
+    const url = await app.url();
+    await page.goto(`${url}/split1`, {waitUntil: 'load'});
+
+    const content = await page.content();
+    t.ok(
+      content.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation initially'
+    );
+    t.ok(
+      content.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations initially'
+    );
+    t.ok(
+      content.includes('other-component-missing-key'),
+      'renders first split child missing translations initially'
+    );
+
+    const hmrCompleted = page.evaluate(() => {
+      return new Promise(resolve => {
+        // eslint-disable-next-line
+        window.__addHotStatusHandler(status => {
+          if (status === 'idle') {
+            setTimeout(() => {
+              resolve();
+            }, 100);
+          }
+        });
+      });
+    });
+
+    changeOtherComponentImportPath();
+    await hmrCompleted;
+
+    t.ok(verifyBuiltWithoutErrors(), 're-built without errors after change');
+
+    const contentAfterChange = await page.content();
+    t.ok(
+      contentAfterChange.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation after change'
+    );
+    t.ok(
+      contentAfterChange.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations after change'
+    );
+    t.ok(
+      contentAfterChange.includes('other-component-missing-key'),
+      'renders first split child missing translations after change'
+    );
+
+    app.teardown();
+  }, 35000);
+
+  test('`fusion build` should build fine from cache after file name change', async () => {
+    async function buildAndStartServer() {
+      const env = {
+        ...process.env,
+        NODE_ENV: 'production',
+      };
+
+      await cmd(`build --dir=${dir} --production`, {env});
+      const {proc, port} = await start(`--dir=${dir}`, {env, cwd: dir});
+
+      return {
+        stop() {
+          proc.kill('SIGKILL');
+        },
+        url: `http://localhost:${port}`,
+      };
+    }
+
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+
+    let app = await buildAndStartServer();
+    t.ok(verifyBuiltWithoutErrors(), 'built without errors');
+    await page.goto(`${app.url}/split1`, {waitUntil: 'load'});
+
+    const content = await page.content();
+    t.ok(
+      content.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation initially'
+    );
+    t.ok(
+      content.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations initially'
+    );
+    t.ok(
+      content.includes('other-component-missing-key'),
+      'renders first split child missing translations initially'
+    );
+
+    app.stop();
+
+    changeOtherComponentImportPath();
+
+    app = await buildAndStartServer();
+    t.ok(verifyBuiltWithoutErrors(), 're-built without errors after change');
+    await page.goto(`${app.url}/split1`, {waitUntil: 'load'});
+
+    const contentAfterChange = await page.content();
+    t.ok(
+      contentAfterChange.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation after change'
+    );
+    t.ok(
+      contentAfterChange.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations after change'
+    );
+    t.ok(
+      contentAfterChange.includes('other-component-missing-key'),
+      'renders first split child missing translations after change'
+    );
+
+    app.stop();
+    browser.close();
+  }, 35000);
+});

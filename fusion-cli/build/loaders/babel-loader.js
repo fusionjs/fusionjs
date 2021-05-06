@@ -12,11 +12,7 @@ const path = require('path');
 const babel = require('@babel/core');
 const loaderUtils = require('loader-utils');
 
-const {translationsDiscoveryKey, workerKey} = require('./loader-context.js');
-
-/*::
-import type {TranslationsDiscoveryContext} from "./loader-context.js";
-*/
+const {workerKey} = require('./loader-context.js');
 
 module.exports = webpackLoader;
 
@@ -26,7 +22,7 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
   const callback = this.async();
   loader
-    .call(this, source, inputSourceMap, this[translationsDiscoveryKey])
+    .call(this, source, inputSourceMap, this._module.buildMeta)
     .then(
       ([code, map]) => callback(null, code, map),
       err => callback(err)
@@ -36,7 +32,7 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
 async function loader(
   source,
   inputSourceMap,
-  discoveryState /*: TranslationsDiscoveryContext*/
+  buildMeta
 ) {
   const filename = this.resourcePath;
   let loaderOptions = loaderUtils.getOptions(this);
@@ -55,15 +51,10 @@ async function loader(
   if (result) {
     const {code, map, metadata} = result;
 
-    if (discoveryState) {
-      if (metadata.translationIds) {
-        discoveryState.set(filename, new Set(metadata.translationIds));
-      } else {
-        // Need to update persisted cache when translations keys are no longer used
-        if (discoveryState.has(filename)) {
-          discoveryState.delete(filename);
-        }
-      }
+    if (metadata.translationIds) {
+      buildMeta.fusionTranslationIds = new Set(metadata.translationIds);
+    } else if (typeof buildMeta.fusionTranslationIds !== 'undefined') {
+      delete buildMeta.fusionTranslationIds;
     }
 
     return [code, map];
