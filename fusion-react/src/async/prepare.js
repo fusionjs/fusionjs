@@ -64,7 +64,7 @@ class PrepareState {
   }
 }
 
-export default function prepare(element: any) {
+export default function prepare(element: any, ctx: any) {
   const prepareState = new PrepareState();
 
   class PrepareContextProvider extends React.Component<{}> {
@@ -84,8 +84,13 @@ export default function prepare(element: any) {
   };
 
   async function process() {
+    if (ctx && ctx.timing) {
+      ctx.timing.markPrepass();
+    }
     await ssrPrepass(React.createElement(PrepareContextProvider));
-
+    if (ctx && ctx.timing) {
+      ctx.timing.markPrepass(prepareState.pending.size);
+    }
     if (prepareState.pending.size) {
       return prepareState.consumeAndAwaitPromises().then(process);
     }

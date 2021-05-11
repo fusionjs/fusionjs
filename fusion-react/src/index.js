@@ -66,7 +66,7 @@ export default class App extends FusionApp {
       },
       provides({skipPrepare, logger}) {
         return (el: React.Element<*>, ctx) => {
-          return (skipPrepare ? Promise.resolve() : prepare(el))
+          return (skipPrepare ? Promise.resolve() : prepare(el, ctx))
             .catch(() => {}) // recover from failed `prepare`
             .then(() => {
               if (render) {

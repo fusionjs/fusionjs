@@ -23,6 +23,11 @@ type MiddlewareTiming = {
   upstream: number,
 };
 
+type PrepassTiming = {
+  duration: number,
+  pendingSize: number,
+};
+
 class Timing {
   start: number;
   render: Deferred<number>;
@@ -31,6 +36,10 @@ class Timing {
   upstream: Deferred<number>;
   upstreamStart: number;
   middleware: Array<MiddlewareTiming>;
+  prepass: Array<PrepassTiming>;
+  prepassMarked: boolean;
+  prepassStart: number;
+
   constructor() {
     this.start = now();
     this.render = deferred();
@@ -39,6 +48,23 @@ class Timing {
     this.upstream = deferred();
     this.upstreamStart = -1;
     this.middleware = [];
+    this.prepass = [];
+    this.prepassMarked = false;
+    this.prepassStart = -1;
+  }
+
+  markPrepass(pendingSize?: number) {
+    if (!this.prepassMarked) {
+      this.prepassMarked = true;
+      this.prepassStart = now();
+    } else {
+      this.prepass.push({
+        duration: now() - this.prepassStart,
+        pendingSize: pendingSize || 0,
+      });
+      this.prepassMarked = false;
+      this.prepassStart = -1;
+    }
   }
 }
 type TimingPlugin = {
@@ -53,7 +79,7 @@ export const TimingToken: Token<TimingPlugin> = createToken('TimingToken');
 
 function middleware(ctx, next) {
   ctx.memoized = new Map();
-  const {start, render, end, downstream, upstream, middleware} = timing.from(
+  const {start, render, end, downstream, upstream, middleware, prepass, markPrepass} = timing.from(
     ctx
   );
   ctx.timing = {
@@ -63,6 +89,8 @@ function middleware(ctx, next) {
     downstream: downstream.promise,
     upstream: upstream.promise,
     middleware,
+    prepass,
+    markPrepass,
   };
   return next()
     .then(() => {
