@@ -14,9 +14,9 @@ const AnsiToHtml = require('ansi-to-html');
 const chalk = require('chalk');
 
 function parseCodeFrame(error /*: Error */) {
-  const match = error.stack
-    .split('\n')[1]
-    .match(/at (.+) \((.+):(\d+):(\d+)\)/);
+  const stackLines = (error.stack || '').split('\n');
+  const secondLine = stackLines.length > 1 ? stackLines[1] : '';
+  const match = secondLine.match(/at (.+) \((.+):(\d+):(\d+)\)/);
   const [, functionName, file, line, column] = match || [];
   if (!(line && column && file)) {
     return {};
@@ -147,5 +147,5 @@ function renderHtmlError(error /*: any */ = {}) {
 module.exports.renderHtmlError = renderHtmlError;
 
 function escapeHtml(str = '') {
-  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return (str || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
