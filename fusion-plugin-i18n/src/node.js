@@ -25,7 +25,7 @@ import type {
   IEmitter,
   OptionalTranslateFnsType,
 } from './types.js';
-import {translateKey, translateKeys} from './translate'
+import {translateKey, translateKeys} from './translate';
 
 function getKeysFromContext(ctx: Context): string[] {
   if (ctx.request.body && Array.isArray(ctx.request.body)) {
@@ -51,7 +51,7 @@ const pluginFactory: () => PluginType = () =>
     deps: {
       loader: I18nLoaderToken.optional,
       events: UniversalEventsToken.optional,
-      translateFns: I18nTranslateFnsToken.optional
+      translateFns: I18nTranslateFnsToken.optional,
     },
     provides: ({loader, events, translateFns}) => {
       class I18n {
@@ -71,12 +71,16 @@ const pluginFactory: () => PluginType = () =>
           if (translateFns) {
             this.translateFns = translateFns;
           } else {
-            this.translateFns = {translateKey, translateKeys}
+            this.translateFns = {translateKey, translateKeys};
           }
         }
         async load() {} //mirror client API
         translate(key, interpolations = {}) {
-          const template = this.translateFns.translateKey(this.translations, this.locale, key)
+          const template = this.translateFns.translateKey(
+            this.translations,
+            this.locale,
+            key
+          );
 
           if (typeof template !== 'string') {
             this.emitter && this.emitter.emit('i18n-translate-miss', {key});
@@ -110,15 +114,20 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.syncChunks,
             ...ctx.preloadChunks,
           ];
-          let keys = [];
-          chunks.forEach(id => {
-            keys = [...keys, ...chunkTranslationMap.translationsForChunk(id)];
-          });
 
+          const keys = new Set();
+          chunks.forEach(id => {
+            const iterator = chunkTranslationMap.translationsForChunk(id);
+            for (const item of iterator) {
+              keys.add(item);
+            }
+          });
 
           const sources = i18n.translations || {};
           const locale = i18n.locale || {};
-          const translations = i18n.translateFns && i18n.translateFns.translateKeys(sources, locale, keys);
+          const translations =
+            i18n.translateFns &&
+            i18n.translateFns.translateKeys(sources, locale, [...keys]);
 
           // i18n.locale is actually a locale.Locale instance
           if (!i18n.locale) {
@@ -150,7 +159,9 @@ const pluginFactory: () => PluginType = () =>
           const sources = i18n.translations || {};
           const localeCode = i18n.locale || {};
 
-          const translations = i18n.translateFns && i18n.translateFns.translateKeys(sources, localeCode, keys);
+          const translations =
+            i18n.translateFns &&
+            i18n.translateFns.translateKeys(sources, localeCode, keys);
           ctx.body = translations;
           ctx.set('cache-control', 'public, max-age=3600'); // cache translations for up to 1 hour
           return next();
