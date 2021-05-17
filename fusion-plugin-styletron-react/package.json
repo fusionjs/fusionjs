@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "css-to-js-sourcemap-worker": "^2.0.4",
-    "styletron-engine-atomic": "^1.4.1",
-    "styletron-engine-monolithic": "^0.0.3"
+    "styletron-engine-atomic": "^1.4.8",
+    "styletron-engine-monolithic": "^0.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
