@@ -268,7 +268,7 @@ class FusionApp {
             .join(', ');
           const plural = dependentTokens.length > 1 ? 's' : '';
           throw new DIError({
-            message: `Missing registration for token "${token.name}". Token is required dependency of plugins registered to ${dependentList} token${plural}`,
+            message: `Missing registration for token "${token.name}". This token is a required dependency of the plugin${plural} registered to ${dependentList} token${plural}`,
             stack: tokenStack && tokenStack.stack,
             errorDoc: 'missing-registration',
           });
