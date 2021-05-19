@@ -26,6 +26,7 @@ export default __BROWSER__ ? clientApp() : serverApp();
 
 export {compose} from './compose.js';
 export {memoize} from './memoize';
+export type {MemoizeFn} from './memoize';
 
 // sanitization API
 export {
