@@ -16,6 +16,9 @@ const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
 const httpProxy = require('http-proxy');
+const net = require('net');
+const readline = require('readline');
+const chalk = require('chalk');
 
 const renderHtmlError = require('./server-error').renderHtmlError;
 
@@ -77,6 +80,7 @@ module.exports.DevelopmentRuntime = function(
     noOpen,
     middleware = (req, res, next) => next(),
     debug = false,
+    disablePrompts = false,
   } /*: any */
 ) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
@@ -198,6 +202,22 @@ module.exports.DevelopmentRuntime = function(
   }
 
   this.start = async function start() {
+    const portAvailable = await isPortAvailable(port);
+    if (!portAvailable) {
+      if (disablePrompts) {
+        // Fast fail, don't prompt
+        throw new Error(`Port ${port} taken by another process`);
+      }
+      const useRandomPort = await prompt(`Port ${port} taken! Continue with a different port?`);
+      if (useRandomPort) {
+        let ports = [];
+        for (let i = 1; i <= 10; i++) {
+          ports.push(port + i);
+        }
+        port = await getPort({port: ports});
+      }
+    }
+
     // $FlowFixMe
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
@@ -244,6 +264,9 @@ module.exports.DevelopmentRuntime = function(
     return listen(port).then(() => {
       const url = `http://localhost:${port}`;
       if (!noOpen) openUrl(url);
+
+      // Return port in case it had to be changed
+      return port;
     });
   };
 
@@ -257,3 +280,34 @@ module.exports.DevelopmentRuntime = function(
 
   return this;
 };
+
+async function prompt(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  return new Promise(resolve => {
+    rl.question(`\n${chalk.bold(question)} [Y/n]`, answer => {
+      const response = answer === '' || answer.toLowerCase() === 'y';
+      rl.close();
+      resolve(response);
+    });
+  });
+}
+
+async function isPortAvailable(port) {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once('error', err => {
+      if (err.code === 'EADDRINUSE') {
+        resolve(false);
+      }
+      reject(err);
+    });
+    server.once('listening',() =>  {
+      server.once('close', () => resolve(true));
+      server.close();
+    });
+    server.listen(port);
+  });
+}

@@ -107,6 +107,11 @@ module.exports = {
         default: 'info',
         describe: 'Log level to show',
       },
+      disablePrompts: {
+        type: 'boolean',
+        default: false,
+        describe: 'Disable command-line prompts',
+      },
       ...disableBuildCacheOption,
     },
   },

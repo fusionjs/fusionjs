@@ -25,6 +25,7 @@ exports.run = async function(
     hmr,
     open,
     logLevel,
+    disablePrompts,
     exitOnError,
     disableBuildCache,
   } /*: any */
@@ -56,6 +57,7 @@ exports.run = async function(
         port,
         debug,
         noOpen: !open,
+        disablePrompts,
       },
       hmr ? {middleware: compiler.getMiddleware()} : {}
     )
@@ -66,7 +68,7 @@ exports.run = async function(
     : null;
 
   // $FlowFixMe
-  await Promise.all([devRuntime.start(), compiler.clean(dir)]);
+  const [actualPort] = await Promise.all([devRuntime.start(), compiler.clean(dir)]);
 
   const runAll = async () => {
     try {
@@ -76,7 +78,7 @@ exports.run = async function(
         testRuntime ? testRuntime.run() : Promise.resolve(),
       ]);
       if (!open) {
-        logger.info(`Application is running on http://localhost:${port}`);
+        logger.info(`Application is running on http://localhost:${actualPort}`);
       }
     } catch (e) {} // eslint-disable-line
   };
