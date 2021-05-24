@@ -22,5 +22,5 @@ const collectDepsByDepth = (deps, dep, list) => {
   }
 };
 const collectDep = (list, dep) => {
-  if (!list.find(item => item.name === dep.name)) list.push(dep);
+  if (!list.find(item => item.name === dep.name && dep.name !== 'UnnamedPlugin')) list.push(dep);
 };
