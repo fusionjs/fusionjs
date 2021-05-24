@@ -28,6 +28,7 @@ exports.run = async function(
     disablePrompts,
     exitOnError,
     disableBuildCache,
+    experimentalSkipRedundantServerReloads,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -58,6 +59,7 @@ exports.run = async function(
         debug,
         noOpen: !open,
         disablePrompts,
+        experimentalSkipRedundantServerReloads,
       },
       hmr ? {middleware: compiler.getMiddleware()} : {}
     )

@@ -112,6 +112,11 @@ module.exports = {
         default: false,
         describe: 'Disable command-line prompts',
       },
+      experimentalSkipRedundantServerReloads: {
+        type: 'boolean',
+        default: false,
+        describe: 'Skip server respawn when server bundle does not change',
+      },
       ...disableBuildCacheOption,
     },
   },

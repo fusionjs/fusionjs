@@ -21,7 +21,13 @@ const readline = require('readline');
 const chalk = require('chalk');
 
 const renderHtmlError = require('./server-error').renderHtmlError;
+const fs = require('fs');
 
+const stat = promisify(fs.stat);
+const exists = promisify(fs.exists);
+
+const entryFile = '.fusion/dist/development/server/server-main.js';
+let entryFileLastModifiedTime = Date.now();
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
   const emitter = new EventEmitter();
@@ -81,6 +87,7 @@ module.exports.DevelopmentRuntime = function(
     middleware = (req, res, next) => next(),
     debug = false,
     disablePrompts = false,
+    experimentalSkipRedundantServerReloads,
   } /*: any */
 ) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
@@ -122,9 +129,7 @@ module.exports.DevelopmentRuntime = function(
         }});
       }
 
-      const entry = path.resolve(
-        '.fusion/dist/development/server/server-main.js'
-      );
+      const entry = path.resolve('${entryFile}');
 
       if (fs.existsSync(entry)) {
         try {
@@ -143,6 +148,21 @@ module.exports.DevelopmentRuntime = function(
         logAndSend(new Error(\`No entry found at \${entry}\`));
       }
     `;
+    if (experimentalSkipRedundantServerReloads && await exists(entryFile)) {
+      const entryFileStats = await stat(entryFile);
+      if (
+        entryFileStats.mtime.toString() ===
+          entryFileLastModifiedTime.toString() &&
+        state.proc &&
+        state.proxy
+      ) {
+        console.log('Server bundle not changed, skipping server restart.');
+        lifecycle.start();
+        return;
+      } else {
+        entryFileLastModifiedTime = entryFileStats.mtime;
+      }
+    }
 
     killProc();
 
