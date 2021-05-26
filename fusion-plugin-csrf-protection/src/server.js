@@ -40,7 +40,7 @@ const enhancer = (oldFetch: Fetch): FusionPlugin<PluginDepsType, Fetch> => {
             const message =
               `Missing csrf token on ${ctx.path}` +
               (__DEV__
-                ? ' Ensure you are using `fetch` from `fusion-plugin-csrf-protection-[react].'
+                ? ' Ensure you are using `fetch` enhanced by `fusion-plugin-csrf-protection`.'
                 : '');
             ctx.throw(403, message);
           }
