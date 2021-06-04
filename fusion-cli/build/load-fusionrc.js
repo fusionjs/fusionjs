@@ -60,12 +60,12 @@ module.exports = function validateConfig(
   if (fs.existsSync(configPath)) {
     config = {
       // $FlowFixMe
-      ...require(configPath)
+      ...require(configPath),
     };
 
     // Store path to config, needed to invalidate build cache
     Object.defineProperty(config, 'configPath', {
-      value: configPath
+      value: configPath,
     });
     if (!isValid(config, silent)) {
       throw new Error('.fusionrc.js is invalid');
@@ -82,7 +82,7 @@ function isValid(config, silent) {
   }
 
   if (
-    !Object.keys(config).every(key =>
+    !Object.keys(config).every((key) =>
       [
         'babel',
         'splitChunks',
@@ -137,7 +137,9 @@ function isValid(config, silent) {
 
   if (
     config.babel &&
-    !Object.keys(config.babel).every(el => ['plugins', 'presets'].includes(el))
+    !Object.keys(config.babel).every((el) =>
+      ['plugins', 'presets'].includes(el)
+    )
   ) {
     throw new Error(
       `Only "plugins" and "presets" are supported in fusionrc.js babel config`
@@ -150,7 +152,9 @@ function isValid(config, silent) {
       config.assumeNoImportSideEffects === true ||
       config.assumeNoImportSideEffects === false ||
       (Array.isArray(config.assumeNoImportSideEffects) &&
-        config.assumeNoImportSideEffects.every(item => typeof item === 'string'))
+        config.assumeNoImportSideEffects.every(
+          (item) => typeof item === 'string'
+        ))
     )
   ) {
     throw new Error(
@@ -194,7 +198,9 @@ function isValid(config, silent) {
       config.defaultImportSideEffects === true ||
       config.defaultImportSideEffects === false ||
       (Array.isArray(config.defaultImportSideEffects) &&
-        config.defaultImportSideEffects.every(item => typeof item === 'string'))
+        config.defaultImportSideEffects.every(
+          (item) => typeof item === 'string'
+        ))
     )
   ) {
     throw new Error(
@@ -222,7 +228,9 @@ function isValid(config, silent) {
       config.disableBuildCache === void 0
     )
   ) {
-    throw new Error('disableBuildCache must be true, false, or undefined in fusionrc.js');
+    throw new Error(
+      'disableBuildCache must be true, false, or undefined in fusionrc.js'
+    );
   }
 
   return true;

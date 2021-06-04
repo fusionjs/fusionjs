@@ -11,11 +11,11 @@ const App = require('fusion-core').default;
 
 const {default: Plugin, ErrorHandlerToken} = require('..');
 
-const onError = e => {
+const onError = (e) => {
   console.log('ERROR HANDLER', e); // eslint-disable-line
 };
 
-const app = new App('el', el => el);
+const app = new App('el', (el) => el);
 
 app.register(Plugin);
 app.register(ErrorHandlerToken, onError);

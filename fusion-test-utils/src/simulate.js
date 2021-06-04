@@ -12,34 +12,32 @@ import type {Context} from 'fusion-core';
 
 import {createRequestContext, createRenderContext} from './mock-context.js';
 
-export const request = (app: FusionApp) => (
-  url: string,
-  options: * = {}
-): Promise<*> => {
-  if (__BROWSER__) {
-    throw new Error(
-      '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
-    );
-  }
-  const ctx = createRequestContext(url, options);
-  return simulate(app, ctx);
-};
-
-export const render = (app: FusionApp) => (
-  url: string,
-  options: * = {}
-): Promise<*> => {
-  if (global.jsdom) {
-    if (!url.startsWith('/')) {
-      url = `/${url}`;
+export const request =
+  (app: FusionApp) =>
+  (url: string, options: * = {}): Promise<*> => {
+    if (__BROWSER__) {
+      throw new Error(
+        '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
+      );
     }
-    global.jsdom.reconfigure({
-      url: `http://localhost${url}`,
-    });
-  }
-  const ctx = createRenderContext(url, options);
-  return simulate(app, ctx);
-};
+    const ctx = createRequestContext(url, options);
+    return simulate(app, ctx);
+  };
+
+export const render =
+  (app: FusionApp) =>
+  (url: string, options: * = {}): Promise<*> => {
+    if (global.jsdom) {
+      if (!url.startsWith('/')) {
+        url = `/${url}`;
+      }
+      global.jsdom.reconfigure({
+        url: `http://localhost${url}`,
+      });
+    }
+    const ctx = createRenderContext(url, options);
+    return simulate(app, ctx);
+  };
 
 export default function simulate(app: FusionApp, ctx: Context): Promise<*> {
   return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);

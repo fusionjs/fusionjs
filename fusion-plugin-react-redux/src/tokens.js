@@ -13,16 +13,14 @@ import type {Token} from 'fusion-core';
 
 import type {GetInitialStateType, ReactReduxServiceType} from './types.js';
 
-export const ReduxToken: Token<ReactReduxServiceType> = createToken(
-  'ReduxToken'
-);
+export const ReduxToken: Token<ReactReduxServiceType> =
+  createToken('ReduxToken');
 export const ReducerToken: Token<Reducer<*, *>> = createToken('ReducerToken');
 export const PreloadedStateToken: Token<Object> = createToken(
   'PreloadedStateToken'
 );
-export const EnhancerToken: Token<StoreEnhancer<*, *, *>> = createToken(
-  'EnhancerToken'
-);
+export const EnhancerToken: Token<StoreEnhancer<*, *, *>> =
+  createToken('EnhancerToken');
 export const ReduxDevtoolsConfigToken: Token<{} | false> = createToken(
   'ReduxDevtoolsConfigToken'
 );

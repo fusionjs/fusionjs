@@ -26,7 +26,7 @@ test('custom render function', async () => {
   expect(didRender).toBeTruthy();
 });
 
-test('runs prepare', async done => {
+test('runs prepare', async (done) => {
   let called = false;
   const Root = prepared(() => {
     called = true;
@@ -42,7 +42,7 @@ test('runs prepare', async done => {
   await simulator.render('/');
 });
 
-test('skip prepare', async done => {
+test('skip prepare', async (done) => {
   const Root = prepared(() => {
     // $FlowFixMe
     done.fail('Should not call this');

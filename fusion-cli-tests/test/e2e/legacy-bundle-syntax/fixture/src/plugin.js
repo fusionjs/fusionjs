@@ -7,7 +7,7 @@ export default createPlugin({
     return async (ctx, next) => {
       return {
         window,
-      }
+      };
     };
   },
 });

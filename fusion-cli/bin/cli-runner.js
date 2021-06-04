@@ -8,7 +8,7 @@
 
 /* eslint-env node */
 
-process.on('unhandledRejection', e => {
+process.on('unhandledRejection', (e) => {
   throw e;
 });
 

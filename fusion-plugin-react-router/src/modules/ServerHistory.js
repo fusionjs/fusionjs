@@ -51,7 +51,7 @@ const createPrefixedURL = (
   }
 };
 
-const staticHandler = methodName => () => {
+const staticHandler = (methodName) => () => {
   throw new Error(`You cannot ${methodName} with server side <Router>`);
 };
 

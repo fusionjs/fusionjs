@@ -17,7 +17,7 @@ class PrepareProvider extends React.Component<*, *> {
   }
 
   splitComponentLoaders: Array<any>;
-  markAsCritical: number => void;
+  markAsCritical: (number) => void;
 
   getChildContext() {
     return {

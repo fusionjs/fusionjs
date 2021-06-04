@@ -28,7 +28,7 @@ const visibilitychangeEvent = new Event('visibilitychange');
 
 /* Test helpers */
 function getApp(fetch: Fetch) {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(FetchToken, fetch);
   store.getAndClear();
   app.register(UniversalEventsBatchStorageToken, store);
@@ -138,7 +138,7 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
   expect(store.data.length).toBe(1);
 });
 
-test('Browser EventEmitter interval', async done => {
+test('Browser EventEmitter interval', async (done) => {
   store.getAndClear();
   const emitter = new UniversalEmitter(
     () => {
@@ -180,7 +180,7 @@ test('Calling flush even no items works as expected', async () => {
   const emitter = new UniversalEmitter(fetch, store, 100, 20);
   await emitter.flush();
   await emitter.flush();
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   for (let index = 0; index < 20; index++) {
     emitter.emit('a', {x: 1});
   }
@@ -203,13 +203,13 @@ test('Lowers limit for 413 errors', async () => {
   await emitter.flush();
 });
 
-const sleep = ms => setTimeout(() => {}, ms);
+const sleep = (ms) => setTimeout(() => {}, ms);
 
 test('Browser EventEmitter does not start a new flush while another one is in progress', async () => {
   store.getAndClear();
   let resolveFetch: (result: any) => void = () => {};
   const fetch: Fetch = jest.fn().mockReturnValue(
-    new Promise(resolve => {
+    new Promise((resolve) => {
       resolveFetch = resolve;
     })
   );

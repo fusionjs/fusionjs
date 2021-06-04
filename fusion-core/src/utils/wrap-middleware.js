@@ -8,7 +8,7 @@
 import path from 'path';
 import {now} from '../plugins/timing';
 
-import type {Context, Middleware, Token, FusionPlugin} from '../types.js';
+import type {Context, Middleware} from '../types.js';
 
 type StacksFormat = {
   type: 'token' | 'register' | 'plugin',
@@ -22,10 +22,10 @@ const getSources = (stacks: Array<StacksFormat>) => {
       type,
       source: stack
         .split('\n')
-        .map(line => line.match(/\((.*?)\)/))
-        .filter(match => match && match[1])
-        .map(match => ((match: any): Array<string>)[1])
-        .map(to => (__NODE__ ? path.relative(process.cwd(), to) : to))
+        .map((line) => line.match(/\((.*?)\)/))
+        .filter((match) => match && match[1])
+        .map((match) => ((match: any): Array<string>)[1])
+        .map((to) => (__NODE__ ? path.relative(process.cwd(), to) : to))
         .shift(),
     };
   });

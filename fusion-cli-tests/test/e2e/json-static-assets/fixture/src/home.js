@@ -15,8 +15,8 @@ export default class Home extends Component<any, any> {
 
   componentDidMount() {
     fetch(assetUrl('../static/test.json'))
-      .then(result => result.json())
-      .then(result => {
+      .then((result) => result.json())
+      .then((result) => {
         this.setState({
           content: result.content,
         });

@@ -7,33 +7,22 @@
  */
 /* eslint-env node */
 
-const path = require('path');
-
-const babel = require('@babel/core');
 const loaderUtils = require('loader-utils');
 
 const {workerKey} = require('./loader-context.js');
 
 module.exports = webpackLoader;
 
-const {version: fusionCLIVersion} = require('../../package.json');
-
 function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
   // Make the loader async
   const callback = this.async();
-  loader
-    .call(this, source, inputSourceMap, this._module.buildMeta)
-    .then(
-      ([code, map]) => callback(null, code, map),
-      err => callback(err)
-    );
+  loader.call(this, source, inputSourceMap, this._module.buildMeta).then(
+    ([code, map]) => callback(null, code, map),
+    (err) => callback(err)
+  );
 }
 
-async function loader(
-  source,
-  inputSourceMap,
-  buildMeta
-) {
+async function loader(source, inputSourceMap, buildMeta) {
   const filename = this.resourcePath;
   let loaderOptions = loaderUtils.getOptions(this);
   // Use worker farm if provided, otherwise require the worker code and execute it in the same thread

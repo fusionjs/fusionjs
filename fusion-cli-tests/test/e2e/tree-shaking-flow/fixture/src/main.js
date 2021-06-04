@@ -7,43 +7,51 @@
  */
 
 // Import only types from dependency
-import type {
-  UnusedDependencyType,
-  UsedDependencyType,
-} from 'fixture-pkg';
+/* eslint-disable import/no-unresolved no-unused-vars */
+import type {UnusedDependencyType, UsedDependencyType} from 'fixture-pkg';
 
 // Import mixed types and values from dependency
 import {
   type UnusedDependencyOtherType,
   type UsedDependencyOtherType,
   unusedDependencyValue,
-  usedDependencyValue
+  usedDependencyValue,
 } from 'fixture-pkg';
 
 // Import only types from userland
-import type {
-  UnusedUserlandType,
-  UsedUserlandType
-} from './user-code.js';
+import type {UnusedUserlandType, UsedUserlandType} from './user-code.js';
 
 // Import mixed types and values from userland
 import {
   type UnusedUserlandOtherType,
   type UsedUserlandOtherType,
   unusedUserlandValue,
-  usedUserlandValue
+  usedUserlandValue,
 } from './user-code.js';
 
 if (__NODE__) {
   // unused in the browser
   //  - node modules
-  const unusedDepVal: UnusedDependencyType = { shouldBeUnused: unusedDependencyValue };
-  const unusedDepVal2: UnusedDependencyOtherType = { alsoShouldBeUnused: unusedDependencyValue };
+  const unusedDepVal: UnusedDependencyType = {
+    shouldBeUnused: unusedDependencyValue,
+  };
+  const unusedDepVal2: UnusedDependencyOtherType = {
+    alsoShouldBeUnused: unusedDependencyValue,
+  };
   //  - userland
-  const unustedUserlandVal: UnusedUserlandType = { shouldBeUnused: unusedUserlandValue };
-  const unustedUserlandVal2: UnusedUserlandOtherType = { alsoShouldBeUnused: unusedUserlandValue };
+  const unustedUserlandVal: UnusedUserlandType = {
+    shouldBeUnused: unusedUserlandValue,
+  };
+  const unustedUserlandVal2: UnusedUserlandOtherType = {
+    alsoShouldBeUnused: unusedUserlandValue,
+  };
 
-  console.log(unusedDepVal, unusedDepVal2, unustedUserlandVal, unustedUserlandVal2);
+  console.log(
+    unusedDepVal,
+    unusedDepVal2,
+    unustedUserlandVal,
+    unustedUserlandVal2
+  );
 }
 
 // used in the browser
@@ -56,8 +64,10 @@ if (__NODE__) {
 // const usedDepVal: UsedDependencyType = { shouldBeUsed: usedDependencyValue};
 // const usedDepVal2: UsedDependencyOtherType = { alsoShouldBeUsed: usedDependencyValue};;
 //  - userland
-const usedUserlandVal: UsedUserlandType = { shouldBeUsed: usedUserlandValue};
-const usedUserlandVal2: UsedUserlandOtherType = { alsoShouldBeUsed: usedUserlandValue};;
+const usedUserlandVal: UsedUserlandType = {shouldBeUsed: usedUserlandValue};
+const usedUserlandVal2: UsedUserlandOtherType = {
+  alsoShouldBeUsed: usedUserlandValue,
+};
 
 console.log(/*usedDepVal, usedDepVal2,*/ usedUserlandVal, usedUserlandVal2);
 

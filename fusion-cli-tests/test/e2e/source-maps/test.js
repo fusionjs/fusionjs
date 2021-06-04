@@ -23,8 +23,8 @@ test('source maps are served when DANGEROUSLY_EXPOSE_SOURCE_MAPS=true', async ()
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -38,9 +38,9 @@ test('source maps are served when DANGEROUSLY_EXPOSE_SOURCE_MAPS=true', async ()
   t.ok(
     bundles
       // Webpack does not produce source-maps for chunks that only contain JSON modules
-      .filter(bundle => !isJsonChunk(bundle))
+      .filter((bundle) => !isJsonChunk(bundle))
       .every(
-        bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
       ),
     'build produces one source map for each regular bundle'
   );
@@ -135,8 +135,8 @@ test('source maps are produced but hidden in production', async () => {
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -150,9 +150,9 @@ test('source maps are produced but hidden in production', async () => {
   t.ok(
     bundles
       // Webpack does not produce source-maps for chunks that only contain JSON modules
-      .filter(bundle => !isJsonChunk(bundle))
+      .filter((bundle) => !isJsonChunk(bundle))
       .every(
-        bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
       ),
     'build produces one source map for each regular bundle'
   );
@@ -236,8 +236,8 @@ test('source maps are not served when CDN_URL is set', async () => {
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -251,9 +251,9 @@ test('source maps are not served when CDN_URL is set', async () => {
   t.ok(
     bundles
       // Webpack does not produce source-maps for chunks that only contain JSON modules
-      .filter(bundle => !isJsonChunk(bundle))
+      .filter((bundle) => !isJsonChunk(bundle))
       .every(
-        bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
       ),
     'build produces one source map for each regular bundle'
   );

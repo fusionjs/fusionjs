@@ -11,7 +11,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/multiple-routes', async done => {
+test('/multiple-routes', async (done) => {
   expect.assertions(6);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -26,7 +26,7 @@ test('/multiple-routes', async done => {
   try {
     let isReady, allRequests;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
@@ -34,25 +34,25 @@ test('/multiple-routes', async done => {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/?page=1').length === 1
+          cacheKeyPaths.filter((key) => key === '/?page=1').length === 1
         ).toBeTruthy();
       } else if (msg._text.startsWith('[TEST] cached after third load:')) {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/?page=2').length === 1
+          cacheKeyPaths.filter((key) => key === '/?page=2').length === 1
         ).toBeTruthy();
       } else if (msg._text.startsWith('[TEST] cached after fourth load:')) {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/?page=3').length === 1
+          cacheKeyPaths.filter((key) => key === '/?page=3').length === 1
         ).toBeTruthy();
       }
     });
@@ -76,7 +76,7 @@ test('/multiple-routes', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -89,7 +89,7 @@ test('/multiple-routes', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -102,7 +102,7 @@ test('/multiple-routes', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -115,7 +115,7 @@ test('/multiple-routes', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 

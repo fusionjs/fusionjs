@@ -21,7 +21,7 @@ const tabulateTokens = (data, type) => {
   const deps = sortDependencies(listDependencies(data[type]));
 
   const list = [];
-  deps.forEach(dep => {
+  deps.forEach((dep) => {
     const name = dep.name;
     const sources = listSourceLines(dep, 'plugin');
     if (['middleware', 'both'].includes(dep.type)) {

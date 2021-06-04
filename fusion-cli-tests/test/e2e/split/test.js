@@ -169,7 +169,7 @@ describe('split chunk ids kept in sync on both client and server', () => {
     expect(chunkIds.client).toEqual(chunkIds.server);
 
     const hmrCompleted = page.evaluate(() => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         // eslint-disable-next-line
         window.__addHotStatusHandler(status => {
           if (status === 'idle') {

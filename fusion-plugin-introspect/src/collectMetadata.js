@@ -35,7 +35,7 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
   };
 };
 
-const findMetadata = dir => {
+const findMetadata = (dir) => {
   dir = path.resolve(process.cwd(), dir);
   try {
     const {dependencies = {}, devDependencies = {}} = JSON.parse(
@@ -55,7 +55,7 @@ const findMetadata = dir => {
   }
 };
 
-const collectEnvironmentVariables = keys => {
+const collectEnvironmentVariables = (keys) => {
   const vars = {};
   for (const key of keys) {
     vars[key] = process.env[key];

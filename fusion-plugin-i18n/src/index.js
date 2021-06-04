@@ -10,7 +10,7 @@ import {createToken} from 'fusion-core';
 import type {FusionPlugin, Token} from 'fusion-core';
 
 import serverPlugin from './node';
-import { matchesLiteralSections as _matchesLiteralSections } from './translate'
+import {matchesLiteralSections as _matchesLiteralSections} from './translate';
 import clientPlugin, {HydrationStateToken} from './browser';
 import serverLoader from './loader';
 import type {
@@ -42,4 +42,11 @@ export type {
   TranslateFuncType,
 };
 export default plugin;
-export { I18nToken, I18nLoaderToken, I18nTranslateFnsToken, HydrationStateToken, createI18nLoader, matchesLiteralSections };
+export {
+  I18nToken,
+  I18nLoaderToken,
+  I18nTranslateFnsToken,
+  HydrationStateToken,
+  createI18nLoader,
+  matchesLiteralSections,
+};

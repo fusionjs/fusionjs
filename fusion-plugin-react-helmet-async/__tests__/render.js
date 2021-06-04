@@ -72,7 +72,7 @@ test(`${name} side render`, async () => {
     if (document.body) {
       document.body.appendChild(root);
     }
-    app = new App(Root, el => render(el, root));
+    app = new App(Root, (el) => render(el, root));
   } else {
     app = new App(Root);
   }
@@ -91,7 +91,7 @@ test(`${name} side render`, async () => {
     expect(ctx.body).toBe(fs.readFileSync(fixtureFile).toString());
   } else if (__BROWSER__) {
     // need to wait until next tick for dom changes
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     expect(document.title).toBe("My Title's </title>");
     const baseEl = document.querySelector('base');
     if (!baseEl) {

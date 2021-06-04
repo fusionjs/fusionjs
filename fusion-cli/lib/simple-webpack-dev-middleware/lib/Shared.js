@@ -13,12 +13,12 @@ const EventEmitter = require('events');
 module.exports = function Shared(context /*: any */) {
   const emitter = new EventEmitter();
   const share = {
-    compilerDone: function() {
+    compilerDone: function () {
       // We are now on valid state
       context.state = true;
       emitter.emit('ready');
     },
-    compilerInvalid: function() {
+    compilerInvalid: function () {
       // We are now in invalid state
       context.state = false;
       //resolve async
@@ -27,13 +27,13 @@ module.exports = function Shared(context /*: any */) {
         callback();
       }
     },
-    handleRequest: function(
+    handleRequest: function (
       filename /*: string */,
       processRequest /*: () => any */
     ) {
       share.waitUntilValid(processRequest);
     },
-    waitUntilValid: function(callback /*: () => any */) {
+    waitUntilValid: function (callback /*: () => any */) {
       if (context.state) {
         return callback();
       }

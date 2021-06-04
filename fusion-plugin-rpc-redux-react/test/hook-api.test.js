@@ -21,7 +21,7 @@ test('useRPCRedux hook API', async () => {
 
   let done;
   // Control when the test should exit
-  const testPromise = new Promise(resolve => (done = resolve));
+  const testPromise = new Promise((resolve) => (done = resolve));
 
   function Root() {
     const getUser = useRPCRedux('getUser', {
@@ -30,7 +30,7 @@ test('useRPCRedux hook API', async () => {
         ...state,
         mappedValue: 'map',
       }),
-      transformParams: arg => ({
+      transformParams: (arg) => ({
         ...arg,
         transformedValue: 'transform',
       }),
@@ -53,7 +53,7 @@ test('useRPCRedux hook API', async () => {
     });
   }
 
-  const app = new App(React.createElement(Root), el => el);
+  const app = new App(React.createElement(Root), (el) => el);
   app.register(RPCToken, Plugin);
   app.register(ReduxToken, Redux);
   app.register(UniversalEventsToken, createMockEmitter());
@@ -62,7 +62,7 @@ test('useRPCRedux hook API', async () => {
       return value;
     },
   });
-  app.register(ReducerToken, state => ({
+  app.register(ReducerToken, (state) => ({
     stateValue: 'state',
   }));
   const sim = getSimulator(app);

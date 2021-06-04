@@ -95,7 +95,7 @@ const pluginFactory: () => PluginType = () =>
         }
       }
 
-      const service = {from: memoize(ctx => new I18n(ctx))};
+      const service = {from: memoize((ctx) => new I18n(ctx))};
       return service;
     },
     middleware: (_, plugin) => {
@@ -116,7 +116,7 @@ const pluginFactory: () => PluginType = () =>
           ];
 
           const keys = new Set();
-          chunks.forEach(id => {
+          chunks.forEach((id) => {
             const iterator = chunkTranslationMap.translationsForChunk(id);
             for (const item of iterator) {
               keys.add(item);

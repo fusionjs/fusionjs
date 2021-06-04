@@ -1,4 +1,4 @@
 /* istanbul ignore file */
 // @noflow
 
-export default function() {}
+export default function () {}

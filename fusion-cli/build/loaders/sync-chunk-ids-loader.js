@@ -13,13 +13,12 @@ import type {ClientChunkMetadataContext} from "./loader-context.js";
 const {clientChunkMetadataContextKey} = require('./loader-context.js');
 
 module.exports = function syncChunkIdsLoader() {
-  const chunkMetadataState /*: ClientChunkMetadataContext*/ = this[
-    clientChunkMetadataContextKey
-  ];
+  const chunkMetadataState /*: ClientChunkMetadataContext*/ =
+    this[clientChunkMetadataContextKey];
   this.cacheable(false);
   const callback = this.async();
 
-  chunkMetadataState.result.then(chunkMetadata => {
+  chunkMetadataState.result.then((chunkMetadata) => {
     callback(
       null,
       `module.exports = ${JSON.stringify(chunkMetadata.criticalIds)};`

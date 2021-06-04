@@ -42,7 +42,7 @@ test('register filters error stack', function registerTest() {
   const plugin = createPlugin({});
 
   function srcMain() {
-    const app = new App('el', el => el);
+    const app = new App('el', (el) => el);
     app.register(token, plugin);
   }
 
@@ -68,10 +68,10 @@ test('register filters error stack', function registerTest() {
 test('enhance filters error stack', function enhanceTest() {
   const token = createToken('token');
   const plugin = createPlugin({});
-  const enhancer = obj => obj;
+  const enhancer = (obj) => obj;
 
   function srcMain() {
-    const app = new App('el', el => el);
+    const app = new App('el', (el) => el);
     app.register(token, plugin);
     app.enhance(token, enhancer);
   }
@@ -108,7 +108,7 @@ test('alias filters error stack', function aliasTest() {
   });
 
   function srcMain() {
-    const app = new App('el', el => el);
+    const app = new App('el', (el) => el);
     app.register(token, plugin).alias(fromToken, toToken);
   }
 

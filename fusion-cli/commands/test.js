@@ -11,7 +11,7 @@
 const {allowedJestOptions} = require('../build/jest/cli-options');
 const {TestAppRuntime} = require('../build/test-runtime');
 
-exports.run = async function(
+exports.run = async function (
   {
     dir = '.',
     debug,
@@ -34,13 +34,13 @@ exports.run = async function(
   const jestArgs /*: any */ = {
     updateSnapshot: updateSnapshot || u || false,
   };
-  allowedJestOptions.forEach(arg => {
+  allowedJestOptions.forEach((arg) => {
     if (rest[arg]) {
       jestArgs[arg] = rest[arg];
     }
   });
 
-  if ([testFolder, testMatch, testRegex].filter(t => t !== '').length > 1) {
+  if ([testFolder, testMatch, testRegex].filter((t) => t !== '').length > 1) {
     throw new Error(
       'Only one of testMatch, testRegex and testFolder can be defined at one time'
     );

@@ -11,9 +11,7 @@ export type Fetch = (
 export const FetchToken: Token<Fetch> = createToken('FetchToken');
 
 export type Session = {
-  from(
-    ctx: Context
-  ): {
+  from(ctx: Context): {
     get(keyPath: string): any,
     set(keyPath: string, val: any): void,
   },

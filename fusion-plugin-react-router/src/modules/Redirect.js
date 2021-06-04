@@ -49,7 +49,7 @@ export class Redirect extends React.Component<PropsType> {
   render() {
     return (
       <RouterContext.Consumer>
-        {context => {
+        {(context) => {
           const staticContext =
             this.context.router && this.context.router.staticContext;
 

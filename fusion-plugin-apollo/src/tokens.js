@@ -22,11 +22,10 @@ export type InitApolloClientType<TInitialState> = (
 // We should have better flow types for the schema
 export const GraphQLSchemaToken: Token<any> = createToken('GraphQlSchemaToken');
 
-export type ApolloContext<T> = Context => T | T;
+export type ApolloContext<T> = (Context) => T | T;
 
-export const ApolloContextToken: Token<ApolloContext<mixed>> = createToken(
-  'ApolloContextToken'
-);
+export const ApolloContextToken: Token<ApolloContext<mixed>> =
+  createToken('ApolloContextToken');
 
 export const ApolloCacheContext = React.createContext<any>();
 
@@ -34,9 +33,8 @@ export const GraphQLEndpointToken: Token<string> = createToken(
   'GraphQLEndpointToken'
 );
 
-export const ApolloClientToken: Token<
-  InitApolloClientType<mixed>
-> = createToken('ApolloClientToken');
+export const ApolloClientToken: Token<InitApolloClientType<mixed>> =
+  createToken('ApolloClientToken');
 
 export const GetDataFromTreeToken: Token<any> = createToken(
   'GetDataFromTreeToken'
@@ -54,10 +52,8 @@ type BodyParserConfigType = {
   onerror?: (err: any, ctx: Context) => any,
   disableBodyParser?: (ctx: Context, next: () => Promise<any>) => Promise<any>,
 };
-export const ApolloBodyParserConfigToken: Token<BodyParserConfigType> = createToken(
-  'ApolloBodyParserConfigToken'
-);
+export const ApolloBodyParserConfigToken: Token<BodyParserConfigType> =
+  createToken('ApolloBodyParserConfigToken');
 
-export const ApolloDefaultOptionsConfigToken: Token<GraphQLOptionsType> = createToken(
-  'ApolloDefaultOptionsConfigToken'
-);
+export const ApolloDefaultOptionsConfigToken: Token<GraphQLOptionsType> =
+  createToken('ApolloDefaultOptionsConfigToken');

@@ -15,11 +15,11 @@ test('`fusion build` with assets', async () => {
     path.join(dir, '.fusion/dist/production/server')
   );
   expect(serverBuild.length > 0).toBe(true);
-  expect(serverBuild.filter(file => file.endsWith('.js.map'))).toEqual([]);
+  expect(serverBuild.filter((file) => file.endsWith('.js.map'))).toEqual([]);
 
   const clientBuild = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
   expect(clientBuild.length > 0).toBe(true);
-  expect(clientBuild.filter(file => file.endsWith('.js.map'))).toEqual([]);
+  expect(clientBuild.filter((file) => file.endsWith('.js.map'))).toEqual([]);
 }, 100000);

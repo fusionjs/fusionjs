@@ -11,7 +11,7 @@ import type {Token} from 'fusion-core';
 
 export type Timers = {
   setInterval: (Function, number) => number,
-  clearInterval: number => void,
+  clearInterval: (number) => void,
 };
 
 export const NodePerformanceEmitterToken: Token<any> = createToken(

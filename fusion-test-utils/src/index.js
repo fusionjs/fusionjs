@@ -45,7 +45,7 @@ export function getSimulator(
     request: request(app),
     render: render(app),
     // $FlowFixMe
-    getService: token => app.getService(token),
+    getService: (token) => app.getService(token),
   };
 }
 

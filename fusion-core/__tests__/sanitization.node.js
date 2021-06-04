@@ -36,16 +36,10 @@ test('html sanitization works', async () => {
   );
 });
 test('nested sanitization works', async () => {
-  const safe = html`
-    hello
-  `;
-  const value = html`
-    <div>${safe}</div>
-  `;
+  const safe = html` hello `;
+  const value = html` <div>${safe}</div> `;
   expect(typeof value).toBe('object');
-  expect(consumeSanitizedHTML(value)).toBe(
-    `\n    <div>\n    hello\n  </div>\n  `
-  );
+  expect(consumeSanitizedHTML(value)).toBe(` <div> hello </div> `);
 });
 test('dangerouslySetHTML works', async () => {
   const trusted = dangerouslySetHTML(JSON.stringify({a: 1}));

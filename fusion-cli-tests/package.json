@@ -13,20 +13,10 @@
   },
   "devDependencies": {
     "acorn": "^8.2.4",
-    "babel-eslint": "^10.0.3",
     "chrome-remote-interface": "^0.27.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
     "eslint-import-resolver-node": "^0.3.4",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "fixture-es2017-pkg": "0.0.0-monorepo",
     "fixture-macro-pkg": "0.0.0-monorepo",
     "flow-bin": "^0.109.0",
@@ -42,7 +32,6 @@
     "globby": "^11.0.1",
     "graphql": "^14.5.8",
     "locale": "^0.1.0",
-    "prettier": "^1.19.1",
     "puppeteer": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -56,7 +45,7 @@
   "scripts": {
     "build": "echo ok",
     "flow": "flow",
-    "lint": "eslint .",
+    "lint": "yarn g:lint --ignore-path $INIT_CWD/.eslintignore",
     "test": "git clean -Xfd test/e2e && jest --maxWorkers 1"
   }
 }

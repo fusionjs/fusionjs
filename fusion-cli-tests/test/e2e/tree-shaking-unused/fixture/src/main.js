@@ -1,4 +1,5 @@
 // @noflow
+/* eslint-disable-next-line import/no-unresolved */
 import {used, unused} from 'fixture-pkg';
 import {used2, unused2} from './user-code.js';
 

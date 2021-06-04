@@ -79,7 +79,7 @@ test('context#ServiceConsumer', async () => {
     return React.createElement(
       ServiceConsumer,
       {token: TestToken},
-      provides => {
+      (provides) => {
         didRender = true;
         expect(provides).toBe(3);
         return React.createElement('div', null, 'hello');
@@ -115,7 +115,7 @@ test('context#withServices', async () => {
       test1: TestToken1,
       test2: TestToken2,
     },
-    deps => ({mappedOne: deps.test1, mappedTwo: deps.test2})
+    (deps) => ({mappedOne: deps.test1, mappedTwo: deps.test2})
   )(TestComponent);
   const element = React.createElement(WrappedComponent, {propValue: 3});
   const app = new App(element);

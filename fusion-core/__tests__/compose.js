@@ -22,7 +22,7 @@ test('composed middleware are executed correctly', () => {
   expect(() => middleware()).not.toThrow();
 });
 
-test('downstream and upstream run in same order as koa', done => {
+test('downstream and upstream run in same order as koa', (done) => {
   expect.assertions(6);
   function a(ctx, next) {
     expect(++ctx.number).toBe(1);

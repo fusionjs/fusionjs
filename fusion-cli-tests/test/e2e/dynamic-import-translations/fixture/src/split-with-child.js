@@ -5,7 +5,7 @@ import {withTranslations} from 'fusion-plugin-i18n-react';
 
 import SplitRouteChild from './split-child.js';
 
-function SplitRouteWithChild () {
+function SplitRouteWithChild() {
   return <SplitRouteChild />;
 }
 

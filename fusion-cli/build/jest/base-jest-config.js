@@ -25,10 +25,7 @@ function getReactVersion(meta) {
     (meta.dependencies && meta.dependencies.react) ||
     (meta.devDependencies && meta.devDependencies.react) ||
     (meta.peerDependencies && meta.peerDependencies.react);
-  return react
-    .split('.')
-    .shift()
-    .match(/\d+/);
+  return react.split('.').shift().match(/\d+/);
 }
 
 function hasEnzyme(meta) {

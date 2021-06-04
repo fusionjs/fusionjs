@@ -20,7 +20,7 @@ test('`fusion build` with dynamic imports', async () => {
     path.resolve(dir, '.fusion/dist/development/client')
   );
 
-  const asyncBundles = bundles.filter(f => !/(vendor|runtime|main)/.test(f));
+  const asyncBundles = bundles.filter((f) => !/(vendor|runtime|main)/.test(f));
 
   // No async bundles are created
   t.equal(asyncBundles.length, 0);

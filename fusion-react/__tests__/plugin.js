@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import ReactPlugin from '../src/plugin';
 
-test('.create works', done => {
+test('.create works', (done) => {
   class Foo {
     foo() {}
   }

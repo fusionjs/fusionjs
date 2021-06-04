@@ -8,8 +8,6 @@
 
 /* eslint-env node */
 
-const webpack = require('webpack');
-
 /*::
 import type {TranslationsManifestState, TranslationsManifest} from "../types.js";
 
@@ -34,12 +32,12 @@ class I18nDiscoveryPlugin {
   apply(compiler /*: any */) {
     const name = this.constructor.name;
 
-    compiler.hooks.compilation.tap(name, compilation => {
+    compiler.hooks.compilation.tap(name, (compilation) => {
       // NOTE: This hook will execute twice when legacy bundle is enabled,
       // in which case it should not cause any conflicts, considering that
       // same i18n keys should be discovered in both cases.
       compilation.hooks.afterOptimizeTree.tap(name, (chunks, modules) => {
-        modules.forEach(module => {
+        modules.forEach((module) => {
           if (
             module.buildMeta.fusionTranslationIds &&
             module.buildMeta.fusionTranslationIds.size > 0

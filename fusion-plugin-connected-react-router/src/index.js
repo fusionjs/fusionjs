@@ -22,7 +22,7 @@ const plugin: ConnectedRouterPluginType = createPlugin({
     router: RouterToken,
   },
   provides: ({router}) => {
-    const enhancer = createStore => {
+    const enhancer = (createStore) => {
       return function _createStore(reducer, initialState) {
         const store = createStore(reducer, initialState);
         // $FlowFixMe - We enhance the store to add ctx onto it, which doesn't exist in the redux libdef

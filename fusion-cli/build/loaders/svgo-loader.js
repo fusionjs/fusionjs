@@ -7,10 +7,10 @@
  */
 /* eslint-env node */
 
-const { optimize, extendDefaultPlugins } = require('svgo');
+const {optimize, extendDefaultPlugins} = require('svgo');
 
 module.exports = function svgoLoader(source /*: string*/) {
-  const { data, error } = optimize(source, {
+  const {data, error} = optimize(source, {
     multipass: true,
     plugins: extendDefaultPlugins([
       {
@@ -20,7 +20,7 @@ module.exports = function svgoLoader(source /*: string*/) {
       {
         name: 'cleanupIDs',
         active: false,
-      }
+      },
     ]),
   });
 

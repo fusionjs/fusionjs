@@ -36,6 +36,7 @@
     "fusion-cli-tests-fixtures",
     "eslint-config-fusion",
     "fusion-plugin-web-app-manifest",
+    "linter",
     "jest-resolver-fusion"
   ],
   "devDependencies": {

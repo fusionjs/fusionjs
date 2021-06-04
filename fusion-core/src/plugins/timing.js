@@ -79,9 +79,16 @@ export const TimingToken: Token<TimingPlugin> = createToken('TimingToken');
 
 function middleware(ctx, next) {
   ctx.memoized = new Map();
-  const {start, render, end, downstream, upstream, middleware, prepass, markPrepass} = timing.from(
-    ctx
-  );
+  const {
+    start,
+    render,
+    end,
+    downstream,
+    upstream,
+    middleware,
+    prepass,
+    markPrepass,
+  } = timing.from(ctx);
   ctx.timing = {
     start,
     render: render.promise,
@@ -99,7 +106,7 @@ function middleware(ctx, next) {
       const endTime = now() - ctx.timing.start;
       end.resolve(endTime);
     })
-    .catch(e => {
+    .catch((e) => {
       // currently we only resolve upstream and downstream when the request does not error
       // we should however always resolve the request end timing
       if (e && e.status) {

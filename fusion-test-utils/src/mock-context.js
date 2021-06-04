@@ -51,7 +51,7 @@ export function createRequestContext(
     // $FlowFixMe
     new (require('http').OutgoingMessage)()
   ).filter(
-    sym =>
+    (sym) =>
       // Node 10
       /outHeadersKey/.test(sym.toString()) ||
       // Node 12
@@ -80,9 +80,9 @@ export function createRequestContext(
   });
   res.on = onEmitter;
   req.socket.remoteAddress = req.socket.remoteAddress || '127.0.0.1';
-  res.getHeader = k => res._headers[k.toLowerCase()];
+  res.getHeader = (k) => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);
-  res.removeHeader = k => delete res._headers[k.toLowerCase()];
+  res.removeHeader = (k) => delete res._headers[k.toLowerCase()];
 
   // createContext is missing in Koa typings
   const ctx = (new Koa(): any).createContext(req, res);

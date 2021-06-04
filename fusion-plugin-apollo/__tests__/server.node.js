@@ -76,7 +76,7 @@ test('SSR with <Query>', async () => {
   const el = (
     <div>
       <Query query={query}>
-        {result => {
+        {(result) => {
           if (result.loading) {
             return <div>Loading...</div>;
           } else if (result.data) {
@@ -119,7 +119,7 @@ test('SSR with <Query> and custom context', async () => {
   const el = (
     <div>
       <Query query={query}>
-        {result => {
+        {(result) => {
           if (result.loading) {
             return <div>Loading...</div>;
           } else if (result.data) {
@@ -164,7 +164,7 @@ test('SSR with <Query> and errors', async () => {
   const el = (
     <div>
       <Query query={query}>
-        {result => {
+        {(result) => {
           if (result.loading) {
             return <div>Loading...</div>;
           } else if (result.data) {

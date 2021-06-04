@@ -32,7 +32,7 @@ class ChildCompilationPlugin {
   outputOptions: Object;
   */
   constructor(opts /*: Opts*/) {
-    const { entry } = webpack.config.getNormalizedWebpackOptions({
+    const {entry} = webpack.config.getNormalizedWebpackOptions({
       entry: opts.entry,
     });
 
@@ -52,12 +52,13 @@ class ChildCompilationPlugin {
       const childCompiler = compilation.createChildCompiler(
         this.name,
         this.outputOptions,
-        [
-          new JsonpTemplatePlugin(),
-          ...this.plugins(compilation.options),
-        ]
+        [new JsonpTemplatePlugin(), ...this.plugins(compilation.options)]
       );
-      EntryOptionPlugin.applyEntryOption(childCompiler, compiler.context, this.entry);
+      EntryOptionPlugin.applyEntryOption(
+        childCompiler,
+        compiler.context,
+        this.entry
+      );
 
       childCompiler.runAsChild((err, entries, childCompilation) => {
         callback(err);

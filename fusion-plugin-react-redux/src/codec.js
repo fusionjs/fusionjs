@@ -29,7 +29,7 @@ export function encode(str: string) {
   if (str === void 0) {
     return 'undefined';
   }
-  return str.replace(encodeRegex, match => encodeChars[match]);
+  return str.replace(encodeRegex, (match) => encodeChars[match]);
 }
 
 const decodeRegex = /(%5C)|(%25)/g;
@@ -39,5 +39,5 @@ const decodeChars = {
 };
 
 export function decode(str: string) {
-  return str.replace(decodeRegex, match => decodeChars[match]);
+  return str.replace(decodeRegex, (match) => decodeChars[match]);
 }

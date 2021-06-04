@@ -12,12 +12,12 @@ const fs = require('fs');
 
 // Jest writes coverage after the process exits
 // so we need to poll and wait for all coverage files.
-const waitForAllCoverage = dirs => {
+const waitForAllCoverage = (dirs) => {
   const maxTries = 10000;
   let numTries = 0;
   return Promise.all(
     dirs.map(
-      dir =>
+      (dir) =>
         new Promise((resolve, reject) => {
           const interval = setInterval(() => {
             const coverageExists = fs.existsSync(
@@ -37,7 +37,7 @@ const waitForAllCoverage = dirs => {
   );
 };
 
-module.exports = function(rootDir /*: string */) {
+module.exports = function (rootDir /*: string */) {
   return waitForAllCoverage([rootDir]).then(() => {
     const createReporter = require('istanbul-api').createReporter;
     const istanbulCoverage = require('istanbul-lib-coverage');
@@ -45,10 +45,10 @@ module.exports = function(rootDir /*: string */) {
     const map = istanbulCoverage.createCoverageMap();
     const reporter = createReporter();
 
-    [rootDir].forEach(dir => {
+    [rootDir].forEach((dir) => {
       // $FlowFixMe
       const coverage = require(`${dir}/coverage/coverage-final.json`);
-      Object.keys(coverage).forEach(filename => {
+      Object.keys(coverage).forEach((filename) => {
         const obj = coverage[filename];
         // It seems coverage objects are arbitrarily nested or not
         // See: https://github.com/fusionjs/fusion-cli/pull/489

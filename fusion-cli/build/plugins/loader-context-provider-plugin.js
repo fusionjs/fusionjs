@@ -20,10 +20,13 @@ class LoaderContextProviderPlugin /*::<T>*/ {
   }
   apply(compiler /*: Object */) {
     const name = this.constructor.name;
-    compiler.hooks.compilation.tap(name, compilation => {
-      webpack.NormalModule.getCompilationHooks(compilation).loader.tap(name, (context, module) => {
-        context[this.loaderContextKey] = this.value;
-      });
+    compiler.hooks.compilation.tap(name, (compilation) => {
+      webpack.NormalModule.getCompilationHooks(compilation).loader.tap(
+        name,
+        (context, module) => {
+          context[this.loaderContextKey] = this.value;
+        }
+      );
     });
   }
 }

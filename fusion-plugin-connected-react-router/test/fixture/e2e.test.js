@@ -10,7 +10,7 @@
 const {Runtime} = require('../utils.js');
 
 /* eslint-env node */
-test('browser plugin integration test', async done => {
+test('browser plugin integration test', async (done) => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -18,14 +18,17 @@ test('browser plugin integration test', async done => {
 
   let path = await runtime.page.$eval(
     '[data-testid="path"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(path).toEqual('/');
 
   await runtime.page.click('#go-to-test');
   await runtime.page.waitForSelector('[data-testid="path"]');
 
-  path = await runtime.page.$eval('[data-testid="path"]', el => el.textContent);
+  path = await runtime.page.$eval(
+    '[data-testid="path"]',
+    (el) => el.textContent
+  );
   expect(path).toEqual('/test');
 
   await runtime.end();

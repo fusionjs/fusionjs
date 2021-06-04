@@ -17,7 +17,7 @@ const binPath = require.resolve('fusion-cli/bin/cli.js');
 function makeCommand(args) /*: Array<string> */ {
   if (Array.isArray(args)) {
     if (args[0] !== '-e') {
-      return args.map(x => x.split(' ')).reduce((x, y) => x.concat(y));
+      return args.map((x) => x.split(' ')).reduce((x, y) => x.concat(y));
     }
     return args;
   }
@@ -37,14 +37,14 @@ function run(
   const stderrLines = [];
   const promise = new Promise((resolve, reject) => {
     child.stdout &&
-      child.stdout.on('data', data => {
+      child.stdout.on('data', (data) => {
         stdoutLines.push(data.toString());
       });
     child.stderr &&
-      child.stderr.on('data', data => {
+      child.stderr.on('data', (data) => {
         stderrLines.push(data.toString());
       });
-    child.on('close', code => {
+    child.on('close', (code) => {
       const stdout = stdoutLines.join('\n');
       const stderr = stderrLines.join('\n');
       if (code === 0 || code === null) {
@@ -53,7 +53,7 @@ function run(
         reject({stdout, stderr, code});
       }
     });
-    child.on('error', e => {
+    child.on('error', (e) => {
       reject(e);
     });
   });
@@ -88,7 +88,7 @@ async function waitForServer(port /*: any */) /*: any */ {
   let numTries = 0;
   let res;
   while (!started && numTries < 20) {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     try {
       res = await request(`http://localhost:${port}/`, {
         headers: {

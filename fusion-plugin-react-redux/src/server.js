@@ -70,7 +70,7 @@ const plugin =
         }
       }
       return {
-        from: memoize(ctx => new Redux(ctx)),
+        from: memoize((ctx) => new Redux(ctx)),
       };
     },
     middleware(_, redux) {

@@ -1,8 +1,8 @@
 // @noflow
 import App from 'fusion-core';
 
-export default async function() {
-  const app = new App('element', el => el);
+export default async function () {
+  const app = new App('element', (el) => el);
   if (__NODE__) {
     app.middleware((ctx, next) => {
       if (ctx.path === '/redirect') {

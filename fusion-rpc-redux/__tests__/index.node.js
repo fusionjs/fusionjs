@@ -6,7 +6,6 @@
  * @flow
  */
 
-import execa from 'execa';
 import {
   createRPCHandler,
   createRPCReactors,
@@ -33,27 +32,27 @@ test('api', () => {
   expect(typeof createRPCReducer).toBe('function');
 });
 
-test('createRPCHandler success', done => {
+test('createRPCHandler success', (done) => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
-      start: args => {
+      start: (args) => {
         expect(args.transformed).toBe('transformed-args');
         expect(args.mapped).toBe('mapped-params');
         return {type: 'start', payload: args};
       },
-      success: result => {
+      success: (result) => {
         expect(result).toBe('test-resolve');
         return {type: 'success', payload: result};
       },
-      failure: e => {
+      failure: (e) => {
         // $FlowFixMe
         done.fail('should not call failure');
         return {type: 'failure', payload: e};
       },
     },
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(action.type).toBe(expectedActions.shift());
       },
       getState: () => {
@@ -63,7 +62,7 @@ test('createRPCHandler success', done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         expect(rpcId).toBe('test');
         return Promise.resolve('test-resolve');
       },
@@ -77,7 +76,7 @@ test('createRPCHandler success', done => {
         mapped: 'mapped-params',
       };
     },
-    transformParams: params => {
+    transformParams: (params) => {
       expect(params.mapped).toBe('mapped-params');
       return {
         mapped: params.mapped,
@@ -87,30 +86,30 @@ test('createRPCHandler success', done => {
   });
   const result = handler('args');
   expect(result instanceof Promise).toBeTruthy();
-  result.then(resolved => {
+  result.then((resolved) => {
     expect(resolved).toBe('test-resolve');
     done();
   });
 });
 
-test('createRPCHandler error in success reducer', done => {
+test('createRPCHandler error in success reducer', (done) => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
-      start: args => {
+      start: (args) => {
         return {type: 'start', payload: args};
       },
-      success: result => {
+      success: (result) => {
         throw new Error('Fail');
       },
-      failure: e => {
+      failure: (e) => {
         // $FlowFixMe
         done.fail('should not call failure');
         return {type: 'failure', payload: e};
       },
     },
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(action.type).toBe(expectedActions.shift());
       },
       getState: () => {
@@ -120,39 +119,39 @@ test('createRPCHandler error in success reducer', done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         return Promise.resolve('test-resolve');
       },
     },
     rpcId: 'test',
   });
-  handler('args').catch(e => {
+  handler('args').catch((e) => {
     expect(e.message).toBe('Fail');
     expect(e.stack).toBeTruthy();
     done();
   });
 });
 
-test('createRPCHandler error in start reducer', async done => {
+test('createRPCHandler error in start reducer', async (done) => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
-      start: args => {
+      start: (args) => {
         throw new Error('Fail');
       },
-      success: result => {
+      success: (result) => {
         // $FlowFixMe
         done.fail('should not call success');
         return {type: 'success', payload: result};
       },
-      failure: e => {
+      failure: (e) => {
         // $FlowFixMe
         done.fail('should not call failure');
         return {type: 'failure', payload: e};
       },
     },
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(action.type).toBe(expectedActions.shift());
       },
       getState: () => {
@@ -162,7 +161,7 @@ test('createRPCHandler error in start reducer', async done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         return Promise.resolve('test-resolve');
       },
     },
@@ -173,24 +172,24 @@ test('createRPCHandler error in start reducer', async done => {
   done();
 });
 
-test('createRPCHandler error in failure reducer', async done => {
+test('createRPCHandler error in failure reducer', async (done) => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
-      start: args => {
+      start: (args) => {
         return {type: 'start', payload: args};
       },
-      success: result => {
+      success: (result) => {
         // $FlowFixMe
         done.fail('should not call success');
         return {type: 'success', payload: result};
       },
-      failure: e => {
+      failure: (e) => {
         throw new Error('Fail');
       },
     },
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(action.type).toBe(expectedActions.shift());
       },
       getState: () => {
@@ -200,7 +199,7 @@ test('createRPCHandler error in failure reducer', async done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         return Promise.reject('test-reject');
       },
     },
@@ -210,28 +209,28 @@ test('createRPCHandler error in failure reducer', async done => {
   done();
 });
 
-test('createRPCHandler failure', done => {
+test('createRPCHandler failure', (done) => {
   const expectedActions = ['start', 'failure'];
   const error = new Error('fail');
   const handler = createRPCHandler({
     actions: {
-      start: args => {
+      start: (args) => {
         expect(args).toBe('transformed-args');
         return {type: 'start', payload: args};
       },
-      success: result => {
+      success: (result) => {
         // $FlowFixMe
         done.fail('should not call success');
         return {type: 'success', payload: result};
       },
-      failure: e => {
+      failure: (e) => {
         expect(e.message).toBe(error.message);
         expect(e.initialArgs).toEqual('transformed-args');
         return {type: 'failure', payload: e};
       },
     },
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(action.type).toBe(expectedActions.shift());
       },
       getState: () => {
@@ -241,34 +240,34 @@ test('createRPCHandler failure', done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         expect(rpcId).toBe('test');
         return Promise.reject(error);
       },
     },
     rpcId: 'test',
-    mapStateToParams: state => {
+    mapStateToParams: (state) => {
       expect(state).toBe('test-state');
       return 'mapped-params';
     },
-    transformParams: params => {
+    transformParams: (params) => {
       expect(params).toBe('mapped-params');
       return 'transformed-args';
     },
   });
   const result = handler('args');
   expect(result instanceof Promise).toBeTruthy();
-  result.then(reject => {
+  result.then((reject) => {
     expect(reject).toBe(error);
     done();
   });
 });
 
-test('createRPCHandler optional parameters', done => {
+test('createRPCHandler optional parameters', (done) => {
   const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
   const handler = createRPCHandler({
     store: {
-      dispatch: action => {
+      dispatch: (action) => {
         expect(typeof action === 'object' && action.type).toBe(
           expectedActions.shift()
         );
@@ -278,7 +277,7 @@ test('createRPCHandler optional parameters', done => {
       replaceReducer: () => {},
     },
     rpc: {
-      request: rpcId => {
+      request: (rpcId) => {
         expect(rpcId).toBe('test');
         return Promise.resolve('response');
       },
@@ -287,13 +286,13 @@ test('createRPCHandler optional parameters', done => {
   });
   const result = handler('args');
   expect(result instanceof Promise).toBeTruthy();
-  result.then(response => {
+  result.then((response) => {
     expect(response).toBe('response');
     done();
   });
 });
 
-test('createRPCReactors', done => {
+test('createRPCReactors', (done) => {
   const reactors = createRPCReactors('getCount', {
     start() {},
     success() {},
@@ -315,7 +314,7 @@ test('createRPCReactors', done => {
   done();
 });
 
-test('createRPCReactors optional reducers', done => {
+test('createRPCReactors optional reducers', (done) => {
   const reactors = createRPCReactors('getCount', {});
   expect(typeof reactors.start).toBe('function');
   expect(typeof reactors.success).toBe('function');

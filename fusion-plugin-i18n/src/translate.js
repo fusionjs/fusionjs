@@ -1,4 +1,5 @@
-import { type TranslationsObjectType } from './types'
+// @flow
+import {type TranslationsObjectType} from './types';
 
 export function matchesLiteralSections(literalSections: Array<string>) {
   return (translation: string) => {
@@ -37,16 +38,18 @@ export function matchesLiteralSections(literalSections: Array<string>) {
   };
 }
 
-export function translateKeys(sources: any, locale: any, keys: TranslationsObjectType[]): TranslationsObjectType[] {
-  const translations = {}
+export function translateKeys(
+  sources: any,
+  locale: any,
+  keys: Array<string>
+): TranslationsObjectType {
+  const translations = {};
   let possibleTranslations;
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (Array.isArray(key)) {
       const filter = matchesLiteralSections(key);
       if (!possibleTranslations) {
-        possibleTranslations = sources
-        ? Object.keys(sources)
-        : [];
+        possibleTranslations = sources ? Object.keys(sources) : [];
       }
 
       const matches = possibleTranslations.filter(filter);
@@ -63,8 +66,9 @@ export function translateKeys(sources: any, locale: any, keys: TranslationsObjec
 // Default i18n format
 export function translateKey(sources: any, locale: any, key: string): string {
   const localeKey = sources[key];
-  if (typeof localeKey === "string") {
-    return localeKey
+  if (typeof localeKey === 'string') {
+    return localeKey;
   }
+  // $FlowFixMe - we are unsound here, but assume that key exists
   return;
 }

@@ -12,6 +12,6 @@ import './async-prepare-context.node.js';
 import './async-split.node.js';
 import './async-context.node.js';
 
-process.on('unhandledRejection', e => {
+process.on('unhandledRejection', (e) => {
   throw e;
 });

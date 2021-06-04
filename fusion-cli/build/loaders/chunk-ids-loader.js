@@ -21,9 +21,8 @@ async function chunkIdsLoader() {
   const callback = this.async();
   const options = this.getOptions();
 
-  const chunkMetadataState /*: ClientChunkMetadataContext*/ = this[
-    clientChunkMetadataContextKey
-  ];
+  const chunkMetadataState /*: ClientChunkMetadataContext*/ =
+    this[clientChunkMetadataContextKey];
 
   const filename = options.path;
 

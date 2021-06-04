@@ -26,7 +26,7 @@ const supportedLevels = [
 function normalizeErrors(value) {
   if (value && value instanceof Error) {
     const error = {};
-    Object.getOwnPropertyNames(value).forEach(key => {
+    Object.getOwnPropertyNames(value).forEach((key) => {
       error[key] = value[key];
     });
     return {error};
@@ -43,7 +43,7 @@ const plugin =
     provides: ({emitter}) => {
       class UniversalLogger {
         constructor() {
-          supportedLevels.forEach(level => {
+          supportedLevels.forEach((level) => {
             // $FlowFixMe
             this[level] = (...args) => {
               return this.log(level, ...args);
@@ -61,7 +61,7 @@ const plugin =
           // unwieldy batch sizes
           if (level === 'error') {
             // $FlowFixMe
-            emitter.flush().catch(error => this.log('error', error));
+            emitter.flush().catch((error) => this.log('error', error));
           }
         }
       }

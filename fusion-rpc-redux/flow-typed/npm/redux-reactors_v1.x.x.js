@@ -1,23 +1,24 @@
+// @flow
 // flow-typed signature: 630bd128cb32aefe434b73743e823696
 // flow-typed version: 0222ebe024/redux-reactors_v1.x.x/flow_>=v0.95.x <=v0.103.x
 
 declare module 'redux-reactors' {
   /* Helper types from 'redux'
-  *
-  * NOTE THAT THE BELOW TYPES ARE COPIED DIRECTLY FROM THE LIBDEF
-  * FOR 'redux'.  CHANGES SHOULD BE MIRRORED BACK HERE TO ENSURE
-  * CONSISTENCY ACROSS VERSIONS.
-  *
-  * Equivalent to:
-  *    import type { StoreCreator, Action } from 'redux';
-  */
+   *
+   * NOTE THAT THE BELOW TYPES ARE COPIED DIRECTLY FROM THE LIBDEF
+   * FOR 'redux'.  CHANGES SHOULD BE MIRRORED BACK HERE TO ENSURE
+   * CONSISTENCY ACROSS VERSIONS.
+   *
+   * Equivalent to:
+   *    import type { StoreCreator, Action } from 'redux';
+   */
   declare type Action<T> = {
-    type: T
+    type: T,
   };
 
   declare type DispatchAPI<A> = (action: A) => A;
 
-  declare type Dispatch<A: { type: * }> = DispatchAPI<A>;
+  declare type Dispatch<A: {type: *}> = DispatchAPI<A>;
 
   declare type Reducer<S, A> = (state: S | void, action: A) => S;
 
@@ -43,7 +44,6 @@ declare module 'redux-reactors' {
   };
   /* END OF COPIED 'redux' TYPES */
 
-
   declare export type ReactorAction<S, T> = {|
     type: T,
     payload: mixed,
@@ -55,7 +55,9 @@ declare module 'redux-reactors' {
     ActionType,
     A: Action<ActionType> | ReactorAction<S, ActionType>,
     D
-  >(createStore: StoreCreator<S, A, D>): StoreCreator<S, A, D>;
+  >(
+    createStore: StoreCreator<S, A, D>
+  ): StoreCreator<S, A, D>;
 
   declare export function createReactor<S, T>(
     type: T,

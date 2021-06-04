@@ -16,10 +16,10 @@ import ErrorHandlingPlugin, {ErrorHandlingEmitterToken} from '../src/client';
 test('Get exception stack frames', () => {
   expect.assertions(4);
 
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
 
   const mockError = new Error('mock');
-  const mockEmit = e => {
+  const mockEmit = (e) => {
     expect(e).toBe(mockError);
   };
 
@@ -50,7 +50,7 @@ test('Get exception stack frames', () => {
 test("Don't break on cross-origin exceptions", () => {
   expect.assertions(1);
 
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
 
   window.opener = new Proxy(
     {},

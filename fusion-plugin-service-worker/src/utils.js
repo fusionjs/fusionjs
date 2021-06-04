@@ -5,20 +5,20 @@ import type {SWLoggerType} from './types';
 export function unregisterServiceWorker(logger: SWLoggerType) {
   return window.navigator.serviceWorker
     .getRegistrations()
-    .then(registrations => {
+    .then((registrations) => {
       const len = registrations.length;
       if (len) {
         logger.log(`*** unregistering ${len} sw${len > 1 ? 's' : ''}`);
         return Promise.all(
           registrations.map(
-            registration =>
-              new Promise(res => registration.unregister().then(() => res()))
+            (registration) =>
+              new Promise((res) => registration.unregister().then(() => res()))
           )
         );
       }
     })
     .then(() => deleteAllCaches())
-    .catch(e => {
+    .catch((e) => {
       deleteAllCaches().then(() => {
         logger.log('*** error unregistering sw:', e);
       });
@@ -31,5 +31,5 @@ export function deleteAllCaches() {
   }
   return caches
     .keys()
-    .then(keyList => Promise.all(keyList.map(key => caches.delete(key))));
+    .then((keyList) => Promise.all(keyList.map((key) => caches.delete(key))));
 }

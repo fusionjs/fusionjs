@@ -13,7 +13,7 @@ const App = AppFactory();
 test('app callback', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const render = el => {
+  const render = (el) => {
     numRenders++;
     expect(el).toBe(element);
     return el;
@@ -28,7 +28,7 @@ test('app callback', async () => {
   expect(ctx.element).toBe(element);
 });
 
-test('throws rendering errors', async done => {
+test('throws rendering errors', async (done) => {
   const element = 'hi';
   const render = () => {
     return new Promise(() => {

@@ -42,7 +42,7 @@ export default {
     plugin.middleware = (deps: *, provides: *) => {
       let nextMiddleware =
         originalMiddleware && originalMiddleware(deps, provides);
-      const mw: Middleware = function(ctx, next) {
+      const mw: Middleware = function (ctx, next) {
         if (ctx.element) {
           ctx.element = React.createElement(
             ProviderComponent,

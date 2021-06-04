@@ -18,7 +18,7 @@ import ErrorHandling, {ErrorHandlerToken} from '../src/server';
 test('request errors', async () => {
   expect.assertions(6);
 
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
 
   let called = 0;
   const expectedTypes = ['browser', 'request'];
@@ -35,7 +35,7 @@ test('request errors', async () => {
     .request('/_errors', {
       body: {message: 'test'},
     })
-    .catch(e => {
+    .catch((e) => {
       expect(e).toBe('REJECTED');
     });
 
@@ -47,7 +47,7 @@ test('request errors', async () => {
 test('request errors send early response', async () => {
   expect.assertions(2);
 
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
 
   let called = 0;
   const onError = () => {
@@ -62,14 +62,14 @@ test('request errors send early response', async () => {
     .request('/someRoute', {
       body: {message: 'test'},
     })
-    .catch(e => {
+    .catch((e) => {
       expect(e).toBe('REJECTED');
     });
   expect(called).toBe(1);
 });
 
 test('adds script', async () => {
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
 
   app.register(ErrorHandling);
   app.register(ErrorHandlerToken, () => {});
@@ -80,42 +80,42 @@ test('adds script', async () => {
   ).toBeTruthy();
 });
 
-test('Uncaught exceptions', async done => {
+test('Uncaught exceptions', async (done) => {
   const forked = fork('./fixtures/uncaught-exception.js', {stdio: 'pipe'});
   let stdout = '';
-  forked.stdout.on('data', data => {
+  forked.stdout.on('data', (data) => {
     stdout += data.toString();
   });
 
-  forked.on('close', code => {
+  forked.on('close', (code) => {
     expect(code).toBe(1);
     expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
     done();
   });
 });
 
-test('Unhandled rejections', async done => {
+test('Unhandled rejections', async (done) => {
   const forked = fork('./fixtures/unhandled-rejection.js', {stdio: 'pipe'});
   let stdout = '';
-  forked.stdout.on('data', data => {
+  forked.stdout.on('data', (data) => {
     stdout += data.toString();
   });
-  forked.on('close', code => {
+  forked.on('close', (code) => {
     expect(code).toBe(1);
     expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
     done();
   });
 });
 
-test('Unhandled rejections with non-error', async done => {
+test('Unhandled rejections with non-error', async (done) => {
   const forked = fork('./fixtures/unhandled-rejection-non-error.js', {
     stdio: 'pipe',
   });
   let stdout = '';
-  forked.stdout.on('data', data => {
+  forked.stdout.on('data', (data) => {
     stdout += data.toString();
   });
-  forked.on('close', code => {
+  forked.on('close', (code) => {
     expect(code).toBe(1);
     expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
     expect(stdout.includes('INSTANCEOF ERROR true')).toBeTruthy();

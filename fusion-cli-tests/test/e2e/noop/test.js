@@ -29,7 +29,7 @@ test('`fusion dev --dir` works w/ relative dir', async () => {
   const {proc} = await dev(`--dir=${dir}`, {
     stdio: ['inherit', 'inherit', 'pipe'],
   });
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   t.ok(await exists(entry), 'Entry file gets compiled');
   proc.stderr.destroy(); // disconnect the piped socket to prevent the Node process from hanging
   proc.kill('SIGKILL');
@@ -141,7 +141,7 @@ test('`fusion build --experimentalServerless` works', async () => {
     handler(req, res);
   });
   await new Promise((resolve, reject) => {
-    server.listen(port, err => {
+    server.listen(port, (err) => {
       if (err) reject(err);
       resolve();
     });
@@ -189,7 +189,7 @@ test('`fusion build --experimentalServerless --production` works', async () => {
     handler(req, res);
   });
   await new Promise((resolve, reject) => {
-    server.listen(port, err => {
+    server.listen(port, (err) => {
       if (err) reject(err);
       resolve();
     });
@@ -218,11 +218,11 @@ test('`fusion build` works in production with a CDN_URL', async () => {
     path.resolve(dir, '.fusion/dist/production/client')
   );
   t.ok(
-    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-main-(.*?).js$/.test(f)),
     'includes a versioned client-main.js file'
   );
   t.ok(
-    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-vendor-(.*?).js$/.test(f)),
     'includes a versioned client-vendor.js file'
   );
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
@@ -262,11 +262,11 @@ test('`fusion build` works in production with default asset path and supplied RO
     path.resolve(dir, '.fusion/dist/production/client')
   );
   t.ok(
-    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-main-(.*?).js$/.test(f)),
     'includes a versioned client-main.js file'
   );
   t.ok(
-    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-vendor-(.*?).js$/.test(f)),
     'includes a versioned client-vendor.js file'
   );
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
@@ -305,12 +305,12 @@ test('`fusion start` does not throw error on client when using route prefix', as
   });
   const page = await browser.newPage();
 
-  page.on('error', err => {
+  page.on('error', (err) => {
     // $FlowFixMe
     t.fail(`Client-side error: ${err}`);
   });
 
-  page.on('pageerror', err => {
+  page.on('pageerror', (err) => {
     // $FlowFixMe
     t.fail(`Client-side error: ${err}`);
   });
@@ -338,11 +338,11 @@ test('`fusion build` works in production', async () => {
     path.resolve(dir, '.fusion/dist/production/client')
   );
   t.ok(
-    clientFiles.some(f => /client-main-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-main-(.*?).js$/.test(f)),
     'includes a versioned client-main.js file'
   );
   t.ok(
-    clientFiles.some(f => /client-vendor-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-vendor-(.*?).js$/.test(f)),
     'includes a versioned client-vendor.js file'
   );
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
@@ -364,7 +364,7 @@ test('`fusion build` works in production', async () => {
     'includes a reference to client-legacy-vendor'
   );
 
-  clientFiles.forEach(file => {
+  clientFiles.forEach((file) => {
     if (file.endsWith('.map')) {
       t.ok(
         clientFiles.includes(path.basename(file, '.map')),
@@ -389,29 +389,29 @@ test('production works', async () => {
   const clientDir = path.resolve(dir, `.fusion/dist/production/client`);
   const assets = await readdir(clientDir);
   t.ok(
-    assets.find(a => a.match(/^client-main.+\.js$/)),
+    assets.find((a) => a.match(/^client-main.+\.js$/)),
     'main .js'
   );
   t.ok(
-    assets.find(a => a.match(/^client-main.+\.js.map$/)),
+    assets.find((a) => a.match(/^client-main.+\.js.map$/)),
     'main .map'
   );
   //t.ok(assets.find(a => a.match(/^client-main.+\.js.gz$/)), 'main .gz');
   t.ok(
-    assets.find(a => a.match(/^client-main.+\.js.br$/)),
+    assets.find((a) => a.match(/^client-main.+\.js.br$/)),
     'main .br'
   );
   t.ok(
-    assets.find(a => a.match(/^client-vendor.+\.js$/)),
+    assets.find((a) => a.match(/^client-vendor.+\.js$/)),
     'vendor .js'
   );
   t.ok(
-    assets.find(a => a.match(/^client-vendor.+\.js.map$/)),
+    assets.find((a) => a.match(/^client-vendor.+\.js.map$/)),
     'vendor .map'
   );
   //t.ok(assets.find(a => a.match(/^client-vendor.+\.js.gz$/)), 'vendor .gz');
   t.ok(
-    assets.find(a => a.match(/^client-vendor.+\.js.br$/)),
+    assets.find((a) => a.match(/^client-vendor.+\.js.br$/)),
     'vendor .br'
   );
   const command = `

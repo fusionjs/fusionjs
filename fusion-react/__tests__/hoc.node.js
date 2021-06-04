@@ -41,7 +41,7 @@ test('hoc#legacy', async () => {
 });
 
 test('hoc#legacy with mapProvidesToProps', async () => {
-  const withTest = hoc.create('test', provides => {
+  const withTest = hoc.create('test', (provides) => {
     return {mapped: provides};
   });
 
@@ -117,7 +117,7 @@ test('hoc', async () => {
   const withTest = compose(
     hoc.create('test1', undefined, TestToken1),
     hoc.create('test2', undefined, TestToken2),
-    hoc.create('test3', provides => ({mapped: provides}), TestToken3)
+    hoc.create('test3', (provides) => ({mapped: provides}), TestToken3)
   );
   const testProvides1 = {hello: 1};
   const testProvides2 = {hello: 2};

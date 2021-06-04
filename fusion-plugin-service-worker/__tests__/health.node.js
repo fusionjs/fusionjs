@@ -30,7 +30,7 @@ const createMockLogger = () => ({
 
 test('/health request', async () => {
   expect.assertions(2);
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(SWTemplateFunctionToken, swTemplateFunction);
   app.register(LoggerToken, createMockLogger());
   app.register(ServiceWorker);

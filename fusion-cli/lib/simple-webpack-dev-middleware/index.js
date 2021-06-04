@@ -11,7 +11,7 @@
 const Shared = require('./lib/Shared');
 
 // constructor for the middleware
-module.exports = function(compiler /*: any */, options /*: any */) {
+module.exports = function (compiler /*: any */, options /*: any */) {
   options = options || {};
   const context = {
     state: false,
@@ -27,7 +27,7 @@ module.exports = function(compiler /*: any */, options /*: any */) {
   ) {
     function goNext() {
       // $FlowFixMe
-      shared.waitUntilValid(function() {
+      shared.waitUntilValid(function () {
         next();
       }, req);
     }

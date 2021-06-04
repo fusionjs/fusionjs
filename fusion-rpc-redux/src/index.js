@@ -37,7 +37,7 @@ function camelUpper(key: string): string {
   return key.replace(/([A-Z])/g, '_$1').toUpperCase();
 }
 
-const noopReducer: Reducer<*, *> = state => state;
+const noopReducer: Reducer<*, *> = (state) => state;
 
 type ActionNamesType = {failure: string, start: string, success: string};
 type ActionTypesType = $Keys<ActionNamesType>;
@@ -151,7 +151,7 @@ export function createRPCHandler({
     store.dispatch(actions && actions.start(args));
     return rpc
       .request(rpcId, args)
-      .then(result => {
+      .then((result) => {
         try {
           store.dispatch(actions && actions.success(result));
         } catch (e) {
@@ -160,7 +160,7 @@ export function createRPCHandler({
         }
         return result;
       })
-      .catch(e => {
+      .catch((e) => {
         if (e.__shouldBubble) {
           delete e.__shouldBubble;
           throw e;

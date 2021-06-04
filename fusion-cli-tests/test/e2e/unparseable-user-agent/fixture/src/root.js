@@ -1,7 +1,7 @@
 // @noflow
 
 import React from 'react';
-import Router, {Route, Switch, Link} from 'fusion-plugin-react-router';
+import {Route, Switch, Link} from 'fusion-plugin-react-router';
 import {split} from 'fusion-react';
 
 import routes from './routes';

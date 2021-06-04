@@ -9,11 +9,11 @@ module.exports.where = async (token /*: string*/) => {
   const dep = [
     ...listDependencies(data.server || []),
     ...listDependencies(data.browser || []),
-  ].find(dep => dep.name === token);
+  ].find((dep) => dep.name === token);
 
   if (!dep) return '';
 
-  const sources = listSourceLines(dep, 'register').map(source => {
+  const sources = listSourceLines(dep, 'register').map((source) => {
     return path.resolve(process.cwd(), source);
   });
   return sources.join('\n');

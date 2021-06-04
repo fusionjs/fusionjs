@@ -4,14 +4,14 @@
 
 exports.getStyles = function getStyles(page) {
   return page.evaluate(() => {
-    return Array.from(document.styleSheets).flatMap(sheet =>
-      Array.from(sheet.cssRules).flatMap(rule => rule.cssText)
+    return Array.from(document.styleSheets).flatMap((sheet) =>
+      Array.from(sheet.cssRules).flatMap((rule) => rule.cssText)
     );
   });
 };
 
 exports.getComputedStyle = function getComputedStyle(page, selector) {
-  return page.$eval(selector, el =>
+  return page.$eval(selector, (el) =>
     JSON.parse(JSON.stringify(getComputedStyle(el)))
   );
 };
@@ -25,7 +25,7 @@ exports.untilReady = async function untilReady(page, port) {
       started = true;
     } catch (e) {
       numTries++;
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(resolve, Math.pow(2, numTries));
       });
     }

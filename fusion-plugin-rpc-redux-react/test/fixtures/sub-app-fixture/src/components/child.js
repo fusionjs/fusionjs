@@ -28,11 +28,11 @@ function Child(props) {
 
 export default compose(
   withRPCRedux('getLastTrip'),
-  connect(({ lastTrip }) => ({
+  connect(({lastTrip}) => ({
     lastTrip: lastTrip.data,
-    isLoading: lastTrip.loading
+    isLoading: lastTrip.loading,
   })),
-  prepared(props =>
+  prepared((props) =>
     props.lastTrip
       ? Promise.resolve()
       : props.getLastTrip({tripId: CHILD_TRIP_ID})

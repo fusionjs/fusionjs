@@ -40,7 +40,7 @@ test('`fusion build` tree shaking', async () => {
   const clientFiles = await readdir(
     path.resolve(dir, '.fusion/dist/production/client')
   );
-  const clientMainFile = clientFiles.filter(f =>
+  const clientMainFile = clientFiles.filter((f) =>
     /client-main-(.*?).js$/.test(f)
   )[0];
   const clientMain = path.resolve(

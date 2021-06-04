@@ -15,7 +15,7 @@ import createClientHydrate, {
 import createClientRenderer from './plugins/client-renderer';
 import {RenderToken, ElementToken} from './tokens';
 
-export default function(): typeof BaseApp {
+export default function (): typeof BaseApp {
   return class ClientApp extends BaseApp {
     constructor(el, render) {
       super(el, render);

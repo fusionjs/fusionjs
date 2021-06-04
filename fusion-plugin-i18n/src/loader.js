@@ -16,20 +16,21 @@ import type {Context} from 'fusion-core';
 import type {TranslationsObjectType} from './types.js';
 
 export type I18nLoaderType = {
-  from: (
-    ctx: Context
-  ) => {locale: string | Locale, translations: TranslationsObjectType},
+  from: (ctx: Context) => {
+    locale: string | Locale,
+    translations: TranslationsObjectType,
+  },
 };
 export type LocaleResolverType = (ctx: Context) => string;
 export type LoaderFactoryType = (
   resolveLocales?: LocaleResolverType
 ) => I18nLoaderType;
 
-const defaultResolveLocales: LocaleResolverType = ctx =>
+const defaultResolveLocales: LocaleResolverType = (ctx) =>
   ctx.headers['accept-language'];
 
 const loader: LoaderFactoryType = (resolveLocales = defaultResolveLocales) => {
-  const readDir = root => {
+  const readDir = (root) => {
     try {
       return fs.readdirSync(root);
     } catch (e) {
@@ -38,8 +39,8 @@ const loader: LoaderFactoryType = (resolveLocales = defaultResolveLocales) => {
   };
   const root = './translations';
   const locales = readDir(root)
-    .filter(p => p.match(/json$/))
-    .map(p => p.replace(/\.json$/, ''));
+    .filter((p) => p.match(/json$/))
+    .map((p) => p.replace(/\.json$/, ''));
   const data = locales.reduce((memo, locale) => {
     const parsedLocale = new Locale(locale);
     memo[parsedLocale.normalized] = JSON.parse(
@@ -50,7 +51,7 @@ const loader: LoaderFactoryType = (resolveLocales = defaultResolveLocales) => {
   const supportedLocales = new Locales(locales);
 
   return {
-    from: memoize(ctx => {
+    from: memoize((ctx) => {
       const expectedLocales = new Locales(resolveLocales(ctx));
       const locale = expectedLocales.best(supportedLocales);
       const translations: TranslationsObjectType = data[locale.normalized];

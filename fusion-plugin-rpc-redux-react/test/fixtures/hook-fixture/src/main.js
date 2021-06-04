@@ -19,7 +19,7 @@ import {FetchToken} from 'fusion-tokens';
 import {combineReducers} from 'redux';
 
 export default () => {
-  const app = new App((<Root />));
+  const app = new App(<Root />);
 
   __NODE__
     ? app.register(RPCHandlersToken, rpcHandlers)

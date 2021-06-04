@@ -12,12 +12,8 @@ export default () => {
 
   return (
     <div id="hook-translation">
-      <p>
-        {translate('translations.hook')}
-      </p>
-      <p>
-        {translate(`pattern.${'def'}`)}
-      </p>
+      <p>{translate('translations.hook')}</p>
+      <p>{translate(`pattern.${'def'}`)}</p>
     </div>
   );
-}
+};

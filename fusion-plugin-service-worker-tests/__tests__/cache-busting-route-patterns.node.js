@@ -11,7 +11,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/cache-busting-route-patterns', async done => {
+test('/cache-busting-route-patterns', async (done) => {
   expect.assertions(8);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer({
@@ -28,7 +28,7 @@ test('/cache-busting-route-patterns', async done => {
   try {
     let isReady, allRequests;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
@@ -36,9 +36,9 @@ test('/cache-busting-route-patterns', async done => {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/').length === 1
+          cacheKeyPaths.filter((key) => key === '/').length === 1
         ).toBeTruthy();
       } else if (
         msg._text.startsWith(
@@ -48,9 +48,9 @@ test('/cache-busting-route-patterns', async done => {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/' || key === '/?bust=true')
+          cacheKeyPaths.filter((key) => key === '/' || key === '/?bust=true')
             .length === 0
         ).toBeTruthy();
       } else if (
@@ -61,9 +61,9 @@ test('/cache-busting-route-patterns', async done => {
         const cacheKeyPaths = msg._text
           .split('#')[1]
           .split(',')
-          .map(key => key.split(port)[1]);
+          .map((key) => key.split(port)[1]);
         expect(
-          cacheKeyPaths.filter(key => key === '/?bust=false').length === 1
+          cacheKeyPaths.filter((key) => key === '/?bust=false').length === 1
         ).toBeTruthy();
       }
     });
@@ -87,7 +87,7 @@ test('/cache-busting-route-patterns', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -100,7 +100,7 @@ test('/cache-busting-route-patterns', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -118,7 +118,7 @@ test('/cache-busting-route-patterns', async done => {
     // Capture requests during next load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 

@@ -34,7 +34,7 @@ const plugin =
           throw e;
         };
       }
-      const addListener = key => {
+      const addListener = (key) => {
         if (
           key.match(/webkit/) == null && // stop deprecation warnings
           window[key] &&
@@ -43,8 +43,8 @@ const plugin =
         ) {
           const proto = window[key].prototype;
           const old = proto.addEventListener;
-          proto.addEventListener = function(type, fn, ...rest) {
-            const cb = function(...args) {
+          proto.addEventListener = function (type, fn, ...rest) {
+            const cb = function (...args) {
               try {
                 return fn.apply(this, args);
               } catch (e) {
@@ -63,7 +63,7 @@ const plugin =
           // Ignore. Don't have access to the prop, possibly cross-origin restriction.
         }
       }
-      window.addEventListener('unhandledrejection', e => {
+      window.addEventListener('unhandledrejection', (e) => {
         e.preventDefault();
         _emit(e.reason instanceof Error ? e.reason : new Error(e.reason));
       });

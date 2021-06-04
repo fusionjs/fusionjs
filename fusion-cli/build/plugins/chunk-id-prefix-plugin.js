@@ -22,7 +22,7 @@ class ChunkIdPrefixPlugin {
       // prefix. Therefore we tap into .compilation hook in .thisCompilation(),
       // this ensures our logic runs after webpack assigned reqired chunk ids.
       compiler.hooks.compilation.tap(name, (compilation) => {
-        compilation.hooks.chunkIds.tap(name, chunks => {
+        compilation.hooks.chunkIds.tap(name, (chunks) => {
           for (const chunk of chunks) {
             const chunkId = `${this.prefix}-${chunk.id}`;
 

@@ -43,7 +43,7 @@ test('Server EventEmitter - events from browser', async () => {
       end: Promise.resolve(5),
     },
   };
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     events.on('a', ({x}, ctx) => {
@@ -70,10 +70,10 @@ test('Server EventEmitter - events from browser', async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test('Server EventEmitter - events with ctx', async done => {
+test('Server EventEmitter - events with ctx', async (done) => {
   let globalCalled = false;
   const mockCtx = {mock: true};
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   app.register(
     createPlugin({
@@ -105,7 +105,7 @@ test('Server EventEmitter - mapping', async () => {
       end: Promise.resolve(5),
     },
   };
-  const app = new App('fake-element', el => el);
+  const app = new App('fake-element', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     events.on('a', (payload, c) => {
@@ -141,9 +141,9 @@ test('Server EventEmitter - mapping', async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test('Server EventEmitter error handling', async done => {
+test('Server EventEmitter error handling', async (done) => {
   expect.assertions(1);
-  const app = new App('fake-element', el => el);
+  const app = new App('fake-element', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
@@ -172,8 +172,8 @@ test('Server EventEmitter error handling', async done => {
   done();
 });
 
-test('Server EventEmitter batching', async done => {
-  const app = new App('fake-element', el => el);
+test('Server EventEmitter batching', async (done) => {
+  const app = new App('fake-element', (el) => el);
   const flags = {
     preawait: false,
     postawait: false,
@@ -206,7 +206,7 @@ test('Server EventEmitter batching', async done => {
       });
       await next();
       emitter.emit('test-post-await', {x: 1});
-      emitter.map(payload => {
+      emitter.map((payload) => {
         return {
           ...payload,
           lol: true,

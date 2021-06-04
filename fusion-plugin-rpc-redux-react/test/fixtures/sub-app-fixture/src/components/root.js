@@ -43,7 +43,7 @@ function Root(props) {
 export default compose(
   withRPCRedux('getLastTrip'),
   connect(({lastTrip}) => ({lastTrip: lastTrip.data})),
-  prepared(props =>
+  prepared((props) =>
     props.lastTrip
       ? Promise.resolve()
       : props.getLastTrip({tripId: PARENT_TRIP_ID})

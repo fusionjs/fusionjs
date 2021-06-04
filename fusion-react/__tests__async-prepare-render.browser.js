@@ -15,7 +15,7 @@ import {prepare} from './src/index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
-test('Client-side preparing', done => {
+test('Client-side preparing', (done) => {
   let numRenders = 0;
   function SimplePortal() {
     numRenders++;

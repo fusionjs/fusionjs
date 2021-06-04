@@ -139,7 +139,7 @@ test('`fusion dev` app with split translations integration', async () => {
   );
 
   const reloaded = page.evaluate(() => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // eslint-disable-next-line
       window.__addHotStatusHandler(status => {
         if (status === 'idle') {
@@ -178,7 +178,7 @@ test('`fusion dev` app with split translations integration', async () => {
   await Promise.all([
     page.click('#split2-link'),
     page.waitForSelector('#split2-translation'),
-    new Promise(r => setTimeout(r, 2000)), // component is initally rendered without translation
+    new Promise((r) => setTimeout(r, 2000)), // component is initally rendered without translation
   ]);
   const content4 = await page.content();
   t.ok(
@@ -310,7 +310,7 @@ describe('i18n manifest caching', () => {
     );
 
     const hmrCompleted = page.evaluate(() => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         // eslint-disable-next-line
         window.__addHotStatusHandler(status => {
           if (status === 'idle') {

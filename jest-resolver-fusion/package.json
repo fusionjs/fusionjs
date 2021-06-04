@@ -9,7 +9,7 @@
   "scripts": {
     "build": "echo ok",
     "flow": "flow",
-    "lint": "eslint .",
+    "lint": "yarn g:lint",
     "test": "echo ok"
   }
 }

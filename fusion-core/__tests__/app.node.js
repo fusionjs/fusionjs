@@ -13,7 +13,7 @@ import type {Context} from '../src/types.js';
 
 test('context composition', async () => {
   const element = 'hello';
-  const render = el => `<h1>${el}</h1>`;
+  const render = (el) => `<h1>${el}</h1>`;
   const wrap = (ctx, next) => {
     ctx.element = ctx.element.toUpperCase();
     return next();
@@ -52,7 +52,7 @@ test('context composition', async () => {
 
 test('context composition with a cdn', async () => {
   const element = 'hello';
-  const render = el => `<h1>${el}</h1>`;
+  const render = (el) => `<h1>${el}</h1>`;
   const wrap = () => (ctx: Context, next: () => Promise<void>) => {
     ctx.element = ctx.element.toUpperCase();
     return next();

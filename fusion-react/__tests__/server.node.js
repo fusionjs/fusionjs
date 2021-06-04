@@ -17,7 +17,7 @@ test('renders', () => {
   expect(/hello/.test(rendered)).toBeTruthy();
 });
 
-test('app api', async done => {
+test('app api', async (done) => {
   expect(typeof App).toBe('function');
   const app = new App(React.createElement('div', null, 'Hello World'));
   const simulator = getSimulator(app);
@@ -32,7 +32,7 @@ test('app api', async done => {
 test('throw on non-element root', async () => {
   expect(() => {
     // $FlowFixMe
-    new App(function() {
+    new App(function () {
       return null;
     });
   }).toThrow();

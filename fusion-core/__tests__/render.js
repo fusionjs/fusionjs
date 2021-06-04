@@ -19,7 +19,7 @@ const TokenB: Token<BType> = createToken('TokenB');
 const TokenString: Token<string> = createToken('TokenString');
 
 function delay() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, 1);
   });
 }
@@ -27,7 +27,7 @@ function delay() {
 test('async render', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     expect(el).toBe(element);
     return delay().then(() => {
       numRenders++;
@@ -45,7 +45,7 @@ test('async render', async () => {
 test('sync render', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     numRenders++;
     expect(el).toBe(element);
     return el;
@@ -61,7 +61,7 @@ test('render plugin order', async () => {
   let numRenders = 0;
   const element = 'hi';
   let order = 0;
-  const renderFn = el => {
+  const renderFn = (el) => {
     order++;
     expect(el).toBe(element);
     expect(order).toBe(3);
@@ -97,7 +97,7 @@ test('render plugin order', async () => {
 test('app.register - async render with async middleware', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     expect(el).toBe(element);
     return delay().then(() => {
       numRenders++;
@@ -122,7 +122,7 @@ test('app.register - async render with async middleware', async () => {
 test('app.register - middleware execution respects registration order', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     expect(el).toBe(element);
     return delay().then(() => {
       numRenders++;
@@ -164,7 +164,7 @@ test('app.register - middleware execution respects registration order', async ()
 test('app.register - middleware execution respects dependency order', async () => {
   let numRenders = 0;
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     expect(el).toBe(element);
     return delay().then(() => {
       numRenders++;
@@ -186,11 +186,11 @@ test('app.register - middleware execution respects dependency order', async () =
     TokenA,
     createPlugin({
       deps: {TokenB},
-      provides: deps => {
+      provides: (deps) => {
         expect(deps.TokenB().b).toBe('something-b');
         return {a: 'something'};
       },
-      middleware: deps => {
+      middleware: (deps) => {
         expect(deps.TokenB().b).toBe('something-b');
         return async function second(ctx, next) {
           expect(order).toBe(2);
@@ -238,13 +238,13 @@ test('app.register - middleware execution respects dependency order', async () =
 
 test('app.middleware with dependencies', async () => {
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     return el;
   };
   const app = new App(element, renderFn);
   let called = false;
   app.register(TokenString, 'Something');
-  app.middleware({TokenString}, deps => {
+  app.middleware({TokenString}, (deps) => {
     expect(deps.TokenString).toBe('Something');
     return (ctx, next) => {
       called = true;
@@ -257,7 +257,7 @@ test('app.middleware with dependencies', async () => {
 
 test('app.middleware with no dependencies', async () => {
   const element = 'hi';
-  const renderFn = el => {
+  const renderFn = (el) => {
     return el;
   };
   const app = new App(element, renderFn);

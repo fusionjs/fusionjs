@@ -25,7 +25,7 @@ const {
   withTranslations,
 } = require('fusion-plugin-i18n-react');
 
-test('plugin', async t => {
+test('plugin', async (t) => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   function Test(props) {
     t.equal(typeof props.translate, 'function');
@@ -62,7 +62,7 @@ test('plugin', async t => {
   t.ok(typeof ctx.body === 'string' && ctx.body.includes('hello'));
 });
 
-test('able to do simple translations in React 16 - leverages React.Fragment', async t => {
+test('able to do simple translations in React 16 - leverages React.Fragment', async (t) => {
   const dir = path.resolve(__dirname, 'fixture');
   const {proc, port} = await dev(`--dir=${dir}`);
   const browser = await puppeteer.launch({
@@ -73,14 +73,14 @@ test('able to do simple translations in React 16 - leverages React.Fragment', as
 
   // enable request interception
   await page.setRequestInterception(true);
-  page.on('request', request => {
+  page.on('request', (request) => {
     // Add a new header for navigation request.
     const headers = request.headers();
     headers['accept-language'] = 'en-US,en';
     request.continue({...request, _headers: headers});
   });
 
-  page.on('response', response => {
+  page.on('response', (response) => {
     const req = response.request();
     allUrls.push(req.url());
   });

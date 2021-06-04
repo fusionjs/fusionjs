@@ -11,7 +11,7 @@ const cacheablePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/response to redirect', async done => {
+test('/response to redirect', async (done) => {
   expect.assertions(7);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -26,7 +26,7 @@ test('/response to redirect', async done => {
   try {
     let isReady;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after redirect:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(
@@ -34,7 +34,7 @@ test('/response to redirect', async done => {
           cacheKeys.length === cacheablePaths.length + 1
         ).toBeTruthy();
         expect(
-          cacheablePaths.every(path =>
+          cacheablePaths.every((path) =>
             cacheKeys.includes(`${hostname}${port}${path}`)
           )
         ).toBeTruthy();
@@ -61,7 +61,7 @@ test('/response to redirect', async done => {
     // Capture requests during next load.
     const allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -73,26 +73,26 @@ test('/response to redirect', async done => {
 
     expect(
       Array.from(allRequests.values())
-        .filter(req =>
+        .filter((req) =>
           cacheablePaths.find(
-            path =>
+            (path) =>
               `${hostname}${port}${path}` === req.url() ||
               req.url() === `${hostname}${port}/redirected` // html
           )
         )
-        .every(req => req.response() && req.response().fromServiceWorker())
+        .every((req) => req.response() && req.response().fromServiceWorker())
     ).toBeTruthy();
 
     expect(
       Array.from(allRequests.values())
         .filter(
-          req =>
+          (req) =>
             !cacheablePaths.find(
-              path => `${hostname}${port}${path}` === req.url()
+              (path) => `${hostname}${port}${path}` === req.url()
             )
         )
         .every(
-          req =>
+          (req) =>
             req.resourceType() === 'document' || // documents always handled by service worker
             !req.response() ||
             !req.response().fromServiceWorker()

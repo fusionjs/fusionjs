@@ -69,8 +69,8 @@ export const Runtime = class Runtime {
 
     this.started = true;
     if (this.collectLogs) {
-      this.page.on('console', msg =>
-        msg.args().forEach(async arg => {
+      this.page.on('console', (msg) =>
+        msg.args().forEach(async (arg) => {
           console.log(await arg.jsonValue()); // eslint-disable-line
         })
       );
@@ -98,7 +98,7 @@ async function untilReady(page, port) {
       started = true;
     } catch (e) {
       numTries++;
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(resolve, Math.pow(2, numTries));
       });
     }

@@ -52,7 +52,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
 
   let statsOutput = JSON.parse(await readFile(statsFile, 'utf-8'));
   t.ok(Array.isArray(statsOutput));
-  statsOutput = statsOutput.map(stat => {
+  statsOutput = statsOutput.map((stat) => {
     // initial build
     expect(stat.isIncrementalBuild).toBe(false);
     stat.path = 'path';
@@ -110,7 +110,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
 
   let incStatsOutput = JSON.parse(await readFile(statsFile, 'utf-8'));
   t.ok(Array.isArray(incStatsOutput));
-  incStatsOutput = incStatsOutput.map(stat => {
+  incStatsOutput = incStatsOutput.map((stat) => {
     // subsequent build is incremental
     expect(stat.isIncrementalBuild).toBe(true);
     stat.path = 'path';
@@ -161,7 +161,7 @@ async function tryTimes(fn, counter) {
   }
   const result = await fn();
   if (!result) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         resolve(tryTimes(fn, --counter));
       }, 1000);

@@ -14,11 +14,10 @@ const {clientChunkMetadataContextKey} = require('./loader-context.js');
 
 module.exports = function chunkManifestLoader() {
   this.cacheable(false);
-  const chunkMetadataState /*: ClientChunkMetadataContext*/ = this[
-    clientChunkMetadataContextKey
-  ];
+  const chunkMetadataState /*: ClientChunkMetadataContext*/ =
+    this[clientChunkMetadataContextKey];
   const callback = this.async();
-  chunkMetadataState.result.then(chunkMetadata => {
+  chunkMetadataState.result.then((chunkMetadata) => {
     callback(null, generateSource(chunkMetadata));
   });
 };

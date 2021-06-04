@@ -34,7 +34,7 @@ function ensureCompilerStatsInfo(stats) {
       compilerPath: stats.name,
       ...errorOrWarning,
     };
-  }
+  };
 }
 
 function getErrors(info, depth = 0) {
@@ -63,32 +63,28 @@ function getWarnings(info, depth = 0) {
 
 function dedupeErrors(items) {
   const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  const set = new Set(items.map(item => (
-    [
+  const set = new Set(
+    items.map((item) =>
       [
-        `${item.compilerPath}:`,
-        item.moduleName,
-        item.loc,
-      ]
-        .filter(Boolean)
-        .join(' '),
-      item.message,
-      ...(item.moduleTrace || [])
-        .map(module => (
+        [`${item.compilerPath}:`, item.moduleName, item.loc]
+          .filter(Boolean)
+          .join(' '),
+        item.message,
+        ...(item.moduleTrace || []).map((module) =>
           [
             ` @ ${module.originName}`,
-            ...(module.dependencies || [])
-              .map(dep => dep.loc)
+            ...(module.dependencies || []).map((dep) => dep.loc),
           ]
             .filter(Boolean)
             .join(' ')
-        )),
-      item.details
-    ]
-      .filter(Boolean)
-      .join('\n')
-      .replace(re, '$2')
-  )));
+        ),
+        item.details,
+      ]
+        .filter(Boolean)
+        .join('\n')
+        .replace(re, '$2')
+    )
+  );
   return Array.from(set);
 }
 
@@ -121,7 +117,7 @@ function getStatsLogger({dir, logger, env}) {
           errorStack: true,
           warnings: true,
           warningsCount: true,
-        }
+        },
       },
       // No need to include all modules, as they are also grouped by chunk,
       // and this is enough for most bundle analyzers to generate report
@@ -131,16 +127,16 @@ function getStatsLogger({dir, logger, env}) {
 
     // TODO(#13): These logs seem to be kinda noisy for dev.
     if (isProd) {
-      info.children.forEach(child => {
+      info.children.forEach((child) => {
         child.assets
           .slice()
-          .filter(asset => {
+          .filter((asset) => {
             return !asset.name.endsWith('.map');
           })
           .sort((a, b) => {
             return b.size - a.size;
           })
-          .forEach(asset => {
+          .forEach((asset) => {
             logger.info(`Entrypoint: ${chalk.bold(child.name)}`);
             logger.info(`Asset: ${chalk.bold(asset.name)}`);
             logger.info(`Size: ${chalk.bold(asset.size)} bytes`);
@@ -149,11 +145,11 @@ function getStatsLogger({dir, logger, env}) {
     }
 
     if (stats.hasWarnings()) {
-      getWarnings(info).forEach(e => logger.warn(e));
+      getWarnings(info).forEach((e) => logger.warn(e));
     }
 
     if (stats.hasErrors()) {
-      getErrors(info).forEach(e => logger.error(e));
+      getErrors(info).forEach((e) => logger.error(e));
     }
   };
 }
@@ -233,10 +229,11 @@ function Compiler(
 
   let worker = createWorker(maxWorkers);
 
-  const disableBuildCacheOption = typeof disableBuildCache === 'undefined'
-    ? fusionConfig.disableBuildCache
-    : disableBuildCache;
-  const isBuildCacheEnabled = disableBuildCacheOption !== true
+  const disableBuildCacheOption =
+    typeof disableBuildCache === 'undefined'
+      ? fusionConfig.disableBuildCache
+      : disableBuildCache;
+  const isBuildCacheEnabled = disableBuildCacheOption !== true;
 
   const sharedOpts = {
     dir: root,
@@ -266,7 +263,7 @@ function Compiler(
     }),
   ]);
   if (process.env.LOG_END_TIME == 'true') {
-    compiler.hooks.done.tap('BenchmarkTimingPlugin', stats => {
+    compiler.hooks.done.tap('BenchmarkTimingPlugin', (stats) => {
       /* eslint-disable-next-line no-console */
       console.log(`End time: ${Date.now()}`);
     });
@@ -276,12 +273,12 @@ function Compiler(
     compiler.hooks.watchRun.tap('StartWorkersAgain', () => {
       if (worker === void 0) worker = createWorker(maxWorkers);
     });
-    compiler.hooks.watchClose.tap('KillWorkers', stats => {
+    compiler.hooks.watchClose.tap('KillWorkers', (stats) => {
       if (worker !== void 0) worker.end();
       worker = void 0;
     });
   } else
-    compiler.hooks.done.tap('KillWorkers', stats => {
+    compiler.hooks.done.tap('KillWorkers', (stats) => {
       if (worker !== void 0) worker.end();
       worker = void 0;
     });
@@ -289,7 +286,7 @@ function Compiler(
   const statsLogger = getStatsLogger({dir, logger, env});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
-  this.start = cb => {
+  this.start = (cb) => {
     cb = cb || function noop(err, stats) {};
     // Handler may be called multiple times by `watch`
     // But only call `cb` the first time
@@ -303,14 +300,16 @@ function Compiler(
       }
     };
 
-    const watchOptions = compiler.options.map(options => options.watchOptions || {})
+    const watchOptions = compiler.options.map(
+      (options) => options.watchOptions || {}
+    );
     if (watch) {
       return compiler.watch(watchOptions, handler);
     } else {
       compiler.run((err, stats) => {
-        compiler.close(closeErr => {
+        compiler.close((closeErr) => {
           handler(err || closeErr, stats);
-        })
+        });
       });
       // mimic watcher interface for API consistency
       return {
@@ -324,7 +323,7 @@ function Compiler(
     const dev = webpackDevMiddleware(compiler);
     const hot = webpackHotMiddleware(compiler, {log: false});
     return (req, res, next) => {
-      dev(req, res, err => {
+      dev(req, res, (err) => {
         if (err) return next(err);
         return hot(req, res, next);
       });
@@ -336,7 +335,7 @@ function Compiler(
       // Need to persist build cache from previous builds
       rimraf(
         `${dir}/.fusion/${isBuildCacheEnabled ? '!(.build-cache)' : ''}`,
-        e => (e ? reject(e) : resolve())
+        (e) => (e ? reject(e) : resolve())
       );
     });
   };

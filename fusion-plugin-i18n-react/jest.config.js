@@ -4,25 +4,25 @@
 module.exports = {
   projects: [
     {
-      displayName: "node",
-      testEnvironment: "node",
-      testPathIgnorePatterns: ["/node_modules/", ".browser.js", "dist"],
+      displayName: 'node',
+      testEnvironment: 'node',
+      testPathIgnorePatterns: ['/node_modules/', '.browser.js', 'dist'],
       globals: {
         __NODE__: true,
         __BROWSER__: false,
-        __DEV__: true
-      }
+        __DEV__: true,
+      },
     },
     {
-      displayName: "browser",
-      testEnvironment: "jsdom",
-      setupFilesAfterEnv: ["<rootDir>/src/setupTests.js"],
-      testPathIgnorePatterns: ["/node_modules/", ".node.js", "dist"],
+      displayName: 'browser',
+      testEnvironment: 'jsdom',
+      setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+      testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
       globals: {
         __NODE__: false,
         __BROWSER__: true,
-        __DEV__: true
-      }
-    }
-  ]
+        __DEV__: true,
+      },
+    },
+  ],
 };

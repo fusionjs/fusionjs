@@ -7,7 +7,7 @@ import {createPlugin} from '../src/create-plugin';
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
 test('app.cleanup with no cleanup plugins', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(
     createPlugin({
       provides: () => 'hello world',
@@ -20,13 +20,13 @@ test('app.cleanup with no cleanup plugins', async () => {
 });
 
 test('app.cleanup with async cleanup plugins', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   let firstCleanupCalled = false;
   let nextCleanupCalled = false;
   app.register(
     createPlugin({
       provides: () => 'hello world',
-      cleanup: p => {
+      cleanup: (p) => {
         firstCleanupCalled = true;
         expect(p).toBe('hello world');
         return Promise.resolve();
@@ -37,7 +37,7 @@ test('app.cleanup with async cleanup plugins', async () => {
   app.register(
     createPlugin({
       provides: () => 'another test',
-      cleanup: p => {
+      cleanup: (p) => {
         nextCleanupCalled = true;
         expect(p).toBe('another test');
         return Promise.resolve();
@@ -54,7 +54,7 @@ test('app.cleanup with async cleanup plugins', async () => {
 });
 
 test('app.cleanup does not cleanup if cleanup was not given a function', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(
     createPlugin({
       provides: () => 'hello world',

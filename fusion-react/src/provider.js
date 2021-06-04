@@ -24,7 +24,7 @@ export default {
       [name]: PropTypes.any.isRequired,
     };
     Provider.displayName =
-      name.replace(/^./, c => c.toUpperCase()) + 'Provider';
+      name.replace(/^./, (c) => c.toUpperCase()) + 'Provider';
 
     return Provider;
   },

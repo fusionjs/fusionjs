@@ -15,7 +15,7 @@ function reload() {
   // $FlowFixMe
   const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line
   const initialize = main.default || main;
-  Promise.resolve(initialize()).then(app => {
+  Promise.resolve(initialize()).then((app) => {
     if (!(app instanceof BaseApp)) {
       throw new Error('Application entry point did not return an App');
     }

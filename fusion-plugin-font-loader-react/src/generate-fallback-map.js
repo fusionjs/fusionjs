@@ -21,7 +21,7 @@ export default function generateFallbackMap(
 
   // FIRST TRAVERSAL: gather set of possible fallbacks per font and
   // the list of all fonts our depth strategy suggests we should preload
-  Object.keys(fonts).forEach(fontName => {
+  Object.keys(fonts).forEach((fontName) => {
     let depth = 0;
     let nextFallback = {name: fontName};
     fallbackCandidateLookup[fontName] = [nextFallback];
@@ -37,12 +37,12 @@ export default function generateFallbackMap(
     preloadableFallbacks[nextFallback.name] = true;
   });
   // SECOND TRAVERSAL: for each font select the closest fallback font that we planned to preloaded
-  Object.keys(fonts).forEach(fontName => {
+  Object.keys(fonts).forEach((fontName) => {
     // if font itself is preloadable then no fallback required
     if (!preloadableFallbacks[fontName]) {
       // otherwise use the first preloadable fallback
       const fallback = fallbackCandidateLookup[fontName].find(
-        fallback => preloadableFallbacks[fallback.name]
+        (fallback) => preloadableFallbacks[fallback.name]
       );
       fallbackLookup[fontName] = fallback;
     }

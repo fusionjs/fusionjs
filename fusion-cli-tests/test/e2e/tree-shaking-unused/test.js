@@ -19,9 +19,9 @@ test('`fusion build` tree shaking unused imports in dev w/ assumeNoImportSideEff
   const clientFiles = await readdir(distFolder);
 
   clientFiles
-    .filter(file => path.extname(file) === '.js')
-    .map(file => path.join(distFolder, file))
-    .forEach(file => {
+    .filter((file) => path.extname(file) === '.js')
+    .map((file) => path.join(distFolder, file))
+    .forEach((file) => {
       t.ok(
         !fs.readFileSync(file, 'utf-8').includes('__fixture_pkg_unused__'),
         'should not include unused export in browser'
@@ -39,9 +39,9 @@ test('`fusion build` polyfills with assumeNoImportSideEffects: true', async () =
   const clientFiles = await readdir(distFolder);
 
   const hasCoreJS = clientFiles
-    .filter(file => path.extname(file) === '.js')
-    .map(file => path.join(distFolder, file))
-    .some(file => {
+    .filter((file) => path.extname(file) === '.js')
+    .map((file) => path.join(distFolder, file))
+    .some((file) => {
       return fs.readFileSync(file, 'utf-8').includes('__core-js_shared__');
     });
 

@@ -14,11 +14,11 @@ test('server plugin', async () => {
   const StorageToken = createToken('Storage');
   const StorageService = createPlugin({
     provides() {
-      return data => (store = data);
+      return (data) => (store = data);
     },
   });
 
-  const app = new App(' ', v => v);
+  const app = new App(' ', (v) => v);
   let data = {};
   app.register(StorageToken, StorageService);
   app.register(

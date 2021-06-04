@@ -2,7 +2,7 @@
 export default function main() {
   const loader2 = import('./dynamic2.js');
   const loader = import('./dynamic.js');
-  loader.then(dynamicImport =>
+  loader.then((dynamicImport) =>
     console.log(
       JSON.stringify({
         dynamicContent: dynamicImport.default(),

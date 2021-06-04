@@ -1,5 +1,5 @@
 // @noflow
 
-export default function() {
+export default function () {
   return 'loaded-dynamic-import-updated-updated';
 }

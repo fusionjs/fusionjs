@@ -30,12 +30,12 @@ class SourceMapPlugin {
           additionalAssets: true,
         },
         (assets) => {
-          const jsAssetNames = Object.keys(assets).filter(name =>
-            name.endsWith('.js') && !name.endsWith('-with-map.js')
+          const jsAssetNames = Object.keys(assets).filter(
+            (name) => name.endsWith('.js') && !name.endsWith('-with-map.js')
           );
 
           const nonRuntimeHashes = jsAssetNames
-            .map(name => {
+            .map((name) => {
               if (/runtime/.test(name)) {
                 return false;
               }
@@ -47,19 +47,20 @@ class SourceMapPlugin {
 
           for (const name of jsAssetNames) {
             try {
-              const sources = assets[name] instanceof ConcatSource
-                ? assets[name].getChildren()
-                : [assets[name]];
+              const sources =
+                assets[name] instanceof ConcatSource
+                  ? assets[name].getChildren()
+                  : [assets[name]];
 
               const source = sources[0];
               const sourceMapComment = sources[1] || '';
               const withMapFileName = name.replace(/\.js$/, '-with-map.js');
-              const { info: assetInfo } = compilation.getAsset(name);
+              const {info: assetInfo} = compilation.getAsset(name);
 
               compilation.updateAsset(name, source, {
                 related: {
-                  sourceMap: null
-                }
+                  sourceMap: null,
+                },
               });
 
               // Write -with-map asset with source map comment
@@ -75,19 +76,13 @@ class SourceMapPlugin {
                 }
                 compilation.emitAsset(
                   withMapFileName,
-                  new ConcatSource(
-                    withMapSource,
-                    sourceMapComment
-                  ),
+                  new ConcatSource(withMapSource, sourceMapComment),
                   assetInfo
                 );
               } else {
                 compilation.emitAsset(
                   withMapFileName,
-                  new ConcatSource(
-                    source,
-                    sourceMapComment
-                  ),
+                  new ConcatSource(source, sourceMapComment),
                   assetInfo
                 );
               }

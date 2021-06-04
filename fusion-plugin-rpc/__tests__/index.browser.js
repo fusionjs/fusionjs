@@ -38,7 +38,7 @@ function createTestFixture() {
     }),
   });
 
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   // $FlowFixMe
   app.register(FetchToken, mockFetch);
   app.register(UniversalEventsToken, mockEmitterPlugin);
@@ -47,7 +47,7 @@ function createTestFixture() {
   return app;
 }
 
-test('success status request', done => {
+test('success status request', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -64,7 +64,7 @@ test('success status request', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -79,7 +79,7 @@ test('success status request', done => {
             expect(options.body).toBe('{}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -92,7 +92,7 @@ test('success status request', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request with additional query params', done => {
+test('success status request with additional query params', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -114,7 +114,7 @@ test('success status request with additional query params', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -129,7 +129,7 @@ test('success status request with additional query params', done => {
             expect(options.body).toBe('{}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -142,7 +142,7 @@ test('success status request with additional query params', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request (with custom api path)', done => {
+test('success status request (with custom api path)', (done) => {
   const app = createTestFixture();
 
   app.register(RPCHandlersConfigToken, {apiPath: 'test/api/path'});
@@ -152,7 +152,7 @@ test('success status request (with custom api path)', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -167,7 +167,7 @@ test('success status request (with custom api path)', done => {
             expect(options.body).toBe('{}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -180,7 +180,7 @@ test('success status request (with custom api path)', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request (with custom api path containing slashes)', done => {
+test('success status request (with custom api path containing slashes)', (done) => {
   const app = createTestFixture();
 
   app.register(RPCHandlersConfigToken, {apiPath: '///test/api///path/'});
@@ -190,7 +190,7 @@ test('success status request (with custom api path containing slashes)', done =>
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -205,7 +205,7 @@ test('success status request (with custom api path containing slashes)', done =>
             expect(options.body).toBe('{}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -218,7 +218,7 @@ test('success status request (with custom api path containing slashes)', done =>
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request w/args and header', done => {
+test('success status request w/args and header', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -236,7 +236,7 @@ test('success status request w/args and header', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -252,7 +252,7 @@ test('success status request w/args and header', done => {
             expect(options.body).toBe('{"args":1}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -265,7 +265,7 @@ test('success status request w/args and header', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request w/args and options', done => {
+test('success status request w/args and options', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -283,7 +283,7 @@ test('success status request w/args and options', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -299,7 +299,7 @@ test('success status request w/args and options', done => {
             expect(options.body).toBe('{"args":1}');
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -312,7 +312,7 @@ test('success status request w/args and options', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('success status request w/form data', done => {
+test('success status request w/form data', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
       expect(type).toBe('rpc:method-client');
@@ -330,7 +330,7 @@ test('success status request w/form data', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -356,7 +356,7 @@ test('success status request w/form data', done => {
             ]);
             done();
           })
-          .catch(e => {
+          .catch((e) => {
             // $FlowFixMe
             done.fail(e);
           });
@@ -369,7 +369,7 @@ test('success status request w/form data', done => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('failure status request', done => {
+test('failure status request', (done) => {
   const mockFetchAsFailure = () =>
     Promise.resolve({
       json: () => ({status: 'failure', data: 'failure data'}),
@@ -395,7 +395,7 @@ test('failure status request', done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: deps => {
+      provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
@@ -407,7 +407,7 @@ test('failure status request', done => {
             // $FlowFixMe
             done.fail(() => new Error('should reject promise'));
           })
-          .catch(e => {
+          .catch((e) => {
             expect(e).toBe('failure data');
             done();
           });

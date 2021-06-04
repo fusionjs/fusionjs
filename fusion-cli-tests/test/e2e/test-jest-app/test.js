@@ -385,13 +385,13 @@ test('`fusion test` writes results to disk based on env var', async () => {
 });
 
 async function triggerCodeStep() {
-  return new Promise(resolve => {
-    CDP({port: '9229'}, async client => {
+  return new Promise((resolve) => {
+    CDP({port: '9229'}, async (client) => {
       const {Runtime} = client;
       await Runtime.runIfWaitingForDebugger();
       await client.close();
       resolve();
-    }).on('error', err => {
+    }).on('error', (err) => {
       throw err;
     });
   });
@@ -411,9 +411,9 @@ test('`fusion test --env=jsdom,node`', async () => {
   const listenAddresses = {};
   let numResults = 0;
 
-  let completed = new Promise(resolve => {
+  let completed = new Promise((resolve) => {
     child.stderr &&
-      child.stderr.on('data', data => {
+      child.stderr.on('data', (data) => {
         const line = data.toString();
         // eslint-disable-next-line no-console
         console.log(` - received spawn line: ${line}`);
@@ -436,9 +436,9 @@ test('`fusion test --env=jsdom,node`', async () => {
   // Poll until we get a listener message.
   async function checkStartedMessageCount(count) {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       while (Object.keys(listenAddresses).length < count) {
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 100));
       }
       resolve();
     });

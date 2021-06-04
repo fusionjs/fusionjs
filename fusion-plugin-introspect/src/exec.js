@@ -9,10 +9,7 @@ import proc from 'child_process';
 
 export const exec = (cmd: string) => {
   try {
-    return proc
-      .execSync(cmd)
-      .toString()
-      .trim();
+    return proc.execSync(cmd).toString().trim();
   } catch (e) {
     return '';
   }

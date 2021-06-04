@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import prepared from './prepared.js';
 
 declare var __webpack_modules__: {[string]: any};
-declare var __webpack_require__: any => any;
+declare var __webpack_require__: (any) => any;
 
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
@@ -68,7 +68,7 @@ export default function withAsyncComponent<Config>({
     (props, context) => {
       if (AsyncComponent) {
         if (__NODE__ && context.markAsCritical) {
-          metadata.chunkIds.forEach(chunkId => {
+          metadata.chunkIds.forEach((chunkId) => {
             context.markAsCritical(chunkId);
           });
         }
@@ -86,7 +86,7 @@ export default function withAsyncComponent<Config>({
           // $FlowFixMe
           metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
           return Promise.all(
-            context.splitComponentLoaders.map(loader =>
+            context.splitComponentLoaders.map((loader) =>
               loader(metadata.chunkIds, metadata)
             )
           ).then(() => AsyncComponent);
@@ -108,14 +108,14 @@ export default function withAsyncComponent<Config>({
       metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
 
       if (__NODE__ && context.markAsCritical) {
-        metadata.chunkIds.forEach(chunkId => {
+        metadata.chunkIds.forEach((chunkId) => {
           context.markAsCritical(chunkId);
         });
       }
 
       const loadPromises = [
         componentPromise,
-        ...context.splitComponentLoaders.map(loader =>
+        ...context.splitComponentLoaders.map((loader) =>
           loader(metadata.chunkIds, metadata)
         ),
       ];
@@ -128,7 +128,7 @@ export default function withAsyncComponent<Config>({
             throw new Error('Bundle does not contain a default export');
           }
         })
-        .catch(err => {
+        .catch((err) => {
           error = err;
           if (__BROWSER__)
             setTimeout(() => {

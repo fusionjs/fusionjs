@@ -19,7 +19,7 @@ import path from 'path';
 import mount from 'koa-mount';
 import serve from 'koa-static';
 
-export default function(dir /*: string */) {
+export default function (dir /*: string */) {
   /* eslint-disable-next-line */
   return createPlugin/*:: <AssetsDepsType, AssetsType> */(
     {
@@ -42,7 +42,7 @@ export default function(dir /*: string */) {
             // setting defer here tells the `serve` middleware to `await next` first before
             // setting the response. This allows composition with user middleware
             defer: true,
-            setHeaders: res => {
+            setHeaders: (res) => {
               if (!__DEV__) {
                 res.setHeader('Cache-Control', 'public, max-age=31536000');
               }

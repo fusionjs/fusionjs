@@ -21,15 +21,15 @@ module.exports = function gqlPlugin(babel /*: Object */, state /*: Object */) {
   return {visitor};
 
   function refsHandler(t, context, refs = [], specifierName) {
-    refs.forEach(refPath => {
+    refs.forEach((refPath) => {
       const parentPath = refPath.parentPath;
       if (t.isSequenceExpression(parentPath)) {
         const callExpression = parentPath.node.expressions.find(
-          n => n.type === 'CallExpression'
+          (n) => n.type === 'CallExpression'
         );
         const args = callExpression.arguments;
         validateArgs(args, parentPath);
-        parentPath.node.expressions = parentPath.node.expressions.map(p => {
+        parentPath.node.expressions = parentPath.node.expressions.map((p) => {
           if (p === callExpression) {
             return getReplacementPath(args);
           }

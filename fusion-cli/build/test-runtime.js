@@ -14,7 +14,7 @@ const rimraf = require('rimraf');
 
 const convertCoverage = require('./convert-coverage');
 
-module.exports.TestAppRuntime = function(
+module.exports.TestAppRuntime = function (
   {
     dir = '.',
     debug = false,
@@ -54,7 +54,7 @@ module.exports.TestAppRuntime = function(
         args.push('--verbose');
       }
 
-      Object.keys(jestArgs).forEach(arg => {
+      Object.keys(jestArgs).forEach((arg) => {
         const value = jestArgs[arg];
         if (value && typeof value === 'boolean') {
           args.push(`--${arg}`);
@@ -78,7 +78,9 @@ module.exports.TestAppRuntime = function(
       // Remove existing coverage directories
       const folders = [`${rootDir}/coverage/`];
       return Promise.all(
-        folders.map(folder => new Promise(resolve => rimraf(folder, resolve)))
+        folders.map(
+          (folder) => new Promise((resolve) => rimraf(folder, resolve))
+        )
       );
     };
 
@@ -122,14 +124,12 @@ module.exports.TestAppRuntime = function(
       return convertCoverage(rootDir);
     };
 
-    return setup()
-      .then(spawnProc)
-      .then(finish);
+    return setup().then(spawnProc).then(finish);
   };
 
   this.stop = () => {
     if (state.procs.length) {
-      state.procs.forEach(proc => proc.kill());
+      state.procs.forEach((proc) => proc.kill());
       state.procs = [];
     }
   };

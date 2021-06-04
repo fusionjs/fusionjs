@@ -1,7 +1,7 @@
 // @noflow
 const test = require('tape');
 
-test('client test runs', t => {
+test('client test runs', (t) => {
   t.pass('client test runs');
   t.pass(`browser __BROWSER__ is ${__BROWSER__}`);
   t.pass(`browser __DEV__ is ${__DEV__}`);

@@ -27,7 +27,7 @@ import {
 
 /* Test fixtures */
 const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
   if (reducer) {
     app.register(ReducerToken, reducer);
   }
@@ -43,7 +43,7 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
   return () => app;
 };
 
-test('interface', async done => {
+test('interface', async (done) => {
   const ctx = {memoized: new Map()};
   const reducer = (state, action) => ({test: action.payload || 1});
   const redux = getService(appCreator(reducer), Redux).from((ctx: any));
@@ -61,7 +61,7 @@ test('interface', async done => {
   done();
 });
 
-test('non-ssr routes', async done => {
+test('non-ssr routes', async (done) => {
   const reducer = (state, action) => ({test: action.payload || 1});
   const plugin = getService(appCreator(reducer), Redux);
   let mockCtx = {
@@ -81,13 +81,13 @@ test('non-ssr routes', async done => {
   done();
 });
 
-test('getInitialState', async done => {
+test('getInitialState', async (done) => {
   const reducer = (state = {}, action) => ({
     ...state,
     test: action.payload || 1,
   });
   const mockCtx = {mock: true, memoized: new Map()};
-  const getInitialState: any = async ctx => {
+  const getInitialState: any = async (ctx) => {
     expect(ctx).toBe(mockCtx);
     return {hello: 'world'};
   };
@@ -114,15 +114,17 @@ test('getInitialState', async done => {
   done();
 });
 
-test('enhancers', async done => {
+test('enhancers', async (done) => {
   const mockCtx: any = {mock: true, memoized: new Map()};
-  const myEnhancer = createStore => (...args) => {
-    const store = createStore(...args);
-    // $FlowFixMe
-    expect(store.ctx).toBe(mockCtx);
-    return store;
-  };
-  const reducer = s => s;
+  const myEnhancer =
+    (createStore) =>
+    (...args) => {
+      const store = createStore(...args);
+      // $FlowFixMe
+      expect(store.ctx).toBe(mockCtx);
+      return store;
+    };
+  const reducer = (s) => s;
   const redux = getService(
     appCreator(reducer, null, null, myEnhancer),
     Redux
@@ -143,8 +145,8 @@ const testEnhancer = async (
   done,
   enhancer: StoreEnhancer<*, *, *> | FusionPlugin<*, StoreEnhancer<*, *, *>>
 ): Promise<void> => {
-  const app = new App('el', el => el);
-  const mockReducer: Reducer<*, *> = s => s;
+  const app = new App('el', (el) => el);
+  const mockReducer: Reducer<*, *> = (s) => s;
 
   app.register(EnhancerToken, enhancer);
   app.register(ReducerToken, mockReducer);
@@ -178,30 +180,30 @@ const testEnhancer = async (
   await simulator.render('/');
 };
 
-test('enhancers - via app.register', async done => {
+test('enhancers - via app.register', async (done) => {
   /* Enhancer function */
-  const myEnhancer: StoreEnhancer<*, *, *> = createStore => (...args) => {
-    const store = createStore(...args);
-    // $FlowFixMe
-    store.mock = true;
-    return store;
-  };
+  const myEnhancer: StoreEnhancer<*, *, *> =
+    (createStore) =>
+    (...args) => {
+      const store = createStore(...args);
+      // $FlowFixMe
+      store.mock = true;
+      return store;
+    };
   await testEnhancer(done, myEnhancer);
 
   /* Enhancer plugin */
-  const myEnhancerPlugin: FusionPlugin<
-    *,
-    StoreEnhancer<*, *, *>
-  > = createPlugin({
-    provides() {
-      return myEnhancer;
-    },
-  });
+  const myEnhancerPlugin: FusionPlugin<*, StoreEnhancer<*, *, *>> =
+    createPlugin({
+      provides() {
+        return myEnhancer;
+      },
+    });
   await testEnhancer(done, myEnhancerPlugin);
   done();
 });
 
-test('serialization', async done => {
+test('serialization', async (done) => {
   const reducer = (state, action) => ({
     test: action.payload || 1,
     xss: '</div>',
@@ -230,7 +232,7 @@ test('serialization', async done => {
   done();
 });
 
-test('serialization and deserialization', async done => {
+test('serialization and deserialization', async (done) => {
   // A redux state with encoded chars
   const obj = {
     backslashes: '\\u0026',
@@ -258,8 +260,8 @@ test('serialization and deserialization', async done => {
   const body = consumeSanitizedHTML(ctx.template.body[0]);
   const dom = new JSDOM(`<!DOCTYPE html>${body}`);
 
-  const content = dom.window.document.getElementById('__REDUX_STATE__')
-    .textContent;
+  const content =
+    dom.window.document.getElementById('__REDUX_STATE__').textContent;
   expect(deserialize(unescape(content))).toStrictEqual(obj);
 
   done();

@@ -23,7 +23,10 @@ test('diagnostics requests respects ROUTE_PREFIX env var', async () => {
 
   const [port] = await Promise.all([
     getPort(),
-    execFile('fusion', ['build', '--no-minify', '--skipSourceMaps'], {cwd: fixture, env}),
+    execFile('fusion', ['build', '--no-minify', '--skipSourceMaps'], {
+      cwd: fixture,
+      env,
+    }),
   ]);
 
   const server = spawn('fusion', ['start', `--port=${port}`], {
@@ -40,12 +43,12 @@ test('diagnostics requests respects ROUTE_PREFIX env var', async () => {
   });
 
   const page = await browser.newPage();
-  await page.on('request', req => {
+  await page.on('request', (req) => {
     requests.push(req.url());
   });
   await untilReady(page, port);
 
-  const diagnosticsRequest = requests.filter(r => /diagnostics/.test(r))[0];
+  const diagnosticsRequest = requests.filter((r) => /diagnostics/.test(r))[0];
   if (!diagnosticsRequest) {
     throw new Error('Could not find diagnostics request');
   }
@@ -63,7 +66,7 @@ async function untilReady(page, port) {
   let started = false;
   let numTries = 0;
   while (!started && numTries < 20) {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     try {
       await page.goto(`http://localhost:${port}`);
       started = true;

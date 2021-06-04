@@ -6,7 +6,7 @@ import type {RouteTagsType} from '../types';
 export default createPlugin<{}, RouteTagsType>({
   provides: () => {
     return {
-      from: memoize(ctx => {
+      from: memoize((ctx) => {
         return {
           name: 'unknown_route',
         };

@@ -13,7 +13,7 @@ import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {HydrationStateToken} from './browser';
-import {I18nLoaderToken, I18nTranslateFnsToken} from './tokens.js';
+import {I18nLoaderToken} from './tokens.js';
 
 export type TranslationsObjectType = {[string]: string};
 
@@ -25,9 +25,13 @@ export type TranslateFuncType = (
 ) => string;
 
 export type OptionalTranslateFnsType = {
-  +translateKeys: (sources: any, locale: any, keys: string[]) => TranslationsObjectType[],
-  +translateKey: (sources: any, locale: any, key: string) => string
-}
+  +translateKeys: (
+    sources: any,
+    locale: any,
+    keys: string[]
+  ) => TranslationsObjectType,
+  +translateKey: (sources: any, locale: any, key: string) => string,
+};
 
 export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
@@ -40,9 +44,7 @@ export type I18nDepsType = {
 export type IEmitter = $Call<ExtractReturnType, typeof UniversalEventsToken>;
 
 export type I18nServiceType = {
-  from: (
-    ctx: Context
-  ) => {
+  from: (ctx: Context) => {
     +locale?: string | Locale,
     +translations?: TranslationsObjectType,
     +load: (Array<string>) => Promise<void>,

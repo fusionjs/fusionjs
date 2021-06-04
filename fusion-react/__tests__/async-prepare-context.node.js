@@ -10,7 +10,7 @@
 import * as React from 'react';
 import {prepare} from '../src/async/index.js';
 
-test('Preparing a sync app passing through context', done => {
+test('Preparing a sync app passing through context', (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;

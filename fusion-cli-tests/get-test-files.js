@@ -26,7 +26,7 @@ function getFiles() /*: Array<string> */ {
       '**/test.js',
       '**/*.spec.js',
       '**/*.test.js',
-      ...testPathIgnorePatterns.map(pattern => `!${pattern}`),
+      ...testPathIgnorePatterns.map((pattern) => `!${pattern}`),
     ],
     {
       gitignore: true,
@@ -50,4 +50,4 @@ const files = getFiles();
  * a new glob pattern which will match all of the
  * selected files, exclusively.
  */
-process.stdout.write(files.map(str => '.*/' + str).join('|'));
+process.stdout.write(files.map((str) => '.*/' + str).join('|'));

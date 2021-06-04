@@ -18,7 +18,7 @@ module.exports.tokens = async () => {
 const tabulateTokens = (data, type) => {
   const space = ' '.repeat(getMaxWordWidth(data[type]) + 2);
   return sortDependencies(listDependencies(data[type]))
-    .map(dep => {
+    .map((dep) => {
       const name = dep.name;
       return (
         `${name}${space.slice(name.length)}` +

@@ -1,3 +1,4 @@
+// @flow
 const moduleA = `
 moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,
 moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,moduleA,

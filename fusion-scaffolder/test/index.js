@@ -17,7 +17,7 @@ const stat = promisify(fs.stat);
 const rimraf = promisify(rimrafCb);
 const readFile = promisify(fs.readFile);
 
-test('scaffolding with no path', async t => {
+test('scaffolding with no path', async (t) => {
   try {
     await scaffold();
   } catch (e) {
@@ -26,7 +26,7 @@ test('scaffolding with no path', async t => {
   }
 });
 
-test('scaffolding with no files in template', async t => {
+test('scaffolding with no files in template', async (t) => {
   try {
     await scaffold({
       path: './test/fixtures/nofiles',
@@ -37,7 +37,7 @@ test('scaffolding with no files in template', async t => {
   }
 });
 
-test('scaffolding with no project name', async t => {
+test('scaffolding with no project name', async (t) => {
   try {
     await scaffold({
       cwd: __dirname,
@@ -49,7 +49,7 @@ test('scaffolding with no project name', async t => {
   }
 });
 
-test('scaffolding example/', async t => {
+test('scaffolding example/', async (t) => {
   await scaffold({
     cwd: __dirname,
     path: './fixtures/example',
@@ -115,7 +115,7 @@ test('scaffolding example/', async t => {
   await t.end();
 });
 
-test('scaffolding with absolute projectPath', async t => {
+test('scaffolding with absolute projectPath', async (t) => {
   await scaffold({
     cwd: __dirname,
     path: './fixtures/example',

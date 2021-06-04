@@ -45,7 +45,7 @@ function teardown() {
   }
 }
 
-test('browser plugin integration test withRPCRedux', async done => {
+test('browser plugin integration test withRPCRedux', async (done) => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -60,15 +60,15 @@ test('browser plugin integration test withRPCRedux', async done => {
     return action.payload;
   }, null);
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
 
   const withTest = compose(
     withRPCRedux('test'),
-    connect(s => ({s})),
-    prepared(props =>
+    connect((s) => ({s})),
+    prepared((props) =>
       props.a ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
@@ -103,7 +103,7 @@ test('browser plugin integration test withRPCRedux', async done => {
   done();
 });
 
-test('browser plugin integration test withRPCRedux and options', async done => {
+test('browser plugin integration test withRPCRedux and options', async (done) => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -121,7 +121,7 @@ test('browser plugin integration test withRPCRedux and options', async done => {
     {state: 2}
   );
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
@@ -132,8 +132,8 @@ test('browser plugin integration test withRPCRedux and options', async done => {
 
   const withTest = compose(
     withRPCRedux('test', {mapStateToParams}),
-    connect(s => ({s})),
-    prepared(props => (props.a ? Promise.resolve() : props.test({arg: 1})))
+    connect((s) => ({s})),
+    prepared((props) => (props.a ? Promise.resolve() : props.test({arg: 1})))
   )(Component);
 
   const element = React.createElement(
@@ -167,7 +167,7 @@ test('browser plugin integration test withRPCRedux and options', async done => {
   done();
 });
 
-test('browser plugin integration test withRPCRedux - failure', async done => {
+test('browser plugin integration test withRPCRedux - failure', async (done) => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -192,15 +192,15 @@ test('browser plugin integration test withRPCRedux - failure', async done => {
     return action.payload;
   }, null);
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
 
   const withTest = compose(
     withRPCRedux('test'),
-    connect(s => ({s})),
-    prepared(props =>
+    connect((s) => ({s})),
+    prepared((props) =>
       props.message ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
@@ -236,13 +236,13 @@ test('browser plugin integration test withRPCRedux - failure', async done => {
   );
   await getSimulator(app)
     .render('/')
-    .catch(e => expect(e.message).toBe('message'));
+    .catch((e) => expect(e.message).toBe('message'));
   expect(expectedActions.length).toBe(0);
   teardown();
   done();
 });
 
-test('browser mock integration test withRPCRedux', async done => {
+test('browser mock integration test withRPCRedux', async (done) => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -257,15 +257,15 @@ test('browser mock integration test withRPCRedux', async done => {
     return action.payload;
   }, null);
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
 
   const withTest = compose(
     withRPCRedux('test'),
-    connect(s => ({s})),
-    prepared(props =>
+    connect((s) => ({s})),
+    prepared((props) =>
       props.a ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
@@ -300,7 +300,7 @@ test('browser mock integration test withRPCRedux', async done => {
   done();
 });
 
-test('browser mock integration test withRPCRedux - failure', async done => {
+test('browser mock integration test withRPCRedux - failure', async (done) => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -323,15 +323,15 @@ test('browser mock integration test withRPCRedux - failure', async done => {
     return action.payload;
   }, null);
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
 
   const withTest = compose(
     withRPCRedux('test'),
-    connect(s => ({s})),
-    prepared(props =>
+    connect((s) => ({s})),
+    prepared((props) =>
       props.message ? Promise.resolve() : props.test({hello: 'world'})
     )
   )(Component);
@@ -367,13 +367,13 @@ test('browser mock integration test withRPCRedux - failure', async done => {
   app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app)
     .render('/')
-    .catch(e => expect(e.message).toBe('message'));
+    .catch((e) => expect(e.message).toBe('message'));
   expect(expectedActions.length).toBe(0);
   teardown();
   done();
 });
 
-test('browser plugin integration test withRPCReactor', async done => {
+test('browser plugin integration test withRPCReactor', async (done) => {
   setup();
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -385,7 +385,7 @@ test('browser plugin integration test withRPCReactor', async done => {
     reactorEnhancer
   );
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
@@ -414,10 +414,10 @@ test('browser plugin integration test withRPCReactor', async done => {
         throw new AssertionError('should not call failure'); // eslint-disable-line
       },
     }),
-    prepared(props =>
+    prepared((props) =>
       props.a ? Promise.resolve() : props.test({hello: 'world'})
     ),
-    connect(s => ({s}))
+    connect((s) => ({s}))
   );
 
   const element = React.createElement(
@@ -453,7 +453,7 @@ test('browser plugin integration test withRPCReactor', async done => {
   done();
 });
 
-test('browser mock plugin integration test withRPCReactor', async done => {
+test('browser mock plugin integration test withRPCReactor', async (done) => {
   setup();
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -465,7 +465,7 @@ test('browser mock plugin integration test withRPCReactor', async done => {
     reactorEnhancer
   );
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
@@ -494,10 +494,10 @@ test('browser mock plugin integration test withRPCReactor', async done => {
         throw new AssertionError('should not call failure'); // eslint-disable-line
       },
     }),
-    prepared(props =>
+    prepared((props) =>
       props.a ? Promise.resolve() : props.test({hello: 'world'})
     ),
-    connect(s => ({s}))
+    connect((s) => ({s}))
   );
 
   const element = React.createElement(
@@ -532,7 +532,7 @@ test('browser mock plugin integration test withRPCReactor', async done => {
   done();
 });
 
-test('browser plugin integration test withRPCReactor - failure', async done => {
+test('browser plugin integration test withRPCReactor - failure', async (done) => {
   setup();
   const err = {
     message: 'Some failure',
@@ -549,7 +549,7 @@ test('browser plugin integration test withRPCReactor - failure', async done => {
     reactorEnhancer
   );
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
@@ -580,10 +580,10 @@ test('browser plugin integration test withRPCReactor - failure', async done => {
         };
       },
     }),
-    prepared(props =>
+    prepared((props) =>
       props.message ? Promise.resolve() : props.test({hello: 'world'})
     ),
-    connect(s => ({s}))
+    connect((s) => ({s}))
   );
 
   const element = React.createElement(
@@ -615,7 +615,7 @@ test('browser plugin integration test withRPCReactor - failure', async done => {
   app.register(UniversalEventsToken, createMockEmitter());
   await getSimulator(app)
     .render('/')
-    .catch(e => expect(e.message).toBe('Some failure'));
+    .catch((e) => expect(e.message).toBe('Some failure'));
   expect(expectedActions.length).toBe(0);
   expect(flags.start).toBe(true);
   expect(flags.failure).toBe(true);
@@ -623,7 +623,7 @@ test('browser plugin integration test withRPCReactor - failure', async done => {
   done();
 });
 
-test('browser plugin integration test withRPCReactor - failure 2', async done => {
+test('browser plugin integration test withRPCReactor - failure 2', async (done) => {
   setup();
   const err = {
     message: 'Some failure',
@@ -640,7 +640,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async done =>
     reactorEnhancer
   );
 
-  const Component = props => {
+  const Component = (props) => {
     expect(typeof props.test).toBe('function');
     return React.createElement('span', null, 'hello world');
   };
@@ -672,10 +672,10 @@ test('browser plugin integration test withRPCReactor - failure 2', async done =>
         };
       },
     }),
-    prepared(props =>
+    prepared((props) =>
       props.message ? Promise.resolve() : props.test({hello: 'world'})
     ),
-    connect(s => ({s}))
+    connect((s) => ({s}))
   );
 
   const element = React.createElement(
@@ -707,7 +707,7 @@ test('browser plugin integration test withRPCReactor - failure 2', async done =>
   );
   await getSimulator(app)
     .render('/')
-    .catch(e => expect(e.message).toBe('Some failure'));
+    .catch((e) => expect(e.message).toBe('Some failure'));
   expect(expectedActions.length).toBe(0);
   expect(flags.start).toBe(true);
   expect(flags.failure).toBe(true);

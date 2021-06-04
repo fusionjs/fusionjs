@@ -47,7 +47,7 @@ export default class App extends FusionApp {
         'Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)'
       );
     }
-    const getService = token => {
+    const getService = (token) => {
       // $FlowFixMe
       const provides = this.getService(token);
       const isRequiredToken = Boolean(token.optional);
@@ -87,7 +87,7 @@ export default class App extends FusionApp {
           }
 
           const markAsCritical = __NODE__
-            ? chunkId => {
+            ? (chunkId) => {
                 // Push to legacy context for backwards compat w/ legacy SSR template
                 ctx.preloadChunks.push(chunkId);
 

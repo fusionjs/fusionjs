@@ -18,7 +18,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/cache expiry', async done => {
+test('/cache expiry', async (done) => {
   expect.assertions(6);
   const hostname = 'http://localhost:';
   // for testing, set cache expiry to 4 seconds instead of
@@ -35,7 +35,7 @@ test('/cache expiry', async done => {
   try {
     let isReady, allRequests;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
@@ -71,7 +71,7 @@ test('/cache expiry', async done => {
     // Capture requests during 2nd load.
     allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -83,14 +83,14 @@ test('/cache expiry', async done => {
 
     expect(
       Array.from(allRequests.values())
-        .filter(req =>
+        .filter((req) =>
           cacheablePaths.find(
-            path =>
+            (path) =>
               `${hostname}${port}${path}` === req.url() ||
               req.url() === `${hostname}${port}/` // html
           )
         )
-        .every(req => req.response() && req.response().fromServiceWorker())
+        .every((req) => req.response() && req.response().fromServiceWorker())
     ).toBeTruthy();
 
     // wait four seconds for cache to expire

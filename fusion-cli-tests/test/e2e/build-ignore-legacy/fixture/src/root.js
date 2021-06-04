@@ -3,7 +3,7 @@
 import React from 'react';
 import Router, {Route, Switch, Link} from 'fusion-plugin-react-router';
 import {Translate} from 'fusion-plugin-i18n-react';
-import HOCTranslations from './hocTranslation.js'; 
+import HOCTranslations from './hocTranslation.js';
 import HookTranslations from './hookTranslation.js';
 
 import routes from './routes';
@@ -12,8 +12,8 @@ export default function Root() {
   return (
     <div>
       <Translate id="main" />
-      <HOCTranslations/>
-      <HookTranslations/>
+      <HOCTranslations />
+      <HookTranslations />
       <Link id="split1-link" to="/split1">
         go to /split1 route
       </Link>

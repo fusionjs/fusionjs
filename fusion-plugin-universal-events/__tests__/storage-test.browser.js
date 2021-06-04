@@ -13,7 +13,7 @@ const toBeTested = {
   inMemoryBatchStorage,
 };
 
-Object.keys(toBeTested).forEach(storageType => {
+Object.keys(toBeTested).forEach((storageType) => {
   const {add, addToStart, getAndClear} = toBeTested[storageType];
 
   // eslint-disable-next-line jest/valid-describe

@@ -18,12 +18,12 @@ test('`fusion build` legacy bundle contains valid es5 code', async () => {
 
   const clientDistPath = path.resolve(dir, '.fusion/dist/production/client');
   const legacyFiles = (await readdir(clientDistPath)).filter(
-    f => /client-legacy/.test(f) && path.extname(f) === '.js'
+    (f) => /client-legacy/.test(f) && path.extname(f) === '.js'
   );
 
   t.ok(legacyFiles.length > 0, 'produced legacy bundle');
 
-  legacyFiles.forEach(file => {
+  legacyFiles.forEach((file) => {
     const filePath = path.join(clientDistPath, file);
     const code = fs.readFileSync(filePath, 'utf-8');
 

@@ -44,7 +44,7 @@ export default class UniversalEmitter implements IEmitter {
   handleEvent(type: mixed, payload: mixed, ctx?: Context): void {
     const globalHandlers = this.handlers[globalEventType] || [];
     const handlers = (this.handlers[type] || []).concat(globalHandlers);
-    handlers.forEach(handler => handler(payload, ctx, type));
+    handlers.forEach((handler) => handler(payload, ctx, type));
   }
 
   /* eslint-disable-next-line  no-unused-vars */

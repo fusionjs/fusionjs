@@ -9,7 +9,7 @@
 import {combineReducers} from 'redux';
 
 export default combineReducers({
-  user: function(state = {}) {
+  user: function (state = {}) {
     return {
       ...state,
       data: {id: 1},

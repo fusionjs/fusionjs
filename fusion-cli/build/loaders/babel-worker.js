@@ -51,14 +51,13 @@ async function runTransformation(
         loaderOptions.overrides[i]
       );
       //$FlowFixMe
-      override.test = modulePath => {
+      override.test = (modulePath) => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
           return false;
         }
 
-        const experimentalTransformTest = getExperimentalTransformTest(
-          rootContext
-        );
+        const experimentalTransformTest =
+          getExperimentalTransformTest(rootContext);
         const defaultTransform = getTransformDefault(modulePath, rootContext);
         const transform = experimentalTransformTest
           ? experimentalTransformTest(modulePath, defaultTransform)
@@ -88,7 +87,7 @@ async function runTransformation(
 
   const options = config.options;
 
-  let metadata/*: TransformationMetadata*/ = {};
+  let metadata /*: TransformationMetadata*/ = {};
 
   let translationIds = new Set();
   // Add the discovery plugin

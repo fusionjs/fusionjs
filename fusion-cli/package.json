@@ -58,8 +58,6 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "request-promise": "^4.2.4"
@@ -96,7 +94,7 @@
   "scripts": {
     "build": "echo ok",
     "flow": "flow",
-    "lint": "eslint .",
+    "lint": "yarn g:lint",
     "test": "git clean -Xfd test/e2e && jest --maxWorkers 1"
   }
 }

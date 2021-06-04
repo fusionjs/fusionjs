@@ -17,7 +17,7 @@ import CsrfPlugin from '../src/index';
 
 /* Test helpers */
 function getApp(fetchFn: Fetch) {
-  const app = new App('element', el => el);
+  const app = new App('element', (el) => el);
   app.register(FetchToken, fetchFn);
   app.enhance(FetchToken, CsrfPlugin);
   return app;
@@ -31,7 +31,7 @@ function createMockFetch(responseParams: mixed): Response {
   };
 }
 
-test('exposes right methods', done => {
+test('exposes right methods', (done) => {
   const app = getApp(window.fetch);
   app.register(
     createPlugin({
@@ -45,7 +45,7 @@ test('exposes right methods', done => {
   app.resolve();
 });
 
-test('includes routePrefix if exists', async done => {
+test('includes routePrefix if exists', async (done) => {
   window.__ROUTE_PREFIX__ = '/something';
   const fetch = (url, args) => {
     expect(url).toBe('/something/hello');
@@ -76,7 +76,7 @@ test('includes routePrefix if exists', async done => {
   app.resolve();
 });
 
-test('sends token on POST', async done => {
+test('sends token on POST', async (done) => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());
@@ -105,7 +105,7 @@ test('sends token on POST', async done => {
   app.resolve();
 });
 
-test('defaults method to GET', async done => {
+test('defaults method to GET', async (done) => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());

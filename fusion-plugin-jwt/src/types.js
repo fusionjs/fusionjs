@@ -15,9 +15,7 @@ import {
 } from './tokens.js';
 
 export type SessionService = {
-  from(
-    ctx: Context
-  ): {
+  from(ctx: Context): {
     loadToken(): Promise<?Object | string>,
     get(keyPath: string): mixed,
     set(keyPath: string, val: mixed): boolean,

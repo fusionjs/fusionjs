@@ -17,13 +17,13 @@ import BrowserPerformanceEmitterPlugin from '../src/browser';
 
 /* Fixture */
 function createTestFixture() {
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   app.register(BrowserPerformanceEmitterPlugin);
   return app;
 }
 
 // getEntriesByType is not implemented in JSDOM
-test.skip('Correct metrics are logged', done => {
+test.skip('Correct metrics are logged', (done) => {
   /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
@@ -60,10 +60,10 @@ test.skip('Correct metrics are logged', done => {
     expect(event.payload.resourceEntries).toEqual(
       window.performance
         .getEntriesByType('resource')
-        .filter(entry => {
+        .filter((entry) => {
           return entry.name.indexOf('data:') !== 0 && entry.toJSON;
         })
-        .map(entry => entry.toJSON())
+        .map((entry) => entry.toJSON())
     );
 
     /* Revert window overrides */
@@ -74,7 +74,7 @@ test.skip('Correct metrics are logged', done => {
   });
 });
 
-test('Emits correct event', done => {
+test('Emits correct event', (done) => {
   /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
@@ -108,7 +108,7 @@ test('Emits correct event', done => {
     expect(eventsEmitted.length).toBe(1);
     const event = eventsEmitted[0];
     expect(event.type).toBe('browser-performance-emitter:stats:browser-only');
-    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach((item) => {
       expect(
         Object.prototype.hasOwnProperty.call(event.payload, item)
       ).toBeTruthy();
@@ -122,7 +122,7 @@ test('Emits correct event', done => {
   });
 });
 
-test('Does not fail when window.performance is null', done => {
+test('Does not fail when window.performance is null', (done) => {
   /* Window overrides */
   const oldPerformance = window.performance;
   const originalAddEventListener = window.addEventListener;
@@ -158,7 +158,7 @@ test('Does not fail when window.performance is null', done => {
     expect(eventsEmitted.length).toBe(1);
     const event = eventsEmitted[0];
     expect(event.type).toBe('browser-performance-emitter:stats:browser-only');
-    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach(item => {
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach((item) => {
       expect(
         Object.prototype.hasOwnProperty.call(event.payload, item)
       ).toBeTruthy();

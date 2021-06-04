@@ -21,13 +21,15 @@ async function getDistFiles(dir) {
   const clientFiles = await readdir(
     path.resolve(dir, '.fusion/dist/production/client')
   );
-  const clientMainFile = clientFiles.filter(f =>
+  const clientMainFile = clientFiles.filter((f) =>
     /client-main-(.*?).js$/.test(f)
   )[0];
-  const clientVendorFile = clientFiles.filter(f =>
+  const clientVendorFile = clientFiles.filter((f) =>
     /client-vendor-(.*?).js$/.test(f)
   )[0];
-  const splitClientChunks = clientFiles.filter(f => /[0-9]+-(.*?).js$/.test(f));
+  const splitClientChunks = clientFiles.filter((f) =>
+    /[0-9]+-(.*?).js$/.test(f)
+  );
   return {
     clientFiles,
     clientMainFile,
@@ -140,11 +142,11 @@ test('`fusion build` app with dynamic imports integration', async () => {
   const BASE_COUNT = SYNC_CHUNK_COUNT + ROUTE_INDEPENDENT_ASYNC_CHUNK_COUNT;
 
   t.equal(
-    await page.$$eval('link[rel="preload"]', els => els.length),
+    await page.$$eval('link[rel="preload"]', (els) => els.length),
     BASE_COUNT
   );
   t.ok(
-    await page.$$eval('link[rel="preload"]', els =>
+    await page.$$eval('link[rel="preload"]', (els) =>
       // eslint-disable-next-line
       els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),
@@ -154,15 +156,15 @@ test('`fusion build` app with dynamic imports integration', async () => {
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     BASE_COUNT
   );
 
   // Async can causes race conditions as scripts may be executed before DOM is fully parsed.
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.async === false)
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
+      els.every((el) => el.async === false)
     ),
     'all scripts not be async'
   );
@@ -171,21 +173,21 @@ test('`fusion build` app with dynamic imports integration', async () => {
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     BASE_COUNT + 1,
     'one extra script after loading new route'
   );
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.crossOrigin === null)
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
+      els.every((el) => el.crossOrigin === null)
     ),
     'non-module scripts do not have crossorigin attribute'
   );
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
       // eslint-disable-next-line
       els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),
@@ -194,20 +196,20 @@ test('`fusion build` app with dynamic imports integration', async () => {
 
   t.equal(cookies.length, BASE_COUNT + 1);
   t.ok(
-    cookies.every(cookie => cookie === 'foo=bar'),
+    cookies.every((cookie) => cookie === 'foo=bar'),
     'cookies sent w/ every request to chunk'
   );
 
   await page.goto(`http://localhost:${port}/split-route`);
 
   t.equal(
-    await page.$$eval('link[rel="preload"]', els => els.length),
+    await page.$$eval('link[rel="preload"]', (els) => els.length),
     BASE_COUNT + 1
   );
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     BASE_COUNT + 1
   );
@@ -233,7 +235,7 @@ test('`fusion build` app with CDN_URL and same-origin', async () => {
   });
   const page = await browser.newPage();
   await page.setRequestInterception(true);
-  await page.on('request', request => {
+  await page.on('request', (request) => {
     // Ignore CDN requests since they will cause the browser to hang.
     if (request.url().startsWith('https://cdn.com')) {
       request.abort();
@@ -244,8 +246,8 @@ test('`fusion build` app with CDN_URL and same-origin', async () => {
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.crossOrigin === 'anonymous')
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
+      els.every((el) => el.crossOrigin === 'anonymous')
     ),
     'non-module scripts have crossorigin attribute'
   );
@@ -291,15 +293,15 @@ test('`fusion build` app with Safari user agent and same-origin', async () => {
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     BASE_COUNT
   );
 
   // Async can causes race conditions as scripts may be executed before DOM is fully parsed.
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.async === false)
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
+      els.every((el) => el.async === false)
     ),
     'all scripts not be async'
   );
@@ -308,21 +310,21 @@ test('`fusion build` app with Safari user agent and same-origin', async () => {
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     BASE_COUNT + 1,
     'one extra script after loading new route'
   );
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
-      els.every(el => el.crossOrigin === null)
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
+      els.every((el) => el.crossOrigin === null)
     ),
     'non-module scripts do not have crossorigin attribute'
   );
 
   t.ok(
-    await page.$$eval('script[src]:not([type="application/json"])', els =>
+    await page.$$eval('script[src]:not([type="application/json"])', (els) =>
       // eslint-disable-next-line
       els.every(el => el.getAttribute('nonce') === window.__NONCE__)
     ),

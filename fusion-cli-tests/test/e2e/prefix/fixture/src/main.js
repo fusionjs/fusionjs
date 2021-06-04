@@ -1,8 +1,8 @@
 // @noflow
 import App, {createPlugin, RoutePrefixToken} from 'fusion-core';
 
-export default async function() {
-  const app = new App('element', el => el);
+export default async function () {
+  const app = new App('element', (el) => el);
   app.middleware((ctx, next) => {
     if (ctx.url === '/' && ctx.path === '/') {
       ctx.body = 'ROOT REQUEST';

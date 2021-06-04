@@ -51,13 +51,13 @@ const getSources = (stacks, ignore) => {
       type,
       source: stack
         .split('\n')
-        .filter(line => {
+        .filter((line) => {
           return line.match(/\//) && !line.match(ignore[type] || /base-app/);
         })
-        .map(line => line.match(/\((.*?)\)/))
-        .filter(match => match && match[1])
-        .map(match => ((match: any): Array<string>)[1])
-        .map(to => (__NODE__ ? path.relative(process.cwd(), to) : to))
+        .map((line) => line.match(/\((.*?)\)/))
+        .filter((match) => match && match[1])
+        .map((match) => ((match: any): Array<string>)[1])
+        .map((to) => (__NODE__ ? path.relative(process.cwd(), to) : to))
         .shift(),
     };
   });

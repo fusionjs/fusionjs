@@ -28,7 +28,7 @@ function mockWindow({performance, ...otherOverrides} = {}) {
 
 test('enhancedBrowserMetrics', () => {
   [null, undefined, {}, {performance: {}}, {performance: {timing: {}}}].forEach(
-    w => {
+    (w) => {
       expect(browserPerfCollector(w)).toEqual({});
     }
   );
@@ -74,8 +74,7 @@ test('enhancedBrowserMetrics', () => {
                 return [
                   {
                     initiatorType: 'link',
-                    name:
-                      'http://localhost:5663/trips-viewer/stylesheets/main.css',
+                    name: 'http://localhost:5663/trips-viewer/stylesheets/main.css',
                     entryType: 'resource',
                     startTime: 132.92000000000002,
                     duration: 4.435000000000002,

@@ -11,7 +11,7 @@ import {ApolloContextToken} from '../index.js';
 
 const app = new App();
 
-app.register(ApolloContextToken, ctx => ({
+app.register(ApolloContextToken, (ctx) => ({
   testcase: ctx.path,
 }));
 

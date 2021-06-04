@@ -8,7 +8,6 @@
 /* eslint-env node */
 
 const path = require('path');
-const fs = require('fs');
 const loaderUtils = require('loader-utils');
 
 module.exports = function fileLoader(content /*: Buffer */) {

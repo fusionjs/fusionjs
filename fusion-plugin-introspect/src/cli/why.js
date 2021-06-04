@@ -6,7 +6,7 @@ const {listSourceLines} = require('./listSourceLines.js');
 module.exports.why = async (token /*: string*/) => {
   const data = await parseRuntimeMetadata();
   const deps = listDependencies(data.server);
-  const dep = deps.find(dep => dep.name === token);
+  const dep = deps.find((dep) => dep.name === token);
 
   if (!dep) return '';
 
@@ -44,7 +44,7 @@ function describeUsage(dep, token) {
     'alias-to': ' is aliased from another token in',
   };
   return Object.keys(verbs)
-    .map(type => {
+    .map((type) => {
       const lines = listSourceLines(dep, type);
       if (lines.length > 0) {
         //eslint-disable-next-line
@@ -58,7 +58,7 @@ function describeUsage(dep, token) {
 function graphParents(deps, token, fork = true, level = 0) {
   const indent = `${fork ? '│' : ' '}  `.repeat(level);
   const parents = deps
-    .filter(dep => dep.dependencies.find(name => name === token))
+    .filter((dep) => dep.dependencies.find((name) => name === token))
     .map(({name}, i, {length}) => {
       const fork = i < length - 1;
       const line = fork ? '├─' : '└─';
@@ -71,7 +71,7 @@ function graphParents(deps, token, fork = true, level = 0) {
 
 function graphChildren(deps, token, fork = true, level = 0) {
   const indent = `${fork ? '│' : ' '}  `.repeat(level);
-  const self = deps.find(dep => dep.name === token);
+  const self = deps.find((dep) => dep.name === token);
   if (!self) return '';
   const children = self.dependencies
     .map((dep, i, {length}) => {

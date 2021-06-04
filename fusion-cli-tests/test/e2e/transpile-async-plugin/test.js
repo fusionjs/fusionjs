@@ -28,11 +28,11 @@ test('`fusion build` transpiles async middleware', async () => {
   const distPath = path.resolve(dir, '.fusion/dist/production/client');
   const clientFiles = await readdir(distPath);
   t.ok(
-    clientFiles.some(f => /client-legacy-main-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-legacy-main-(.*?).js$/.test(f)),
     'includes a versioned client-legacy-main.js file'
   );
   t.ok(
-    clientFiles.some(f => /client-legacy-vendor-(.*?).js$/.test(f)),
+    clientFiles.some((f) => /client-legacy-vendor-(.*?).js$/.test(f)),
     'includes a versioned client-legacy-vendor.js file'
   );
   t.ok(await exists(serverEntryPath), 'Server Entry file gets compiled');
@@ -41,28 +41,28 @@ test('`fusion build` transpiles async middleware', async () => {
     'Server Entry file sourcemap gets compiled'
   );
 
-  const legacyFiles = clientFiles.filter(f => /client-legacy/.test(f));
+  const legacyFiles = clientFiles.filter((f) => /client-legacy/.test(f));
   legacyFiles
-    .filter(file => path.extname(file) === '.js')
-    .forEach(file => {
+    .filter((file) => path.extname(file) === '.js')
+    .forEach((file) => {
       babel.transformFileSync(path.join(distPath, file), {
         plugins: [
           () => {
             return {
               visitor: {
-                FunctionDeclaration: path => {
+                FunctionDeclaration: (path) => {
                   if (path.node.async) {
                     // $FlowFixMe
                     t.fail(`bundle has untranspiled async function`);
                   }
                 },
-                ArrowFunctionExpression: path => {
+                ArrowFunctionExpression: (path) => {
                   if (path.node.async) {
                     // $FlowFixMe
                     t.fail('bundle has untranspiled async function');
                   }
                 },
-                FunctionExpression: path => {
+                FunctionExpression: (path) => {
                   if (path.node.async) {
                     // $FlowFixMe
                     t.fail('bundle has untranspiled async function');

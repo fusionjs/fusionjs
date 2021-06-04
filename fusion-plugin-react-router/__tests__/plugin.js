@@ -92,7 +92,7 @@ if (__NODE__) {
       </div>
     );
     const app = getApp(element);
-    app.register(GetStaticContextToken, ctx => {
+    app.register(GetStaticContextToken, (ctx) => {
       return {
         set status(code) {
           expect(code).toBe(307);
@@ -275,13 +275,14 @@ test('Router Providing History', async () => {
     {
       router: RouterToken,
     },
-    ({router}) => (ctx, next) => {
-      const {history} = router.from(ctx);
-      expect(history).toBeTruthy();
-      expect(typeof history.push).toBe('function');
-      expect(typeof history.replace).toBe('function');
-      return next();
-    }
+    ({router}) =>
+      (ctx, next) => {
+        const {history} = router.from(ctx);
+        expect(history).toBeTruthy();
+        expect(typeof history.push).toBe('function');
+        expect(typeof history.replace).toBe('function');
+        return next();
+      }
   );
   const simulator = setup(app);
   await simulator.render('/');
@@ -308,7 +309,7 @@ test('events with no tracking id and route prefix', async () => {
   cleanup();
 });
 
-test('events with no tracking id and deep path', async done => {
+test('events with no tracking id and deep path', async (done) => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
@@ -342,7 +343,7 @@ test('events with no tracking id and deep path', async done => {
   done();
 });
 
-test('events with no tracking id and deep path and route prefix', async done => {
+test('events with no tracking id and deep path and route prefix', async (done) => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
@@ -392,7 +393,7 @@ test('without UniversalEventsToken', async () => {
 });
 
 if (__BROWSER__) {
-  test('mapping events in browser', async done => {
+  test('mapping events in browser', async (done) => {
     const Home = withRouter(({location, history}) => {
       if (location.pathname === '/') {
         setTimeout(() => {

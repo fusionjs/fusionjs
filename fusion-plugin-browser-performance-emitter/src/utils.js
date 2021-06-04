@@ -24,6 +24,6 @@ export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
 }
 
 export function getTimeFromMarks(marks: Array<PaintTime>, name: string) {
-  const matchingMarks = marks.filter(mark => mark.name === name);
+  const matchingMarks = marks.filter((mark) => mark.name === name);
   return matchingMarks.length ? matchingMarks[0].startTime : null;
 }

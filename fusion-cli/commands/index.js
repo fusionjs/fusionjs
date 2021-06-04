@@ -4,7 +4,7 @@
 const {allowedJestOptions} = require('../build/jest/cli-options');
 
 const jestOptionsDescriptions = {};
-allowedJestOptions.forEach(arg => {
+allowedJestOptions.forEach((arg) => {
   jestOptionsDescriptions[arg] = {
     type: 'boolean',
     describe:
@@ -17,8 +17,8 @@ const disableBuildCacheOption = {
   disableBuildCache: {
     type: 'boolean',
     default: undefined,
-    describe: 'Disable persistent build cache.'
-  }
+    describe: 'Disable persistent build cache.',
+  },
 };
 
 module.exports = {

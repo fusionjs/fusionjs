@@ -58,13 +58,13 @@ test('jsdom with /', async () => {
 });
 
 test('status is 404 if ctx.body is never updated', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const ctx = await getSimulator(app).request('/');
   expect(ctx.status).toBe(404);
 });
 
 test('status is 200 if ctx.body is updated in request', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.middleware((ctx, next) => {
     ctx.body = {ok: 1};
     return next();

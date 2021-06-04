@@ -12,7 +12,7 @@ const winston = require('winston');
 
 const {Compiler} = require('../build/compiler.js');
 
-exports.run = async function(
+exports.run = async function (
   {
     dir = '.',
     production,

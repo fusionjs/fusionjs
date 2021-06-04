@@ -14,13 +14,13 @@ import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import I18n from '../src/node';
-import {matchesLiteralSections} from '../src/translate'
+import {matchesLiteralSections} from '../src/translate';
 import {I18nLoaderToken} from '../src/tokens.js';
 import {I18nToken} from '../src/index';
 
 test('translate', async () => {
   const data = {test: 'hello', interpolated: 'hi ${adjective} ${noun}'};
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(I18nToken, I18n);
   app.register(I18nLoaderToken, {
     from: () => ({translations: data, locale: 'en_US'}),
@@ -63,7 +63,7 @@ test('translate', async () => {
   await simulator.render('/');
 });
 
-test('ssr', async done => {
+test('ssr', async (done) => {
   const data = {test: 'hello</div>', interpolated: 'hi ${value}'};
 
   const chunkTranslationMap = require('../chunk-translation-map');
@@ -107,7 +107,7 @@ test('ssr', async done => {
   done();
 });
 
-test('endpoint', async done => {
+test('endpoint', async (done) => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
 
   const chunkTranslationMap = require('../chunk-translation-map');
@@ -154,7 +154,7 @@ test('endpoint', async done => {
   done();
 });
 
-test('endpoint request handles empty body', async done => {
+test('endpoint request handles empty body', async (done) => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -191,7 +191,7 @@ test('endpoint request handles empty body', async done => {
   done();
 });
 
-test('endpoint request handles legacy query params', async done => {
+test('endpoint request handles legacy query params', async (done) => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -227,7 +227,7 @@ test('endpoint request handles legacy query params', async done => {
   done();
 });
 
-test('non matched route', async done => {
+test('non matched route', async (done) => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {

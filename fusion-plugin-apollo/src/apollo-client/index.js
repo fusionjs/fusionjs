@@ -93,7 +93,7 @@ const ApolloClientPlugin: FusionPlugin<
     defaultOptions: ApolloClientDefaultOptionsToken.optional,
   },
   provides({
-    getCache = ctx =>
+    getCache = (ctx) =>
       // don't automatically add typename when handling POST requests via the executor. This saves size on the response
       new InMemoryCache({
         addTypename: ctx.method === 'POST' ? false : true,
@@ -114,7 +114,7 @@ const ApolloClientPlugin: FusionPlugin<
         'WARNING: Setting a custom context via ApolloContextToken is deprecated. Please use the DI system to inject dependencies directly into your resolver plugins.'
       );
     } else {
-      apolloContext = ctx => ctx;
+      apolloContext = (ctx) => ctx;
     }
     function getClient(ctx, initialState) {
       const cache = getCache(ctx);

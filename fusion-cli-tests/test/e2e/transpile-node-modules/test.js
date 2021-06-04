@@ -31,19 +31,19 @@ test('transpiles node_modules', async () => {
       () => {
         return {
           visitor: {
-            FunctionDeclaration: path => {
+            FunctionDeclaration: (path) => {
               if (path.node.async) {
                 // $FlowFixMe
                 t.fail(`bundle has untranspiled async function`);
               }
             },
-            ArrowFunctionExpression: path => {
+            ArrowFunctionExpression: (path) => {
               if (path.node.async) {
                 // $FlowFixMe
                 t.fail('bundle has untranspiled async function');
               }
             },
-            FunctionExpression: path => {
+            FunctionExpression: (path) => {
               if (path.node.async) {
                 // $FlowFixMe
                 t.fail('bundle has untranspiled async function');

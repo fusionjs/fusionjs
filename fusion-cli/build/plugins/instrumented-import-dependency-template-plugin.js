@@ -45,8 +45,8 @@ type ClientTemplateOpts = {|
 
 const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule.js');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
-const ImportDependencyTemplate = require('webpack/lib/dependencies/ImportDependency')
-  .Template;
+const ImportDependencyTemplate =
+  require('webpack/lib/dependencies/ImportDependency').Template;
 
 const isInstrumentedSymbolClient = Symbol('InstrumentedImportDependencyClient');
 const isInstrumentedSymbolServer = Symbol('InstrumentedImportDependencyServer');
@@ -86,14 +86,23 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
    * for now, we'll just override this method entirely with a modified version
    * Based on https://github.com/webpack/webpack/blob/e1a405e3c248b142894568163b331761e737d6ea/lib/dependencies/ImportDependency.js
    */
-  apply(dep /*: any */, source /*: any */, { runtimeTemplate, module, moduleGraph, chunkGraph, runtimeRequirements }) {
+  apply(
+    dep /*: any */,
+    source /*: any */,
+    {runtimeTemplate, module, moduleGraph, chunkGraph, runtimeRequirements}
+  ) {
     const block = moduleGraph.getParentBlock(dep);
     const depModule = moduleGraph.getModule(dep);
 
     let translationKeys = [];
     let chunkIds = [];
     if (dep[isInstrumentedSymbolClient]) {
-      translationKeys = getTranslationKeys(chunkGraph, moduleGraph, this.i18nManifest, dep);
+      translationKeys = getTranslationKeys(
+        chunkGraph,
+        moduleGraph,
+        this.i18nManifest,
+        dep
+      );
       chunkIds = getChunkGroupIds(chunkGraph.getBlockChunkGroup(block));
     } else if (dep[isInstrumentedSymbolServer]) {
       // Template invoked without InstrumentedImportDependency
@@ -101,9 +110,7 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       chunkIds = getModuleClientChunkIds(this.clientChunkIndex, depModule);
     } else {
       // Prevent future developers from creating a broken webpack state
-      throw new Error(
-        'Dependency is not instrumented'
-      );
+      throw new Error('Dependency is not instrumented');
     }
     const content = runtimeTemplate.moduleNamespacePromise({
       chunkGraph,
@@ -112,7 +119,7 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
       request: dep.request,
       strict: module.buildMeta.strictHarmonyModule,
       message: 'import()',
-      runtimeRequirements
+      runtimeRequirements,
     });
     // Add the following properties to the promise returned by import()
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
@@ -121,14 +128,16 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
     const customContent = chunkIds
       ? `Object.defineProperties(${content}, {
         "__CHUNK_IDS": {value:${JSON.stringify(chunkIds)}},
-        "__MODULE_ID": {value:${JSON.stringify(chunkGraph.getModuleId(depModule))}},
+        "__MODULE_ID": {value:${JSON.stringify(
+          chunkGraph.getModuleId(depModule)
+        )}},
         "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
       : content;
     // replace with `customContent` instead of `content`
     source.replace(dep.range[0], dep.range[1] - 1, customContent);
   }
-};
+}
 
 /**
  * Webpack plugin to replace standard ImportDependencyTemplate with custom one
@@ -148,13 +157,13 @@ class InstrumentedImportDependencyTemplatePlugin {
 
       let clientChunkIndex;
       compiler.hooks.make.tapAsync(name, (compilation, done) => {
-        clientChunkMetadata.result.then(metadata => {
+        clientChunkMetadata.result.then((metadata) => {
           clientChunkIndex = metadata.fileManifest;
 
           compilation.dependencyTemplates.set(
             ImportDependency,
             new InstrumentedImportDependencyTemplate({
-              clientChunkIndex
+              clientChunkIndex,
             })
           );
           done();
@@ -162,13 +171,16 @@ class InstrumentedImportDependencyTemplatePlugin {
       });
 
       compiler.hooks.compilation.tap(name, (compilation, params) => {
-        compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
+        compilation.hooks.afterOptimizeDependencies.tap(name, (modules) => {
           // Instrument ImportDependency
           for (const module of modules) {
             if (module.blocks) {
-              module.blocks.forEach(block => {
+              module.blocks.forEach((block) => {
                 block.dependencies.forEach((dep, index) => {
-                  if (dep instanceof ImportDependency && !dep[isInstrumentedSymbolServer]) {
+                  if (
+                    dep instanceof ImportDependency &&
+                    !dep[isInstrumentedSymbolServer]
+                  ) {
                     const depModule = compilation.moduleGraph.getModule(dep);
 
                     const originalUpdateHash = dep.updateHash;
@@ -176,11 +188,14 @@ class InstrumentedImportDependencyTemplatePlugin {
                       originalUpdateHash.apply(this, args);
 
                       const [hash] = args;
-                      const chunkIds = getModuleClientChunkIds(clientChunkIndex, depModule);
+                      const chunkIds = getModuleClientChunkIds(
+                        clientChunkIndex,
+                        depModule
+                      );
                       // Invalidate this dependency when the client chunk ids change
                       // Necessary for HMR, and to invalidate build cache
                       hash.update(chunkIds.join(','));
-                    }
+                    };
 
                     dep[isInstrumentedSymbolServer] = true;
                   }
@@ -195,30 +210,37 @@ class InstrumentedImportDependencyTemplatePlugin {
       const i18nManifest = this.opts.i18nManifest;
 
       // Override ImportDependency.Template
-      compiler.hooks.make.tap(name, compilation => {
+      compiler.hooks.make.tap(name, (compilation) => {
         compilation.dependencyTemplates.set(
           ImportDependency,
           new InstrumentedImportDependencyTemplate({
-            i18nManifest
+            i18nManifest,
           })
         );
       });
 
       compiler.hooks.compilation.tap(name, (compilation, params) => {
-        compilation.hooks.afterOptimizeDependencies.tap(name, modules => {
+        compilation.hooks.afterOptimizeDependencies.tap(name, (modules) => {
           // Instrument ImportDependency
           for (const module of modules) {
             if (module.blocks) {
-              module.blocks.forEach(block => {
+              module.blocks.forEach((block) => {
                 block.dependencies.forEach((dep, index) => {
-                  if (dep instanceof ImportDependency && !dep[isInstrumentedSymbolClient]) {
+                  if (
+                    dep instanceof ImportDependency &&
+                    !dep[isInstrumentedSymbolClient]
+                  ) {
                     const depModule = compilation.moduleGraph.getModule(dep);
-                    const depModuleId = compilation.chunkGraph.getModuleId(depModule);
+                    const depModuleId =
+                      compilation.chunkGraph.getModuleId(depModule);
                     if (depModuleId === null && depModule.libIdent) {
                       const moduleId = depModule.libIdent({
                         context: compiler.options.context,
                       });
-                      compilation.chunkGraph.setModuleId(depModule, createCachedModuleId(moduleId));
+                      compilation.chunkGraph.setModuleId(
+                        depModule,
+                        createCachedModuleId(moduleId)
+                      );
                     }
 
                     const originalUpdateHash = dep.updateHash;
@@ -226,11 +248,16 @@ class InstrumentedImportDependencyTemplatePlugin {
                       originalUpdateHash.apply(this, args);
 
                       const [hash] = args;
-                      const translationKeys = getTranslationKeys(compilation.chunkGraph, compilation.moduleGraph, i18nManifest, dep);
+                      const translationKeys = getTranslationKeys(
+                        compilation.chunkGraph,
+                        compilation.moduleGraph,
+                        i18nManifest,
+                        dep
+                      );
                       // Invalidate this dependency when the translation keys change
                       // Necessary for HMR, and to invalidate build cache
                       hash.update(translationKeys.join(','));
-                    }
+                    };
 
                     dep[isInstrumentedSymbolClient] = true;
                   }
@@ -247,7 +274,7 @@ class InstrumentedImportDependencyTemplatePlugin {
      * Based on https://github.com/gogoair/custom-module-ids-webpack-plugin
      */
     compiler.hooks.compilation.tap(name, (compilation, params) => {
-      compilation.hooks.beforeModuleIds.tap(name, modules => {
+      compilation.hooks.beforeModuleIds.tap(name, (modules) => {
         for (const module of modules) {
           const moduleId = compilation.chunkGraph.getModuleId(module);
           if (moduleId === null && module.libIdent) {
@@ -329,7 +356,7 @@ function getModuleClientChunkIds(clientChunkIndex, module) {
 function getChunkGroupIds(chunkGroup) {
   if (chunkGroup && !chunkGroup.isInitial()) {
     if (Array.isArray(chunkGroup.chunks)) {
-      return chunkGroup.chunks.map(c => c.id);
+      return chunkGroup.chunks.map((c) => c.id);
     }
     return [chunkGroup.id];
   }
@@ -348,20 +375,22 @@ function getChunkGroupModules(chunkGraph, moduleGraph, dep) {
   const depModule = moduleGraph.getModule(dep);
   if (depModule && depModule.dependencies) {
     modulesSet.add(getModuleResource(depModule));
-    depModule.dependencies.forEach(dependency => {
+    depModule.dependencies.forEach((dependency) => {
       const dependencyModule = moduleGraph.getModule(dependency);
       if (dependencyModule) {
         modulesSet.add(getModuleResource(dependencyModule));
       }
     });
   }
-  const chunkGroup = chunkGraph.getBlockChunkGroup(moduleGraph.getParentBlock(dep));
+  const chunkGroup = chunkGraph.getBlockChunkGroup(
+    moduleGraph.getParentBlock(dep)
+  );
   if (chunkGroup && Array.isArray(chunkGroup.chunks)) {
-    chunkGroup.chunks.forEach(chunk => {
+    chunkGroup.chunks.forEach((chunk) => {
       for (const module of chunkGraph.getChunkModulesIterable(chunk)) {
         modulesSet.add(getModuleResource(module));
         if (module instanceof ConcatenatedModule) {
-          module.modules.forEach(module => {
+          module.modules.forEach((module) => {
             modulesSet.add(getModuleResource(module));
           });
         }

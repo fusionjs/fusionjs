@@ -17,7 +17,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/works offline', async done => {
+test('/works offline', async (done) => {
   expect.assertions(10);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -32,12 +32,12 @@ test('/works offline', async done => {
   try {
     let isReady;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
         expect(
-          precachePaths.every(path =>
+          precachePaths.every((path) =>
             cacheKeys.includes(`${hostname}${port}${path}`)
           )
         ).toBeTruthy();
@@ -49,7 +49,7 @@ test('/works offline', async done => {
           cacheKeys.length === cacheablePaths.length + 1
         ).toBeTruthy();
         expect(
-          cacheablePaths.every(path =>
+          cacheablePaths.every((path) =>
             cacheKeys.includes(`${hostname}${port}${path}`)
           )
         ).toBeTruthy();
@@ -75,7 +75,7 @@ test('/works offline', async done => {
     // Capture requests during 2nd load.
     const allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -90,26 +90,26 @@ test('/works offline', async done => {
 
     expect(
       Array.from(allRequests.values())
-        .filter(req =>
+        .filter((req) =>
           cacheablePaths.find(
-            path =>
+            (path) =>
               `${hostname}${port}${path}` === req.url() ||
               req.url() === `${hostname}${port}/` // html
           )
         )
-        .every(req => req.response() && req.response().fromServiceWorker())
+        .every((req) => req.response() && req.response().fromServiceWorker())
     ).toBeTruthy();
 
     expect(
       Array.from(allRequests.values())
         .filter(
-          req =>
+          (req) =>
             !cacheablePaths.find(
-              path => `${hostname}${port}${path}` === req.url()
+              (path) => `${hostname}${port}${path}` === req.url()
             )
         )
         .every(
-          req =>
+          (req) =>
             req.resourceType() === 'document' || // html always processed by SW
             !req.response() ||
             !req.response().fromServiceWorker()

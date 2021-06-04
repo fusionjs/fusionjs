@@ -10,7 +10,7 @@ module.exports = async function testHmr(dir /*: any */) {
   const {proc, port} = await dev(`--dir=${dir}`);
 
   // Watcher doesn't pick up changes immediately
-  await new Promise(res => setTimeout(res, 500));
+  await new Promise((res) => setTimeout(res, 500));
 
   const fixtureContent = fs.readFileSync(
     path.resolve(dir, 'src/home.js'),

@@ -19,14 +19,7 @@ import RouteTagsPlugin from './plugins/route-tags';
 import {captureStackTrace, DIError} from './stack-trace.js';
 import wrapMiddleware from './utils/wrap-middleware.js';
 
-import type {
-  aliaser,
-  cleanupFn,
-  Context,
-  FusionPlugin,
-  Middleware,
-  Token,
-} from './types.js';
+import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
 
 interface Register<T> {
   (Token<T>, mixed): aliaser<Token<T>>;
@@ -34,7 +27,7 @@ interface Register<T> {
 }
 
 class FusionApp {
-  constructor(el: Element | string, render: any => any) {
+  constructor(el: Element | string, render: (any) => any) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
     this._dependedOn = new Set();
@@ -60,7 +53,7 @@ class FusionApp {
   plugins: Array<any>;
   cleanups: Array<cleanupFn>;
   renderer: any;
-  _getService: any => any;
+  _getService: (any) => any;
   _dependedOn: Set<any>;
 
   register: Register<*> = <T>(tokenOrValue, maybeValue) => {
@@ -110,7 +103,7 @@ class FusionApp {
     };
     if (value && value.__plugin__) {
       if (value.deps) {
-        Object.values(value.deps).forEach(token =>
+        Object.values(value.deps).forEach((token) =>
           this._dependedOn.add(getTokenRef(token))
         );
       }
@@ -164,7 +157,7 @@ class FusionApp {
     });
   }
   cleanup() {
-    return Promise.all(this.cleanups.map(fn => fn()));
+    return Promise.all(this.cleanups.map((fn) => fn()));
   }
   resolve<TResolved>() {
     if (!this.renderer) {
@@ -194,7 +187,7 @@ class FusionApp {
 
       // Base: if currently resolving the same type, we have a circular dependency
       if (resolving.has(getTokenRef(token))) {
-        const registerStack = token.stacks.find(t => t.type === 'register');
+        const registerStack = token.stacks.find((t) => t.type === 'register');
         throw new DIError({
           message: `Cannot resolve circular dependency: ${token.name}`,
           errorDoc: 'circular-dependencies',
@@ -220,13 +213,13 @@ class FusionApp {
          */
         const findDependentTokens = () => {
           return dependents
-            .filter(entry => {
+            .filter((entry) => {
               if (!entry[1].value || !entry[1].value.deps) {
                 return false;
               }
               return Object.values(entry[1].value.deps).includes(token);
             })
-            .map(entry => entry[1].token.name);
+            .map((entry) => entry[1].token.name);
         };
         const findDependentEnhancers = () => {
           return appliedEnhancers
@@ -249,12 +242,12 @@ class FusionApp {
         ];
 
         const duplicates = this.plugins
-          .filter(p => p.name === token.name)
-          .map(p => {
-            const stack = p.stacks.find(t => t.type === 'token');
+          .filter((p) => p.name === token.name)
+          .map((p) => {
+            const stack = p.stacks.find((t) => t.type === 'token');
             return stack.stack;
           });
-        const tokenStack = token.stacks.find(t => t.type === 'token');
+        const tokenStack = token.stacks.find((t) => t.type === 'token');
         if (duplicates.length) {
           // Note: Update when string token equality is implemented
           throw new DIError({
@@ -264,7 +257,7 @@ class FusionApp {
           });
         } else {
           const dependentList = dependentTokens
-            .map(token => `"${token}"`)
+            .map((token) => `"${token}"`)
             .join(', ');
           const plural = dependentTokens.length > 1 ? 's' : '';
           throw new DIError({
@@ -303,7 +296,7 @@ class FusionApp {
       if (value && value.__plugin__) {
         provides = resolvePlugin(provides);
         if (value.cleanup) {
-          this.cleanups.push(function() {
+          this.cleanups.push(function () {
             return typeof value.cleanup === 'function'
               ? value.cleanup(provides)
               : Promise.resolve();
@@ -314,14 +307,14 @@ class FusionApp {
       }
 
       if (enhancers && enhancers.length) {
-        enhancers.forEach(e => {
+        enhancers.forEach((e) => {
           let nextProvides = e(provides);
           appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
             // if the token has a plugin enhancer, allow it to be registered with no dependents
             nonPluginTokens.delete(token);
             if (nextProvides.deps) {
-              Object.values(nextProvides.deps).forEach(token =>
+              Object.values(nextProvides.deps).forEach((token) =>
                 this._dependedOn.add(getTokenRef(token))
               );
             }
@@ -345,7 +338,7 @@ class FusionApp {
         token !== EnableMiddlewareTimingToken &&
         !this._dependedOn.has(getTokenRef(token))
       ) {
-        const registerStack = token.stacks.find(t => t.type === 'register');
+        const registerStack = token.stacks.find((t) => t.type === 'register');
         throw new DIError({
           message: `Registered token without depending on it: ${token.name}`,
           errorDoc: 'registered-without-depending',
@@ -355,7 +348,7 @@ class FusionApp {
     }
 
     this.plugins = resolvedPlugins;
-    this._getService = token => resolved.get(getTokenRef(token));
+    this._getService = (token) => resolved.get(getTokenRef(token));
   }
   getService<TResolved>(token: Token<TResolved>): any {
     if (!this._getService) {

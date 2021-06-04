@@ -12,9 +12,9 @@ import {
   createRenderContext,
 } from '../src/index.js';
 
-test('Some content', async assert => {
+test('Some content', async (assert) => {
   assert.ok(true);
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const TokenA: Token<string> = createToken('A');
   app.register(TokenA, 'test');
   const simulator = getSimulator(app);

@@ -20,9 +20,7 @@ const plugin =
       return (ctx, next) => {
         if (ctx.element) {
           ctx.template.head.push(
-            html`
-              <link rel="manifest" href="/manifest.json" />
-            `
+            html` <link rel="manifest" href="/manifest.json" /> `
           );
         } else if (ctx.method === 'GET' && ctx.path === '/manifest.json') {
           ctx.body = manifest;

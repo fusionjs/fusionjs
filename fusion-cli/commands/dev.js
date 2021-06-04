@@ -15,7 +15,7 @@ const {DevelopmentRuntime} = require('../build/dev-runtime');
 const {TestAppRuntime} = require('../build/test-runtime');
 const {execSync: exec} = require('child_process');
 
-exports.run = async function(
+exports.run = async function (
   {
     dir = '.',
     test,
@@ -69,8 +69,10 @@ exports.run = async function(
     ? new TestAppRuntime({dir, overrideNodeEnv: true})
     : null;
 
-  // $FlowFixMe
-  const [actualPort] = await Promise.all([devRuntime.start(), compiler.clean(dir)]);
+  const [actualPort] = await Promise.all([
+    devRuntime.start(),
+    compiler.clean(),
+  ]);
 
   const runAll = async () => {
     try {

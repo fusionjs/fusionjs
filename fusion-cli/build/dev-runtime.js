@@ -42,7 +42,7 @@ function Lifecycle() {
     stop: () => {
       state.started = false;
     },
-    error: error => {
+    error: (error) => {
       state.error = error;
       // The error listener may emit before we call wait.
       // Make sure that we're listening before attempting to emit.
@@ -79,7 +79,7 @@ type DevRuntimeType = {
 };
 */
 
-module.exports.DevelopmentRuntime = function(
+module.exports.DevelopmentRuntime = function (
   {
     port,
     dir = '.',
@@ -148,7 +148,7 @@ module.exports.DevelopmentRuntime = function(
         logAndSend(new Error(\`No entry found at \${entry}\`));
       }
     `;
-    if (experimentalSkipRedundantServerReloads && await exists(entryFile)) {
+    if (experimentalSkipRedundantServerReloads && (await exists(entryFile))) {
       const entryFileStats = await stat(entryFile);
       if (
         entryFileStats.mtime.toString() ===
@@ -192,7 +192,7 @@ module.exports.DevelopmentRuntime = function(
       // $FlowFixMe
       state.proc.on('exit', handleChildServerCrash);
       // $FlowFixMe
-      state.proc.on('message', message => {
+      state.proc.on('message', (message) => {
         if (message.event === 'started') {
           lifecycle.start();
           resolve();
@@ -228,7 +228,9 @@ module.exports.DevelopmentRuntime = function(
         // Fast fail, don't prompt
         throw new Error(`Port ${port} taken by another process`);
       }
-      const useRandomPort = await prompt(`Port ${port} taken! Continue with a different port?`);
+      const useRandomPort = await prompt(
+        `Port ${port} taken! Continue with a different port?`
+      );
       if (useRandomPort) {
         let ports = [];
         for (let i = 1; i <= 10; i++) {
@@ -244,14 +246,14 @@ module.exports.DevelopmentRuntime = function(
         lifecycle.wait().then(
           () => {
             // $FlowFixMe
-            state.proxy.web(req, res, e => {
+            state.proxy.web(req, res, (e) => {
               if (res.finished) return;
 
               res.write(renderHtmlError(e));
               res.end();
             });
           },
-          error => {
+          (error) => {
             if (res.finished) return;
 
             res.write(renderHtmlError(error));
@@ -262,7 +264,7 @@ module.exports.DevelopmentRuntime = function(
     });
 
     state.server.on('upgrade', (req, socket, head) => {
-      socket.on('error', e => {
+      socket.on('error', (e) => {
         socket.destroy();
       });
       lifecycle.wait().then(
@@ -304,10 +306,10 @@ module.exports.DevelopmentRuntime = function(
 async function prompt(question) {
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
-  return new Promise(resolve => {
-    rl.question(`\n${chalk.bold(question)} [Y/n]`, answer => {
+  return new Promise((resolve) => {
+    rl.question(`\n${chalk.bold(question)} [Y/n]`, (answer) => {
       const response = answer === '' || answer.toLowerCase() === 'y';
       rl.close();
       resolve(response);
@@ -318,13 +320,13 @@ async function prompt(question) {
 async function isPortAvailable(port) {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
-    server.once('error', err => {
+    server.once('error', (err) => {
       if (err.code === 'EADDRINUSE') {
         resolve(false);
       }
       reject(err);
     });
-    server.once('listening',() =>  {
+    server.once('listening', () => {
       server.once('close', () => resolve(true));
       server.close();
     });

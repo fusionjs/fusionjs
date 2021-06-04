@@ -26,10 +26,13 @@ class ClientChunkMetadataStateHydrator {
       this.state.reset();
     });
 
-    compiler.hooks.thisCompilation.tap(name, compilation => {
+    compiler.hooks.thisCompilation.tap(name, (compilation) => {
       compilation.hooks.afterProcessAssets.tap(name, () => {
         const chunks = compilation.chunks;
-        const fileManifest = chunkIndexFromWebpackChunks(compilation.chunkGraph, chunks);
+        const fileManifest = chunkIndexFromWebpackChunks(
+          compilation.chunkGraph,
+          chunks
+        );
         const urlMap = chunkMapFromWebpackChunks(chunks);
         const {criticalPaths, criticalIds} = criticalChunkInfo(
           compilation,
@@ -65,7 +68,7 @@ function chunkIndexFromWebpackChunks(chunkGraph, chunks) {
           if (m.resource) {
             files.push(m.resource);
           } else if (m.modules) {
-            files.push(...m.modules.map(module => module.resource));
+            files.push(...m.modules.map((module) => module.resource));
           }
         }
       }
@@ -87,7 +90,7 @@ function chunkIndexFromWebpackChunks(chunkGraph, chunks) {
 
 function chunkMapFromWebpackChunks(chunks) {
   const chunkMap = new Map();
-  chunks.forEach(chunk => {
+  chunks.forEach((chunk) => {
     const filename = chunk.files.values().next().value;
     const inner = new Map();
     inner.set('es5', filename);
@@ -128,8 +131,10 @@ function getChunkInfo(compilation, chunks) {
 
 function criticalChunkInfo(compilation, chunks) {
   const mainEntrypoint = compilation.entrypoints.get('main');
-  const chunkIds = mainEntrypoint.chunks.map(c => c.id);
-  const chunkPaths = mainEntrypoint.chunks.map(c => c.files.values().next().value);
+  const chunkIds = mainEntrypoint.chunks.map((c) => c.id);
+  const chunkPaths = mainEntrypoint.chunks.map(
+    (c) => c.files.values().next().value
+  );
   return {
     criticalIds: chunkIds,
     criticalPaths: chunkPaths,

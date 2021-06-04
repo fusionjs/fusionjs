@@ -1,7 +1,7 @@
 // @noflow
 import App from 'fusion-core';
 
-export default (async function() {
+export default (async function () {
   const aPromise = import('./test-a.js');
   const bPromise = import('./test-b.js');
   const cPromise = import('./test-combined.js');
@@ -10,19 +10,18 @@ export default (async function() {
   // force split chunk for module-a, dependent on by test-split-chunk-group
   const moduleAPromise = import('./module-a');
 
-  const app = new App(
-    'element',
-    el => {
-      if (__NODE__) {
-        return `<div id="ssr">${dPromise.__CHUNK_IDS}</div>`;
-      } else {
-        document.body.innerHTML = `
+  const app = new App('element', (el) => {
+    if (__NODE__) {
+      return `<div id="ssr">${dPromise.__CHUNK_IDS}</div>`;
+    } else {
+      document.body.innerHTML = `
           <div id="csr">${dPromise.__CHUNK_IDS}</div>
-          <div id="csr-test-split-chunk-group">${splitChunkGroupPromise.__CHUNK_IDS.join(',')}</div>
+          <div id="csr-test-split-chunk-group">${splitChunkGroupPromise.__CHUNK_IDS.join(
+            ','
+          )}</div>
         `;
-      }
     }
-  );
+  });
 
   app.middleware((ctx, next) => {
     if (ctx.path === '/test-a') {
@@ -45,7 +44,7 @@ export default (async function() {
 
 // $FlowFixMe
 if (__BROWSER__ && module.hot) {
-  window.__addHotStatusHandler = handler => {
+  window.__addHotStatusHandler = (handler) => {
     // $FlowFixMe
     module.hot.addStatusHandler(handler);
   };

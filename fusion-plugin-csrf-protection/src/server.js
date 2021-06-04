@@ -20,11 +20,11 @@ const enhancer = (oldFetch: Fetch): FusionPlugin<PluginDepsType, Fetch> => {
     deps: {
       ignored: CsrfIgnoreRoutesToken.optional,
     },
-    provides: deps => {
+    provides: (deps) => {
       // Pass through the old implementation
       return oldFetch;
     },
-    middleware: deps => {
+    middleware: (deps) => {
       const {ignored = []} = deps;
       const ignoreSet = new Set(ignored);
 

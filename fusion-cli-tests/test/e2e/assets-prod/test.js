@@ -23,7 +23,7 @@ test('source maps for JS static assets are not served in production', async () =
 
     const bundles = fs
       .readdirSync(path.join(dir, '.fusion/dist/production/client'))
-      .filter(file => path.extname(file) === '.js' && !isWithMap(file));
+      .filter((file) => path.extname(file) === '.js' && !isWithMap(file));
     t.ok(bundles.length > 0);
 
     for (const bundle of bundles) {

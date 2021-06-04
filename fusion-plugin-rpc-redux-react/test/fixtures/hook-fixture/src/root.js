@@ -26,7 +26,7 @@ function Handler(props) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    handler().then(data => {
+    handler().then((data) => {
       if (mounted) setData(data);
     });
     return () => setMounted(false);

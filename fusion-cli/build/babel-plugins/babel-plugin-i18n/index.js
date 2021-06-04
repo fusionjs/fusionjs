@@ -33,7 +33,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
   );
 
   function refsHandler(t, context, refs = [], specifierName) {
-    refs.forEach(refPath => {
+    refs.forEach((refPath) => {
       const parentPath = refPath.parentPath;
       if (t.isCallExpression(refPath.parent)) {
         const firstArg = refPath.parent.arguments[0];
@@ -44,7 +44,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
             throw parentPath.buildCodeFrameError(errorMessage);
           }
           const elements = firstArg.elements;
-          elements.forEach(element => {
+          elements.forEach((element) => {
             if (!t.isStringLiteral(element)) {
               throw parentPath.buildCodeFrameError(errorMessage);
             }
@@ -59,7 +59,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
           const localName = refPath.parentPath.parent.id.name;
           const translationPaths =
             refPath.parentPath.scope.bindings[localName].referencePaths;
-          translationPaths.forEach(translationPath => {
+          translationPaths.forEach((translationPath) => {
             if (
               // translate()
               t.isCallExpression(translationPath.parentPath) &&
@@ -71,7 +71,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
               if (t.isStringLiteral(arg)) {
                 translationIds.add(arg.value);
               } else if (t.isTemplateLiteral(arg)) {
-                const literalSections = arg.quasis.map(q => q.value.cooked);
+                const literalSections = arg.quasis.map((q) => q.value.cooked);
                 if (literalSections.join('') === '') {
                   // template literal not hinted, i.e. translate(`${foo}`)
                   throw translationPath.parentPath.buildCodeFrameError(
@@ -126,7 +126,7 @@ function i18nPlugin(babel /*: Object */, {translationIds} /*: PluginOpts */) {
       if (!t.isJSXOpeningElement(refPath.parent)) {
         return;
       }
-      refPath.parent.attributes.forEach(attr => {
+      refPath.parent.attributes.forEach((attr) => {
         if (!t.isJSXAttribute(attr)) {
           return;
         }

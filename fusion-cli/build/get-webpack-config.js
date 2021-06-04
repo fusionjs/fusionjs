@@ -15,10 +15,7 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
-const {
-  gzipWebpackPlugin,
-  brotliWebpackPlugin,
-} = require('../lib/compression');
+const {gzipWebpackPlugin, brotliWebpackPlugin} = require('../lib/compression');
 const resolveFrom = require('../lib/resolve-from');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
@@ -205,7 +202,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
   const {experimentalBundleTest, experimentalTransformTest} = fusionConfig;
   const babelTester = experimentalTransformTest
-    ? modulePath => {
+    ? (modulePath) => {
         if (!JS_EXT_PATTERN.test(modulePath)) {
           return false;
         }
@@ -253,7 +250,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   let isIncrementalBuild = false;
 
   // Invalidate cache when any of these values change
-  const cacheVersionVars/*: SerializableConfigOpts */ = {
+  const cacheVersionVars /*: SerializableConfigOpts */ = {
     id,
     dev,
     dir,
@@ -295,7 +292,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     watchOptions: {
       // Ignore Yarn PnP immutable paths, as well as invalid virtual paths
       // @see: https://github.com/yarnpkg/berry/blob/5869e5934dcd7491422c2045675bcea2944708cc/packages/yarnpkg-fslib/sources/VirtualFS.ts#L8-L14
-      ignored: /(\/\.yarn(\/[^/]+)*\/cache\/[^\/]+\.zip|\/\.yarn\/(?:\$\$virtual|__virtual__)(?!(\/[^/]+){2}\/.+$))/,
+      ignored:
+        /(\/\.yarn(\/[^/]+)*\/cache\/[^/]+\.zip|\/\.yarn\/(?:\$\$virtual|__virtual__)(?!(\/[^/]+){2}\/.+$))/,
     },
     name: runtime,
     target,
@@ -409,7 +407,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'server' && {
-          compiler: id => id === 'server',
+          compiler: (id) => id === 'server',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
@@ -436,7 +434,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         (runtime === 'client' || runtime === 'sw') && {
-          compiler: id => id === 'client' || id === 'sw',
+          compiler: (id) => id === 'client' || id === 'sw',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
@@ -463,7 +461,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'client' && {
-          compiler: id => id === 'client-legacy',
+          compiler: (id) => id === 'client-legacy',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
@@ -520,52 +518,51 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         },
         (isAssumeNoImportSideEffectsEnabled ||
           !isDefaultImportSideEffectsEnabled) && {
-            sideEffects: false,
-            ...(isAssumeNoImportSideEffectsEnabled
-              ? null
-              : {
-                  // `defaultImportSideEffects: false` only applies to imports to other packages from within
-                  // application. Imports within other packages to other packages will not be affected.
-                  issuer: dir,
-                }),
-            test: modulePath =>
-              // NOTE: Breaking change in webpack v5
-              // Need to skip modules generated via custom webpack loaders, for which there's no module resource set
-              // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/RuleSet.js#L487
-              Boolean(modulePath) &&
-              // `defaultImportSideEffects: false` does not apply to application code,
-              // in which case we defer to the `sideEffects` in app-root package.json
-              (isAssumeNoImportSideEffectsEnabled ||
-                modulePath.startsWith(dir)),
-            descriptionData: {
-              // We need to respect the value set in package.json whenever possible, hence
-              // only set module as sideEffects free if sideEffects field was not defined.
-              sideEffects: val => !Boolean(val),
-              ...(function () {
-                const ignoredPackages = new Set([
-                  'core-js',
-                  'regenerator-runtime',
-                  ...(isAssumeNoImportSideEffectsEnabled &&
-                    Array.isArray(fusionConfig.assumeNoImportSideEffects)
-                    ? fusionConfig.assumeNoImportSideEffects
-                    : []),
-                  ...(!isDefaultImportSideEffectsEnabled &&
-                    Array.isArray(fusionConfig.defaultImportSideEffects)
-                    ? fusionConfig.defaultImportSideEffects
-                    : []),
-                ]);
+          sideEffects: false,
+          ...(isAssumeNoImportSideEffectsEnabled
+            ? null
+            : {
+                // `defaultImportSideEffects: false` only applies to imports to other packages from within
+                // application. Imports within other packages to other packages will not be affected.
+                issuer: dir,
+              }),
+          test: (modulePath) =>
+            // NOTE: Breaking change in webpack v5
+            // Need to skip modules generated via custom webpack loaders, for which there's no module resource set
+            // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/RuleSet.js#L487
+            Boolean(modulePath) &&
+            // `defaultImportSideEffects: false` does not apply to application code,
+            // in which case we defer to the `sideEffects` in app-root package.json
+            (isAssumeNoImportSideEffectsEnabled || modulePath.startsWith(dir)),
+          descriptionData: {
+            // We need to respect the value set in package.json whenever possible, hence
+            // only set module as sideEffects free if sideEffects field was not defined.
+            sideEffects: (val) => !val,
+            ...(function () {
+              const ignoredPackages = new Set([
+                'core-js',
+                'regenerator-runtime',
+                ...(isAssumeNoImportSideEffectsEnabled &&
+                Array.isArray(fusionConfig.assumeNoImportSideEffects)
+                  ? fusionConfig.assumeNoImportSideEffects
+                  : []),
+                ...(!isDefaultImportSideEffectsEnabled &&
+                Array.isArray(fusionConfig.defaultImportSideEffects)
+                  ? fusionConfig.defaultImportSideEffects
+                  : []),
+              ]);
 
-                return {
-                  name: packageName => !ignoredPackages.has(packageName),
-                };
-              })(),
-            },
+              return {
+                name: (packageName) => !ignoredPackages.has(packageName),
+              };
+            })(),
           },
+        },
       ].filter(Boolean),
     },
     externals: [
       runtime === 'server' &&
-        (({ context, request }, callback) => {
+        (({context, request}, callback) => {
           if (/^[@a-z\-0-9]+/.test(request)) {
             const absolutePath = resolveFrom.silent(context, request);
             // do not bundle external packages and those not whitelisted
@@ -659,9 +656,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
       onBuildEnd
         ? new ProgressBarPlugin({
-            callback: progressBar => {
+            callback: (progressBar) => {
               const buildTime = new Date() - progressBar.start;
-              const buildStats/*: BuildStats*/ = {
+              const buildStats /*: BuildStats*/ = {
                 command,
                 target: id,
                 mode,
@@ -759,7 +756,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               ? 'client-legacy-[name].js'
               : 'client-legacy-[name]-[chunkhash].js',
           },
-          plugins: options => [
+          plugins: (options) => [
             new webpack.optimize.RuntimeChunkPlugin(
               options.optimization.runtimeChunk
             ),

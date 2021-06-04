@@ -30,12 +30,12 @@ test('Base EventEmitter mappers', () => {
   const events: IEmitter = new EventEmitter();
   let eventHandlerCount = 0;
   let mapCount = 0;
-  events.on('test', event => {
+  events.on('test', (event) => {
     eventHandlerCount++;
     expect(event.a).toBe(true);
     expect(event.b).toBe(true);
   });
-  events.map('test', event => {
+  events.map('test', (event) => {
     mapCount++;
     return Object.assign(event, {a: true});
   });
@@ -45,15 +45,15 @@ test('Base EventEmitter mappers', () => {
   expect(mapCount).toBe(1);
 });
 
-test('Base EventEmitter * mappers', done => {
+test('Base EventEmitter * mappers', (done) => {
   const events: IEmitter = new EventEmitter();
-  events.map('*', payload => {
+  events.map('*', (payload) => {
     return {...payload, a: true};
   });
-  events.map('test', payload => {
+  events.map('test', (payload) => {
     return {...payload, b: true};
   });
-  events.on('test', payload => {
+  events.on('test', (payload) => {
     expect(payload).toStrictEqual({
       a: true,
       b: true,
@@ -65,15 +65,15 @@ test('Base EventEmitter * mappers', done => {
   events.handleEvent('test', mappedPayload);
 });
 
-test('Base EventEmitter implicit * mappers', done => {
+test('Base EventEmitter implicit * mappers', (done) => {
   const events: IEmitter = new EventEmitter();
-  events.map(payload => {
+  events.map((payload) => {
     return {...payload, a: true};
   });
-  events.map('test', payload => {
+  events.map('test', (payload) => {
     return {...payload, b: true};
   });
-  events.on('test', payload => {
+  events.on('test', (payload) => {
     expect(payload).toStrictEqual({
       a: true,
       b: true,
@@ -97,7 +97,7 @@ test('Base EventEmitter * handlers', () => {
     calledGlobal = true;
   });
 
-  events.on('test', payload => {
+  events.on('test', (payload) => {
     expect(payload).toStrictEqual({
       c: true,
     });
@@ -120,7 +120,7 @@ test('Base EventEmitter implicit * handlers', () => {
     calledGlobal = true;
   });
 
-  events.on('test', payload => {
+  events.on('test', (payload) => {
     expect(payload).toStrictEqual({
       c: true,
     });

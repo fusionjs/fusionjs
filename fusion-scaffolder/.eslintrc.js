@@ -1,6 +1,8 @@
+/* eslint-env node */
+// @flow
 module.exports = {
   root: true,
-  extends: [require.resolve('eslint-config-fusion')],
+  extends: ['../linter/.eslintrc.js'],
   env: {
     node: true,
   },
