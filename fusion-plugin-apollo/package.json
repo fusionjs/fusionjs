@@ -13,7 +13,8 @@
     "apollo-link-http": "^1.5.15",
     "apollo-link-schema": "^1.2.3",
     "apollo-server-koa": "^2.7.0",
-    "koa-compose": "^4.1.0"
+    "koa-compose": "^4.1.0",
+    "fusion-plugin-universal-events": "0.0.0-monorepo"
   },
   "devDependencies": {
     "@apollo/react-common": "^3.1.3",
