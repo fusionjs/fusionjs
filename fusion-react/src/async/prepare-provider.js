@@ -14,15 +14,18 @@ class PrepareProvider extends React.Component<*, *> {
     super(props, context);
     this.splitComponentLoaders = [];
     this.markAsCritical = props.markAsCritical;
+    this.pushSSRMetadata = props.pushSSRMetadata;
   }
 
   splitComponentLoaders: Array<any>;
   markAsCritical: (number) => void;
+  pushSSRMetadata: (any) => void;
 
   getChildContext() {
     return {
       splitComponentLoaders: this.splitComponentLoaders,
       markAsCritical: this.markAsCritical,
+      pushSSRMetadata: this.pushSSRMetadata,
     };
   }
   render() {
@@ -33,6 +36,7 @@ class PrepareProvider extends React.Component<*, *> {
 PrepareProvider.childContextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
   markAsCritical: PropTypes.func,
+  pushSSRMetadata: PropTypes.func,
 };
 
 export default PrepareProvider;

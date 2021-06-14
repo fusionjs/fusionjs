@@ -1,0 +1,7 @@
+Object.defineProperty(import("./foo.js"), "__FUSION_DYNAMIC_IMPORT_METADATA__", {
+  "value": {
+    "version": 1,
+    "origin": "build/babel-plugins/babel-plugin-instrument-dynamic-import/test/fixtures/input-basic",
+    "target": "./foo.js"
+  }
+});

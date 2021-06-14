@@ -113,6 +113,15 @@ export default function withAsyncComponent<Config>({
         });
       }
 
+      if (__NODE__ && context.pushSSRMetadata) {
+        if (componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__) {
+          context.pushSSRMetadata({
+            type: 'critical-dynamic-import',
+            data: componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__,
+          });
+        }
+      }
+
       const loadPromises = [
         componentPromise,
         ...context.splitComponentLoaders.map((loader) =>

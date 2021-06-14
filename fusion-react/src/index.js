@@ -98,8 +98,23 @@ export default class App extends FusionApp {
                 }
               }
             : noop;
+
+          // This is used to collect arbitrary metadata during a given SSR
+          // The primary use case is to collect bundler-specific information
+          // about import() statements encountered during SSR so that async
+          // bundle-split client code can be preloaded/fetched appropriately
+          ctx.ssrMetadata = [];
+          const pushSSRMetadata = __NODE__
+            ? (metadata) => {
+                ctx.ssrMetadata.push(metadata);
+              }
+            : noop;
+
           ctx.element = (
-            <PrepareProvider markAsCritical={markAsCritical}>
+            <PrepareProvider
+              markAsCritical={markAsCritical}
+              pushSSRMetadata={pushSSRMetadata}
+            >
               <FusionContext.Provider value={ctx}>
                 <ServiceContext.Provider value={getService}>
                   {ctx.element}
