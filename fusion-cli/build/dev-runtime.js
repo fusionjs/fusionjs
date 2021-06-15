@@ -148,8 +148,9 @@ module.exports.DevelopmentRuntime = function (
         logAndSend(new Error(\`No entry found at \${entry}\`));
       }
     `;
-    if (experimentalSkipRedundantServerReloads && (await exists(entryFile))) {
-      const entryFileStats = await stat(entryFile);
+    const fpath = path.join(dir, entryFile);
+    if (experimentalSkipRedundantServerReloads && (await exists(fpath))) {
+      const entryFileStats = await stat(fpath);
       if (
         entryFileStats.mtime.toString() ===
           entryFileLastModifiedTime.toString() &&
