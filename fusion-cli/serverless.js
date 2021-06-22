@@ -18,7 +18,7 @@ module.exports = (args /*: ?Options */) => {
   )).default;
   const handlerPromise = getHandler(dir);
   return (req /*: any */, res /*: any */) => {
-    return handlerPromise.then(h => {
+    return handlerPromise.then((h) => {
       return h(req, res);
     });
   };

@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CDP = require('chrome-remote-interface');
-const spawn = require('child_process').spawn;
+const {spawn} = require('child_process');
 
 const {promisify} = require('util');
 const {cmd} = require('../utils.js');
@@ -15,7 +15,6 @@ const readFile = promisify(fs.readFile);
 
 const countTests = require('./fixture/src/count-tests');
 
-const runnerPath = require.resolve('fusion-cli/bin/cli-runner');
 const jestConfigPath = require.resolve('fusion-cli/build/jest/jest-config.js');
 
 const dir = path.resolve(__dirname, './fixture');
@@ -386,31 +385,35 @@ test('`fusion test` writes results to disk based on env var', async () => {
 });
 
 async function triggerCodeStep() {
-  return new Promise(resolve => {
-    CDP({port: '9229'}, async client => {
+  return new Promise((resolve) => {
+    CDP({port: '9229'}, async (client) => {
       const {Runtime} = client;
       await Runtime.runIfWaitingForDebugger();
       await client.close();
       resolve();
-    }).on('error', err => {
+    }).on('error', (err) => {
       throw err;
     });
   });
 }
 
-test('`fusion test --debug --env=jsdom,node`', async () => {
-  const args = `test --dir=${dir} --configPath=${jestConfigPath} --debug --env=jsdom,node  --match=passes`;
-
-  const cmd = `require('${runnerPath}').run('node ${runnerPath} ${args}')`;
+test('`fusion test --env=jsdom,node`', async () => {
+  const binPath = require.resolve('fusion-cli/bin/cli.js');
   const stderrLines = [];
-  const child = spawn('node', ['-e', cmd]);
+  const child = spawn(
+    'node',
+    `${binPath} test --dir=${dir} --configPath=${jestConfigPath} --debug --env=jsdom,node  --match=passes`.split(
+      ' '
+    ),
+    {stdio: 'pipe'}
+  );
 
   const listenAddresses = {};
   let numResults = 0;
 
-  let completed = new Promise(resolve => {
+  let completed = new Promise((resolve) => {
     child.stderr &&
-      child.stderr.on('data', data => {
+      child.stderr.on('data', (data) => {
         const line = data.toString();
         // eslint-disable-next-line no-console
         console.log(` - received spawn line: ${line}`);
@@ -433,9 +436,9 @@ test('`fusion test --debug --env=jsdom,node`', async () => {
   // Poll until we get a listener message.
   async function checkStartedMessageCount(count) {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       while (Object.keys(listenAddresses).length < count) {
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 100));
       }
       resolve();
     });

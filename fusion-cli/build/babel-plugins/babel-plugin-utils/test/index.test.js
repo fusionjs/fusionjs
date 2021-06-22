@@ -15,7 +15,7 @@ const createNamedModuleVisitor = require('../visit-named-module');
 const replaceImportDeclaration = require('../replace-import-declaration');
 
 function createTestPlugin(handler) {
-  return babel => {
+  return (babel) => {
     const visitor = createNamedModuleVisitor(
       babel.types,
       'foo',
@@ -62,7 +62,7 @@ test('import case', () => {
 });
 
 test('replace import declaration from named module with variable declarations', () => {
-  const plugin = babel => {
+  const plugin = (babel) => {
     const visitor = replaceImportDeclaration(babel.types, 'bar');
     return {visitor};
   };

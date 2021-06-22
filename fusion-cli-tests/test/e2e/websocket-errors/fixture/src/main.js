@@ -1,8 +1,8 @@
 // @noflow
-import App, {HttpServerToken, createPlugin} from 'fusion-core';
+import App from 'fusion-core';
 
-export default async function() {
-  const app = new App('test', el => el);
+export default async function () {
+  const app = new App('test', (el) => el);
   if (__NODE__) {
     app.middleware((ctx, next) => {
       if (ctx.url === '/health') {

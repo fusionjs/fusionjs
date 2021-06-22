@@ -12,7 +12,7 @@ import type {Context} from 'fusion-core';
 
 import I18n from '../src/browser';
 
-test('hydration', done => {
+test('hydration', (done) => {
   const hydrationState = {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${adjective} ${noun}'},
@@ -51,7 +51,7 @@ test('hydration', done => {
   done();
 });
 
-test('hydration from element', done => {
+test('hydration from element', (done) => {
   const hydrationState = {
     chunks: [0],
     translations: {test: 'hello', interpolated: 'hi ${value}'},
@@ -76,7 +76,7 @@ test('hydration from element', done => {
   done();
 });
 
-test('hydration parse error', done => {
+test('hydration parse error', (done) => {
   const translations = document.createElement('script');
   translations.setAttribute('type', 'application/json');
   translations.setAttribute('id', '__TRANSLATIONS__');
@@ -101,7 +101,7 @@ test('hydration parse error', done => {
   done();
 });
 
-test('hydration missing element error', done => {
+test('hydration missing element error', (done) => {
   expect.assertions(1);
   if (!I18n.provides) {
     done();
@@ -119,7 +119,7 @@ test('hydration missing element error', done => {
   done();
 });
 
-test('load', done => {
+test('load', (done) => {
   let called = false;
   const hydrationState = {
     chunks: [],

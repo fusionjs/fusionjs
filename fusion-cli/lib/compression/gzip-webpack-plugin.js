@@ -13,9 +13,11 @@
 const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = new CompressionPlugin({
-  filename: '[path].gz',
+  filename: '[file].gz',
   algorithm: 'gzip',
   test: /\.js$/,
+  // There's no need to compress server bundle
+  exclude: 'server-main.js',
   threshold: 0,
   minRatio: 1,
 });

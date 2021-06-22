@@ -11,7 +11,7 @@ import puppeteer from 'puppeteer';
 import getPort from 'get-port';
 import child_process from 'child_process';
 import {promisify} from 'util';
-import request from 'request-promise';
+import axios from 'axios';
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
@@ -69,8 +69,8 @@ export const Runtime = class Runtime {
 
     this.started = true;
     if (this.collectLogs) {
-      this.page.on('console', msg =>
-        msg.args().forEach(async arg => {
+      this.page.on('console', (msg) =>
+        msg.args().forEach(async (arg) => {
           console.log(await arg.jsonValue()); // eslint-disable-line
         })
       );
@@ -78,7 +78,7 @@ export const Runtime = class Runtime {
   }
   request(path) {
     const url = `${this.url}${path.startsWith('/') ? path : `/${path}`}`;
-    return request(url);
+    return axios(url);
   }
   async end() {
     if (this.started) {
@@ -98,7 +98,7 @@ async function untilReady(page, port) {
       started = true;
     } catch (e) {
       numTries++;
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         setTimeout(resolve, Math.pow(2, numTries));
       });
     }

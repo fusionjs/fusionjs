@@ -15,10 +15,7 @@ cli
   .describe('List of all DI tokens in order of resolution')
   .action(logs(tokens));
 
-cli
-  .command('why <token>')
-  .describe('How a DI token is used')
-  .action(logs(why));
+cli.command('why <token>').describe('How a DI token is used').action(logs(why));
 
 cli
   .command('where <token>')

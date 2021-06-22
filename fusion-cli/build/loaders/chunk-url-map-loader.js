@@ -14,11 +14,10 @@ const {clientChunkMetadataContextKey} = require('./loader-context.js');
 
 module.exports = function chunkUrlMapLoader() {
   this.cacheable(false);
-  const chunkMetadataState /*: ClientChunkMetadataContext*/ = this[
-    clientChunkMetadataContextKey
-  ];
+  const chunkMetadataState /*: ClientChunkMetadataContext*/ =
+    this[clientChunkMetadataContextKey];
   const callback = this.async();
-  chunkMetadataState.result.then(chunkMetadata => {
+  chunkMetadataState.result.then((chunkMetadata) => {
     callback(null, generateSource(chunkMetadata.urlMap));
   });
 };
@@ -26,7 +25,7 @@ module.exports = function chunkUrlMapLoader() {
 function generateSource(chunkUrlMap) {
   return `module.exports = new Map(
     ${JSON.stringify(
-      Array.from(chunkUrlMap.entries()).map(entry => {
+      Array.from(chunkUrlMap.entries()).map((entry) => {
         return [entry[0], Array.from(entry[1].entries())];
       })
     )}.map(entry => { //[number, Map<string,string>]

@@ -25,7 +25,7 @@ import createMockEmitter from './create-mock-emitter';
 const MOCK_JSON_PARAMS = {test: 'test-args'};
 
 const mockService: RPCServiceType = getService(() => {
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   const mockEmitter: IEmitter = (new MockEmitter(): any);
   // $FlowFixMe
   mockEmitter.from = () => mockEmitter;
@@ -47,7 +47,7 @@ function createTestFixture() {
     provides: () => mockEmitter,
   });
 
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, mockHandlers);
   app.register(RPCToken, RPCPlugin);
@@ -103,7 +103,7 @@ test('service - requires ctx', () => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('service - request api', async done => {
+test('service - request api', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -131,7 +131,7 @@ test('service - request api', async done => {
   });
 
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(UniversalEventsToken, mockEmitter);
     app.register(RPCToken, RPCPlugin);
     app.register(RPCHandlersToken, mockHandlers);
@@ -158,7 +158,7 @@ test('service - request api', async done => {
   }
 });
 
-test('service - request api with failing request', async done => {
+test('service - request api with failing request', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -186,7 +186,7 @@ test('service - request api with failing request', async done => {
   });
 
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(UniversalEventsToken, mockEmitter);
     app.register(RPCHandlersToken, mockHandlers);
     return app;
@@ -202,7 +202,7 @@ test('service - request api with failing request', async done => {
   done();
 });
 
-test('service - request api with invalid endpoint', async done => {
+test('service - request api with invalid endpoint', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -224,7 +224,7 @@ test('service - request api with invalid endpoint', async done => {
   });
 
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(UniversalEventsToken, mockEmitter);
     app.register(RPCHandlersToken, mockHandlers);
     return app;
@@ -260,7 +260,7 @@ test('FusionJS - middleware resolves', async () => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('middleware - invalid endpoint', async done => {
+test('middleware - invalid endpoint', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -317,7 +317,7 @@ test('middleware - invalid endpoint', async done => {
   }
 });
 
-test('middleware - valid endpoint', async done => {
+test('middleware - valid endpoint', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -387,7 +387,7 @@ test('middleware - valid endpoint', async done => {
   }
 });
 
-test('middleware - valid endpoint (custom api path)', async done => {
+test('middleware - valid endpoint (custom api path)', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -453,7 +453,7 @@ test('middleware - valid endpoint (custom api path)', async done => {
   }
 });
 
-test('middleware - valid endpoint (custom api path including slashes)', async done => {
+test('middleware - valid endpoint (custom api path including slashes)', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -519,7 +519,7 @@ test('middleware - valid endpoint (custom api path including slashes)', async do
   }
 });
 
-test('middleware - valid endpoint with route prefix', async done => {
+test('middleware - valid endpoint with route prefix', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '/lol',
@@ -576,7 +576,7 @@ test('middleware - valid endpoint with route prefix', async done => {
   }
 });
 
-test('middleware - valid endpoint failure with ResponseError', async done => {
+test('middleware - valid endpoint failure with ResponseError', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -646,7 +646,7 @@ test('middleware - valid endpoint failure with ResponseError', async done => {
   }
 });
 
-test('middleware - valid endpoint failure with standard error', async done => {
+test('middleware - valid endpoint failure with standard error', async (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -720,7 +720,7 @@ test('middleware - valid endpoint failure with standard error', async done => {
   }
 });
 
-test('throws when not passed ctx', async done => {
+test('throws when not passed ctx', async (done) => {
   const app = createTestFixture();
 
   expect.assertions(1);
@@ -728,16 +728,18 @@ test('throws when not passed ctx', async done => {
     app,
     createPlugin({
       deps: {rpcFactory: RPCToken},
-      middleware: ({rpcFactory}) => async () => {
-        // $FlowFixMe
-        expect(() => rpcFactory.from()).toThrow();
-        done();
-      },
+      middleware:
+        ({rpcFactory}) =>
+        async () => {
+          // $FlowFixMe
+          expect(() => rpcFactory.from()).toThrow();
+          done();
+        },
     })
   ).request('/');
 });
 
-test('middleware - bodyparser options with very small jsonLimit', async done => {
+test('middleware - bodyparser options with very small jsonLimit', async (done) => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -745,7 +747,8 @@ test('middleware - bodyparser options with very small jsonLimit', async done => 
     path: '/api/test',
     method: 'POST',
     request: {
-      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+      is: (mineTypes) =>
+        mineTypes.some((mineType) => mineType.includes('json')),
     },
   }: any);
   let executedHandler = false;
@@ -802,7 +805,7 @@ test('middleware - bodyparser options with very small jsonLimit', async done => 
   }
 });
 
-test('middleware - bodyparser options with default jsonLimit', async done => {
+test('middleware - bodyparser options with default jsonLimit', async (done) => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -810,7 +813,8 @@ test('middleware - bodyparser options with default jsonLimit', async done => {
     path: '/api/test',
     method: 'POST',
     request: {
-      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+      is: (mineTypes) =>
+        mineTypes.some((mineType) => mineType.includes('json')),
     },
   }: any);
 
@@ -856,7 +860,7 @@ test('middleware - bodyparser options with default jsonLimit', async done => {
   }
 });
 
-test('middleware - parse formData', async done => {
+test('middleware - parse formData', async (done) => {
   const form = new FormData();
   form.append('name', 'test');
   const req = new MockReq({
@@ -878,7 +882,8 @@ test('middleware - parse formData', async done => {
     path: '/api/test',
     method: 'POST',
     request: {
-      is: mineTypes => mineTypes.some(mineType => mineType.includes('json')),
+      is: (mineTypes) =>
+        mineTypes.some((mineType) => mineType.includes('json')),
     },
   }: any);
 

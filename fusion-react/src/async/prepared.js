@@ -18,83 +18,82 @@ type PreparedOpts = {
   forceUpdate?: boolean,
 };
 
-const prepared = (
-  sideEffect: (any, any) => any | Promise<any>,
-  opts?: PreparedOpts = {}
-) => <Config>(
-  OriginalComponent: React.ComponentType<Config>
-): React.ComponentType<{...Config, effectId?: string}> => {
-  opts = Object.assign(
-    {
-      boundary: false,
-      defer: false,
-      componentDidMount: true,
-      componentWillReceiveProps: false,
-      componentDidUpdate: false,
-      contextTypes: {},
-      forceUpdate: false,
-    },
-    opts
-  );
+const prepared =
+  (sideEffect: (any, any) => any | Promise<any>, opts?: PreparedOpts = {}) =>
+  <Config>(
+    OriginalComponent: React.ComponentType<Config>
+  ): React.ComponentType<{...Config, effectId?: string}> => {
+    opts = Object.assign(
+      {
+        boundary: false,
+        defer: false,
+        componentDidMount: true,
+        componentWillReceiveProps: false,
+        componentDidUpdate: false,
+        contextTypes: {},
+        forceUpdate: false,
+      },
+      opts
+    );
 
-  class PreparedComponent extends React.Component<any> {
-    componentDidMount() {
-      if (opts.componentDidMount) {
-        Promise.resolve(sideEffect(this.props, this.context)).then(() => {
-          if (opts.forceUpdate) {
-            this.forceUpdate();
+    class PreparedComponent extends React.Component<any> {
+      componentDidMount() {
+        if (opts.componentDidMount) {
+          Promise.resolve(sideEffect(this.props, this.context)).then(() => {
+            if (opts.forceUpdate) {
+              this.forceUpdate();
+            }
+          });
+        }
+      }
+
+      UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+        if (opts.componentWillReceiveProps) {
+          sideEffect(nextProps, nextContext);
+        }
+      }
+
+      componentDidUpdate() {
+        if (opts.componentDidUpdate) {
+          sideEffect(this.props, this.context);
+        }
+      }
+
+      render() {
+        const effectId = this.props.effectId || 'defaultId';
+        const prepareState = this.context.__PREPARE_STATE__;
+        if (prepareState) {
+          if (opts.defer || opts.boundary) {
+            // skip prepare if defer or boundary
+            return null;
           }
-        });
-      }
-    }
 
-    UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
-      if (opts.componentWillReceiveProps) {
-        sideEffect(nextProps, nextContext);
-      }
-    }
+          const isResolved = prepareState.isResolved(
+            PreparedComponent,
+            effectId,
+            () => sideEffect(this.props, this.context)
+          );
 
-    componentDidUpdate() {
-      if (opts.componentDidUpdate) {
-        sideEffect(this.props, this.context);
-      }
-    }
-
-    render() {
-      const effectId = this.props.effectId || 'defaultId';
-      const prepareState = this.context.__PREPARE_STATE__;
-      if (prepareState) {
-        if (opts.defer || opts.boundary) {
-          // skip prepare if defer or boundary
-          return null;
+          if (!isResolved) {
+            // Wait until resolved
+            return null;
+          }
         }
 
-        const isResolved = prepareState.isResolved(
-          PreparedComponent,
-          effectId,
-          () => sideEffect(this.props, this.context)
-        );
-
-        if (!isResolved) {
-          // Wait until resolved
-          return null;
-        }
+        return <OriginalComponent {...this.props} />;
       }
-
-      return <OriginalComponent {...this.props} />;
     }
-  }
 
-  PreparedComponent.contextTypes = {
-    __PREPARE_STATE__: () => {},
-    ...opts.contextTypes,
+    PreparedComponent.contextTypes = {
+      __PREPARE_STATE__: () => {},
+      ...opts.contextTypes,
+    };
+
+    const displayName =
+      OriginalComponent.displayName || OriginalComponent.name || '';
+    PreparedComponent.displayName = `PreparedComponent(${displayName})`;
+
+    return PreparedComponent;
   };
-
-  const displayName =
-    OriginalComponent.displayName || OriginalComponent.name || '';
-  PreparedComponent.displayName = `PreparedComponent(${displayName})`;
-
-  return PreparedComponent;
-};
 
 export default prepared;

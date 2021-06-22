@@ -57,7 +57,7 @@ export default async function loadApp(dir /*: string */ = '.') {
     if (prefix) {
       stripRoutePrefix(req, prefix);
     }
-    appHandler(req, res).catch(e => {
+    appHandler(req, res).catch((e) => {
       app.onerror(e);
     });
   };

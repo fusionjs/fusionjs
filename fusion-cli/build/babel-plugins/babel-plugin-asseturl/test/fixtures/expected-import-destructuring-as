@@ -1,4 +1,4 @@
 import { assetUrl as frameworkAssetUrl } from 'fusion-core';
 import assetUrl from 'assetURL';
 assetUrl('./path');
-frameworkAssetUrl(require("__SECRET_FILE_LOADER__?assetUrl=true!./path"));
+frameworkAssetUrl(require("__SECRET_FILE_LOADER__!./path?assetUrl=true"));

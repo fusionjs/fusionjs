@@ -48,7 +48,7 @@ const getWorker = (file, content, options) => {
 
 module.exports = function loader() {};
 
-module.exports.pitch = function(request /* : any*/) {
+module.exports.pitch = function (request /* : any*/) {
   const options = loaderUtils.getOptions(this) || {};
 
   if (!this.webpack) {
@@ -64,7 +64,7 @@ module.exports.pitch = function(request /* : any*/) {
 
   const filename = loaderUtils.interpolateName(
     this,
-    options.name || '[hash].worker.js',
+    options.name || '[contenthash].worker.js',
     {
       context: options.context || this.rootContext || this.options.context,
       regExp: options.regExp,
@@ -81,7 +81,7 @@ module.exports.pitch = function(request /* : any*/) {
   };
 
   worker.compiler = this._compilation.createChildCompiler(
-    'worker',
+    `worker-${this._compiler.name}`,
     worker.options
   );
 
@@ -93,7 +93,7 @@ module.exports.pitch = function(request /* : any*/) {
 
   const subCache = `subcache ${__dirname} ${request}`;
 
-  worker.compilation = compilation => {
+  worker.compilation = (compilation) => {
     if (compilation.cache) {
       if (!compilation.cache[subCache]) {
         compilation.cache[subCache] = {};

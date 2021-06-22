@@ -24,7 +24,7 @@
     "prettier": "^1.18.2"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "yarn g:lint",
     "test": "echo ok",
     "build": "echo ok",
     "flow": "flow check"

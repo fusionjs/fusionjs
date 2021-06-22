@@ -18,7 +18,7 @@ module.exports = function i18nManifestLoader() {
     return void callback('no i18n manifest');
   }
 
-  i18nManifest.result.then(manifest => {
+  i18nManifest.result.then((manifest) => {
     return void callback(null, generateSource(manifest));
   });
 };
@@ -49,5 +49,5 @@ function generateSource(manifest) {
 }
 
 function chunkIdsForPath(path) {
-  return `require("__SECRET_CHUNK_ID_LOADER__!${path}")`;
+  return `require("__SECRET_CHUNK_ID_LOADER__?path=${path}!")`;
 }

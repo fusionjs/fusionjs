@@ -11,6 +11,7 @@ import I18n from './plugin';
 export {
   I18nToken,
   I18nLoaderToken,
+  I18nTranslateFnsToken,
   HydrationStateToken,
   createI18nLoader,
 } from 'fusion-plugin-i18n';

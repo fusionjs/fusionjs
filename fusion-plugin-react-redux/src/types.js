@@ -31,9 +31,7 @@ export type ReactReduxDepsType = {
 };
 
 export type ReactReduxServiceType = {
-  from: (
-    ctx?: Context
-  ) => {
+  from: (ctx?: Context) => {
     ctx?: Context,
     store: StoreWithContextType<*, *, *>,
     initStore?: () => Promise<StoreWithContextType<*, *, *>>,

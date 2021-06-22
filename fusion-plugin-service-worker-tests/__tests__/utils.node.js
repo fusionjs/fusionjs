@@ -20,8 +20,8 @@ export async function startServer(customEnvVariables: any) {
   };
 
   const proc = spawn(
-    path.resolve(__dirname, '../node_modules/.bin/fusion'),
-    ['dev', '--port', port, '--no-open'],
+    'yarn',
+    ['fusion', 'dev', '--port', port, '--no-open'],
     opts
   );
   const stdoutLines = [];
@@ -42,7 +42,7 @@ export async function startServer(customEnvVariables: any) {
       console.log({stdout, stderr, code});
     }
   });
-  proc.on('error', e => {
+  proc.on('error', (e) => {
     // eslint-disable-next-line no-console
     console.log(e);
   });
@@ -52,7 +52,7 @@ export async function startServer(customEnvVariables: any) {
   let numTries = 0;
   let res, initialResponse;
   while (!started && numTries < 20) {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     try {
       res = await fetch(`http://localhost:${port}/`, {
         headers: {accept: 'text/html'},
@@ -72,14 +72,14 @@ export async function startServer(customEnvVariables: any) {
 
 export async function logCachedURLs(page: Page, label: string) {
   await page.evaluate(
-    label =>
+    (label) =>
       window.caches
         .open('0.0.0')
-        .then(cache => cache.keys())
-        .then(keys =>
+        .then((cache) => cache.keys())
+        .then((keys) =>
           console.log(
             `${label}#${keys
-              .map(key => key.url)
+              .map((key) => key.url)
               .filter(Boolean)
               .join(',')}`
           )
@@ -89,14 +89,14 @@ export async function logCachedURLs(page: Page, label: string) {
 }
 
 export async function logCacheDates(page: Page, label: string) {
-  await page.evaluate(async label => {
+  await page.evaluate(async (label) => {
     const cache = await window.caches.open('0.0.0');
     const requests = await cache.keys();
     const responses = await Promise.all(
-      requests.map(request => cache.match(request))
+      requests.map((request) => cache.match(request))
     );
     console.log(
-      `${label}#${responses.map(res =>
+      `${label}#${responses.map((res) =>
         new Date(res.headers.get('date')).getTime()
       )}`
     );

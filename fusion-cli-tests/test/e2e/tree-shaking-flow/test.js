@@ -19,9 +19,9 @@ test('`fusion build` strips unused types in dev and correctly tree shakes remain
   const clientFiles = await readdir(distFolder);
 
   clientFiles
-    .filter(file => path.extname(file) === '.js')
-    .map(file => path.join(distFolder, file))
-    .forEach(file => {
+    .filter((file) => path.extname(file) === '.js')
+    .map((file) => path.join(distFolder, file))
+    .forEach((file) => {
       const unusedChecks = [
         // userland
         'UnusedUserlandType',
@@ -34,7 +34,7 @@ test('`fusion build` strips unused types in dev and correctly tree shakes remain
         '__FIXTURE_DEPENDENCY_UNUSED__',
       ];
 
-      unusedChecks.forEach(name => {
+      unusedChecks.forEach((name) => {
         t.ok(
           !fs.readFileSync(file, 'utf-8').includes(name),
           `should not include unused export in browser: ${name}`

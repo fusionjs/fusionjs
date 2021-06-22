@@ -177,7 +177,7 @@ class NodePerformanceEmitter {
         'Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
-    this.gc.on('stats', stats => {
+    this.gc.on('stats', (stats) => {
       this.emit('timing:gc', {
         duration: stats.pauseMS,
         type: stats.gctype,
@@ -261,7 +261,7 @@ const plugin =
 
       return service;
     },
-    cleanup: async service => service.stop(),
+    cleanup: async (service) => service.stop(),
   });
 
 export default ((plugin: any): FusionPlugin<Deps, NodePerformanceEmitter>);

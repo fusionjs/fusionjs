@@ -1,0 +1,8 @@
+{
+  "name": "fusion-cli-tests-fixtures",
+  "private": true,
+  "workspaces": [
+    "fixtures/node_modules/fixture-macro-pkg",
+    "fixtures/node_modules/fixture-es2017-pkg"
+  ]
+}

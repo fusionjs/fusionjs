@@ -12,7 +12,9 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 
-exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
+exports.run = async function (
+  {dir = '.', environment, port, debug} /*: any */
+) {
   if (debug && !process.env.__FUSION_DEBUGGING__) {
     const command = process.argv.shift();
     const args = process.argv;
@@ -26,14 +28,14 @@ exports.run = async function({dir = '.', environment, port, debug} /*: any */) {
     });
   }
 
-  const getEntry = env => {
+  const getEntry = (env) => {
     const entryPath = `.fusion/dist/${env}/server/server-main.js`;
     return path.resolve(dir, entryPath);
   };
 
   const env = environment
     ? fs.existsSync(getEntry(environment)) && environment
-    : ['development', 'production'].find(e => fs.existsSync(getEntry(e)));
+    : ['development', 'production'].find((e) => fs.existsSync(getEntry(e)));
 
   if (env) {
     const entry = getEntry(env);

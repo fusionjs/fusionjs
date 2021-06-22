@@ -30,7 +30,7 @@ Enzyme.configure({adapter: new Adapter()});
 
 /* Test fixtures */
 const appCreator = (reducer, preloadedState, enhancer, reduxDevToolsConfig) => {
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
   if (reducer) {
     app.register(ReducerToken, reducer);
   }
@@ -127,7 +127,7 @@ test('browser with undefined __REDUX_STATE__ element', () => {
   reduxState.setAttribute('id', '__REDUX_STATE__');
   reduxState.textContent = serialize(undefined);
   document.body && document.body.appendChild(reduxState);
-  const reducer = state => state;
+  const reducer = (state) => state;
   const {store} = getService(appCreator(reducer), Redux).from();
   expect(store.getState()).toStrictEqual(undefined);
   document.body && document.body.removeChild(reduxState);
@@ -143,7 +143,7 @@ test('browser with enhancer', () => {
     };
   };
   let enhancerCalls = 0;
-  const enhancer = createStore => {
+  const enhancer = (createStore) => {
     enhancerCalls++;
     expect(typeof createStore).toBe('function');
     return (...args) => {
@@ -176,7 +176,7 @@ test('browser with devtools enhancer', () => {
     };
   };
   let enhancerCalls = 0;
-  window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
     enhancerCalls++;
     expect(typeof createStore).toBe('function');
     return (...args) => {
@@ -202,7 +202,7 @@ test('browser with devtools enhancer with custom devToolsConfig', () => {
   };
   let enhancerCalls = 0;
   let devToolsInitArg = null;
-  window.__REDUX_DEVTOOLS_EXTENSION__ = initArg => createStore => {
+  window.__REDUX_DEVTOOLS_EXTENSION__ = (initArg) => (createStore) => {
     devToolsInitArg = initArg;
     enhancerCalls++;
     expect(typeof createStore).toBe('function');
@@ -213,7 +213,7 @@ test('browser with devtools enhancer with custom devToolsConfig', () => {
   };
   // https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#actionsanitizer--statesanitizer
   const customReduxDevtoolsConfig = {
-    actionSanitizer: action => action,
+    actionSanitizer: (action) => action,
   };
   const {store} = getService(
     appCreator(reducer, null, null, customReduxDevtoolsConfig),
@@ -238,7 +238,7 @@ test('browser with devtools enhancer, and devToolsConfig set to false', () => {
     };
   };
   let enhancerCalls = 0;
-  window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
     enhancerCalls++;
   };
   const {store} = getService(
@@ -262,7 +262,7 @@ test('browser with devtools enhancer and normal enhancer', () => {
   };
   let devtoolsEnhancerCalls = 0;
   let enhancerCalls = 0;
-  window.__REDUX_DEVTOOLS_EXTENSION__ = () => createStore => {
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
     devtoolsEnhancerCalls++;
     expect(typeof createStore).toBe('function');
     return (...args) => {
@@ -270,7 +270,7 @@ test('browser with devtools enhancer and normal enhancer', () => {
       return createStore(...args);
     };
   };
-  const enhancer = createStore => {
+  const enhancer = (createStore) => {
     enhancerCalls++;
     expect(typeof createStore).toBe('function');
     return (...args) => {
@@ -297,7 +297,7 @@ test('browser middleware', async () => {
     expect(typeof props.dispatch).toBe('function');
     return React.createElement('div');
   }
-  const Connected = connect(state => state)(Component);
+  const Connected = connect((state) => state)(Component);
   const element = React.createElement(Connected);
   const ctx = {element};
   const Plugin = getService(appCreator(reducer), Redux);

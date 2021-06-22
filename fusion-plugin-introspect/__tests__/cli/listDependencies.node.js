@@ -2,7 +2,7 @@
 import {listDependencies} from '../../src/cli/listDependencies.js';
 
 test('listDependencies', () => {
-  const dep = name => ({name, type: 'both', sources: [], dependencies: []});
+  const dep = (name) => ({name, type: 'both', sources: [], dependencies: []});
   const deps = listDependencies([
     {timestamp: 0, dependencies: [dep('foo'), dep('hello')]},
     {timestamp: 0, dependencies: [dep('bar'), dep('foobar')]},

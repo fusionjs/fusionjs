@@ -26,7 +26,7 @@ if (__NODE__) {
     '\u2028': '\\u2028',
     '\u2029': '\\u2029',
   };
-  const replaceForbidden = c => forbiddenChars[c];
+  const replaceForbidden = (c) => forbiddenChars[c];
 
   const key = Symbol('sanitized html');
   html = (
@@ -53,7 +53,7 @@ if (__NODE__) {
     return h[key];
   };
 }
-const replaceEscaped = c => String.fromCodePoint(parseInt(c.slice(2), 16));
+const replaceEscaped = (c) => String.fromCodePoint(parseInt(c.slice(2), 16));
 const unescape = (str: string): string => {
   return str.replace(
     /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029|\\u0026/g,

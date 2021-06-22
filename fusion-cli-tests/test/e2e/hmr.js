@@ -6,11 +6,24 @@ const t = require('assert');
 const puppeteer = require('puppeteer');
 const {dev} = require('./utils.js');
 
-module.exports = async function testHmr(dir /*: any */) {
-  const {proc, port} = await dev(`--dir=${dir}`);
+module.exports = async function testHmr(
+  dir /*: any */,
+  skipServerReload /*: boolean */ = false
+) {
+  const options = skipServerReload
+    ? {
+        stdio: 'pipe',
+      }
+    : undefined;
+  const {proc, port, promise} = await dev(
+    `--dir=${dir} ${
+      skipServerReload ? '--experimentalSkipRedundantServerReloads' : ''
+    }`,
+    options
+  );
 
   // Watcher doesn't pick up changes immediately
-  await new Promise(res => setTimeout(res, 500));
+  await new Promise((res) => setTimeout(res, 500));
 
   const fixtureContent = fs.readFileSync(
     path.resolve(dir, 'src/home.js'),
@@ -49,5 +62,12 @@ module.exports = async function testHmr(dir /*: any */) {
   fs.writeFileSync(path.resolve(dir, 'src/home.js'), fixtureContent);
 
   await browser.close();
-  proc.kill('SIGKILL');
+  proc.kill('SIGTERM');
+  if (skipServerReload) {
+    const {stdout} = await promise;
+    t.ok(
+      stdout.includes('Server bundle not changed, skipping server restart'),
+      'Server was expected to skip restart but did not.'
+    );
+  }
 };

@@ -11,6 +11,6 @@ import {SessionToken} from 'fusion-tokens';
 import JWTServer from '../src/index';
 
 test('registers against session token', () => {
-  const app = new App('fake-element', el => el);
+  const app = new App('fake-element', (el) => el);
   app.register(SessionToken, JWTServer);
 });

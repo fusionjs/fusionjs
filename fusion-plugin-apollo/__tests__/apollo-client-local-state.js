@@ -21,7 +21,7 @@ import {
 } from '../src/apollo-client/index.js';
 
 test('local state management', async () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(ApolloClientToken, ApolloClientPlugin);
   app.register(
     GraphQLSchemaToken,

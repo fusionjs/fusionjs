@@ -153,7 +153,7 @@ type I18nLoader = {
 
 * `loader.from: (ctx) => ({locale, translations})` -
   * `ctx: FusionContext` - Required. A [Fusion.JS context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context) object.
-  * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  * `locale: string | Locale` - The default i18n loader returns the [Locale](https://www.npmjs.com/package/locale) class here, but strings are also supported if you write your own loader.
   * `translations: {[string]: string}` - A object that maps translation keys to translated values for the given locale
 
 ###### Default value

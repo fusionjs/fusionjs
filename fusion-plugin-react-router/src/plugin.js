@@ -34,16 +34,13 @@ type ProviderPropsType = {
 };
 
 type HistoryWrapperType = {
-  from: (
-    ctx: Context
-  ) => {
+  from: (ctx: Context) => {
     history: RouterHistoryType,
   },
 };
 
-export const GetStaticContextToken = createToken<
-  (ctx: Context) => StaticContextType
->('GetStaticContext');
+export const GetStaticContextToken =
+  createToken<(ctx: Context) => StaticContextType>('GetStaticContext');
 
 export const RouterProviderToken: Token<
   React.ComponentType<ProviderPropsType>
@@ -109,7 +106,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
           <Router
             history={history}
             Provider={Provider}
-            onRoute={d => {
+            onRoute={(d) => {
               pageData = d;
               tags.name = pageData.title;
               tags.page = pageData.page;
@@ -132,7 +129,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
 
           if (emitter) {
             const scopedEmitter = emitter.from(ctx);
-            const emitTiming = type => timing => {
+            const emitTiming = (type) => (timing) => {
               scopedEmitter.emit(type, {
                 title: pageData.routeMatched ? pageData.title : noMatchingRoute,
                 page: pageData.page,
@@ -140,13 +137,13 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
                 timing,
               });
             };
-            scopedEmitter.map(payload => {
+            scopedEmitter.map((payload) => {
               if (payload && typeof payload === 'object') {
                 payload.__url__ = pageData.title;
               }
               return payload;
             });
-            ctx.timing.end.then(timing => {
+            ctx.timing.end.then((timing) => {
               emitTiming('pageview:server')(timing);
               ctx.timing.render.then(emitTiming('render:server'));
             });
@@ -162,7 +159,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
           tags.page = pageData.page;
         }
         emitter &&
-          emitter.map(payload => {
+          emitter.map((payload) => {
             if (payload && typeof payload === 'object') {
               if (pageData.routeMatched) {
                 payload.__url__ = pageData.title;
@@ -191,7 +188,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             history={browserHistory}
             Provider={Provider}
             basename={ctx.prefix}
-            onRoute={payload => {
+            onRoute={(payload) => {
               payload.routeMatched = true;
               pageData = payload;
               tags.name = pageData.title;

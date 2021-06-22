@@ -28,14 +28,14 @@ test('`fusion build` app chunk group loading', async () => {
   const EXPECTED_PRELOADED_CHUNK_COUNT = 5;
 
   t.equal(
-    await page.$$eval('link[rel="preload"]', els => els.length),
+    await page.$$eval('link[rel="preload"]', (els) => els.length),
     EXPECTED_PRELOADED_CHUNK_COUNT
   );
 
   t.equal(
     await page.$$eval(
       'script[src]:not([type="application/json"])',
-      els => els.length
+      (els) => els.length
     ),
     EXPECTED_PRELOADED_CHUNK_COUNT
   );

@@ -14,18 +14,11 @@
     "koa-bodyparser": "^4.2.1"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "babel-eslint": "^10.0.3",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "create-universal-package": "^4.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "form-data": "3.0.0",
     "fusion-core": "0.0.0-monorepo",
@@ -35,7 +28,6 @@
     "fusion-tokens": "0.0.0-monorepo",
     "jest": "^25.1.0",
     "mock-req": "^0.2.0",
-    "prettier": "^1.19.1",
     "sinon": "^7.1.1"
   },
   "engines": {
@@ -63,12 +55,11 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "cup-build",
     "build-tests": "cup-build-tests",
     "clean": "cup-clean",
     "flow": "flow",
-    "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
+    "lint": "yarn g:lint",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

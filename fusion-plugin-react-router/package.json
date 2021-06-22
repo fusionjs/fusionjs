@@ -12,28 +12,22 @@
     "react-router-dom": "^5.1.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.8.3",
-    "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "jest": "^25.1.0",
-    "prettier": "^1.19.1",
+    "jest-resolver-fusion": "0.0.0-monorepo",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "react-router": "^5.1.0"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -52,7 +46,8 @@
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "react-router": "*"
   },
   "repository": {
     "directory": "fusion-plugin-react-router",
@@ -60,11 +55,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
-    "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
+    "lint": "yarn g:lint",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

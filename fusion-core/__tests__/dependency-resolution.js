@@ -27,7 +27,7 @@ const TokenString: Token<string> = createToken('TokenString');
 const TokenNumber: Token<number> = createToken('TokenNumber');
 
 test('dependency registration', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   expect(app).toBeTruthy();
   const counters = {
     a: 0,
@@ -49,7 +49,7 @@ test('dependency registration', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.b++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.b).toBe(1);
@@ -65,7 +65,7 @@ test('dependency registration', () => {
       a: TokenA,
       b: TokenB,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.c++;
       expect(deps.a.a).toBe('PluginA');
       expect(deps.b.b).toBe('PluginB');
@@ -82,7 +82,7 @@ test('dependency registration', () => {
   app.register(
     createPlugin({
       deps: {a: TokenA, b: TokenB, c: TokenC},
-      provides: deps => {
+      provides: (deps) => {
         counters.d++;
         expect(deps.a.a).toBe('PluginA');
         expect(deps.b.b).toBe('PluginB');
@@ -102,7 +102,7 @@ test('dependency registration', () => {
 });
 
 test('dependency registration with aliases', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   expect(app).toBeTruthy();
   const counters = {
     a: 0,
@@ -124,7 +124,7 @@ test('dependency registration with aliases', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.b++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.b).toBe(1);
@@ -140,7 +140,7 @@ test('dependency registration with aliases', () => {
       a: TokenA,
       b: TokenB,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.c++;
       expect(deps.a.a).toBe('PluginA');
       expect(deps.b.b).toBe('PluginD');
@@ -155,7 +155,7 @@ test('dependency registration with aliases', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.d++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.d).toBe(1);
@@ -181,7 +181,7 @@ test('dependency registration with aliases', () => {
 });
 
 test('optional dependency registration with aliases', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   expect(app).toBeTruthy();
   const counters = {
     a: 0,
@@ -203,7 +203,7 @@ test('optional dependency registration with aliases', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.b++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.b).toBe(1);
@@ -222,7 +222,7 @@ test('optional dependency registration with aliases', () => {
       a: TokenA,
       b: TokenB.optional,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.c++;
       expect(deps.a.a).toBe('PluginA');
       expect(deps.b && deps.b.b).toBe('PluginD');
@@ -237,7 +237,7 @@ test('optional dependency registration with aliases', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.d++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.d).toBe(1);
@@ -263,7 +263,7 @@ test('optional dependency registration with aliases', () => {
 });
 
 test('dependency registration with aliasing non-plugins', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   expect(app).toBeTruthy();
   const counters = {
     a: 0,
@@ -280,7 +280,7 @@ test('dependency registration with aliasing non-plugins', () => {
     deps: {
       a: ValueTokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.b++;
       expect(deps.a).toBe('some-value');
       expect(counters.b).toBe(1);
@@ -295,7 +295,7 @@ test('dependency registration with aliasing non-plugins', () => {
     deps: {
       a: ValueTokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       counters.c++;
       expect(deps.a).toBe('some-aliased-value');
       expect(counters.c).toBe(1);
@@ -317,7 +317,7 @@ test('dependency registration with aliasing non-plugins', () => {
 });
 
 test('dependency registration with no token', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const PluginA: FusionPlugin<void, AType> = createPlugin({
     provides: () => {
       return {
@@ -329,7 +329,7 @@ test('dependency registration with no token', () => {
     deps: {
       a: TokenA,
     },
-    provides: deps => {
+    provides: (deps) => {
       expect(deps.a.a).toBe('PluginA');
       return {
         b: 'PluginB',
@@ -342,7 +342,7 @@ test('dependency registration with no token', () => {
   app.register(
     createPlugin({
       deps: {a: TokenA, b: TokenB},
-      provides: deps => {
+      provides: (deps) => {
         expect(deps.a.a).toBe('PluginA');
         expect(deps.b.b).toBe('PluginB');
       },
@@ -358,7 +358,7 @@ test('dependency registration with middleware', () => {
     c: 0,
     d: 0,
   };
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   expect(app).toBeTruthy();
   const PluginA = createPlugin({
     provides: () => {
@@ -371,7 +371,7 @@ test('dependency registration with middleware', () => {
   });
   const PluginB = createPlugin({
     deps: {a: TokenA},
-    provides: deps => {
+    provides: (deps) => {
       counters.b++;
       expect(deps.a.a).toBe('PluginA');
       expect(counters.b).toBe(1);
@@ -382,7 +382,7 @@ test('dependency registration with middleware', () => {
   });
   const PluginC = createPlugin({
     deps: {a: TokenA, b: TokenB},
-    provides: deps => {
+    provides: (deps) => {
       counters.c++;
       expect(deps.a.a).toBe('PluginA');
       expect(deps.b.b).toBe('PluginB');
@@ -406,7 +406,7 @@ test('dependency registration with middleware', () => {
 });
 
 test('dependency registration with missing dependency', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const PluginA = createPlugin({
     provides: () => {
       return {
@@ -428,7 +428,7 @@ test('dependency registration with missing dependency', () => {
 });
 
 test('dependency registration with missing dependency and multiple dependent plugins', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const PluginA = createPlugin({
     provides: () => {
       return {
@@ -456,12 +456,12 @@ test('dependency registration with missing dependency and multiple dependent plu
 });
 
 test('dependency registration with null value', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
   expect(() => {
     const PluginC = createPlugin({
       deps: {optionalNull: TokenEAsNullable},
-      provides: deps => {
+      provides: (deps) => {
         expect(deps.optionalNull).toBe(null);
       },
     });
@@ -471,7 +471,7 @@ test('dependency registration with null value', () => {
   }).not.toThrow();
 
   expect(() => {
-    const app = new App('el', el => el);
+    const app = new App('el', (el) => el);
     // $FlowFixMe
     app.register(TokenString, null);
     app.middleware({something: TokenString}, ({something}) => {
@@ -483,7 +483,7 @@ test('dependency registration with null value', () => {
 });
 
 test('dependency registration with optional deps', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
   const checkString = (s: string): void => {
     expect(s).toBe('hello');
@@ -516,7 +516,7 @@ test('dependency registration with optional deps', () => {
 });
 
 test('dependency registration with missing deep tree dependency', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const PluginA = createPlugin({
     provides: () => {
       return {
@@ -547,7 +547,7 @@ test('dependency registration with missing deep tree dependency', () => {
 });
 
 test('dependency registration with circular dependency', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const PluginB = createPlugin({
     deps: {c: TokenC},
     provides: () => {
@@ -574,7 +574,7 @@ test('dependency configuration with missing deps', () => {
   const StringToken: Token<string> = createToken('string-token');
   const OtherStringToken: Token<string> = createToken('other-string-token');
 
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
   const provides = jest.fn();
 
@@ -591,7 +591,7 @@ test('dependency configuration with missing deps', () => {
   app.register(StringToken, 'string-a');
   expect(() => app.resolve()).toThrow();
   expect(() => app.resolve()).toThrow(
-    /Token is required dependency of plugins registered to "parent-token" token/
+    /This token is a required dependency of the plugin registered to "parent-token" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });
@@ -600,7 +600,7 @@ test('error message when dependent plugin does not have token', () => {
   const StringToken: Token<string> = createToken('string-token');
   const OtherStringToken: Token<string> = createToken('other-string-token');
 
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
   const provides = jest.fn();
 
@@ -615,20 +615,20 @@ test('error message when dependent plugin does not have token', () => {
   );
   app.register(StringToken, 'string-a');
   expect(() => app.resolve()).toThrow(
-    /Token is required dependency of plugins registered to "UnnamedPlugin" token/
+    /This token is a required dependency of the plugin registered to "UnnamedPlugin" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });
 
 test('Extraneous dependencies', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const TestToken = createToken('test');
   app.register(TestToken, 'some-value');
   expect(() => app.resolve()).toThrow();
 });
 
 test('Extraneous dependencies after re-registering', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const TokenA = createToken('A');
   const TokenB = createToken('B');
   app.register(
@@ -643,7 +643,7 @@ test('Extraneous dependencies after re-registering', () => {
 });
 
 test('Missing token errors reasonably', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   // $FlowFixMe
   expect(() => app.register('some-value')).toThrow(
     /Cannot register some-value/
@@ -654,7 +654,7 @@ test('Missing token errors reasonably', () => {
 });
 
 test('retrieve dependency', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const TokenA = createToken('a');
   const PluginA = createPlugin({
     provides: () => {
@@ -670,7 +670,7 @@ test('retrieve dependency', () => {
 });
 
 test('retrieve unresolved dependency', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   const TokenA = createToken('a');
   const PluginA = createPlugin({
     provides: () => {

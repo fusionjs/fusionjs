@@ -9,11 +9,13 @@
 import {compose} from './compose.js';
 import timing, {TimingToken} from './plugins/timing';
 import BaseApp from './base-app';
-import createClientHydrate from './plugins/client-hydrate';
+import createClientHydrate, {
+  getSerializedRoutePrefix,
+} from './plugins/client-hydrate';
 import createClientRenderer from './plugins/client-renderer';
 import {RenderToken, ElementToken} from './tokens';
 
-export default function(): typeof BaseApp {
+export default function (): typeof BaseApp {
   return class ClientApp extends BaseApp {
     constructor(el, render) {
       super(el, render);
@@ -29,8 +31,13 @@ export default function(): typeof BaseApp {
       const middleware = compose(this.plugins);
       return () => {
         // TODO(#62): Create noop context object to match server api
+        const routePrefix = getSerializedRoutePrefix();
+        const replaceRouteRegex = new RegExp(`^${routePrefix}`);
         const ctx: any = {
-          url: window.location.pathname + window.location.search,
+          url: (window.location.pathname + window.location.search).replace(
+            replaceRouteRegex,
+            ''
+          ),
           element: null,
           body: null,
         };

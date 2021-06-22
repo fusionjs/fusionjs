@@ -1,4 +1,4 @@
 // @flow
-const content = 'worker2-included';
+const content: string = 'worker2-included';
 
 export default content;

@@ -1,5 +1,5 @@
+/* eslint-env node */
+// @flow
 module.exports = {
-  extends: [
-    require.resolve('eslint-config-fusion')
-  ]
+  extends: ['../linter/.eslintrc.js'],
 };

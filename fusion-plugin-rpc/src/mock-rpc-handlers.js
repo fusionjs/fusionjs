@@ -25,7 +25,8 @@ const getMockRpcHandlers = (
       ...rpcHandlers,
       ...mapObject(fixture, (rpcId, responseDetails) => async (...args) => {
         const response = Array.isArray(responseDetails)
-          ? responseDetails.filter(item => isEqual(item.args, args))[0].response
+          ? responseDetails.filter((item) => isEqual(item.args, args))[0]
+              .response
           : responseDetails;
 
         onMockRpc && onMockRpc(rpcId, args, response);

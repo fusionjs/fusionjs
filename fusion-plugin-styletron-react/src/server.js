@@ -34,34 +34,38 @@ function getPlugin(getStyletronEngine: any): any {
       deps: {
         prefix: AtomicPrefixToken.optional,
       },
-      middleware: ({prefix}) => (ctx, next) => {
-        if (__DEV__) {
-          if (ctx.url === workerRoute) {
-            ctx.body = fs.createReadStream(workerPath);
+      middleware:
+        ({prefix}) =>
+        (ctx, next) => {
+          if (__DEV__) {
+            if (ctx.url === workerRoute) {
+              ctx.body = fs.createReadStream(workerPath);
+              return next();
+            }
+            if (ctx.url === wasmRoute) {
+              ctx.body = fs.createReadStream(wasmPath);
+              return next();
+            }
+          }
+
+          if (ctx.element) {
+            const config = prefix === void 0 ? void 0 : {prefix};
+            const engine = getStyletronEngine(config);
+
+            ctx.element = (
+              <StyletronProvider value={engine}>
+                {ctx.element}
+              </StyletronProvider>
+            );
+
+            return next().then(() => {
+              const stylesForHead = engine.getStylesheetsHtml();
+              ctx.template.head.push(dangerouslySetHTML(stylesForHead));
+            });
+          } else {
             return next();
           }
-          if (ctx.url === wasmRoute) {
-            ctx.body = fs.createReadStream(wasmPath);
-            return next();
-          }
-        }
-
-        if (ctx.element) {
-          const config = prefix === void 0 ? void 0 : {prefix};
-          const engine = getStyletronEngine(config);
-
-          ctx.element = (
-            <StyletronProvider value={engine}>{ctx.element}</StyletronProvider>
-          );
-
-          return next().then(() => {
-            const stylesForHead = engine.getStylesheetsHtml();
-            ctx.template.head.push(dangerouslySetHTML(stylesForHead));
-          });
-        } else {
-          return next();
-        }
-      },
+        },
     });
   return plugin;
 }

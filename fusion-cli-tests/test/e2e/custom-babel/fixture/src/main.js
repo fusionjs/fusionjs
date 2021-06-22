@@ -9,6 +9,6 @@ console.log('helloworld');
 console.log(test);
 console.log(other);
 
-export default (async function() {
-  return new App('el', el => el);
+export default (async function () {
+  return new App('el', (el) => el);
 });

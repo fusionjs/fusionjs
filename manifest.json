@@ -34,7 +34,8 @@
     "eslint-config-fusion",
     "create-fusion-plugin",
     "create-fusion-app",
-    "fusion-plugin-web-app-manifest"
+    "fusion-plugin-web-app-manifest",
+    "jest-resolver-fusion"
   ],
   "versionPolicy": {
     "lockstep": true

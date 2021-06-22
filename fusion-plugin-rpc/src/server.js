@@ -112,16 +112,16 @@ const pluginFactory: () => RPCPluginType = () =>
       rpcConfig: RPCHandlersConfigToken.optional,
     },
 
-    provides: deps => {
+    provides: (deps) => {
       const {emitter, handlers} = deps;
 
       const service = {
-        from: memoize(ctx => new RPC(emitter, handlers, ctx)),
+        from: memoize((ctx) => new RPC(emitter, handlers, ctx)),
       };
       return service;
     },
 
-    middleware: deps => {
+    middleware: (deps) => {
       const {emitter, handlers, bodyParserOptions, rpcConfig} = deps;
       if (!handlers)
         throw new Error('Missing handlers registered to RPCHandlersToken');

@@ -24,7 +24,7 @@ function chunkPathsPlugin(babel /*: Object */) {
 }
 
 function refsHandler(t, context, refs = []) {
-  refs.forEach(refPath => {
+  refs.forEach((refPath) => {
     const parentPath = refPath.parentPath;
     if (!t.isCallExpression(parentPath)) {
       return;

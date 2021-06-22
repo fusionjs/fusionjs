@@ -20,9 +20,9 @@ export default ((createPlugin({
           const existingSW = sw.controller;
           if (shouldRegister) {
             sw.register('/sw.js')
-              .then(res => logger.log('*** sw registered:', res))
-              .catch(e => logger.log('*** sw registration failed:', e));
-            sw.addEventListener('message', event => {
+              .then((res) => logger.log('*** sw registered:', res))
+              .catch((e) => logger.log('*** sw registration failed:', e));
+            sw.addEventListener('message', (event) => {
               // additional listeners can be added at the app level
               if (existingSW && event.data.type === 'upgrade-available') {
                 // prompt user to reload for new build

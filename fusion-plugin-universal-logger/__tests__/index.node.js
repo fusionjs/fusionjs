@@ -40,7 +40,7 @@ test('Server logger', async () => {
     }
   }
 
-  const app = new App('element', el => el);
+  const app = new App('element', (el) => el);
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
   app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});
@@ -84,7 +84,7 @@ test('Server logger listening on events', async () => {
       called = true;
     }
   }
-  const app = new App('element', el => el);
+  const app = new App('element', (el) => el);
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
   app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});

@@ -57,13 +57,13 @@ export async function start({port, dir = '.'} /*: any */) {
   server.on('request', (req, res) => {
     if (prefix) stripRoutePrefix(req, prefix);
     // $FlowFixMe
-    state.serve(req, res).catch(e => {
+    state.serve(req, res).catch((e) => {
       // $FlowFixMe
       state.app.onerror(e);
     });
   });
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     server &&
       server.listen(port, () => {
         resolve(server);

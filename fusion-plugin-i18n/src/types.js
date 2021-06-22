@@ -24,22 +24,31 @@ export type TranslateFuncType = (
   interpolations?: {+[string]: string | number}
 ) => string;
 
+export type OptionalTranslateFnsType = {
+  +translateKeys: (
+    sources: any,
+    locale: any,
+    keys: string[]
+  ) => TranslationsObjectType,
+  +translateKey: (sources: any, locale: any, key: string) => string,
+};
+
 export type I18nDepsType = {
   fetch?: typeof FetchToken.optional,
   hydrationState?: typeof HydrationStateToken.optional,
   loader?: typeof I18nLoaderToken.optional,
   events?: typeof UniversalEventsToken.optional,
+  translateFns?: typeof I18nLoaderToken.optional,
 };
 
 export type IEmitter = $Call<ExtractReturnType, typeof UniversalEventsToken>;
 
 export type I18nServiceType = {
-  from: (
-    ctx: Context
-  ) => {
+  from: (ctx: Context) => {
     +locale?: string | Locale,
     +translations?: TranslationsObjectType,
     +load: (Array<string>) => Promise<void>,
     +translate: TranslateFuncType,
+    +translateFns?: OptionalTranslateFnsType,
   },
 };

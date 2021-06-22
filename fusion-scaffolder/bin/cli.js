@@ -57,6 +57,6 @@ scaffold(options)
       }" has been scaffolded!`
     );
   })
-  .catch(e => {
+  .catch((e) => {
     log(colors.red(e));
   });

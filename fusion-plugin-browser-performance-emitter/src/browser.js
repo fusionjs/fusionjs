@@ -37,10 +37,10 @@ class BrowserPerformanceEmitter {
       resourceEntries ||
       window.performance
         .getEntriesByType('resource')
-        .filter(entry => {
+        .filter((entry) => {
           return entry.name.indexOf('data:') !== 0 && entry.toJSON;
         })
-        .map(entry => entry.toJSON());
+        .map((entry) => entry.toJSON());
 
     return {
       timing,
@@ -77,9 +77,9 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
   __BROWSER__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
-    middleware: deps => {
+    middleware: (deps) => {
       const emitter = deps.emitter;
-      const emit = payload => {
+      const emit = (payload) => {
         emitter.emit('browser-performance-emitter:stats:browser-only', payload);
       };
 
@@ -90,11 +90,8 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
           // window.performance.timing.loadEventEnd not ready until the next tick
           window.setTimeout(() => {
             // for testing purposes pass timing and resourceEntries from options
-            const {
-              timing,
-              resourceEntries,
-              paintTimes,
-            } = browserPerformanceEmitter.calculate();
+            const {timing, resourceEntries, paintTimes} =
+              browserPerformanceEmitter.calculate();
             emit({
               timing,
               resourceEntries,

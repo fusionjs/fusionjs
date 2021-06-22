@@ -7,7 +7,6 @@
  */
 
 /* eslint-env node */
-
 /*::
 declare var __webpack_public_path__: string;
 */
@@ -15,33 +14,21 @@ declare var __webpack_public_path__: string;
 import assert from 'assert';
 import {URL} from 'url';
 
-let prefix = load('ROUTE_PREFIX');
-if (typeof prefix === 'string') {
-  assert(!prefix.endsWith('/'), 'ROUTE_PREFIX must not end with /');
+import {getEnv} from 'fusion-core';
+
+const {prefix, cdnUrl, dangerouslyExposeSourceMaps} = getEnv();
+if (typeof prefix === 'string' && prefix !== '') {
   assert(prefix.startsWith('/'), 'ROUTE_PREFIX must start with /');
 }
-
-let cdnUrl = load('CDN_URL');
-if (typeof cdnUrl === 'string') {
-  assert(!cdnUrl.endsWith('/'), 'CDN_URL must not end with /');
+if (typeof cdnUrl === 'string' && cdnUrl !== '') {
   assert(new URL(cdnUrl), 'CDN_URL must be valid absolute URL');
 }
 
 let assetBasePath = '/_static/';
-
 if (prefix) {
   assetBasePath = prefix + assetBasePath;
 }
 
-const dangerouslyExposeSourceMaps = load('DANGEROUSLY_EXPOSE_SOURCE_MAPS');
 // eslint-disable-next-line
 __webpack_public_path__ =
   cdnUrl && !dangerouslyExposeSourceMaps ? cdnUrl + '/' : assetBasePath;
-
-function load(key) {
-  const value = process.env[key];
-  if (value === null) {
-    return void 0;
-  }
-  return value;
-}

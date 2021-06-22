@@ -42,7 +42,7 @@ test('token prefix', async () => {
   );
   const styles = await getStyles(page);
 
-  expect(styles.every(style => style.startsWith('.__atomic_prefix__'))).toBe(
+  expect(styles.every((style) => style.startsWith('.__atomic_prefix__'))).toBe(
     true
   );
 

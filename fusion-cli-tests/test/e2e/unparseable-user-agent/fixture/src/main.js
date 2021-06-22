@@ -1,4 +1,7 @@
 // @noflow
+
+/* eslint-env browser */
+
 import React from 'react';
 import App from 'fusion-react';
 import Router from 'fusion-plugin-react-router';

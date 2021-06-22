@@ -16,7 +16,7 @@ module.exports = function spawn(
   const [command, ...args] = commandString.split(' ');
   const child = cp.spawn(command, args, {stdio: 'inherit'});
   return new Promise((resolve, reject) => {
-    child.on('exit', code => {
+    child.on('exit', (code) => {
       if (code === 0) {
         return resolve();
       }
@@ -24,7 +24,7 @@ module.exports = function spawn(
         new Error(`Command: '${commandString}' exited with code: ${code}`)
       );
     });
-    child.on('error', err => {
+    child.on('error', (err) => {
       return reject(err);
     });
   });

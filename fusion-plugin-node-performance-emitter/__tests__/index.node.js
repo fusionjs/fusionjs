@@ -39,7 +39,7 @@ const mockEmitterFactory = () => {
   return (mockEmitter: any);
 };
 
-const mockTimersFactory = shouldExpect => {
+const mockTimersFactory = (shouldExpect) => {
   let _numSetInterval = 0;
   return {
     _getNumSetInterval: () => _numSetInterval,
@@ -68,7 +68,7 @@ function createTestFixture() {
     provides: () => mockEmitterFactory(),
   });
 
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   app.register(NodePerformanceEmitterToken, NodePerformanceEmitterPlugin);
   app.register(TimersToken, mockTimers);
   app.register(UniversalEventsToken, mockEmitterPlugin);
@@ -118,7 +118,7 @@ test('service - cannot track the same types more than once at a time', () => {
 test('service - tracking number of timer intervals set', () => {
   const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitterFactory());
     registerMockConfig(app);
@@ -131,11 +131,11 @@ test('service - tracking number of timer intervals set', () => {
   expect(mockTimers._getNumSetInterval() === 0).toBeTruthy();
 });
 
-test('service - tracking emit messages', done => {
+test('service - tracking emit messages', (done) => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitter);
     registerMockConfig(app);
@@ -144,37 +144,40 @@ test('service - tracking emit messages', done => {
 
   // Register to listen to emits
   let emitNumberTracker = 0;
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:event_loop_lag`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:event_loop_lag`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:rss`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:rss`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:externalMemory`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapTotal`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapUsed`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:heapUsed`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentSockets`, payload => {
-    emitNumberTracker++;
-    expect(payload !== undefined).toBeTruthy();
-  });
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`, payload => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:gauge:globalAgentSockets`, (payload) => {
     emitNumberTracker++;
     expect(payload !== undefined).toBeTruthy();
   });
   mockEmitter.on(
+    `${EVENT_PLUGIN_NAME}:gauge:globalAgentRequests`,
+    (payload) => {
+      emitNumberTracker++;
+      expect(payload !== undefined).toBeTruthy();
+    }
+  );
+  mockEmitter.on(
     `${EVENT_PLUGIN_NAME}:gauge:globalAgentFreeSockets`,
-    payload => {
+    (payload) => {
       emitNumberTracker++;
       expect(payload !== undefined).toBeTruthy();
     }
@@ -190,11 +193,11 @@ test('service - tracking emit messages', done => {
   });
 });
 
-test('service - testing garbage collection emits', done => {
+test('service - testing garbage collection emits', (done) => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory();
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitter);
     registerMockConfig(app);
@@ -204,7 +207,7 @@ test('service - testing garbage collection emits', done => {
   // Register to listen to emits
   let gcMessageReceived = false;
   let totalDuration = 0;
-  mockEmitter.on(`${EVENT_PLUGIN_NAME}:timing:gc`, args => {
+  mockEmitter.on(`${EVENT_PLUGIN_NAME}:timing:gc`, (args) => {
     totalDuration += args.duration;
     gcMessageReceived = true;
   });

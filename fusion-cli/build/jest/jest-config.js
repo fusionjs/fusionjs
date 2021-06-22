@@ -24,7 +24,7 @@ let config = {
 // Use projects if we have more than one environment.
 if (projects.length > 1) {
   // $FlowFixMe
-  config.projects = projects.map(project => {
+  config.projects = projects.map((project) => {
     return {
       // $FlowFixMe
       ...require(`./${project === 'jsdom' ? 'jsdom' : 'node'}/jest.config.js`),

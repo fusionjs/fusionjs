@@ -27,7 +27,7 @@ export type UserActionType = {|
 const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
   'getUser',
   {
-    start: state => {
+    start: (state) => {
       return {
         ...state,
         loading: true,

@@ -21,7 +21,7 @@ test('http handler with express', async () => {
   // $FlowFixMe
   const proxyServer = http.createServer((req, res) => res.end('Proxy OK'));
   const port2 = await getPort();
-  await new Promise(resolve => proxyServer.listen(port, resolve));
+  await new Promise((resolve) => proxyServer.listen(port, resolve));
   app.middleware(async (ctx, next) => {
     await next();
     expect(ctx.respond).toBe(false);
@@ -35,7 +35,7 @@ test('http handler with express', async () => {
 
   // $FlowFixMe
   const server = http.createServer(app.callback());
-  await new Promise(resolve => server.listen(port2, resolve));
+  await new Promise((resolve) => server.listen(port2, resolve));
 
   expect(await reqPromise(`http://localhost:${port2}/proxy`)).toBe('Proxy OK');
 

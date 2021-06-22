@@ -82,7 +82,7 @@ export default (renderFn: Render) =>
       schema,
       endpoint = '/graphql',
       getApolloClient,
-      apolloContext = ctx => {
+      apolloContext = (ctx) => {
         return ctx;
       },
       bodyParserConfig = {},
@@ -124,14 +124,14 @@ export default (renderFn: Render) =>
         }
       };
       if (__NODE__ && schema) {
-        const getApolloContext = ctx => {
+        const getApolloContext = (ctx) => {
           if (typeof apolloContext === 'function') {
             return apolloContext(ctx);
           }
           return apolloContext;
         };
         const server = new ApolloServer({
-          formatError: error => {
+          formatError: (error) => {
             logger && logger.error(error.message, error);
             return error;
           },
@@ -141,7 +141,7 @@ export default (renderFn: Render) =>
           context: ({ctx}) => {
             return ctx;
           },
-          executor: async requestContext => {
+          executor: async (requestContext) => {
             const fusionCtx = requestContext.context;
             const routeTags = RouteTags.from(fusionCtx);
             routeTags.name = 'graphql';
@@ -169,7 +169,7 @@ export default (renderFn: Render) =>
         server.applyMiddleware({
           // switch to server.getMiddleware once https://github.com/apollographql/apollo-server/pull/2435 lands
           app: {
-            use: m => {
+            use: (m) => {
               serverMiddleware.push(m);
             },
           },

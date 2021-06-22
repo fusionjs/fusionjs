@@ -21,7 +21,7 @@ export function compose(middleware: Array<Middleware>): Middleware {
     }
   }
 
-  return function(context, next) {
+  return function (context, next) {
     let index = -1;
     return dispatch(0);
     function dispatch(i) {

@@ -43,11 +43,11 @@ testFontLoader(mixedConfig, testMixedFontLoad, 'mixed');
 
 function testFontLoader(config, styleHeaderTest, type) {
   test(`plugin - middleware adds ${type} font faces`, () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.middleware(async (ctx, next) => {
       await next();
       styleHeaderTest(
-        ctx.template.head.map(e => consumeSanitizedHTML(e)).join('')
+        ctx.template.head.map((e) => consumeSanitizedHTML(e)).join('')
       );
     });
     app.register(FontLoaderReactToken, FontLoaderReactPlugin);

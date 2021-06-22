@@ -43,16 +43,15 @@ class MergedDeferredState /*::<T, U>*/ {
   constructor(states /*: any */, mergeResultsFn /*: Array<T> => U */) {
     this.states = states;
     this.mergeResultsFn = mergeResultsFn;
-    this.reset();
   }
-  reset() {
-    this.result = Promise.all(
+  get result() {
+    return Promise.all(
       this.states
-        .filter(state => state.enabled.value)
-        .map(state => {
+        .filter((state) => state.enabled.value)
+        .map((state) => {
           return state.deferred.result;
         })
-    ).then(resolved => {
+    ).then((resolved) => {
       const result = this.mergeResultsFn(resolved);
       return result;
     });

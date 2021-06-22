@@ -19,7 +19,7 @@ test('DIErrors within fusion-core all correspond to markdown documents', async (
   const srcDir = path.resolve('src');
   const srcFiles = await recursiveReadDir(srcDir);
   const docReferences = [];
-  const visitor = createDocumentVisitor(doc => docReferences.push(doc));
+  const visitor = createDocumentVisitor((doc) => docReferences.push(doc));
   for (const file of srcFiles) {
     if (path.extname(file) !== '.js') continue;
     const code = await readFile(file, 'utf-8');
@@ -30,14 +30,14 @@ test('DIErrors within fusion-core all correspond to markdown documents', async (
     traverse(ast, visitor);
   }
   expect(docReferences.length).not.toBe(0);
-  const markdownFiles = (await readDir('../errors')).map(file =>
+  const markdownFiles = (await readDir('../errors')).map((file) =>
     file.replace(/\.md$/, '')
   );
   expect(markdownFiles.length).not.toBe(0);
 
   // Error docs will not be deleted when an error is obviated/removed, so
   // markdown files will always be a superset including current error references
-  docReferences.forEach(docRef => {
+  docReferences.forEach((docRef) => {
     expect(markdownFiles).toContain(docRef);
   });
 });
@@ -46,7 +46,7 @@ async function recursiveReadDir(dir) {
   const files = await readDir(dir, {withFileTypes: true});
   return [].concat(
     ...(await Promise.all(
-      files.map(file => {
+      files.map((file) => {
         const resolved = path.resolve(dir, file.name);
         if (file.isDirectory()) {
           return recursiveReadDir(resolved);
@@ -62,7 +62,7 @@ function createDocumentVisitor(callback) {
   return {
     ImportDeclaration(path) {
       // import {DIError} from '../stack-trace.js';
-      const DIError = path.node.specifiers.find(sp => {
+      const DIError = path.node.specifiers.find((sp) => {
         const importPath = path.node.source.value;
         return (
           sp.imported &&
@@ -83,7 +83,7 @@ function createDocumentVisitor(callback) {
               'DIError invocation must have options object passed as only argument'
             );
           }
-          let doc = usage.parent.arguments[0].properties.find(prop => {
+          let doc = usage.parent.arguments[0].properties.find((prop) => {
             return prop.key.name === 'errorDoc';
           });
           if (!doc) {

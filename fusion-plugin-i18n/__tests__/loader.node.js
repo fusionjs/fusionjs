@@ -22,7 +22,7 @@ test('loader', async () => {
   fs.mkdirSync('translations');
   fs.writeFileSync('translations/en_US.json', '{"test": "hi ${value}"}');
 
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(I18nToken, I18n);
   // $FlowFixMe
   app.register(UniversalEventsToken, {
@@ -46,10 +46,10 @@ test('custom locale resolver', async () => {
   fs.writeFileSync('translations/en_US.json', '{"foo": "bar"}');
   fs.writeFileSync('translations/custom_US.json', '{"foo": "qux"}');
 
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(
     I18nLoaderToken,
-    createI18nLoader(ctx => 'custom_US')
+    createI18nLoader((ctx) => 'custom_US')
   );
   app.register(I18nToken, I18n);
   // $FlowFixMe

@@ -20,7 +20,7 @@ const testText = 'π+[.—_]imW12/?';
 // how long to wait for load before switching style to true font anyway
 const timeout = 60000;
 
-export default function(font: string) {
+export default function (font: string) {
   if (__BROWSER__ && document) {
     // $FlowFixMe
     return document.fonts && typeof document.fonts.load === 'function'
@@ -31,12 +31,14 @@ export default function(font: string) {
 
 function loadFontPolyfill(font): Promise<void> {
   const testDivs = createTestDivs();
-  // $FlowFixMe
-  testDivs.forEach(div => (div.style.fontFamily = `${font}, ${div.testFont}`));
+  testDivs.forEach(
+    // $FlowFixMe
+    (div) => (div.style.fontFamily = `${font}, ${div.testFont}`)
+  );
   const waitUntil = Date.now() + timeout;
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     (function monitorWidth(delay) {
-      setTimeout(function() {
+      setTimeout(function () {
         if (Date.now() >= waitUntil || hasFontLoaded(testDivs)) {
           resolve();
           cleanup(testDivs);
@@ -52,13 +54,13 @@ function hasFontLoaded(testDivs) {
   // Test whether n elements that were originally diverse system fonts are now all equal widths
   return Boolean(
     testDivs
-      .map(div => div.offsetWidth)
+      .map((div) => div.offsetWidth)
       .reduce((width1, width2) => (width1 === width2 ? width1 : NaN))
   );
 }
 
 function cleanup(testDivs) {
-  testDivs.forEach(div => {
+  testDivs.forEach((div) => {
     const p = div.parentNode;
     if (p) {
       p.removeChild(div);
@@ -72,8 +74,9 @@ function createTestDivs() {
     const div = document.createElement('div');
     // $FlowFixMe
     div.testFont = testFont;
-    div.style.cssText = `position:absolute;top:-999px;left:${-9999 +
-      i * 100}px;visibility:hidden;
+    div.style.cssText = `position:absolute;top:-999px;left:${
+      -9999 + i * 100
+    }px;visibility:hidden;
   white-space:nowrap;font-size:20em;font-family:${testFont}`;
     div.appendChild(document.createTextNode(testText));
     if (document && document.body) {

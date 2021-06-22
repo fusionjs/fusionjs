@@ -41,7 +41,7 @@ function BundleSplitConsumer(props, {splitComponentLoaders}) {
   React.useMemo(() => splitComponentLoaders.push(callbacks.load), []);
   React.useMemo(() => {
     if (i18n !== callbacks.i18n) {
-      const index = splitComponentLoaders.find(fn => fn === callbacks.load);
+      const index = splitComponentLoaders.find((fn) => fn === callbacks.load);
       const load = (_, {i18nKeys}) => i18n.load(i18nKeys);
       splitComponentLoaders.splice(index, 1, load);
       setCallbacks({i18n, load});

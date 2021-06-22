@@ -41,7 +41,7 @@ const createMockEmitter = (
 
 test('browser logger', () => {
   let called = false;
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {
@@ -65,9 +65,9 @@ test('browser logger', () => {
   expect(called).toBe(true);
 });
 
-test('browser logger with errors', done => {
+test('browser logger with errors', (done) => {
   expect.assertions(6);
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {
@@ -101,7 +101,7 @@ test('browser logger with errors', done => {
 
 test('browser logger with errors as first argument', () => {
   let called = false;
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(LoggerToken, plugin);
 
   const mockEmitter = createMockEmitter((type, payload) => {

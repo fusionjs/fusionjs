@@ -22,12 +22,6 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
     : fs.existsSync(`${dir}/package-lock.json`)
     ? 'npm'
     : 'none';
-  const lockFile =
-    lockFileType === 'yarn'
-      ? fs.readFileSync(`${dir}/yarn.lock`, 'utf8')
-      : lockFileType === 'npm'
-      ? fs.readFileSync(`${dir}/package-lock.json`, 'utf8')
-      : '';
 
   return {
     timestamp: Date.now(),
@@ -36,13 +30,12 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
     npmVersion,
     yarnVersion,
     lockFileType,
-    lockFile,
     ...dependencies,
     ...environmentVariables,
   };
 };
 
-const findMetadata = dir => {
+const findMetadata = (dir) => {
   dir = path.resolve(process.cwd(), dir);
   try {
     const {dependencies = {}, devDependencies = {}} = JSON.parse(
@@ -62,7 +55,7 @@ const findMetadata = dir => {
   }
 };
 
-const collectEnvironmentVariables = keys => {
+const collectEnvironmentVariables = (keys) => {
   const vars = {};
   for (const key of keys) {
     vars[key] = process.env[key];

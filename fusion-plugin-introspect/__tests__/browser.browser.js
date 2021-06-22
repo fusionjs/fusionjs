@@ -10,7 +10,7 @@ import App from 'fusion-core';
 import plugin from '../src/browser.js';
 
 test('browser plugin', async () => {
-  const app = new App(' ', v => v);
+  const app = new App(' ', (v) => v);
   const qs = document.querySelector;
   const xhr = window.XMLHttpRequest;
   try {

@@ -12,19 +12,19 @@ import PropTypes from 'prop-types';
 import type {Token} from 'fusion-core';
 
 function capitalize(str: string): string {
-  return str.replace(/^./, c => c.toUpperCase());
+  return str.replace(/^./, (c) => c.toUpperCase());
 }
 
 type ReactHOC = (React.ComponentType<*>) => React.ComponentType<*>;
 export default {
   create: (
     name: string,
-    mapProvidesToProps?: Object => Object,
+    mapProvidesToProps?: (Object) => Object,
     token?: Token<*>
   ): ReactHOC => {
     const mapProvides = mapProvidesToProps
       ? mapProvidesToProps
-      : provides => ({[name]: provides});
+      : (provides) => ({[name]: provides});
     const _token = token; // Make token constant for flow
     if (_token) {
       // Use new Context through useService hook

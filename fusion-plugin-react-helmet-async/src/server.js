@@ -35,7 +35,7 @@ const plugin =
               .replace('</title>', '')
               .replace(/^<title.*>/, '')
           );
-          keys.forEach(key => {
+          keys.forEach((key) => {
             ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));
           });
           Object.assign(

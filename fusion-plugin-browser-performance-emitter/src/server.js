@@ -18,7 +18,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
   __NODE__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
-    provides: deps => {
+    provides: (deps) => {
       const emitter = deps.emitter;
       const perfLoggerVersion = require('../package.json').version;
       emitter.on('browser-performance-emitter:stats:browser-only', (e, ctx) => {
@@ -121,7 +121,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
           }, {});
 
           if (!isEmpty(resourceLoadTimes)) {
-            Object.keys(resourceLoadTimes).forEach(resourceType => {
+            Object.keys(resourceLoadTimes).forEach((resourceType) => {
               const avgTime = parseInt(
                 mean(resourceLoadTimes[resourceType]),
                 10

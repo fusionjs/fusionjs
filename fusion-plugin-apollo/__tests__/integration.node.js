@@ -54,7 +54,7 @@ async function testApp(el, {typeDefs, resolvers}, enhanceApp) {
   // $FlowFixMe
   const server = http.createServer(app.callback());
   await new Promise((resolve, reject) =>
-    server.listen(port, err => {
+    server.listen(port, (err) => {
       if (err) return reject(err);
       return resolve();
     })
@@ -113,7 +113,7 @@ test('Query request with custom apollo context', async () => {
       },
     },
   };
-  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, (app) => {
     // $FlowFixMe
     app.register(ApolloContextToken, 5);
   });
@@ -172,7 +172,7 @@ test('Mutation request', async () => {
   server.close();
 });
 
-test('Mutation request with error', async done => {
+test('Mutation request with error', async (done) => {
   const mutation = gql`
     mutation Test($arg: String) {
       testMutation(arg: $arg) {
@@ -213,7 +213,7 @@ test('Mutation request with error', async done => {
   done();
 });
 
-test('Query request with error', async done => {
+test('Query request with error', async (done) => {
   const query = gql`
     query Test {
       test
@@ -275,9 +275,9 @@ test('/graphql endpoint with body parser config', async () => {
     },
   };
   let called = false;
-  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, (app) => {
     app.register(ApolloBodyParserConfigToken, {
-      detectJSON: ctx => {
+      detectJSON: (ctx) => {
         called = true;
         return true;
       },
@@ -315,7 +315,7 @@ test('Query request with custom apollo server options config', async () => {
       },
     }),
   };
-  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, (app) => {
     app.register(ApolloDefaultOptionsConfigToken, {mocks});
   });
   const result = await client.query({query});
@@ -328,7 +328,7 @@ test('Query request with custom apollo server options config', async () => {
   server.close();
 });
 
-test('Invalid query request - logs error', async done => {
+test('Invalid query request - logs error', async (done) => {
   const query = gql`
     query Test {
       lmao
@@ -342,7 +342,7 @@ test('Invalid query request - logs error', async done => {
   `;
   const resolvers = {};
   let logCount = 0;
-  const {server, client} = await testApp(el, {typeDefs, resolvers}, app => {
+  const {server, client} = await testApp(el, {typeDefs, resolvers}, (app) => {
     // $FlowFixMe
     app.register(LoggerToken, {
       error: (message, error) => {

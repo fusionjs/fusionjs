@@ -24,7 +24,10 @@ test('`fusion build` app with split translations integration', async () => {
   });
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
+
+  await new Promise((res) => setTimeout(res, 5000));
   const content = await page.content();
+
   t.ok(
     content.includes('__MAIN_TRANSLATED__'),
     'app content contains translated main chunk'
@@ -122,7 +125,7 @@ test('`fusion dev` app with split translations integration', async () => {
   );
 
   const reloaded = page.evaluate(() => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // eslint-disable-next-line
       window.__addHotStatusHandler(status => {
         if (status === 'idle') {

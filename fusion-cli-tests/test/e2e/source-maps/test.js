@@ -23,8 +23,8 @@ test('source maps are served when DANGEROUSLY_EXPOSE_SOURCE_MAPS=true', async ()
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -36,9 +36,12 @@ test('source maps are served when DANGEROUSLY_EXPOSE_SOURCE_MAPS=true', async ()
   );
 
   t.ok(
-    bundles.every(
-      bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
-    ),
+    bundles
+      // Webpack does not produce source-maps for chunks that only contain JSON modules
+      .filter((bundle) => !isJsonChunk(bundle))
+      .every(
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+      ),
     'build produces one source map for each regular bundle'
   );
 
@@ -47,34 +50,43 @@ test('source maps are served when DANGEROUSLY_EXPOSE_SOURCE_MAPS=true', async ()
     const mapPath = `${jsPath}.map`;
     const asset = await request(`http://localhost:${port}${jsPath}`);
     t.equal(asset.status, 200, 'Request for JS bundle yields OK response');
-    if (isWithMap(bundle)) {
-      t.ok(
-        containsSourceMapComment(asset.data),
-        'bundle contains source map comment'
-      );
-    } else {
+
+    // Webpack does not produce source-maps for chunks that only contain JSON modules
+    if (isJsonChunk(bundle)) {
       t.ok(
         !containsSourceMapComment(asset.data),
-        'bundle does not contain source map comment'
+        'json bundle does not contain source map comment'
       );
-    }
-
-    const assetMap = await request(`http://localhost:${port}${mapPath}`, {
-      validateStatus: () => true,
-    });
-    if (isWithMap(bundle)) {
-      t.equal(
-        assetMap.status,
-        404,
-        'Request for associated source map 404s for with-map bundles'
-      );
-      t.equal(assetMap.data, 'Not Found');
     } else {
-      t.equal(
-        assetMap.status,
-        200,
-        'Request for associated source map yield OK for regular bundles'
-      );
+      if (isWithMap(bundle)) {
+        t.ok(
+          containsSourceMapComment(asset.data),
+          'bundle contains source map comment'
+        );
+      } else {
+        t.ok(
+          !containsSourceMapComment(asset.data),
+          'bundle does not contain source map comment'
+        );
+      }
+
+      const assetMap = await request(`http://localhost:${port}${mapPath}`, {
+        validateStatus: () => true,
+      });
+      if (isWithMap(bundle)) {
+        t.equal(
+          assetMap.status,
+          404,
+          'Request for associated source map 404s for with-map bundles'
+        );
+        t.equal(assetMap.data, 'Not Found');
+      } else {
+        t.equal(
+          assetMap.status,
+          200,
+          'Request for associated source map yield OK for regular bundles'
+        );
+      }
     }
   }
 
@@ -123,8 +135,8 @@ test('source maps are produced but hidden in production', async () => {
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -136,9 +148,12 @@ test('source maps are produced but hidden in production', async () => {
   );
 
   t.ok(
-    bundles.every(
-      bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
-    ),
+    bundles
+      // Webpack does not produce source-maps for chunks that only contain JSON modules
+      .filter((bundle) => !isJsonChunk(bundle))
+      .every(
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+      ),
     'build produces one source map for each regular bundle'
   );
 
@@ -148,7 +163,8 @@ test('source maps are produced but hidden in production', async () => {
 
     const asset = await request(`http://localhost:${port}${jsPath}`);
     t.equal(asset.status, 200, 'Request for JS bundle yields OK response');
-    if (isWithMap(bundle)) {
+    // Webpack does not produce source-maps for chunks that only contain JSON modules
+    if (!isJsonChunk(bundle) && isWithMap(bundle)) {
       t.ok(
         containsSourceMapComment(asset.data),
         'bundle contains source map comment'
@@ -220,8 +236,8 @@ test('source maps are not served when CDN_URL is set', async () => {
   const files = fs.readdirSync(
     path.join(dir, '.fusion/dist/production/client')
   );
-  const bundles = files.filter(file => path.extname(file) === '.js');
-  const sourceMaps = files.filter(file => file.endsWith('.js.map'));
+  const bundles = files.filter((file) => path.extname(file) === '.js');
+  const sourceMaps = files.filter((file) => file.endsWith('.js.map'));
   const withMap = bundles.filter(isWithMap);
 
   t.ok(bundles.length > 0, 'build succeeded');
@@ -233,9 +249,12 @@ test('source maps are not served when CDN_URL is set', async () => {
   );
 
   t.ok(
-    bundles.every(
-      bundle => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
-    ),
+    bundles
+      // Webpack does not produce source-maps for chunks that only contain JSON modules
+      .filter((bundle) => !isJsonChunk(bundle))
+      .every(
+        (bundle) => isWithMap(bundle) || sourceMaps.includes(`${bundle}.map`)
+      ),
     'build produces one source map for each regular bundle'
   );
 
@@ -245,34 +264,42 @@ test('source maps are not served when CDN_URL is set', async () => {
 
     const asset = await request(`http://localhost:${port}${jsPath}`);
     t.equal(asset.status, 200, 'Request for JS bundle yields OK response');
-    if (isWithMap(bundle)) {
-      t.ok(
-        containsSourceMapComment(asset.data),
-        'bundle contains source map comment'
-      );
-    } else {
+    // Webpack does not produce source-maps for chunks that only contain JSON modules
+    if (isJsonChunk(bundle)) {
       t.ok(
         !containsSourceMapComment(asset.data),
-        'bundle does not contain source map comment'
+        'json bundle does not contain source map comment'
       );
-    }
-
-    const assetMap = await request(`http://localhost:${port}${mapPath}`, {
-      validateStatus: () => true,
-    });
-    if (isWithMap(bundle)) {
-      t.equal(
-        assetMap.status,
-        404,
-        'Request for associated source map 404s for with-map bundles'
-      );
-      t.equal(assetMap.data, 'Not Found');
     } else {
-      t.equal(
-        assetMap.status,
-        200,
-        'Request for associated source map yield OK for regular bundles'
-      );
+      if (isWithMap(bundle)) {
+        t.ok(
+          containsSourceMapComment(asset.data),
+          'bundle contains source map comment'
+        );
+      } else {
+        t.ok(
+          !containsSourceMapComment(asset.data),
+          'bundle does not contain source map comment'
+        );
+      }
+
+      const assetMap = await request(`http://localhost:${port}${mapPath}`, {
+        validateStatus: () => true,
+      });
+      if (isWithMap(bundle)) {
+        t.equal(
+          assetMap.status,
+          404,
+          'Request for associated source map 404s for with-map bundles'
+        );
+        t.equal(assetMap.data, 'Not Found');
+      } else {
+        t.equal(
+          assetMap.status,
+          200,
+          'Request for associated source map yield OK for regular bundles'
+        );
+      }
     }
   }
 
@@ -308,10 +335,14 @@ test('source maps are not served when CDN_URL is set', async () => {
       },
     })
   ).data;
-  t.equal(assetPath, '/_static/d41d8cd98f00b204e9800998ecf8427e.map');
+  t.equal(assetPath, '/_static/31d6cfe0d16ae931b73c59d7e0c089c0.map');
 
   proc.kill('SIGKILL');
 }, 100000);
+
+function isJsonChunk(bundle) {
+  return bundle.includes('json-chunk');
+}
 
 function isWithMap(bundle) {
   return bundle.endsWith('-with-map.js');

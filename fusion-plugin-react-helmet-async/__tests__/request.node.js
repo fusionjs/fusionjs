@@ -12,7 +12,7 @@ import {getSimulator} from 'fusion-test-utils';
 import HelmetPlugin from '../src/index.js';
 
 test('Non render request', async () => {
-  const app = new App(React.createElement('div'), el => el);
+  const app = new App(React.createElement('div'), (el) => el);
   app.register(HelmetPlugin);
   const sim = getSimulator(app);
   const ctx = await sim.request('/');
@@ -20,7 +20,7 @@ test('Non render request', async () => {
 });
 
 test('Render request with server side redirect', async () => {
-  const app = new App(React.createElement('div'), el => el);
+  const app = new App(React.createElement('div'), (el) => el);
   app.register(HelmetPlugin);
   app.middleware((ctx, next) => {
     ctx.redirect('/test');

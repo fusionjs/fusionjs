@@ -22,7 +22,7 @@ export default (
   logger?: Logger,
   getDataFromTree?: typeof defaultGetDataFromTree
 ) => {
-  return (getDataFromTree || defaultGetDataFromTree)(root).catch(e => {
+  return (getDataFromTree || defaultGetDataFromTree)(root).catch((e) => {
     logger && logger.error('SSR Failed with Error', e);
   });
 };

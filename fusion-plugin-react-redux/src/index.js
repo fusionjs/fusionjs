@@ -19,4 +19,5 @@ export {
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
+  ReduxDevtoolsConfigToken,
 } from './tokens';

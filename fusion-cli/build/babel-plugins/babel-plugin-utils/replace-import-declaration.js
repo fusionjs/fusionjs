@@ -36,7 +36,7 @@ function replaceImportDeclaration(
       }
 
       path.replaceWithMultiple(
-        path.get('specifiers').map(specifier => {
+        path.get('specifiers').map((specifier) => {
           const specifierName = specifier.get('imported').node.name;
           return t.variableDeclaration('const', [
             t.variableDeclarator(

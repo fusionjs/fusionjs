@@ -30,13 +30,6 @@ exports.translationsManifestContextKey = Symbol(
 );
 
 /*::
-export type TranslationsDiscoveryContext = TranslationsManifest;
-*/
-exports.translationsDiscoveryKey = Symbol(
-  'loader context key for translations discovery'
-);
-
-/*::
 export type DevContext = boolean;
 */
 exports.devContextKey = Symbol('loader context key for __DEV__ state');

@@ -4,7 +4,7 @@
 const {allowedJestOptions} = require('../build/jest/cli-options');
 
 const jestOptionsDescriptions = {};
-allowedJestOptions.forEach(arg => {
+allowedJestOptions.forEach((arg) => {
   jestOptionsDescriptions[arg] = {
     type: 'boolean',
     describe:
@@ -12,6 +12,22 @@ allowedJestOptions.forEach(arg => {
       arg.toLowerCase(),
   };
 });
+
+const disableBuildCacheOption = {
+  disableBuildCache: {
+    type: 'boolean',
+    default: undefined,
+    describe: 'Disable persistent build cache.',
+  },
+};
+
+const experimentalEsbuildMinifierOption = {
+  experimentalEsbuildMinifier: {
+    type: 'boolean',
+    default: undefined,
+    describe: '[Experimental] Enable esbuild minifier (instead of Terser)',
+  },
+};
 
 module.exports = {
   build: {
@@ -53,6 +69,8 @@ module.exports = {
         default: false,
         describe: 'Build without source maps.',
       },
+      ...disableBuildCacheOption,
+      ...experimentalEsbuildMinifierOption,
     },
   },
   dev: {
@@ -98,6 +116,17 @@ module.exports = {
         default: 'info',
         describe: 'Log level to show',
       },
+      disablePrompts: {
+        type: 'boolean',
+        default: false,
+        describe: 'Disable command-line prompts',
+      },
+      experimentalSkipRedundantServerReloads: {
+        type: 'boolean',
+        default: false,
+        describe: 'Skip server respawn when server bundle does not change',
+      },
+      ...disableBuildCacheOption,
     },
   },
   profile: {
@@ -118,6 +147,7 @@ module.exports = {
         default: '4000',
         describe: 'Port for the bundle analyzer server',
       },
+      ...disableBuildCacheOption,
     },
   },
   start: {

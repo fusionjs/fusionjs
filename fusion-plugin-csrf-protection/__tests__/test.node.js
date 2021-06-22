@@ -19,7 +19,7 @@ function MockFetch() {
 }
 
 function getApp() {
-  const app = new App('fake-element', el => el);
+  const app = new App('fake-element', (el) => el);
   app.middleware(async (ctx, next) => {
     try {
       await next();

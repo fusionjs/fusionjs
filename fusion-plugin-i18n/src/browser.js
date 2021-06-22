@@ -71,14 +71,14 @@ const pluginFactory: () => PluginType = () =>
         }
         async load(translationKeys) {
           const loadedKeys = Object.keys(this.translations);
-          const unloaded = translationKeys.filter(key => {
+          const unloaded = translationKeys.filter((key) => {
             return loadedKeys.indexOf(key) < 0 && !this.requestedKeys.has(key);
           });
           if (unloaded.length > 0) {
             // Don't try to load translations again if a request is already in
             // flight. This means that we need to add unloaded chunks to
             // loadedChunks optimistically and remove them if some error happens
-            unloaded.forEach(key => {
+            unloaded.forEach((key) => {
               this.requestedKeys.add(key);
             });
             const fetchOpts = {
@@ -97,7 +97,7 @@ const pluginFactory: () => PluginType = () =>
               }`,
               fetchOpts
             )
-              .then(r => {
+              .then((r) => {
                 try {
                   return r.json();
                 } catch (err) {
@@ -115,7 +115,7 @@ const pluginFactory: () => PluginType = () =>
                 // An error occurred, so remove the chunks we were trying to load
                 // from loadedChunks. This allows us to try to load those chunk
                 // translations again
-                unloaded.forEach(key => {
+                unloaded.forEach((key) => {
                   this.requestedKeys.delete(key);
                 });
               });

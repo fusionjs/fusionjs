@@ -7,7 +7,7 @@ import ServiceWorker from '../src/index';
 import {SWLoggerToken, SWRegisterToken} from '../src/tokens';
 
 beforeEach(() => {
-  const mockRegister = jest.fn(path => Promise.resolve(path));
+  const mockRegister = jest.fn((path) => Promise.resolve(path));
   const mockGetRegistrations = jest.fn(() =>
     Promise.resolve([{unregister: () => Promise.resolve(true)}])
   );
@@ -23,11 +23,11 @@ afterEach(() => {
   delete window.navigator.serviceWorker;
 });
 
-test('/registers sw', async done => {
+test('/registers sw', async (done) => {
   expect.assertions(1);
   mockAddEventListener();
   let logged = '';
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(SWLoggerToken, {
     log(...args) {
       logged += args.join(' ');
@@ -42,11 +42,11 @@ test('/registers sw', async done => {
   await app.cleanup();
 });
 
-test('/unregisters sw', async done => {
+test('/unregisters sw', async (done) => {
   expect.assertions(1);
   mockAddEventListener();
   let logged = '';
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
   app.register(SWRegisterToken, false);
   app.register(SWLoggerToken, {
     log(...args) {
@@ -63,7 +63,7 @@ test('/unregisters sw', async done => {
 
 function mockAddEventListener() {
   const addEventListener = window.addEventListener;
-  window.addEventListener = function(_, fn) {
+  window.addEventListener = function (_, fn) {
     fn();
     window.addEventListener = addEventListener;
   };

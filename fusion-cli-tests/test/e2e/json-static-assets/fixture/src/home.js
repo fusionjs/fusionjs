@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import {assetUrl} from 'fusion-core';
 
-import {content} from '../static/test.json';
+import testJson from '../static/test.json';
 
 export default class Home extends Component<any, any> {
   constructor() {
@@ -15,8 +15,8 @@ export default class Home extends Component<any, any> {
 
   componentDidMount() {
     fetch(assetUrl('../static/test.json'))
-      .then(result => result.json())
-      .then(result => {
+      .then((result) => result.json())
+      .then((result) => {
         this.setState({
           content: result.content,
         });
@@ -26,7 +26,7 @@ export default class Home extends Component<any, any> {
   render() {
     return (
       <div id="content">
-        {this.state.content}|{content}
+        {this.state.content}|{testJson.content}
       </div>
     );
   }

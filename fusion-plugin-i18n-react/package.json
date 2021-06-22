@@ -11,30 +11,25 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
     "@babel/plugin-transform-modules-commonjs": "^7.5.0",
+    "@babel/preset-env": "^7.12.1",
     "@babel/preset-flow": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
-    "babel-eslint": "^10.0.3",
     "babel-jest": "^25.1.0",
     "create-universal-package": "^4.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-i18n": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
+    "fusion-tokens": "0.0.0-monorepo",
     "jest": "^25.1.0",
     "locale": "^0.1.0",
-    "prettier": "^1.19.1",
     "puppeteer": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -56,9 +51,13 @@
   "main": "./dist-node-cjs/index.js",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-react": "0.0.0-monorepo",
-    "react": "^16.12.0"
+    "fusion-core": "*",
+    "fusion-plugin-i18n": "*",
+    "fusion-plugin-universal-events": "*",
+    "fusion-react": "*",
+    "fusion-tokens": "*",
+    "react": "*",
+    "react-dom": "*"
   },
   "repository": {
     "directory": "fusion-plugin-i18n-react",
@@ -66,11 +65,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
-    "lint": "eslint src",
-    "prepublish": "npm run build",
+    "lint": "yarn g:lint",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

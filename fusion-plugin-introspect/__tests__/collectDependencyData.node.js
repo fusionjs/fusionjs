@@ -32,14 +32,14 @@ test('collectDependencyData', () => {
 
   const data = collectDependencyData(app);
 
-  const ssr = data.dependencies.find(d => d.name === 'SSRDeciderToken');
+  const ssr = data.dependencies.find((d) => d.name === 'SSRDeciderToken');
   if (ssr) {
     expect(ssr.sources instanceof Array).toBe(true);
     expect(ssr.name).toBe('SSRDeciderToken');
     expect(ssr.dependencies).toEqual([]);
   } else throw new Error('should find SSRDeciderToken');
 
-  const v = data.dependencies.find(d => d.name === 'V');
+  const v = data.dependencies.find((d) => d.name === 'V');
   if (v) {
     expect(v.sources instanceof Array).toBe(true);
     expect(v.name).toBe('V');
@@ -47,7 +47,7 @@ test('collectDependencyData', () => {
     expect(v.dependencies).toEqual([]);
   } else throw new Error('should find V');
 
-  const a = data.dependencies.find(d => d.name === 'A');
+  const a = data.dependencies.find((d) => d.name === 'A');
   if (a) {
     expect(a.sources instanceof Array).toBe(true);
     expect(a.name).toBe('A');
@@ -55,7 +55,7 @@ test('collectDependencyData', () => {
     expect(a.dependencies).toEqual([]);
   } else throw new Error('should find A');
 
-  const b = data.dependencies.find(d => d.name === 'B');
+  const b = data.dependencies.find((d) => d.name === 'B');
   if (b) {
     expect(b.sources instanceof Array).toBe(true);
     expect(b.name).toBe('B');
@@ -63,7 +63,7 @@ test('collectDependencyData', () => {
     expect(b.dependencies).toEqual(['A']);
   } else throw new Error('should find B');
 
-  const c = data.dependencies.find(d => d.name === 'C');
+  const c = data.dependencies.find((d) => d.name === 'C');
   if (c) {
     expect(c.sources instanceof Array).toBe(true);
     expect(c.name).toBe('C');

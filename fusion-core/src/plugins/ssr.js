@@ -17,7 +17,7 @@ import type {
 const botRegex = /(bot|crawler|spider)/i;
 const SSRDecider = createPlugin<{}, SSRDeciderService>({
   provides: () => {
-    return ctx => {
+    return (ctx) => {
       // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
       // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
       if (ctx.path.match(/\.(js|js\.map|gif|jpg|png|pdf|json|svg)$/))
@@ -85,13 +85,13 @@ export default function createSSRPlugin({
 function legacySSRBodyTemplate(ctx) {
   const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
   const safeAttrs = Object.keys(htmlAttrs)
-    .map(attrKey => {
+    .map((attrKey) => {
       return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
     })
     .join('');
 
   const safeBodyAttrs = Object.keys(bodyAttrs)
-    .map(attrKey => {
+    .map((attrKey) => {
       return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
     })
     .join('');
@@ -138,7 +138,7 @@ function getUrls({chunkUrlMap, webpackPublicPath}, chunks) {
   // cross origin is needed to get meaningful errors in window.onerror
   const isCrossOrigin = webpackPublicPath.startsWith('http');
   const crossOriginAttribute = isCrossOrigin ? ' crossorigin="anonymous"' : '';
-  return [...new Set(chunks)].map(id => {
+  return [...new Set(chunks)].map((id) => {
     let url = chunkUrlMap.get(id).get('es5');
     if (webpackPublicPath.endsWith('/')) {
       url = webpackPublicPath + url;
@@ -157,7 +157,7 @@ function getChunkScripts(ctx) {
   );
   const preloaded = getUrls(
     ctx,
-    ctx.preloadChunks.filter(item => !ctx.syncChunks.includes(item))
+    ctx.preloadChunks.filter((item) => !ctx.syncChunks.includes(item))
   ).map(({url, crossOriginAttribute}) => {
     return `<script nonce="${ctx.nonce}" defer${crossOriginAttribute} src="${url}"></script>`;
   });

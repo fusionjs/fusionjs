@@ -15,7 +15,7 @@ export function generateFontFaces(
   // first sort atomic and styled font faces so font-faces will be well ordered
   const atomicDescriptors = [];
   const styledDescriptors = [];
-  Object.keys(fonts).forEach(fontName => {
+  Object.keys(fonts).forEach((fontName) => {
     const font = fonts[fontName];
     if (Array.isArray(font)) {
       styledDescriptors.push({fontName, font});
@@ -37,7 +37,7 @@ export function generateFontFaces(
   styledDescriptors.forEach(({fontName, font}) =>
     styledFaces.push(
       ...font.map(
-        fontInstance =>
+        (fontInstance) =>
           `@font-face {
 font-family: "${fontName}";
 font-display: fallback;
@@ -53,12 +53,12 @@ ${asFontFaceStyles(fontInstance.styles).join('')}}`
 function asFontFaceSrc(urls) {
   // `urls` is a dictionary of font types (woff, woff2 etc) to url string
   return Object.keys(urls).map(
-    type => `url("${String(urls[type])}") format("${type}")`
+    (type) => `url("${String(urls[type])}") format("${type}")`
   );
 }
 
 function asFontFaceStyles(styles = {}) {
   return Object.keys(styles).map(
-    key => `${toKebabCase(key)}: ${styles[key]};\n`
+    (key) => `${toKebabCase(key)}: ${styles[key]};\n`
   );
 }

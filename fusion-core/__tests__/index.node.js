@@ -178,10 +178,10 @@ test('disable SSR by composing SSRDecider with a plugin', async () => {
       return next();
     });
 
-    const SSRDeciderEnhancer = ssrDecider => {
+    const SSRDeciderEnhancer = (ssrDecider) => {
       return createPlugin({
         provides: () => {
-          return ctx => {
+          return (ctx) => {
             return (
               ssrDecider(ctx) &&
               !ctx.path.startsWith('/foo') &&
@@ -231,8 +231,9 @@ test('disable SSR by composing SSRDecider with a function', async () => {
       return next();
     });
 
-    app.enhance(SSRDeciderToken, decide => ctx =>
-      decide(ctx) && !ctx.path.startsWith('/foo')
+    app.enhance(
+      SSRDeciderToken,
+      (decide) => (ctx) => decide(ctx) && !ctx.path.startsWith('/foo')
     );
     return app;
   }
@@ -367,7 +368,7 @@ test('SSR with redirects upstream', async () => {
 
 test('HTML escaping works', async () => {
   const element = 'hi';
-  const render = el => el;
+  const render = (el) => el;
   const template = (ctx, next) => {
     ctx.template.htmlAttrs = {lang: '">'};
     ctx.template.bodyAttrs = {test: '">'};
@@ -386,18 +387,10 @@ test('HTML escaping works', async () => {
 
 test('head and body must be sanitized', async () => {
   const element = 'hi';
-  const render = el => el;
+  const render = (el) => el;
   const template = (ctx, next) => {
-    ctx.template.head.push(
-      html`
-        <meta charset="${'">'}" />
-      `
-    );
-    ctx.template.body.push(
-      html`
-        <div>${'">'}</div>
-      `
-    );
+    ctx.template.head.push(html` <meta charset="${'">'}" /> `);
+    ctx.template.body.push(html` <div>${'">'}</div> `);
     return next();
   };
   const app = new App(element, render);
@@ -411,7 +404,7 @@ test('head and body must be sanitized', async () => {
 
 test('throws if head is not sanitized', async () => {
   const element = 'hi';
-  const render = el => el;
+  const render = (el) => el;
   const template = (ctx, next) => {
     ctx.template.head.push(`<meta charset="${'">'}" />`);
     return next();
@@ -432,7 +425,7 @@ test('throws if head is not sanitized', async () => {
 
 test('throws if body is not sanitized', async () => {
   const element = 'hi';
-  const render = el => el;
+  const render = (el) => el;
   const template = (ctx, next) => {
     ctx.template.body.push(`<meta charset="${'">'}" />`);
     return next();
@@ -451,7 +444,7 @@ test('throws if body is not sanitized', async () => {
   );
 });
 
-test('rendering error handling', async done => {
+test('rendering error handling', async (done) => {
   const element = 'hi';
   const render = () => {
     return new Promise(() => {
@@ -464,7 +457,7 @@ test('rendering error handling', async done => {
 });
 
 test('app handles no render token', () => {
-  const app = new BaseApp('el', el => el);
+  const app = new BaseApp('el', (el) => el);
   app.renderer = null;
   expect(() => app.resolve()).toThrowError(
     'Missing registration for RenderToken'

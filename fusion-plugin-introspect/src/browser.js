@@ -17,7 +17,7 @@ const plugin = (app: App, _: any) => {
     /* istanbul ignore else  */
     if (document.querySelector('meta[name=diagnostics]')) {
       const x = new XMLHttpRequest();
-      x.open('POST', '/_diagnostics');
+      x.open('POST', `${getRoutePrefix()}/_diagnostics`);
       x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
       x.send(JSON.stringify(collectDependencyData(app)));
     }
@@ -25,3 +25,7 @@ const plugin = (app: App, _: any) => {
   }
 };
 export default ((plugin: any): (App, Object) => FusionPlugin<void, void>);
+
+function getRoutePrefix() {
+  return window.__ROUTE_PREFIX__ || '';
+}

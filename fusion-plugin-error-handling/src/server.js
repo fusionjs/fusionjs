@@ -16,9 +16,8 @@ import type {Token} from 'fusion-core';
 
 import type {ErrorHandlerPluginType, ErrorHandlerType} from './types.js';
 
-export const ErrorHandlerToken: Token<ErrorHandlerType> = createToken(
-  'ErrorHandlerToken'
-);
+export const ErrorHandlerToken: Token<ErrorHandlerType> =
+  createToken('ErrorHandlerToken');
 
 const captureTypes = {
   browser: 'browser',
@@ -62,12 +61,12 @@ const plugin =
           const script = html`
             <script nonce="${ctx.nonce}">
               const messageCounts = {};
-              onerror = function(m, s, l, c, e) {
+              onerror = function (m, s, l, c, e) {
                 var _e = e || {};
                 messageCounts[m] = (messageCounts[m] || 0) + 1;
                 if (_e.__handled || messageCounts[m] > 3) return;
                 var error = {};
-                Object.getOwnPropertyNames(_e).forEach(function(key) {
+                Object.getOwnPropertyNames(_e).forEach(function (key) {
                   error[key] = e[key];
                 });
                 var x = new XMLHttpRequest();

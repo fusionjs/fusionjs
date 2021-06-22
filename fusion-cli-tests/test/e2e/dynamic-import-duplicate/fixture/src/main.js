@@ -24,20 +24,22 @@ const Two = split({
   ErrorComponent,
 });
 
-export default function() {
-  const app = new App((
-    <div>
-      <span>
-        <One/>
-      </span>
-      <span>
-        <OneDuplicate/>
-      </span>
-      <span>
-        <Two/>
-      </span>
-    </div>
-  ));
+export default function () {
+  const app = new App(
+    (
+      <div>
+        <span>
+          <One />
+        </span>
+        <span>
+          <OneDuplicate />
+        </span>
+        <span>
+          <Two />
+        </span>
+      </div>
+    )
+  );
   if (__NODE__) {
     app.register(RenderToken, () => {
       return '<div id="root"></div>';

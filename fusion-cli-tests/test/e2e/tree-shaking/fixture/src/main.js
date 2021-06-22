@@ -1,4 +1,6 @@
 // @noflow
+/* eslint-disable no-unused-vars */
+
 import App from 'fusion-core';
 import child_process from 'child_process';
 import cluster from 'cluster';
@@ -19,8 +21,8 @@ import instrumentedAsPureNodePlugin from './plugins/instrumented-as-pure-node.js
 import {plugin as namedExportBrowserPlugin} from './plugins/named-export-browser.js';
 import {plugin as namedExportNodePlugin} from './plugins/named-export-node.js';
 
-export default async function() {
-  const app = new App('element', el => el);
+export default async function () {
+  const app = new App('element', (el) => el);
   __BROWSER__ && app.register(defaultExportBrowserPlugin);
   __NODE__ && app.register(defaultExportNodePlugin);
   __BROWSER__ && app.register(instrumentedAsPureBrowserPlugin);

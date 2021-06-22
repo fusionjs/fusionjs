@@ -15,28 +15,17 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
+    "@babel/core": "^7.12.3",
     "@babel/parser": "^7.12.3",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-transform-flow-strip-types": "^7.8.3",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "@babel/traverse": "^7.12.1",
     "@babel/types": "^7.5.0",
-    "babel-eslint": "^10.0.3",
     "create-universal-package": "^4.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "jest": "^25.1.0",
-    "node-fetch": "^2.6.0",
-    "prettier": "^1.19.1"
+    "node-fetch": "^2.6.0"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -58,11 +47,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
-    "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
+    "lint": "yarn g:lint",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

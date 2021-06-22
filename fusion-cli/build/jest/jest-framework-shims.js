@@ -8,11 +8,11 @@
 
 /* eslint-env node */
 
-process.on('unhandledRejection', e => {
+process.on('unhandledRejection', (e) => {
   throw e;
 });
 
-global.requestAnimationFrame = callback => {
+global.requestAnimationFrame = (callback) => {
   setTimeout(callback, 0);
 };
 

@@ -24,7 +24,7 @@ function chunkIdPlugin(babel /*: Object */) {
 }
 
 function refsHandler(t, context, refs = []) {
-  refs.forEach(refPath => {
+  refs.forEach((refPath) => {
     const parentPath = refPath.parentPath;
     if (!t.isCallExpression(parentPath)) {
       return;
@@ -42,7 +42,9 @@ function refsHandler(t, context, refs = []) {
     }
     args[0].replaceWith(
       t.callExpression(t.identifier('require'), [
-        t.stringLiteral(`__SECRET_CHUNK_ID_LOADER__!${args[0].node.value}`),
+        t.stringLiteral(
+          `__SECRET_CHUNK_ID_LOADER__?path=${args[0].node.value}!`
+        ),
       ])
     );
   });

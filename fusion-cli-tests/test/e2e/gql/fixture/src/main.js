@@ -1,7 +1,7 @@
 // @noflow
 import App from 'fusion-core';
-// $FlowFixMe
-import {gql} from 'fusion-apollo';
+import {gql} from 'fusion-plugin-apollo';
+
 const schema = gql('./schema.graphql');
 const query = gql('./query.gql');
 
@@ -10,8 +10,8 @@ if (__BROWSER__) {
   window.query = query;
 }
 
-export default (async function() {
-  const app = new App('element', el => el);
+export default (async function () {
+  const app = new App('element', (el) => el);
   __NODE__ &&
     app.middleware((ctx, next) => {
       if (ctx.url === '/schema') {

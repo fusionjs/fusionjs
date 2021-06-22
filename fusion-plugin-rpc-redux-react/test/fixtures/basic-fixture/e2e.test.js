@@ -10,7 +10,7 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('browser plugin integration test withRPCRedux', async done => {
+test('browser plugin integration test withRPCRedux', async (done) => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -18,7 +18,7 @@ test('browser plugin integration test withRPCRedux', async done => {
   // result of successful rpc call is returned in dom
   const userId = await runtime.page.$eval(
     '[data-testid="user-id"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(userId).toEqual('123');
 

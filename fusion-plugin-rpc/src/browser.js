@@ -98,8 +98,8 @@ class RPC {
             body: JSON.stringify(args || {}),
           }
     )
-      .then(r => r.json())
-      .then(args => {
+      .then((r) => r.json())
+      .then((args) => {
         const {status, data} = args;
         if (status === 'success') {
           emitter.emit(statKey, {
@@ -130,7 +130,7 @@ const pluginFactory: () => RPCPluginType = () =>
       rpcConfig: RPCHandlersConfigToken.optional,
       queryParams: RPCQueryParamsToken.optional,
     },
-    provides: deps => {
+    provides: (deps) => {
       const {
         fetch = window.fetch,
         emitter,
@@ -140,7 +140,7 @@ const pluginFactory: () => RPCPluginType = () =>
       } = deps;
 
       return {
-        from: memoize(ctx => {
+        from: memoize((ctx) => {
           const queryParamsValue = (queryParams && queryParams.from(ctx)) || [];
           const locale = (i18n && i18n.from(ctx).locale) || '';
           const localeCode = typeof locale === 'string' ? locale : locale.code;

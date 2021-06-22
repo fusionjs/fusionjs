@@ -35,18 +35,18 @@ function testDev(title, dir) {
       const compiler = new Compiler({env, dir, logger});
       await compiler.clean();
 
-      const compilationError = await new Promise(resolve => {
+      const compilationError = await new Promise((resolve) => {
         compiler.start((err, stats) => {
           if (err || stats.hasErrors()) {
             return resolve(err || new Error('Compiler stats included errors.'));
           }
 
-          expect(logger.warn.mock.calls.length).toMatchSnapshot(`dev-warn`);
-          expect(logger.error.mock.calls.length).toMatchSnapshot(`dev-error`);
           return resolve(false);
         });
       });
       t.ok(compilationError, 'Should produce compilation error');
+      expect(logger.warn.mock.calls.length).toMatchSnapshot('dev-warn');
+      expect(logger.error.mock.calls.length).toMatchSnapshot('dev-error');
       // $FlowFixMe
       t.throws(() => require(entry), 'Should throw');
     },
@@ -68,7 +68,7 @@ function testProd(title, dir) {
       const compiler = new Compiler({env, dir, logger});
       await compiler.clean();
 
-      const compilationError = await new Promise(resolve => {
+      const compilationError = await new Promise((resolve) => {
         compiler.start((err, stats) => {
           if (err || stats.hasErrors()) {
             return resolve(err || new Error('Compiler stats included errors.'));
@@ -78,9 +78,9 @@ function testProd(title, dir) {
         });
       });
       t.ok(compilationError, 'Should produce compilation error');
-      expect(logger.warn.mock.calls.length).toMatchSnapshot(`production-warn`);
+      expect(logger.warn.mock.calls.length).toMatchSnapshot('production-warn');
       expect(logger.error.mock.calls.length).toMatchSnapshot(
-        `production-error`
+        'production-error'
       );
 
       // $FlowFixMe

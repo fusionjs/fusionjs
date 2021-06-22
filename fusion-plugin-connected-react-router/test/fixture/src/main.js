@@ -26,12 +26,12 @@ import {ConnectedRouter} from 'connected-react-router';
 import reducer from './redux.js';
 
 export default function start() {
-  const app = new App((<Root />));
+  const app = new App(<Root />);
 
   app.register(ReduxToken, Redux);
   app.register(ReducerToken, reducer);
   __NODE__ &&
-    app.register(GetInitialStateToken, async ctx => ({
+    app.register(GetInitialStateToken, async (ctx) => ({
       user: {},
     }));
 

@@ -14,7 +14,7 @@ const TEST_MANIFEST = {
   name: 'Fusion test manifest',
 };
 
-test('injects manifest', async done => {
+test('injects manifest', async (done) => {
   const element = React.createElement('div');
   const setupContext: any = {element, template: {head: [], body: []}};
 
@@ -36,7 +36,7 @@ test('injects manifest', async done => {
   done();
 });
 
-test('returns manifest', async done => {
+test('returns manifest', async (done) => {
   const requestContext: any = {
     undefined,
     method: 'GET',

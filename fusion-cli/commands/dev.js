@@ -15,7 +15,7 @@ const {DevelopmentRuntime} = require('../build/dev-runtime');
 const {TestAppRuntime} = require('../build/test-runtime');
 const {execSync: exec} = require('child_process');
 
-exports.run = async function(
+exports.run = async function (
   {
     dir = '.',
     test,
@@ -25,7 +25,10 @@ exports.run = async function(
     hmr,
     open,
     logLevel,
+    disablePrompts,
     exitOnError,
+    disableBuildCache,
+    experimentalSkipRedundantServerReloads,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -44,6 +47,7 @@ exports.run = async function(
     forceLegacyBuild,
     watch: true,
     logger,
+    disableBuildCache,
   });
 
   const devRuntime = new DevelopmentRuntime(
@@ -54,6 +58,8 @@ exports.run = async function(
         port,
         debug,
         noOpen: !open,
+        disablePrompts,
+        experimentalSkipRedundantServerReloads,
       },
       hmr ? {middleware: compiler.getMiddleware()} : {}
     )
@@ -63,8 +69,10 @@ exports.run = async function(
     ? new TestAppRuntime({dir, overrideNodeEnv: true})
     : null;
 
-  // $FlowFixMe
-  await Promise.all([devRuntime.start(), compiler.clean(dir)]);
+  const [actualPort] = await Promise.all([
+    devRuntime.start(),
+    compiler.clean(),
+  ]);
 
   const runAll = async () => {
     try {
@@ -74,7 +82,7 @@ exports.run = async function(
         testRuntime ? testRuntime.run() : Promise.resolve(),
       ]);
       if (!open) {
-        logger.info(`Application is running on http://localhost:${port}`);
+        logger.info(`Application is running on http://localhost:${actualPort}`);
       }
     } catch (e) {} // eslint-disable-line
   };

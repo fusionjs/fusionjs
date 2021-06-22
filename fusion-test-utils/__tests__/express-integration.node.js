@@ -12,7 +12,7 @@ import express from 'express';
 
 import {getSimulator} from '../src/index.js';
 
-test('integrate with express', async done => {
+test('integrate with express', async (done) => {
   const flags = {render: false, end: false};
   const element = 'hi';
   const renderFn = () => {

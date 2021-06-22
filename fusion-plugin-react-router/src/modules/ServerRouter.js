@@ -33,7 +33,7 @@ class ServerRouter extends React.Component<PropsType> {
         'Using context.setCode is deprecated. Use a setter on the status prop instead'
       );
       Object.defineProperty(context, 'status', {
-        set: code => {
+        set: (code) => {
           context.setCode(code);
         },
         configurable: true,
@@ -44,7 +44,7 @@ class ServerRouter extends React.Component<PropsType> {
         'Using context.redirect is deprecated. Use a setter on the url prop instead'
       );
       Object.defineProperty(context, 'url', {
-        set: url => {
+        set: (url) => {
           context.redirect(url);
         },
         configurable: true,

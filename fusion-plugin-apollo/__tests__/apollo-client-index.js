@@ -14,11 +14,14 @@ import {ApolloLink} from 'apollo-link';
 import {FetchToken} from 'fusion-tokens';
 import unfetch from 'unfetch';
 
-import {ApolloClientPlugin, GetApolloClientLinksToken} from '../src/apollo-client/index.js';
+import {
+  ApolloClientPlugin,
+  GetApolloClientLinksToken,
+} from '../src/apollo-client/index.js';
 
 test('ApolloUniveralClient', async () => {
-  const app = new App('el', el => el);
-  app.register(GetApolloClientLinksToken, links => [
+  const app = new App('el', (el) => el);
+  app.register(GetApolloClientLinksToken, (links) => [
     new ApolloLink((op, forward) => {
       return forward(op);
     }),

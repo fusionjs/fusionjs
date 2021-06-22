@@ -131,7 +131,7 @@ const plugin =
     provides: ({fetch, storage}) => {
       return new UniversalEmitter(fetch, storage || localBatchStorage);
     },
-    cleanup: async emitter => {
+    cleanup: async (emitter) => {
       return emitter.teardown();
     },
   });

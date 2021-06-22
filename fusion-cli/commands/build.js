@@ -12,7 +12,7 @@ const winston = require('winston');
 
 const {Compiler} = require('../build/compiler.js');
 
-exports.run = async function(
+exports.run = async function (
   {
     dir = '.',
     production,
@@ -23,6 +23,8 @@ exports.run = async function(
     experimentalServerless,
     modernBuildOnly,
     skipSourceMaps,
+    disableBuildCache,
+    experimentalEsbuildMinifier,
   } /*: {
     experimentalServerless: boolean,
     dir: string,
@@ -33,6 +35,8 @@ exports.run = async function(
     minify: boolean,
     modernBuildOnly: boolean,
     skipSourceMaps: boolean,
+    disableBuildCache?: boolean,
+    experimentalEsbuildMinifier?: boolean,
   }*/
 ) {
   const logger = winston.createLogger({
@@ -56,6 +60,8 @@ exports.run = async function(
     modernBuildOnly,
     maxWorkers,
     skipSourceMaps,
+    disableBuildCache,
+    experimentalEsbuildMinifier,
   });
 
   await compiler.clean();

@@ -30,9 +30,9 @@ const {ConnectedRouter, push} = require('connected-react-router');
 const {getSimulator} = require('fusion-test-utils');
 const {connect} = require('react-redux');
 
-test('An app', async done => {
+test('An app', async (done) => {
   expect.assertions(5);
-  const Root = connect(state => state, {push})(props => {
+  const Root = connect((state) => state, {push})((props) => {
     expect(props.router.location.pathname).toBe('/');
     props.push('/test');
     return React.createElement('div', null, 'Hello World');
@@ -52,9 +52,9 @@ test('An app', async done => {
     return state;
   });
   app.register(EnhancerToken, ConnectedRouterEnhancer);
-  app.enhance(RouterToken, oldRouter => {
+  app.enhance(RouterToken, (oldRouter) => {
     return {
-      from: ctx => {
+      from: (ctx) => {
         const {history} = oldRouter.from(ctx);
         return {
           history: {
@@ -70,17 +70,19 @@ test('An app', async done => {
   app.register(
     createPlugin({
       deps: {redux: ReduxToken},
-      middleware: ({redux}) => async (ctx, next) => {
-        await next();
-        const store = redux.from(ctx).store;
-        const state = store.getState();
-        expect(typeof state.router.location.pathname).toBe('string');
-        expect(typeof state.router.action).toBe('string');
-        store.dispatch({
-          type: 'TEST',
-        });
-        expect(store.getState().test).toBe(true);
-      },
+      middleware:
+        ({redux}) =>
+        async (ctx, next) => {
+          await next();
+          const store = redux.from(ctx).store;
+          const state = store.getState();
+          expect(typeof state.router.location.pathname).toBe('string');
+          expect(typeof state.router.action).toBe('string');
+          store.dispatch({
+            type: 'TEST',
+          });
+          expect(store.getState().test).toBe(true);
+        },
     })
   );
 

@@ -16,9 +16,18 @@ const {spawn} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
 const httpProxy = require('http-proxy');
+const net = require('net');
+const readline = require('readline');
+const chalk = require('chalk');
 
 const renderHtmlError = require('./server-error').renderHtmlError;
+const fs = require('fs');
 
+const stat = promisify(fs.stat);
+const exists = promisify(fs.exists);
+
+const entryFile = '.fusion/dist/development/server/server-main.js';
+let entryFileLastModifiedTime = Date.now();
 // mechanism to allow a running proxy server to wait for a child process server to start
 function Lifecycle() {
   const emitter = new EventEmitter();
@@ -33,7 +42,7 @@ function Lifecycle() {
     stop: () => {
       state.started = false;
     },
-    error: error => {
+    error: (error) => {
       state.error = error;
       // The error listener may emit before we call wait.
       // Make sure that we're listening before attempting to emit.
@@ -70,13 +79,15 @@ type DevRuntimeType = {
 };
 */
 
-module.exports.DevelopmentRuntime = function(
+module.exports.DevelopmentRuntime = function (
   {
     port,
     dir = '.',
     noOpen,
     middleware = (req, res, next) => next(),
     debug = false,
+    disablePrompts = false,
+    experimentalSkipRedundantServerReloads,
   } /*: any */
 ) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
@@ -118,9 +129,7 @@ module.exports.DevelopmentRuntime = function(
         }});
       }
 
-      const entry = path.resolve(
-        '.fusion/dist/development/server/server-main.js'
-      );
+      const entry = path.resolve('${entryFile}');
 
       if (fs.existsSync(entry)) {
         try {
@@ -139,6 +148,22 @@ module.exports.DevelopmentRuntime = function(
         logAndSend(new Error(\`No entry found at \${entry}\`));
       }
     `;
+    const fpath = path.join(dir, entryFile);
+    if (experimentalSkipRedundantServerReloads && (await exists(fpath))) {
+      const entryFileStats = await stat(fpath);
+      if (
+        entryFileStats.mtime.toString() ===
+          entryFileLastModifiedTime.toString() &&
+        state.proc &&
+        state.proxy
+      ) {
+        console.log('Server bundle not changed, skipping server restart.');
+        lifecycle.start();
+        return;
+      } else {
+        entryFileLastModifiedTime = entryFileStats.mtime;
+      }
+    }
 
     killProc();
 
@@ -168,7 +193,7 @@ module.exports.DevelopmentRuntime = function(
       // $FlowFixMe
       state.proc.on('exit', handleChildServerCrash);
       // $FlowFixMe
-      state.proc.on('message', message => {
+      state.proc.on('message', (message) => {
         if (message.event === 'started') {
           lifecycle.start();
           resolve();
@@ -198,20 +223,38 @@ module.exports.DevelopmentRuntime = function(
   }
 
   this.start = async function start() {
+    const portAvailable = await isPortAvailable(port);
+    if (!portAvailable) {
+      if (disablePrompts) {
+        // Fast fail, don't prompt
+        throw new Error(`Port ${port} taken by another process`);
+      }
+      const useRandomPort = await prompt(
+        `Port ${port} taken! Continue with a different port?`
+      );
+      if (useRandomPort) {
+        let ports = [];
+        for (let i = 1; i <= 10; i++) {
+          ports.push(port + i);
+        }
+        port = await getPort({port: ports});
+      }
+    }
+
     // $FlowFixMe
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
         lifecycle.wait().then(
           () => {
             // $FlowFixMe
-            state.proxy.web(req, res, e => {
+            state.proxy.web(req, res, (e) => {
               if (res.finished) return;
 
               res.write(renderHtmlError(e));
               res.end();
             });
           },
-          error => {
+          (error) => {
             if (res.finished) return;
 
             res.write(renderHtmlError(error));
@@ -222,7 +265,7 @@ module.exports.DevelopmentRuntime = function(
     });
 
     state.server.on('upgrade', (req, socket, head) => {
-      socket.on('error', e => {
+      socket.on('error', (e) => {
         socket.destroy();
       });
       lifecycle.wait().then(
@@ -244,6 +287,9 @@ module.exports.DevelopmentRuntime = function(
     return listen(port).then(() => {
       const url = `http://localhost:${port}`;
       if (!noOpen) openUrl(url);
+
+      // Return port in case it had to be changed
+      return port;
     });
   };
 
@@ -257,3 +303,34 @@ module.exports.DevelopmentRuntime = function(
 
   return this;
 };
+
+async function prompt(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question(`\n${chalk.bold(question)} [Y/n]`, (answer) => {
+      const response = answer === '' || answer.toLowerCase() === 'y';
+      rl.close();
+      resolve(response);
+    });
+  });
+}
+
+async function isPortAvailable(port) {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        resolve(false);
+      }
+      reject(err);
+    });
+    server.once('listening', () => {
+      server.once('close', () => resolve(true));
+      server.close();
+    });
+    server.listen(port);
+  });
+}

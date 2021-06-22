@@ -24,7 +24,7 @@ import rpcHandlers from './rpc/index.js';
 import reducer from './redux.js';
 
 export default () => {
-  const app = new App((<Root />));
+  const app = new App(<Root />);
 
   if (__BROWSER__) {
     app.register(FetchToken, window.fetch);
@@ -32,7 +32,7 @@ export default () => {
 
   if (__NODE__) {
     app.register(RPCHandlersToken, rpcHandlers);
-    app.register(GetInitialStateToken, async ctx => ({}));
+    app.register(GetInitialStateToken, async (ctx) => ({}));
   }
 
   app.register(RPCToken, RPCPlugin);

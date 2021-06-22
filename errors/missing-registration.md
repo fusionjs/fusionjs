@@ -10,3 +10,12 @@ yourself. That is, if you register a plugin that depends on another token, you
 must not forget to register that token.
 
 Fix this error by registering the token listed.
+
+
+###### What is "UnnamedPlugin"?
+
+The above error may refer to an `UnnamedPlugin`. If one of the dependent tokens
+in the error above was registered without a token, i.e.
+`app.register(MyPlugin)`, Fusion.js will automatically assign this plugin an
+internal token reference called `UnnamedPluginX`, where `X` is an internal
+(and otherwise insignificant) counter.

@@ -38,7 +38,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   - `ENABLE_REACT_PROFILER=true fusion build`
 
-- `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild]`
+- `fusion dev [dir] [--port] [--no-hmr] [--test] [--log-level] [--forceLegacyBuild] [--disablePrompts]`
   Builds development assets and runs the application in development mode
 
   Note that this command only builds browser artifacts in memory, and it doesn't save them to the filesystem. This allows hot module reloading to occur faster since there's no performance cost due to I/O access.
@@ -50,6 +50,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--forceLegacyBuild`: Force enable legacy build. By default not compiled in dev.
   - `--exitOnError`: Exit the process if a compiliation error occurs.
   - `--preserveNames`: Disable name mangling during script minification
+  - `--disablePrompts`: Disable command-line prompts. Useful for CI environment
 
 <!--
 * `fusion profile [--environment] [--watch] [--file-count]`: Profile your application

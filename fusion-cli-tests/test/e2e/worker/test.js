@@ -26,7 +26,7 @@ test('`fusion build` app with worker integration', async () => {
   let content;
   let contentFound = false;
   while (!contentFound) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     content = await page.content();
     if (
       content.includes('worker1-included') &&

@@ -36,7 +36,7 @@ export default ((__NODE__ &&
       return async (ctx, next) => {
         if (__NODE__) {
           if (ctx.method === 'GET' && ctx.url === '/sw.js') {
-            const chunkUrls = Array.from(ctx.chunkUrlMap).map(value =>
+            const chunkUrls = Array.from(ctx.chunkUrlMap).map((value) =>
               value[1].get('es5')
             );
             try {
@@ -46,14 +46,14 @@ export default ((__NODE__ &&
                 // TODO(#24): also include images etc.
                 cacheableResourcePaths: chunkUrls,
                 // cannot precache from different domain
-                precachePaths: chunkUrls.filter(url =>
+                precachePaths: chunkUrls.filter((url) =>
                   hasSameHostName(url, ctx.url)
                 ),
                 cacheBustingPatternStrings: cacheBustingPatterns
-                  ? cacheBustingPatterns.map(regex => String(regex))
+                  ? cacheBustingPatterns.map((regex) => String(regex))
                   : [],
                 cacheableRoutePatternStrings: cacheableRoutePatterns
-                  ? cacheableRoutePatterns.map(regex => String(regex))
+                  ? cacheableRoutePatterns.map((regex) => String(regex))
                   : [],
                 cacheDuration,
               });

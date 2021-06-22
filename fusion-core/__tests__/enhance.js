@@ -8,18 +8,18 @@ import type {FusionPlugin, Token} from '../src/types.js';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
-test('enhancement', done => {
-  const app = new App('el', el => el);
+test('enhancement', (done) => {
+  const app = new App('el', (el) => el);
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
-      return arg => arg;
+      return (arg) => arg;
     },
   });
   const BaseFnEnhancer = (fn: FnType): FnType => {
-    return arg => {
+    return (arg) => {
       return fn(arg) + ' enhanced';
     };
   };
@@ -33,20 +33,20 @@ test('enhancement', done => {
   app.resolve();
 });
 
-test('enhancement with a plugin', done => {
-  const app = new App('el', el => el);
+test('enhancement with a plugin', (done) => {
+  const app = new App('el', (el) => el);
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
-      return arg => arg;
+      return (arg) => arg;
     },
   });
   const BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
     return createPlugin({
       provides: () => {
-        return arg => {
+        return (arg) => {
           return fn(arg) + ' enhanced';
         };
       },
@@ -63,15 +63,15 @@ test('enhancement with a plugin', done => {
 });
 
 test('enhancement with a plugin allows orphan plugins', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
-  const BaseFn: FnType = a => a;
+  const BaseFn: FnType = (a) => a;
   const BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
     return createPlugin({
       provides: () => {
-        return arg => {
+        return (arg) => {
           return fn(arg) + ' enhanced';
         };
       },
@@ -85,11 +85,11 @@ test('enhancement with a plugin allows orphan plugins', () => {
 });
 
 test('enhancement with a non-plugin enhancer does not allow orphan plugins', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
-  const BaseFn: FnType = a => a;
+  const BaseFn: FnType = (a) => a;
   const BaseFnEnhancer = (fn: FnType): FnType => {
     return fn;
   };
@@ -100,8 +100,8 @@ test('enhancement with a non-plugin enhancer does not allow orphan plugins', () 
   }).toThrow();
 });
 
-test('enhancement with a plugin with deps', done => {
-  const app = new App('el', el => el);
+test('enhancement with a plugin with deps', (done) => {
+  const app = new App('el', (el) => el);
 
   const DepAToken: Token<string> = createToken('DepA');
   const DepBToken: Token<string> = createToken('DepB');
@@ -118,11 +118,11 @@ test('enhancement with a plugin with deps', done => {
     },
   });
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
-      return arg => arg;
+      return (arg) => arg;
     },
   });
   const BaseFnEnhancer = (
@@ -141,7 +141,7 @@ test('enhancement with a plugin with deps', done => {
         expect(a).toBe('test-dep-a');
         expect(b).toBe('test-dep-b');
         expect(c).toBe('test-dep-c');
-        return arg => {
+        return (arg) => {
           return fn(arg) + ' enhanced';
         };
       },
@@ -161,14 +161,14 @@ test('enhancement with a plugin with deps', done => {
 });
 
 // TODO(#573) This is a regression test which hasn't been fixed yet
-test.skip('Plugin enhancer on unregistered token with no dependencies', t => {
-  let app = new App('el', el => el);
-  type FnType = string => string;
+test.skip('Plugin enhancer on unregistered token with no dependencies', (t) => {
+  let app = new App('el', (el) => el);
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   let BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
     return createPlugin({
       provides: () => {
-        return arg => {
+        return (arg) => {
           return fn(arg) + ' enhanced';
         };
       },
@@ -181,14 +181,14 @@ test.skip('Plugin enhancer on unregistered token with no dependencies', t => {
 });
 
 // TODO(#573) This is a regression test which hasn't been fixed yet
-test.skip('Plugin enhancer on unregistered token with optional dependency', t => {
-  let app = new App('el', el => el);
-  type FnType = string => string;
+test.skip('Plugin enhancer on unregistered token with optional dependency', (t) => {
+  let app = new App('el', (el) => el);
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   let BaseFnEnhancer = (fn: FnType): FusionPlugin<void, FnType> => {
     return createPlugin({
       provides: () => {
-        return arg => {
+        return (arg) => {
           return fn(arg) + ' enhanced';
         };
       },
@@ -208,9 +208,9 @@ test.skip('Plugin enhancer on unregistered token with optional dependency', t =>
 });
 
 // TODO(#573) This is a regression test which hasn't been fixed yet
-test.skip('regular enhancer on unregistered token with no dependencies', t => {
-  let app = new App('el', el => el);
-  type FnType = string => string;
+test.skip('regular enhancer on unregistered token with no dependencies', (t) => {
+  let app = new App('el', (el) => el);
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   let BaseFnEnhancer = (fn: FnType): FnType => {
     return fn;
@@ -222,8 +222,8 @@ test.skip('regular enhancer on unregistered token with no dependencies', t => {
 });
 
 test('regular enhancer on unregistered token with optional dependencies', () => {
-  let app = new App('el', el => el);
-  type FnType = string => string;
+  let app = new App('el', (el) => el);
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   let BaseFnEnhancer = (fn: FnType): FnType => {
     return fn;
@@ -242,18 +242,18 @@ test('regular enhancer on unregistered token with optional dependencies', () => 
 });
 
 test('enhancement with a plugin with missing deps', () => {
-  const app = new App('el', el => el);
+  const app = new App('el', (el) => el);
 
   const DepAToken: Token<string> = createToken('DepA');
   const DepBToken: Token<string> = createToken('DepB');
 
   const DepB = 'test-dep-b';
 
-  type FnType = string => string;
+  type FnType = (string) => string;
   const FnToken: Token<FnType> = createToken('FnType');
   const BaseFn: FusionPlugin<void, FnType> = createPlugin({
     provides: () => {
-      return arg => arg;
+      return (arg) => arg;
     },
   });
   const provides = jest.fn();
@@ -276,7 +276,7 @@ test('enhancement with a plugin with missing deps', () => {
     return (ctx, next) => next();
   });
   expect(() => app.resolve()).toThrow(
-    /Token is required dependency of plugins registered to "EnhancerOf<FnType>" token/
+    /This token is a required dependency of the plugin registered to "EnhancerOf<FnType>" token/
   );
   expect(provides).not.toHaveBeenCalled();
 });

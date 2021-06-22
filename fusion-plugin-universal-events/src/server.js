@@ -22,7 +22,7 @@ export class GlobalEmitter extends Emitter {
 
   constructor() {
     super();
-    this.from = memoize(ctx => {
+    this.from = memoize((ctx) => {
       return new ScopedEmitter(ctx, this);
     });
   }

@@ -10,7 +10,7 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('useRPCRedux handler resolves data from redux store', async done => {
+test('useRPCRedux handler resolves data from redux store', async (done) => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -19,7 +19,7 @@ test('useRPCRedux handler resolves data from redux store', async done => {
   // test return value from useRPCRedux handler
   const handlerData = await runtime.page.$eval(
     '[data-testid="user-data"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(handlerData).toEqual('user');
 
@@ -27,7 +27,7 @@ test('useRPCRedux handler resolves data from redux store', async done => {
   // test return value for useSelector
   const selectorData = await runtime.page.$eval(
     '[data-testid="trip-data"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(selectorData).toEqual('trip');
 

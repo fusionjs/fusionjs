@@ -25,7 +25,7 @@ export default async function start() {
 
 // $FlowFixMe
 if (__BROWSER__ && module.hot) {
-  window.__addHotStatusHandler = handler => {
+  window.__addHotStatusHandler = (handler) => {
     // $FlowFixMe
     module.hot.addStatusHandler(handler);
   };

@@ -13,7 +13,7 @@ export default function generatePreloadLinks(
   fontDictionary: AtomicFontsObjectType
 ) {
   const links = [];
-  Object.keys(fontNames).forEach(fontName => {
+  Object.keys(fontNames).forEach((fontName) => {
     const font = fontDictionary[fontName];
     if (font) {
       // We can't detect woff2 support on the server, but rel=prelaod

@@ -6,17 +6,20 @@
     "eslint-config-uber-universal-stage-3": "^3.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.8.0",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.27.0",
     "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
+    "eslint-plugin-flowtype": "^5.7.2",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
-    "prettier": "^1.19.1"
+    "prettier": "^2.3.0"
   },
   "engines": {
     "node": ">=8.9.4",

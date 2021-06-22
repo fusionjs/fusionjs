@@ -38,7 +38,7 @@ test('simulate multi-render requests', async () => {
   }
 });
 
-test('simulate non-render request', async done => {
+test('simulate non-render request', async (done) => {
   const flags = {render: false};
   const element = 'hi';
   const renderFn = () => {
@@ -72,7 +72,7 @@ test('use simulator with fixture and plugin dependencies', async () => {
   });
   function getTestFixture() {
     // Register plugins
-    const app = new App('hi', el => el);
+    const app = new App('hi', (el) => el);
     app.register(msgProviderPluginToken, msgProviderPlugin);
     return app;
   }
@@ -96,7 +96,7 @@ test('use simulator with fixture and plugin dependencies', async () => {
 });
 
 // Has to be skipped because this test relies on Jest globals not existing (i.e. tape)
-test.skip('test throws when not using test-app', async done => {
+test.skip('test throws when not using test-app', async (done) => {
   expect(exportedTest).toThrow('test-app');
   done();
 });
@@ -108,7 +108,7 @@ test('getService - returns service as expected, with no dependencies', async () 
     },
   });
 
-  const service = getService(() => new App('hi', el => el), simplePlugin);
+  const service = getService(() => new App('hi', (el) => el), simplePlugin);
   expect(service).toBeTruthy();
   expect(service.meaningOfLife).toBe(42);
 });
@@ -128,7 +128,7 @@ test('getService - returns service as expected, with dependencies', async () => 
   });
 
   const service = getService(() => {
-    const app = new App('hi', el => el);
+    const app = new App('hi', (el) => el);
     app.register(meaningOfLifeToken, meaningOfLifePlugin);
     return app;
   }, simplePlugin);
@@ -145,17 +145,17 @@ test('getService - throws as expected due to missing dependency', async () => {
     },
   });
   expect(() =>
-    getService(() => new App('hi', el => el), simplePlugin)
+    getService(() => new App('hi', (el) => el), simplePlugin)
   ).toThrow();
 });
 
 test('memoize helper', async () => {
-  const app = new App('hi', el => el);
+  const app = new App('hi', (el) => el);
   app.register(
     createPlugin({
       provides: () => {
         return {
-          from: memoize(ctx => {
+          from: memoize((ctx) => {
             return 5;
           }),
         };

@@ -1,5 +1,5 @@
 // @noflow
-module.exports = function(output) {
+module.exports = function (output) {
   // Parse jest output like:
   // Test Suites: 1 failed, 1 total
   const pattern = /Test Suites:.*?, ([0-9]+) total/g;

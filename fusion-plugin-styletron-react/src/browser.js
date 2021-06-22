@@ -26,52 +26,54 @@ function getPlugin(getStyletronEngine: any): any {
       deps: {
         prefix: AtomicPrefixToken.optional,
       },
-      middleware: ({prefix}) => (ctx, next) => {
-        if (ctx.element) {
-          if (!engine) {
-            const config: {
-              hydrate: HTMLCollection<HTMLElement>,
-              prefix?: string,
-            } = {
-              hydrate: document.getElementsByClassName('_styletron_hydrate_'),
-            };
-            if (prefix !== void 0) {
-              config.prefix = prefix;
+      middleware:
+        ({prefix}) =>
+        (ctx, next) => {
+          if (ctx.element) {
+            if (!engine) {
+              const config: {
+                hydrate: HTMLCollection<HTMLElement>,
+                prefix?: string,
+              } = {
+                hydrate: document.getElementsByClassName('_styletron_hydrate_'),
+              };
+              if (prefix !== void 0) {
+                config.prefix = prefix;
+              }
+              engine = getStyletronEngine(config);
             }
-            engine = getStyletronEngine(config);
-          }
-          if (__DEV__ && !debugEngine && typeof Worker !== 'undefined') {
-            const worker = new Worker(workerRoute);
-            worker.postMessage({
-              id: 'init_wasm',
-              url: wasmRoute,
-            });
-            worker.postMessage({
-              id: 'set_render_interval',
-              interval: 180,
-            });
-            if ((module: any).hot) {
-              (module: any).hot.addStatusHandler(status => {
-                if (status === 'dispose') {
-                  worker.postMessage({id: 'invalidate'});
-                }
+            if (__DEV__ && !debugEngine && typeof Worker !== 'undefined') {
+              const worker = new Worker(workerRoute);
+              worker.postMessage({
+                id: 'init_wasm',
+                url: wasmRoute,
               });
+              worker.postMessage({
+                id: 'set_render_interval',
+                interval: 180,
+              });
+              if ((module: any).hot) {
+                (module: any).hot.addStatusHandler((status) => {
+                  if (status === 'dispose') {
+                    worker.postMessage({id: 'invalidate'});
+                  }
+                });
+              }
+              debugEngine = new DebugEngine(worker);
             }
-            debugEngine = new DebugEngine(worker);
+            ctx.element = (
+              <StyletronProvider
+                value={engine}
+                debug={debugEngine}
+                debugAfterHydration={Boolean(debugEngine)}
+              >
+                {ctx.element}
+              </StyletronProvider>
+            );
           }
-          ctx.element = (
-            <StyletronProvider
-              value={engine}
-              debug={debugEngine}
-              debugAfterHydration={Boolean(debugEngine)}
-            >
-              {ctx.element}
-            </StyletronProvider>
-          );
-        }
 
-        return next();
-      },
+          return next();
+        },
     });
   return plugin;
 }

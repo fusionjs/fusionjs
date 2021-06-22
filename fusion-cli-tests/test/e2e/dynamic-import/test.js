@@ -25,14 +25,26 @@ test('`fusion build` with dynamic imports', async () => {
     testContent.dynamicContent.includes('loaded dynamic import'),
     'dynamic import is executed'
   );
-  expect(testContent.chunkIds).toStrictEqual([
-    [10003, 0],
-    [10004, 1],
-  ]); // 'Chunk IDs are populated'
+  // 'Chunk IDs are populated'
+  expect(testContent.chunkIds).toMatchInlineSnapshot(`
+    Array [
+      Array [
+        "legacy-src_dynamic_js",
+        "src_dynamic_js",
+      ],
+      Array [
+        "legacy-src_dynamic2_js",
+        "src_dynamic2_js",
+      ],
+    ]
+  `);
 
   t.ok(
     await exists(
-      path.resolve(dir, `.fusion/dist/development/client/client-0.js`)
+      path.resolve(
+        dir,
+        '.fusion/dist/development/client/client-src_dynamic_js.js'
+      )
     ),
     'client dynamic import bundle exists'
   );

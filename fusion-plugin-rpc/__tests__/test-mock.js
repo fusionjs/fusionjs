@@ -32,14 +32,14 @@ function createTestFixture() {
     provides: () => mockEmitter,
   });
 
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   app.register(RPCHandlersToken, mockHandlers);
   app.register(MockPluginToken, RPCPlugin);
   return app;
 }
 
-test('mock with missing handler', async done => {
+test('mock with missing handler', async (done) => {
   const app = createTestFixture();
 
   expect.assertions(1);
@@ -47,7 +47,7 @@ test('mock with missing handler', async done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: async deps => {
+      provides: async (deps) => {
         const rpc = deps.rpcFactory.from(mockCtx);
         await expect(rpc.request('test')).rejects.toThrowError(
           'Missing RPC handler for test'
@@ -58,9 +58,9 @@ test('mock with missing handler', async done => {
   );
 });
 
-test('mock with handler', async done => {
+test('mock with handler', async (done) => {
   const mockHandlers = {
-    test: args => {
+    test: (args) => {
       expect(args).toStrictEqual({test: 'args'});
       return 10;
     },
@@ -74,7 +74,7 @@ test('mock with handler', async done => {
     app,
     createPlugin({
       deps: {rpcFactory: MockPluginToken},
-      provides: async deps => {
+      provides: async (deps) => {
         const rpc = deps.rpcFactory.from(mockCtx);
 
         const result = await rpc.request('test', {test: 'args'});

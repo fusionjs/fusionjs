@@ -24,7 +24,7 @@ function assetURLPlugin(babel /*: Object */) {
 }
 
 function refsHandler(t, context, refs = []) {
-  refs.forEach(refPath => {
+  refs.forEach((refPath) => {
     const parentPath = refPath.parentPath;
     if (!t.isCallExpression(parentPath)) {
       return;
@@ -43,7 +43,7 @@ function refsHandler(t, context, refs = []) {
     args[0].replaceWith(
       t.callExpression(t.identifier('require'), [
         t.stringLiteral(
-          `__SECRET_FILE_LOADER__?assetUrl=true!${args[0].node.value}`
+          `__SECRET_FILE_LOADER__!${args[0].node.value}?assetUrl=true`
         ),
       ])
     );

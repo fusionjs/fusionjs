@@ -1,6 +1,6 @@
 import { chunkId } from 'fusion-core';
 import { chunkId as chunkIdOther } from 'chunkId';
 const path = './test';
-chunkId(require("__SECRET_CHUNK_ID_LOADER__!./path"));
+chunkId(require("__SECRET_CHUNK_ID_LOADER__?path=./path!"));
 chunkIdOther(path);
-chunkId(require("__SECRET_CHUNK_ID_LOADER__!./path"));
+chunkId(require("__SECRET_CHUNK_ID_LOADER__?path=./path!"));

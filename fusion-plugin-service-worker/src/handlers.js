@@ -27,10 +27,10 @@ export default function getHandlers(assetInfo: AssetInfo) {
         caches.delete(cacheName).then(() =>
           caches
             .open(cacheName)
-            .then(cache => {
+            .then((cache) => {
               return cache.addAll(precachePaths);
             })
-            .catch(e => {
+            .catch((e) => {
               // Don't throw an error because we expect CORS (CDN) requests to not be precacheable
               // (`addAll` expects a 200 response, but CORS returns an opaque response)
               // CORS resources will be lazily cached on first fetch instead
@@ -42,8 +42,8 @@ export default function getHandlers(assetInfo: AssetInfo) {
     onActivate: (event: InstallEvent) => {
       // let all existing clients claim this new worker instance
       event.waitUntil(clients.claim());
-      self.clients.matchAll().then(all =>
-        all.map(client =>
+      self.clients.matchAll().then((all) =>
+        all.map((client) =>
           client.postMessage({
             type: 'upgrade-available',
             text: '*** from sw: reload for updates',
@@ -75,7 +75,7 @@ export default function getHandlers(assetInfo: AssetInfo) {
           // bypass service worker, use network
           return;
         }
-        const p = caches.match(event.request).then(cachedResponse => {
+        const p = caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) {
             if (expectsHtml) {
               if (cacheHasExpired(cachedResponse, cacheDuration)) {
@@ -83,8 +83,8 @@ export default function getHandlers(assetInfo: AssetInfo) {
                 return caches
                   .delete(cacheName)
                   .then(() =>
-                    self.clients.matchAll().then(all =>
-                      all.map(client =>
+                    self.clients.matchAll().then((all) =>
+                      all.map((client) =>
                         client.postMessage({
                           type: 'cache-expired',
                           text: '*** from sw: cache expired',
@@ -112,7 +112,7 @@ export default function getHandlers(assetInfo: AssetInfo) {
 }
 
 function fetchAndCache(request, expectsHtml) {
-  return fetch(request).then(resp => {
+  return fetch(request).then((resp) => {
     if (expectsHtml) {
       // check we've got good html before caching
       if (!responseIsOKAndHtml(resp)) {
@@ -130,7 +130,7 @@ function fetchAndCache(request, expectsHtml) {
     }
 
     const clonedResponse = resp.clone();
-    caches.open(cacheName).then(cache => {
+    caches.open(cacheName).then((cache) => {
       cache.put(request.url, clonedResponse);
     });
     // Pass original response back to browser
@@ -166,7 +166,7 @@ function requestIsCacheable(
   if (expectsHtml) {
     // cache html unless cacheableRoutePatterns is specified and non-matching
     return cacheableRoutePatterns
-      ? cacheableRoutePatterns.some(p => (url.pathname + url.search).match(p))
+      ? cacheableRoutePatterns.some((p) => (url.pathname + url.search).match(p))
       : true;
   } else {
     return (
@@ -185,17 +185,18 @@ function cacheHasExpired(cachedResponse, cacheDuration) {
 function shouldInvalidateCache(event, cacheBustingPatterns) {
   return (
     cacheBustingPatterns &&
-    cacheBustingPatterns.some(pattern => event.request.url.match(pattern))
+    cacheBustingPatterns.some((pattern) => event.request.url.match(pattern))
   );
 }
 
 function unexpectedResponseMessage(resp) {
-  return `[sw debug] expected HTML but got ${(resp &&
-    resp.headers &&
-    resp.headers.get('content-type')) ||
-    'unknown'}`;
+  return `[sw debug] expected HTML but got ${
+    (resp && resp.headers && resp.headers.get('content-type')) || 'unknown'
+  }`;
 }
 
 function mapToRegex(arr) {
-  return arr.length ? arr.map(str => new RegExp(str.replace(/\//g, ''))) : null;
+  return arr.length
+    ? arr.map((str) => new RegExp(str.replace(/\//g, '')))
+    : null;
 }

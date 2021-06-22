@@ -26,6 +26,7 @@ export default __BROWSER__ ? clientApp() : serverApp();
 
 export {compose} from './compose.js';
 export {memoize} from './memoize';
+export type {MemoizeFn} from './memoize';
 
 // sanitization API
 export {
@@ -54,6 +55,7 @@ export {
   RoutePrefixToken,
   CriticalChunkIdsToken,
   RouteTagsToken,
+  EnableMiddlewareTimingToken,
 } from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';

@@ -10,13 +10,13 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('browser plugin integration test withRPCRedux', async done => {
+test('browser plugin integration test withRPCRedux', async (done) => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
   const parentTripId = await runtime.page.$eval(
     '[data-testid="parent-trip-id"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(parentTripId).toEqual('123');
 
@@ -27,7 +27,7 @@ test('browser plugin integration test withRPCRedux', async done => {
 
   const childTripId = await runtime.page.$eval(
     '[data-testid="child-trip-id"]',
-    el => el.textContent
+    (el) => el.textContent
   );
   expect(childTripId).toEqual('456');
 

@@ -16,7 +16,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/response to error', async done => {
+test('/response to error', async (done) => {
   expect.assertions(10);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -31,12 +31,12 @@ test('/response to error', async done => {
   try {
     let isReady, controller;
     const page = await browser.newPage();
-    page.on('console', msg => {
+    page.on('console', (msg) => {
       if (msg._text.startsWith('[TEST] cached after first load:')) {
         const cacheKeys = msg._text.split('#')[1].split(',');
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
         expect(
-          precachePaths.every(path =>
+          precachePaths.every((path) =>
             cacheKeys.includes(`${hostname}${port}${path}`)
           )
         ).toBeTruthy();
@@ -50,7 +50,7 @@ test('/response to error', async done => {
           cacheKeys.length === cacheablePaths.length + 1
         ).toBeTruthy();
         expect(
-          cacheablePaths.every(path =>
+          cacheablePaths.every((path) =>
             cacheKeys.includes(`${hostname}${port}${path}`)
           )
         ).toBeTruthy();
@@ -81,7 +81,7 @@ test('/response to error', async done => {
     // Capture requests during next load.
     const allRequests = new Map();
 
-    page.on('request', req => {
+    page.on('request', (req) => {
       allRequests.set(req.url(), req);
     });
 

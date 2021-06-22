@@ -11,17 +11,12 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "axios": "^0.21.0",
     "create-universal-package": "^4.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
-    "eslint-plugin-cup": "^2.0.2",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.20.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^4.1.0",
     "flow-bin": "^0.109.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
@@ -33,7 +28,6 @@
     "fusion-tokens": "0.0.0-monorepo",
     "get-port": "^5.1.1",
     "jest": "^25.1.0",
-    "prettier": "^1.19.1",
     "prop-types": "^15.7.2",
     "puppeteer": "^2.1.1",
     "react": "^16.12.0",
@@ -41,8 +35,7 @@
     "react-redux": "^7.1.0",
     "react-test-renderer": "^16.12.0",
     "redux": "^4.0.5",
-    "redux-reactors": "^1.0.3",
-    "request-promise": "^4.2.4"
+    "redux-reactors": "^1.0.3"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -74,11 +67,10 @@
     "url": "https://github.com/fusionjs/fusionjs"
   },
   "scripts": {
-    "build": "npm run clean && cup-build",
     "clean": "cup-clean",
     "flow": "flow",
-    "lint": "eslint .",
-    "prepublish": "npm run build",
+    "lint": "yarn g:lint",
+    "prepack": "cup-build --force-flow",
     "test": "jest"
   },
   "sideEffects": false

@@ -46,11 +46,11 @@ test('`fusion dev` recovering from errors', async () => {
       fs.writeFileSync(mainPath, fs.readFileSync(mainPath));
     }
   }
-  proc.stderr.on('data', stderr => {
+  proc.stderr.on('data', (stderr) => {
     output.push(stderr.toString());
     next();
   });
   // Need a wait here before saving otherwise the watcher won't pick up the edited file.
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 500));
   fs.writeFileSync(mainPath, fs.readFileSync(mainPath));
 }, 100000);

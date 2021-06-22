@@ -1,8 +1,0 @@
-node_modules/
-dist-*/
-coverage/
-.nyc_output/
-
-.DS_Store
-npm-debug.log
-yarn-error.log

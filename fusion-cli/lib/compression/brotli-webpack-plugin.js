@@ -18,13 +18,11 @@ class NoopPlugin {
 }
 
 const BrotliPlugin = new CompressionPlugin({
-  filename: '[path].br',
+  filename: '[file].br',
   algorithm: 'brotliCompress',
   test: /\.(js|css|html|svg)$/,
-  compressionOptions: {
-    // zlib’s `level` option matches Brotli’s `BROTLI_PARAM_QUALITY` option.
-    level: 11,
-  },
+  // There's no need to compress server bundle
+  exclude: 'server-main.js',
   threshold: 0,
   minRatio: 1,
   deleteOriginalAssets: false,

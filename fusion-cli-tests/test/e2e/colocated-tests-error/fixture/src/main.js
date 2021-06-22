@@ -2,4 +2,4 @@
 
 require('./foo/foo.js');
 
-export default function() {}
+export default function () {}

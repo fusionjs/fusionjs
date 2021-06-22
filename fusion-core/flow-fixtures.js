@@ -75,12 +75,11 @@ const simplePlugin = createPlugin({
   provides: ({str}: {str: string}) => {
     return str;
   },
-  middleware: (deps: {str: string}, service: SimplePluginServiceType) => async (
-    ctx,
-    next
-  ) => {
-    return;
-  },
+  middleware:
+    (deps: {str: string}, service: SimplePluginServiceType) =>
+    async (ctx, next) => {
+      return;
+    },
 });
 
 /* Sanity Check: Middleware */
@@ -102,7 +101,7 @@ if (extractedEmptyMiddleware) {
 /*   - Case: Extract and invoke a service-less middleware */
 const noServiceWithSimpleMiddlewarePlugin = createPlugin({
   deps: ({str: sampleStringToken}: SimplePluginDepsType),
-  middleware: deps => simpleMiddleware,
+  middleware: (deps) => simpleMiddleware,
 });
 const extractedServicelessMiddleware =
   noServiceWithSimpleMiddlewarePlugin.middleware;
@@ -144,7 +143,5 @@ async function checkEnv() {
 }
 
 /*   - Case: sanitization typing */
-const sanitizedString = html`
-  mystring
-`;
+const sanitizedString = html` mystring `;
 consumeSanitizedHTML(sanitizedString);

@@ -21,7 +21,7 @@ type ExtractReturnType = <V>(() => V) => V;
 type IEmitter = $Call<typeof UniversalEventsToken, ExtractReturnType>;
 
 /* Mocks & Mock Factories */
-const getMockEventEmitterFactory = function() {
+const getMockEventEmitterFactory = function () {
   const handlers = {};
   const eventEmitterFactory = {
     from(ctx) {
@@ -54,7 +54,7 @@ const sampleReducer = (state = [], action) => {
 const appCreator = (deps?: {emitter?: IEmitter, transformer?: Function}) => {
   const {emitter, transformer} = deps || {};
 
-  const app = new App('test', el => el);
+  const app = new App('test', (el) => el);
   if (emitter) {
     app.register(UniversalEventsToken, emitter);
   }
@@ -84,7 +84,7 @@ test('Emits actions', () => {
   const store = createStore(
     sampleReducer,
     [],
-    compose(enhancer, createStore => (...args) => {
+    compose(enhancer, (createStore) => (...args) => {
       const store = createStore(...args);
       // $FlowFixMe
       store.ctx = mockCtx;
@@ -115,7 +115,7 @@ test('transformers', () => {
   const enhancer = getService(
     appCreator({
       emitter: mockEventEmitter,
-      transformer: action => ({foo: action.foo}),
+      transformer: (action) => ({foo: action.foo}),
     }),
     actionEmitterPlugin
   );
@@ -124,7 +124,7 @@ test('transformers', () => {
   const store = createStore(
     sampleReducer,
     [],
-    compose(enhancer, createStore => (...args) => {
+    compose(enhancer, (createStore) => (...args) => {
       const store = createStore(...args);
       // $FlowFixMe
       store.ctx = mockCtx;

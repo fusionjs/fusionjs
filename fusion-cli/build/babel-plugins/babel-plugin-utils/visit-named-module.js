@@ -24,8 +24,8 @@ function createNamedModuleVisitor(
   refsHandler /*: RefsHandlerT */
 ) {
   const compareToModuleName = Array.isArray(moduleName)
-    ? s => moduleName.includes(s)
-    : s => s === moduleName;
+    ? (s) => moduleName.includes(s)
+    : (s) => s === moduleName;
   return {
     /**
      * Handle ES imports
@@ -42,7 +42,7 @@ function createNamedModuleVisitor(
         return;
       }
       state.importedPackageName = sourceName;
-      path.get('specifiers').forEach(specifier => {
+      path.get('specifiers').forEach((specifier) => {
         const localPath = specifier.get('local');
         const localName = localPath.node.name;
         if (!localPath.scope.bindings[localName]) {

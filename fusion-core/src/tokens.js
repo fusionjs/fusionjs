@@ -35,3 +35,7 @@ export type CriticalChunkIdsService = {
 export const CriticalChunkIdsToken = createToken<CriticalChunkIdsService>(
   'CriticalChunkIdsToken'
 );
+
+export const EnableMiddlewareTimingToken = createToken<boolean>(
+  'EnableMiddlewareTimingToken'
+);

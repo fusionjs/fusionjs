@@ -17,7 +17,8 @@ export default (el: React.Element<*>, logger?: Logger) => {
   } catch (e) {
     if (__DEV__) {
       console.error(
-        'Server-side render failed. Falling back to client-side render'
+        'Server-side render failed. Falling back to client-side render',
+        e
       );
     }
     logger && logger.error('SSR Failed with Error', e);

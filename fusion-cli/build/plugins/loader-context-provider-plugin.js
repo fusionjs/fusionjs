@@ -7,6 +7,8 @@
  */
 /*eslint-env node */
 
+const webpack = require('webpack');
+
 class LoaderContextProviderPlugin /*::<T>*/ {
   /*::
   value: T;
@@ -18,10 +20,13 @@ class LoaderContextProviderPlugin /*::<T>*/ {
   }
   apply(compiler /*: Object */) {
     const name = this.constructor.name;
-    compiler.hooks.compilation.tap(name, compilation => {
-      compilation.hooks.normalModuleLoader.tap(name, (context, module) => {
-        context[this.loaderContextKey] = this.value;
-      });
+    compiler.hooks.compilation.tap(name, (compilation) => {
+      webpack.NormalModule.getCompilationHooks(compilation).loader.tap(
+        name,
+        (context, module) => {
+          context[this.loaderContextKey] = this.value;
+        }
+      );
     });
   }
 }

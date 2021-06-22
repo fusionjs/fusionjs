@@ -25,7 +25,7 @@ test('renders', () => {
   cleanup(root);
 });
 
-test('client side app', async done => {
+test('client side app', async (done) => {
   expect.assertions(5);
   const root = setup();
 

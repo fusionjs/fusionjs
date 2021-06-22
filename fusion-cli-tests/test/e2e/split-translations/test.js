@@ -64,6 +64,15 @@ test('`fusion build` app with split translations integration', async () => {
     content2.includes('__SPLIT1_TRANSLATED__'),
     'renders first split translation'
   );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
+  );
+
   await Promise.all([
     page.click('#split2-link'),
     page.waitForSelector('#split2-translation'),
@@ -118,11 +127,19 @@ test('`fusion dev` app with split translations integration', async () => {
   const content2 = await page.content();
   t.ok(
     content2.includes('__SPLIT1_TRANSLATED__'),
-    'renders first  split translation'
+    'renders first split translation'
+  );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
   );
 
   const reloaded = page.evaluate(() => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // eslint-disable-next-line
       window.__addHotStatusHandler(status => {
         if (status === 'idle') {
@@ -161,7 +178,7 @@ test('`fusion dev` app with split translations integration', async () => {
   await Promise.all([
     page.click('#split2-link'),
     page.waitForSelector('#split2-translation'),
-    new Promise(r => setTimeout(r, 1000)), // component is initally rendered without translation
+    new Promise((r) => setTimeout(r, 2000)), // component is initally rendered without translation
   ]);
   const content4 = await page.content();
   t.ok(
@@ -179,6 +196,14 @@ test('`fusion dev` app with split translations integration', async () => {
   t.ok(
     content5.includes('__SPLIT1_TRANSLATED__'),
     'renders translation from unmodified file after rebuild'
+  );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split unmodified child translations after rebuild'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split unmodified child missing translations after rebuild'
   );
 
   await app.teardown();
@@ -210,8 +235,179 @@ test('`fusion dev` app with split translations integration (cached)', async () =
   const content2 = await page.content();
   t.ok(
     content2.includes('__SPLIT1_TRANSLATED__'),
-    'renders first  split translation'
+    'renders first split translation'
+  );
+  t.ok(
+    content2.includes('__OTHER_COMPONENT__'),
+    'renders first split child translations'
+  );
+  t.ok(
+    content2.includes('other-component-missing-key'),
+    'renders first split child missing translations'
   );
 
   app.teardown();
 }, 100000);
+
+describe('i18n manifest caching', () => {
+  const splitFilePath = path.join(dir, 'src/split1.js');
+  const otherComponentFilePath = path.join(dir, 'src/other-component.js');
+  const otherComponentRenamedFilePath = otherComponentFilePath.replace(
+    'other-component.js',
+    'other-component-renamed.js'
+  );
+
+  let splitFileContents;
+  beforeEach(() => {
+    splitFileContents = fs.readFileSync(splitFilePath, 'utf-8');
+    fs.copyFileSync(otherComponentFilePath, otherComponentRenamedFilePath);
+  });
+
+  afterEach(() => {
+    fs.writeFileSync(splitFilePath, splitFileContents);
+    fs.unlinkSync(otherComponentRenamedFilePath);
+  });
+
+  function changeOtherComponentImportPath() {
+    fs.writeFileSync(
+      splitFilePath,
+      splitFileContents.replace(
+        './other-component.js',
+        './other-component-renamed.js'
+      )
+    );
+  }
+
+  function verifyBuiltWithoutErrors() {
+    const stats = JSON.parse(
+      fs.readFileSync(path.join(dir, '.fusion/stats.json'), 'utf-8')
+    );
+
+    return !stats.errors || !stats.errors.length;
+  }
+
+  test('`fusion dev` should build fine from memory cache after file name change', async () => {
+    const app = dev(dir);
+    await app.setup();
+    t.ok(verifyBuiltWithoutErrors(), 'built without errors');
+
+    const page = await app.browser().newPage();
+    const url = await app.url();
+    await page.goto(`${url}/split1`, {waitUntil: 'load'});
+
+    const content = await page.content();
+    t.ok(
+      content.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation initially'
+    );
+    t.ok(
+      content.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations initially'
+    );
+    t.ok(
+      content.includes('other-component-missing-key'),
+      'renders first split child missing translations initially'
+    );
+
+    const hmrCompleted = page.evaluate(() => {
+      return new Promise((resolve) => {
+        // eslint-disable-next-line
+        window.__addHotStatusHandler(status => {
+          if (status === 'idle') {
+            setTimeout(() => {
+              resolve();
+            }, 100);
+          }
+        });
+      });
+    });
+
+    changeOtherComponentImportPath();
+    await hmrCompleted;
+
+    t.ok(verifyBuiltWithoutErrors(), 're-built without errors after change');
+
+    const contentAfterChange = await page.content();
+    t.ok(
+      contentAfterChange.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation after change'
+    );
+    t.ok(
+      contentAfterChange.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations after change'
+    );
+    t.ok(
+      contentAfterChange.includes('other-component-missing-key'),
+      'renders first split child missing translations after change'
+    );
+
+    app.teardown();
+  }, 35000);
+
+  test('`fusion build` should build fine from cache after file name change', async () => {
+    async function buildAndStartServer() {
+      const env = {
+        ...process.env,
+        NODE_ENV: 'production',
+      };
+
+      await cmd(`build --dir=${dir} --production`, {env});
+      const {proc, port} = await start(`--dir=${dir}`, {env, cwd: dir});
+
+      return {
+        stop() {
+          proc.kill('SIGKILL');
+        },
+        url: `http://localhost:${port}`,
+      };
+    }
+
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+
+    let app = await buildAndStartServer();
+    t.ok(verifyBuiltWithoutErrors(), 'built without errors');
+    await page.goto(`${app.url}/split1`, {waitUntil: 'load'});
+
+    const content = await page.content();
+    t.ok(
+      content.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation initially'
+    );
+    t.ok(
+      content.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations initially'
+    );
+    t.ok(
+      content.includes('other-component-missing-key'),
+      'renders first split child missing translations initially'
+    );
+
+    app.stop();
+
+    changeOtherComponentImportPath();
+
+    app = await buildAndStartServer();
+    t.ok(verifyBuiltWithoutErrors(), 're-built without errors after change');
+    await page.goto(`${app.url}/split1`, {waitUntil: 'load'});
+
+    const contentAfterChange = await page.content();
+    t.ok(
+      contentAfterChange.includes('__SPLIT1_TRANSLATED__'),
+      'renders first split translation after change'
+    );
+    t.ok(
+      contentAfterChange.includes('__OTHER_COMPONENT__'),
+      'renders first split child translations after change'
+    );
+    t.ok(
+      contentAfterChange.includes('other-component-missing-key'),
+      'renders first split child missing translations after change'
+    );
+
+    app.stop();
+    browser.close();
+  }, 35000);
+});

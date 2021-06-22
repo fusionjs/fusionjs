@@ -179,13 +179,13 @@ A function that provides translations. Optional. Server-side only.
 
 ```js
 type I18nLoader = {
-  from: (ctx: Context) => {locale: string, translations: Object},
+  from: (ctx: Context) => {locale: string | Locale, translations: Object},
 };
 ```
 
 * `loader.from: (ctx) => ({locale, translations})` -
   * `ctx: FusionContext` - Required. A [Fusion.js context](https://github.com/fusionjs/fusionjs/tree/master/fusion-core#context) object.
-  * `locale: Locale` - A [Locale](https://www.npmjs.com/package/locale)
+  * `locale: string | Locale` - The default i18n loader returns the [Locale](https://www.npmjs.com/package/locale) class here, but strings are also supported if you write your own loader.
   * `translations: Object` - A object that maps translation keys to translated values for the given locale
 
 ###### Default values

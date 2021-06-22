@@ -1,7 +1,7 @@
 // @flow
 import type {LocationType} from '../types';
 
-const addLeadingSlash = path => (path.charAt(0) === '/' ? path : '/' + path);
+const addLeadingSlash = (path) => (path.charAt(0) === '/' ? path : '/' + path);
 
 export const addRoutePrefix = (
   location: string | LocationType,

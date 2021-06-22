@@ -25,7 +25,7 @@ import {
 import type {SessionDeps, SessionService} from './types.js';
 
 // Scope path to `data.` here since `jsonwebtoken` has some special top-level keys that we do not want to expose (ex: `exp`)
-const getFullPath = keyPath => `data.${keyPath}`;
+const getFullPath = (keyPath) => `data.${keyPath}`;
 
 type JWTConfig = {
   secret: string,
@@ -79,7 +79,7 @@ const p: FusionPlugin<SessionDeps, SessionService> =
       cookieName: SessionCookieNameToken,
       expires: SessionCookieExpiresToken.optional,
     },
-    provides: deps => {
+    provides: (deps) => {
       const {secret, cookieName, expires = 86400} = deps;
       const service: SessionService = {
         from: memoize((ctx: Context) => {

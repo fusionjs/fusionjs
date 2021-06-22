@@ -261,6 +261,8 @@ The `prepare` function recursively traverses the element rendering tree and awai
 
 It should be used (and `await`-ed) _before_ calling `renderToString` on the server. If any of the side effects throws, `prepare` will also throw.
 
+Timing information will be collected in `ctx.timing.prepass` - the number of prepasses required as well as the duration of each prepass.
+
 #### prepared
 
 ```js

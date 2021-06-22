@@ -12,7 +12,7 @@ import type {Middleware} from 'fusion-core';
 
 import PrepareProvider from './prepare-provider';
 
-const middleware: Middleware = function(ctx, next) {
+const middleware: Middleware = function (ctx, next) {
   if (__DEV__) {
     // eslint-disable-next-line no-console
     console.warn('The {middleware} export from fusion-react is deprecated.');
@@ -23,7 +23,7 @@ const middleware: Middleware = function(ctx, next) {
   }
 
   const markAsCritical = __NODE__
-    ? chunkId => {
+    ? (chunkId) => {
         // Push to legacy context for backwards compat w/ legacy SSR template
         ctx.preloadChunks.push(chunkId);
       }

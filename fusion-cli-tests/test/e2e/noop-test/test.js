@@ -23,7 +23,7 @@ test('development env globals', async () => {
   // Validate browser globals by file content
   const clientDir = path.resolve(dir, `.fusion/dist/development/client`);
   const assets = await readdir(clientDir);
-  const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
+  const clientEntry = assets.find((a) => a.match(/^client-main.*\.js$/));
   const clientEntryPath = path.resolve(
     dir,
     `.fusion/dist/development/client/${clientEntry}`
@@ -75,7 +75,7 @@ test('production env globals', async () => {
   // Validate browser globals by file content
   const clientDir = path.resolve(dir, `.fusion/dist/production/client`);
   const assets = await readdir(clientDir);
-  const clientEntry = assets.find(a => a.match(/^client-main.*\.js$/));
+  const clientEntry = assets.find((a) => a.match(/^client-main.*\.js$/));
   const clientEntryPath = path.resolve(
     dir,
     `.fusion/dist/production/client/${clientEntry}`

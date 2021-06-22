@@ -24,7 +24,7 @@ test('`fusion dev` works with fs', async () => {
   t.ok(res.includes('writeFile'), 'supports fs api on the server');
   const {data: mainRes} = await request(`${url}/_static/client-main.js`);
   t.ok(
-    mainRes.includes('node-libs-browser/mock/empty.js'),
+    mainRes.includes('fs (ignored)'),
     'includes empty fs for browser in dev'
   );
   app.teardown();
@@ -40,7 +40,7 @@ test('`fusion build` tree shaking', async () => {
   const clientFiles = await readdir(
     path.resolve(dir, '.fusion/dist/production/client')
   );
-  const clientMainFile = clientFiles.filter(f =>
+  const clientMainFile = clientFiles.filter((f) =>
     /client-main-(.*?).js$/.test(f)
   )[0];
   const clientMain = path.resolve(

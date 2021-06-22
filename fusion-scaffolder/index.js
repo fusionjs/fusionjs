@@ -85,7 +85,7 @@ async function compile(projectPath, templatePath, contentPath, ctx) {
   const files = await readdir(contentPath);
 
   return await Promise.all(
-    files.map(async filePath => {
+    files.map(async (filePath) => {
       const relativeFilePath = relative(contentPath, filePath);
       const newFilePath = join(projectPath, relativeFilePath);
       const newFileDir = dirname(newFilePath);
@@ -129,7 +129,7 @@ async function install(projectPath) {
         }
       );
     }
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code !== 0) {
         reject(
           new Error(

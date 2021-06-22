@@ -8,10 +8,13 @@
 
 /* eslint-env node */
 
-const {translationsDiscoveryKey} = require('../loaders/loader-context.js');
-
 /*::
 import type {TranslationsManifestState, TranslationsManifest} from "../types.js";
+
+interface I18nManifestCache {
+  storePromise: (TranslationsManifest) => Promise<void>,
+  getPromise: () => Promise<TranslationsManifest | void>,
+}
 */
 
 class I18nDiscoveryPlugin {
@@ -28,18 +31,32 @@ class I18nDiscoveryPlugin {
   }
   apply(compiler /*: any */) {
     const name = this.constructor.name;
-    // "thisCompilation" is not run in child compilations
-    compiler.hooks.thisCompilation.tap(name, compilation => {
-      compilation.hooks.normalModuleLoader.tap(name, (context, module) => {
-        context[translationsDiscoveryKey] = this.manifest;
+
+    compiler.hooks.compilation.tap(name, (compilation) => {
+      // NOTE: This hook will execute twice when legacy bundle is enabled,
+      // in which case it should not cause any conflicts, considering that
+      // same i18n keys should be discovered in both cases.
+      compilation.hooks.afterOptimizeTree.tap(name, (chunks, modules) => {
+        modules.forEach((module) => {
+          if (
+            module.buildMeta.fusionTranslationIds &&
+            module.buildMeta.fusionTranslationIds.size > 0
+          ) {
+            this.manifest.set(
+              module.resource,
+              module.buildMeta.fusionTranslationIds
+            );
+          }
+        });
       });
     });
+
     compiler.hooks.done.tap(name, () => {
       this.manifestState.resolve(this.manifest);
     });
-    compiler.hooks.invalid.tap(name, filename => {
+    compiler.hooks.invalid.tap(name, () => {
+      this.manifest.clear();
       this.manifestState.reset();
-      this.manifest.delete(filename);
     });
   }
 }

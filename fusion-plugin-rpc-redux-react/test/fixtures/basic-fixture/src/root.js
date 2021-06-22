@@ -23,7 +23,7 @@ function Root(props) {
 export default compose(
   withRPCRedux('getUser'),
   connect(({user}) => ({user: user.data})),
-  prepared(props =>
+  prepared((props) =>
     props.user ? Promise.resolve() : props.getUser({name: 'hello'})
   )
 )(Root);

@@ -24,7 +24,7 @@ const plugin =
       handler: HttpHandlerToken,
       config: HttpHandlerConfigToken.optional,
     },
-    middleware: deps => {
+    middleware: (deps) => {
       const {handler, config = defaultConfig} = deps;
       return async (ctx, next) => {
         if (config.defer) {
@@ -53,7 +53,7 @@ const plugin =
           res.on('end', listener);
           res.on('finish', listener);
 
-          handler(req, res, error => {
+          handler(req, res, (error) => {
             ctx.res.statusCode = prevStatusCode;
             // $FlowFixMe
             return done(error);

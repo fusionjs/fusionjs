@@ -29,7 +29,7 @@ test('plugin', () => {
   const EventEmitter = createMockEmitter();
 
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(RPCHandlersToken, handlers);
     app.register(UniversalEventsToken, EventEmitter);
     return app;
@@ -45,7 +45,7 @@ test('mock plugin', () => {
   const handlers = {test() {}};
 
   const appCreator = () => {
-    const app = new App('content', el => el);
+    const app = new App('content', (el) => el);
     app.register(RPCHandlersToken, handlers);
     app.register(UniversalEventsToken, createMockEmitter());
     return app;
@@ -56,7 +56,7 @@ test('mock plugin', () => {
   expect(typeof RPCRedux.from(mockCtx).request).toBe('function');
 });
 
-test('withRPCRedux hoc', async done => {
+test('withRPCRedux hoc', async (done) => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {
@@ -115,7 +115,7 @@ test('withRPCRedux hoc', async done => {
   done();
 });
 
-test('withRPCReactor hoc', async done => {
+test('withRPCReactor hoc', async (done) => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {

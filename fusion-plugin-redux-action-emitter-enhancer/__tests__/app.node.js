@@ -23,7 +23,7 @@ const mockEmitter = {
   emit: (type, payload) => {
     eventsEmitted.push({type, payload});
   },
-  from: function() {
+  from: function () {
     return this;
   },
 };
@@ -34,7 +34,7 @@ const mockEmitterPlugin = createPlugin({
 });
 
 function createTestFixture() {
-  const app = new App('content', el => el);
+  const app = new App('content', (el) => el);
   app.register(EnhancerToken, ReduxActionEmitterEnhancer);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   return app;
@@ -48,7 +48,7 @@ test('plugin - service resolved as expected', () => {
     app,
     createPlugin({
       deps: {enhancer: EnhancerToken},
-      provides: deps => {
+      provides: (deps) => {
         const {enhancer} = deps;
         expect(enhancer).toBeTruthy();
         const createStore: StoreCreator<*, *, *> = () => {
@@ -59,7 +59,7 @@ test('plugin - service resolved as expected', () => {
             replaceReducer: () => {},
           };
         };
-        const mockReducer: Reducer<*, *> = s => s;
+        const mockReducer: Reducer<*, *> = (s) => s;
         const enhanced = enhancer(createStore)(mockReducer);
         enhanced.dispatch({
           type: 'TEST',

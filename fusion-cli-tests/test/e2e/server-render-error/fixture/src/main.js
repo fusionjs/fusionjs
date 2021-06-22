@@ -18,7 +18,9 @@ export default () => {
     )
   );
   app.register(Router);
-  __BROWSER__ && app.register(FetchToken, window.fetch);
+  if (__BROWSER__) {
+    app.register(FetchToken, window.fetch);
+  }
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   return app;
 };

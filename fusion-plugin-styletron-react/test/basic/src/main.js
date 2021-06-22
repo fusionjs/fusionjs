@@ -4,7 +4,7 @@ import React from 'react';
 import App from 'fusion-react';
 import Styletron, {styled} from '../../..';
 
-const StyledComponent = styled('div', props => ({color: props.$color}));
+const StyledComponent = styled('div', (props) => ({color: props.$color}));
 
 function Root() {
   const [color, setColor] = React.useState('red');
@@ -24,7 +24,7 @@ function Root() {
 }
 
 export default () => {
-  const app = new App((<Root />));
+  const app = new App(<Root />);
   app.register(Styletron);
   return app;
 };

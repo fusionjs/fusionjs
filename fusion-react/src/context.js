@@ -18,16 +18,15 @@ export const ServiceContext = React.createContext<any>(() => {
 type ReturnsType<T> = () => T;
 
 export function useService<TService>(token: ReturnsType<TService>): TService {
-  const getService = React.useContext<(ReturnsType<TService>) => TService>(
-    ServiceContext
-  );
+  const getService =
+    React.useContext<(ReturnsType<TService>) => TService>(ServiceContext);
   const provides = getService(token);
   return provides;
 }
 
 type ServiceConsumerProps<TService> = {
   token: ReturnsType<TService>,
-  children: TService => Element<any>,
+  children: (TService) => Element<any>,
 };
 
 export function ServiceConsumer<TService>({
@@ -47,7 +46,7 @@ export function ServiceConsumer<TService>({
 type Dependencies = {[string]: ReturnsType<mixed>};
 type Services = {[string]: ReturnsType<mixed>};
 type Props = {[string]: any};
-type Mapper = Services => Props;
+type Mapper = (Services) => Props;
 
 function getServices(getService, deps: Dependencies): Services {
   const services = {};
@@ -59,7 +58,7 @@ function getServices(getService, deps: Dependencies): Services {
   return services;
 }
 
-const identity = i => i;
+const identity = (i) => i;
 
 export function withServices(
   deps: Dependencies,
