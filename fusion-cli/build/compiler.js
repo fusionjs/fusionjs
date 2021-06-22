@@ -179,6 +179,7 @@ type CompilerOpts = {
   skipSourceMaps?: boolean,
   command?: 'dev' | 'build',
   disableBuildCache?: boolean,
+  experimentalEsbuildMinifier?: boolean,
 };
 */
 
@@ -198,6 +199,7 @@ function Compiler(
     maxWorkers,
     command,
     disableBuildCache,
+    experimentalEsbuildMinifier,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const root = path.resolve(dir);
@@ -235,6 +237,12 @@ function Compiler(
       : disableBuildCache;
   const isBuildCacheEnabled = disableBuildCacheOption !== true;
 
+  const experimentalEsbuildMinifierOption =
+    typeof experimentalEsbuildMinifier === 'undefined'
+      ? fusionConfig.experimentalEsbuildMinifier
+      : experimentalEsbuildMinifier;
+  const isEsbuildMinifierEnabled = experimentalEsbuildMinifierOption === true;
+
   const sharedOpts = {
     dir: root,
     dev: env === 'development',
@@ -250,6 +258,7 @@ function Compiler(
     gzip: fusionConfig.gzip != undefined ? fusionConfig.gzip : true,
     brotli: fusionConfig.brotli != undefined ? fusionConfig.brotli : true,
     isBuildCacheEnabled,
+    isEsbuildMinifierEnabled,
     minify,
     worker,
     command,

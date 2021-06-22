@@ -134,3 +134,15 @@ module.exports = {
   disableBuildCache: true,
 };
 ```
+
+## `experimentalEsbuildMinifier`
+
+This is an optional property that can be used to configure Fusion.js to use experimental esbuild minifier instead of Terser.
+If left undefined, this property will default to false.
+
+```js
+module.exports = {
+  // NOTE: Set `ESBUILD_WORKER_THREADS=1` env for the build process to get better performance
+  experimentalEsbuildMinifier: true,
+};
+```

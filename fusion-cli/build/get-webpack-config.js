@@ -103,6 +103,7 @@ export type WebpackConfigOpts = {|
   onBuildEnd?: $PropertyType<FusionRC, 'onBuildEnd'>,
   command?: 'dev' | 'build',
   isBuildCacheEnabled: boolean,
+  isEsbuildMinifierEnabled: boolean,
 |};
 
 type JsonValue = boolean | number | string | null | void | $Shape<{ [string]: JsonValue }> | $ReadOnlyArray<JsonValue>;
@@ -144,6 +145,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     command,
     preserveNames,
     isBuildCacheEnabled,
+    isEsbuildMinifierEnabled,
     // ACHTUNG:
     // Adding new config option? Please do not forget to add it to `cacheVersionVars`
   } = opts;
@@ -756,23 +758,36 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               ? 'client-legacy-[name].js'
               : 'client-legacy-[name]-[chunkhash].js',
           },
-          plugins: (options) => [
-            new webpack.optimize.RuntimeChunkPlugin(
-              options.optimization.runtimeChunk
-            ),
-            new webpack.optimize.SplitChunksPlugin(
-              options.optimization.splitChunks
-            ),
-            // need to re-apply template
-            new InstrumentedImportDependencyTemplatePlugin({
-              compilation: 'client',
-              i18nManifest: state.i18nManifest,
-            }),
-            new ClientChunkMetadataStateHydratorPlugin(
-              state.legacyClientChunkMetadata
-            ),
-            new ChunkIdPrefixPlugin('legacy'),
-          ],
+          plugins: (options) =>
+            [
+              new webpack.optimize.RuntimeChunkPlugin(
+                options.optimization.runtimeChunk
+              ),
+              new webpack.optimize.SplitChunksPlugin(
+                options.optimization.splitChunks
+              ),
+              // need to re-apply template
+              new InstrumentedImportDependencyTemplatePlugin({
+                compilation: 'client',
+                i18nManifest: state.i18nManifest,
+              }),
+              new ClientChunkMetadataStateHydratorPlugin(
+                state.legacyClientChunkMetadata
+              ),
+              new ChunkIdPrefixPlugin('legacy'),
+              shouldMinify &&
+                isEsbuildMinifierEnabled && {
+                  apply: (compiler) => {
+                    const EsbuildMinifyPlugin = require('./plugins/esbuild-minify-plugin.js');
+                    new EsbuildMinifyPlugin({
+                      transformOptions: {
+                        target: 'es5',
+                        keepNames: preserveNames,
+                      },
+                    }).apply(compiler);
+                  },
+                },
+            ].filter(Boolean),
         }),
     ].filter(Boolean),
     optimization: {
@@ -813,30 +828,43 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       minimize: shouldMinify,
       minimizer: shouldMinify
         ? [
-            new TerserPlugin({
-              extractComments: false,
-              terserOptions: {
-                parse: {
-                  ecma: 2017,
-                },
-                compress: {
-                  ecma: 5,
-                  // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
-                  // This mangles mapbox-gl creating an error when used alongside with window global mangling:
-                  // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
-                  typeofs: false,
+            isEsbuildMinifierEnabled
+              ? (compiler /*: any */) => {
+                  const EsbuildMinifyPlugin = require('./plugins/esbuild-minify-plugin.js');
+                  new EsbuildMinifyPlugin({
+                    transformOptions: {
+                      // At this point everything should be transpiled by babel, so using
+                      // higher target w/ esbuild to prevent any additional transpilations
+                      // (e.g. rest/spread operators; async functions)
+                      target: 'es2018',
+                      keepNames: preserveNames,
+                    },
+                  }).apply(compiler);
+                }
+              : new TerserPlugin({
+                  extractComments: false,
+                  terserOptions: {
+                    parse: {
+                      ecma: 2017,
+                    },
+                    compress: {
+                      ecma: 5,
+                      // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
+                      // This mangles mapbox-gl creating an error when used alongside with window global mangling:
+                      // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
+                      typeofs: false,
 
-                  // inline=2 can cause const reassignment
-                  // https://github.com/mishoo/UglifyJS2/issues/2842
-                  inline: 1,
-                },
-                format: {
-                  ecma: 5,
-                },
-                keep_fnames: preserveNames,
-                keep_classnames: preserveNames,
-              },
-            }),
+                      // inline=2 can cause const reassignment
+                      // https://github.com/mishoo/UglifyJS2/issues/2842
+                      inline: 1,
+                    },
+                    format: {
+                      ecma: 5,
+                    },
+                    keep_fnames: preserveNames,
+                    keep_classnames: preserveNames,
+                  },
+                }),
           ]
         : undefined,
     },

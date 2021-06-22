@@ -21,6 +21,14 @@ const disableBuildCacheOption = {
   },
 };
 
+const experimentalEsbuildMinifierOption = {
+  experimentalEsbuildMinifier: {
+    type: 'boolean',
+    default: undefined,
+    describe: '[Experimental] Enable esbuild minifier (instead of Terser)',
+  },
+};
+
 module.exports = {
   build: {
     descr: 'Build your app',
@@ -62,6 +70,7 @@ module.exports = {
         describe: 'Build without source maps.',
       },
       ...disableBuildCacheOption,
+      ...experimentalEsbuildMinifierOption,
     },
   },
   dev: {

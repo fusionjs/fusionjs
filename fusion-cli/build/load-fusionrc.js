@@ -48,6 +48,7 @@ export type FusionRC = {
   brotli?: boolean,
   onBuildEnd?: (stats: BuildStats) => void,
   disableBuildCache?: boolean,
+  experimentalEsbuildMinifier?: boolean,
 };
 */
 
@@ -90,6 +91,7 @@ function isValid(config, silent) {
         'defaultImportSideEffects',
         'assumeNoImportSideEffects',
         'experimentalCompile',
+        'experimentalEsbuildMinifier',
         'experimentalTransformTest',
         'experimentalBundleTest',
         'nodeBuiltins',
@@ -133,6 +135,18 @@ function isValid(config, silent) {
       return 'all';
     };
     delete config.experimentalCompile;
+  }
+
+  if (
+    !(
+      config.experimentalEsbuildMinifier === false ||
+      config.experimentalEsbuildMinifier === true ||
+      config.experimentalEsbuildMinifier === void 0
+    )
+  ) {
+    throw new Error(
+      'experimentalEsbuildMinifier must be true, false, or undefined in fusionrc.js'
+    );
   }
 
   if (
