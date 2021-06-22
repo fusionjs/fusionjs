@@ -409,7 +409,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'server' && {
-          compiler: (id) => id === 'server',
+          compiler: (id) => id === 'server' || id === 'worker-server',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
@@ -436,7 +436,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         (runtime === 'client' || runtime === 'sw') && {
-          compiler: (id) => id === 'client' || id === 'sw',
+          compiler: (id) =>
+            id === 'client' || id === 'sw' || id === 'worker-client',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [
@@ -463,7 +464,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
          * Global transforms (including ES2017+ transpilations)
          */
         runtime === 'client' && {
-          compiler: (id) => id === 'client-legacy',
+          compiler: (id) =>
+            id === 'client-legacy' || id === 'worker-client-legacy',
           test: babelTester,
           exclude: EXCLUDE_TRANSPILATION_PATTERNS,
           use: [

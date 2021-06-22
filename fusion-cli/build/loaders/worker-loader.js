@@ -81,7 +81,7 @@ module.exports.pitch = function (request /* : any*/) {
   };
 
   worker.compiler = this._compilation.createChildCompiler(
-    'worker',
+    `worker-${this._compiler.name}`,
     worker.options
   );
 
