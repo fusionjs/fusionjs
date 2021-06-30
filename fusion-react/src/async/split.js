@@ -20,6 +20,8 @@ const contextTypes = {
 if (__NODE__) {
   // $FlowFixMe
   contextTypes.markAsCritical = PropTypes.func;
+  // $FlowFixMe
+  contextTypes.pushSSRMetadata = PropTypes.func;
 }
 
 export default function withAsyncComponent<Config>({

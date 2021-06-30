@@ -16,6 +16,7 @@ import {
   useService,
   withServices,
 } from '../src/context.js';
+import {split} from '../src/async/index.js';
 
 test('context#useService', async () => {
   const TestToken = createToken('test');
@@ -127,4 +128,36 @@ test('context#withServices', async () => {
     typeof ctx.body === 'string' && ctx.body.includes('hello')
   ).toBeTruthy();
   expect(didRender).toBeTruthy();
+});
+
+test('collects split SSR metadata in context', async () => {
+  function DeferredComponent() {
+    return <div>Loaded</div>;
+  }
+  function LoadingComponent() {
+    return <div>Loading</div>;
+  }
+  function ErrorComponent() {
+    return <div>Failed</div>;
+  }
+
+  const SplitComponent = split({
+    defer: false,
+    load: () =>
+      // $FlowFixMe
+      (Object.defineProperty(
+        Promise.resolve({default: DeferredComponent}),
+        '__FUSION_DYNAMIC_IMPORT_METADATA__',
+        {value: 'some_arbitrary_metadata'}
+      ): any),
+    LoadingComponent,
+    ErrorComponent,
+  });
+
+  const app = new App(<SplitComponent />);
+  const sim = getSimulator(app);
+  const ctx = await sim.render('/');
+  expect(ctx.ssrMetadata).toStrictEqual([
+    {data: 'some_arbitrary_metadata', type: 'critical-dynamic-import'},
+  ]);
 });

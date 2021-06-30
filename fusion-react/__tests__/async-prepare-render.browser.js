@@ -11,7 +11,7 @@ import * as React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import ReactDOM from 'react-dom';
-import {prepare} from './src/index.js';
+import {prepare} from '../src/index.js';
 
 Enzyme.configure({adapter: new Adapter()});
 
