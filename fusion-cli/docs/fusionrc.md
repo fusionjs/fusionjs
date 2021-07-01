@@ -142,7 +142,6 @@ If left undefined, this property will default to false.
 
 ```js
 module.exports = {
-  // NOTE: Set `ESBUILD_WORKER_THREADS=1` env for the build process to get better performance
   experimentalEsbuildMinifier: true,
 };
 ```

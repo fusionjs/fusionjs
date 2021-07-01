@@ -104,11 +104,9 @@ class EsbuildMinifyPlugin {
             ...moduleTransformOptions
           } = transformOptions;
 
-          // Unfortunately the hook we're tapping into is not async, which forces
-          // us to use sync build API. We'll rely on `ESBUILD_WORKER_THREADS`
-          // experimental worker-threads feature to reduce some of the overhead.
-          // Also, transform API does not seem to perform any kind of DCE,
-          // therefore we're using build API with `bundle` option enabled.
+          // Unfortunately the hook we're tapping into is not async, which forces us
+          // to use esbuild's sync API. We're also using build API with `bundle` option
+          // enabled, because esbuild's transform API does not perform any kind of DCE.
           const result = buildSync({
             ...moduleTransformOptions,
             bundle: true,

@@ -27,7 +27,7 @@
     "enhanced-resolve": "5.0.0-beta.4",
     "enzyme-adapter-react-16": "^1.15.2",
     "enzyme-to-json": "^3.3.4",
-    "esbuild": "^0.12.8",
+    "esbuild": "^0.12.13",
     "get-port": "^5.1.1",
     "graphql-tag": "^2.10.1",
     "http-proxy": "^1.17.0",
