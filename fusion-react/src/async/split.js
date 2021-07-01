@@ -37,10 +37,12 @@ export default function withAsyncComponent<Config>({
 }): React.ComponentType<Config> {
   let AsyncComponent = null;
   let error = null;
+  // This stores promise instrumentation used by webpack
   const metadata = {
     chunkIds: [],
     i18nKeys: [],
   };
+  let dynamicImportMetadata; // Stores promise instrumentation used by esbuild
 
   function WithAsyncComponent(props) {
     if (__BROWSER__) {
@@ -74,6 +76,14 @@ export default function withAsyncComponent<Config>({
             context.markAsCritical(chunkId);
           });
         }
+
+        if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
+          context.pushSSRMetadata({
+            type: 'critical-dynamic-import',
+            data: dynamicImportMetadata,
+          });
+        }
+
         if (__DEV__) {
           // In case promise instrumentation has changed, call
           // splitComponentLoaders again
@@ -87,6 +97,10 @@ export default function withAsyncComponent<Config>({
           metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
           // $FlowFixMe
           metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
+          dynamicImportMetadata =
+            // $FlowFixMe
+            componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__;
+
           return Promise.all(
             context.splitComponentLoaders.map((loader) =>
               loader(metadata.chunkIds, metadata)
@@ -108,20 +122,20 @@ export default function withAsyncComponent<Config>({
       metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
       // $FlowFixMe
       metadata.i18nKeys = componentPromise.__I18N_KEYS || [];
-
+      dynamicImportMetadata =
+        // $FlowFixMe
+        componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__;
       if (__NODE__ && context.markAsCritical) {
         metadata.chunkIds.forEach((chunkId) => {
           context.markAsCritical(chunkId);
         });
       }
 
-      if (__NODE__ && context.pushSSRMetadata) {
-        if (componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__) {
-          context.pushSSRMetadata({
-            type: 'critical-dynamic-import',
-            data: componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__,
-          });
-        }
+      if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
+        context.pushSSRMetadata({
+          type: 'critical-dynamic-import',
+          data: dynamicImportMetadata,
+        });
       }
 
       const loadPromises = [

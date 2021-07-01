@@ -160,4 +160,10 @@ test('collects split SSR metadata in context', async () => {
   expect(ctx.ssrMetadata).toStrictEqual([
     {data: 'some_arbitrary_metadata', type: 'critical-dynamic-import'},
   ]);
+
+  // Should also be present for subsequent SSR
+  const ctx2 = await sim.render('/');
+  expect(ctx2.ssrMetadata).toStrictEqual([
+    {data: 'some_arbitrary_metadata', type: 'critical-dynamic-import'},
+  ]);
 });
