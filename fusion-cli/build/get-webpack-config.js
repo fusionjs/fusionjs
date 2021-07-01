@@ -291,6 +291,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
         }
       : null),
+    snapshot: {
+      // It's common that developers modify code inside node_modules to debug
+      // some problem with their application or third party package. Hence we
+      // we are letting webpack check the file timestamps to invalidate cache,
+      // instead of relying on package's version defined in package.json file.
+      managedPaths: [],
+    },
     watchOptions: {
       // Ignore Yarn PnP immutable paths, as well as invalid virtual paths
       // @see: https://github.com/yarnpkg/berry/blob/5869e5934dcd7491422c2045675bcea2944708cc/packages/yarnpkg-fslib/sources/VirtualFS.ts#L8-L14
