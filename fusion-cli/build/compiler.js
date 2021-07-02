@@ -26,7 +26,7 @@ const {
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
 
-const Worker = require('jest-worker').default;
+const {Worker} = require('jest-worker');
 
 function ensureCompilerStatsInfo(stats) {
   return function handleErrorOrWarning(errorOrWarning) {
@@ -377,8 +377,8 @@ function createWorker(maxWorkers /* maxWorkers?: number */) {
   if (require('os').cpus().length < 2) return void 0;
   return new Worker(require.resolve('./loaders/babel-worker.js'), {
     exposedMethods: ['runTransformation'],
-    forkOptions: {stdio: 'inherit'},
     numWorkers: maxWorkers,
+    workerSchedulingPolicy: 'in-order',
   });
 }
 
