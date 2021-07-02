@@ -575,7 +575,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtime === 'server' &&
         (({context, request}, callback) => {
           if (/^[@a-z\-0-9]+/.test(request)) {
-            const absolutePath = resolveFrom.silent(context, request);
+            const absolutePath = getModuleAbsolutePath(context, request);
             // do not bundle external packages and those not whitelisted
             if (typeof absolutePath !== 'string') {
               // if module is missing, skip rewriting to absolute path
@@ -896,19 +896,51 @@ if (process.env.NODE_ENV && process.env.NODE_ENV !== '${env}') {
   `;
 }
 
-function getSrcPath(dir) {
+const moduleAbsolutePathCache = new Map();
+function getModuleAbsolutePath(context, request) {
+  const cacheKey = [context, request].join('|');
+
+  if (moduleAbsolutePathCache.has(cacheKey)) {
+    return moduleAbsolutePathCache.get(cacheKey);
+  }
+
+  const absolutePath = resolveFrom.silent(context, request);
+
+  // Do not cache missing modules
+  if (!absolutePath) {
+    return absolutePath;
+  }
+
+  moduleAbsolutePathCache.set(cacheKey, absolutePath);
+
+  return absolutePath;
+}
+
+const srcPathCache /*: Map<string, string>*/ = new Map();
+function getSrcPath(dir) /*: string*/ {
+  if (srcPathCache.has(dir)) {
+    // $FlowFixMe
+    return srcPathCache.get(dir);
+  }
+
+  let srcPath;
   // resolving to the real path of a known top-level file is required to support Bazel, which symlinks source files individually
   if (process.env.NODE_PRESERVE_SYMLINKS) {
-    return path.resolve(dir, 'src');
+    srcPath = path.resolve(dir, 'src');
+  } else {
+    try {
+      const real = path.dirname(
+        fs.realpathSync(path.resolve(dir, 'package.json'))
+      );
+      srcPath = path.resolve(real, 'src');
+    } catch (e) {
+      srcPath = path.resolve(dir, 'src');
+    }
   }
-  try {
-    const real = path.dirname(
-      fs.realpathSync(path.resolve(dir, 'package.json'))
-    );
-    return path.resolve(real, 'src');
-  } catch (e) {
-    return path.resolve(dir, 'src');
-  }
+
+  srcPathCache.set(dir, srcPath);
+
+  return srcPath;
 }
 
 function isEmptyDir(dir) {
