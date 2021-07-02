@@ -675,7 +675,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 mode,
                 path: dir,
                 watch,
-                minify,
+                minify: shouldMinify,
                 skipSourceMaps,
                 buildTime,
                 isIncrementalBuild,
