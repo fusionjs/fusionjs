@@ -29,6 +29,7 @@ exports.run = async function (
     exitOnError,
     disableBuildCache,
     experimentalSkipRedundantServerReloads,
+    stats,
   } /*: any */
 ) {
   const logger = winston.createLogger({
@@ -48,6 +49,7 @@ exports.run = async function (
     watch: true,
     logger,
     disableBuildCache,
+    stats,
   });
 
   const devRuntime = new DevelopmentRuntime(

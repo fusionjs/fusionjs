@@ -25,6 +25,11 @@ const {
 } = require('./shared-state-containers.js');
 const mergeChunkMetadata = require('./merge-chunk-metadata');
 const loadFusionRC = require('./load-fusionrc.js');
+const {
+  STATS_VERBOSITY_LEVELS,
+  FULL_STATS,
+  MINIMAL_STATS,
+} = require('./constants/compiler-stats.js');
 
 const {Worker} = require('jest-worker');
 
@@ -88,7 +93,23 @@ function dedupeErrors(items) {
   return Array.from(set);
 }
 
-function getStatsLogger({dir, logger, env}) {
+function getStatsOptions(statsLevel, isProd) {
+  switch (statsLevel) {
+    case STATS_VERBOSITY_LEVELS.full:
+      return FULL_STATS;
+    case STATS_VERBOSITY_LEVELS.minimal:
+    default:
+      return isProd
+        ? {
+            ...MINIMAL_STATS,
+            assets: true,
+            cachedAssets: true,
+          }
+        : MINIMAL_STATS;
+  }
+}
+
+function getStatsLogger({dir, logger, env, statsLevel}) {
   return (err, stats) => {
     // syntax errors are logged 4 times (once by webpack, once by babel, once on server and once on client)
     // we only want to log each syntax error once
@@ -103,26 +124,7 @@ function getStatsLogger({dir, logger, env}) {
     }
 
     const file = path.resolve(dir, '.fusion/stats.json');
-    const info = stats.toJson({
-      // Note: need to reduce memory and disk space usage to help with some faulty builds (OOMs)
-      children: {
-        // None of the analyzers inspect child compilations, so we can keep it to a minimum
-        children: {
-          all: false,
-          timings: true,
-          builtAt: true,
-          errors: true,
-          errorsCount: true,
-          errorDetails: true,
-          errorStack: true,
-          warnings: true,
-          warningsCount: true,
-        },
-      },
-      // No need to include all modules, as they are also grouped by chunk,
-      // and this is enough for most bundle analyzers to generate report
-      modules: false,
-    });
+    const info = stats.toJson(getStatsOptions(statsLevel, isProd));
     fs.writeFile(file, JSON.stringify(info, null, 2), () => {});
 
     // TODO(#13): These logs seem to be kinda noisy for dev.
@@ -155,15 +157,15 @@ function getStatsLogger({dir, logger, env}) {
 }
 
 /*::
+import type {STATS_VERBOSITY_LEVELS_TYPE} from './constants/compiler-stats.js';
+
 type CompilerType = {
   on: (type: any, callback: any) => any,
   start: (callback: any) => any,
   getMiddleware: () => any,
   clean: () => any,
 };
-*/
 
-/*::
 type CompilerOpts = {
   serverless?: boolean,
   dir?: string,
@@ -180,9 +182,9 @@ type CompilerOpts = {
   command?: 'dev' | 'build',
   disableBuildCache?: boolean,
   experimentalEsbuildMinifier?: boolean,
+  stats?: STATS_VERBOSITY_LEVELS_TYPE,
 };
 */
-
 function Compiler(
   {
     dir = '.',
@@ -200,6 +202,7 @@ function Compiler(
     command,
     disableBuildCache,
     experimentalEsbuildMinifier,
+    stats: statsLevel,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const root = path.resolve(dir);
@@ -292,7 +295,7 @@ function Compiler(
       worker = void 0;
     });
 
-  const statsLogger = getStatsLogger({dir, logger, env});
+  const statsLogger = getStatsLogger({dir, logger, env, statsLevel});
 
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
   this.start = (cb) => {

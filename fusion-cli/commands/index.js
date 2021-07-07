@@ -2,6 +2,9 @@
 /* eslint-env node */
 
 const {allowedJestOptions} = require('../build/jest/cli-options');
+const {
+  STATS_VERBOSITY_LEVELS,
+} = require('../build/constants/compiler-stats.js');
 
 const jestOptionsDescriptions = {};
 allowedJestOptions.forEach((arg) => {
@@ -26,6 +29,16 @@ const experimentalEsbuildMinifierOption = {
     type: 'boolean',
     default: undefined,
     describe: '[Experimental] Enable esbuild minifier (instead of Terser)',
+  },
+};
+
+const statsOption = {
+  stats: {
+    type: 'string',
+    default: STATS_VERBOSITY_LEVELS.minimal,
+    describe: `Control verbosity level of build stats output (${Object.keys(
+      STATS_VERBOSITY_LEVELS
+    ).join(', ')})`,
   },
 };
 
@@ -71,6 +84,7 @@ module.exports = {
       },
       ...disableBuildCacheOption,
       ...experimentalEsbuildMinifierOption,
+      ...statsOption,
     },
   },
   dev: {
@@ -127,6 +141,7 @@ module.exports = {
         describe: 'Skip server respawn when server bundle does not change',
       },
       ...disableBuildCacheOption,
+      ...statsOption,
     },
   },
   profile: {

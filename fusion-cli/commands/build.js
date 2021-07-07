@@ -11,6 +11,9 @@
 const winston = require('winston');
 
 const {Compiler} = require('../build/compiler.js');
+/*::
+import type {STATS_VERBOSITY_LEVELS_TYPE} from '../build/constants/compiler-stats.js';
+*/
 
 exports.run = async function (
   {
@@ -25,6 +28,7 @@ exports.run = async function (
     skipSourceMaps,
     disableBuildCache,
     experimentalEsbuildMinifier,
+    stats,
   } /*: {
     experimentalServerless: boolean,
     dir: string,
@@ -37,6 +41,7 @@ exports.run = async function (
     skipSourceMaps: boolean,
     disableBuildCache?: boolean,
     experimentalEsbuildMinifier?: boolean,
+    stats?: STATS_VERBOSITY_LEVELS_TYPE,
   }*/
 ) {
   const logger = winston.createLogger({
@@ -62,6 +67,7 @@ exports.run = async function (
     skipSourceMaps,
     disableBuildCache,
     experimentalEsbuildMinifier,
+    stats,
   });
 
   await compiler.clean();
