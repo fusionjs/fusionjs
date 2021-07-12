@@ -69,7 +69,7 @@ test('compiles with custom splitChunks config', async () => {
     'mapbox vendor bundle includes mapbox'
   );
   t.ok(
-    clientNodeModuleChunkEntry.includes('/node_modules/other/'),
+    clientNodeModuleChunkEntry.includes('hi from other'),
     'node module chunk includes other'
   );
 }, 100000);

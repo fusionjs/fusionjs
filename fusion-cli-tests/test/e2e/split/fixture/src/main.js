@@ -8,7 +8,7 @@ export default (async function () {
   const dPromise = import('./test-transitive.js');
   const splitChunkGroupPromise = import('./test-split-chunk-group.js');
   // force split chunk for module-a, dependent on by test-split-chunk-group
-  const moduleAPromise = import('./module-a');
+  const moduleAPromise = import('../node_modules/module-a');
 
   const app = new App('element', (el) => {
     if (__NODE__) {

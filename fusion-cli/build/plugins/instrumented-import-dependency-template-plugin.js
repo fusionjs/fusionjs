@@ -235,6 +235,7 @@ class InstrumentedImportDependencyTemplatePlugin {
                       compilation.chunkGraph.getModuleId(depModule);
                     if (depModuleId === null && depModule.libIdent) {
                       const moduleId = depModule.libIdent({
+                        associatedObjectForCache: compiler.root,
                         context: compiler.options.context,
                       });
                       compilation.chunkGraph.setModuleId(
@@ -281,6 +282,7 @@ class InstrumentedImportDependencyTemplatePlugin {
             // Some modules lose their id by this point
             // Reassign the cached module id so it matches the id used in the instrumentation
             const id = module.libIdent({
+              associatedObjectForCache: compiler.root,
               context: compiler.options.context,
             });
             const cachedModuleId = getCachedModuleId(id);
@@ -356,7 +358,7 @@ function getModuleClientChunkIds(clientChunkIndex, module) {
 function getChunkGroupIds(chunkGroup) {
   if (chunkGroup && !chunkGroup.isInitial()) {
     if (Array.isArray(chunkGroup.chunks)) {
-      return chunkGroup.chunks.map((c) => c.id);
+      return chunkGroup.chunks.map((c) => c.id).sort();
     }
     return [chunkGroup.id];
   }

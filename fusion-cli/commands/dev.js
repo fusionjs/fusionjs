@@ -12,7 +12,6 @@ const winston = require('winston');
 
 const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
-const {TestAppRuntime} = require('../build/test-runtime');
 const {execSync: exec} = require('child_process');
 
 exports.run = async function (
@@ -67,9 +66,11 @@ exports.run = async function (
     )
   );
 
-  const testRuntime = test
-    ? new TestAppRuntime({dir, overrideNodeEnv: true})
-    : null;
+  let testRuntime = null;
+  if (test) {
+    const {TestAppRuntime} = require('../build/test-runtime');
+    testRuntime = new TestAppRuntime({dir, overrideNodeEnv: true});
+  }
 
   const [actualPort] = await Promise.all([
     devRuntime.start(),

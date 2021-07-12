@@ -12,10 +12,8 @@ const fs = require('fs');
 const path = require('path');
 
 const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
-const {gzipWebpackPlugin, brotliWebpackPlugin} = require('../lib/compression');
 const resolveFrom = require('../lib/resolve-from');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
@@ -41,7 +39,6 @@ const {
 const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-metadata-state-hydrator-plugin.js');
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
-const SourceMapPlugin = require('./plugins/source-map-plugin.js');
 const {version: fusionCLIVersion} = require('../package.json');
 
 /*::
@@ -327,8 +324,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       ].filter(Boolean),
     },
     mode,
-    // TODO(#47): Do we need to do something different here for production?
-    stats: 'minimal',
     /**
      * `cheap-module-source-map` is best supported by Chrome DevTools
      * See: https://github.com/webpack/webpack/issues/2145#issuecomment-294361203
@@ -350,6 +345,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     output: {
       uniqueName: 'Fusion',
       path: path.join(fusionBuildFolder, 'dist', env, runtime),
+      pathinfo: false,
       filename:
         runtime === 'server'
           ? 'server-main.js'
@@ -571,39 +567,42 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         },
       ].filter(Boolean),
     },
-    externals: [
-      runtime === 'server' &&
-        (({context, request}, callback) => {
-          if (/^[@a-z\-0-9]+/.test(request)) {
-            const absolutePath = getModuleAbsolutePath(context, request);
-            // do not bundle external packages and those not whitelisted
-            if (typeof absolutePath !== 'string') {
-              // if module is missing, skip rewriting to absolute path
-              return callback(null, request);
-            }
-            if (experimentalBundleTest) {
-              const bundle = experimentalBundleTest(
-                absolutePath,
-                'browser-only'
-              );
-              if (bundle === 'browser-only') {
-                // don't bundle on the server
-                return callback(null, 'commonjs ' + absolutePath);
-              } else if (bundle === 'universal') {
-                // bundle on the server
-                return callback();
-              } else {
-                throw new Error(
-                  `Unexpected value: ${bundle} from experimentalBundleTest. Expected 'browser-only' | 'universal'.`
-                );
+    externals:
+      runtime === 'server'
+        ? (
+            {context, request} /*: { context: string, request: string }*/,
+            callback /*: (error: ?Error, result?: string) => void */
+          ) => {
+            if (/^[@a-z\-0-9]+/.test(request)) {
+              const absolutePath = getModuleAbsolutePath(context, request);
+              // do not bundle external packages and those not whitelisted
+              if (typeof absolutePath !== 'string') {
+                // if module is missing, skip rewriting to absolute path
+                return callback(null, request);
               }
+              if (experimentalBundleTest) {
+                const bundle = experimentalBundleTest(
+                  absolutePath,
+                  'browser-only'
+                );
+                if (bundle === 'browser-only') {
+                  // don't bundle on the server
+                  return callback(null, 'commonjs ' + absolutePath);
+                } else if (bundle === 'universal') {
+                  // bundle on the server
+                  return callback();
+                } else {
+                  throw new Error(
+                    `Unexpected value: ${bundle} from experimentalBundleTest. Expected 'browser-only' | 'universal'.`
+                  );
+                }
+              }
+              return callback(null, 'commonjs ' + absolutePath);
             }
-            return callback(null, 'commonjs ' + absolutePath);
+            // bundle everything else (local files, __*)
+            return callback();
           }
-          // bundle everything else (local files, __*)
-          return callback();
-        }),
-    ].filter(Boolean),
+        : undefined,
     resolve: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
       aliasFields: [
@@ -642,7 +641,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       },
     },
     plugins: [
-      runtime === 'client' && !dev && !skipSourceMaps && new SourceMapPlugin(),
+      runtime === 'client' &&
+        !dev &&
+        !skipSourceMaps &&
+        ((compiler) => {
+          const SourceMapPlugin = require('./plugins/source-map-plugin.js');
+          new SourceMapPlugin().apply(compiler);
+        }),
       // NOTE: Breaking change in webpack v5
       // Need to provide same API to source node modules in client bundles
       // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L83-L94
@@ -707,8 +712,34 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             state.i18nDeferredManifest
           ),
       new LoaderContextProviderPlugin(workerKey, worker),
-      !dev && shouldGzip && gzipWebpackPlugin,
-      !dev && brotli && brotliWebpackPlugin,
+      !dev &&
+        shouldGzip &&
+        ((compiler) => {
+          const CompressionPlugin = require('compression-webpack-plugin');
+          new CompressionPlugin({
+            filename: '[file].gz',
+            algorithm: 'gzip',
+            test: /\.(js|css|html|svg)$/,
+            // There's no need to compress server bundle
+            exclude: 'server-main.js',
+            threshold: 0,
+            minRatio: 1,
+          }).apply(compiler);
+        }),
+      !dev &&
+        brotli &&
+        ((compiler) => {
+          const CompressionPlugin = require('compression-webpack-plugin');
+          new CompressionPlugin({
+            filename: '[file].br',
+            algorithm: 'brotliCompress',
+            test: /\.(js|css|html|svg)$/,
+            // There's no need to compress server bundle
+            exclude: 'server-main.js',
+            threshold: 0,
+            minRatio: 1,
+          }).apply(compiler);
+        }),
       runtime === 'server'
         ? // Server
           new InstrumentedImportDependencyTemplatePlugin({
@@ -769,12 +800,14 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
           plugins: (options) =>
             [
-              new webpack.optimize.RuntimeChunkPlugin(
-                options.optimization.runtimeChunk
-              ),
-              new webpack.optimize.SplitChunksPlugin(
-                options.optimization.splitChunks
-              ),
+              options.optimization.runtimeChunk &&
+                new webpack.optimize.RuntimeChunkPlugin(
+                  options.optimization.runtimeChunk
+                ),
+              options.optimization.splitChunks &&
+                new webpack.optimize.SplitChunksPlugin(
+                  options.optimization.splitChunks
+                ),
               // need to re-apply template
               new InstrumentedImportDependencyTemplatePlugin({
                 compilation: 'client',
@@ -813,7 +846,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       runtimeChunk: runtime === 'client' && {name: 'runtime'},
       splitChunks:
         runtime !== 'client'
-          ? void 0
+          ? false
           : fusionConfig.splitChunks
           ? // Tilde character in filenames is not well supported
             // https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html
@@ -822,10 +855,13 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               chunks: 'async',
               automaticNameDelimiter: '-',
               cacheGroups: {
-                default: {
-                  minChunks: 2,
-                  reuseExistingChunk: true,
-                },
+                // Only split node_modules in a separate chunk while in dev mode
+                default: dev
+                  ? false
+                  : {
+                      minChunks: 2,
+                      reuseExistingChunk: true,
+                    },
                 vendor: {
                   test: /[\\/]node_modules[\\/]/,
                   name: 'vendor',
@@ -850,32 +886,35 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                     },
                   }).apply(compiler);
                 }
-              : new TerserPlugin({
-                  extractComments: false,
-                  terserOptions: {
-                    parse: {
-                      ecma: 2017,
-                    },
-                    compress: {
-                      ecma: 5,
-                      // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
-                      // This mangles mapbox-gl creating an error when used alongside with window global mangling:
-                      // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
-                      typeofs: false,
+              : (compiler /*: any */) => {
+                  const TerserPlugin = require('terser-webpack-plugin');
+                  new TerserPlugin({
+                    extractComments: false,
+                    terserOptions: {
+                      parse: {
+                        ecma: 2017,
+                      },
+                      compress: {
+                        ecma: 5,
+                        // typeofs: true (default) transforms typeof foo == "undefined" into foo === void 0.
+                        // This mangles mapbox-gl creating an error when used alongside with window global mangling:
+                        // https://github.com/webpack-contrib/uglifyjs-webpack-plugin/issues/189
+                        typeofs: false,
 
-                      // inline=2 can cause const reassignment
-                      // https://github.com/mishoo/UglifyJS2/issues/2842
-                      inline: 1,
+                        // inline=2 can cause const reassignment
+                        // https://github.com/mishoo/UglifyJS2/issues/2842
+                        inline: 1,
+                      },
+                      format: {
+                        ecma: 5,
+                      },
+                      keep_fnames: preserveNames,
+                      keep_classnames: preserveNames,
                     },
-                    format: {
-                      ecma: 5,
-                    },
-                    keep_fnames: preserveNames,
-                    keep_classnames: preserveNames,
-                  },
-                }),
+                  }).apply(compiler);
+                },
           ]
-        : undefined,
+        : [],
     },
   };
 }

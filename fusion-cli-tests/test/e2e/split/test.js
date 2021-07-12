@@ -142,7 +142,7 @@ describe('split chunk ids kept in sync on both client and server', () => {
     });
 
     return {
-      server,
+      server: server.map((v) => v.toString()),
       client,
     };
   }
@@ -164,7 +164,7 @@ describe('split chunk ids kept in sync on both client and server', () => {
 
     const chunkIds = await fetchChunkIds(page, baseUrl);
 
-    // There should be 2 chunks in this group (one of which is module-a reused chunk)
+    // There should be 2 chunks in this group (one of which is module-a vendors chunk)
     expect(chunkIds.server.length).toEqual(2);
     expect(chunkIds.client).toEqual(chunkIds.server);
 

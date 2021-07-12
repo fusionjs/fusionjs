@@ -24,7 +24,9 @@ test('`fusion dev` works with fs', async () => {
   t.ok(res.includes('writeFile'), 'supports fs api on the server');
   const {data: mainRes} = await request(`${url}/_static/client-main.js`);
   t.ok(
-    mainRes.includes('fs (ignored)'),
+    mainRes.match(
+      /fs__WEBPACK_IMPORTED_MODULE_\d+__ = __webpack_require__\("\?.*"\)/
+    ) !== null,
     'includes empty fs for browser in dev'
   );
   app.teardown();
