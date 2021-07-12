@@ -1,8 +1,8 @@
 // @noflow
 import App from 'fusion-core';
 
-import test from 'mapbox-gl';
-import other from 'other';
+import test from '../node_modules/mapbox-gl';
+import other from '../node_modules/other';
 
 console.log('helloworld');
 

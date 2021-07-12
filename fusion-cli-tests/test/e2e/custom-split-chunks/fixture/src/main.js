@@ -2,8 +2,8 @@
 import App from 'fusion-core';
 
 // initial bundles
-import mapbox from 'mapbox-gl';
-import react from 'react';
+import mapbox from '../node_modules/mapbox-gl';
+import react from '../node_modules/react';
 
 console.log(mapbox);
 console.log(react);
