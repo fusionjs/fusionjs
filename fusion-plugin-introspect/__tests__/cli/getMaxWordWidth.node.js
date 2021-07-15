@@ -1,5 +1,5 @@
 // @flow
-import {getMaxWordWidth} from '../../src/cli/getMaxWordWidth.js';
+import {getMaxWordWidth} from '../../src/shared/getMaxWordWidth.js';
 
 test('getMaxWordWidth', () => {
   const dep = (name) => ({name, type: 'both', sources: [], dependencies: []});

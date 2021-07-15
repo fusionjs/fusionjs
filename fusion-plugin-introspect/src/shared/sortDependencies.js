@@ -1,6 +1,6 @@
 // @flow
 /*::
-import type {DepData, Dep} from './types.js';
+import type {DepData, Dep} from '../cli/types.js';
 */
 module.exports.sortDependencies = (deps /*: Array<Dep>*/) /*:Array<Dep> */ => {
   const list = [];

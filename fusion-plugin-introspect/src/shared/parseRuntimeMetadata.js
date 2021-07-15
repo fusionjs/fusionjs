@@ -1,6 +1,6 @@
 // @flow
 /*::
-import type {Schema} from './types.js';
+import type {Schema} from '../cli/types.js';
 */
 const fs = require('fs');
 const util = require('util');

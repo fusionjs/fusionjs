@@ -1,8 +1,8 @@
 // @flow
 const path = require('path');
-const {parseRuntimeMetadata} = require('./parseRuntimeMetadata.js');
-const {listDependencies} = require('./listDependencies.js');
-const {listSourceLines} = require('./listSourceLines.js');
+const {parseRuntimeMetadata} = require('../shared/parseRuntimeMetadata.js');
+const {listDependencies} = require('../shared/listDependencies.js');
+const {listSourceLines} = require('../shared/listSourceLines.js');
 
 module.exports.where = async (token /*: string*/) => {
   const data = await parseRuntimeMetadata();

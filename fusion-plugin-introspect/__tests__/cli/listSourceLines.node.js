@@ -1,5 +1,5 @@
 // @flow
-import {listSourceLines} from '../../src/cli/listSourceLines.js';
+import {listSourceLines} from '../../src/shared/listSourceLines.js';
 
 test('listSourceLines', () => {
   const dep = {

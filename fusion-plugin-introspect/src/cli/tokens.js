@@ -1,9 +1,9 @@
 // @flow
-const {parseRuntimeMetadata} = require('./parseRuntimeMetadata.js');
-const {getMaxWordWidth} = require('./getMaxWordWidth.js');
-const {listDependencies} = require('./listDependencies.js');
-const {listSourceLines} = require('./listSourceLines.js');
-const {sortDependencies} = require('./sortDependencies.js');
+const {parseRuntimeMetadata} = require('../shared/parseRuntimeMetadata.js');
+const {getMaxWordWidth} = require('../shared/getMaxWordWidth.js');
+const {listDependencies} = require('../shared/listDependencies.js');
+const {listSourceLines} = require('../shared/listSourceLines.js');
+const {sortDependencies} = require('../shared/sortDependencies.js');
 
 module.exports.tokens = async () => {
   const data = await parseRuntimeMetadata();

@@ -1,5 +1,5 @@
 // @flow
-import {sortDependencies} from '../../src/cli/sortDependencies.js';
+import {sortDependencies} from '../../src/shared/sortDependencies.js';
 
 test('sortDependencies', async () => {
   const data = sortDependencies([

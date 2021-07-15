@@ -1,6 +1,6 @@
 // @flow
 import {mockFs} from './mockFs.js';
-import {parseRuntimeMetadata} from '../../src/cli/parseRuntimeMetadata.js';
+import {parseRuntimeMetadata} from '../../src/shared/parseRuntimeMetadata.js';
 
 test('parseRuntimeMetadata', async () => {
   const mock = mockFs();

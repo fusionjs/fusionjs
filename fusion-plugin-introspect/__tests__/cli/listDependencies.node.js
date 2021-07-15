@@ -1,5 +1,5 @@
 // @flow
-import {listDependencies} from '../../src/cli/listDependencies.js';
+import {listDependencies} from '../../src/shared/listDependencies.js';
 
 test('listDependencies', () => {
   const dep = (name) => ({name, type: 'both', sources: [], dependencies: []});

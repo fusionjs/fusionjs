@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type {Dep, Source} from './types.js';
+import type {Dep, Source} from '../cli/types.js';
 */
 
 module.exports.listSourceLines = (

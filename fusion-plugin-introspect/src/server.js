@@ -5,13 +5,23 @@
  *
  * @flow
  */
-
 import type App, {FusionPlugin} from 'fusion-core';
 import {createPlugin, html} from 'fusion-core';
 import parser from 'koa-bodyparser';
 import {collectDependencyData} from './collectDependencyData.js';
 import {collectMetadata} from './collectMetadata.js';
 import * as fsStore from './fs-store.js';
+
+const {parseRuntimeMetadata} = require('./shared/parseRuntimeMetadata.js');
+const {getMaxWordWidth} = require('./shared/getMaxWordWidth.js');
+const {listDependencies} = require('./shared/listDependencies.js');
+const {listSourceLines} = require('./shared/listSourceLines.js');
+const {sortDependencies} = require('./shared/sortDependencies.js');
+const {describeUsage} = require('./shared/describeUsage.js');
+const {graphParents} = require('./shared/graphParents.js');
+const {graphChildren} = require('./shared/graphChildren.js');
+const {describeType} = require('./shared/describeType.js');
+const path = require('path');
 
 export type IntrospectionSchema = {
   version: string,
@@ -96,6 +106,104 @@ const plugin = (app: App, {store, env = [], deps = {}}: Object = {}) => {
           ) {
             ctx.status = 200;
             ctx.body = 'OK';
+          }
+          if (
+            ctx.method === 'GET' &&
+            ctx.path.startsWith('/_diagnostics_api')
+          ) {
+            if (ctx.path.startsWith('/_diagnostics_api/tokens')) {
+              const data = await parseRuntimeMetadata();
+
+              const tabulateTokens = (data, type) => {
+                const space = ' '.repeat(getMaxWordWidth(data[type]) + 2);
+                return sortDependencies(listDependencies(data[type]))
+                  .map((dep) => {
+                    const name = dep.name;
+                    return (
+                      `${name}${space.slice(name.length)}` +
+                      listSourceLines(dep, 'register').join(space)
+                    );
+                  })
+                  .join('\n');
+              };
+
+              const lists = [
+                data.browser
+                  ? `Browser:\n${tabulateTokens(data, 'browser')}\n\n`
+                  : '',
+                data.server
+                  ? `Server:\n${tabulateTokens(data, 'server')}\n\n`
+                  : '',
+              ];
+
+              ctx.response.body = lists.filter(Boolean).join('\n');
+            } else if (ctx.path.startsWith('/_diagnostics_api/why')) {
+              var token = ctx.query.token;
+
+              const data = await parseRuntimeMetadata();
+              const deps = listDependencies(data.server);
+              const dep = deps.find((dep) => dep.name === token);
+
+              if (!dep) return '';
+
+              const explanation = [
+                describeType(dep, token),
+                describeUsage(dep, token),
+                `${token} is used by:\n` + graphParents(deps, token),
+                `${token} depends on:\n` + graphChildren(deps, token),
+              ];
+
+              ctx.response.body = explanation.filter(Boolean).join('\n');
+            } else if (ctx.path.startsWith('/_diagnostics_api/middleware')) {
+              const data = await parseRuntimeMetadata();
+
+              const tabulateTokens = (data, type) => {
+                const space = ' '.repeat(getMaxWordWidth(data[type]) + 2);
+                const deps = sortDependencies(listDependencies(data[type]));
+
+                const list = [];
+                deps.forEach((dep) => {
+                  const name = dep.name;
+                  const sources = listSourceLines(dep, 'plugin');
+                  if (['middleware', 'both'].includes(dep.type)) {
+                    list.push(
+                      `${name}${space.slice(name.length)}${sources[0]}`
+                    );
+                  }
+                });
+                return list.join('\n');
+              };
+
+              const lists = [
+                data.browser
+                  ? `Browser:\n${tabulateTokens(data, 'browser')}\n\n`
+                  : '',
+                data.server
+                  ? `Server:\n${tabulateTokens(data, 'server')}\n\n`
+                  : '',
+              ];
+
+              ctx.response.body = lists.filter(Boolean).join('\n');
+            } else if (ctx.path.startsWith('/_diagnostics_api/where')) {
+              token = ctx.query.token;
+
+              const data = await parseRuntimeMetadata();
+              const dep = [
+                ...listDependencies(data.server || []),
+                ...listDependencies(data.browser || []),
+              ].find((dep) => dep.name === token);
+
+              if (!dep) {
+                ctx.response.body = 'No dependencies';
+                return;
+              }
+
+              const sources = listSourceLines(dep, 'register').map((source) => {
+                return path.resolve(process.cwd(), source);
+              });
+
+              ctx.response.body = sources.join('\n');
+            }
           }
           return next();
         };

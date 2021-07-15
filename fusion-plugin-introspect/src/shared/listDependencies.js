@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type {DepData, Dep} from './types.js';
+import type {DepData, Dep} from '../cli/types.js';
 */
 
 module.exports.listDependencies = (
