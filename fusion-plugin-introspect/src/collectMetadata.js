@@ -8,15 +8,13 @@
 /* eslint-env node */
 import fs from 'fs';
 import path from 'path';
-import {exec} from './exec.js';
 
 export const collectMetadata = (root: string, keys: Array<string>) => {
   const {dependencies, dir} = findMetadata(root);
   const environmentVariables = collectEnvironmentVariables(keys);
 
   const nodeVersion = process.version;
-  const npmVersion = exec('npm --version');
-  const yarnVersion = exec('yarn --version');
+  const packageManagersData = getPackageManagersData();
   const lockFileType = fs.existsSync(`${dir}/yarn.lock`)
     ? 'yarn'
     : fs.existsSync(`${dir}/package-lock.json`)
@@ -27,8 +25,8 @@ export const collectMetadata = (root: string, keys: Array<string>) => {
     timestamp: Date.now(),
     pid: process.pid,
     nodeVersion,
-    npmVersion,
-    yarnVersion,
+    npmVersion: packageManagersData.npm || '',
+    yarnVersion: packageManagersData.yarn || '',
     lockFileType,
     ...dependencies,
     ...environmentVariables,
@@ -54,6 +52,24 @@ const findMetadata = (dir) => {
     }
   }
 };
+
+const PACKAGE_MANAGERS = new Set(['npm', 'yarn']);
+const getPackageManagersData = () =>
+  // Yarn: yarn/3.0.0-rc.2.git.20210503.hash-f661129e npm/? node/12.20.1 darwin x64
+  // NPM: npm/6.14.10 node/v12.20.1 darwin x64
+  (process.env.npm_config_user_agent || '').split(' ').reduce((acc, part) => {
+    const parts = part.split('/');
+
+    if (parts.length === 2) {
+      const [product, productVersion] = parts;
+
+      if (PACKAGE_MANAGERS.has(product)) {
+        acc[product] = productVersion === '?' ? '' : productVersion;
+      }
+    }
+
+    return acc;
+  }, {});
 
 const collectEnvironmentVariables = (keys) => {
   const vars = {};

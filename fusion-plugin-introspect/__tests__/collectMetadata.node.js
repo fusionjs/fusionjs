@@ -9,15 +9,16 @@
 import {collectMetadata} from '../src/collectMetadata.js';
 
 test('collectMetadata', () => {
+  const NPM_VERSION = '6.14.13';
+  const YARN_VERSION = '3.0.0-rc.2.git.20210503.hash-f661129e';
   process.env.FOO = 'foo';
   process.env.BAR = 'bar';
+  process.env.npm_config_user_agent = `yarn/${YARN_VERSION} npm/${NPM_VERSION} node/12.20.1 darwin x64`;
   const data = collectMetadata('.', ['FOO']);
   expect(data.nodeVersion.constructor).toBe(String);
   expect(data.nodeVersion.length > 0).toBe(true);
-  expect(data.npmVersion.constructor).toBe(String);
-  expect(data.npmVersion.length > 0).toBe(true);
-  expect(data.yarnVersion.constructor).toBe(String);
-  expect(data.yarnVersion.length > 0).toBe(true);
+  expect(data.npmVersion).toEqual(NPM_VERSION);
+  expect(data.yarnVersion).toEqual(YARN_VERSION);
   // expect(data.lockFileType).toBe('yarn'); // FIXME We don't have lockfiles in each package anymore
   expect(data.devDependencies.constructor).toBe(Object);
   // $FlowFixMe
