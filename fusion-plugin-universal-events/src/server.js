@@ -83,7 +83,10 @@ const plugin =
     provides: () => new GlobalEmitter(),
     middleware: (deps, globalEmitter) => {
       const bodyParser = require('koa-bodyparser');
-      const parseBody = bodyParser();
+      // Forcing to parse JSON even if the Content-Type is different because we only expect JSON
+      // payloads for events and the browser sends beacons with Content-Type: 'text/plain' due to
+      // this bug http://crbug.com/490015
+      const parseBody = bodyParser({detectJSON: () => true});
       return async function universalEventsMiddleware(ctx, next) {
         const emitter = globalEmitter.from(ctx);
         if (ctx.method === 'POST' && ctx.path === '/_events') {

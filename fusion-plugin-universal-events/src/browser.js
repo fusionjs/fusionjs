@@ -22,6 +22,12 @@ import {
   localBatchStorage,
 } from './storage/index.js';
 
+// The Beacon API rejects requests with big payloads and the size limit
+// depends on the user agent. The limit in Chrome is 64KB and it is supposed
+// to be at least the same also for the other browsers, even if they did not
+// release any official information.
+const BEACON_PAYLOAD_SIZE_LIMIT = 60000;
+
 export class UniversalEmitter extends Emitter {
   flush: any;
   fetch: Fetch;
@@ -73,6 +79,34 @@ export class UniversalEmitter extends Emitter {
       this.finishFlush();
       return;
     }
+
+    if (navigator.sendBeacon) {
+      const itemsToSend = [];
+      let jsonSize = 12; // Base payload is `{"items":[]}`
+      for (let i = 0, l = items.length; i < l; i += 1) {
+        const itemJSON = JSON.stringify(items[i]);
+        const jsonItemSize = new Blob([itemJSON]).size;
+        if (jsonItemSize + jsonSize < BEACON_PAYLOAD_SIZE_LIMIT) {
+          itemsToSend.push(itemJSON);
+          jsonSize += jsonItemSize + (itemsToSend.length > 1 ? 1 : 0);
+        } else {
+          break;
+        }
+      }
+
+      // Not sending Blob with Content-Type: 'application/json' because it throws in some old browsers.
+      // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
+      // performed in sendBeacon using Blob with a not-simple content type.
+      // See http://crbug.com/490015
+      const payload = `{"items":[${itemsToSend.join(',')}]}`;
+      // $FlowFixMe already checked navigator.sendBeacon existence
+      if (navigator.sendBeacon('/_events', payload)) {
+        this.storage.getAndClear(itemsToSend.length);
+        this.finishFlush();
+        return;
+      }
+    }
+
     try {
       const res = await this.fetch('/_events', {
         method: 'POST',

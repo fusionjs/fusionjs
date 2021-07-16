@@ -47,7 +47,50 @@ function createMockFetch(responseParams: mixed): Response {
 test('Browser EventEmitter', async () => {
   let fetched = false;
   let emitted = false;
-  const fetch: Fetch = (url, options) => {
+  navigator.sendBeacon = jest.fn((url, payload) => {
+    if (!payload) {
+      throw new Error(`Expected payload to exist`);
+    }
+
+    expect(url).toBe('/_events');
+    const jsonBody = JSON.parse(payload.toString());
+    expect(jsonBody.items.length).toBe(1);
+    expect(jsonBody.items[0].payload.x).toBe(1);
+    fetched = true;
+    return true;
+  });
+  const fetch = jest.fn();
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.on('a', ({x}) => {
+        expect(x).toBe(1);
+        emitted = true;
+      });
+      emitter.emit('a', {x: 1});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  expect(navigator.sendBeacon).toHaveBeenCalled();
+  expect(fetch).not.toHaveBeenCalled();
+  expect(emitted).toBe(true);
+  expect(fetched).toBe(true);
+  expect(store.data.length).toBe(0);
+});
+
+test('Browser EventEmitter - should fall back to fetch if sendBeacon is not supported', async () => {
+  let fetched = false;
+  let emitted = false;
+  navigator.sendBeacon = undefined;
+  const fetch: Fetch = jest.fn((url, options) => {
     if (
       !options ||
       !options.method ||
@@ -73,7 +116,7 @@ test('Browser EventEmitter', async () => {
     expect(jsonBody.items[0].payload.x).toBe(1);
     fetched = true;
     return Promise.resolve(createMockFetch());
-  };
+  });
 
   const app = getApp(fetch);
   app.middleware({events: UniversalEventsToken}, ({events}) => {
@@ -93,12 +136,62 @@ test('Browser EventEmitter', async () => {
   const simulator = getSimulator(app);
   await simulator.render('/');
 
+  expect(fetch).toHaveBeenCalled();
   expect(emitted).toBe(true);
   expect(fetched).toBe(true);
   expect(store.data.length).toBe(0);
 });
 
-test('Browser EventEmitter adds events back to queue if they fail to send', async () => {
+test('Browser EventEmitter - should fall back to fetch if beacon fails to enqueue', async () => {
+  navigator.sendBeacon = jest.fn(() => false);
+  const fetch: Fetch = jest.fn(() =>
+    Promise.resolve(createMockFetch({ok: true}))
+  );
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.emit('a', {x: 1});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  expect(navigator.sendBeacon).toHaveBeenCalled();
+  expect(fetch).toHaveBeenCalled();
+  expect(store.data.length).toBe(0);
+});
+
+test('Browser EventEmitter - should not send all the events if beacon is too big', async () => {
+  navigator.sendBeacon = jest.fn(() => true);
+  const fetch: Fetch = jest.fn(() => Promise.resolve(createMockFetch()));
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.emit('a', {x: 'a'.repeat(40000)});
+      emitter.emit('b', {x: 'b'.repeat(40000)});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  expect(navigator.sendBeacon).toHaveBeenCalled();
+  expect(store.data.length).toBe(1);
+});
+
+test('Browser EventEmitter - fetch adds events back to queue if they fail to send', async () => {
+  navigator.sendBeacon = undefined;
   const fetch: Fetch = () => Promise.resolve(createMockFetch({ok: false}));
 
   const app = getApp(fetch);
@@ -118,7 +211,8 @@ test('Browser EventEmitter adds events back to queue if they fail to send', asyn
   expect(store.data.length).toBe(1);
 });
 
-test('Browser EventEmitter adds events back to queue if they fail to send 2', async () => {
+test('Browser EventEmitter - fetch adds events back to queue if they fail to send 2', async () => {
+  navigator.sendBeacon = undefined;
   const fetch: Fetch = () => Promise.reject();
 
   const app = getApp(fetch);
@@ -139,6 +233,7 @@ test('Browser EventEmitter adds events back to queue if they fail to send 2', as
 });
 
 test('Browser EventEmitter interval', async (done) => {
+  navigator.sendBeacon = jest.fn(() => true);
   store.getAndClear();
   const emitter = new UniversalEmitter(
     () => {
@@ -159,6 +254,7 @@ test('Browser EventEmitter interval', async (done) => {
 });
 
 test('Respects the limit when flushing', async () => {
+  navigator.sendBeacon = jest.fn(() => true);
   store.getAndClear();
   const fetch: Fetch = () => Promise.resolve(createMockFetch());
   const emitter = new UniversalEmitter(fetch, store, 2000, 20);
@@ -175,6 +271,7 @@ test('Respects the limit when flushing', async () => {
 });
 
 test('Calling flush even no items works as expected', async () => {
+  navigator.sendBeacon = jest.fn(() => true);
   store.getAndClear();
   const fetch: Fetch = () => Promise.resolve(createMockFetch());
   const emitter = new UniversalEmitter(fetch, store, 100, 20);
@@ -189,7 +286,8 @@ test('Calling flush even no items works as expected', async () => {
   emitter.teardown();
 });
 
-test('Lowers limit for 413 errors', async () => {
+test('Fetch lowers limit for 413 errors', async () => {
+  navigator.sendBeacon = undefined;
   store.getAndClear();
   const fetch: Fetch = () =>
     Promise.resolve(createMockFetch({status: 413, ok: false}));
@@ -206,6 +304,7 @@ test('Lowers limit for 413 errors', async () => {
 const sleep = (ms) => setTimeout(() => {}, ms);
 
 test('Browser EventEmitter does not start a new flush while another one is in progress', async () => {
+  navigator.sendBeacon = undefined;
   store.getAndClear();
   let resolveFetch: (result: any) => void = () => {};
   const fetch: Fetch = jest.fn().mockReturnValue(
