@@ -30,68 +30,9 @@ const {
   FULL_STATS,
   MINIMAL_STATS,
 } = require('./constants/compiler-stats.js');
+const {getStatsErrors, getStatsWarnings} = require('./webpack-stats-utils.js');
 
 const {Worker} = require('jest-worker');
-
-function ensureCompilerStatsInfo(stats) {
-  return function handleErrorOrWarning(errorOrWarning) {
-    return {
-      compilerPath: stats.name,
-      ...errorOrWarning,
-    };
-  };
-}
-
-function getErrors(info, depth = 0) {
-  let errors = info.errors.map(ensureCompilerStatsInfo(info));
-  if (info.children && info.children.length) {
-    errors = errors.concat(
-      info.children.reduce((x, child) => {
-        return x.concat(getErrors(child, depth + 1));
-      }, [])
-    );
-  }
-  return depth === 0 ? dedupeErrors(errors) : errors;
-}
-
-function getWarnings(info, depth = 0) {
-  let warnings = info.warnings.map(ensureCompilerStatsInfo(info));
-  if (info.children && info.children.length) {
-    warnings = warnings.concat(
-      info.children.reduce((x, child) => {
-        return x.concat(getWarnings(child, depth + 1));
-      }, [])
-    );
-  }
-  return depth === 0 ? dedupeErrors(warnings) : warnings;
-}
-
-function dedupeErrors(items) {
-  const re = /BabelLoaderError(.|\n)+( {4}at transpile)/gim;
-  const set = new Set(
-    items.map((item) =>
-      [
-        [`${item.compilerPath}:`, item.moduleName, item.loc]
-          .filter(Boolean)
-          .join(' '),
-        item.message,
-        ...(item.moduleTrace || []).map((module) =>
-          [
-            ` @ ${module.originName}`,
-            ...(module.dependencies || []).map((dep) => dep.loc),
-          ]
-            .filter(Boolean)
-            .join(' ')
-        ),
-        item.details,
-      ]
-        .filter(Boolean)
-        .join('\n')
-        .replace(re, '$2')
-    )
-  );
-  return Array.from(set);
-}
 
 function getStatsOptions(statsLevel, isProd) {
   switch (statsLevel) {
@@ -147,11 +88,11 @@ function getStatsLogger({dir, logger, env, statsLevel}) {
     }
 
     if (stats.hasWarnings()) {
-      getWarnings(info).forEach((e) => logger.warn(e));
+      getStatsWarnings(info).forEach((e) => logger.warn(e));
     }
 
     if (stats.hasErrors()) {
-      getErrors(info).forEach((e) => logger.error(e));
+      getStatsErrors(info).forEach((e) => logger.error(e));
     }
   };
 }

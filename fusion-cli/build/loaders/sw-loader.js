@@ -8,6 +8,7 @@
 /*eslint-env node */
 const webpack = require('webpack');
 const MemoryFileSystem = require('memory-fs');
+const {getStatsErrors} = require('../webpack-stats-utils.js');
 
 /*::
 import type {WebpackConfigOpts} from "../get-webpack-config.js";
@@ -31,11 +32,21 @@ function swLoader() {
 
   compiler.run((err, stats) => {
     if (err || stats.hasErrors()) {
-      const info = stats.toJson('errors-only');
+      const info = stats.toJson({
+        all: false,
+        errorDetails: true,
+        errors: true,
+        errorsCount: true,
+        errorStack: true,
+      });
 
-      for (let err of info.errors) {
-        return void callback(new Error(err));
-      }
+      return void callback(
+        new Error(
+          `Service Worker compilation included errors: \n\n${getStatsErrors(
+            info
+          ).join('\n')}`
+        )
+      );
     }
 
     // Let loader know about compilation dependencies so re-builds are triggered appropriately
