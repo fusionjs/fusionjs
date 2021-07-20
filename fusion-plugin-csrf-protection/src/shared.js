@@ -14,7 +14,7 @@ const methods = {POST: 1, PUT: 1, PATCH: 1, DELETE: 1};
 export function verifyMethod(
   method: string | $Keys<typeof methods>
 ): $Values<typeof methods> {
-  return methods[method];
+  return methods[method.toUpperCase()];
 }
 export const CsrfIgnoreRoutesToken: Token<Array<string>> = createToken(
   'CsrfIgnoreRoutesToken'
