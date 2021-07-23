@@ -107,7 +107,9 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
     } else if (dep[isInstrumentedSymbolServer]) {
       // Template invoked without InstrumentedImportDependency
       // server-side, use values from client bundle
-      chunkIds = getModuleClientChunkIds(this.clientChunkIndex, depModule);
+      if (depModule) {
+        chunkIds = getModuleClientChunkIds(this.clientChunkIndex, depModule);
+      }
     } else {
       // Prevent future developers from creating a broken webpack state
       throw new Error('Dependency is not instrumented');
@@ -125,15 +127,16 @@ class InstrumentedImportDependencyTemplate extends ImportDependencyTemplate {
     // - `__CHUNK_IDS`: the webpack chunk ids for the dynamic import
     // - `__MODULE_ID`: the webpack module id of the dynamically imported module. Equivalent to require.resolveWeak(path)
     // - `__I18N_KEYS`: the translation keys used in the client chunk group for this import()
-    const customContent = chunkIds
-      ? `Object.defineProperties(${content}, {
+    const customContent =
+      chunkIds && chunkIds.length
+        ? `Object.defineProperties(${content}, {
         "__CHUNK_IDS": {value:${JSON.stringify(chunkIds)}},
         "__MODULE_ID": {value:${JSON.stringify(
           chunkGraph.getModuleId(depModule)
         )}},
         "__I18N_KEYS": {value:${JSON.stringify(translationKeys)}}
         })`
-      : content;
+        : content;
     // replace with `customContent` instead of `content`
     source.replace(dep.range[0], dep.range[1] - 1, customContent);
   }
@@ -183,19 +186,21 @@ class InstrumentedImportDependencyTemplatePlugin {
                   ) {
                     const depModule = compilation.moduleGraph.getModule(dep);
 
-                    const originalUpdateHash = dep.updateHash;
-                    dep.updateHash = function (...args) {
-                      originalUpdateHash.apply(this, args);
+                    if (depModule) {
+                      const originalUpdateHash = dep.updateHash;
+                      dep.updateHash = function (...args) {
+                        originalUpdateHash.apply(this, args);
 
-                      const [hash] = args;
-                      const chunkIds = getModuleClientChunkIds(
-                        clientChunkIndex,
-                        depModule
-                      );
-                      // Invalidate this dependency when the client chunk ids change
-                      // Necessary for HMR, and to invalidate build cache
-                      hash.update(chunkIds.join(','));
-                    };
+                        const [hash] = args;
+                        const chunkIds = getModuleClientChunkIds(
+                          clientChunkIndex,
+                          depModule
+                        );
+                        // Invalidate this dependency when the client chunk ids change
+                        // Necessary for HMR, and to invalidate build cache
+                        hash.update(chunkIds.join(','));
+                      };
+                    }
 
                     dep[isInstrumentedSymbolServer] = true;
                   }
@@ -231,17 +236,19 @@ class InstrumentedImportDependencyTemplatePlugin {
                     !dep[isInstrumentedSymbolClient]
                   ) {
                     const depModule = compilation.moduleGraph.getModule(dep);
-                    const depModuleId =
-                      compilation.chunkGraph.getModuleId(depModule);
-                    if (depModuleId === null && depModule.libIdent) {
-                      const moduleId = depModule.libIdent({
-                        associatedObjectForCache: compiler.root,
-                        context: compiler.options.context,
-                      });
-                      compilation.chunkGraph.setModuleId(
-                        depModule,
-                        createCachedModuleId(moduleId)
-                      );
+                    if (depModule) {
+                      const depModuleId =
+                        compilation.chunkGraph.getModuleId(depModule);
+                      if (depModuleId === null && depModule.libIdent) {
+                        const moduleId = depModule.libIdent({
+                          associatedObjectForCache: compiler.root,
+                          context: compiler.options.context,
+                        });
+                        compilation.chunkGraph.setModuleId(
+                          depModule,
+                          createCachedModuleId(moduleId)
+                        );
+                      }
                     }
 
                     const originalUpdateHash = dep.updateHash;
@@ -342,6 +349,11 @@ function getTranslationKeys(chunkGraph, moduleGraph, i18nManifest, dep) {
 }
 
 function getModuleClientChunkIds(clientChunkIndex, module) {
+  if (!module) {
+    // Fatal error: we should not be making this call for missing module
+    throw new Error('Can not determine client chunk ids for missing module');
+  }
+
   const clientChunkIds = clientChunkIndex.get(getModuleResource(module));
 
   if (clientChunkIds) {
@@ -362,6 +374,8 @@ function getChunkGroupIds(chunkGroup) {
     }
     return [chunkGroup.id];
   }
+
+  return [];
 }
 
 function getModuleResource(module) {
