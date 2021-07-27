@@ -40,6 +40,7 @@ const ClientChunkMetadataStateHydratorPlugin = require('./plugins/client-chunk-m
 const InstrumentedImportDependencyTemplatePlugin = require('./plugins/instrumented-import-dependency-template-plugin');
 const I18nDiscoveryPlugin = require('./plugins/i18n-discovery-plugin.js');
 const {version: fusionCLIVersion} = require('../package.json');
+const {JS_EXT_PATTERN} = require('./constants/paths.js');
 
 /*::
 type Runtime = "server" | "client" | "sw";
@@ -57,7 +58,6 @@ const EXCLUDE_TRANSPILATION_PATTERNS = [
   /node_modules\/react\//,
   /node_modules\/core-js\//,
 ];
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
 
 /*::
 import type {
@@ -146,10 +146,28 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     // ACHTUNG:
     // Adding new config option? Please do not forget to add it to `cacheVersionVars`
   } = opts;
-  const main = 'src/main.js';
+  const mainJs = 'src/main.js';
+  const mainTs = 'src/main.ts';
+  const mainTsx = 'src/main.tsx';
+  let main;
+  let isTypeScriptProject = false;
 
-  if (!fs.existsSync(path.join(dir, main))) {
-    throw new Error(`Project directory must contain a ${main} file`);
+  if (fs.existsSync(path.join(dir, mainJs))) {
+    main = mainJs;
+  } else if (fs.existsSync(path.join(dir, mainTs))) {
+    main = mainTs;
+    isTypeScriptProject = true;
+  } else if (fs.existsSync(path.join(dir, mainTsx))) {
+    main = mainTsx;
+    isTypeScriptProject = true;
+  } else {
+    throw new Error(
+      `Project directory must contain either one of these files: ${[
+        mainJs,
+        mainTs,
+        mainTsx,
+      ].join(', ')}`
+    );
   }
 
   const runtime = COMPILATIONS[id];
@@ -263,6 +281,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     preserveNames,
     nodeBuiltins,
     fusionCLIVersion,
+    main,
+    isTypeScriptProject,
   };
   const cacheDirectory = path.join(fusionBuildFolder, '.build-cache');
   const isBuildCachePersistent =
@@ -625,7 +645,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // Need to prioritize .mjs extension to keep similar behavior to
       // webpack v4, also some packages lack fully specified path in esm
       // @see: https://github.com/webpack/webpack/issues/11467#issuecomment-691702706
-      extensions: ['.mjs', '...'],
+      extensions: [
+        '.mjs',
+        ...(isTypeScriptProject ? ['.ts', '.tsx'] : []),
+        '...',
+      ],
     },
     resolveLoader: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,

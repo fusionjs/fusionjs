@@ -18,5 +18,5 @@ module.exports = {
   name: 'browser',
   // Exposes global.jsdom so we can reconfigure the url on each simulator.render call
   testEnvironment: 'jest-environment-jsdom-global',
-  testPathIgnorePatterns: ['.*\\.node\\.js'],
+  testPathIgnorePatterns: ['.*\\.node\\.[jt]sx?'],
 };

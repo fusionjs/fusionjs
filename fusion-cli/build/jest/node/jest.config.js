@@ -17,5 +17,5 @@ module.exports = {
   browser: false,
   name: 'node',
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['.*\\.browser\\.js'],
+  testPathIgnorePatterns: ['.*\\.browser\\.[jt]sx?'],
 };

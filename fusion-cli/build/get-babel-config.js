@@ -53,7 +53,10 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       opts.dev &&
         require.resolve('babel-plugin-transform-styletron-display-name'),
     ].filter(Boolean),
-    presets: [[require.resolve('@babel/preset-env'), envPresetOpts]],
+    presets: [
+      [require.resolve('@babel/preset-env'), envPresetOpts],
+      require.resolve('@babel/preset-typescript'),
+    ],
     babelrc: false,
   };
 

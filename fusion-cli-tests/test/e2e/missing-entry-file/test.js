@@ -15,7 +15,9 @@ test('throws if missing src/main.js', async () => {
     t.fail('did not error');
   } catch (e) {
     t.ok(
-      e.stderr.includes('Project directory must contain a src/main.js file')
+      e.stderr.includes(
+        'Project directory must contain either one of these files: src/main.js, src/main.ts, src/main.tsx'
+      )
     );
   }
 });

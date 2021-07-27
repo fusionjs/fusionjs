@@ -16,9 +16,9 @@ const rootDir = process.env.NODE_PRESERVE_SYMLINKS
 
 const matchField = process.env.TEST_REGEX ? 'testRegex' : 'testMatch';
 const matchValue = process.env.TEST_FOLDER
-  ? [`**/${process.env.TEST_FOLDER || '__tests__'}/**/*.js`]
+  ? [`**/${process.env.TEST_FOLDER || '__tests__'}/**/*.[jt]s?(x)`]
   : process.env.TEST_REGEX ||
-    (process.env.TEST_MATCH || '**/__tests__/**/*.js').split(',');
+    (process.env.TEST_MATCH || '**/__tests__/**/*.[jt]s?(x)').split(',');
 
 function getReactVersion(meta) {
   const react =
@@ -71,7 +71,7 @@ module.exports = {
   coverageReporters: ['json'],
   rootDir,
   transform: {
-    '\\.js$': require.resolve('./jest-transformer.js'),
+    '\\.[jt]sx?$': require.resolve('./jest-transformer.js'),
     '\\.(gql|graphql)$': require.resolve('./graphql-jest-transformer.js'),
   },
   transformIgnorePatterns,
@@ -81,7 +81,7 @@ module.exports = {
   [matchField]: matchValue,
   testURL: 'http://localhost:3000/',
   collectCoverageFrom: [
-    'src/**/*.js',
+    'src/**/*.{js,ts,tsx}',
     '!**/__generated__/**',
     '!**/__integration__/**',
     '!**/__tests__/**',

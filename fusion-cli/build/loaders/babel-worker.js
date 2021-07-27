@@ -13,6 +13,7 @@ const babel = require('@babel/core');
 const getBabelConfig = require('../get-babel-config.js');
 let {getTransformDefault} = require('../get-webpack-config.js');
 const loadFusionRC = require('../load-fusionrc.js');
+const {JS_EXT_PATTERN} = require('../constants/paths.js');
 
 module.exports = {
   runTransformation,
@@ -23,8 +24,6 @@ type TransformationMetadata = {
   translationIds: string[]
 };
 */
-
-const JS_EXT_PATTERN = /\.(mjs|js|jsx)$/;
 
 async function runTransformation(
   source /*: string */,
