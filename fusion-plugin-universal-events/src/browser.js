@@ -50,7 +50,9 @@ export class UniversalEmitter extends Emitter {
     this.fetch = fetch;
     this.setFrequency(interval);
     this.limit = limit;
-    window.addEventListener('visibilitychange', this.flushBeforeTerminated);
+    document.addEventListener('visibilitychange', this.flushBeforeTerminated);
+    window.addEventListener('pagehide', this.flush);
+    window.addEventListener('beforeunload', this.flush);
   }
   setFrequency(frequency: number): void {
     window.clearInterval(this.interval);
@@ -102,6 +104,10 @@ export class UniversalEmitter extends Emitter {
       // $FlowFixMe already checked navigator.sendBeacon existence
       if (navigator.sendBeacon('/_events', payload)) {
         this.storage.getAndClear(itemsToSend.length);
+        // Do not start a new flush if current payload is big because the next beacon would be rejected.
+        if (items.length !== itemsToSend.length) {
+          this.hasFlushBeenScheduled = false;
+        }
         this.finishFlush();
         return;
       }
@@ -134,7 +140,9 @@ export class UniversalEmitter extends Emitter {
     }
   }
   teardown(): void {
-    window.removeEventListener('visibilitychange', this.flushBeforeTerminated);
+    document.removeEventListener('visibilitychange', this.flushBeforeTerminated);
+    window.removeEventListener('pagehide', this.flush);
+    window.removeEventListener('beforeunload', this.flush);
     clearInterval(this.interval);
     this.interval = null;
   }

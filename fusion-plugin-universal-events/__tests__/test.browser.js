@@ -71,7 +71,7 @@ test('Browser EventEmitter', async () => {
         emitted = true;
       });
       emitter.emit('a', {x: 1});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -128,7 +128,7 @@ test('Browser EventEmitter - should fall back to fetch if sendBeacon is not supp
         emitted = true;
       });
       emitter.emit('a', {x: 1});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -154,7 +154,7 @@ test('Browser EventEmitter - should fall back to fetch if beacon fails to enqueu
       const emitter = events.from(ctx);
       expect(emitter).toBe(events);
       emitter.emit('a', {x: 1});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -178,7 +178,7 @@ test('Browser EventEmitter - should not send all the events if beacon is too big
       expect(emitter).toBe(events);
       emitter.emit('a', {x: 'a'.repeat(40000)});
       emitter.emit('b', {x: 'b'.repeat(40000)});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -200,7 +200,7 @@ test('Browser EventEmitter - fetch adds events back to queue if they fail to sen
       const emitter = events.from(ctx);
       expect(emitter).toBe(events);
       emitter.emit('a', {x: 1});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
@@ -221,7 +221,7 @@ test('Browser EventEmitter - fetch adds events back to queue if they fail to sen
       const emitter = events.from(ctx);
       expect(emitter).toBe(events);
       emitter.emit('a', {x: 1});
-      window.dispatchEvent(visibilitychangeEvent);
+      document.dispatchEvent(visibilitychangeEvent);
       emitter.teardown();
       return next();
     };
