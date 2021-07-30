@@ -45,10 +45,11 @@ const types: Array<ActionTypesType> = ['start', 'success', 'failure'];
 
 function createActionNames(rpcId: string): ActionNamesType {
   const rpcActionName = camelUpper(rpcId);
-  return types.reduce((names, type) => {
+  const names: ActionNamesType = {};
+  types.forEach((type) => {
     names[type] = `${rpcActionName}_${type.toUpperCase()}`;
-    return names;
-  }, {});
+  });
+  return names;
 }
 
 type Action<TType, TPayload> = {
@@ -59,22 +60,24 @@ type ConvertToAction = <T>(T) => (payload: any) => Action<T, *>;
 type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
 export function createRPCActions(rpcId: string): RPCActionsType {
   const actionNames = createActionNames(rpcId);
-  return types.reduce((obj, type) => {
+  const obj: RPCActionsType = {};
+  types.forEach((type) => {
     obj[type] = (payload: any) => {
       return {type: actionNames[type], payload};
     };
-    return obj;
-  }, {});
+  });
+  return obj;
 }
 
 function getNormalizedReducers<S, A: ActionType>(
   reducers: RPCReducersType<S, A>
 ): NormalizedRPCReducersType<S, A> {
-  return types.reduce((obj, type) => {
+  const obj: NormalizedRPCReducersType<S, A> = {};
+  types.forEach((type) => {
     // $FlowFixMe
     obj[type] = reducers[type] || noopReducer;
-    return obj;
-  }, {});
+  });
+  return obj;
 }
 
 export function createRPCReducer<S, A: ActionType>(

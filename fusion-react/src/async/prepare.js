@@ -8,6 +8,7 @@
 
 import * as React from 'react';
 import ssrPrepass from 'react-ssr-prepass';
+import PropTypes from 'prop-types';
 
 class PrepareState {
   seen: Map<any, Set<string>>;
@@ -77,11 +78,11 @@ export default function prepare(element: any, ctx: any) {
     render() {
       return element;
     }
+    static childContextTypes = {
+      __PREPARE_STATE__: PropTypes.any,
+      __IS_PREPARE__: PropTypes.any,
+    };
   }
-  PrepareContextProvider.childContextTypes = {
-    __PREPARE_STATE__: () => {},
-    __IS_PREPARE__: () => {},
-  };
 
   async function process() {
     if (ctx && ctx.timing) {

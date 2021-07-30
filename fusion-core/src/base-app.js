@@ -19,15 +19,17 @@ import RouteTagsPlugin from './plugins/route-tags';
 import {captureStackTrace, DIError} from './stack-trace.js';
 import wrapMiddleware from './utils/wrap-middleware.js';
 
-import type {aliaser, cleanupFn, FusionPlugin, Token} from './types.js';
+import type {
+  aliaser,
+  cleanupFn,
+  FusionPlugin,
+  Middleware,
+  Token,
+  ExtractTokenType,
+} from './types.js';
 
-interface Register<T> {
-  (Token<T>, mixed): aliaser<Token<T>>;
-  (mixed): aliaser<Token<T>>;
-}
-
-class FusionApp {
-  constructor(el: Element | string, render: (any) => any) {
+class BaseApp {
+  constructor(el: any, render: any) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
     this._dependedOn = new Set();
@@ -56,7 +58,10 @@ class FusionApp {
   _getService: (any) => any;
   _dependedOn: Set<any>;
 
-  register: Register<*> = <T>(tokenOrValue, maybeValue) => {
+  register<TDeps, T>(
+    tokenOrValue: Token<T> | FusionPlugin<TDeps, T>,
+    maybeValue?: FusionPlugin<TDeps, T> | T
+  ): aliaser {
     const hasToken = tokenOrValue instanceof TokenImpl;
     const token = hasToken
       ? ((tokenOrValue: any): Token<T>)
@@ -93,9 +98,9 @@ class FusionApp {
     if (value && value.__plugin__) {
       token.stacks.push({type: 'plugin', stack: value.stack});
     }
-    return this._register(token, value);
-  };
-  _register<TResolved>(token: Token<TResolved>, value: *) {
+    return this._register<T>(token, value);
+  }
+  _register<T>(token: Token<T>, value: any): aliaser {
     this.plugins.push(token);
     const {aliases, enhancers} = this.registered.get(getTokenRef(token)) || {
       aliases: new Map(),
@@ -126,11 +131,14 @@ class FusionApp {
     };
     return {alias};
   }
-  middleware(deps: *, middleware: *) {
+  middleware<TDeps: {} = {}>(
+    deps: TDeps | Middleware,
+    middleware?: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
+  ) {
     if (middleware === undefined) {
-      middleware = () => deps;
+      middleware = () => ((deps: any): Middleware);
     }
-    this.register(createPlugin({deps, middleware}));
+    this.register(createPlugin({deps: ((deps: any): TDeps), middleware}));
   }
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function) {
     token.stacks.push({
@@ -173,7 +181,7 @@ class FusionApp {
     const enableMiddlewareTiming = this.registered.has(
       getTokenRef(EnableMiddlewareTimingToken)
     );
-    const resolveToken = (token: Token<TResolved>, tokenAliases) => {
+    const resolveToken = (token: Token<TResolved>, tokenAliases?) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(getTokenRef(token))) {
         const newToken = tokenAliases.get(getTokenRef(token));
@@ -350,7 +358,7 @@ class FusionApp {
     this.plugins = resolvedPlugins;
     this._getService = (token) => resolved.get(getTokenRef(token));
   }
-  getService<TResolved>(token: Token<TResolved>): any {
+  getService<TResolved>(token: Token<TResolved>): TResolved {
     if (!this._getService) {
       throw new DIError({
         message: 'Cannot get service from unresolved app',
@@ -359,6 +367,7 @@ class FusionApp {
     }
     return this._getService(token);
   }
+  callback(...args: any[]): Promise<void> | any {}
 }
 
 /* Helper functions */
@@ -369,4 +378,4 @@ function getTokenRef(token) {
   return token;
 }
 
-export default FusionApp;
+export default BaseApp;

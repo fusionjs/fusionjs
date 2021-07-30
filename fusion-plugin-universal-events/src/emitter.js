@@ -34,14 +34,14 @@ export default class UniversalEmitter implements IEmitter {
     const index = this.handlers[type].indexOf(callback);
     if (index > -1) this.handlers[type].splice(index, 1);
   }
-  mapEvent(type: mixed, payload: mixed, ctx?: Context): mixed {
+  mapEvent(type: string, payload: mixed, ctx?: Context): mixed {
     const globalMappers = this.mappers[globalEventType] || [];
     const mappers = (this.mappers[type] || []).concat(globalMappers);
     return mappers.reduce((payload, mapper) => {
       return mapper(payload, ctx, type);
     }, payload);
   }
-  handleEvent(type: mixed, payload: mixed, ctx?: Context): void {
+  handleEvent(type: string, payload: mixed, ctx?: Context): void {
     const globalHandlers = this.handlers[globalEventType] || [];
     const handlers = (this.handlers[type] || []).concat(globalHandlers);
     handlers.forEach((handler) => handler(payload, ctx, type));
@@ -52,7 +52,7 @@ export default class UniversalEmitter implements IEmitter {
     throw new Error('Not implemented.');
   }
   /* eslint-disable-next-line  no-unused-vars */
-  emit(type: mixed, payload: mixed, ctx?: Context) {
+  emit(type: string, payload: mixed, ctx?: Context) {
     // throw new Error('Not implemented.');
   }
   /* eslint-disable-next-line  no-unused-vars */

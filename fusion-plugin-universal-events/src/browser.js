@@ -40,8 +40,8 @@ export class UniversalEmitter extends Emitter {
   constructor(
     fetch: Fetch,
     storage: BatchStorage,
-    interval?: number = 5000,
-    limit?: number = 1000
+    interval: number = 5000,
+    limit: number = 1000
   ): void {
     super();
     //privates
@@ -56,7 +56,7 @@ export class UniversalEmitter extends Emitter {
     window.clearInterval(this.interval);
     this.interval = setInterval(this.flush, frequency);
   }
-  emit(type: mixed, payload: mixed): void {
+  emit(type: string, payload: mixed): void {
     payload = super.mapEvent(type, payload);
     super.handleEvent(type, payload);
     this.storage.add({type, payload});
@@ -157,7 +157,13 @@ export class UniversalEmitter extends Emitter {
 
 const plugin =
   __BROWSER__ &&
-  createPlugin({
+  createPlugin<
+    {
+      fetch: typeof FetchToken,
+      storage: typeof UniversalEventsBatchStorageToken.optional,
+    },
+    IEmitter
+  >({
     deps: {
       fetch: FetchToken,
       storage: UniversalEventsBatchStorageToken.optional,

@@ -68,11 +68,11 @@ export type FusionPlugin<Deps, Service> = {|
 
 export type SSRDecider = (Context) => boolean;
 
-export type aliaser<TToken> = {
-  alias: (sourceToken: TToken, destToken: TToken) => aliaser<TToken>,
+export type aliaser = {
+  alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser,
 };
 
-export type cleanupFn = (thing: any) => Promise<void>;
+export type cleanupFn = (thing?: any) => Promise<void>;
 
 export type SSRBodyTemplate = (Context) => $PropertyType<Context, 'body'>;
 

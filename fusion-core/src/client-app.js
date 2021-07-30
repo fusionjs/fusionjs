@@ -15,9 +15,9 @@ import createClientHydrate, {
 import createClientRenderer from './plugins/client-renderer';
 import {RenderToken, ElementToken} from './tokens';
 
-export default function (): typeof BaseApp {
+export default function () {
   return class ClientApp extends BaseApp {
-    constructor(el, render) {
+    constructor(el: any, render: any) {
       super(el, render);
       this.register(TimingToken, timing);
       this.middleware({element: ElementToken}, createClientHydrate);

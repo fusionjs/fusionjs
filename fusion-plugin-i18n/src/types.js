@@ -28,7 +28,7 @@ export type OptionalTranslateFnsType = {
   +translateKeys: (
     sources: any,
     locale: any,
-    keys: string[]
+    keys: (string | string[])[]
   ) => TranslationsObjectType,
   +translateKey: (sources: any, locale: any, key: string) => string,
 };

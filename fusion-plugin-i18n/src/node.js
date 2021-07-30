@@ -155,7 +155,8 @@ const pluginFactory: () => PluginType = () =>
             ctx.request.body = [];
           }
 
-          const keys = getKeysFromContext(ctx);
+          // flow does not recognize "string[]" as "(string | string[])[]" - so typing it as any
+          const keys: any = getKeysFromContext(ctx);
           const sources = i18n.translations || {};
           const localeCode = i18n.locale || {};
 

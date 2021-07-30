@@ -28,10 +28,10 @@ test('Preparing a sync app passing through context', (done) => {
       numRenders++;
       return <SimplePresentational />;
     }
+    static childContextTypes = {
+      test: () => {},
+    };
   }
-  SimpleComponent.childContextTypes = {
-    test: () => {},
-  };
   function SimplePresentational(props, context) {
     expect(context.test).toBe('data');
     numChildRenders++;

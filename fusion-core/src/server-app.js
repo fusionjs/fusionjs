@@ -19,12 +19,12 @@ import {
 import ssrPlugin from './plugins/ssr';
 import contextMiddleware from './plugins/server-context.js';
 
-export default function (): typeof BaseApp {
+export default function () {
   const Koa = require('koa');
 
   return class ServerApp extends BaseApp {
     _app: Koa;
-    constructor(el, render) {
+    constructor(el: any, render: any) {
       super(el, render);
       this._app = new Koa();
       this._app.proxy = true;

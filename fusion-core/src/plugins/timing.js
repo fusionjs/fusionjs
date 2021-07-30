@@ -141,7 +141,7 @@ export function now(): number {
 function deferred<T>(): Deferred<T> {
   let resolve = () => {};
   let reject = () => {};
-  const promise = new Promise((res, rej) => {
+  const promise = new Promise<T>((res, rej) => {
     resolve = res;
     reject = rej;
   });

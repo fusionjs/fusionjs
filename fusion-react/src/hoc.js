@@ -45,6 +45,9 @@ export default {
     } else {
       // Use legacy Context
       return (Component: React.ComponentType<*>) => {
+        const displayName =
+          Component.displayName || Component.name || 'Anonymous';
+
         class HOC extends React.Component<*> {
           provides: any;
 
@@ -56,13 +59,12 @@ export default {
             const props = {...this.props, ...mapProvides(this.provides)};
             return React.createElement(Component, props);
           }
+
+          static displayName = `With${capitalize(name)}(${displayName})`;
+          static contextTypes = {
+            [name]: PropTypes.any.isRequired,
+          };
         }
-        const displayName =
-          Component.displayName || Component.name || 'Anonymous';
-        HOC.displayName = `With${capitalize(name)}(${displayName})`;
-        HOC.contextTypes = {
-          [name]: PropTypes.any.isRequired,
-        };
         return HOC;
       };
     }

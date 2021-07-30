@@ -41,7 +41,7 @@ export function matchesLiteralSections(literalSections: Array<string>) {
 export function translateKeys(
   sources: any,
   locale: any,
-  keys: Array<string>
+  keys: (string | string[])[]
 ): TranslationsObjectType {
   const translations = {};
   let possibleTranslations;

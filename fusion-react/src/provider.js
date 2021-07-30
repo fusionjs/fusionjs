@@ -10,22 +10,22 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 export default {
-  create: (name: string) => {
-    class Provider extends React.Component<*> {
+  create: (name: string): React.ComponentType<any> => {
+    class Provider extends React.Component<any> {
       getChildContext() {
         return {[name]: this.props.provides};
       }
       render() {
         return React.Children.only(this.props.children);
       }
-    }
-    Provider.childContextTypes = {
-      ...(Provider.childContextTypes || {}),
-      [name]: PropTypes.any.isRequired,
-    };
-    Provider.displayName =
-      name.replace(/^./, (c) => c.toUpperCase()) + 'Provider';
 
+      static childContextTypes = {
+        [name]: PropTypes.any.isRequired,
+      };
+
+      static displayName =
+        name.replace(/^./, (c) => c.toUpperCase()) + 'Provider';
+    }
     return Provider;
   },
 };

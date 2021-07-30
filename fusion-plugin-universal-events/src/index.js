@@ -16,10 +16,12 @@ import type {
   UniversalEventsPluginDepsType as DepsType,
 } from './types.js';
 
-const UniversalEventsPlugin = __BROWSER__ ? BrowserEvents : ServerEvents;
+const UniversalEventsPlugin: FusionPlugin<DepsType, IEmitter> = __BROWSER__
+  ? BrowserEvents
+  : ServerEvents;
 
 // eslint-disable-next-line prettier/prettier
-export default ((UniversalEventsPlugin: any): FusionPlugin<DepsType, IEmitter>);
+export default UniversalEventsPlugin;
 
 export const UniversalEventsToken: Token<IEmitter> = createToken(
   'UniversalEventsToken'

@@ -8,8 +8,6 @@
 /* eslint-env node */
 import assert from 'assert';
 
-export default __BROWSER__ ? () => {} : loadEnv();
-
 function load(key, value) {
   return process.env[key] || value;
 }
@@ -60,4 +58,5 @@ type Env = {
   webpackPublicPath: string,
   dangerouslyExposeSourceMaps: boolean,
 };
-declare export default () => Env;
+
+export default (((__BROWSER__ ? () => {} : loadEnv()): any): () => Env);

@@ -12,12 +12,13 @@ import {FetchToken} from 'fusion-tokens';
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
 type HandlerFnType<TInput> = (
   payload: TInput,
-  ctx?: Context
+  ctx?: Context,
+  type?: string
 ) => void | Promise<void>;
 
 export interface IEmitter {
   from(ctx: Context): IEmitter;
-  emit(type: mixed, payload: mixed, ctx?: Context): void;
+  emit(type: string, payload: mixed, ctx?: Context): void;
   setFrequency(frequency: number): void;
   teardown(): void;
 
@@ -30,8 +31,8 @@ export interface IEmitter {
   off<TIn>(type: string, callback: HandlerFnType<TIn>): void;
   off<TIn>(callback: HandlerFnType<TIn>): void;
 
-  mapEvent(type: mixed, payload: mixed, ctx?: Context): mixed;
-  handleEvent(type: mixed, payload: mixed, ctx?: Context): void;
+  mapEvent(type: string, payload: mixed, ctx?: Context): mixed;
+  handleEvent(type: string, payload: mixed, ctx?: Context): void;
 
   flush(): void;
 }

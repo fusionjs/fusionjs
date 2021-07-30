@@ -59,4 +59,4 @@ type ProviderType = {
 };
 
 export type PluginType = FusionPlugin<DepsType, ProviderType>;
-export type FontLoaderPluginType = Token<PluginType>;
+export type FontLoaderPluginType = Token<ProviderType>;

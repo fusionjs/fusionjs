@@ -17,8 +17,8 @@ import type {
 } from './types.js';
 
 export class GlobalEmitter extends Emitter {
-  from: any;
-  ctx: any;
+  from: (ctx: Context) => ScopedEmitter;
+  ctx: Context;
 
   constructor() {
     super();
@@ -26,7 +26,7 @@ export class GlobalEmitter extends Emitter {
       return new ScopedEmitter(ctx, this);
     });
   }
-  emit(type: mixed, payload: mixed, ctx?: Context): void {
+  emit(type: string, payload: mixed, ctx?: Context): void {
     payload = super.mapEvent(type, payload, this.ctx);
     super.handleEvent(type, payload, ctx);
   }
@@ -36,19 +36,19 @@ export class GlobalEmitter extends Emitter {
 }
 
 class ScopedEmitter extends Emitter {
-  ctx: any;
-  parent: any;
-  batch: any;
-  flushed: any;
+  ctx: Context;
+  parent: GlobalEmitter;
+  batch: Array<{type: string, payload: any}>;
+  flushed: boolean;
 
-  constructor(ctx, parent) {
+  constructor(ctx: Context, parent: GlobalEmitter) {
     super();
     this.ctx = ctx;
     this.parent = parent;
     this.batch = [];
     this.flushed = false;
   }
-  emit(type, payload) {
+  emit(type: string, payload: mixed) {
     // this logic exists to manage ensuring we send events after the batch
     if (this.flushed) {
       this.handleBatchedEvent({type, payload});
@@ -56,7 +56,7 @@ class ScopedEmitter extends Emitter {
       this.batch.push({type, payload});
     }
   }
-  handleBatchedEvent({type, payload}) {
+  handleBatchedEvent({type, payload}: {type: string, payload: mixed}) {
     payload = super.mapEvent(type, payload, this.ctx);
     payload = this.parent.mapEvent(type, payload, this.ctx);
     super.handleEvent(type, payload, this.ctx);

@@ -14,7 +14,7 @@ class InMemoryBatchStorage implements BatchStorage {
     this.data.unshift(...toBeAdded);
   };
 
-  getAndClear = (limit?: number = Infinity): BatchType[] => {
+  getAndClear = (limit: number = Infinity): BatchType[] => {
     const allEvents = this.data;
     const [eventsToSend, eventsToStore] = split(allEvents, limit);
     this.data = eventsToStore;

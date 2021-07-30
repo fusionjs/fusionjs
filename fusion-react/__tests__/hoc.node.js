@@ -88,10 +88,10 @@ test('hoc#legacy with custom provider', async () => {
       expect(this.props.ctx).toBeTruthy();
       return React.Children.only(this.props.children);
     }
+    static childContextTypes = {
+      test: PropTypes.any.isRequired,
+    };
   }
-  CustomProvider.childContextTypes = {
-    test: PropTypes.any.isRequired,
-  };
 
   const testPlugin = plugin.create(
     'test',

@@ -24,7 +24,7 @@ export class TokenImpl<TResolved> {
     stack: string,
   }>;
 
-  constructor(name: string, ref: mixed) {
+  constructor(name: string, ref?: mixed) {
     this.name = name;
     this.ref = ref || new Ref();
     this.type = ref ? TokenType.Optional : TokenType.Required;

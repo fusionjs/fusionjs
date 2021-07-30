@@ -33,7 +33,7 @@ class LocalBatchStorage implements BatchStorage {
     set(toBeAdded.concat(get()));
   };
 
-  getAndClear = (limit?: number = Infinity): BatchType[] => {
+  getAndClear = (limit: number = Infinity): BatchType[] => {
     const allEvents = get();
     const [eventsToSend, eventsToStore] = split(allEvents, limit);
     set(eventsToStore);

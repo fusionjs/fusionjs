@@ -7,6 +7,7 @@
  */
 
 import * as React from 'react';
+import PropTypes from 'prop-types';
 
 type PreparedOpts = {
   boundary?: boolean,
@@ -35,6 +36,9 @@ const prepared =
       },
       opts
     );
+
+    const displayName =
+      OriginalComponent.displayName || OriginalComponent.name || '';
 
     class PreparedComponent extends React.Component<any> {
       componentDidMount() {
@@ -82,16 +86,13 @@ const prepared =
 
         return <OriginalComponent {...this.props} />;
       }
+
+      static contextTypes = {
+        __PREPARE_STATE__: PropTypes.any,
+        ...opts.contextTypes,
+      };
+      static displayName = `PreparedComponent(${displayName})`;
     }
-
-    PreparedComponent.contextTypes = {
-      __PREPARE_STATE__: () => {},
-      ...opts.contextTypes,
-    };
-
-    const displayName =
-      OriginalComponent.displayName || OriginalComponent.name || '';
-    PreparedComponent.displayName = `PreparedComponent(${displayName})`;
 
     return PreparedComponent;
   };

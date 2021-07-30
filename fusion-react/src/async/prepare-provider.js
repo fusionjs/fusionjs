@@ -9,7 +9,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-class PrepareProvider extends React.Component<*, *> {
+class PrepareProvider extends React.Component<any, any> {
   constructor(props: any, context: any) {
     super(props, context);
     this.splitComponentLoaders = [];
@@ -18,8 +18,8 @@ class PrepareProvider extends React.Component<*, *> {
   }
 
   splitComponentLoaders: Array<any>;
-  markAsCritical: (number) => void;
-  pushSSRMetadata: (any) => void;
+  markAsCritical: (chunkId: number) => void;
+  pushSSRMetadata: (metadata: any) => void;
 
   getChildContext() {
     return {
@@ -31,12 +31,12 @@ class PrepareProvider extends React.Component<*, *> {
   render() {
     return React.Children.only(this.props.children);
   }
-}
 
-PrepareProvider.childContextTypes = {
-  splitComponentLoaders: PropTypes.array.isRequired,
-  markAsCritical: PropTypes.func,
-  pushSSRMetadata: PropTypes.func,
-};
+  static childContextTypes = {
+    splitComponentLoaders: PropTypes.array.isRequired,
+    markAsCritical: PropTypes.func,
+    pushSSRMetadata: PropTypes.func,
+  };
+}
 
 export default PrepareProvider;

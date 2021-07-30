@@ -22,9 +22,10 @@ import serverApp from './server-app';
 import clientApp from './client-app';
 import getEnv from './get-env.js';
 
-export default __BROWSER__ ? clientApp() : serverApp();
+type FusionApp = typeof BaseApp;
+export default ((__BROWSER__ ? clientApp() : serverApp()): FusionApp);
 
-export {compose} from './compose.js';
+export {compose} from './compose';
 export {memoize} from './memoize';
 export type {MemoizeFn} from './memoize';
 
@@ -61,8 +62,6 @@ export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
 
-type FusionApp = typeof BaseApp;
-declare export default typeof BaseApp;
 export type {
   Context,
   ExtractTokenType,

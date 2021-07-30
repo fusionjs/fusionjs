@@ -525,7 +525,7 @@ test('dependency registration with missing deep tree dependency', () => {
     },
   });
   const PluginB = createPlugin({
-    deps: {a: TokenA, d: 'RANDOM-TOKEN'},
+    deps: {a: TokenA, d: createToken('RANDOM-TOKEN')},
     provides: () => {
       return {
         b: 'PluginB',
