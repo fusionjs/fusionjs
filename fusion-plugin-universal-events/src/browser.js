@@ -17,10 +17,8 @@ import type {
   UniversalEventsPluginDepsType as DepsType,
   BatchStorage,
 } from './types.js';
-import {
-  UniversalEventsBatchStorageToken,
-  localBatchStorage,
-} from './storage/index.js';
+import {UniversalEventsBatchStorageToken} from './storage/index.js';
+import {inMemoryBatchStorage} from './storage/in-memory.js';
 
 // The Beacon API rejects requests with big payloads and the size limit
 // depends on the user agent. The limit in Chrome is 64KB and it is supposed
@@ -169,7 +167,7 @@ const plugin =
       storage: UniversalEventsBatchStorageToken.optional,
     },
     provides: ({fetch, storage}) => {
-      return new UniversalEmitter(fetch, storage || localBatchStorage);
+      return new UniversalEmitter(fetch, storage || inMemoryBatchStorage);
     },
     cleanup: async (emitter) => {
       return emitter.teardown();
