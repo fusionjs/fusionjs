@@ -29,11 +29,17 @@ if (__NODE__) {
   const replaceForbidden = (c) => forbiddenChars[c];
 
   const key = Symbol('sanitized html');
+  const inspect = Symbol.for('nodejs.util.inspect.custom');
   html = (
     [head, ...rest]: Array<string>,
     ...values: Array<string>
   ): SanitizedHTMLWrapper => {
     const obj = {};
+    Object.defineProperty(obj, inspect, {
+      value: function inspectHtml() {
+        return consumeSanitizedHTML(this);
+      },
+    });
     Object.defineProperty(obj, key, {
       enumerable: false,
       configurable: false,
