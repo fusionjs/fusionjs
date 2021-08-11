@@ -82,9 +82,11 @@ function getCompiler(opts) {
   });
   config.output.filename = SW_OUTPUT_FILENAME;
   // $FlowFixMe
-  config.output.library = SW_IDENTIFIER;
-  // $FlowFixMe
-  config.output.libraryExport = 'default';
+  config.output.library = {
+    name: SW_IDENTIFIER,
+    type: 'self',
+    export: 'default',
+  };
   config.output.path = '/';
   // $FlowFixMe
   config.entry = './src/sw.js';
@@ -100,5 +102,5 @@ function getSWTemplateFnSource(swBundle) {
   ).slice(
     1,
     -1
-  )};${SW_IDENTIFIER}(..." + JSON.stringify(params) + ",${Date.now()})"`;
+  )};self['${SW_IDENTIFIER}'](..." + JSON.stringify(params) + ",${Date.now()})"`;
 }

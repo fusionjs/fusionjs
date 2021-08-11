@@ -10,6 +10,7 @@ const {cmd, start} = require('../utils.js');
 const dir = path.resolve(__dirname, './fixture');
 
 test('sw bundle works with serialized/deserialized arguments', async () => {
+  global.self = global;
   await cmd(`build --dir=${dir} --production`);
   const {proc, port} = await start(`--dir=${dir}`, {
     env: Object.assign({}, process.env, {
