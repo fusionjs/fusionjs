@@ -33,4 +33,4 @@ test('useRPCRedux handler resolves data from redux store', async (done) => {
 
   await runtime.end();
   done();
-}, 30000);
+}, 45000);

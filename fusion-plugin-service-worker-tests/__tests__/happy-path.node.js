@@ -145,4 +145,4 @@ test('/happy path', async (done) => {
     proc.kill();
     done();
   }
-}, 15000);
+}, 20000);

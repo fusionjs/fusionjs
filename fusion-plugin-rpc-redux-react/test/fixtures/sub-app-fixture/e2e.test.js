@@ -33,4 +33,4 @@ test('browser plugin integration test withRPCRedux', async (done) => {
 
   await runtime.end();
   done();
-}, 30000);
+}, 45000);
