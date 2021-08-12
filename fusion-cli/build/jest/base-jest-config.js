@@ -53,7 +53,7 @@ function getReactSetup() {
 const reactSetup = getReactSetup();
 
 function getTransformIgnorePatterns() {
-  const defaults = ['/node_modules/(?!(fusion-cli.*build))'];
+  const defaults = ['/node_modules/(?!(fusion-cli))'];
   try {
     const path = require('path');
     // $FlowFixMe
