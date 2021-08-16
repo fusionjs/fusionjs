@@ -2,7 +2,7 @@
 import {createPlugin} from 'fusion-core';
 import type {Context} from 'fusion-core';
 
-export default createPlugin<mixed, void>({
+export default createPlugin<void, void>({
   middleware() {
     return (ctx: Context, next: () => Promise<*>) => {
       if (ctx.method === 'GET' && ctx.path === '/error-500') {

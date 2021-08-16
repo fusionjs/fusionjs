@@ -54,13 +54,17 @@ export type ExtractTokenType = <V>(Token<V>) => V;
 
 export type ExtractDepsType<V> = $ObjMap<V, ExtractTokenType>;
 
-export type FusionPlugin<Deps, Service> = {|
+export type FusionPluginDepsType = $ReadOnly<{
+  [key: string]: Token<any>,
+}> | void;
+
+export type FusionPlugin<Deps: FusionPluginDepsType, Service> = {|
   __plugin__: boolean,
   stack: string,
   deps?: Deps,
-  provides?: (Deps: $ObjMap<Deps & {}, ExtractTokenType>) => Service,
+  provides?: (Deps: ExtractDepsType<Deps & {}>) => Service,
   middleware?: (
-    Deps: $ObjMap<Deps & {}, ExtractTokenType>,
+    Deps: ExtractDepsType<Deps & {}>,
     Service: Service
   ) => Middleware,
   cleanup?: (service: Service) => Promise<void>,

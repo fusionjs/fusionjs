@@ -50,9 +50,9 @@ export function getSimulator(
 }
 
 // eslint-disable-next-line jest/no-export
-export function getService<TDeps, TService>(
+export function getService<TService>(
   appCreator: () => FusionApp,
-  plugin: FusionPlugin<TDeps, TService>
+  plugin: FusionPlugin<any, TService>
 ): TService {
   const app = appCreator();
   const token: Token<TService> = createToken('service-helper');

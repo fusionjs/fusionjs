@@ -58,9 +58,9 @@ class BaseApp {
   _getService: (any) => any;
   _dependedOn: Set<any>;
 
-  register<TDeps, T>(
-    tokenOrValue: Token<T> | FusionPlugin<TDeps, T>,
-    maybeValue?: FusionPlugin<TDeps, T> | T
+  register<T>(
+    tokenOrValue: Token<T> | FusionPlugin<any, T>,
+    maybeValue?: FusionPlugin<any, T> | T
   ): aliaser {
     const hasToken = tokenOrValue instanceof TokenImpl;
     const token = hasToken

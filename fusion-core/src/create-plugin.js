@@ -6,7 +6,7 @@
  * @flow
  */
 
-import type {FusionPlugin} from './types.js';
+import type {FusionPlugin, FusionPluginDepsType} from './types.js';
 import {captureStackTrace} from './stack-trace.js';
 
 // eslint-disable-next-line flowtype/generic-spacing
@@ -15,7 +15,7 @@ type FusionPluginNoHidden<TDeps, TService> = $Diff<
   {__plugin__: boolean, stack: string}
 >;
 
-export function createPlugin<TDeps, TService>(
+export function createPlugin<TDeps: FusionPluginDepsType, TService>(
   opts: $Exact<FusionPluginNoHidden<TDeps, TService>>
 ): FusionPlugin<TDeps, TService> {
   return {
