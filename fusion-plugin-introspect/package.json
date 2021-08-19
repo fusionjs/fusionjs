@@ -10,6 +10,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
+    "@types/koa-bodyparser": "^4.2.1",
     "koa-bodyparser": "^4.2.1",
     "sade": "^1.6.0"
   },
@@ -46,6 +47,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-introspect",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo"

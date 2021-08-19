@@ -7,6 +7,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
+    "@types/koa-bodyparser": "^4.2.1",
     "body-parser": "^1.18.3",
     "formidable": "1.2.1",
     "just-compare": "^1.3.0",
@@ -42,6 +43,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-rpc",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",

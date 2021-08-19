@@ -49,6 +49,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-connected-react-router",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "connected-react-router": "^6.5.0",

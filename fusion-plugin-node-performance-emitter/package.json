@@ -7,6 +7,8 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
+    "@types/node": "^12.12.50",
+    "@types/react": "^16.9.43",
     "assert": "^1.4.1",
     "gc-stats": "^1.4.0"
   },
@@ -46,6 +48,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-node-performance-emitter",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",

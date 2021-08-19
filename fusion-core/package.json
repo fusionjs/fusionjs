@@ -7,6 +7,8 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
+    "@types/koa": "^2.7.0",
+    "@types/node": "^12.12.50",
     "koa": "^2.7.0",
     "koa-compose": "^4.1.0",
     "node-mocks-http": "^1.7.5",
@@ -40,6 +42,7 @@
   "homepage": "https://fusionjs.com/api/fusion-core",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "repository": {
     "directory": "fusion-core",

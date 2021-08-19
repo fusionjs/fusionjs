@@ -7,6 +7,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
+    "@types/koa-bodyparser": "^4.2.1",
     "koa-bodyparser": "^4.2.1",
     "locale": "^0.1.0"
   },
@@ -37,6 +38,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-i18n",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",

@@ -39,6 +39,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-font-loader-react",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",

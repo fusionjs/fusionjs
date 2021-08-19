@@ -40,6 +40,7 @@
   "homepage": "https://fusionjs.com/api/fusion-plugin-browser-performance-emitter",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
+  "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "0.0.0-monorepo",
