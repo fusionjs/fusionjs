@@ -92,6 +92,7 @@ module.exports.DevelopmentRuntime = function (
 ) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
   const state = {
+    isInvalid: true,
     server: null,
     proc: null,
     proxy: null,
@@ -101,6 +102,8 @@ module.exports.DevelopmentRuntime = function (
   const resolvedServerErrorPath = require.resolve('./server-error');
 
   this.run = async function reloadProc() {
+    state.isInvalid = false;
+
     const childPort = await getPort();
     const command = `
       process.on('SIGTERM', () => process.exit());
@@ -158,7 +161,10 @@ module.exports.DevelopmentRuntime = function (
         state.proxy
       ) {
         console.log('Server bundle not changed, skipping server restart.');
-        lifecycle.start();
+        // No point to resume at this point, as there's another compilation in progress
+        if (!state.isInvalid) {
+          lifecycle.start();
+        }
         return;
       } else {
         entryFileLastModifiedTime = entryFileStats.mtime;
@@ -195,7 +201,10 @@ module.exports.DevelopmentRuntime = function (
       // $FlowFixMe
       state.proc.on('message', (message) => {
         if (message.event === 'started') {
-          lifecycle.start();
+          // No point to resume at this point, as there's another compilation in progress
+          if (!state.isInvalid) {
+            lifecycle.start();
+          }
           resolve();
         }
         if (message.event === 'error') {
@@ -207,7 +216,10 @@ module.exports.DevelopmentRuntime = function (
     });
   };
 
-  this.invalidate = () => lifecycle.stop();
+  this.invalidate = () => {
+    state.isInvalid = true;
+    lifecycle.stop();
+  };
 
   function killProc() {
     if (state.proc) {

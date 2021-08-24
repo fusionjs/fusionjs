@@ -92,6 +92,19 @@ exports.run = async function (
 
   const watcher = await new Promise((resolve, reject) => {
     const watcher = compiler.start((err, stats) => {
+      // Rerun for each recompile
+      compiler.on('done', () => {
+        if (debug) {
+          // make the default node debug port available for attaching by killing the
+          // old attached process
+          try {
+            exec("kill -9 $(lsof -n -i:9229 | grep node | awk '{print $2}')");
+          } catch (e) {} // eslint-disable-line
+        }
+        runAll();
+      });
+      compiler.on('invalid', () => devRuntime.invalidate());
+
       if (err || stats.hasErrors()) {
         if (exitOnError) {
           return reject(
@@ -104,19 +117,6 @@ exports.run = async function (
       return runAll().then(() => resolve(watcher));
     });
   });
-
-  // Rerun for each recompile
-  compiler.on('done', () => {
-    if (debug) {
-      // make the default node debug port available for attaching by killing the
-      // old attached process
-      try {
-        exec("kill -9 $(lsof -n -i:9229 | grep node | awk '{print $2}')");
-      } catch (e) {} // eslint-disable-line
-    }
-    runAll();
-  });
-  compiler.on('invalid', () => devRuntime.invalidate());
 
   function stop() {
     watcher.close();
