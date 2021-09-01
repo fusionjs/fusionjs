@@ -361,6 +361,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       ? 'source-map'
       : runtime === 'sw'
       ? 'hidden-source-map'
+      : // `cheap-*` devtool can't be used with minimizers, as it doesn't include column mappings
+      // @see: https://github.com/webpack/webpack/issues/4176#issuecomment-762347256
+      shouldMinify
+      ? 'source-map'
       : 'cheap-module-source-map',
     output: {
       uniqueName: 'Fusion',
