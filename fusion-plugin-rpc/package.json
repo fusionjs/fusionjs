@@ -15,11 +15,11 @@
     "koa-bodyparser": "^4.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-transform-flow-strip-types": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
-    "create-universal-package": "^4.1.0",
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-transform-flow-strip-types": "^7.14.5",
+    "@babel/preset-env": "^7.15.0",
+    "create-universal-package": "^4.1.2",
     "flow-bin": "^0.109.0",
     "form-data": "3.0.0",
     "fusion-core": "0.0.0-monorepo",

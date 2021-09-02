@@ -47,7 +47,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     plugins: [
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       [
-        require.resolve('@rtsao/plugin-proposal-class-properties'),
+        require.resolve('@babel/plugin-proposal-class-properties'),
         {loose: false},
       ],
       opts.dev &&

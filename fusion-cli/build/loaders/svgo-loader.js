@@ -7,21 +7,22 @@
  */
 /* eslint-env node */
 
-const {optimize, extendDefaultPlugins} = require('svgo');
+const {optimize} = require('svgo');
 
 module.exports = function svgoLoader(source /*: string*/) {
   const {data, error} = optimize(source, {
     multipass: true,
-    plugins: extendDefaultPlugins([
+    plugins: [
       {
-        name: 'removeUselessDefs',
-        active: false,
+        name: 'preset-default',
+        params: {
+          overrides: {
+            removeUselessDefs: false,
+            cleanupIDs: false,
+          },
+        },
       },
-      {
-        name: 'cleanupIDs',
-        active: false,
-      },
-    ]),
+    ],
   });
 
   if (error) {

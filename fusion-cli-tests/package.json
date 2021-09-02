@@ -2,14 +2,14 @@
   "name": "fusion-cli-tests",
   "version": "0.0.0-monorepo",
   "dependencies": {
-    "@babel/core": "^7.8.4",
+    "@babel/core": "^7.15.0",
     "axios": "^0.21.0",
     "fusion-cli": "0.0.0-monorepo",
     "get-port": "^5.1.1",
     "http-proxy": "^1.17.0",
     "jest": "^25.5.4",
-    "jest-environment-jsdom": "^24.9.0",
-    "jest-environment-jsdom-global": "^1.2.1"
+    "jest-environment-jsdom": "^27.1.0",
+    "jest-environment-jsdom-global": "^3.0.0"
   },
   "devDependencies": {
     "acorn": "^8.2.4",
