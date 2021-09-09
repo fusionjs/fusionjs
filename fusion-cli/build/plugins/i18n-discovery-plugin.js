@@ -32,23 +32,41 @@ class I18nDiscoveryPlugin {
   apply(compiler /*: any */) {
     const name = this.constructor.name;
 
+    const manifest = this.manifest;
+    function addModuleTranslationKeys(module) {
+      if (
+        module.resource &&
+        module.buildMeta.fusionTranslationIds &&
+        module.buildMeta.fusionTranslationIds.size > 0
+      ) {
+        manifest.set(module.resource, module.buildMeta.fusionTranslationIds);
+      }
+    }
+
     compiler.hooks.compilation.tap(name, (compilation) => {
       // NOTE: This hook will execute twice when legacy bundle is enabled,
       // in which case it should not cause any conflicts, considering that
       // same i18n keys should be discovered in both cases.
-      compilation.hooks.afterOptimizeTree.tap(name, (chunks, modules) => {
-        modules.forEach((module) => {
-          if (
-            module.buildMeta.fusionTranslationIds &&
-            module.buildMeta.fusionTranslationIds.size > 0
-          ) {
-            this.manifest.set(
-              module.resource,
-              module.buildMeta.fusionTranslationIds
-            );
+      compilation.hooks.afterOptimizeChunkModules.tap(
+        name,
+        (chunks, modules) => {
+          for (const chunk of chunks) {
+            for (const module of compilation.chunkGraph.getChunkModulesIterable(
+              chunk
+            )) {
+              if (module.resource) {
+                // instanceof NormalModule
+                addModuleTranslationKeys(module);
+              } else if (module.modules) {
+                // instanceof ConcatenatedModule
+                module.modules.forEach((m) => {
+                  addModuleTranslationKeys(m);
+                });
+              }
+            }
           }
-        });
-      });
+        }
+      );
     });
 
     compiler.hooks.done.tap(name, () => {
