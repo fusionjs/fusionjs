@@ -40,7 +40,7 @@ exports.run = async function (
   if (env) {
     const entry = getEntry(env);
     // $FlowFixMe
-    const {start} = require(entry);
+    const {start} = await require(entry);
     return start({dir, port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
   } else {
     throw new Error(`App can't start. JS isn't compiled`); // handle compilation errors

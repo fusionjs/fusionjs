@@ -32,20 +32,20 @@ import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
 import {SSRBodyTemplate} from '../plugins/ssr-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
+// $FlowFixMe
+import main from '__FUSION_ENTRY_PATH__'; // eslint-disable-line import/no-unresolved
 
 let prefix = process.env.ROUTE_PREFIX;
 let AssetsPlugin;
 
-// $FlowFixMe
-const main = require('__FUSION_ENTRY_PATH__'); // eslint-disable-line import/no-unresolved, import/no-extraneous-dependencies
-
 let server = null;
 const state = {serve: null};
-const initialize = main
-  ? main.default || main
-  : () => {
-      throw new Error('App should export a function');
-    };
+const initialize =
+  typeof main === 'function'
+    ? main
+    : () => {
+        throw new Error('App should export a function');
+      };
 
 export async function start({port, dir = '.'} /*: any */) {
   AssetsPlugin = AssetsFactory(dir);

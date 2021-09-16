@@ -14,7 +14,8 @@ const path = require('path');
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
-const resolveFrom = require('../lib/resolve-from');
+const resolveFrom = require('../lib/resolve-from.js');
+const isEsModule = require('../lib/is-es-module.js');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const NodeSourcePlugin = require('./plugins/node-source-plugin.js');
@@ -322,7 +323,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         /(\/\.yarn(\/[^/]+)*\/cache\/[^/]+\.zip|\/\.yarn\/(?:\$\$virtual|__virtual__)(?!(\/[^/]+){2}\/.+$))/,
     },
     name: runtime,
-    target,
+    target: target === 'node' ? 'node12.17' : target,
     entry: {
       main: [
         runtime === 'client' &&
@@ -604,6 +605,19 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 // if module is missing, skip rewriting to absolute path
                 return callback(null, request);
               }
+
+              const isEsm = isEsModule(absolutePath);
+              if (isEsm) {
+                if (typeof process.versions.pnp !== 'undefined') {
+                  // Yarn PnP does not support es modules yet,
+                  // have to bundle this dependency on the server
+                  // @see: https://github.com/yarnpkg/berry/issues/638
+                  return callback();
+                }
+              }
+
+              const moduleType = isEsm ? 'module' : 'commonjs';
+
               if (experimentalBundleTest) {
                 const bundle = experimentalBundleTest(
                   absolutePath,
@@ -611,7 +625,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 );
                 if (bundle === 'browser-only') {
                   // don't bundle on the server
-                  return callback(null, 'commonjs ' + absolutePath);
+                  return callback(null, `${moduleType} ${absolutePath}`);
                 } else if (bundle === 'universal') {
                   // bundle on the server
                   return callback();
@@ -621,7 +635,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                   );
                 }
               }
-              return callback(null, 'commonjs ' + absolutePath);
+              return callback(null, `${moduleType} ${absolutePath}`);
             }
             // bundle everything else (local files, __*)
             return callback();
