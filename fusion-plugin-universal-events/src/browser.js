@@ -26,6 +26,9 @@ import {inMemoryBatchStorage} from './storage/in-memory.js';
 // release any official information.
 const BEACON_PAYLOAD_SIZE_LIMIT = 60000;
 
+// The bodyparser used server-side has a default 1mb limit
+const XHR_PAYLOAD_SIZE_LIMIT = 1048576;
+
 export class UniversalEmitter extends Emitter {
   flush: any;
   fetch: Fetch;
@@ -78,26 +81,29 @@ export class UniversalEmitter extends Emitter {
       return;
     }
 
-    if (navigator.sendBeacon) {
-      const itemsToSend = [];
-      let jsonSize = 12; // Base payload is `{"items":[]}`
-      for (let i = 0, l = items.length; i < l; i += 1) {
-        const itemJSON = JSON.stringify(items[i]);
-        const jsonItemSize = new Blob([itemJSON]).size;
-        if (jsonItemSize + jsonSize < BEACON_PAYLOAD_SIZE_LIMIT) {
-          itemsToSend.push(itemJSON);
-          jsonSize += jsonItemSize + (itemsToSend.length > 1 ? 1 : 0);
-        } else {
-          break;
-        }
-      }
+    const payloadSizelimit = navigator.sendBeacon
+      ? BEACON_PAYLOAD_SIZE_LIMIT
+      : XHR_PAYLOAD_SIZE_LIMIT;
 
+    const itemsToSend = [];
+    let jsonSize = 12; // Base payload is `{"items":[]}`
+    for (let i = 0, l = items.length; i < l; i += 1) {
+      const itemJSON = JSON.stringify(items[i]);
+      const jsonItemSize = new Blob([itemJSON]).size;
+      if (jsonItemSize + jsonSize < payloadSizelimit) {
+        itemsToSend.push(itemJSON);
+        jsonSize += jsonItemSize + (itemsToSend.length > 1 ? 1 : 0);
+      } else {
+        break;
+      }
+    }
+    const payload = `{"items":[${itemsToSend.join(',')}]}`;
+
+    if (navigator.sendBeacon) {
       // Not sending Blob with Content-Type: 'application/json' because it throws in some old browsers.
       // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
       // performed in sendBeacon using Blob with a not-simple content type.
       // See http://crbug.com/490015
-      const payload = `{"items":[${itemsToSend.join(',')}]}`;
-      // $FlowFixMe already checked navigator.sendBeacon existence
       if (navigator.sendBeacon('/_events', payload)) {
         this.storage.getAndClear(itemsToSend.length);
         this.finishFlush();
@@ -111,12 +117,12 @@ export class UniversalEmitter extends Emitter {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({items}),
+        body: payload,
       });
 
       if (res.ok) {
         // clear only events that were sent, preserve ones that might be added while request was executed
-        this.storage.getAndClear(items.length);
+        this.storage.getAndClear(itemsToSend.length);
         this.finishFlush();
       } else {
         // If the server responds with a 413, it means the size of the payload was too large.

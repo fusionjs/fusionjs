@@ -299,6 +299,7 @@ test('Fetch lowers limit for 413 errors', async () => {
   await emitter.flush();
   expect(emitter.limit).toBe(5);
   await emitter.flush();
+  emitter.teardown();
 });
 
 const sleep = (ms) => setTimeout(() => {}, ms);
@@ -328,4 +329,30 @@ test('Browser EventEmitter does not start a new flush while another one is in pr
   await sleep(1);
   // no more additional flush is needed as far as no events were emitted
   expect(fetch).toBeCalledTimes(2);
+  emitter.teardown();
+});
+
+test('Browser EventEmitter - should not send payloads larger than xhr body limit', async () => {
+  const fetch: Fetch = jest.fn(() => Promise.resolve(createMockFetch()));
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      // emit 5 events that are each slighly under half the max payload limit
+      emitter.emit('a', {x: 'a'.repeat(1048576 / 2 - 100)});
+      emitter.emit('b', {x: 'b'.repeat(1048576 / 2 - 100)});
+      emitter.emit('c', {x: 'c'.repeat(1048576 / 2 - 100)});
+      emitter.emit('d', {x: 'e'.repeat(1048576 / 2 - 100)});
+      emitter.emit('e', {x: 'e'.repeat(1048576 / 2 - 100)});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+  expect(store.data.length).toBe(3);
 });
