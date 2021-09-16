@@ -33,7 +33,8 @@
   "files": [
     "chunk-translation-map.js",
     "dist-*/",
-    "src/"
+    "src/",
+    "index.d.ts"
   ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-react-helmet-async",
   "license": "MIT",

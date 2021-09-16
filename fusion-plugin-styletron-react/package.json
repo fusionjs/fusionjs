@@ -39,7 +39,8 @@
     "dist-browser-esm",
     "dist-node-cjs",
     "dist-node-esm",
-    "src/"
+    "src/",
+    "index.d.ts"
   ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-styletron-react",
   "license": "MIT",

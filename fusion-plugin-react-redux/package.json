@@ -34,7 +34,8 @@
   "files": [
     "dist-*/",
     "flow-typed",
-    "src/"
+    "src/",
+    "index.d.ts"
   ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-react-redux",
   "license": "MIT",

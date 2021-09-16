@@ -44,7 +44,8 @@
     "dist-node-cjs",
     "dist-node-esm",
     "flow-typed",
-    "src/"
+    "src/",
+    "index.d.ts"
   ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-connected-react-router",
   "license": "MIT",

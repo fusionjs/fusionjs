@@ -38,7 +38,8 @@
   },
   "files": [
     "dist-*/",
-    "src/"
+    "src/",
+    "index.d.ts"
   ],
   "homepage": "https://fusionjs.com/api/fusion-plugin-rpc",
   "license": "MIT",
