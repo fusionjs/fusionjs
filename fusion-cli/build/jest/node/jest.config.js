@@ -14,7 +14,6 @@ module.exports = {
   ...baseJestConfig,
   resolver: require.resolve('../resolver.js'),
   displayName: 'node',
-  browser: false,
   name: 'node',
   testEnvironment: 'node',
   testPathIgnorePatterns: ['.*\\.browser\\.[jt]sx?'],

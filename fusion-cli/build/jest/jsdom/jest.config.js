@@ -14,7 +14,6 @@ module.exports = {
   ...baseJestConfig,
   resolver: require.resolve('../resolver.js'),
   displayName: 'browser',
-  browser: true,
   name: 'browser',
   // Exposes global.jsdom so we can reconfigure the url on each simulator.render call
   testEnvironment: 'jest-environment-jsdom-global',
