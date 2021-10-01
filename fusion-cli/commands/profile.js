@@ -8,34 +8,8 @@
 
 /* eslint-env node */
 
-const {Compiler} = require('../build/compiler.js');
-const {
-  STATS_VERBOSITY_LEVELS,
-} = require('../build/constants/compiler-stats.js');
-const analyzer = require('bundle-analyzer');
-
-exports.run = async function profileHandler(
-  {dir = '.', port, environment, disableBuildCache} /*: any */
-) {
-  const compiler = new Compiler({
-    env: environment,
-    dir,
-    watch: true,
-    disableBuildCache,
-    stats: STATS_VERBOSITY_LEVELS.full,
-  });
-  const server = analyzer.start({
-    dir: `${dir}/.fusion/dist/${environment}/client`,
-    port,
-  });
-  const watcher = compiler.start(() => {
-    server.update();
-  });
-  return {
-    compiler,
-    stop() {
-      watcher.close();
-      server.close();
-    },
-  };
+exports.run = async function profileHandler() {
+  console.warn(
+    '`fusion profile` command is deprecated. You can use `--analyze` option with `build` or `dev` command instead'
+  );
 };

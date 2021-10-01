@@ -13,6 +13,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const resolveFrom = require('../lib/resolve-from.js');
 const isEsModule = require('../lib/is-es-module.js');
@@ -74,6 +75,7 @@ import type {
 } from "./load-fusionrc.js";
 
 export type WebpackConfigOpts = {|
+  analyze?: 'client' | 'server',
   id: $Keys<typeof COMPILATIONS>,
   dir: string,
   dev: boolean,
@@ -125,6 +127,7 @@ const WEBPACK_NODE_OPTIONS = new Set(['__filename', '__dirname', 'global']);
 
 function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const {
+    analyze,
     id,
     dev,
     dir,
@@ -172,10 +175,17 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   }
 
   const runtime = COMPILATIONS[id];
+  const isAnalyzerEnabled = analyze === runtime;
   const mode = dev ? 'development' : 'production';
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
-  const isHMREnabled = dev && hmr && watch;
+  const isHMREnabled =
+    dev &&
+    hmr &&
+    watch &&
+    // Disabling HMR when running in analyze mode,
+    // so hot-update chunks do not get in a way.
+    !isAnalyzerEnabled;
   const target = {server: 'node', client: 'web', sw: 'webworker'}[runtime];
   const fusionBuildFolder = path.resolve(dir, '.fusion');
 
@@ -683,6 +693,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       },
     },
     plugins: [
+      isAnalyzerEnabled &&
+        new BundleAnalyzerPlugin({
+          analyzerHost: 'localhost',
+          analyzerPort: 'auto',
+        }),
       runtime === 'client' &&
         !dev &&
         !skipSourceMaps &&

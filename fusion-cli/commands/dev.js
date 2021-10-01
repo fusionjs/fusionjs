@@ -16,6 +16,7 @@ const {execSync: exec} = require('child_process');
 
 exports.run = async function (
   {
+    analyze,
     dir = '.',
     test,
     debug,
@@ -40,6 +41,7 @@ exports.run = async function (
   logger.add(new winston.transports.Console({level: logLevel}));
 
   const compiler = new Compiler({
+    analyze,
     command: 'dev',
     env: 'development',
     dir,

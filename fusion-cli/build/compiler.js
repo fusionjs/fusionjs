@@ -108,6 +108,7 @@ type CompilerType = {
 };
 
 type CompilerOpts = {
+  analyze?: boolean | 'client' | 'server',
   serverless?: boolean,
   dir?: string,
   env: "production" | "development",
@@ -128,6 +129,7 @@ type CompilerOpts = {
 */
 function Compiler(
   {
+    analyze,
     dir = '.',
     env,
     hmr = true,
@@ -188,6 +190,7 @@ function Compiler(
   const isEsbuildMinifierEnabled = experimentalEsbuildMinifierOption === true;
 
   const sharedOpts = {
+    analyze: handleAnalyzeOption(analyze),
     dir: root,
     dev: env === 'development',
     hmr,
@@ -324,6 +327,18 @@ function createWorker(maxWorkers /* maxWorkers?: number */) {
     numWorkers: maxWorkers,
     workerSchedulingPolicy: 'in-order',
   });
+}
+
+function handleAnalyzeOption(analyze /*?: boolean | string */) {
+  if (typeof analyze === 'boolean') {
+    if (analyze) {
+      return 'client';
+    }
+
+    return;
+  }
+
+  return analyze;
 }
 
 module.exports.Compiler = Compiler;

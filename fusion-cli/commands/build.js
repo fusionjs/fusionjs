@@ -17,6 +17,7 @@ import type {STATS_VERBOSITY_LEVELS_TYPE} from '../build/constants/compiler-stat
 
 exports.run = async function (
   {
+    analyze,
     dir = '.',
     production,
     preserveNames,
@@ -30,6 +31,7 @@ exports.run = async function (
     experimentalEsbuildMinifier,
     stats,
   } /*: {
+    analyze?: boolean | 'client' | 'server',
     experimentalServerless: boolean,
     dir: string,
     production: boolean,
@@ -55,6 +57,7 @@ exports.run = async function (
   const env = production ? 'production' : 'development';
 
   const compiler = new Compiler({
+    analyze,
     command: 'build',
     env,
     dir,

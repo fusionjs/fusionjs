@@ -16,6 +16,14 @@ allowedJestOptions.forEach((arg) => {
   };
 });
 
+const analyzeOption = {
+  analyze: {
+    type: 'string',
+    default: undefined,
+    describe: `Run bundle analyzer for targeted build (client, server)`,
+  },
+};
+
 const disableBuildCacheOption = {
   disableBuildCache: {
     type: 'boolean',
@@ -82,6 +90,7 @@ module.exports = {
         default: false,
         describe: 'Build without source maps.',
       },
+      ...analyzeOption,
       ...disableBuildCacheOption,
       ...experimentalEsbuildMinifierOption,
       ...statsOption,
@@ -140,30 +149,14 @@ module.exports = {
         default: false,
         describe: 'Skip server respawn when server bundle does not change',
       },
+      ...analyzeOption,
       ...disableBuildCacheOption,
       ...statsOption,
     },
   },
   profile: {
-    descr: 'Profile your application',
-    options: {
-      dir: {
-        type: 'string',
-        default: '.',
-        describe: 'Root path for the application relative to CLI CWD',
-      },
-      environment: {
-        type: 'string',
-        default: 'production',
-        describe: 'Either `production` or `development`',
-      },
-      port: {
-        type: 'number',
-        default: '4000',
-        describe: 'Port for the bundle analyzer server',
-      },
-      ...disableBuildCacheOption,
-    },
+    descr:
+      'Deprecated: You can use `--analyze` option with `build` or `dev` command instead',
   },
   start: {
     descr: 'Run your app',

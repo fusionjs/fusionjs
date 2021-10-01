@@ -33,6 +33,8 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--log-level`: Log level to output to console `[default: "info"]`
   - `--skipSourceMaps`: Skip building source maps
   - `--maxWorkers`: Maximum number of workers create by webpack during build process
+  - `--stats`: Control verbosity level of build stats output (`full`, `minimal`) `[default: "minimal"]`
+  - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
 
   Builds where the ENABLE_REACT_PROFILER environment variable is set to `'true'` will enable the [Fusion React Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) in apps deployed to production. (NOTE: using the react profiler will itself slightly degrade performance):
 
@@ -51,13 +53,8 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--exitOnError`: Exit the process if a compiliation error occurs.
   - `--preserveNames`: Disable name mangling during script minification
   - `--disablePrompts`: Disable command-line prompts. Useful for CI environment
-
-<!--
-* `fusion profile [--environment] [--watch] [--file-count]`: Profile your application
-  * `--environment`: Either `production` or `development` `[default: "production"]`
-  * `--watch`: After profiling, launch source-map-explorer with file watch
-  * `--file-count`: The number of file sizes to output, sorted largest to smallest (-1 for all files) `[default: 20]`
--->
+  - `--stats`: Control verbosity level of build stats output (`full`, `minimal`) `[default: "minimal"]`
+  - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
 
 - `fusion start [--environment]`
   Runs your application, assuming you have previously built them via `fusion build`. Note that build artifacts must be saved to disk (i.e. this command will fail if you use `fusion dev` to build artifacts instead of `fusion build`.
@@ -113,9 +110,6 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--watchman`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watchman
   - `--maxWorkers`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#maxworkers
 
-- `fusion profile`
-  Generates a graph diagram of dependencies
-
 ### Webpack stats.json file
 
-Building an app generates a `.fusion/stats.json` file, which can be used with [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer)
+Building an app generates a `.fusion/stats.json` file, which by default includes very basic information about the webpack build. You can build using `--stats=full` option, which will generate more verbose stats file that can be used with [`webpack-bundle-analyzer`](https://www.npmjs.com/package/webpack-bundle-analyzer), or other bundle analyzer that can read webpack stats output.

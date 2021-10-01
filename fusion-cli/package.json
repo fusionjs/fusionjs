@@ -21,7 +21,6 @@
     "babel-plugin-transform-cup-globals": "^1.0.2",
     "babel-plugin-transform-prune-unused-imports": "^1.0.1",
     "babel-plugin-transform-styletron-display-name": "^1.1.4",
-    "bundle-analyzer": "^0.0.6",
     "chalk": "^4.1.2",
     "compression-webpack-plugin": "^8.0.1",
     "core-js": "^3.17.1",
@@ -54,6 +53,7 @@
     "svgo": "^2.5.0",
     "terser-webpack-plugin": "^5.2.0",
     "webpack": "^5.51.1",
+    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-hot-middleware": "^2.25.0",
     "winston": "^3.3.3",
     "yaml-loader": "^0.6.0"
