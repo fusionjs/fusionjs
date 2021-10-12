@@ -73,30 +73,30 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   );
   expect(resA).toMatchInlineSnapshot(`
     Array [
-      838,
-      967,
-      "legacy-649",
-      "legacy-809",
+      356,
+      644,
+      "legacy-447",
+      "legacy-926",
     ]
   `);
   expect(resB).toMatchInlineSnapshot(`
     Array [
-      439,
-      967,
-      "legacy-649",
-      "legacy-893",
+      27,
+      356,
+      "legacy-844",
+      "legacy-926",
     ]
   `);
   expect(resCombined).toMatchInlineSnapshot(`
     Array [
-      967,
-      "legacy-649",
+      356,
+      "legacy-926",
     ]
   `);
   expect(resTransitive).toMatchInlineSnapshot(`
     Array [
-      638,
-      "legacy-542",
+      269,
+      "legacy-431",
     ]
   `);
 
@@ -106,7 +106,7 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  t.ok(csrContent.includes('<div id="csr">638</div>'));
+  t.ok(csrContent.includes('<div id="csr">269</div>'));
 
   browser.close();
   proc.kill('SIGKILL');
