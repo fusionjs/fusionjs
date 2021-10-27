@@ -139,7 +139,13 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
             };
             scopedEmitter.map((payload) => {
               if (payload && typeof payload === 'object') {
-                payload.__url__ = pageData.title;
+                if (pageData.routeMatched) {
+                  payload.__url__ = pageData.title;
+                  payload.__urlParams__ = pageData.params;
+                } else {
+                  payload.__url__ = noMatchingRoute;
+                  payload.__urlParams__ = {};
+                }
               }
               return payload;
             });
@@ -164,7 +170,6 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
               if (pageData.routeMatched) {
                 payload.__url__ = pageData.title;
                 payload.__urlParams__ = pageData.params;
-                delete pageData.routeMatched;
               } else {
                 payload.__url__ = noMatchingRoute;
                 payload.__urlParams__ = {};
