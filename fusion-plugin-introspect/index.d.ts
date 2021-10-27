@@ -54,7 +54,7 @@ declare type Metadata = {
 };
 
 declare const _default: (
-  b: fusion_core.default,
+  b: fusion_core.FusionApp,
   a: any
 ) => fusion_core.FusionPlugin<undefined, undefined>;
 
