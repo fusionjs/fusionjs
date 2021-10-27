@@ -18,6 +18,8 @@
     "@babel/plugin-transform-flow-strip-types": "^7.14.5",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@types/jest": "25.2.3",
+    "@types/node": "*",
     "create-universal-package": "^4.1.2",
     "express": "^4.16.4",
     "flow-bin": "^0.109.0",
@@ -42,7 +44,9 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "0.0.0-monorepo",
+    "@types/jest": "*",
+    "@types/node": "*"
   },
   "repository": {
     "directory": "fusion-test-utils",

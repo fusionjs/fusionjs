@@ -7,8 +7,6 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "@types/node": "^12.12.50",
-    "@types/react": "^16.9.43",
     "assert": "^1.4.1",
     "gc-stats": "^1.4.0"
   },

@@ -10,7 +10,6 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "@types/koa-bodyparser": "^4.2.1",
     "koa-bodyparser": "^4.2.1",
     "sade": "^1.6.0"
   },
