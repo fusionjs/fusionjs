@@ -44,9 +44,9 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
     "@types/jest": "*",
-    "@types/node": "*"
+    "@types/node": "*",
+    "fusion-core": "0.0.0-monorepo"
   },
   "repository": {
     "directory": "fusion-test-utils",
