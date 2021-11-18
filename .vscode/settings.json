@@ -4,19 +4,23 @@
     "ignorePattern": [
       "dist",
       "node_modules",
-      "templates",
-    ],
+      "templates"
+    ]
   },
   "files.associations": {
     // json comments in rush config files
     "command-line.json": "jsonc",
     "common-versions.json": "jsonc",
     "rush.json": "jsonc",
-    "version-policies.json": "jsonc",
+    "version-policies.json": "jsonc"
   },
-  "flow.pathToFlow": "${workspaceFolder}/common/temp/node_modules/.bin/flow",
+  "flow.pathToFlow": "${workspaceFolder}/.yarn/sdks/flow-bin/cli.js",
   "javascript.validate.enable": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  }
 }
