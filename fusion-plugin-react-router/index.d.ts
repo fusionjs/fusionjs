@@ -193,8 +193,10 @@ declare const Route: React.FC<
   {
     trackingId?: any;
     component?: React.ComponentType<any>;
-    render?: (routeProps: any) => React.ReactNode;
-    children?: React.ReactNode | ((routeProps: any) => React.ReactNode);
+    render?: (routeProps: ContextRouterType) => React.ReactNode;
+    children?:
+      | React.ReactNode
+      | ((routeProps: ContextRouterType) => React.ReactNode);
   } & react_router.RouteProps<
     string,
     {
