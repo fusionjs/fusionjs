@@ -160,10 +160,11 @@ const pluginFactory: () => RPCPluginType = () =>
                     if (err) {
                       reject(err);
                     }
-                    if (fields && Object.keys(fields).length) {
-                      resolve(fields);
-                    }
-                    resolve(files.file);
+
+                    resolve({
+                      ...fields,
+                      ...files,
+                    });
                   });
                 });
               } else {

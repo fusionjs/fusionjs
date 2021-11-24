@@ -336,12 +336,19 @@ test('success status request w/form data', (done) => {
         });
         expect(typeof rpc.request).toBe('function');
         expect(rpc.request('test') instanceof Promise).toBeTruthy();
-        // eslint-disable-next-line cup/no-undef
+        /* eslint-disable cup/no-undef */
         const formData = new FormData();
         formData.append('random', 'some-random');
         formData.append('foo', 'foo content');
-        // TODO do we need to test with file as well?
-        // formData.append('file', '<how to do this>');
+
+        const mockFile_1 = new File(['foo'], 'foo.csv', {type: 'text/csv'});
+        const mockFile_2 = new File(['bar'], 'bar.csv', {type: 'text/csv'});
+
+        formData.append('fooFile', mockFile_1);
+        formData.append('barFile', mockFile_2);
+
+        /* eslint-enable cup/no-undef */
+
         rpc
           .request('test', formData)
           .then(([url, options]) => {
@@ -353,6 +360,8 @@ test('success status request w/form data', (done) => {
             expect(Array.from(options.body.entries())).toEqual([
               ['random', 'some-random'],
               ['foo', 'foo content'],
+              ['fooFile', mockFile_1],
+              ['barFile', mockFile_2],
             ]);
             done();
           })
