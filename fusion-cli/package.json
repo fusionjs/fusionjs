@@ -52,6 +52,7 @@
     "source-map-support": "^0.5.19",
     "svgo": "^2.5.0",
     "terser-webpack-plugin": "^5.2.0",
+    "vary": "^1.1.2",
     "webpack": "^5.51.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-hot-middleware": "^2.25.0",

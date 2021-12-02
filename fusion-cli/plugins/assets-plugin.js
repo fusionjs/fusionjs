@@ -18,6 +18,7 @@ import {chunks} from '../build/loaders/chunk-manifest-loader.js!'; // eslint-dis
 import path from 'path';
 import mount from 'koa-mount';
 import serve from 'koa-static';
+import vary from 'vary';
 
 export default function (dir /*: string */) {
   /* eslint-disable-next-line */
@@ -47,6 +48,8 @@ export default function (dir /*: string */) {
                 res.setHeader('Cache-Control', 'public, max-age=31536000');
               }
               res.setHeader('Timing-Allow-Origin', '*');
+
+              vary(res, 'Accept-Encoding');
             },
           }
         );

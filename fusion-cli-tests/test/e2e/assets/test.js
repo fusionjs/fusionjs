@@ -29,6 +29,11 @@ test('`fusion build` with assets', async () => {
       'max-age=0',
       'should not cache build assets for non-production builds'
     );
+    t.equal(
+      res.headers.vary,
+      'Accept-Encoding',
+      'should specify vary header as served content may be encoded'
+    );
     t.equal(res.headers['x-route-name'], 'static_asset');
     t.equal(res.data, contents);
     t.equal(res.headers['x-test'], 'test');
@@ -74,6 +79,11 @@ test('`fusion build --production` with assets', async () => {
       res.headers['cache-control'],
       'public, max-age=31536000',
       'should cache build assets for production builds'
+    );
+    t.equal(
+      res.headers.vary,
+      'Accept-Encoding',
+      'should specify vary header as served content may be encoded'
     );
     t.equal(res.headers['x-route-name'], 'static_asset');
     t.equal(res.data, contents);
