@@ -3,13 +3,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-import type {Middleware} from './types.js';
-
 // inline version of koa-compose to get around Rollup/CUP commonjs-related issue
-export function compose(middleware: Array<Middleware>): Middleware {
+export function compose(middleware) {
   if (!Array.isArray(middleware)) {
     throw new TypeError('Middleware stack must be an array!');
   }

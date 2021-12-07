@@ -3,10 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-import type {Token} from './types.js';
 import {captureStackTrace} from './stack-trace.js';
 
 export const TokenType = Object.freeze({
@@ -14,17 +13,8 @@ export const TokenType = Object.freeze({
   Optional: 1,
 });
 function Ref() {}
-export class TokenImpl<TResolved> {
-  name: string;
-  ref: mixed;
-  type: $Values<typeof TokenType>;
-  optional: ?TokenImpl<TResolved>;
-  stacks: Array<{
-    type: 'token' | 'register' | 'enhance' | 'alias-from' | 'alias-to',
-    stack: string,
-  }>;
-
-  constructor(name: string, ref?: mixed) {
+export class TokenImpl {
+  constructor(name, ref) {
     this.name = name;
     this.ref = ref || new Ref();
     this.type = ref ? TokenType.Optional : TokenType.Required;
@@ -35,6 +25,6 @@ export class TokenImpl<TResolved> {
   }
 }
 
-export function createToken<TResolvedType>(name: string): Token<TResolvedType> {
-  return ((new TokenImpl(name): any): Token<TResolvedType>);
+export function createToken(name) {
+  return new TokenImpl(name);
 }

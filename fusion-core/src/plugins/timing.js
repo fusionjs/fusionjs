@@ -3,43 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 import {createPlugin} from '../create-plugin';
 import {memoize} from '../memoize';
 import {createToken} from '../create-token';
-import type {Token} from '../types.js';
-
-type Deferred<T> = {
-  promise: Promise<T>,
-  resolve: (result: T) => void,
-  reject: (error: Error) => void,
-};
-
-type MiddlewareTiming = {
-  token: string,
-  source: string,
-  downstream: number,
-  upstream: number,
-};
-
-type PrepassTiming = {
-  duration: number,
-  pendingSize: number,
-};
 
 class Timing {
-  start: number;
-  render: Deferred<number>;
-  end: Deferred<number>;
-  downstream: Deferred<number>;
-  upstream: Deferred<number>;
-  upstreamStart: number;
-  middleware: Array<MiddlewareTiming>;
-  prepass: Array<PrepassTiming>;
-  prepassMarked: boolean;
-  prepassStart: number;
-
   constructor() {
     this.start = now();
     this.render = deferred();
@@ -53,7 +23,7 @@ class Timing {
     this.prepassStart = -1;
   }
 
-  markPrepass(pendingSize?: number) {
+  markPrepass(pendingSize) {
     if (!this.prepassMarked) {
       this.prepassMarked = true;
       this.prepassStart = now();
@@ -67,15 +37,12 @@ class Timing {
     }
   }
 }
-type TimingPlugin = {
-  from(ctx: Object): Timing,
-};
 
-const timing: TimingPlugin = {
+const timing = {
   from: memoize(() => new Timing()),
 };
 
-export const TimingToken: Token<TimingPlugin> = createToken('TimingToken');
+export const TimingToken = createToken('TimingToken');
 
 function middleware(ctx, next) {
   ctx.memoized = new Map();
@@ -119,12 +86,12 @@ function middleware(ctx, next) {
     });
 }
 
-export default createPlugin<{}, typeof timing>({
+export default createPlugin({
   provides: () => timing,
   middleware: () => middleware,
 });
 
-export function now(): number {
+export function now() {
   if (__NODE__) {
     const [seconds, ns] = process.hrtime();
     return Math.round(seconds * 1000 + ns / 1e6);
@@ -138,10 +105,10 @@ export function now(): number {
   }
 }
 
-function deferred<T>(): Deferred<T> {
+function deferred() {
   let resolve = () => {};
   let reject = () => {};
-  const promise = new Promise<T>((res, rej) => {
+  const promise = new Promise((res, rej) => {
     resolve = res;
     reject = rej;
   });

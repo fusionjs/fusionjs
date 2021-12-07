@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 /* eslint-env node */
 import assert from 'assert';
@@ -33,7 +33,7 @@ export function loadEnv() {
   );
 
   const assetPath = `${prefix}${baseAssetPath}`;
-  return function loadEnv(): Env {
+  return function loadEnv() {
     return {
       rootDir,
       env,
@@ -48,15 +48,5 @@ export function loadEnv() {
 }
 
 // Handle flow-types for export so browser export is ignored.
-type Env = {
-  rootDir: string,
-  env: string,
-  prefix: string,
-  assetPath: string,
-  baseAssetPath: string,
-  cdnUrl: string,
-  webpackPublicPath: string,
-  dangerouslyExposeSourceMaps: boolean,
-};
 
-export default (((__BROWSER__ ? () => {} : loadEnv()): any): () => Env);
+export default __BROWSER__ ? () => {} : loadEnv();

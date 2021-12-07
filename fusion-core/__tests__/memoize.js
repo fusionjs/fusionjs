@@ -3,16 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import {memoize} from '../src/memoize';
 
-import type {Context} from '../src/types.js';
-
 test('memoize', () => {
-  // $FlowFixMe
-  const mockCtx: Context = {
+  const mockCtx = {
     memoized: new Map(),
   };
 

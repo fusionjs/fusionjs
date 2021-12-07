@@ -1,4 +1,4 @@
-/* @flow */
+/* @noflow */
 /* global __filename */
 
 import ClientAppFactory from '../src/client-app';

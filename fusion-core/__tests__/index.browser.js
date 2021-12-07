@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import AppFactory from '../src/client-app';
@@ -21,7 +21,6 @@ test('app callback', async () => {
   const app = new App(element, render);
   const callback = app.callback();
   expect(typeof callback).toBe('function');
-  // $FlowFixMe
   const ctx = await callback();
   expect(ctx.rendered).toBe(element);
   expect(numRenders).toBe(1);

@@ -1,4 +1,4 @@
-// @flow
+// @noflow
 
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';

@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import {compose} from '../src/compose';
@@ -14,11 +14,8 @@ test('composed middleware are executed correctly', () => {
   }
   const middleware = compose([A]);
   const next = () => Promise.resolve();
-  // $FlowFixMe
   expect(() => middleware({}, next)).not.toThrow();
-  // $FlowFixMe
   expect(() => middleware(void 0, next)).not.toThrow();
-  // $FlowFixMe
   expect(() => middleware()).not.toThrow();
 });
 
@@ -45,6 +42,5 @@ test('downstream and upstream run in same order as koa', (done) => {
   const middleware = compose([a, b, c]);
   const ctx = {number: 0};
   const next = () => Promise.resolve();
-  // $FlowFixMe
   middleware(ctx, next).then(done);
 });

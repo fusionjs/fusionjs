@@ -1,4 +1,4 @@
-// @flow
+// @noflow
 
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
@@ -58,7 +58,6 @@ test('app.cleanup does not cleanup if cleanup was not given a function', async (
   app.register(
     createPlugin({
       provides: () => 'hello world',
-      // $FlowFixMe - Ignore this to test branch
       cleanup: 'notafunc',
       middleware: () => (ctx, next) => next(),
     })

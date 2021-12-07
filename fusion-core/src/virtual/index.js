@@ -3,10 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-export function assetUrl(url: string): string {
+export function assetUrl(url) {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -14,7 +14,7 @@ export function assetUrl(url: string): string {
   return url;
 }
 
-export function chunkId(filename: string): string {
+export function chunkId(filename) {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -22,7 +22,7 @@ export function chunkId(filename: string): string {
   return filename;
 }
 
-export function syncChunkIds(argument: any): any {
+export function syncChunkIds(argument) {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -30,7 +30,7 @@ export function syncChunkIds(argument: any): any {
   return argument;
 }
 
-export function syncChunkPaths(argument: any): any {
+export function syncChunkPaths(argument) {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function
@@ -38,7 +38,7 @@ export function syncChunkPaths(argument: any): any {
   return argument;
 }
 
-export function workerUrl(url: string): string {
+export function workerUrl(url) {
   /**
    * PLEASE NOTE: a build step transforms
    * the arguments provided to this function

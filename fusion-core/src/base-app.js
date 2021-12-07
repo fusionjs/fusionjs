@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 import {createPlugin} from './create-plugin';
 import {createToken, TokenType, TokenImpl} from './create-token';
@@ -19,17 +19,8 @@ import RouteTagsPlugin from './plugins/route-tags';
 import {captureStackTrace, DIError} from './stack-trace.js';
 import wrapMiddleware from './utils/wrap-middleware.js';
 
-import type {
-  aliaser,
-  cleanupFn,
-  FusionPlugin,
-  Middleware,
-  Token,
-  ExtractTokenType,
-} from './types.js';
-
 class BaseApp {
-  constructor(el: any, render: any) {
+  constructor(el, render) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
     this._dependedOn = new Set();
@@ -42,31 +33,11 @@ class BaseApp {
   }
 
   // eslint-disable-next-line
-  registered: Map<
-    any,
-    {
-      aliases?: Map<any, any>,
-      enhancers?: Array<any>,
-      token: any,
-      value?: FusionPlugin<*, *>,
-    }
-  >;
-  enhancerToToken: Map<any, any>;
-  plugins: Array<any>;
-  cleanups: Array<cleanupFn>;
-  renderer: any;
-  _getService: (any) => any;
-  _dependedOn: Set<any>;
 
-  register<T>(
-    tokenOrValue: Token<T> | FusionPlugin<any, T>,
-    maybeValue?: FusionPlugin<any, T> | T
-  ): aliaser {
+  register(tokenOrValue, maybeValue) {
     const hasToken = tokenOrValue instanceof TokenImpl;
-    const token = hasToken
-      ? ((tokenOrValue: any): Token<T>)
-      : createToken('UnnamedPlugin');
-    const value: any = hasToken ? maybeValue : tokenOrValue;
+    const token = hasToken ? tokenOrValue : createToken('UnnamedPlugin');
+    const value = hasToken ? maybeValue : tokenOrValue;
     if (!hasToken && (value == null || !value.__plugin__)) {
       throw new DIError({
         message: __DEV__
@@ -98,9 +69,9 @@ class BaseApp {
     if (value && value.__plugin__) {
       token.stacks.push({type: 'plugin', stack: value.stack});
     }
-    return this._register<T>(token, value);
+    return this._register(token, value);
   }
-  _register<T>(token: Token<T>, value: any): aliaser {
+  _register(token, value) {
     this.plugins.push(token);
     const {aliases, enhancers} = this.registered.get(getTokenRef(token)) || {
       aliases: new Map(),
@@ -131,16 +102,13 @@ class BaseApp {
     };
     return {alias};
   }
-  middleware<TDeps: {} = {}>(
-    deps: TDeps | Middleware,
-    middleware?: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
-  ) {
+  middleware(deps, middleware) {
     if (middleware === undefined) {
-      middleware = () => ((deps: any): Middleware);
+      middleware = () => deps;
     }
-    this.register(createPlugin({deps: ((deps: any): TDeps), middleware}));
+    this.register(createPlugin({deps: deps, middleware}));
   }
-  enhance<TResolved>(token: Token<TResolved>, enhancer: Function) {
+  enhance(token, enhancer) {
     token.stacks.push({
       type: 'enhance',
       stack: captureStackTrace(this.enhance),
@@ -167,7 +135,7 @@ class BaseApp {
   cleanup() {
     return Promise.all(this.cleanups.map((fn) => fn()));
   }
-  resolve<TResolved>() {
+  resolve() {
     if (!this.renderer) {
       throw new Error('Missing registration for RenderToken');
     }
@@ -181,7 +149,7 @@ class BaseApp {
     const enableMiddlewareTiming = this.registered.has(
       getTokenRef(EnableMiddlewareTimingToken)
     );
-    const resolveToken = (token: Token<TResolved>, tokenAliases?) => {
+    const resolveToken = (token, tokenAliases) => {
       // Base: if we have already resolved the type, return it
       if (tokenAliases && tokenAliases.has(getTokenRef(token))) {
         const newToken = tokenAliases.get(getTokenRef(token));
@@ -358,7 +326,7 @@ class BaseApp {
     this.plugins = resolvedPlugins;
     this._getService = (token) => resolved.get(getTokenRef(token));
   }
-  getService<TResolved>(token: Token<TResolved>): TResolved {
+  getService(token) {
     if (!this._getService) {
       throw new DIError({
         message: 'Cannot get service from unresolved app',
@@ -367,7 +335,7 @@ class BaseApp {
     }
     return this._getService(token);
   }
-  callback(...args: any[]): Promise<void> | any {}
+  callback(...args) {}
 }
 
 /* Helper functions */

@@ -3,10 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-export function captureStackTrace(caller: Function): string {
+export function captureStackTrace(caller) {
   // For monitoring in production, use a single format independent of browser
   if (__BROWSER__ && !__DEV__) {
     return new Error().stack;
@@ -22,18 +22,7 @@ export function captureStackTrace(caller: Function): string {
 }
 
 export class DIError extends Error {
-  link: ?string;
-  constructor({
-    message,
-    errorDoc,
-    caller,
-    stack,
-  }: {
-    message: string,
-    errorDoc?: string,
-    caller?: Function,
-    stack?: string,
-  }) {
+  constructor({message, errorDoc, caller, stack}) {
     super(message);
     if (errorDoc) {
       this.link = `https://github.com/fusionjs/fusionjs/tree/master/errors/${errorDoc}.md`;

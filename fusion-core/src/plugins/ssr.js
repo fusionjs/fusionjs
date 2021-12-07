@@ -3,19 +3,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML} from '../sanitization';
-import type {
-  Context,
-  SSRDecider as SSRDeciderService,
-  SSRBodyTemplate as SSRBodyTemplateService,
-} from '../types.js';
 
 const botRegex = /(bot|crawler|spider)/i;
-const SSRDecider = createPlugin<{}, SSRDeciderService>({
+const SSRDecider = createPlugin({
   provides: () => {
     return (ctx) => {
       // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
@@ -46,12 +41,8 @@ export default function createSSRPlugin({
   element,
   ssrDecider,
   ssrBodyTemplate,
-}: {
-  element: any,
-  ssrDecider: SSRDeciderService,
-  ssrBodyTemplate?: SSRBodyTemplateService,
 }) {
-  return async function ssrPlugin(ctx: Context, next: () => Promise<void>) {
+  return async function ssrPlugin(ctx, next) {
     if (!ssrDecider(ctx)) return next();
 
     const template = {

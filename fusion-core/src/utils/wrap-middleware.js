@@ -3,19 +3,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 import path from 'path';
 import {now} from '../plugins/timing';
 
-import type {Context, Middleware} from '../types.js';
-
-type StacksFormat = {
-  type: 'token' | 'register' | 'plugin',
-  stack: string,
-};
-
-const getSources = (stacks: Array<StacksFormat>) => {
+const getSources = (stacks) => {
   // stack is of format: 'at file_xyz.js (/some/file/system/path.js:30:1)\n'
   return stacks.map(({type, stack = ''}) => {
     return {
@@ -24,7 +17,7 @@ const getSources = (stacks: Array<StacksFormat>) => {
         .split('\n')
         .map((line) => line.match(/\((.*?)\)/))
         .filter((match) => match && match[1])
-        .map((match) => ((match: any): Array<string>)[1])
+        .map((match) => match[1])
         .map((to) => (__NODE__ ? path.relative(process.cwd(), to) : to))
         .shift(),
     };
@@ -32,12 +25,8 @@ const getSources = (stacks: Array<StacksFormat>) => {
 };
 
 // Wraps middleware for measuring middleware timing
-export default function wrapMiddleware(
-  existingMiddleware: Middleware,
-  token: any,
-  plugin: any
-): Middleware {
-  return async (ctx: Context, next) => {
+export default function wrapMiddleware(existingMiddleware, token, plugin) {
+  return async (ctx, next) => {
     const downstreamStart = now();
     let upstreamStart = 0;
 

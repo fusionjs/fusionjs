@@ -1,4 +1,4 @@
-// @flow
+// @noflow
 
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
@@ -68,7 +68,6 @@ test('timing plugin on error middleware', async (done) => {
   });
   app.middleware((ctx, next) => {
     const e = new Error('fail request');
-    // $FlowFixMe
     e.status = 500;
     throw e;
   });

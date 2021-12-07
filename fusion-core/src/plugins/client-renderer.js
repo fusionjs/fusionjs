@@ -3,13 +3,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
-import type {Context} from '../types.js';
-
-export default function createClientRenderer({render}: {render: any}) {
-  return function renderer(ctx: Context, next: () => Promise<void>) {
+export default function createClientRenderer({render}) {
+  return function renderer(ctx, next) {
     const rendered = render(ctx.element, ctx);
     if (rendered instanceof Promise) {
       return rendered.then((r) => {

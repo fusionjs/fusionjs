@@ -3,13 +3,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import App from '../src/index';
 import {compose} from '../src/compose.js';
-
-import type {Context} from '../src/types.js';
 
 test('context composition', async () => {
   const element = 'hello';
@@ -42,18 +40,16 @@ test('context composition', async () => {
   app.resolve();
   const middleware = compose(app.plugins);
   await expect(
-    // $FlowFixMe
     middleware(context, () => Promise.resolve())
   ).resolves.not.toThrow();
   expect(typeof context.rendered).toBe('string');
-  // $FlowFixMe
   expect(context.rendered.includes('<h1>HELLO</h1>')).toBeTruthy();
 });
 
 test('context composition with a cdn', async () => {
   const element = 'hello';
   const render = (el) => `<h1>${el}</h1>`;
-  const wrap = () => (ctx: Context, next: () => Promise<void>) => {
+  const wrap = () => (ctx, next) => {
     ctx.element = ctx.element.toUpperCase();
     return next();
   };
@@ -81,10 +77,9 @@ test('context composition with a cdn', async () => {
   app.resolve();
   const middleware = compose(app.plugins);
   await expect(
-    middleware(((context: any): Context), () => Promise.resolve())
+    middleware(context, () => Promise.resolve())
   ).resolves.not.toThrow();
   expect(
-    // $FlowFixMe
     context.body.includes('https://something.com/lol/es5-file.js')
   ).toBeTruthy();
 });

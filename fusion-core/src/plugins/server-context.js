@@ -3,18 +3,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import uuidv4 from 'uuid/v4';
 import UAParser from 'ua-parser-js';
 import getEnv from '../get-env.js';
 
-import type {Context} from '../types.js';
-
 const envVars = getEnv();
 
-export default function middleware(ctx: Context, next: () => Promise<void>) {
+export default function middleware(ctx, next) {
   // env vars
   ctx.rootDir = envVars.rootDir;
   ctx.env = envVars.env;

@@ -1,30 +1,18 @@
-/* @flow */
+/* @noflow */
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
 import {createPlugin} from '../src/create-plugin';
 import {createToken} from '../src/create-token';
-import type {FusionPlugin, Token} from '../src/types.js';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
-type AType = {
-  a: string,
-};
-type BType = {
-  b: string,
-};
-type CType = {
-  c: string,
-};
-type EType = {
-  e: string,
-};
-const TokenA: Token<AType> = createToken('TokenA');
-const TokenB: Token<BType> = createToken('TokenB');
-const TokenC: Token<CType> = createToken('TokenC');
-const TokenD: Token<BType> = createToken('TokenD');
-const TokenEAsNullable: Token<?EType> = createToken('TokenEAsNullable');
-const TokenString: Token<string> = createToken('TokenString');
-const TokenNumber: Token<number> = createToken('TokenNumber');
+
+const TokenA = createToken('TokenA');
+const TokenB = createToken('TokenB');
+const TokenC = createToken('TokenC');
+const TokenD = createToken('TokenD');
+const TokenEAsNullable = createToken('TokenEAsNullable');
+const TokenString = createToken('TokenString');
+const TokenNumber = createToken('TokenNumber');
 
 test('dependency registration', () => {
   const app = new App('el', (el) => el);
@@ -36,7 +24,7 @@ test('dependency registration', () => {
     d: 0,
   };
 
-  const PluginA: FusionPlugin<void, AType> = createPlugin({
+  const PluginA = createPlugin({
     provides: () => {
       counters.a++;
       expect(counters.a).toBe(1);
@@ -45,7 +33,7 @@ test('dependency registration', () => {
       };
     },
   });
-  const PluginB: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginB = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -59,8 +47,7 @@ test('dependency registration', () => {
     },
   });
 
-  type PluginCType = FusionPlugin<{a: Token<AType>, b: Token<BType>}, CType>;
-  const PluginC: PluginCType = createPlugin({
+  const PluginC = createPlugin({
     deps: {
       a: TokenA,
       b: TokenB,
@@ -111,7 +98,7 @@ test('dependency registration with aliases', () => {
     d: 0,
   };
 
-  const PluginA: FusionPlugin<void, AType> = createPlugin({
+  const PluginA = createPlugin({
     provides: () => {
       counters.a++;
       expect(counters.a).toBe(1);
@@ -120,7 +107,7 @@ test('dependency registration with aliases', () => {
       };
     },
   });
-  const PluginB: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginB = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -134,8 +121,7 @@ test('dependency registration with aliases', () => {
     },
   });
 
-  type PluginCType = FusionPlugin<{a: Token<AType>, b: Token<BType>}, CType>;
-  const PluginC: PluginCType = createPlugin({
+  const PluginC = createPlugin({
     deps: {
       a: TokenA,
       b: TokenB,
@@ -151,7 +137,7 @@ test('dependency registration with aliases', () => {
     },
   });
 
-  const PluginD: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginD = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -190,7 +176,7 @@ test('optional dependency registration with aliases', () => {
     d: 0,
   };
 
-  const PluginA: FusionPlugin<void, AType> = createPlugin({
+  const PluginA = createPlugin({
     provides: () => {
       counters.a++;
       expect(counters.a).toBe(1);
@@ -199,7 +185,7 @@ test('optional dependency registration with aliases', () => {
       };
     },
   });
-  const PluginB: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginB = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -213,11 +199,7 @@ test('optional dependency registration with aliases', () => {
     },
   });
 
-  type PluginCType = FusionPlugin<
-    {a: typeof TokenA, b: typeof TokenB.optional},
-    CType
-  >;
-  const PluginC: PluginCType = createPlugin({
+  const PluginC = createPlugin({
     deps: {
       a: TokenA,
       b: TokenB.optional,
@@ -233,7 +215,7 @@ test('optional dependency registration with aliases', () => {
     },
   });
 
-  const PluginD: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginD = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -274,9 +256,9 @@ test('dependency registration with aliasing non-plugins', () => {
 
   const ValueA = 'some-value';
   const AliasedValue = 'some-aliased-value';
-  const ValueTokenA: Token<string> = createToken('ValueA');
-  const AliasedTokenA: Token<string> = createToken('AliasedTokenA');
-  const PluginB: FusionPlugin<{a: Token<string>}, BType> = createPlugin({
+  const ValueTokenA = createToken('ValueA');
+  const AliasedTokenA = createToken('AliasedTokenA');
+  const PluginB = createPlugin({
     deps: {
       a: ValueTokenA,
     },
@@ -290,8 +272,7 @@ test('dependency registration with aliasing non-plugins', () => {
     },
   });
 
-  type PluginCType = FusionPlugin<{a: Token<string>}, CType>;
-  const PluginC: PluginCType = createPlugin({
+  const PluginC = createPlugin({
     deps: {
       a: ValueTokenA,
     },
@@ -318,14 +299,14 @@ test('dependency registration with aliasing non-plugins', () => {
 
 test('dependency registration with no token', () => {
   const app = new App('el', (el) => el);
-  const PluginA: FusionPlugin<void, AType> = createPlugin({
+  const PluginA = createPlugin({
     provides: () => {
       return {
         a: 'PluginA',
       };
     },
   });
-  const PluginB: FusionPlugin<{a: Token<AType>}, BType> = createPlugin({
+  const PluginB = createPlugin({
     deps: {
       a: TokenA,
     },
@@ -472,7 +453,6 @@ test('dependency registration with null value', () => {
 
   expect(() => {
     const app = new App('el', (el) => el);
-    // $FlowFixMe
     app.register(TokenString, null);
     app.middleware({something: TokenString}, ({something}) => {
       expect(something).toBe(null);
@@ -485,23 +465,19 @@ test('dependency registration with null value', () => {
 test('dependency registration with optional deps', () => {
   const app = new App('el', (el) => el);
 
-  const checkString = (s: string): void => {
+  const checkString = (s) => {
     expect(s).toBe('hello');
   };
-  const checkNumUndefined = (n: void | number): void => {
+  const checkNumUndefined = (n) => {
     expect(n).toBe(undefined);
   };
 
-  type Deps = {
-    str: string,
-    numOpt: void | number,
-  };
   const PluginA = createPlugin({
     deps: {
       str: TokenString,
       numOpt: TokenNumber.optional,
     },
-    provides: ({str, numOpt}: Deps) => {
+    provides: ({str, numOpt}) => {
       checkString(str);
       checkNumUndefined(numOpt);
 
@@ -570,9 +546,9 @@ test('dependency registration with circular dependency', () => {
 });
 
 test('dependency configuration with missing deps', () => {
-  const ParentToken: Token<string> = createToken('parent-token');
-  const StringToken: Token<string> = createToken('string-token');
-  const OtherStringToken: Token<string> = createToken('other-string-token');
+  const ParentToken = createToken('parent-token');
+  const StringToken = createToken('string-token');
+  const OtherStringToken = createToken('other-string-token');
 
   const app = new App('el', (el) => el);
 
@@ -597,8 +573,8 @@ test('dependency configuration with missing deps', () => {
 });
 
 test('error message when dependent plugin does not have token', () => {
-  const StringToken: Token<string> = createToken('string-token');
-  const OtherStringToken: Token<string> = createToken('other-string-token');
+  const StringToken = createToken('string-token');
+  const OtherStringToken = createToken('other-string-token');
 
   const app = new App('el', (el) => el);
 
@@ -644,12 +620,10 @@ test('Extraneous dependencies after re-registering', () => {
 
 test('Missing token errors reasonably', () => {
   const app = new App('el', (el) => el);
-  // $FlowFixMe
   expect(() => app.register('some-value')).toThrow(
     /Cannot register some-value/
   );
   const BrowserPlugin = null; // idiomatic browser plugin implementation for server-only plugin is `export default null`;
-  // $FlowFixMe
   expect(() => app.register(BrowserPlugin)).toThrow(/Cannot register null/);
 });
 

@@ -57,7 +57,7 @@
     "clean": "cup-clean",
     "flow": "flow",
     "lint": "yarn g:lint",
-    "prepack": "cup-build --force-flow",
+    "prepack": "cup-build && cp src/index.js.flow dist-node-cjs",
     "test": "jest"
   },
   "sideEffects": false

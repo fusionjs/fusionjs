@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 /* eslint-env browser */
 import {compose} from './compose.js';
@@ -17,7 +17,7 @@ import {RenderToken, ElementToken} from './tokens';
 
 export default function () {
   return class ClientApp extends BaseApp {
-    constructor(el: any, render: any) {
+    constructor(el, render) {
       super(el, render);
       this.register(TimingToken, timing);
       this.middleware({element: ElementToken}, createClientHydrate);
@@ -33,7 +33,7 @@ export default function () {
         // TODO(#62): Create noop context object to match server api
         const routePrefix = getSerializedRoutePrefix();
         const replaceRouteRegex = new RegExp(`^${routePrefix}`);
-        const ctx: any = {
+        const ctx = {
           url: (window.location.pathname + window.location.search).replace(
             replaceRouteRegex,
             ''

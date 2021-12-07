@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 /*
 We never want developers to be able to write `ctx.template.body.push(`<div>${stuff}</div>`)`
@@ -12,8 +12,6 @@ Instead, they should use html`<div>{stuff}</div>` so interpolated data gets auto
 We trust the markup outside of interpolation because it's code written by a developer with commit permissions,
 which can be audited via code reviews
 */
-
-import type {SanitizedHTMLWrapper} from './types.js';
 
 // eslint-disable-next-line import/no-mutable-exports
 let html, dangerouslySetHTML, consumeSanitizedHTML, escape;
@@ -30,10 +28,7 @@ if (__NODE__) {
 
   const key = Symbol('sanitized html');
   const inspect = Symbol.for('nodejs.util.inspect.custom');
-  html = (
-    [head, ...rest]: Array<string>,
-    ...values: Array<string>
-  ): SanitizedHTMLWrapper => {
+  html = ([head, ...rest], ...values) => {
     const obj = {};
     Object.defineProperty(obj, inspect, {
       value: function inspectHtml() {
@@ -47,12 +42,12 @@ if (__NODE__) {
     });
     return obj;
   };
-  dangerouslySetHTML = (str: string): Object => html([str]);
-  escape = (str: any): string => {
+  dangerouslySetHTML = (str) => html([str]);
+  escape = (str) => {
     if (str && str[key] !== undefined) return consumeSanitizedHTML(str);
     return String(str).replace(/[<>&"\u2028\u2029]/g, replaceForbidden);
   };
-  consumeSanitizedHTML = (h: SanitizedHTMLWrapper): string => {
+  consumeSanitizedHTML = (h) => {
     if (typeof h === 'string') {
       throw new Error(`Unsanitized html. Use html\`${h}\``);
     }
@@ -60,7 +55,7 @@ if (__NODE__) {
   };
 }
 const replaceEscaped = (c) => String.fromCodePoint(parseInt(c.slice(2), 16));
-const unescape = (str: string): string => {
+const unescape = (str) => {
   return str.replace(
     /\\u003C|\\u003E|\\u0022|\\u002F|\\u2028|\\u2029|\\u0026/g,
     replaceEscaped
@@ -68,20 +63,13 @@ const unescape = (str: string): string => {
 };
 
 // These types are necessary due to not having an assignment in the __BROWSER__ environment
-const flowHtml = ((html: any): (
-  strings: Array<string>,
-  ...expressions: Array<string>
-) => SanitizedHTMLWrapper);
+const flowHtml = html;
 
-const flowDangerouslySetHTML = ((dangerouslySetHTML: any): (
-  html: string
-) => Object);
+const flowDangerouslySetHTML = dangerouslySetHTML;
 
-const flowConsumeSanitizedHTML = ((consumeSanitizedHTML: any): (
-  str: SanitizedHTMLWrapper
-) => string);
+const flowConsumeSanitizedHTML = consumeSanitizedHTML;
 
-const flowEscape = ((escape: any): (str: string) => string);
+const flowEscape = escape;
 
 export {
   flowHtml as html,

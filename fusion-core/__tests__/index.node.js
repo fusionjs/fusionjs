@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 
 import App, {html} from '../src/index';
@@ -39,7 +39,6 @@ test('ssr with accept header', async () => {
     expect(ctx.template.body instanceof Array).toBeTruthy();
   });
 
-  // $FlowFixMe
   const ctx = await run(app);
   expect(typeof ctx.rendered).toBe('string');
   expect(typeof ctx.body).toBe('string');
@@ -81,7 +80,7 @@ test('ssr with bot user agent', async () => {
       'user-agent': 'AdsBot-Google',
     },
   };
-  // $FlowFixMe
+
   const ctx = await run(app, initialCtx);
   expect(typeof ctx.rendered).toBe('string');
   expect(typeof ctx.body).toBe('string');
@@ -111,7 +110,7 @@ test('POST request with bot user agent', async () => {
       'user-agent': 'AdsBot-Google',
     },
   };
-  // $FlowFixMe
+
   const ctx = await run(app, initialCtx);
   expect(ctx.rendered).toBeFalsy();
   expect(ctx.body).toBe('OK');
@@ -130,7 +129,6 @@ test('ssr without valid accept header', async () => {
     headers: {accept: '*/*'},
   };
 
-  // $FlowFixMe
   const ctx = await run(app, initialCtx);
   expect(ctx.element).toBeFalsy();
   expect(ctx.type).toBeFalsy();
@@ -154,7 +152,6 @@ test('ssr without valid bot user agent', async () => {
     },
   };
 
-  // $FlowFixMe
   const ctx = await run(app, initialCtx);
   expect(ctx.element).toBeFalsy();
   expect(ctx.type).toBeFalsy();
@@ -199,7 +196,6 @@ test('disable SSR by composing SSRDecider with a plugin', async () => {
     method: 'GET',
     path: '/foo',
   };
-  // $FlowFixMe
   const ctx = await run(buildApp(), initialCtx);
 
   expect(ctx.element).toBeFalsy();
@@ -210,7 +206,6 @@ test('disable SSR by composing SSRDecider with a plugin', async () => {
   let validSSRPathCtx = {
     path: '/some-path',
   };
-  // $FlowFixMe
   const renderCtx = await run(buildApp(), validSSRPathCtx);
   expect(renderCtx.element).toBe(element);
   expect(renderCtx.type).toBe('text/html');
@@ -242,7 +237,6 @@ test('disable SSR by composing SSRDecider with a function', async () => {
     method: 'GET',
     path: '/foo',
   };
-  // $FlowFixMe
   const ctx = await run(buildApp(), initialCtx);
 
   expect(ctx.element).toBeFalsy();
@@ -253,7 +247,6 @@ test('disable SSR by composing SSRDecider with a function', async () => {
   let validSSRPathCtx = {
     path: '/some-path',
   };
-  // $FlowFixMe
   const renderCtx = await run(buildApp(), validSSRPathCtx);
   expect(renderCtx.element).toBe(element);
   expect(renderCtx.type).toBe('text/html');
@@ -289,7 +282,6 @@ test('SSR extension handling', async () => {
       method: 'GET',
       path: `/some-path.${i}`,
     };
-    // $FlowFixMe
     await run(buildApp(), initialCtx);
     const shouldSSR = extensionToSSRSupported[i];
     expect(flags.render).toBe(shouldSSR);
@@ -378,7 +370,6 @@ test('HTML escaping works', async () => {
   const app = new App(element, render);
   app.middleware(template);
 
-  // $FlowFixMe
   const ctx = await run(app);
   expect(ctx.body.includes('<html lang="\\u0022\\u003E">')).toBeTruthy();
   expect(ctx.body.includes('<body test="\\u0022\\u003E">')).toBeTruthy();
@@ -396,7 +387,6 @@ test('head and body must be sanitized', async () => {
   const app = new App(element, render);
   app.middleware(template);
 
-  // $FlowFixMe
   const ctx = await run(app);
   expect(ctx.body.includes('<meta charset="\\u0022\\u003E" />')).toBeTruthy();
   expect(ctx.body.includes('<div>\\u0022\\u003E</div>')).toBeTruthy();
@@ -472,6 +462,5 @@ test('enable proxy flag', () => {
     return 'lol';
   };
   const app = new App(element, render);
-  // $FlowFixMe
   expect(app._app.proxy).toBe(true);
 });

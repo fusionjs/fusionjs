@@ -3,32 +3,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
-import type {
-  ExtractDepsType,
-  Context,
-  ExtractTokenType,
-  FusionPlugin,
-  FusionPluginDepsType,
-  Middleware,
-  Token,
-  SSRBodyTemplate,
-  RenderType as Render,
-  RouteTagsType,
-} from './types.js';
 
-import BaseApp from './base-app';
 import serverApp from './server-app';
 import clientApp from './client-app';
 import getEnv from './get-env.js';
 
-type FusionApp = typeof BaseApp;
-export default ((__BROWSER__ ? clientApp() : serverApp()): FusionApp);
+export default __BROWSER__ ? clientApp() : serverApp();
 
 export {compose} from './compose';
 export {memoize} from './memoize';
-export type {MemoizeFn} from './memoize';
 
 // sanitization API
 export {
@@ -62,17 +47,3 @@ export {
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
-
-export type {
-  Context,
-  ExtractTokenType,
-  FusionApp,
-  FusionPlugin,
-  FusionPluginDepsType,
-  Middleware,
-  Token,
-  SSRBodyTemplate,
-  Render,
-  RouteTagsType,
-  ExtractDepsType,
-};

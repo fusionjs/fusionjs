@@ -1,0 +1,175 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import type { Server } from "http";
+
+import type {
+  aliaser,
+  cleanupFn,
+  ExtractDepsType,
+  Context,
+  ExtractTokenType,
+  FusionPlugin,
+  FusionPluginDepsType,
+  Middleware,
+  Token,
+  SSRBodyTemplate,
+  RenderType as Render,
+  SanitizedHTMLWrapper,
+  RenderType,
+  SSRDecider,
+  RouteTagsType,
+} from "../src/types.js";
+
+export {
+  RenderToken,
+  ElementToken,
+  SSRDeciderToken,
+  HttpServerToken,
+  SSRBodyTemplateToken,
+  RoutePrefixToken,
+  CriticalChunkIdsToken,
+  RouteTagsToken,
+  EnableMiddlewareTimingToken,
+} from "../src/tokens";
+
+export const TokenType = Object.freeze({
+  Required: 0,
+  Optional: 1,
+});
+
+declare class TokenImpl<TResolved> {
+  name: string;
+  ref: mixed;
+  type: $Values<typeof TokenType>;
+  optional: ?TokenImpl<TResolved>;
+  stacks: Array<{
+    type: "token" | "register" | "enhance" | "alias-from" | "alias-to",
+    stack: string,
+  }>;
+  constructor(name: string, ref?: mixed): TokenImpl<TResolved>;
+}
+
+declare export function createToken<TResolvedType>(
+  name: string
+): Token<TResolvedType>;
+
+export type MemoizeFn<A> = (ctx: Context) => A;
+
+declare export function memoize<A>(fn: MemoizeFn<A>): MemoizeFn<A>;
+
+declare class BaseApp {
+  constructor(el: any, render: any): BaseApp;
+  registered: Map<
+    any,
+    {
+      aliases?: Map<any, any>,
+      enhancers?: Array<any>,
+      token: any,
+      value?: FusionPlugin<*, *>,
+    }
+  >;
+  enhancerToToken: Map<any, any>;
+  plugins: Array<any>;
+  cleanups: Array<cleanupFn>;
+  renderer: any;
+  _getService: (any) => any;
+  _dependedOn: Set<any>;
+  register<T>(
+    tokenOrValue: Token<T> | FusionPlugin<any, T>,
+    maybeValue?: FusionPlugin<any, T> | T
+  ): aliaser;
+  _register<T>(token: Token<T>, value: any): aliaser;
+  middleware<TDeps: {} = {}>(
+    deps: TDeps | Middleware,
+    middleware?: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
+  ): void;
+  enhance<TResolved>(token: Token<TResolved>, enhancer: Function): void;
+  cleanup(): Promise<any>;
+  resolve<TResolved>(): void;
+  getService<TResolved>(token: Token<TResolved>): TResolved;
+  callback(...args: any[]): Promise<void> | any;
+}
+
+// eslint-disable-next-line flowtype/generic-spacing
+type FusionPluginNoHidden<TDeps, TService> = $Diff<
+  FusionPlugin<TDeps, TService>,
+  { __plugin__: boolean, stack: string }
+>;
+
+declare export function createPlugin<TDeps: FusionPluginDepsType, TService>(
+  opts: $Exact<FusionPluginNoHidden<TDeps, TService>>
+): FusionPlugin<TDeps, TService>;
+
+declare export default typeof BaseApp;
+
+declare export function compose(middleware: Array<Middleware>): Middleware;
+
+declare export function html(
+  strings: Array<string>,
+  ...expressions: Array<string>
+): SanitizedHTMLWrapper;
+
+declare export function dangerouslySetHTML(html: string): Object;
+
+declare export function consumeSanitizedHTML(str: SanitizedHTMLWrapper): string;
+
+declare export function escape(str: string): string;
+
+declare export function unescape(str: string): string;
+
+type Env = {
+  rootDir: string,
+  env: string,
+  prefix: string,
+  assetPath: string,
+  baseAssetPath: string,
+  cdnUrl: string,
+  webpackPublicPath: string,
+  dangerouslyExposeSourceMaps: boolean,
+};
+
+declare export function getEnv(): Env;
+
+declare export function assetUrl(url: string): string;
+declare export function chunkId(filename: string): string;
+declare export function syncChunkIds(argument: any): any;
+declare export function syncChunkPaths(argument: any): any;
+declare export function workerUrl(url: string): string;
+
+declare export var RouteTagsToken: Token<RouteTagsType>;
+declare export var RenderToken: Token<RenderType>;
+declare export var ElementToken: Token<any>;
+declare export var SSRDeciderToken: Token<SSRDecider>;
+declare export var HttpServerToken: Token<Server>;
+declare export var SSRBodyTemplateToken: Token<SSRBodyTemplate>;
+declare export var RoutePrefixToken: Token<string>;
+
+type CriticalChunkIds = Set<number>;
+
+type CriticalChunkIdsService = {
+  from(ctx: Context): CriticalChunkIds,
+};
+
+declare export var CriticalChunkIdsToken: Token<CriticalChunkIdsService>;
+
+declare export var EnableMiddlewareTimingToken: Token<boolean>;
+
+export type {
+  Context,
+  ExtractTokenType,
+  BaseApp as FusionApp,
+  FusionPlugin,
+  FusionPluginDepsType,
+  Middleware,
+  Token,
+  SSRBodyTemplate,
+  Render,
+  RouteTagsType,
+  ExtractDepsType,
+};

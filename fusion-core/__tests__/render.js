@@ -1,22 +1,16 @@
-/* @flow */
+/* @noflow */
 
 import {run} from './test-helper';
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
 import {createPlugin} from '../src/create-plugin';
 import {createToken} from '../src/create-token';
-import type {Token} from '../src/types.js';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
-type AType = {
-  a: string,
-};
-type BType = () => {
-  b: string,
-};
-const TokenA: Token<AType> = createToken('TokenA');
-const TokenB: Token<BType> = createToken('TokenB');
-const TokenString: Token<string> = createToken('TokenString');
+
+const TokenA = createToken('TokenA');
+const TokenB = createToken('TokenB');
+const TokenString = createToken('TokenString');
 
 function delay() {
   return new Promise((resolve) => {
@@ -79,8 +73,7 @@ test('render plugin order', async () => {
       return next();
     },
   });
-  // TODO(#137): fix flow types for renderPlugin
-  // $FlowFixMe
+
   const app = new App(element, renderPlugin);
   app.middleware((ctx, next) => {
     order++;

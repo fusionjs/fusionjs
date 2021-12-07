@@ -3,7 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
+ * @noflow
  */
 /* eslint-env node */
 import {compose} from './compose.js';
@@ -23,8 +23,7 @@ export default function () {
   const Koa = require('koa');
 
   return class ServerApp extends BaseApp {
-    _app: Koa;
-    constructor(el: any, render: any) {
+    constructor(el, render) {
       super(el, render);
       this._app = new Koa();
       this._app.proxy = true;

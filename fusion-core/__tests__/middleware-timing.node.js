@@ -1,4 +1,4 @@
-// @flow
+// @noflow
 
 import {run} from './test-helper';
 import {EnableMiddlewareTimingToken} from '../src/tokens';
