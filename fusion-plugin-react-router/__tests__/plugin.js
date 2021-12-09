@@ -407,7 +407,12 @@ if (__BROWSER__) {
         </div>
       );
     });
-    const User = () => {
+    const User = withRouter(({location, history}) => {
+      if (location.pathname === '/user/1234') {
+        setTimeout(() => {
+          history.push('/user/12345');
+        }, 50);
+      }
       // add some nested routes
       return (
         <div>
@@ -415,7 +420,7 @@ if (__BROWSER__) {
           <Route path="/user/:uuid" component={Hello} />
         </div>
       );
-    };
+    });
     const Hello = () => {
       return <div>Hello</div>;
     };
@@ -431,6 +436,12 @@ if (__BROWSER__) {
       {
         page: '/user/:uuid',
         params: {uuid: '1234'},
+        title: '/user/:uuid',
+        routeMatched: true,
+      },
+      {
+        page: '/user/:uuid',
+        params: {uuid: '12345'},
         title: '/user/:uuid',
         routeMatched: true,
       },

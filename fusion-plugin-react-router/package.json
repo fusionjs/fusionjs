@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "history": "^4.9.0",
+    "just-compare": "^1.3.0",
     "prop-types": "^15.7.2",
     "react-router-dom": "^5.1.0"
   },

@@ -9,6 +9,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import {Router as BaseRouter} from 'react-router-dom';
+import compare from 'just-compare';
 
 import type {RouterPropsType as PropsType, RouterType} from '../types.js';
 
@@ -20,6 +21,7 @@ type ContextType = {
 };
 class BrowserRouter extends React.Component<PropsType> {
   lastTitle: ?string;
+  lastParams: {};
   context: ContextType;
 
   static defaultProps = {
@@ -36,8 +38,13 @@ class BrowserRouter extends React.Component<PropsType> {
     const {__IS_PREPARE__} = this.context;
     return {
       onRoute: (routeData: any) => {
-        if (routeData.title !== this.lastTitle && !__IS_PREPARE__) {
+        if (
+          !__IS_PREPARE__ &&
+          (routeData.title !== this.lastTitle ||
+            !compare(routeData.params, this.lastParams))
+        ) {
           this.lastTitle = routeData.title;
+          this.lastParams = routeData.params;
           this.props.onRoute && this.props.onRoute(routeData);
         }
       },
