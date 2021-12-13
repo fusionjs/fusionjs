@@ -90,6 +90,11 @@ module.exports = {
         default: false,
         describe: 'Build without source maps.',
       },
+      minify: {
+        type: 'boolean',
+        default: true,
+        describe: 'Minify scripts while bundling scripts',
+      },
       ...analyzeOption,
       ...disableBuildCacheOption,
       ...experimentalEsbuildMinifierOption,
