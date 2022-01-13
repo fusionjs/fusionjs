@@ -10,9 +10,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
 
-declare var __webpack_modules__: {[string]: any};
-declare var __webpack_require__: (any) => any;
-
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
 };
@@ -45,20 +42,6 @@ export default function withAsyncComponent<Config>({
   let dynamicImportMetadata; // Stores promise instrumentation used by esbuild
 
   function WithAsyncComponent(props) {
-    if (__BROWSER__) {
-      let promise = load();
-      // $FlowFixMe
-      let id = promise.__MODULE_ID;
-
-      if (
-        typeof __webpack_modules__ !== 'undefined' &&
-        __webpack_modules__[id]
-      ) {
-        // If module is already loaded, it can be synchronously imported
-        AsyncComponent = __webpack_require__(id).default;
-      }
-    }
-
     if (error) {
       return <ErrorComponent error={error} />;
     }
