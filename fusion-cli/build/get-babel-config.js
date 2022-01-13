@@ -45,6 +45,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   // Shared base configuration
   let config = {
     plugins: [
+      require.resolve('@babel/plugin-transform-flow-strip-types'),
       require.resolve('@babel/plugin-syntax-dynamic-import'),
       [
         require.resolve('@babel/plugin-proposal-class-properties'),
@@ -58,6 +59,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
       require.resolve('@babel/preset-typescript'),
     ],
     babelrc: false,
+    configFile: false,
   };
 
   if (opts.specOnly === false) {
@@ -73,9 +75,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
         development: dev,
       },
     ]);
-    config.plugins.unshift(
-      require.resolve('@babel/plugin-transform-flow-strip-types')
-    );
     if (fusionTransforms) {
       config.presets.push([fusionPreset, {target, assumeNoImportSideEffects}]);
     } else {
