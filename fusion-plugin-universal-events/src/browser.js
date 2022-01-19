@@ -104,7 +104,9 @@ export class UniversalEmitter extends Emitter {
       // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
       // performed in sendBeacon using Blob with a not-simple content type.
       // See http://crbug.com/490015
-      if (navigator.sendBeacon('/_events', payload)) {
+      const prefix = window.__ROUTE_PREFIX__ || '';
+      const eventsURL = prefix + '/_events';
+      if (navigator.sendBeacon(eventsURL, payload)) {
         this.storage.getAndClear(itemsToSend.length);
         this.finishFlush();
         return;

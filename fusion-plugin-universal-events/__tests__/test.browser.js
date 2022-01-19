@@ -86,6 +86,53 @@ test('Browser EventEmitter', async () => {
   expect(store.data.length).toBe(0);
 });
 
+test('Browser EventEmitter should append routePrefix if sendBeacon API is used', async () => {
+  window.__ROUTE_PREFIX__ = '/routePrefix';
+  navigator.sendBeacon = jest.fn((url, payload) => {
+    expect(url).toBe('/routePrefix/_events');
+    return true;
+  });
+  const fetch = jest.fn();
+  const app = getApp(fetch);
+
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.emit('a', {x: 1});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+  delete window.__ROUTE_PREFIX__;
+});
+
+test('Browser EventEmitter should not routePrefix if fetch API is used since it is appended in csrf plugin', async () => {
+  window.__ROUTE_PREFIX__ = '/routePrefix';
+  navigator.sendBeacon = undefined;
+
+  const fetch = jest.fn();
+  const app = getApp(fetch);
+
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.emit('a', {x: 1});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+  expect(fetch).toHaveBeenCalledWith('/_events', expect.anything());
+  delete window.__ROUTE_PREFIX__;
+});
+
 test('Browser EventEmitter - should fall back to fetch if sendBeacon is not supported', async () => {
   let fetched = false;
   let emitted = false;
