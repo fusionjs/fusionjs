@@ -10,6 +10,9 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import prepared from './prepared.js';
 
+declare var __webpack_modules__: {[string]: any};
+declare var __webpack_require__: (any) => any;
+
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
 };
@@ -19,6 +22,32 @@ if (__NODE__) {
   contextTypes.markAsCritical = PropTypes.func;
   // $FlowFixMe
   contextTypes.pushSSRMetadata = PropTypes.func;
+}
+
+let cachedLoadedChunkIds;
+let lastWebpackChunksLength;
+function getLoadedChunkIds() {
+  const webpackChunks = __BROWSER__ ? window.webpackChunkFusion : [];
+
+  if (
+    cachedLoadedChunkIds &&
+    lastWebpackChunksLength === webpackChunks.length
+  ) {
+    return cachedLoadedChunkIds;
+  }
+
+  cachedLoadedChunkIds = new Set(
+    webpackChunks.flatMap((chunkTuple) => chunkTuple[0])
+  );
+  lastWebpackChunksLength = webpackChunks.length;
+
+  return cachedLoadedChunkIds;
+}
+
+function webpackChunksLoaded(chunkIds) {
+  const loadedChunkIds = getLoadedChunkIds();
+
+  return chunkIds.every((chunkId) => loadedChunkIds.has(chunkId));
 }
 
 export default function withAsyncComponent<Config>({
@@ -42,6 +71,29 @@ export default function withAsyncComponent<Config>({
   let dynamicImportMetadata; // Stores promise instrumentation used by esbuild
 
   function WithAsyncComponent(props) {
+    if (__BROWSER__) {
+      // We need to check if the module is already loaded, as it could be marked as
+      // critical during SSR. This is crucial in case the prepare ran during SSR,
+      // but skipped on the client. In which case the AsyncComponent will never get
+      // populated before app is hydrated, causing a rendering mismatch.
+      if (!AsyncComponent) {
+        let promise = load();
+        // $FlowFixMe
+        const id = promise.__MODULE_ID;
+        // $FlowFixMe
+        const chunkIds = promise.__CHUNK_IDS;
+
+        if (
+          typeof __webpack_modules__ !== 'undefined' &&
+          __webpack_modules__[id] &&
+          webpackChunksLoaded(chunkIds)
+        ) {
+          // If module is already loaded, it can be synchronously imported
+          AsyncComponent = __webpack_require__(id).default;
+        }
+      }
+    }
+
     if (error) {
       return <ErrorComponent error={error} />;
     }
