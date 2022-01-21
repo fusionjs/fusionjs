@@ -596,28 +596,6 @@ test('error message when dependent plugin does not have token', () => {
   expect(provides).not.toHaveBeenCalled();
 });
 
-test('Extraneous dependencies', () => {
-  const app = new App('el', (el) => el);
-  const TestToken = createToken('test');
-  app.register(TestToken, 'some-value');
-  expect(() => app.resolve()).toThrow();
-});
-
-test('Extraneous dependencies after re-registering', () => {
-  const app = new App('el', (el) => el);
-  const TokenA = createToken('A');
-  const TokenB = createToken('B');
-  app.register(
-    TokenA,
-    createPlugin({
-      deps: {b: TokenB},
-    })
-  );
-  app.register(TokenB, 'test');
-  app.register(TokenA, createPlugin({}));
-  expect(() => app.resolve()).not.toThrow();
-});
-
 test('Missing token errors reasonably', () => {
   const app = new App('el', (el) => el);
   expect(() => app.register('some-value')).toThrow(

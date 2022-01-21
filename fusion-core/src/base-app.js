@@ -23,7 +23,6 @@ class BaseApp {
   constructor(el, render) {
     this.registered = new Map(); // getTokenRef(token) -> {value, aliases, enhancers}
     this.enhancerToToken = new Map(); // enhancer -> token
-    this._dependedOn = new Set();
     this.plugins = []; // Token
     this.cleanups = [];
     el && this.register(ElementToken, el);
@@ -31,8 +30,6 @@ class BaseApp {
     this.register(SSRDeciderToken, SSRDecider);
     this.register(RouteTagsToken, RouteTagsPlugin);
   }
-
-  // eslint-disable-next-line
 
   register(tokenOrValue, maybeValue) {
     const hasToken = tokenOrValue instanceof TokenImpl;
@@ -77,13 +74,6 @@ class BaseApp {
       aliases: new Map(),
       enhancers: [],
     };
-    if (value && value.__plugin__) {
-      if (value.deps) {
-        Object.values(value.deps).forEach((token) =>
-          this._dependedOn.add(getTokenRef(token))
-        );
-      }
-    }
     this.registered.set(getTokenRef(token), {
       value,
       aliases,
@@ -94,7 +84,6 @@ class BaseApp {
       const stack = captureStackTrace(alias);
       sourceToken.stacks.push({type: 'alias-from', stack});
       destToken.stacks.push({type: 'alias-to', stack});
-      this._dependedOn.add(getTokenRef(destToken));
       if (aliases) {
         aliases.set(getTokenRef(sourceToken), destToken);
       }
@@ -141,7 +130,6 @@ class BaseApp {
     }
     this._register(RenderToken, this.renderer);
     const resolved = new Map(); // Token.ref || Token => Service
-    const nonPluginTokens = new Set(); // Token
     const resolving = new Set(); // Token.ref || Token
     const registered = this.registered; // Token.ref || Token -> {value, aliases, enhancers}
     const resolvedPlugins = []; // Plugins
@@ -278,8 +266,6 @@ class BaseApp {
               : Promise.resolve();
           });
         }
-      } else {
-        nonPluginTokens.add(token);
       }
 
       if (enhancers && enhancers.length) {
@@ -287,13 +273,6 @@ class BaseApp {
           let nextProvides = e(provides);
           appliedEnhancers.push([e, nextProvides]);
           if (nextProvides && nextProvides.__plugin__) {
-            // if the token has a plugin enhancer, allow it to be registered with no dependents
-            nonPluginTokens.delete(token);
-            if (nextProvides.deps) {
-              Object.values(nextProvides.deps).forEach((token) =>
-                this._dependedOn.add(getTokenRef(token))
-              );
-            }
             nextProvides = resolvePlugin(nextProvides);
           }
           provides = nextProvides;
@@ -306,21 +285,6 @@ class BaseApp {
 
     for (let i = 0; i < this.plugins.length; i++) {
       resolveToken(this.plugins[i]);
-    }
-    for (const token of nonPluginTokens) {
-      if (
-        token !== ElementToken &&
-        token !== RenderToken &&
-        token !== EnableMiddlewareTimingToken &&
-        !this._dependedOn.has(getTokenRef(token))
-      ) {
-        const registerStack = token.stacks.find((t) => t.type === 'register');
-        throw new DIError({
-          message: `Registered token without depending on it: ${token.name}`,
-          errorDoc: 'registered-without-depending',
-          stack: registerStack && registerStack.stack,
-        });
-      }
     }
 
     this.plugins = resolvedPlugins;

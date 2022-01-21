@@ -80,21 +80,6 @@ test('enhancement with a plugin allows orphan plugins', () => {
   }).not.toThrow();
 });
 
-test('enhancement with a non-plugin enhancer does not allow orphan plugins', () => {
-  const app = new App('el', (el) => el);
-
-  const FnToken = createToken('FnType');
-  const BaseFn = (a) => a;
-  const BaseFnEnhancer = (fn) => {
-    return fn;
-  };
-  app.register(FnToken, BaseFn);
-  app.enhance(FnToken, BaseFnEnhancer);
-  expect(() => {
-    app.resolve();
-  }).toThrow();
-});
-
 test('enhancement with a plugin with deps', (done) => {
   const app = new App('el', (el) => el);
 
