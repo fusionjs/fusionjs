@@ -237,6 +237,28 @@ test('Browser EventEmitter - should not send all the events if beacon is too big
   expect(store.data.length).toBe(1);
 });
 
+test('Browser EventEmitter - should use fetch if single event is larger than beacon limit', async () => {
+  navigator.sendBeacon = jest.fn(() => true);
+  const fetch: Fetch = jest.fn(() => Promise.resolve(createMockFetch()));
+
+  const app = getApp(fetch);
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    return (ctx, next) => {
+      const emitter = events.from(ctx);
+      expect(emitter).toBe(events);
+      emitter.emit('a', {x: 'a'.repeat(100000)});
+      window.dispatchEvent(visibilitychangeEvent);
+      emitter.teardown();
+      return next();
+    };
+  });
+  const simulator = getSimulator(app);
+  await simulator.render('/');
+
+  expect(fetch).toHaveBeenCalled();
+  expect(store.data.length).toBe(0);
+});
+
 test('Browser EventEmitter - fetch adds events back to queue if they fail to send', async () => {
   navigator.sendBeacon = undefined;
   const fetch: Fetch = () => Promise.resolve(createMockFetch({ok: false}));

@@ -86,6 +86,7 @@ export class UniversalEmitter extends Emitter {
       : XHR_PAYLOAD_SIZE_LIMIT;
 
     const itemsToSend = [];
+    let isLargePayload = false;
     let jsonSize = 12; // Base payload is `{"items":[]}`
     for (let i = 0, l = items.length; i < l; i += 1) {
       const itemJSON = JSON.stringify(items[i]);
@@ -94,12 +95,17 @@ export class UniversalEmitter extends Emitter {
         itemsToSend.push(itemJSON);
         jsonSize += jsonItemSize + (itemsToSend.length > 1 ? 1 : 0);
       } else {
+        if (i === 0) {
+          // single item is larger than payload size limit
+          isLargePayload = true;
+          itemsToSend.push(itemJSON);
+        }
         break;
       }
     }
     const payload = `{"items":[${itemsToSend.join(',')}]}`;
 
-    if (navigator.sendBeacon) {
+    if (navigator.sendBeacon && !isLargePayload) {
       // Not sending Blob with Content-Type: 'application/json' because it throws in some old browsers.
       // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
       // performed in sendBeacon using Blob with a not-simple content type.
