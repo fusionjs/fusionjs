@@ -673,11 +673,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // Need to prioritize .mjs extension to keep similar behavior to
       // webpack v4, also some packages lack fully specified path in esm
       // @see: https://github.com/webpack/webpack/issues/11467#issuecomment-691702706
-      extensions: [
-        '.mjs',
-        ...(isTypeScriptProject ? ['.ts', '.tsx'] : []),
-        '...',
-      ],
+      extensions: ['.mjs', '.ts', '.tsx', '...'],
     },
     resolveLoader: {
       symlinks: process.env.NODE_PRESERVE_SYMLINKS ? false : true,
