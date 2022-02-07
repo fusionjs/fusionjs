@@ -31,6 +31,11 @@ exports.run = async function (
     ...rest
   } /*: any */
 ) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    'Deprecation warning: `fusion test` is deprecated, use `jest` instead.'
+  );
+
   const jestArgs /*: any */ = {
     updateSnapshot: updateSnapshot || u || false,
   };

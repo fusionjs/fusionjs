@@ -13,7 +13,7 @@ const testTarget = require('./test');
 exports.run = (...args /*: any */) => {
   // eslint-disable-next-line no-console
   console.warn(
-    'Deprecation warning: `fusion test-app` is deprecated, use `fusion test` instead.'
+    'Deprecation warning: `fusion test-app` is deprecated, use `jest` instead.'
   );
   return testTarget.run(...args);
 };
