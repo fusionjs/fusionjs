@@ -157,6 +157,7 @@ declare type ContextType = {
 };
 declare class BrowserRouter$1 extends React.Component<RouterPropsType> {
   lastTitle: string | undefined | null;
+  lastParams: {};
   context: ContextType;
   static defaultProps: {
     onRoute: () => void;
@@ -193,10 +194,22 @@ declare const Route: React.FC<
   {
     trackingId?: any;
     component?: React.ComponentType<any>;
-    render?: (routeProps: ContextRouterType) => React.ReactNode;
+    render?: (
+      routeProps: react_router.RouteComponentProps<
+        {},
+        react_router.StaticContext,
+        unknown
+      >
+    ) => React.ReactNode;
     children?:
       | React.ReactNode
-      | ((routeProps: ContextRouterType) => React.ReactNode);
+      | ((
+          routeProps: react_router.RouteComponentProps<
+            {},
+            react_router.StaticContext,
+            unknown
+          >
+        ) => React.ReactNode);
   } & react_router.RouteProps<
     string,
     {

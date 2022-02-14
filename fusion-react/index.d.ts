@@ -101,6 +101,11 @@ declare const prepared: (
   } & Config
 >;
 
+declare global {
+  interface Window {
+    webpackChunkFusion: any;
+  }
+}
 declare function withAsyncComponent<Config>({
   defer,
   load,
