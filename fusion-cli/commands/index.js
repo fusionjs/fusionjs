@@ -188,7 +188,6 @@ module.exports = {
       },
     },
   },
-  'test-app': {},
   test: {
     descr: 'Run browser tests, using Jest',
     options: {
