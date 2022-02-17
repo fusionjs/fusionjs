@@ -22,7 +22,8 @@
     "flow-bin": "^0.109.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-react-router": "0.0.0-monorepo",
+    "fusion-plugin-react-router": "2.3.3",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "get-port": "^5.1.1",
@@ -55,7 +56,7 @@
   "peerDependencies": {
     "connected-react-router": "^6.5.0",
     "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-react-router": "0.0.0-monorepo",
+    "fusion-plugin-react-router": "2.3.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "redux": "^4.0.5"
