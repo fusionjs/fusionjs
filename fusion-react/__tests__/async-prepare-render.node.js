@@ -8,23 +8,20 @@
 
 /* eslint-disable react/no-multi-comp */
 import * as React from 'react';
-import Enzyme, {shallow} from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import TestRenderer from 'react-test-renderer';
 import {prepare, prepared} from '../src/async/index.js';
-
-Enzyme.configure({adapter: new Adapter()});
 
 test('Preparing a hook', (done) => {
   function Component() {
     const [state] = React.useState(0);
-    return <span>{state}</span>;
+    return `Current value: ${state}`;
   }
   const app = <Component />;
   const p = prepare(app);
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    const wrapper = shallow(app);
-    expect(wrapper.find('span').length).toBe(1);
+    const renderer = TestRenderer.create(app);
+    expect(renderer.root.children).toEqual(['Current value: 0']);
     done();
   });
 });
@@ -327,10 +324,10 @@ test('Preparing an async app with componentWillReceiveProps option', (done) => {
     expect(numRenders).toBe(1);
     expect(numChildRenders).toBe(1);
     // triggers componentDidMount
-    const wrapper = shallow(app);
+    const renderer = TestRenderer.create(app);
     expect(numPrepares).toBe(2);
     // triggers componentWillReceiveProps
-    wrapper.setProps({test: true});
+    renderer.update(<AsyncParent data="test" test />);
     expect(numPrepares).toBe(3);
     done();
   });
@@ -374,10 +371,10 @@ test('Preparing an async app with componentDidUpdate option', (done) => {
     expect(numRenders).toBe(1);
     expect(numChildRenders).toBe(1);
     // triggers componentDidMount
-    const wrapper = shallow(app);
+    const renderer = TestRenderer.create(app);
     expect(numPrepares).toBe(2);
     // triggers componentDidUpdate
-    wrapper.setProps({test: true});
+    renderer.update(<AsyncParent data="test" test />);
     expect(numPrepares).toBe(3);
     done();
   });
@@ -385,7 +382,8 @@ test('Preparing an async app with componentDidUpdate option', (done) => {
 
 test('Preparing React.forwardRef', (done) => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
+  const Forwarded = React.forwardRef(function Inner(props, ref) {
+    // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
   });
 
@@ -398,15 +396,16 @@ test('Preparing React.forwardRef', (done) => {
   const p = prepare(app);
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    const wrapper = shallow(<div>{app}</div>);
-    expect(wrapper.find('span').length).toBe(2);
+    const renderer = TestRenderer.create(<div>{app}</div>);
+    expect(renderer.root.findAllByType('span').length).toBe(2);
     done();
   });
 });
 
 test('Preparing React.forwardRef with async children', (done) => {
   // $FlowFixMe
-  const Forwarded = React.forwardRef(function Inner(props, ref) { // eslint-disable-line
+  const Forwarded = React.forwardRef(function Inner(props, ref) {
+    // eslint-disable-line
     return <div ref={ref}>{props.children}</div>;
   });
   let numChildRenders = 0;
@@ -445,8 +444,8 @@ test('Preparing a Fragment', (done) => {
   const p = prepare(app);
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    const wrapper = shallow(<div>{app}</div>);
-    expect(wrapper.find('span').length).toBe(2);
+    const renderer = TestRenderer.create(<div>{app}</div>);
+    expect(renderer.root.findAllByType('span').length).toBe(2);
     done();
   });
 });
@@ -492,8 +491,8 @@ test('Preparing React.createContext()', (done) => {
   const p = prepare(app);
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    const wrapper = shallow(<div>{app}</div>);
-    expect(wrapper.find('span').length).toBe(1);
+    const renderer = TestRenderer.create(<div>{app}</div>);
+    expect(renderer.root.findAllByType('span').length).toBe(2);
     done();
   });
 });
@@ -538,9 +537,17 @@ test('Preparing React.createContext() with async children', (done) => {
     expect(numRenderPropsRenders).toBe(2);
     expect(numChildRenders).toBe(2);
 
-    expect(shallow(<div>{app}</div>).html()).toBe(
-      '<div><div>dark</div><div>dark</div></div>'
-    );
+    const renderer = TestRenderer.create(<div>{app}</div>);
+    expect(renderer.toJSON()).toMatchInlineSnapshot(`
+      <div>
+        <div>
+          dark
+        </div>
+        <div>
+          dark
+        </div>
+      </div>
+    `);
     done();
   });
 });
@@ -697,11 +704,13 @@ test('Preparing a component using getDerivedStateFromProps', (done) => {
     expect(numConstructors).toBe(1);
     expect(numRenders).toBe(1);
     expect(numChildRenders).toBe(1);
-    const wrapper = shallow(app);
-    // triggers getDerivedStateFromProps
-    // Enzyme does not yet support calling getDerivedStateFromProps after setProps
-    wrapper.setProps({test: true});
     expect(numDerivedStateFromProps).toBe(1);
+    // triggers getDerivedStateFromProps
+    const renderer = TestRenderer.create(app);
+    expect(numDerivedStateFromProps).toBe(2);
+    // triggers getDerivedStateFromProps
+    renderer.update(<AsyncParent data="test" test />);
+    expect(numDerivedStateFromProps).toBe(3);
     done();
   });
 });

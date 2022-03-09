@@ -1,3 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`useTranslations() hook 1`] = `"<div>foo bar baz</div>"`;
+exports[`useTranslations() hook 1`] = `
+<DocumentFragment>
+  <div>
+    foo bar baz
+  </div>
+</DocumentFragment>
+`;

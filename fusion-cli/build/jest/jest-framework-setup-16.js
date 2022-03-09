@@ -10,9 +10,7 @@
 
 /* eslint-env node */
 /* eslint-disable import/no-unresolved, import/no-extraneous-dependencies */
-// $FlowFixMe
 import {configure} from 'enzyme';
-// $FlowFixMe
 import Adapter from 'enzyme-adapter-react-16';
 /* eslint-enable import/no-unresolved, import/no-extraneous-dependencies */
 

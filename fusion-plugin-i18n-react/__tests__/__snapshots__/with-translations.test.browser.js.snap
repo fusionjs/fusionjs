@@ -1,3 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`withTranslations() HOC - localeCode 1`] = `"<div>fr_CAfoo bar baz</div>"`;
+exports[`withTranslations() HOC - localeCode 1`] = `
+<DocumentFragment>
+  <div>
+    fr_CAfoo bar baz
+  </div>
+</DocumentFragment>
+`;

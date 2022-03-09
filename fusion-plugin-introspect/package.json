@@ -24,8 +24,6 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^25.1.0",
     "create-universal-package": "^4.1.2",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.2",
     "flow-bin": "^0.109.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",

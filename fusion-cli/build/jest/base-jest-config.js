@@ -25,7 +25,8 @@ function getReactVersion(meta) {
     (meta.dependencies && meta.dependencies.react) ||
     (meta.devDependencies && meta.devDependencies.react) ||
     (meta.peerDependencies && meta.peerDependencies.react);
-  return react.split('.').shift().match(/\d+/);
+  const matchResult = react.split('.').shift().match(/\d+/);
+  return matchResult && matchResult[0];
 }
 
 function hasEnzyme(meta) {
@@ -38,14 +39,8 @@ function hasEnzyme(meta) {
 function getReactSetup() {
   // $FlowFixMe
   const meta = require(rootDir + '/package.json');
-  if (hasEnzyme(meta)) {
-    try {
-      return [
-        require.resolve(`./jest-framework-setup-${getReactVersion(meta)}.js`),
-      ];
-    } catch (e) {
-      return [];
-    }
+  if (hasEnzyme(meta) && getReactVersion(meta) === '16') {
+    return [require.resolve('./jest-framework-setup-16.js')];
   }
   return [];
 }

@@ -93,15 +93,15 @@ Example usage:
 ```js
 import React from 'react';
 import {test} from 'fusion-test-utils';
-import {shallow} from 'enzyme';
+import {render} from '@testing-library/react';
 
 import MyComponent from '../my-component';
 
 test('MyComponent snapshot', assert => {
-  const wrapper = shallow(<MyComponent />);
-  assert.matchSnapshot(wrapper);
+  const {asFragment} = render(<MyComponent />);
+  assert.matchSnapshot(asFragment());
   // And optionally, you can pass your own snapshot name as the second argument
-  assert.matchSnapshot(wrapper, 'my snapshot description');
+  assert.matchSnapshot(asFragment(), 'my snapshot description');
 });
 
 test('async functions', async assert => {

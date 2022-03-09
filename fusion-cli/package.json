@@ -83,10 +83,16 @@
   "homepage": "https://fusionjs.com/api/fusion-cli",
   "license": "MIT",
   "peerDependencies": {
+    "enzyme": "*",
     "fusion-core": "0.0.0-monorepo",
     "graphql": "*",
     "react": "*",
     "react-dom": "*"
+  },
+  "peerDependenciesMeta": {
+    "enzyme": {
+      "optional": true
+    }
   },
   "repository": {
     "directory": "fusion-cli",

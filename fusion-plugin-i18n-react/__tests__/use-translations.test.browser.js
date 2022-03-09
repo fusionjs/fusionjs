@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import {mount} from 'enzyme';
+import {render} from '@testing-library/react';
 
 import {useTranslations} from '../src/index';
 import {I18nContext} from '../src/plugin.js';
@@ -20,11 +20,11 @@ test('useTranslations() hook', () => {
     },
   };
 
-  expect(
-    mount(
-      <I18nContext.Provider value={mockI18n}>
-        <Foo />
-      </I18nContext.Provider>
-    ).html()
-  ).toMatchSnapshot();
+  const {asFragment} = render(
+    <I18nContext.Provider value={mockI18n}>
+      <Foo />
+    </I18nContext.Provider>
+  );
+
+  expect(asFragment()).toMatchSnapshot();
 });

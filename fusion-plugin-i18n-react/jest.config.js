@@ -16,7 +16,6 @@ module.exports = {
     {
       displayName: 'browser',
       testEnvironment: 'jsdom',
-      setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
       testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
       globals: {
         __NODE__: false,

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import {mount} from 'enzyme';
+import {render} from '@testing-library/react';
 
 import {withTranslations} from '../src/index';
 import {I18nContext} from '../src/plugin.js';
@@ -24,11 +24,11 @@ test('withTranslations() HOC - localeCode', () => {
     },
   };
 
-  expect(
-    mount(
-      <I18nContext.Provider value={mockI18n}>
-        <Foo />
-      </I18nContext.Provider>
-    ).html()
-  ).toMatchSnapshot();
+  const {asFragment} = render(
+    <I18nContext.Provider value={mockI18n}>
+      <Foo />
+    </I18nContext.Provider>
+  );
+
+  expect(asFragment()).toMatchSnapshot();
 });

@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "react": "16.4.2"
+  },
+  "devDependencies": {
+    "enzyme": "^3.11.0"
   }
 }

@@ -7,14 +7,13 @@
  */
 
 /* eslint-env browser */
-import Enzyme, {mount} from 'enzyme';
 import {connect} from 'react-redux';
-import Adapter from 'enzyme-adapter-react-16';
 import React from 'react';
 
 import App from 'fusion-core';
 import type {Context} from 'fusion-core';
 import {getService} from 'fusion-test-utils';
+import {render} from '@testing-library/react';
 
 import GetReduxPlugin from '../src/browser.js';
 import {
@@ -25,8 +24,6 @@ import {
 } from '../src/tokens.js';
 
 import {serialize} from '../src/codec';
-
-Enzyme.configure({adapter: new Adapter()});
 
 /* Test fixtures */
 const appCreator = (reducer, preloadedState, enhancer, reduxDevToolsConfig) => {
@@ -295,7 +292,7 @@ test('browser middleware', async () => {
   function Component(props) {
     expect(props.test).toBe(1);
     expect(typeof props.dispatch).toBe('function');
-    return React.createElement('div');
+    return <div>Current value: {props.test}</div>;
   }
   const Connected = connect((state) => state)(Component);
   const element = React.createElement(Connected);
@@ -307,11 +304,8 @@ test('browser middleware', async () => {
     Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve())
   ).resolves.not.toThrow();
   expect(ctx.element).not.toBe(element);
-  const rendered = mount(ctx.element);
-  expect(rendered.find(Connected).length).toBe(1);
-  expect(rendered.find(Component).length).toBe(1);
-  expect(rendered.find(Component).props().test).toBe(1);
-  expect(typeof rendered.find(Component).props().dispatch).toBe('function');
+  const {getByText} = render(ctx.element);
+  expect(getByText('Current value: 1')).toBeDefined();
 });
 
 test('browser - store creation without cleanup between iterations', () => {

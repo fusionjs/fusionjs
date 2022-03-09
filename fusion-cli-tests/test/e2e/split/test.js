@@ -73,30 +73,30 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   );
   expect(resA).toMatchInlineSnapshot(`
     Array [
-      356,
-      644,
-      "legacy-447",
-      "legacy-926",
+      512,
+      588,
+      "legacy-700",
+      "legacy-766",
     ]
   `);
   expect(resB).toMatchInlineSnapshot(`
     Array [
-      27,
-      356,
-      "legacy-844",
-      "legacy-926",
+      588,
+      855,
+      "legacy-19",
+      "legacy-766",
     ]
   `);
   expect(resCombined).toMatchInlineSnapshot(`
     Array [
-      356,
-      "legacy-926",
+      588,
+      "legacy-766",
     ]
   `);
   expect(resTransitive).toMatchInlineSnapshot(`
     Array [
-      269,
-      "legacy-431",
+      144,
+      "legacy-10",
     ]
   `);
 
@@ -106,7 +106,7 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  t.ok(csrContent.includes('<div id="csr">269</div>'));
+  t.ok(csrContent.includes('<div id="csr">144</div>'));
 
   browser.close();
   proc.kill('SIGKILL');
@@ -171,7 +171,7 @@ describe('split chunk ids kept in sync on both client and server', () => {
     const hmrCompleted = page.evaluate(() => {
       return new Promise((resolve) => {
         // eslint-disable-next-line
-        window.__addHotStatusHandler(status => {
+        window.__addHotStatusHandler((status) => {
           if (status === 'idle') {
             setTimeout(() => {
               resolve();

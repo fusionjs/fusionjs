@@ -8,12 +8,8 @@
 
 /* eslint-env browser */
 import * as React from 'react';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import ReactDOM from 'react-dom';
 import {prepare} from '../src/index.js';
-
-Enzyme.configure({adapter: new Adapter()});
 
 test('Client-side preparing', (done) => {
   let numRenders = 0;
