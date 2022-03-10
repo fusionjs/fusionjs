@@ -10,12 +10,15 @@ import React from 'react';
 
 import {renderToString as render} from 'react-dom/server';
 
-import {MemoryRouter, Route} from '../src/server.js';
+import {MemoryRouter, Routes, Route} from '../src/server.js';
 
-test('works in server', () => {
+test('memory router works in server', () => {
+  const Hello = () => <div>Test</div>;
   const el = (
     <MemoryRouter initialEntries={['/test']}>
-      <Route path="/test" render={() => <div>Test</div>} />
+      <Routes>
+        <Route path="/test" element={<Hello />} />
+      </Routes>
     </MemoryRouter>
   );
   expect(/Test/.test(render(el))).toBeTruthy();

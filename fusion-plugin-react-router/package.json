@@ -7,10 +7,10 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "history": "^4.9.0",
+    "history": "^5.2.0",
     "just-compare": "^1.3.0",
     "prop-types": "^15.7.2",
-    "react-router-dom": "^5.1.0"
+    "react-router-dom": "^6.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -28,7 +28,7 @@
     "jest-resolver-fusion": "0.0.0-monorepo",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-router": "^5.1.0"
+    "react-router": "^6.2.1"
   },
   "engines": {
     "node": ">=8.9.4",

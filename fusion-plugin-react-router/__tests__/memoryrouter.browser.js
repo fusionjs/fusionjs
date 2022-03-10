@@ -10,14 +10,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {MemoryRouter, Route} from '../src/browser.js';
+import {MemoryRouter, Routes, Route} from '../src/browser.js';
 
-test('works in browser', () => {
+test('memory router works in browser', () => {
   const root = document.createElement('div');
 
+  const Hello = () => <div>Test</div>;
   const el = (
     <MemoryRouter initialEntries={['/test']}>
-      <Route path="/test" render={() => <div>Test</div>} />
+      <Routes>
+        <Route path="/test" element={<Hello />} />
+      </Routes>
     </MemoryRouter>
   );
   ReactDOM.render(el, root);

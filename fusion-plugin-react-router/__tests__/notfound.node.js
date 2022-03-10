@@ -10,7 +10,8 @@ import React from 'react';
 
 import {renderToString as render} from 'react-dom/server';
 
-import {Router, Route, NotFound} from '../src/server.js';
+import {Router, NotFound} from '../src/server.js';
+import {Routes, Route, Router as DefaultProvider} from 'react-router-dom';
 import {createServerHistory} from '../src/modules/ServerHistory.js';
 
 test('sets code', () => {
@@ -28,10 +29,12 @@ test('sets code', () => {
       state.code = code;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
-    <Router history={history} context={ctx}>
-      <Route component={Hello} />
+    <Router context={ctx} history={history} Provider={DefaultProvider}>
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   expect(/Hello/.test(render(el))).toBeTruthy();

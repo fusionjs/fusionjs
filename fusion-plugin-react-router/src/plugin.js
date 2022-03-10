@@ -7,7 +7,6 @@
  */
 
 import * as React from 'react';
-import {Router as DefaultProvider} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
 
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
@@ -25,26 +24,16 @@ import {Router as ServerRouter} from './server.js';
 import {Router as BrowserRouter} from './browser.js';
 import {createServerHistory} from './modules/ServerHistory.js';
 
-import {addRoutePrefix} from './modules/utils.js';
-import type {RouterHistoryType, StaticContextType} from './types.js';
-
-type ProviderPropsType = {
-  history: RouterHistoryType,
-  children?: React.Node,
-};
+import type {TNavigator, StaticContextType} from './types.js';
 
 type HistoryWrapperType = {
   from: (ctx: Context) => {
-    history: RouterHistoryType,
+    history: TNavigator,
   },
 };
 
 export const GetStaticContextToken =
   createToken<(ctx: Context) => StaticContextType>('GetStaticContext');
-
-export const RouterProviderToken: Token<
-  React.ComponentType<ProviderPropsType>
-> = createToken('RouterProvider');
 
 export const RouterToken: Token<HistoryWrapperType> = createToken('Router');
 
@@ -53,7 +42,6 @@ const Router = __NODE__ ? ServerRouter : BrowserRouter;
 type PluginDepsType = {
   getStaticContext: typeof GetStaticContextToken.optional,
   emitter: typeof UniversalEventsToken.optional,
-  Provider: typeof RouterProviderToken.optional,
   RouteTags: typeof RouteTagsToken,
 };
 
@@ -64,14 +52,10 @@ let noMatchingRoute = 'no-matching-route';
 const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
     emitter: UniversalEventsToken.optional,
-    Provider: RouterProviderToken.optional,
     getStaticContext: GetStaticContextToken.optional,
     RouteTags: RouteTagsToken,
   },
-  middleware: (
-    {RouteTags, emitter, Provider = DefaultProvider, getStaticContext},
-    self
-  ) => {
+  middleware: ({RouteTags, emitter, getStaticContext}, self) => {
     return async (ctx, next) => {
       const tags = RouteTags.from(ctx);
       const prefix = ctx.prefix || '';
@@ -93,19 +77,15 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
                 ctx.status = code;
               },
               set url(url: string) {
-                const toUrl = addRoutePrefix(url, prefix);
-                if (typeof toUrl === 'string') {
-                  ctx.redirect(toUrl);
-                }
+                ctx.redirect(url);
               },
             };
         // Expose the history object
-        const history = createServerHistory(prefix, context, prefix + ctx.url);
+        const history = createServerHistory(prefix, context, ctx.url);
         myAPI.history = history;
         ctx.element = (
           <Router
             history={history}
-            Provider={Provider}
             onRoute={(d) => {
               pageData = d;
               tags.name = pageData.title;
@@ -184,14 +164,15 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
           !browserHistory ||
           (__DEV__ && typeof window.jsdom !== 'undefined')
         ) {
-          browserHistory = createBrowserHistory({basename: ctx.prefix});
+          browserHistory = (createBrowserHistory({
+            basename: ctx.prefix,
+          }): TNavigator);
         }
         // Expose the history object
         myAPI.history = browserHistory;
         ctx.element = (
           <Router
             history={browserHistory}
-            Provider={Provider}
             basename={ctx.prefix}
             onRoute={(payload) => {
               payload.routeMatched = true;
@@ -211,7 +192,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   provides() {
     return {
       from: memoize(() => {
-        const api: {history: RouterHistoryType} = ({
+        const api: {history: TNavigator} = ({
           history: null,
         }: any);
         return api;

@@ -8,81 +8,144 @@
 
 import {
   BrowserRouter as BrowserRouterUntyped,
+  unstable_HistoryRouter as UnstableHistoryRouterUntyped,
   HashRouter as HashRouterUntyped,
-  Link as LinkUntyped,
   MemoryRouter as MemoryRouterUntyped,
+  Link as LinkUntyped,
   NavLink as NavLinkUntyped,
-  Prompt as PromptUntyped,
-  StaticRouter as StaticRouterUntyped,
-  Switch as SwitchUntyped,
+  Outlet as OutletUntyped,
+  useOutletContext as useOutletContextUntyped,
+  Routes as _Routes,
+  Route as RouteUntyped,
+  createRoutesFromChildren as createRoutesFromChildrenUntyped,
+  generatePath as generatePathUntyped,
+  matchRoutes as matchRoutesUntyped,
+  renderMatches as renderMatchesUntyped,
   matchPath as matchPathUntyped,
-  withRouter as withRouterUntyped,
-  useHistory as useHistoryUntyped,
-  useParams as useParamsUntyped,
-  useRouteMatch as useRouteMatchUntyped,
+  resolvePath as resolvePathUntyped,
+  useHref as useHrefUntyped,
+  useLinkClickHandler as useLinkClickHandlerUntyped,
+  useInRouterContext as useInRouterContextUntyped,
   useLocation as useLocationUntyped,
+  useNavigationType as useNavigationTypeUntyped,
+  useMatch as useMatchUntyped,
+  useNavigate as useNavigateUntyped,
+  useOutlet as useOutletUntyped,
+  useParams as useParamsUntyped,
+  useResolvedPath as useResolvedPathUntyped,
+  useRoutes as useRoutesUntyped,
+  useSearchParams as useSearchParamsUntyped,
+  createSearchParams as createSearchParamsUntyped,
 } from 'react-router-dom';
 
 import {Status, NotFound} from './modules/Status';
-import {Redirect} from './modules/Redirect';
+import {Navigate} from './modules/Navigate';
 import {Router} from './modules/BrowserRouter';
-import {Route} from './modules/Route';
+import {Routes} from './modules/Routes';
 
 import type {
-  BrowserRouterType,
-  HashRouterType,
-  LinkType,
-  MemoryRouterType,
-  NavLinkType,
-  PromptType,
-  StaticRouterType,
-  SwitchType,
-  matchPathType,
-  withRouterType,
-  RouterHistoryType,
-  MatchType,
-  LocationType,
-  ParamsType,
+  TRoute,
+  TUseLocation,
+  TCreateRoutesFromChildren,
+  TMatchRoutes,
+  TBrowserRouter,
+  TUnstableHistoryRouter,
+  THashRouter,
+  TMemoryRouter,
+  TLink,
+  TNavLink,
+  TOutlet,
+  TUseOutletContext,
+  TGeneratePath,
+  TRenderMatches,
+  TMatchPath,
+  TResolvePath,
+  TUseHref,
+  TUseLinkClickHandler,
+  TUseInRouterContext,
+  TUseNavigationType,
+  TUseMatch,
+  TUseNavigate,
+  TUseOutlet,
+  TUseParams,
+  TUseResolvedPath,
+  TUseRoutes,
+  TUseSearchParams,
+  TCreateSearchParams,
 } from './types.js';
 
 /**
  * Cast each of these imports from react-router-dom to a copied-version of their
- * types.  This is necessary as the libdef defined types will not be accessible to
+ * types. This is necessary as the libdef defined types will not be accessible to
  * consumers of this package.
  */
-const BrowserRouter: BrowserRouterType = BrowserRouterUntyped;
-const HashRouter: HashRouterType = HashRouterUntyped;
-const Link: LinkType = LinkUntyped;
-const MemoryRouter: MemoryRouterType = MemoryRouterUntyped;
-const NavLink: NavLinkType = NavLinkUntyped;
-const Prompt: PromptType = PromptUntyped;
-const StaticRouter: StaticRouterType = StaticRouterUntyped;
-const Switch: SwitchType = SwitchUntyped;
-const matchPath: matchPathType = matchPathUntyped;
-const withRouter: withRouterType = withRouterUntyped;
-const useHistory: () => RouterHistoryType = useHistoryUntyped;
-const useRouteMatch: () => MatchType = useRouteMatchUntyped;
-const useLocation: () => LocationType = useLocationUntyped;
-const useParams: () => ParamsType = useParamsUntyped;
+const BrowserRouter: TBrowserRouter = BrowserRouterUntyped;
+const UnstableHistoryRouter: TUnstableHistoryRouter =
+  UnstableHistoryRouterUntyped;
+const HashRouter: THashRouter = HashRouterUntyped;
+const MemoryRouter: TMemoryRouter = MemoryRouterUntyped;
+const Link: TLink = LinkUntyped;
+const NavLink: TNavLink = NavLinkUntyped;
+const Outlet: TOutlet = OutletUntyped;
+const useOutletContext: TUseOutletContext = useOutletContextUntyped;
+// $FlowFixMe - Adding custom property
+const Route: TRoute = RouteUntyped;
+const createRoutesFromChildren: TCreateRoutesFromChildren =
+  createRoutesFromChildrenUntyped;
+const generatePath: TGeneratePath = generatePathUntyped;
+const matchRoutes: TMatchRoutes = matchRoutesUntyped;
+const renderMatches: TRenderMatches = renderMatchesUntyped;
+const matchPath: TMatchPath = matchPathUntyped;
+const resolvePath: TResolvePath = resolvePathUntyped;
+const useHref: TUseHref = useHrefUntyped;
+const useLinkClickHandler: TUseLinkClickHandler = useLinkClickHandlerUntyped;
+const useInRouterContext: TUseInRouterContext = useInRouterContextUntyped;
+const useLocation: TUseLocation = useLocationUntyped;
+const useNavigationType: TUseNavigationType = useNavigationTypeUntyped;
+const useMatch: TUseMatch = useMatchUntyped;
+const useNavigate: TUseNavigate = useNavigateUntyped;
+const useOutlet: TUseOutlet = useOutletUntyped;
+const useParams: TUseParams = useParamsUntyped;
+const useResolvedPath: TUseResolvedPath = useResolvedPathUntyped;
+const useRoutes: TUseRoutes = useRoutesUntyped;
+const useSearchParams: TUseSearchParams = useSearchParamsUntyped;
+const createSearchParams: TCreateSearchParams = createSearchParamsUntyped;
 
 export {
-  BrowserRouter,
-  HashRouter,
-  Link,
-  MemoryRouter,
-  NavLink,
-  Prompt,
-  StaticRouter,
-  Switch,
-  matchPath,
-  withRouter,
+  // Custom
   Status,
   NotFound,
-  Redirect,
+  Navigate,
   Router,
+  Routes,
+  // Passed Through
+  BrowserRouter,
+  UnstableHistoryRouter,
+  HashRouter,
+  MemoryRouter,
+  Link,
+  NavLink,
+  Outlet,
+  useOutletContext,
+  _Routes,
   Route,
-  useHistory,
-  useRouteMatch,
+  createRoutesFromChildren,
+  generatePath,
+  matchRoutes,
+  renderMatches,
+  matchPath,
+  resolvePath,
+  useHref,
+  useLinkClickHandler,
+  useInRouterContext,
   useLocation,
+  useNavigationType,
+  useMatch,
+  useNavigate,
+  useOutlet,
   useParams,
+  useResolvedPath,
+  useRoutes,
+  useSearchParams,
+  createSearchParams,
 };

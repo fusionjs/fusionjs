@@ -8,10 +8,10 @@
 
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
-import {Router, Route, Status} from '../src/server';
+import {Router, Routes, Route, Status} from '../src/server';
 import {createServerHistory} from '../src/modules/ServerHistory';
 
-test('sets code with static code', () => {
+test('status server sets code with static code', () => {
   const Hello = () => (
     <Status code="404">
       <div>Hello</div>
@@ -26,17 +26,19 @@ test('sets code with static code', () => {
       state.code = code;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
-      <Route component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   expect(/Hello/.test(render(el))).toBeTruthy();
   expect(state.code).toBe(404);
 });
 
-test('sets code with numeric code', () => {
+test('status server sets code with numeric code', () => {
   const Hello = () => (
     <Status code={404}>
       <div>Hello</div>
@@ -51,17 +53,19 @@ test('sets code with numeric code', () => {
       state.code = code;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
-      <Route component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   expect(/Hello/.test(render(el))).toBeTruthy();
   expect(state.code).toBe(404);
 });
 
-test('sets code with string code', () => {
+test('status server sets code with string code', () => {
   const Hello = () => (
     <Status code={'404'}>
       <div>Hello</div>
@@ -76,10 +80,12 @@ test('sets code with string code', () => {
       state.code = code;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
-      <Route component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   expect(/Hello/.test(render(el))).toBeTruthy();

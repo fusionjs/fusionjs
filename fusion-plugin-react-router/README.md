@@ -6,6 +6,8 @@ The `fusion-plugin-react-router` package provides a universal router plugin for 
 
 The package also offers components to control HTTP status server-side.
 
+This plugin uses the 6.x version of `react-router`.
+
 ---
 
 ### Table of contents
@@ -16,18 +18,22 @@ The package also offers components to control HTTP status server-side.
 * [API](#api)
   * [Registration API](#registration-api)
   * [Routing Events and Timing Metrics](#routing-events-and-timing-metrics)
+  * [Accessing History](#accessing-history)
   * [`Router`](#router)
+  * [`Routes`](#routes)
   * [`Route`](#route)
   * [`Link`](#link)
-  * [`Switch`](#switch)
   * [`Status`](#status)
   * [`NotFound`](#notfound)
-  * [`Redirect`](#redirect)
+  * [`Navigate`](#navigate)
   * [`BrowserRouter`](#browserrouter)
   * [`HashRouter`](#hashrouter)
   * [`MemoryRouter`](#memoryrouter)
   * [`withRouter`](#withrouter)
   * [`matchPath`](#matchpath)
+  * [Others](#others)
+* [Plugin Changes From V5](#plugin-changes-from-v5)
+* [Migration from V5](#migration-from-v5)
 
 ---
 
@@ -46,9 +52,9 @@ yarn add fusion-plugin-react-router
 import React from 'react';
 import {
   Router,
+  Routes,
   Route,
   Link,
-  Switch,
   NotFound,
 } from 'fusion-plugin-react-router';
 
@@ -73,11 +79,11 @@ const root = (
         <Link to="/404">404</Link>
       </li>
     </ul>
-    <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/test" component={Test} />
-      <Route component={PageNotFound} />
-    </Switch>
+    <Routes>
+      <Route caseSensitive={true} path="/" element={<Home />} />
+      <Route caseSensitive={true} path="/test" element={<Test />} />
+      <Route element={<PageNotFound />} />
+    </Routes>
   </div>
 );
 export default root;
@@ -127,15 +133,6 @@ import {RouterToken} from 'fusion-plugin-react-router';
 A token for registering the router plugin on. You only need to register the plugin on this token if another
 plugin depends on receiving the history object.
 
-##### `RouterProviderToken`
-
-```jsx
-import {RouterProviderToken} from 'fusion-plugin-react-router';
-```
-
-An optional dependency of this plugin, used to replace the routing provider. Defaults to `import {Router} from react-router-dom`.
-This is necessary for integrating with `connected-react-router`.
-
 ##### `UniversalEventsToken`
 
 ```jsx
@@ -145,7 +142,6 @@ import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 The [universal events](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-universal-events) plugin. Optional.
 
 Provide the UniversalEventsToken when you would like to emit routing events for data collection.
-
 
 ##### `GetStaticContextToken`
 
@@ -228,32 +224,46 @@ Configures a router and acts as a React context provider for routing concerns. T
 import {Router} from 'fusion-plugin-react-router';
 
 <Router
-  location={...}
   basename={...}
+  history={...}
   context={...}
   onRoute={...}
->{child}</Router>
+>
+  {child}
+</Router>
 ```
 
-* `location: string` - Required. The current pathname. Should be `ctx.url` in a Fusion plugin, or `req.url` in the server or `location.pathname` in the client
 * `basename: string` - Optional. Defaults to `''`. A route prefix.
-* `context: {url: string, status: string}` - Optional.
-* `onRoute: ({page: string, title: string}) => void` - Optional. Called when a route change happens. Provides a pathname and a title.
 * `child: React.Element` - Required.
+* `context: {url: string, status: string}` - Optional.
+* `history: History` - A history object that matches the interface from the `history` package.
+* `onRoute: ({page: string, title: string}) => void` - Optional. Called when a route change happens. Provides a pathname and a title.
+
+#### Routes
+
+A container for `Route` components that provides matching abilities to match the current URL to render a specific tree of components.
+
+```js
+import {Routes} from 'fusion-plugin-react-router';
+```
+
+See the [react-router-dom documentation for `<Routes>`](https://reactrouter.com/docs/en/v6/api#routes-and-route).
 
 #### Route
 
-Defines what gets rendered for a given route. Multiple routes can be rendered at the same time if they exist outside a `Switch` component.
+Defines what gets rendered for a given route. Must be rendered with a `Routes` component.
 
 ```jsx
 import {Router, Route} from 'fusion-plugin-react-router';
 
 <Router>
-  <Route exact component={component} path={...} trackingId={...}>{children}</Route>
+  <Routes>
+    <Route element={<Component />} path={...} trackingId={...}>{children}</Route>
+  </Routes>
 </Router>
 ```
 
-See the [react-router documentation for `<Route>`](https://reacttraining.com/react-router/web/api/Route)
+See the [react-router documentation for `<Route>`](https://reactrouter.com/docs/en/v6/api#routes-and-route).
 
 * `trackingId: string` - Optional. To set an analytical name for the route, and make it the first candidate to determine `payload.title` when emitting [routing events](#routing-events-and-timing-metrics).
 
@@ -269,33 +279,19 @@ import {Router, Link} from 'fusion-plugin-react-router';
 </Router>;
 ```
 
-See the [react-router documentation for `<Link>`](https://reacttraining.com/react-router/web/api/Link).
-
-#### `Switch`
-
-Renders the first child `Route` that matches the path.
-
-```jsx
-import {Router, Switch} from 'fusion-plugin-react-router';
-
-<Router>
-  <Switch>{children}</Switch>
-</Router>;
-```
-
-* `children: React.Children<Route>` - React children must be `Route` components.
-
-See the [react-router documentation for `<Switch>`](https://reacttraining.com/react-router/web/api/Switch).
+See the [react-router documentation for `<Link>`](https://reactrouter.com/docs/en/v6/api#link).
 
 #### `Status`
 
 Signals to the `Router` context that an HTTP status change is required.
 
 ```jsx
-import {Router, Route, Status} from 'fusion-plugin-react-router';
+import {Router, Routes, Route, Status} from 'fusion-plugin-react-router';
 
 <Router>
-  <Route component={() => <Status code={...}>{child}</Status>} />
+  <Routes>
+    <Route element={<Status code={...}>{child}</Status>} />
+  </Routes>
 </Router>
 ```
 
@@ -307,29 +303,33 @@ import {Router, Route, Status} from 'fusion-plugin-react-router';
 Equivalent to `<Status code={404}></Status>`
 
 ```jsx
-import {Router, Route, NotFound} from 'fusion-plugin-react-router';
+import {Router, Routes, Route, NotFound} from 'fusion-plugin-react-router';
 
 <Router>
-  <Route component={() => <NotFound>{child}</NotFound>} />
+  <Routes>
+    <Route element={<NotFound>{child}</NotFound>} />
+  </Routes>
 </Router>;
 ```
 
 * `child: React.Element` - A React element
 
-#### `Redirect`
+#### `Navigate`
 
 Signals to the `Router` context to navigate to a new location.
 
 ```jsx
-import {Router, Route, Redirect} from 'fusion-plugin-react-router';
+import {Router, Routes, Route, Navigate} from 'fusion-plugin-react-router';
 
 <Router>
-  <Route component={() => <Redirect to="/">{child}</Redirect>} />
+  <Routes>
+    <Route element={<Navigate to="/">{child}</Navigate>} />
+  </Routes>
 </Router>;
 ```
 
 * `to: string|object` - Required. A URL or location to redirect to.
-* `push: boolean` - Optional. When true, redirecting will push a new entry onto the history instead of replacing the current one.
+* `replace: boolean` - Optional. When true, redirecting will replace the current entry on the history stack instead of pushing a new entry.
 * `code: number` - Optional. A HTTP Status code to be used if this component is mounted.
 
 #### `BrowserRouter`
@@ -340,7 +340,7 @@ A `<Router>` that uses the HTML5 history API to keep your UI in sync with the UR
 import {BrowserRouter} from 'fusion-plugin-react-router';
 ```
 
-See the [react-router-dom documentation for `<BrowserRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/BrowserRouter.md).
+See the [react-router-dom documentation for `<BrowserRouter>`](https://reactrouter.com/docs/en/v6/api#browserrouter).
 
 #### `HashRouter`
 
@@ -350,7 +350,7 @@ A `<Router>` that uses `window.location.hash` to keep your UI in sync with the U
 import {HashRouter} from 'fusion-plugin-react-router';
 ```
 
-See the [react-router-dom documentation for `<HashRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/HashRouter.md).
+See the [react-router-dom documentation for `<HashRouter>`](https://reactrouter.com/docs/en/v6/api#hashrouter).
 
 #### `MemoryRouter`
 
@@ -360,24 +360,38 @@ A `<Router>` that keeps the history of your "URL" in memory (does not read or wr
 import {MemoryRouter} from 'fusion-plugin-react-router';
 ```
 
-See the [react-router-dom documentation for `<MemoryRouter>`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/MemoryRouter.md).
+See the [react-router-dom documentation for `<MemoryRouter>`](https://reactrouter.com/docs/en/v6/api#memoryrouter).
 
-#### `withRouter`
+#### `matchRoutes`
 
-Exposes `match`, `location` and `history` properties of the React Router history object as props. This is a re-export of React Router's `withRouter`.
-
-```js
-import {withRouter} from 'fusion-plugin-react-router';
-```
-
-See the [react-router documentation for `withRouter()`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md).
-
-#### `matchPath`
-
-Programmatic API to run React Router's route matching algorithm. This is a re-export of React Router's `matchPath`.
+Programmatic API to run React Router's route matching algorithm. This is a re-export of React Router's `matchRoutes`.
 
 ```js
-import {matchPath} from 'fusion-plugin-react-router';
+import {matchRoutes} from 'fusion-plugin-react-router';
 ```
 
-See the [react-router documentation for `matchPath()`](https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/matchPath.md).
+See the [react-router documentation for `matchPath()`](https://reactrouter.com/docs/en/v6/api#matchroutes).
+
+#### Others
+
+For the complete list of re-exported components from React Router, visit the documentation here: https://reactrouter.com/docs/en/v6/api
+
+---
+
+### Plugin Changes From V5
+
+For previous users of this plugin that was using React Router 5, the list below details the breaking changes between the old plugin and the V6 plugin:
+
+* `RouterProviderToken` was removed which allowed for swapping the base Router component utilized on the server and browser. Now, the plugin internally uses the `Router` and `BrowserRouter` components from `react-router-dom` directly.
+* The `Redirect` component was renamed to the `Navigate` component.
+* The `Route` component was removed and a replacement `Routes` component was created.
+* The usage of `history` V4 under the hood was updated to match the new API from `history` V5. Any programmatic usage of the history object that was provided by the old plugin will need to be updated to match V5.
+
+---
+
+### Migration from V5
+
+The official documentation provides a detailed list of what changes need to be implemented: https://reactrouter.com/docs/en/v6/upgrading/v5
+
+Because `<Route>` elements no longer take React component but React element instances, if you utilize the `split` API from `fusion-react`, you will need to wrap the output of `split` with a `React.createElement` call to ensure
+that an element is being returned.

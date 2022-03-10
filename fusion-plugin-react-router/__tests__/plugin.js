@@ -5,21 +5,17 @@
  *
  * @flow
  */
+/* eslint-env browser, node */
 
 import React from 'react';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
-import {withRouter, Link} from 'react-router-dom';
 import type {FusionPlugin} from 'fusion-core';
-import {Route} from '../src/modules/Route';
-import {Redirect} from '../src/modules/Redirect.js';
-import RouterPlugin, {
-  RouterProviderToken,
-  RouterToken,
-  GetStaticContextToken,
-} from '../src/plugin';
+import {Link, Routes, Route, Outlet} from '../src/index.js';
+import {Navigate} from '../src/modules/Navigate.js';
+import RouterPlugin, {RouterToken, GetStaticContextToken} from '../src/plugin';
 
 const addRoutePrefix = (ctx, next) => {
   // hack until we have better route prefix support in fusion-test-utils
@@ -58,8 +54,11 @@ if (__NODE__) {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
-        <Redirect from="/" to="/lol" />
-        <Route path="/lol" component={Hello} />
+        <Navigate to="/lol" />
+        <Routes>
+          <Route path="/" element={<Hello />} />
+          <Route path="/lol" element={<Hello />} />
+        </Routes>
       </div>
     );
     const app = getApp(element);
@@ -87,8 +86,12 @@ if (__NODE__) {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
-        <Redirect from="/" to="/lol" />
-        <Route path="/test" component={Hello} />
+        <Navigate to="/lol" />
+        <Routes>
+          <Route path="/" element={<Hello />} />
+          <Route path="/lol" element={<Hello />} />
+          <Route path="/test" element={<Hello />} />
+        </Routes>
       </div>
     );
     const app = getApp(element);
@@ -128,13 +131,17 @@ if (__NODE__) {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
-        <Redirect from="/" to="/lol" />
-        <Route path="/lol" component={Hello} />
+        <Navigate to="/lol" />
+        <Routes>
+          <Route path="/" element={<Hello />} />
+          <Route path="/test" element={<Hello />} />
+          <Route path="/test/lol" element={<Hello />} />
+        </Routes>
       </div>
     );
     const app = getPrefixApp(element);
     const simulator = setup(app);
-    const ctx = await simulator.render('/');
+    const ctx = await simulator.render('/test');
     expect(ctx.status).toBe(307);
     expect(ctx.res.getHeader('Location')).toBe('/test/lol');
     cleanup();
@@ -142,9 +149,9 @@ if (__NODE__) {
   test('handles url with invalid URI encoding on server', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
-      <div>
-        <Route path="/" component={Hello} />
-      </div>
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     );
     const app = getApp(element);
     const UniversalEvents = getMockEvents({
@@ -163,10 +170,10 @@ if (__NODE__) {
 test('events with trackingId', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
-    <div>
-      <Route path="/" trackingId="home" component={Hello} />
-      <Route path="/lol" component={Hello} />
-    </div>
+    <Routes>
+      <Route path="/" trackingId="home" element={<Hello />} />
+      <Route path="/lol" element={<Hello />} />
+    </Routes>
   );
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
@@ -179,13 +186,13 @@ test('events with trackingId', async () => {
   cleanup();
 });
 
-test('events with no tracking id', async () => {
+test('events with no tracking id base', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
-    <div>
-      <Route path="/" component={Hello} />
-      <Route path="/lol" component={Hello} />
-    </div>
+    <Routes>
+      <Route path="/" element={<Hello />} />
+      <Route path="/lol" element={<Hello />} />
+    </Routes>
   );
 
   const app = getApp(element);
@@ -204,8 +211,10 @@ test('no matching route', async () => {
     const Hello = () => <div>Hello</div>;
     const element = (
       <div>
-        <Route path="/" component={Hello} />
-        <Route path="/lol" component={Hello} />
+        <Routes>
+          <Route path="/" element={<Hello />} />
+          <Route path="/lol" element={<Hello />} />
+        </Routes>
       </div>
     );
 
@@ -221,47 +230,14 @@ test('no matching route', async () => {
   }
 });
 
-test('Custom Provider', async () => {
-  const Hello = () => <div>Hello</div>;
-  const element = (
-    <div>
-      <Route path="/" component={Hello} />
-      <Route path="/lol" component={Hello} />
-    </div>
-  );
-
-  const app = getApp(element);
-  const UniversalEvents = getMockEvents({
-    title: 'no-matching-route',
-    page: '/',
-  });
-  app.register(UniversalEventsToken, UniversalEvents);
-  app.register(RouterProviderToken, () => {
-    return <div id="custom-node">CUSTOM PROVIDER RESULT</div>;
-  });
-  const simulator = setup(app);
-  const {rendered} = await simulator.render('/');
-  let result;
-  if (__BROWSER__) {
-    const node = document.getElementById('custom-node');
-    if (!node || !node.textContent) {
-      throw new Error('Could not find node.');
-    }
-    result = node && node.textContent;
-  } else {
-    result = rendered;
-  }
-
-  expect(result.includes('CUSTOM PROVIDER RESULT')).toBeTruthy();
-  cleanup();
-});
-
 test('Router Providing History', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
     <div>
-      <Route path="/" component={Hello} />
-      <Route path="/lol" component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+        <Route path="/lol" element={<Hello />} />
+      </Routes>
     </div>
   );
 
@@ -292,10 +268,10 @@ test('Router Providing History', async () => {
 test('events with no tracking id and route prefix', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
-    <div>
-      <Route path="/" component={Hello} />
-      <Route path="/lol" component={Hello} />
-    </div>
+    <Routes>
+      <Route path="/" element={<Hello />} />
+      <Route path="/lol" element={<Hello />} />
+    </Routes>
   );
 
   const app = getPrefixApp(element);
@@ -305,11 +281,17 @@ test('events with no tracking id and route prefix', async () => {
   });
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
-  await simulator.render('/');
+  await simulator.render('/test');
   cleanup();
 });
 
 test('events with no tracking id and deep path', async (done) => {
+  const HelloParent = () => (
+    <>
+      <div>Hello</div>
+      <Outlet />
+    </>
+  );
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
@@ -317,17 +299,67 @@ test('events with no tracking id and deep path', async (done) => {
   }
   const element = (
     <div>
-      <Route path="/user" component={Hello} />
-      <Route path="/user/:uuid" component={Hello} />
-      <Route path="/lol" component={NotHere} />
+      <Routes>
+        <Route path="/user" element={<HelloParent />}>
+          <Route path=":uuid" element={<Hello />} />
+        </Route>
+        <Route path="/lol" element={<NotHere />} />
+      </Routes>
       <Link to="/lol" />
     </div>
   );
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    title: '/user/:uuid',
-    page: '/user/:uuid',
+    title: '/user/abcd',
+    page: '/user/abcd',
+  });
+
+  app.register(UniversalEventsToken, UniversalEvents);
+  const simulator = setup(app);
+  const ctx = await simulator.render('/user/abcd');
+
+  expect(ctx.rendered.includes('href="/lol"')).toBeTruthy();
+  expect(
+    ctx.rendered.includes('<div>Hello</div><div>Hello</div>')
+  ).toBeTruthy();
+  expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
+  cleanup();
+  done();
+});
+
+test('events with tracking id and deep path', async (done) => {
+  const HelloParent = () => (
+    <>
+      <div>Hello</div>
+      <Outlet />
+    </>
+  );
+  const Hello = () => <div>Hello</div>;
+  const NotHere = () => <div>NotHere</div>;
+  if (__BROWSER__) {
+    return done();
+  }
+  const element = (
+    <div>
+      <Routes>
+        <Route path="/user" element={<HelloParent />}>
+          <Route
+            path=":uuid"
+            element={<Hello />}
+            trackingId={'deep-tracking'}
+          />
+        </Route>
+        <Route path="/lol" element={<NotHere />} />
+      </Routes>
+      <Link to="/lol" />
+    </div>
+  );
+
+  const app = getApp(element);
+  const UniversalEvents = getMockEvents({
+    title: 'deep-tracking',
+    page: '/user/abcd',
   });
 
   app.register(UniversalEventsToken, UniversalEvents);
@@ -344,6 +376,12 @@ test('events with no tracking id and deep path', async (done) => {
 });
 
 test('events with no tracking id and deep path and route prefix', async (done) => {
+  const HelloParent = () => (
+    <>
+      <div>Hello</div>
+      <Outlet />
+    </>
+  );
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
@@ -351,22 +389,25 @@ test('events with no tracking id and deep path and route prefix', async (done) =
   }
   const element = (
     <div>
-      <Route path="/user" component={Hello} />
-      <Route path="/user/:uuid" component={Hello} />
-      <Route path="/lol" component={NotHere} />
+      <Routes>
+        <Route path="/user" element={<HelloParent />}>
+          <Route path=":uuid" element={<Hello />} />
+        </Route>
+        <Route path="/lol" element={<NotHere />} />
+      </Routes>
       <Link to="/lol" />
     </div>
   );
 
   const app = getPrefixApp(element);
   const UniversalEvents = getMockEvents({
-    title: '/user/:uuid',
-    page: '/user/:uuid',
+    title: '/user/abcd',
+    page: '/user/abcd',
   });
 
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
-  const ctx = await simulator.render('/user/abcd');
+  const ctx = await simulator.render('/test/user/abcd');
   expect(ctx.rendered.includes('href="/test/lol"')).toBeTruthy();
   expect(
     ctx.rendered.includes('<div>Hello</div><div>Hello</div>')
@@ -379,9 +420,9 @@ test('events with no tracking id and deep path and route prefix', async (done) =
 test('without UniversalEventsToken', async () => {
   const Hello = () => <div>Hello</div>;
   const element = (
-    <div>
-      <Route path="/" trackingId="home" component={Hello} />
-    </div>
+    <Routes>
+      <Route path="/" trackingId="home" element={<Hello />} />
+    </Routes>
   );
   const app = getApp(element);
   const simulator = setup(app);
@@ -391,109 +432,6 @@ test('without UniversalEventsToken', async () => {
   }
   cleanup();
 });
-
-if (__BROWSER__) {
-  test('mapping events in browser', async (done) => {
-    const Home = withRouter(({location, history}) => {
-      if (location.pathname === '/') {
-        setTimeout(() => {
-          history.push('/user/1234');
-        }, 50);
-      }
-      // add some nested routes
-      return (
-        <div>
-          <Route path="/" component={Hello} />
-        </div>
-      );
-    });
-    const User = withRouter(({location, history}) => {
-      if (location.pathname === '/user/1234') {
-        setTimeout(() => {
-          history.push('/user/12345');
-        }, 50);
-      }
-      // add some nested routes
-      return (
-        <div>
-          <Route path="/" component={Hello} />
-          <Route path="/user/:uuid" component={Hello} />
-        </div>
-      );
-    });
-    const Hello = () => {
-      return <div>Hello</div>;
-    };
-    const element = (
-      <div>
-        <Route path="/" component={Home} />
-        <Route path="/user" component={User} />
-      </div>
-    );
-    const app = getApp(element);
-    const expectedPayloads = [
-      {page: '/', params: {}, title: '/', routeMatched: true},
-      {
-        page: '/user/:uuid',
-        params: {uuid: '1234'},
-        title: '/user/:uuid',
-        routeMatched: true,
-      },
-      {
-        page: '/user/:uuid',
-        params: {uuid: '12345'},
-        title: '/user/:uuid',
-        routeMatched: true,
-      },
-    ];
-    let mapper;
-    const UniversalEvents: FusionPlugin<any, any> = createPlugin({
-      provides: () => ({
-        map(m) {
-          mapper = m;
-        },
-        emit(type, payload) {
-          const expected = expectedPayloads.shift();
-          expect(payload).toStrictEqual(expected);
-          const mapped = mapper({});
-          expect(mapped.__url__).toBe(expected.title);
-          expect(mapped.__urlParams__).toEqual(expected.params);
-          if (expectedPayloads.length === 0) {
-            cleanup();
-            done();
-          }
-        },
-      }),
-    });
-
-    app.register(UniversalEventsToken, UniversalEvents);
-    const simulator = setup(app);
-    await simulator.render('/');
-  });
-  test('handles url with invalid URI encoding in browser', async () => {
-    const Hello = () => <div>Hello</div>;
-    const element = (
-      <div>
-        <Route path="/" component={Hello} />
-      </div>
-    );
-    const app = getApp(element);
-    const UniversalEvents = getMockEvents({
-      title: 'no-matching-route',
-      page: '/%C0%AE%C0%AE/',
-    });
-    app.register(UniversalEventsToken, UniversalEvents);
-    const simulator = setup(app);
-    await simulator.render('/%C0%AE%C0%AE/');
-
-    const node = document.getElementById('root');
-    if (!node || !node.textContent) {
-      throw new Error('Could not find node.');
-    }
-    expect(node && node.textContent).toBe('Hello');
-    cleanup();
-  });
-}
 
 function getMockEvents({
   title: expectedTitle,
@@ -532,17 +470,21 @@ function getMockEvents({
   });
 }
 
+function setupRouterData(pageData = {title: '/', page: '/'}) {
+  const el = document.createElement('script');
+  el.setAttribute('type', 'application/json');
+  el.setAttribute('id', '__ROUTER_DATA__');
+  const textNode = document.createTextNode(JSON.stringify(pageData));
+  el.appendChild(textNode);
+  document.body && document.body.appendChild(el);
+  const rootEl = document.createElement('div');
+  rootEl.setAttribute('id', 'root');
+  document.body && document.body.appendChild(rootEl);
+}
+
 function setup(app, pageData = {title: '/', page: '/'}) {
   if (__BROWSER__) {
-    const el = document.createElement('script');
-    el.setAttribute('type', 'application/json');
-    el.setAttribute('id', '__ROUTER_DATA__');
-    const textNode = document.createTextNode(JSON.stringify(pageData));
-    el.appendChild(textNode);
-    document.body && document.body.appendChild(el);
-    const rootEl = document.createElement('div');
-    rootEl.setAttribute('id', 'root');
-    document.body && document.body.appendChild(rootEl);
+    setupRouterData(pageData);
   }
   const simulator = getSimulator(app);
   return simulator;

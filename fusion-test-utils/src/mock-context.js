@@ -107,7 +107,6 @@ export function createRenderContext(
   url: string,
   options?: ContextOptions = defaultContextOptions
 ): Context {
-  // $FlowFixMe
   return createRequestContext(url, {
     ...options,
     headers: {

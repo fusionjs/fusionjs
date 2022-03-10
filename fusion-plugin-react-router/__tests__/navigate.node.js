@@ -8,12 +8,12 @@
 
 import React from 'react';
 import {renderToString as render} from 'react-dom/server';
-import {Router, Route, Redirect} from '../src/server';
+import {Router, Routes, Route, Navigate} from '../src/server';
 import {createServerHistory} from '../src/modules/ServerHistory';
 
 test('redirects to a new URL', () => {
   const Hello = () => <div>Hello</div>;
-  const Moved = () => <Redirect to="/hello" />;
+  const Moved = () => <Navigate to="/hello" />;
   let setCode = false;
   let didRedirect = false;
   const ctx = {
@@ -28,13 +28,13 @@ test('redirects to a new URL', () => {
       didRedirect = true;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
-      <div>
-        <Route path="/" component={Moved} />
-        <Route path="/hello" component={Hello} />
-      </div>
+      <Routes>
+        <Route path="/" element={<Moved />} />
+        <Route path="/hello" element={<Hello />} />
+      </Routes>
     </Router>
   );
   render(el);
@@ -44,28 +44,28 @@ test('redirects to a new URL', () => {
 
 test('redirects with deprecated context', () => {
   const Hello = () => <div>Hello</div>;
-  const Moved = () => <Redirect to="/hello" />;
+  const Moved = () => <Navigate to="/hello" />;
   let setCode = false;
   let didRedirect = false;
   const ctx = {
     action: null,
     location: null,
-    setCode(code) {
+    set status(code) {
       expect(code).toBe(307);
       setCode = true;
     },
-    redirect(to) {
+    set url(to) {
       expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
-  const history = createServerHistory('/', ctx, '/');
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
-      <div>
-        <Route path="/" component={Moved} />
-        <Route path="/hello" component={Hello} />
-      </div>
+      <Routes>
+        <Route path="/" element={<Moved />} />
+        <Route path="/hello" element={<Hello />} />
+      </Routes>
     </Router>
   );
   render(el);

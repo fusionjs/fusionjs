@@ -8,24 +8,24 @@ const ErrorComponent = () => <div>Error</div>;
 export default [
   {
     path: '/split1',
-    component: split({
+    element: React.createElement(split({
       load() {
         return import('./split1');
       },
       LoadingComponent,
       ErrorComponent,
-    }),
-    exact: true,
+    })),
+    caseSensitive: true,
   },
   {
     path: '/split2',
-    component: split({
+    element: React.createElement(split({
       load() {
         return import('./split2');
       },
       LoadingComponent,
       ErrorComponent,
-    }),
-    exact: true,
+    })),
+    caseSensitive: true,
   },
 ];

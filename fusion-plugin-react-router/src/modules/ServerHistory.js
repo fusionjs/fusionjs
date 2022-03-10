@@ -6,31 +6,44 @@
  * @flow
  */
 
-// $FlowFixMe
-import {createPath, createLocation as defaultCreateLocation} from 'history';
+import {createPath, parsePath} from 'history';
 
-import {addRoutePrefix, removeRoutePrefix} from './utils.js';
-import type {
-  RouterHistoryType,
-  LocationType,
-  StaticContextType,
-} from '../types.js';
+import {addRoutePrefix} from './utils.js';
+import type {TLocation, StaticContextType, TTo, TNavigator} from '../types.js';
+
+const locationToCreatePathOpts = (loc: TLocation) => {
+  const opts = {};
+  for (const opt of ['pathname', 'search', 'hash']) {
+    if (loc[opt]) opts[opt] = loc[opt];
+  }
+  return opts;
+};
+
+const defaultCreateLocation = (path: TTo) => {
+  let location: TLocation = typeof path === 'string' ? parsePath(path) : path;
+  location.pathname = decodeURI(location.pathname);
+  if (!location.pathname) {
+    location.pathname = '/';
+  }
+  return location;
+};
 
 const createLocation = (
-  path: string | LocationType,
-  prefix: string
-): LocationType => {
-  const unprefixed = removeRoutePrefix(path, prefix);
+  path: TTo,
+  prefix: string,
+  addPrefix: boolean
+): TLocation => {
+  const finalPath = addPrefix ? createPrefixedURL(path, prefix) : path;
   try {
-    return defaultCreateLocation(unprefixed);
+    return defaultCreateLocation(finalPath);
   } catch (e) {
     if (e instanceof URIError) {
       return defaultCreateLocation(
-        typeof unprefixed === 'string'
-          ? encodeURI(unprefixed)
+        typeof finalPath === 'string'
+          ? encodeURI(finalPath)
           : {
-              ...unprefixed,
-              pathname: encodeURI(unprefixed.pathname),
+              ...finalPath,
+              pathname: encodeURI(finalPath.pathname),
             }
       );
     } else {
@@ -39,15 +52,12 @@ const createLocation = (
   }
 };
 
-const createPrefixedURL = (
-  location: string | LocationType,
-  prefix: string
-): string | LocationType => {
+const createPrefixedURL = (location: TTo, prefix: string): string => {
   const prefixed = addRoutePrefix(location, prefix);
   if (typeof prefixed === 'string') {
     return prefixed;
   } else {
-    return createPath(prefixed);
+    return createPath(locationToCreatePathOpts(prefixed));
   }
 };
 
@@ -60,39 +70,41 @@ const noop = () => {};
 export function createServerHistory(
   basename: string,
   context: StaticContextType,
-  location: string | LocationType
-): RouterHistoryType {
-  function createHref(location: string | LocationType): string | LocationType {
+  location: string
+): TNavigator {
+  function createHref(location: TTo): string {
     return createPrefixedURL(location, basename);
   }
-  function push(path: string) {
+  function push(path: TTo) {
     context.action = 'PUSH';
-    context.location = createLocation(path, basename);
-    const url = createPath(context.location);
+    // Ensure prefix is always included
+    context.location = createLocation(path, basename, true);
+    const url = createPath(locationToCreatePathOpts(context.location));
     if (typeof url === 'string') {
       context.url = url;
     }
   }
 
-  function replace(path: string) {
+  function replace(path: TTo) {
     context.action = 'REPLACE';
-    context.location = createLocation(path, basename);
-    const url = createPath(context.location);
+    // Ensure prefix is always included
+    context.location = createLocation(path, basename, true);
+    const url = createPath(locationToCreatePathOpts(context.location));
     if (typeof url === 'string') {
       context.url = url;
     }
   }
   const history = {
-    length: 0,
-    createHref,
     action: 'POP',
-    location: createLocation(location, basename),
+    location: createLocation(location, basename, false),
+    go: staticHandler('go'),
     push,
     replace,
-    go: staticHandler('go'),
-    goBack: staticHandler('back'),
-    goForward: staticHandler('forward'),
+    createHref,
+    back: staticHandler('back'),
+    forward: staticHandler('forward'),
     listen: () => noop,
+    block: () => noop,
   };
-  return (history: any);
+  return (history: TNavigator);
 }

@@ -12,9 +12,9 @@ import Home from './home.js';
 export default () => {
   const app = new App(
     (
-      <Switch>
-        <Route exact path="/" component={Home} />
-      </Switch>
+      <Routes>
+        <Route caseSensitive={true} path="/" element={<Home />} />
+      </Routes>
     )
   );
   app.register(Router);

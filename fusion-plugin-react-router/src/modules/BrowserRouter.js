@@ -8,28 +8,27 @@
 
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {Router as BaseRouter} from 'react-router-dom';
+import {unstable_HistoryRouter as BaseRouter} from 'react-router-dom';
 import compare from 'just-compare';
 
-import type {RouterPropsType as PropsType, RouterType} from '../types.js';
+import type {RouterPropsType, RouterType} from '../types.js';
 
 export {Status, NotFound} from './Status.js';
-export {Redirect} from './Redirect.js';
+export {Navigate} from './Navigate.js';
 
 type ContextType = {
   __IS_PREPARE__: boolean,
 };
-class BrowserRouter extends React.Component<PropsType> {
+class BrowserRouter extends React.Component<RouterPropsType> {
   lastTitle: ?string;
   lastParams: {};
   context: ContextType;
 
   static defaultProps = {
     onRoute: () => {},
-    Provider: BaseRouter,
   };
 
-  constructor(props: PropsType, context: ContextType) {
+  constructor(props: RouterPropsType, context: ContextType) {
     super(props, context);
     this.lastTitle = null;
   }
@@ -52,23 +51,20 @@ class BrowserRouter extends React.Component<PropsType> {
   }
 
   render() {
-    const {Provider, history, basename} = this.props;
-    if (!Provider) throw new Error('Missing Provider for Browser Router');
+    const {history, basename} = this.props;
     return (
-      // $FlowFixMe
-      <Provider basename={basename} history={history}>
+      <BaseRouter basename={basename} history={history}>
         {this.props.children}
-      </Provider>
+      </BaseRouter>
     );
   }
 }
 
 BrowserRouter.propTypes = {
-  children: PropTypes.node,
-  onRoute: PropTypes.func,
-  history: PropTypes.object,
-  Provider: PropTypes.any,
   basename: PropTypes.string,
+  children: PropTypes.node,
+  history: PropTypes.object,
+  onRoute: PropTypes.func,
 };
 
 BrowserRouter.contextTypes = {

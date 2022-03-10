@@ -1,20 +1,20 @@
 // @noflow
 import React from 'react';
 import App from 'fusion-react';
-import Router, {Route, Switch} from 'fusion-plugin-react-router';
+import Router, {Route, Routes} from 'fusion-plugin-react-router';
 import UniversalEvents, {
   UniversalEventsToken,
 } from 'fusion-plugin-universal-events';
 import {FetchToken} from 'fusion-tokens';
 
-import home from './home.js';
+import Home from './home.js';
 
 export default async function start() {
   const app = new App(
     (
-      <Switch>
-        <Route exact path="/" component={home} />
-      </Switch>
+      <Routes>
+        <Route caseSensitive={true} path="/" element={<Home />} />
+      </Routes>
     )
   );
   app.register(Router);

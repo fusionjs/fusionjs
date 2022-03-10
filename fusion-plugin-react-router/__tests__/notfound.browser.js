@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom';
 
 import {createBrowserHistory} from 'history';
 
-import {Router, Route, NotFound} from '../src/browser.js';
+import {Router, Routes, Route, NotFound} from '../src/browser.js';
 
 test('noops', () => {
   const root = document.createElement('div');
@@ -24,7 +24,9 @@ test('noops', () => {
   );
   const el = (
     <Router history={createBrowserHistory()}>
-      <Route component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   ReactDOM.render(el, root);

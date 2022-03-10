@@ -9,203 +9,210 @@
 import * as React from 'react';
 
 /* Custom types */
+
 export type RouterPropsType = {
-  context?: any,
-  onRoute?: Function,
-  history: RouterHistoryType,
-  Provider?: BaseRouterType,
   basename?: string,
   children?: React.Node,
+  context?: StaticContextType,
+  history: TNavigator,
+  onRoute?: Function,
 };
 
 export type RouterType = React.ComponentType<RouterPropsType>;
 
-/* Types below adapted from flow-typed's libdef for react-router-dom
- * (https://github.com/flow-typed/flow-typed/blob/master/definitions/npm/react-router-dom_v4.x.x/flow_v0.63.x-/react-router-dom_v4.x.x.js)
- *
- * Note that these must be redefined here in order to export them, as you cannot export types
- * directly from a libdef for consumers.
- */
-export type LocationType = {
+export type StaticContextType = {
+  action?: ?string,
+  location?: ?TLocation,
+  status?: ?number,
+  url?: ?string,
+  setCode?: (number) => void,
+  redirect?: (string) => void,
+};
+
+export type RouterContextType = {
+  basename: string,
+  history: TNavigator,
+  router: {
+    staticContext: StaticContextType,
+  },
+  onRoute: Function,
+};
+
+/* Types below adapted from react-router-dom_v6 TypeScript types */
+
+export type TLocation = {|
   pathname: string,
   search: string,
   hash: string,
-  state?: any,
-  key?: string,
-};
-
-export type LocationShapeType = {
-  pathname?: string,
-  search?: string,
-  hash?: string,
-  state?: any,
-};
-
-export type StaticContextType = {
-  action?: ?string,
-  location?: ?LocationType,
-  status?: ?number,
-  url?: ?string,
-};
-
-export type BrowserRouterType = React.ComponentType<{|
-  basename?: string,
-  forceRefresh?: boolean,
-  getUserConfirmation?: GetUserConfirmation,
-  keyLength?: number,
-  children?: React.Node,
-|}>;
-
-export type HashRouterType = React.ComponentType<{|
-  basename?: string,
-  getUserConfirmation?: GetUserConfirmation,
-  hashType?: 'slash' | 'noslash' | 'hashbang',
-  children?: React.Node,
-|}>;
-
-export type LinkType = React.ComponentType<{
-  className?: string,
-  to: string | LocationShapeType,
-  replace?: boolean,
-  children?: React.Node,
-}>;
-
-export type NavLinkType = React.ComponentType<{
-  to: string | LocationShapeType,
-  activeClassName?: string,
-  className?: string,
-  activeStyle?: Object,
-  style?: Object,
-  isActive?: (match: MatchType, location: LocationType) => boolean,
-  children?: React.Node,
-  exact?: boolean,
-  strict?: boolean,
-}>;
-
-// NOTE: Below are mostly duplicated from react-router.
-export type HistoryActionType = 'PUSH' | 'REPLACE' | 'POP';
-
-export type RouterHistoryType = {
-  length: number,
-  location: LocationType,
-  action: HistoryActionType,
-  listen(
-    callback: (location: LocationType, action: HistoryActionType) => void
-  ): () => void,
-  push(path: string | LocationShapeType, state?: any): void,
-  replace(path: string | LocationShapeType, state?: any): void,
-  go(n: number): void,
-  goBack(): void,
-  goForward(): void,
-  canGo?: (n: number) => boolean,
-  block(
-    callback:
-      | string
-      | ((location: LocationType, action: HistoryActionType) => ?string)
-  ): () => void,
-  // createMemoryHistory
-  index?: number,
-  entries?: Array<LocationType>,
-};
-
-export type ParamsType = {[key: string]: ?string};
-
-export type MatchType = {
-  params: ParamsType,
-  isExact: boolean,
-  path: string,
-  url: string,
-};
-
-export type ContextRouterType = {|
-  history: RouterHistoryType,
-  location: LocationType,
-  match: MatchType,
-  staticContext?: StaticRouterContextType,
 |};
 
-type ContextRouterVoid = {
-  history: RouterHistoryType | void,
-  location: LocationType | void,
-  match: MatchType | void,
-  staticContext?: StaticRouterContextType | void,
-};
+export type TTo = string | TLocation;
 
-type GetUserConfirmation = (
-  message: string,
-  callback: (confirmed: boolean) => void
-) => void;
+export type TNavigation = 'POP' | 'PUSH' | 'REPLACE';
 
-export type StaticRouterContextType = {
-  url?: string,
-};
+export type TNavigator = {|
+  action: string,
+  location: TLocation,
+  go(delta: number): void,
+  push(to: TTo, state?: any): void,
+  replace(path: TTo, state?: any): void,
+  createHref(to: TTo): string,
+  back(): void,
+  forward(): void,
+  listen(listener: any): () => void,
+  block(blocker: any): () => void,
+|};
 
-export type StaticRouterType = React.ComponentType<{|
+export type TRouterProps = {|
   basename?: string,
-  location?: string | LocationType,
-  context: StaticRouterContextType,
-  children?: React.Node,
+  children?: React$Node,
+  location: string | TLocation,
+  navigationType?: TNavigation,
+  navigator: TNavigator,
+  static?: boolean,
+|};
+
+export type TRouter = React$ComponentType<TRouterProps>;
+
+export type TNavigate = React$ComponentType<{|
+  to: TTo,
+  replace?: boolean,
+  state?: any,
 |}>;
 
-export type MemoryRouterType = React.ComponentType<{|
-  initialEntries?: Array<LocationShapeType | string>,
-  initialIndex?: number,
-  getUserConfirmation?: GetUserConfirmation,
-  keyLength?: number,
-  children?: React.Node,
+export type TRoute = React$ComponentType<{|
+  caseSensitive?: boolean,
+  children?: React$Node,
+  element?: React$Node | null,
+  index?: boolean,
+  path?: string,
+  trackingId?: string,
 |}>;
 
-type BaseRouterType = React.ComponentType<{|
-  history: RouterHistoryType,
-  children?: React.Node,
+export type TRoutes = React$ComponentType<{|
+  children?: React$Node,
+  location?: TTo,
 |}>;
 
-export type PromptType = React.ComponentType<{|
-  message: string | ((location: LocationType) => string | boolean),
-  when?: boolean,
-|}>;
+export type TUseLocation = () => TLocation;
 
-export type RedirectType = React.ComponentType<{|
-  to: string | LocationShapeType,
-  push?: boolean,
-  from?: string,
-  exact?: boolean,
-  strict?: boolean,
-|}>;
+export type TRouteObject = {|
+  caseSensitive?: boolean,
+  children?: Array<TRouteObject>,
+  element?: React$Node,
+  index?: boolean,
+  path?: string,
+|};
 
-export type RouteType = React.ComponentType<{|
-  component?: React.ComponentType<*>,
-  render?: (router: ContextRouterType) => React.Node,
-  children?: React.ComponentType<ContextRouterType> | React.Node,
-  path?: string | Array<string>,
-  exact?: boolean,
-  strict?: boolean,
-  location?: LocationShapeType,
-  sensitive?: boolean,
-|}>;
+export type TCreateRoutesFromChildren = (
+  children: React$Node
+) => Array<TRouteObject>;
 
-export type SwitchType = React.ComponentType<{|
-  children?: React.Node,
-  location?: LocationType,
-|}>;
-
-export type withRouterType = <Props: {}, Component: React.ComponentType<Props>>(
-  WrappedComponent: Component
-) => React.ComponentType<
-  $Diff<React.ElementConfig<Component>, ContextRouterVoid>
->;
-
-type MatchPathOptions = {
-  path?: string | string[],
-  exact?: boolean,
-  sensitive?: boolean,
-  strict?: boolean,
-};
-
-export type matchPathType = (
+export type TRouteMatch = {|
+  params: {[key: string]: string},
   pathname: string,
-  options?: MatchPathOptions | string,
-  parent?: MatchType
-) => null | MatchType;
+  route: TRouteObject,
+|};
 
-export type generatePathType = (pattern?: string, params?: Object) => string;
+export type TMatchRoutes = (
+  routes: Array<TRouteObject>,
+  location: TTo,
+  basename?: string
+) => Array<TRouteMatch> | null;
+
+export type TBrowserRouter = React$ComponentType<{|
+  basename?: string,
+  children?: React$Node,
+  window?: any,
+|}>;
+
+export type TUnstableHistoryRouter = React$ComponentType<{|
+  basename?: string,
+  children?: React$Node,
+  history: TNavigator,
+|}>;
+
+export type THashRouter = React$ComponentType<{|
+  basename?: string,
+  children?: React$Node,
+  window?: any,
+|}>;
+
+export type TMemoryRouter = React$ComponentType<{|
+  basename?: string,
+  children?: React$Node,
+  initialEntries?: Array<TTo>,
+  initialIndex?: number,
+|}>;
+
+export type TLink = React$ComponentType<{|
+  reloadDocument?: boolean,
+  replace?: boolean,
+  state?: any,
+  to: TTo,
+|}>;
+
+export type TNavLink = React$ComponentType<{|
+  children?: React$Node,
+  caseSensitive?: boolean,
+  className?: string | Function,
+  end?: boolean,
+  style?: any,
+|}>;
+
+export type TOutlet = React$ComponentType<{|
+  context?: any,
+|}>;
+
+export type TUseOutletContext = () => any;
+
+export type TStaticRouter = React$ComponentType<{|
+  basename?: string,
+  children?: React$Node,
+  location: TTo,
+|}>;
+
+export type TGeneratePath = (path: string, params: Object) => string;
+
+export type TRenderMatches = (
+  matches: Array<TRouteMatch> | null
+) => React$Element<any> | null;
+
+export type TMatchPath = (pattern: any, pathname: string) => any;
+
+export type TResolvePath = (to: TTo, fromPathname: string) => TLocation;
+
+export type TUseHref = (to: TTo) => string;
+
+export type TUseLinkClickHandler = (to: TTo, options?: Object) => any;
+
+export type TUseInRouterContext = () => boolean;
+export type TUseNavigationType = () => TNavigation;
+export type TUseMatch = (pattern: any) => any;
+export type TUseNavigate = () => any;
+export type TUseOutlet = () => React$Element<any> | null;
+export type TUseParams = () => any;
+export type TUseResolvedPath = (to: TTo) => TLocation;
+
+export type TUseRoutes = (
+  routes: Array<TRouteObject>,
+  location?: TTo
+) => React$Element<any> | null;
+
+export type TUseSearchParams = (defaultInit?: any) => [any, any];
+export type TCreateSearchParams = (init?: any) => any;
+
+/* Types below adapted from history_v5 TypeScript types */
+
+export type THistory = {|
+  action: string,
+  location: TLocation,
+  go(delta: number): void,
+  push(to: TTo, state?: any): void,
+  replace(path: TTo, state?: any): void,
+  createHref(to: TTo): string,
+  back(): void,
+  forward(): void,
+  listen(listener: any): () => void,
+  block(blocker: any): () => void,
+|};

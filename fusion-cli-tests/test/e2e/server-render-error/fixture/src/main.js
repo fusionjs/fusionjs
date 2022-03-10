@@ -5,16 +5,16 @@ import {FetchToken} from 'fusion-tokens';
 import UniversalEventsPlugin, {
   UniversalEventsToken,
 } from 'fusion-plugin-universal-events';
-import Router, {Route, Switch} from 'fusion-plugin-react-router';
+import Router, {Route, Routes} from 'fusion-plugin-react-router';
 
 import Home from './home.js';
 
 export default () => {
   const app = new App(
     (
-      <Switch>
-        <Route exact path="/" component={Home} />
-      </Switch>
+      <Routes>
+        <Route caseSensitive={true} path="/" element={<Home />} />
+      </Routes>
     )
   );
   app.register(Router);

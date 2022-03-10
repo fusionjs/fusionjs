@@ -14,6 +14,7 @@ const {renderToString} = require('react-dom/server');
 const {
   default: Router,
   RouterToken,
+  // $FlowFixMe - Pinned to v5 of react router
   RouterProviderToken,
 } = require('fusion-plugin-react-router');
 const {

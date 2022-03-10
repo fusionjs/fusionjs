@@ -7,21 +7,16 @@
  */
 
 import * as React from 'react';
+import type {RouterContextType} from '../types';
 import PropTypes from 'prop-types';
 
 type StatusPropsType = {
   children: React.Node,
   code?: string | number,
 };
-type StatusContextType = {
-  router?: {
-    staticContext: {
-      status: number,
-    },
-  },
-};
+
 export class Status extends React.Component<StatusPropsType> {
-  constructor(props: StatusPropsType, context: StatusContextType) {
+  constructor(props: StatusPropsType, context: RouterContextType) {
     super(props, context);
     const {router: {staticContext} = {}} = context;
     if (staticContext) {

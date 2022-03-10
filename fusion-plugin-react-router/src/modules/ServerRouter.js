@@ -7,10 +7,10 @@
  */
 
 import * as React from 'react';
-
+import PropTypes from 'prop-types';
 import {Router as BaseRouter} from 'react-router-dom';
 
-import type {RouterPropsType as PropsType, RouterType} from '../types.js';
+import type {RouterPropsType, RouterType} from '../types.js';
 
 /**
  * The public top-level API for a "static" <Router>, so-called because it
@@ -18,11 +18,10 @@ import type {RouterPropsType as PropsType, RouterType} from '../types.js';
  * location changes in a context object. Useful mainly in testing and
  * server-rendering scenarios.
  */
-class ServerRouter extends React.Component<PropsType> {
+class ServerRouter extends React.Component<RouterPropsType> {
   static defaultProps = {
     basename: '',
     context: {},
-    Provider: BaseRouter,
     onRoute: () => {},
   };
 
@@ -34,7 +33,7 @@ class ServerRouter extends React.Component<PropsType> {
       );
       Object.defineProperty(context, 'status', {
         set: (code) => {
-          context.setCode(code);
+          if (context.setCode) context.setCode(code);
         },
         configurable: true,
       });
@@ -45,7 +44,7 @@ class ServerRouter extends React.Component<PropsType> {
       );
       Object.defineProperty(context, 'url', {
         set: (url) => {
-          context.redirect(url);
+          if (context.redirect) context.redirect(url);
         },
         configurable: true,
       });
@@ -55,6 +54,7 @@ class ServerRouter extends React.Component<PropsType> {
 
   getChildContext() {
     return {
+      history: this.props.history,
       router: {
         staticContext: this.getRouterStaticContext(),
       },
@@ -64,23 +64,25 @@ class ServerRouter extends React.Component<PropsType> {
   }
 
   render() {
-    const {Provider, history, basename, children} = this.props;
-    if (!Provider) throw new Error('Missing Provider for Server Router');
+    const {history, basename, children} = this.props;
     return (
-      // $FlowFixMe
-      <Provider
+      <BaseRouter
         basename={basename}
-        history={history}
-        staticContext={this.getRouterStaticContext()}
+        location={history.location.pathname}
+        navigator={history}
+        static={true}
       >
         {children}
-      </Provider>
+      </BaseRouter>
     );
   }
 }
 
 ServerRouter.childContextTypes = {
-  router: () => {},
+  history: PropTypes.object,
+  router: PropTypes.shape({
+    staticContext: PropTypes.object,
+  }),
   onRoute: () => {},
 };
 

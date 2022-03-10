@@ -9,10 +9,10 @@
 /* eslint-env browser */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, Status} from '../src/browser';
+import {Router, Routes, Route, Status} from '../src/browser';
 import {createBrowserHistory} from 'history';
 
-test('noops', () => {
+test('status browser noops', () => {
   const root = document.createElement('div');
   const Hello = () => (
     <Status code="404">
@@ -21,7 +21,9 @@ test('noops', () => {
   );
   const el = (
     <Router history={createBrowserHistory()}>
-      <Route component={Hello} />
+      <Routes>
+        <Route path="/" element={<Hello />} />
+      </Routes>
     </Router>
   );
   ReactDOM.render(el, root);

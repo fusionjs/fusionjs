@@ -1,16 +1,16 @@
 // @flow
 import React from 'react';
-import {Route, Switch} from 'fusion-plugin-react-router';
+import {Route, Routes} from 'fusion-plugin-react-router';
 
 import Home from './pages/home.js';
 import PageNotFound from './pages/pageNotFound.js';
 
 const root = (
-  <Switch>
-    <Route exact path="/" component={Home} />
-    <Route exact path="/redirected" component={Home} />
-    <Route component={PageNotFound} />
-  </Switch>
+  <Routes>
+    <Route caseSensitive={true} path="/" element={<Home />} />
+    <Route caseSensitive={true} path="/redirected" element={<Home />} />
+    <Route element={<PageNotFound />} />
+  </Routes>
 );
 
 export default root;

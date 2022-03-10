@@ -1,7 +1,7 @@
 // @noflow
 
 import React from 'react';
-import Router, {Route, Switch, Link} from 'fusion-plugin-react-router';
+import Router, {Route, Routes, Link} from 'fusion-plugin-react-router';
 import {split} from 'fusion-react';
 
 const LoadingComponent = () => <div />;
@@ -26,10 +26,10 @@ const B = split({
 export default function Root() {
   return (
     <div>
-      <Switch>
-        <Route exact path={'/split-a'} component={A} />
-        <Route exact path={'/split-b'} component={A} />
-      </Switch>
+      <Routes>
+        <Route caseSensitive={true} path={'/split-a'} element={<A />} />
+        <Route caseSensitive={true} path={'/split-b'} element={<A />} />
+      </Routes>
     </div>
   );
 }

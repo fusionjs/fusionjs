@@ -1,7 +1,7 @@
 // @noflow
 
 import React from 'react';
-import Router, {Route, Switch, Link} from 'fusion-plugin-react-router';
+import Router, {Route, Routes, Link} from 'fusion-plugin-react-router';
 import {Translate} from 'fusion-plugin-i18n-react';
 import HOCTranslations from './hocTranslation.js';
 import HookTranslations from './hookTranslation.js';
@@ -20,11 +20,11 @@ export default function Root() {
       <Link id="split2-link" to="/split2">
         go to /split2 route
       </Link>
-      <Switch>
+      <Routes>
         {routes.map(({path, ...props}) => (
           <Route key={path} path={path} {...props} />
         ))}
-      </Switch>
+      </Routes>
     </div>
   );
 }

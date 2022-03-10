@@ -1,7 +1,7 @@
 // @noflow
 
 import React from 'react';
-import {Route, Switch, Link} from 'fusion-plugin-react-router';
+import {Route, Routes, Link} from 'fusion-plugin-react-router';
 import {split} from 'fusion-react';
 
 import routes from './routes';
@@ -21,11 +21,11 @@ export default function Root() {
         go to split route
       </Link>
       <Page />
-      <Switch>
+      <Routes>
         {routes.map(({path, ...props}) => (
           <Route key={path} path={path} {...props} />
         ))}
-      </Switch>
+      </Routes>
     </div>
   );
 }
