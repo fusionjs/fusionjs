@@ -20,7 +20,7 @@ const matchValue = process.env.TEST_FOLDER
   : process.env.TEST_REGEX ||
     (process.env.TEST_MATCH || '**/__tests__/**/*.[jt]s?(x)').split(',');
 
-function getReactVersion(meta) {
+function getReactMajorVersion(meta) {
   const react =
     (meta.dependencies && meta.dependencies.react) ||
     (meta.devDependencies && meta.devDependencies.react) ||
@@ -39,9 +39,19 @@ function hasEnzyme(meta) {
 function getReactSetup() {
   // $FlowFixMe
   const meta = require(rootDir + '/package.json');
-  if (hasEnzyme(meta) && getReactVersion(meta) === '16') {
-    return [require.resolve('./jest-framework-setup-16.js')];
+  if (hasEnzyme(meta)) {
+    const reactVersion = getReactMajorVersion(meta);
+
+    switch (reactVersion) {
+      case '16':
+        return [require.resolve('./jest-framework-setup-16.js')];
+      case '17':
+        return [require.resolve('./jest-framework-setup-17.js')];
+      default:
+        return [];
+    }
   }
+
   return [];
 }
 
