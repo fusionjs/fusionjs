@@ -61,54 +61,16 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   - `--environment`: Which environment/assets to run - defaults to first available assets among `["development", "production"]`
 
-- `fusion test [options]`
-  Builds test assets and runs tests
+- `fusion test`
+  This command is being deprecated, please use `jest` directly for which base configuration is provided via `fusion-cli/build/jest/jest-config`:
 
-  Tests are run with Jest
+  ```js
+  // jest.config.js
 
-  - `--dir`: Root path for the application relative to CLI CWD. (default .)
-  - `--debug`: Debug tests using --inspect-brk and --runInBand. (default false)
-  - `--match`: Runs test files that match a given string
-  - `--env`: Comma-separated list of environments to run tests in. Defaults to running both node and browser tests. (default jsdom,node)
-  - `--testFolder`: Which folder to look for tests in. Deprecated, use testMatch or testRegex instead.
-  - `--testMatch`: Which folder to look for tests in. A comma-separated list of glob patterns.
-  - `--testRegex`: Which folder to look for tests in. A comma-separated list of regexp strings.
-  - `--configPath`: Path to the jest configuration, used for testing. (default [path-to-fusion-cli]/build/jest/jest-config.js)
-  - `--updateSnapshot`, `-u`: Updates snapshots
+  module.exports = require('fusion-cli/build/jest/jest-config');
+  ```
 
-  Jest pass-through options
-
-  - `--collectCoverageFrom`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#collectcoveragefrom
-  - `--changedFilesWithAncestor`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#changedfileswithancestor
-  - `--changedSince`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#changedsince
-  - `--ci`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#ci
-  - `--clearCache`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#clearcache
-  - `--colors`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#colors
-  - `--coverage`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#coverage
-  - `--detectOpenHandles`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#detectopenhandles
-  - `--errorOnDeprecated`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#errorondeprecated
-  - `--expand`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#expand
-  - `--findRelatedTests`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#findrelatedtests
-  - `--json`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#json
-  - `--lastCommit`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#lastcommit
-  - `--listTests`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#listtests
-  - `--logHeapUsage`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#logheapusage
-  - `--noStackTrace`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#nostacktrace
-  - `--noVerbose`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#verbose
-  - `--notify`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#notify
-  - `--onlyChanged`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#onlychanged
-  - `--outputPath`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#outputpath
-  - `--passWithNoTests`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#passwithnotests
-  - `--reporters`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#reporters
-  - `--showConfig`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#showconfig
-  - `--silent`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#silent
-  - `--testLocationInResults`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#testlocationinresults
-  - `--useStderr`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#usestderr
-  - `--version`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#version
-  - `--watch`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watch
-  - `--watchAll`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watchall
-  - `--watchman`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#watchman
-  - `--maxWorkers`: Jest CLI argument. See: https://jestjs.io/docs/en/cli.html#maxworkers
+  The last published version of this command options can be found [here](https://github.com/fusionjs/fusionjs/blob/1e48e9077693d0e2bac7c50f008f7b6258db150d/fusion-cli/README.md#:~:text=fusion%20test%20[options]).
 
 ### Webpack stats.json file
 
