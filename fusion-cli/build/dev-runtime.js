@@ -183,6 +183,7 @@ module.exports.DevelopmentRuntime = function (
       if (debug) args.push('--inspect-brk');
 
       state.proxy = httpProxy.createProxyServer({
+        agent: new http.Agent({keepAlive: true}),
         target: {
           host: 'localhost',
           port: childPort,
