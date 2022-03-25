@@ -17,7 +17,7 @@
     "@babel/preset-env": "^7.15.0",
     "axios": "^0.21.0",
     "create-universal-package": "^4.1.2",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-redux": "0.0.0-monorepo",

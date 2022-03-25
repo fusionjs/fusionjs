@@ -96,10 +96,10 @@ const p: FusionPlugin<SessionDeps, SessionService> =
       ) {
         const sign = promisify(jwt.sign.bind(jwt));
         const session = service.from(ctx);
+        // $FlowFixMe
         const token = await session.loadToken();
         await next();
         if (token) {
-          // $FlowFixMe
           delete token.exp; // Clear previous exp time and instead use `expiresIn` option below
           const time = Date.now(); // get time *before* async signing
           const signed = await sign(token, secret, {

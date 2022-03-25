@@ -706,6 +706,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L83-L94
       target !== 'node' &&
         new webpack.ProvidePlugin({
+          // $FlowFixMe
           ...(nodeBuiltins.Buffer
             ? {
                 Buffer: ['buffer', 'Buffer'],

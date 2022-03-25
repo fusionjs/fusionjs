@@ -91,6 +91,7 @@ class RPC {
         : {
             ...options,
             method: 'POST',
+            // $FlowFixMe
             headers: {
               'Content-Type': 'application/json',
               ...(headers || {}),

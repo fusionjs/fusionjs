@@ -22,6 +22,7 @@ const enhancer = (fetch: Fetch) => {
       ...options,
       credentials: 'same-origin',
       headers: {
+        // $FlowFixMe
         ...((options && options.headers) || {}),
         'x-csrf-token': 'x',
       },

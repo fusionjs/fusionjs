@@ -42,7 +42,7 @@ export function withRPCReactor<Props: {}>(
 export function withRPCRedux<Props: {}>(
   rpcId: string,
   {
-    propName = rpcId,
+    propName,
     actions,
     transformParams,
     mapStateToParams,
@@ -63,7 +63,10 @@ export function withRPCRedux<Props: {}>(
         transformParams,
         mapStateToParams: wrappedMapStateToParams,
       });
-      return React.createElement(Component, {...props, [propName]: handler});
+      return React.createElement(Component, {
+        ...props,
+        [propName || rpcId]: handler,
+      });
     }
     const displayName = Component.displayName || Component.name || 'Anonymous';
     WithRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';

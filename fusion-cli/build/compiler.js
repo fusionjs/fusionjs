@@ -134,7 +134,7 @@ function Compiler(
     env,
     hmr = true,
     forceLegacyBuild,
-    preserveNames,
+    preserveNames = false,
     watch = false,
     logger = console,
     minify = true,

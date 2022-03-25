@@ -35,6 +35,7 @@ const appCreator = (reducer, preloadedState, enhancer, reduxDevToolsConfig) => {
     app.register(PreloadedStateToken, preloadedState);
   }
   if (enhancer) {
+    // $FlowFixMe
     app.register(EnhancerToken, enhancer);
   }
   if (reduxDevToolsConfig !== undefined && reduxDevToolsConfig !== null) {

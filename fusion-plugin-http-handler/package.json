@@ -11,7 +11,7 @@
     "@babel/preset-env": "^7.15.0",
     "create-universal-package": "^4.1.2",
     "express": "^4.16.4",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "get-port": "^5.1.1",
     "jest": "^25.1.0",

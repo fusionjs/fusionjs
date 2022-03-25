@@ -85,7 +85,7 @@ const getPlugin = () => {
         }
       }
       return {
-        from: (ctx?: Context) => {
+        from: (ctx: Context) => {
           return new Redux(ctx);
         },
       };

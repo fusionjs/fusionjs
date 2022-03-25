@@ -15,7 +15,7 @@
     "@testing-library/react": "^11.1.0",
     "create-universal-package": "^4.1.2",
     "execa": "^1.0.0",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "jest": "^25.1.0",

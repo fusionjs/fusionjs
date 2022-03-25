@@ -16,7 +16,7 @@
     "@babel/preset-env": "^7.15.0",
     "create-universal-package": "^4.1.2",
     "execa": "^1.0.0",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "jest": "^25.1.0",
     "redux": "^4.0.5"
   },

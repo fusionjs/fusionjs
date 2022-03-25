@@ -9,6 +9,7 @@
 /* eslint-env browser */
 
 import type {Context} from 'fusion-core';
+import type {UniversalEventsType} from 'fusion-plugin-universal-events';
 
 import I18n from '../src/browser';
 
@@ -24,14 +25,13 @@ test('hydration', (done) => {
   }
 
   const mockContext: Context = ({}: any);
-  // $FlowFixMe
-  const events = {
+  const events: UniversalEventsType = ({
     emit: (name, payload) => {
       expect(name).toBe('i18n-translate-miss');
       const key = payload && typeof payload === 'object' && payload.key;
       expect(key).toBe('missing-browser-translation');
     },
-  };
+  }: any);
 
   const i18n = I18n.provides({hydrationState, events}).from(mockContext);
   expect(i18n.translate('test')).toBe('hello');

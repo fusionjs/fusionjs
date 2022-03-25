@@ -161,6 +161,7 @@ export default function withAsyncComponent<Config>({
         // $FlowFixMe
         componentPromise.__FUSION_DYNAMIC_IMPORT_METADATA__;
       if (__NODE__ && context.markAsCritical) {
+        // $FlowFixMe
         metadata.chunkIds.forEach((chunkId) => {
           context.markAsCritical(chunkId);
         });

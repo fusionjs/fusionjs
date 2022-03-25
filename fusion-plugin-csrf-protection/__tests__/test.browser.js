@@ -25,6 +25,7 @@ function getApp(fetchFn: Fetch) {
 
 function createMockFetch(responseParams: mixed): Response {
   const mockResponse = new Response();
+  // $FlowFixMe
   return {
     ...mockResponse,
     ...responseParams,

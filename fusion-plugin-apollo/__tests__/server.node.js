@@ -103,10 +103,10 @@ test('SSR with <Query>', async () => {
   };
   const app = testApp(el, {typeDefs, resolvers});
   const simulator = getSimulator(app);
+  // $FlowFixMe
   const ctx = await simulator.render('/');
   expect(ctx.rendered.includes('test')).toBe(true);
   expect(ctx.rendered.includes('Loading')).toBe(false);
-  // $FlowFixMe
   expect(ctx.body.includes('ROOT_QUERY')).toBeTruthy();
 });
 
@@ -148,10 +148,10 @@ test('SSR with <Query> and custom context', async () => {
   // $FlowFixMe
   app.register(ApolloContextToken, 5);
   const simulator = getSimulator(app);
+  // $FlowFixMe
   const ctx = await simulator.render('/');
   expect(ctx.rendered.includes('test')).toBe(true);
   expect(ctx.rendered.includes('Loading')).toBe(false);
-  // $FlowFixMe
   expect(ctx.body.includes('ROOT_QUERY')).toBeTruthy();
 });
 

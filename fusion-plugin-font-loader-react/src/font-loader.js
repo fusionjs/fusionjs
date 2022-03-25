@@ -24,7 +24,8 @@ export default function (font: string) {
   if (__BROWSER__ && document) {
     // $FlowFixMe
     return document.fonts && typeof document.fonts.load === 'function'
-      ? document.fonts.load(`1em ${font}`) // native API requires size
+      ? // $FlowFixMe
+        document.fonts.load(`1em ${font}`) // native API requires size
       : loadFontPolyfill(font);
   }
 }

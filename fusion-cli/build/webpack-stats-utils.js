@@ -80,7 +80,7 @@ function collectStatsExceptions(
   if (stats.children && stats.children.length) {
     exceptions = exceptions.concat(
       stats.children.reduce((x, child) => {
-        return x.concat(collectStatsExceptions(key, child, depth + 1));
+        return x.concat(collectStatsExceptions(key, child, (depth || 0) + 1));
       }, [])
     );
   }

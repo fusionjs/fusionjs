@@ -19,7 +19,7 @@
     "fixture-es2017-pkg": "0.0.0-monorepo",
     "fixture-macro-pkg": "0.0.0-monorepo",
     "fixture-pure-esm-pkg": "0.0.0-monorepo",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-apollo": "0.0.0-monorepo",
     "fusion-plugin-i18n": "0.0.0-monorepo",

@@ -61,7 +61,7 @@
     "yaml-loader": "^0.6.0"
   },
   "devDependencies": {
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "request-promise": "^4.2.6"
   },

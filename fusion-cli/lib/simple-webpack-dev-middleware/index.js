@@ -29,7 +29,7 @@ module.exports = function (compiler /*: any */, options /*: any */) {
       // $FlowFixMe
       shared.waitUntilValid(function () {
         next();
-      }, req);
+      });
     }
 
     return goNext();

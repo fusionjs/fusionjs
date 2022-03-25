@@ -21,7 +21,7 @@
     "@testing-library/react": "^11.1.0",
     "babel-jest": "^25.1.0",
     "create-universal-package": "^4.1.2",
-    "flow-bin": "^0.109.0",
+    "flow-bin": "^0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-i18n": "0.0.0-monorepo",
     "fusion-plugin-universal-events": "0.0.0-monorepo",

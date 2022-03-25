@@ -144,9 +144,9 @@ test('collects split SSR metadata in context', async () => {
   const SplitComponent = split({
     defer: false,
     load: () =>
-      // $FlowFixMe
       (Object.defineProperty(
         Promise.resolve({default: DeferredComponent}),
+        // $FlowFixMe
         '__FUSION_DYNAMIC_IMPORT_METADATA__',
         {value: 'some_arbitrary_metadata'}
       ): any),

@@ -64,6 +64,7 @@ function getDeps(): DepsType {
 }
 
 export default (renderFn: Render) =>
+  // $FlowFixMe
   createPlugin<DepsType, ProvidesType>({
     deps: getDeps(),
     provides(deps) {
@@ -147,7 +148,6 @@ export default (renderFn: Render) =>
             routeTags.name = 'graphql';
             const apolloCtx = getApolloContext(fusionCtx);
             const client = getApolloClient(fusionCtx, {});
-            // $FlowFixMe
             const queryObservable = client.queryManager.getObservableFromLink(
               requestContext.document,
               apolloCtx,

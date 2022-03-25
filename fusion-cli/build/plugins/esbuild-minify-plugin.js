@@ -61,6 +61,7 @@ class EsbuildMinifyPlugin {
       // esbuild may include some helper methods to the outer-most scope,
       // need to configure it to wrap the output in an IIFE, in order to
       // prevent global namespace pollution
+      // $FlowFixMe
       ...(compiler.options.target === 'web'
         ? {
             format: 'iife',

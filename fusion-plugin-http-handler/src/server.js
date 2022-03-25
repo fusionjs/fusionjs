@@ -34,6 +34,7 @@ const plugin =
           return config.defer || next();
         }
         return new Promise((resolve, reject) => {
+          // $FlowFixMe
           const {req, res} = ctx;
           // Default http response object behavior defaults res.statusCode to 200. Koa sets it to 404.
           // This allows for http servers to use `end()` or express to use `send()` without specifying a 200 status code

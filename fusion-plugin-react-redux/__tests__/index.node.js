@@ -38,6 +38,7 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
     app.register(GetInitialStateToken, getInitialState);
   }
   if (enhancer) {
+    // $FlowFixMe
     app.register(EnhancerToken, enhancer);
   }
   return () => app;
@@ -166,8 +167,8 @@ const testEnhancer = async (
           return;
         }
 
-        const store = await reduxScoped.initStore();
         // $FlowFixMe
+        const store = await reduxScoped.initStore();
         expect(store.mock).toBe(true);
 
         return next();

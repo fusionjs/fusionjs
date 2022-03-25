@@ -69,7 +69,7 @@ test('ssr', async (done) => {
   const chunkTranslationMap = require('../chunk-translation-map');
   chunkTranslationMap.add('a.js', [0], Object.keys(data));
 
-  const ctx: Context = {
+  const ctx: Context = ({
     syncChunks: [0],
     preloadChunks: [],
     headers: {'accept-language': 'en-US'},
@@ -77,7 +77,7 @@ test('ssr', async (done) => {
     // $FlowFixMe - Invalid context
     template: {htmlAttrs: {}, body: []},
     memoized: new Map(),
-  };
+  }: any);
   const deps = {
     loader: {from: () => ({translations: data, locale: 'en-US'})},
   };
