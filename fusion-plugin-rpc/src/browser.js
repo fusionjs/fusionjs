@@ -116,7 +116,7 @@ class RPC {
             status: 'failure',
             timing: Date.now() - startTime,
           });
-          return Promise.reject(data);
+          return Promise.reject(data ? data : {});
         }
       });
   }
