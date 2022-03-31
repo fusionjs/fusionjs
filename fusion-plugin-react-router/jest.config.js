@@ -17,7 +17,7 @@ module.exports = {
     {
       resolver: require.resolve('jest-resolver-fusion'),
       displayName: 'browser',
-      testEnvironment: 'jsdom',
+      testEnvironment: 'jest-environment-jsdom-global',
       browser: true,
       testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
       globals: {
