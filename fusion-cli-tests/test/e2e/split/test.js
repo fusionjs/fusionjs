@@ -196,12 +196,7 @@ describe('split chunk ids kept in sync on both client and server', () => {
   test('`fusion build` CHUNK_IDS stay in sync on both server and client after change', async () => {
     async function buildAndStartServer() {
       await cmd(`build --dir=${dir} --modernBuildOnly`);
-      const {proc, port} = await start(`--dir=${dir}`, {
-        env: {
-          ...process.env,
-          NODE_ENV: 'production',
-        },
-      });
+      const {proc, port} = await start(`--dir=${dir}`);
 
       return {
         stop() {

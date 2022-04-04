@@ -1,5 +1,5 @@
 {
-  "presets": ["@babel/preset-react"],
+  "presets": [["@babel/preset-react", { "runtime": "automatic" }]],
   "plugins": [
     "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-proposal-class-properties"
@@ -11,7 +11,7 @@
         "@babel/plugin-proposal-class-properties"
       ],
       "presets": [
-        "@babel/preset-react",
+        ["@babel/preset-react", { "runtime": "automatic" }],
         ["@babel/preset-env", { "targets": { "node": "current" } }]
       ]
     }

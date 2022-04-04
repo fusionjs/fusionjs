@@ -17,17 +17,14 @@ const spawn = child_process.spawn;
 const fixture = __dirname;
 
 test('token prefix', async () => {
-  const env = Object.assign({}, process.env, {NODE_ENV: 'production'});
-
   const [port] = await Promise.all([
     getPort(),
-    execFile('fusion', ['build'], {cwd: fixture, env}),
+    execFile('fusion', ['build'], {cwd: fixture}),
   ]);
 
   const server = spawn('fusion', ['start', `--port=${port}`], {
     stdio: 'inherit',
     cwd: fixture,
-    env,
   });
 
   const browser = await puppeteer.launch({

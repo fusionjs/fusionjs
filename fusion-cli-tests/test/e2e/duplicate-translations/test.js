@@ -10,12 +10,9 @@ const {cmd, start} = require('../utils.js');
 const dir = path.resolve(__dirname, './fixture');
 
 test('promise instrumentation deduplicates translations', async () => {
-  var env = Object.create(process.env);
-  env.NODE_ENV = 'production';
+  await cmd(`build --dir=${dir}`);
 
-  await cmd(`build --dir=${dir}`, {env});
-
-  const {proc, port} = await start(`--dir=${dir}`, {env, cwd: dir});
+  const {proc, port} = await start(`--dir=${dir}`, {cwd: dir});
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });

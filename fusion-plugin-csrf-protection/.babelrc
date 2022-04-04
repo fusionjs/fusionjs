@@ -1,11 +1,11 @@
 {
-  "presets": ["@babel/preset-react"],
+  "presets": [["@babel/preset-react", { "runtime": "automatic" }]],
   "plugins": ["@babel/plugin-transform-flow-strip-types"],
   "env": {
     "test": {
       "plugins": ["@babel/plugin-transform-flow-strip-types"],
       "presets": [
-        "@babel/preset-react",
+        ["@babel/preset-react", { "runtime": "automatic" }],
         ["@babel/preset-env", { "targets": { "node": "current" } }]
       ]
     }

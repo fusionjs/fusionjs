@@ -45,11 +45,10 @@ export const Runtime = class Runtime {
   }
   async start() {
     const cwd = this.fixturePath;
-    const env = Object.assign({}, process.env, {NODE_ENV: 'production'});
 
     const [port] = await Promise.all([
       getPort(),
-      execFile('fusion', ['build'], {cwd, env}),
+      execFile('fusion', ['build'], {cwd}),
     ]);
     this.port = port;
     this.url = `http://localhost:${this.port}`;
@@ -57,7 +56,6 @@ export const Runtime = class Runtime {
     this.server = spawn('fusion', ['start', `--port=${port}`], {
       stdio: 'inherit',
       cwd,
-      env,
     });
 
     this.browser = await puppeteer.launch({

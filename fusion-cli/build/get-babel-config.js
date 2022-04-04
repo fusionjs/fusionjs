@@ -70,9 +70,10 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     config.presets.push([
       require.resolve('@babel/preset-react'),
       {
+        development: dev,
         pragma: jsx.pragma,
         pragmaFrag: jsx.pragmaFrag,
-        development: dev,
+        runtime: jsx.pragma || jsx.pragmaFrag ? 'classic' : 'automatic',
       },
     ]);
     if (fusionTransforms) {
