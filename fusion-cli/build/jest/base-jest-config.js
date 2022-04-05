@@ -73,7 +73,7 @@ function getTransformIgnorePatterns() {
 
 const transformIgnorePatterns = getTransformIgnorePatterns();
 
-module.exports = {
+const baseJestConfig /*: { [key: string]: any } */ = {
   coverageDirectory: `${rootDir}/coverage`,
   coverageReporters: ['json'],
   rootDir,
@@ -99,3 +99,5 @@ module.exports = {
   ],
   testResultsProcessor: require.resolve('./results-processor.js'),
 };
+
+module.exports = baseJestConfig;
