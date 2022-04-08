@@ -49,7 +49,7 @@ const getWorker = (file, content, options) => {
 module.exports = function loader() {};
 
 module.exports.pitch = function (request /* : any*/) {
-  const options = loaderUtils.getOptions(this) || {};
+  const options = this.getOptions() || {};
 
   if (!this.webpack) {
     throw new WorkerLoaderError({

@@ -6,9 +6,6 @@
  * @flow
  */
 /* eslint-env node */
-
-const loaderUtils = require('loader-utils');
-
 const {workerKey} = require('./loader-context.js');
 
 module.exports = webpackLoader;
@@ -24,7 +21,7 @@ function webpackLoader(source /*: string */, inputSourceMap /*: Object */) {
 
 async function loader(source, inputSourceMap, buildMeta) {
   const filename = this.resourcePath;
-  let loaderOptions = loaderUtils.getOptions(this);
+  let loaderOptions = this.getOptions();
   // Use worker farm if provided, otherwise require the worker code and execute it in the same thread
   const worker = this[workerKey] || require('./babel-worker.js');
 

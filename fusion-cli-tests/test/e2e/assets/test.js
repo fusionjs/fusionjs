@@ -17,7 +17,7 @@ const dir = path.resolve(__dirname, './fixture');
 
 test('`fusion build` with assets', async () => {
   await cmd(`build --dir=${dir}`);
-  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  const expectedAssetPath = '/_static/3815e5e3cfed0142.css';
   try {
     const {proc, port} = await start(`--dir=${dir}`);
     const res = await request(`http://localhost:${port}${expectedAssetPath}`);
@@ -68,7 +68,7 @@ test('`fusion build` with assets', async () => {
 test('`fusion build --production` with assets', async () => {
   const env = {...process.env, NODE_ENV: 'production'};
   await cmd(`build --production --dir=${dir}`, {env});
-  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  const expectedAssetPath = '/_static/3815e5e3cfed0142.css';
   try {
     const {proc, port} = await start(`--dir=${dir}`, {env});
     const res = await request(`http://localhost:${port}${expectedAssetPath}`);
@@ -119,7 +119,7 @@ test('`fusion dev` works with assets', async () => {
   const app = dev(dir);
   await app.setup();
   const url = await app.url();
-  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  const expectedAssetPath = '/_static/3815e5e3cfed0142.css';
   try {
     const {data: clientMain} = await request(`${url}/_static/client-main.js`);
     t.ok(clientMain, 'serves client-main from memory correctly');
@@ -133,8 +133,7 @@ test('`fusion dev` works with assets', async () => {
       'serves css file from memory correctly'
     );
     t.equal(
-      (await request(`${url}/_static/513b30e20d8764530352254b5d7693b1.txt`))
-        .data,
+      (await request(`${url}/_static/5e18e9206bffe834.txt`)).data,
       fs
         .readFileSync(path.resolve(dir, 'src/static/test-server-asset.txt'))
         .toString(),
@@ -146,10 +145,7 @@ test('`fusion dev` works with assets', async () => {
     const jsonAssetRes = await request(`${url}/json`);
     t.equal(jsonAssetRes.headers['x-route-name'], 'unknown_route');
     const jsonAsset = await request(url + jsonAssetRes.data);
-    t.equal(
-      jsonAssetRes.data,
-      '/_static/5c2541248f36989929204695d12a0cad.json'
-    );
+    t.equal(jsonAssetRes.data, '/_static/d3366f276b45c068.json');
     expect(jsonAsset.data).toStrictEqual({key: 'value', unused_key: ''}); // 'assetUrl saves original json file'
 
     t.equal(
@@ -199,11 +195,11 @@ test('`fusion dev` assets work with route prefix', async () => {
     '.fusion/dist/development/server/server-main.js'
   );
 
-  const expectedAssetPath = '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  const expectedAssetPath = '/_static/3815e5e3cfed0142.css';
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   t.equal(
     (await request(`${url}/test-prefix/test`)).data,
-    '/test-prefix/_static/20ae62de101a89a2c832407dc0ee0bbf.css',
+    '/test-prefix/_static/3815e5e3cfed0142.css',
     'sets correct route prefix in path'
   );
   t.ok((await request(`${url}/test-prefix/_static/client-main.js`)).data);
@@ -234,7 +230,7 @@ test('`fusion dev` works with assets with cdnUrl', async () => {
   t.ok(await exists(entryPath), 'Entry file gets compiled');
   t.equal(
     (await request(`${url}/test`)).data,
-    'https://cdn.com/20ae62de101a89a2c832407dc0ee0bbf.css',
+    'https://cdn.com/3815e5e3cfed0142.css',
     'sets correct asset path'
   );
   await app.teardown();

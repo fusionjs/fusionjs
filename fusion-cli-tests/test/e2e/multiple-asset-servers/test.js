@@ -13,8 +13,7 @@ test('`fusion dev` works with assets', async () => {
   const app = dev(dir);
   await app.setup();
   const url = await app.url();
-  const locallyCachedAssetPath =
-    '/_static/20ae62de101a89a2c832407dc0ee0bbf.css';
+  const locallyCachedAssetPath = '/_static/3815e5e3cfed0142.css';
   const uncachedAssetPath = '/_static/lol.css';
   try {
     t.equal(
