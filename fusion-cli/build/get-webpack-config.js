@@ -327,6 +327,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       managedPaths: [],
     },
     watchOptions: {
+      // Note: Webpack recently changed the defaults to 20ms (was 200ms), which
+      // seems to be the reason why we see double compilation on every file save.
+      aggregateTimeout: 100,
       // Ignore Yarn PnP immutable paths, as well as invalid virtual paths
       // @see: https://github.com/yarnpkg/berry/blob/5869e5934dcd7491422c2045675bcea2944708cc/packages/yarnpkg-fslib/sources/VirtualFS.ts#L8-L14
       ignored:
