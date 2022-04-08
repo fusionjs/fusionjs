@@ -11,11 +11,26 @@
 import type {ClientChunkMetadata} from "./types.js";
 */
 
-module.exports = mergeChunkMetadata;
-
+let previousArr;
+let previousResult;
 function mergeChunkMetadata(
   arr /*: Array<ClientChunkMetadata> */
 ) /*: ClientChunkMetadata */ {
+  if (arr.length === 1) {
+    return arr[0];
+  }
+
+  if (previousArr && previousResult) {
+    if (
+      previousArr === arr ||
+      (previousArr.length === arr.length &&
+        previousArr.every((state, idx) => arr[idx] === state))
+    ) {
+      return previousResult;
+    }
+  }
+  previousArr = arr;
+
   const base = {
     fileManifest: new Map(),
     urlMap: new Map(),
@@ -25,42 +40,45 @@ function mergeChunkMetadata(
     runtimeChunkIds: new Set(),
     initialChunkIds: new Set(),
   };
-  arr = arr.reverse();
 
-  return arr.reduce((acc, item) => {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const item = arr[i];
     for (let [key, val] of item.fileManifest) {
-      if (acc.fileManifest.has(key)) {
-        let set = acc.fileManifest.get(key);
+      if (base.fileManifest.has(key)) {
+        let set = base.fileManifest.get(key);
         for (let el of val) {
           // $FlowFixMe
           set.add(el);
         }
       } else {
-        acc.fileManifest.set(key, val);
+        base.fileManifest.set(key, val);
       }
     }
     for (let [key, val] of item.urlMap) {
-      acc.urlMap.set(key, val);
+      base.urlMap.set(key, val);
     }
     for (let [key, val] of item.chunks) {
-      acc.chunks.set(key, val);
+      base.chunks.set(key, val);
     }
     for (let val of item.runtimeChunkIds) {
-      acc.runtimeChunkIds.add(val);
+      base.runtimeChunkIds.add(val);
     }
     for (let val of item.initialChunkIds) {
-      acc.initialChunkIds.add(val);
+      base.initialChunkIds.add(val);
     }
     for (let path of item.criticalPaths) {
-      if (!acc.criticalPaths.includes(path)) {
-        acc.criticalPaths.push(path);
+      if (!base.criticalPaths.includes(path)) {
+        base.criticalPaths.push(path);
       }
     }
     for (let id of item.criticalIds) {
-      if (!acc.criticalIds.includes(id)) {
-        acc.criticalIds.push(id);
+      if (!base.criticalIds.includes(id)) {
+        base.criticalIds.push(id);
       }
     }
-    return acc;
-  }, base);
+  }
+
+  return (previousResult = base);
 }
+
+module.exports = mergeChunkMetadata;
