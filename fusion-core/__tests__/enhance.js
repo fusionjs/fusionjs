@@ -4,6 +4,7 @@ import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
 import {createPlugin} from '../src/create-plugin';
 import {createToken} from '../src/create-token';
+import {run} from './test-helper';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
@@ -250,4 +251,52 @@ test('enhancement with a plugin with missing deps', () => {
     /This token is a required dependency of the plugin registered to "EnhancerOf<FnType>" token/
   );
   expect(provides).not.toHaveBeenCalled();
+});
+
+test('Enhancer middleware hoisted up to position of original registration', async () => {
+  const Token = createToken('Token');
+  const SomeDep = createToken('SomeDep');
+  let app = new App('el', (el) => el);
+
+  let executions = [];
+
+  app.register(
+    Token,
+    createPlugin({
+      deps: {dep: SomeDep},
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(2);
+        return next();
+      },
+    })
+  );
+  // Dep middleware of original should be executed before enhanced middlewares
+  app.register(
+    SomeDep,
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(1);
+        return next();
+      },
+    })
+  );
+  app.middleware((ctx, next) => {
+    executions.push(4);
+    return next();
+  });
+  // Despite being registered last, this enhancer middleware
+  // should be sorted before the above middleware
+  app.enhance(Token, () =>
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(3);
+        return next();
+      },
+    })
+  );
+  await run(app);
+  expect(executions).toStrictEqual([1, 2, 3, 4]);
 });
