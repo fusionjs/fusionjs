@@ -5,6 +5,7 @@ import ServerAppFactory from '../src/server-app';
 import {createPlugin} from '../src/create-plugin';
 import {createToken} from '../src/create-token';
 import {run} from './test-helper';
+import {RenderToken} from '../src/tokens';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
@@ -299,4 +300,194 @@ test('Enhancer middleware hoisted up to position of original registration', asyn
   );
   await run(app);
   expect(executions).toStrictEqual([1, 2, 3, 4]);
+});
+
+test('Chained enhancer middleware hoisted up to position of original registration', async () => {
+  const Token = createToken('Token');
+  const SomeDep = createToken('SomeDep');
+  let app = new App('el', (el) => el);
+
+  let executions = [];
+
+  app.middleware((ctx, next) => {
+    executions.push(0);
+    return next();
+  });
+  app.register(
+    Token,
+    createPlugin({
+      deps: {dep: SomeDep},
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(2);
+        return next();
+      },
+    })
+  );
+  // Dep middleware of original should be executed before enhanced middlewares
+  app.register(
+    SomeDep,
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(1);
+        return next();
+      },
+    })
+  );
+  app.middleware((ctx, next) => {
+    executions.push(6);
+    return next();
+  });
+  // Despite being registered later, these middleware should be hoisted up to
+  // position of original token registration
+  app.enhance(Token, () =>
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(3);
+        return next();
+      },
+    })
+  );
+  app.enhance(Token, () =>
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(4);
+        return next();
+      },
+    })
+  );
+  app.enhance(Token, () =>
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push(5);
+        return next();
+      },
+    })
+  );
+  await run(app);
+  expect(executions).toStrictEqual([0, 1, 2, 3, 4, 5, 6]);
+});
+
+test('Simple RenderToken enhancer middleware order', async () => {
+  let app = new App('el', (el) => el);
+
+  let executions = [];
+
+  app.middleware((ctx, next) => {
+    executions.push(0);
+    return next();
+  });
+  app.enhance(RenderToken, (render) =>
+    createPlugin({
+      provides: () => render,
+      middleware: () => (ctx, next) => {
+        executions.push(2);
+        return next();
+      },
+    })
+  );
+  app.middleware((ctx, next) => {
+    executions.push(1);
+    return next();
+  });
+  await run(app);
+  expect(executions).toStrictEqual([0, 1, 2]);
+});
+
+test('Complex RenderToken enhancer order', async () => {
+  const SomeDep = createToken('SomeDep');
+  const OtherDep = createToken('OtherDep');
+  const AnotherDep = createToken('AnotherDep');
+
+  let executions = [];
+
+  const render = createPlugin({
+    deps: {other: AnotherDep},
+    provides: () => (el) => {
+      executions.push('render_fn');
+      return el;
+    },
+    middleware: () => (ctx, next) => {
+      executions.push('render_middleware');
+      return next();
+    },
+  });
+
+  let app = new App('el', render);
+
+  app.middleware((ctx, next) => {
+    executions.push('before_middleware');
+    return next();
+  });
+  // Dep middleware of original should be executed before enhanced middlewares
+  app.register(
+    SomeDep,
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push('somedep');
+        return next();
+      },
+    })
+  );
+  app.middleware((ctx, next) => {
+    executions.push('after_middleware');
+    return next();
+  });
+  app.enhance(RenderToken, (render) =>
+    createPlugin({
+      provides: () => render,
+      middleware: () => (ctx, next) => {
+        executions.push('render_enhancer1');
+        return next();
+      },
+    })
+  );
+  app.enhance(RenderToken, (render) =>
+    createPlugin({
+      deps: {other: OtherDep},
+      provides: () => render,
+      middleware: () => (ctx, next) => {
+        executions.push('render_enhancer2');
+        return next();
+      },
+    })
+  );
+  app.register(AnotherDep, 'AnotherDep');
+  app.enhance(RenderToken, (render) =>
+    createPlugin({
+      provides: () => render,
+      middleware: () => (ctx, next) => {
+        executions.push('render_enhancer3');
+        return next();
+      },
+    })
+  );
+  app.register(
+    OtherDep,
+    createPlugin({
+      provides: () => {},
+      middleware: () => (ctx, next) => {
+        executions.push('otherdep');
+        return next();
+      },
+    })
+  );
+
+  await run(app);
+  expect(executions).toStrictEqual([
+    'before_middleware',
+    'somedep',
+    'after_middleware',
+    'otherdep',
+    'render_middleware',
+    'render_enhancer1',
+    'render_enhancer2',
+    'render_enhancer3',
+    'render_fn',
+  ]);
 });
