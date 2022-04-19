@@ -125,6 +125,7 @@ type CompilerOpts = {
   disableBuildCache?: boolean,
   experimentalEsbuildMinifier?: boolean,
   stats?: STATS_VERBOSITY_LEVELS_TYPE,
+  unsafeCache?: boolean,
 };
 */
 function Compiler(
@@ -146,6 +147,7 @@ function Compiler(
     disableBuildCache,
     experimentalEsbuildMinifier,
     stats: statsLevel,
+    unsafeCache = false,
   } /*: CompilerOpts */
 ) /*: CompilerType */ {
   const root = path.resolve(dir);
@@ -210,6 +212,7 @@ function Compiler(
     worker,
     command,
     onBuildEnd: fusionConfig.onBuildEnd,
+    unsafeCache,
   };
   const compiler = webpack([
     getWebpackConfig({id: 'client-modern', ...sharedOpts}),

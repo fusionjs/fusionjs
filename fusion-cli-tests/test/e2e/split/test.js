@@ -95,8 +95,8 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   `);
   expect(resTransitive).toMatchInlineSnapshot(`
     Array [
-      144,
-      "legacy-10",
+      743,
+      "legacy-616",
     ]
   `);
 
@@ -106,7 +106,7 @@ test('`fusion build` with dynamic imports and group chunks', async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
   const csrContent = await page.content();
-  t.ok(csrContent.includes('<div id="csr">144</div>'));
+  t.ok(csrContent.includes('<div id="csr">743</div>'));
 
   browser.close();
   proc.kill('SIGKILL');

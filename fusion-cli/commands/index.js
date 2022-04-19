@@ -149,6 +149,12 @@ module.exports = {
         default: false,
         describe: 'Disable command-line prompts',
       },
+      unsafeCache: {
+        type: 'boolean',
+        default: false,
+        describe:
+          "Use webpack's unsafeCache to boost incremental build performance. Any filesystem alterations affecting module resolution will be ignored, and require dev process restart",
+      },
       experimentalSkipRedundantServerReloads: {
         type: 'boolean',
         default: false,
