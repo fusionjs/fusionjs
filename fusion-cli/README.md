@@ -55,6 +55,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--disablePrompts`: Disable command-line prompts. Useful for CI environment
   - `--stats`: Control verbosity level of build stats output (`full`, `minimal`) `[default: "minimal"]`
   - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
+  - `--unsafeCache`: Use webpack's unsafeCache to boost incremental build performance. Any filesystem alterations affecting module resolution will be ignored, and require dev process restart
 
 - `fusion start [--environment]`
   Runs your application, assuming you have previously built them via `fusion build`. Note that build artifacts must be saved to disk (i.e. this command will fail if you use `fusion dev` to build artifacts instead of `fusion build`.

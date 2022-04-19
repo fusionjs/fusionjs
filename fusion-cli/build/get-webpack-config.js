@@ -104,6 +104,7 @@ export type WebpackConfigOpts = {|
   command?: 'dev' | 'build',
   isBuildCacheEnabled: boolean,
   isEsbuildMinifierEnabled: boolean,
+  unsafeCache?: boolean,
 |};
 
 type JsonValue = boolean | number | string | null | void | $Shape<{ [string]: JsonValue }> | $ReadOnlyArray<JsonValue>;
@@ -147,6 +148,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     preserveNames,
     isBuildCacheEnabled,
     isEsbuildMinifierEnabled,
+    unsafeCache,
     // ACHTUNG:
     // Adding new config option? Please do not forget to add it to `cacheVersionVars`
   } = opts;
@@ -319,6 +321,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
         }
       : null),
+    experiments: {
+      cacheUnaffected: true,
+    },
     snapshot: {
       // It's common that developers modify code inside node_modules to debug
       // some problem with their application or third party package. Hence we
@@ -395,6 +400,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             libraryTarget: 'commonjs2',
           }
         : null),
+      hashDigestLength: 16,
+      hashFunction: 'xxhash64',
       // This is the recommended default.
       // See https://webpack.js.org/configuration/output/#output-sourcemapfilename
       sourceMapFilename: `[file].map`,
@@ -604,6 +611,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           },
         },
       ].filter(Boolean),
+      ...(unsafeCache
+        ? {
+            unsafeCache: true,
+          }
+        : null),
     },
     externals:
       runtime === 'server'
