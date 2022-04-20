@@ -301,6 +301,8 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const isBuildCachePersistent =
     isBuildCacheEnabled && !isEmptyDir(cacheDirectory);
 
+  const externalsCache = new Map();
+
   return {
     ...(isBuildCacheEnabled
       ? {
@@ -623,25 +625,39 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             {context, request} /*: { context: string, request: string }*/,
             callback /*: (error: ?Error, result?: string) => void */
           ) => {
-            if (/^[@a-z\-0-9]+/.test(request)) {
-              const absolutePath = getModuleAbsolutePath(context, request);
-              // do not bundle external packages and those not whitelisted
-              if (typeof absolutePath !== 'string') {
-                // if module is missing, skip rewriting to absolute path
-                return callback(null, request);
-              }
+            const cacheKey = `${context}|${request}`;
+            if (externalsCache.has(cacheKey)) {
+              return callback(null, externalsCache.get(cacheKey));
+            }
 
-              const isEsm = isEsModule(absolutePath);
+            function handleExternalResult(result) {
+              externalsCache.set(cacheKey, result);
+              callback(null, result);
+            }
+
+            function handleExternalModule(modulePath) {
+              const isEsm = isEsModule(modulePath);
               if (isEsm) {
                 if (typeof process.versions.pnp !== 'undefined') {
                   // Yarn PnP does not support es modules yet,
                   // have to bundle this dependency on the server
                   // @see: https://github.com/yarnpkg/berry/issues/638
-                  return callback();
+                  return handleExternalResult();
                 }
               }
 
-              const moduleType = isEsm ? 'module' : 'commonjs';
+              return handleExternalResult(
+                `${isEsm ? 'module' : 'commonjs'} ${modulePath}`
+              );
+            }
+
+            if (/^[@a-z\-0-9]+/.test(request)) {
+              const absolutePath = getModuleAbsolutePath(context, request);
+              // do not bundle external packages and those not whitelisted
+              if (typeof absolutePath !== 'string') {
+                // if module is missing, skip rewriting to absolute path
+                return handleExternalResult(request);
+              }
 
               if (experimentalBundleTest) {
                 const bundle = experimentalBundleTest(
@@ -650,20 +666,20 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                 );
                 if (bundle === 'browser-only') {
                   // don't bundle on the server
-                  return callback(null, `${moduleType} ${absolutePath}`);
+                  return handleExternalModule(absolutePath);
                 } else if (bundle === 'universal') {
                   // bundle on the server
-                  return callback();
+                  return handleExternalResult();
                 } else {
                   throw new Error(
                     `Unexpected value: ${bundle} from experimentalBundleTest. Expected 'browser-only' | 'universal'.`
                   );
                 }
               }
-              return callback(null, `${moduleType} ${absolutePath}`);
+              return handleExternalModule(absolutePath);
             }
             // bundle everything else (local files, __*)
-            return callback();
+            return handleExternalResult();
           }
         : undefined,
     resolve: {
@@ -1004,24 +1020,8 @@ if (process.env.NODE_ENV && process.env.NODE_ENV !== '${env}') {
   `;
 }
 
-const moduleAbsolutePathCache = new Map();
 function getModuleAbsolutePath(context, request) {
-  const cacheKey = [context, request].join('|');
-
-  if (moduleAbsolutePathCache.has(cacheKey)) {
-    return moduleAbsolutePathCache.get(cacheKey);
-  }
-
-  const absolutePath = resolveFrom.silent(context, request);
-
-  // Do not cache missing modules
-  if (!absolutePath) {
-    return absolutePath;
-  }
-
-  moduleAbsolutePathCache.set(cacheKey, absolutePath);
-
-  return absolutePath;
+  return resolveFrom.silent(context, request);
 }
 
 const srcPathCache /*: Map<string, string>*/ = new Map();

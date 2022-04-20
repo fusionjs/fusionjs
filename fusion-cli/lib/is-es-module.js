@@ -23,6 +23,7 @@ function readPackage(requestPath) {
 
   const json = tryReadFile(jsonPath);
   if (json === false) {
+    packageJsonCache.set(jsonPath, false);
     return false;
   }
 
