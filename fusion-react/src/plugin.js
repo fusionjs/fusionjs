@@ -28,15 +28,6 @@ export default {
       | FusionPlugin<TDeps, TService>,
     provider?: React.ComponentType<*>
   ): FusionPlugin<TDeps, TService> => {
-    if (plugin.__plugin__ === undefined) {
-      plugin = createPlugin(plugin);
-    }
-    if (!plugin.__plugin__) {
-      throw new Error(
-        'Provided plugin does not match FusionPlugin<TDeps, TService>'
-      );
-    }
-
     let originalMiddleware = plugin.middleware;
     const ProviderComponent = provider || Provider.create(name);
     plugin.middleware = (deps: *, provides: *) => {
@@ -57,6 +48,6 @@ export default {
       };
       return mw;
     };
-    return plugin;
+    return createPlugin((plugin: any));
   },
 };

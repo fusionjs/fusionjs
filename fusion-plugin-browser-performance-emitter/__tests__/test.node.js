@@ -163,13 +163,10 @@ test('Correct metrics are emitted', () => {
     createPlugin({
       provides: () => {
         mockEmitter.on('browser-performance-emitter:stats', handlePerfEvent);
-        mockEmitter.emit(
-          'browser-performance-emitter:stats:browser-only',
-          mockEvent
-        );
       },
     })
   );
+  mockEmitter.emit('browser-performance-emitter:stats:browser-only', mockEvent);
 });
 
 test('Re-emitting events from browser to server correctly', () => {
@@ -193,11 +190,8 @@ test('Re-emitting events from browser to server correctly', () => {
         mockEmitter.on('browser-performance-emitter:stats', (e) => {
           expect(e.foo).toEqual(mockEvent.foo);
         });
-        mockEmitter.emit(
-          'browser-performance-emitter:stats:browser-only',
-          mockEvent
-        );
       },
     })
   );
+  mockEmitter.emit('browser-performance-emitter:stats:browser-only', mockEvent);
 });

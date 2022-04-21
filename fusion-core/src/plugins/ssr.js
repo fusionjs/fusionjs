@@ -7,7 +7,8 @@
  */
 
 import {createPlugin} from '../create-plugin';
-import {escape, consumeSanitizedHTML} from '../sanitization';
+import {escape, consumeSanitizedHTML, html} from '../sanitization';
+import {appSymbol} from '../utils/app-symbol.js';
 
 const botRegex = /(bot|crawler|spider)/i;
 const SSRDecider = createPlugin({
@@ -37,39 +38,42 @@ const SSRDecider = createPlugin({
 });
 export {SSRDecider};
 
-export default function createSSRPlugin({
-  element,
-  ssrDecider,
-  ssrBodyTemplate,
-}) {
-  return async function ssrPlugin(ctx, next) {
-    if (!ssrDecider(ctx)) return next();
+export default function createSSRPlugin(endpoints) {
+  return function ssrMiddleware({element, ssrDecider, ssrBodyTemplate}) {
+    return async function ssrMiddleware(ctx, next) {
+      if (endpoints.has(ctx.path)) {
+        return next();
+      }
+      if (!ssrDecider(ctx)) return next();
 
-    const template = {
-      htmlAttrs: {},
-      bodyAttrs: {},
-      title: '',
-      head: [],
-      body: [],
+      const template = {
+        htmlAttrs: {},
+        bodyAttrs: {},
+        title: '',
+        head: [],
+        body: [],
+      };
+      ctx.element = element;
+      ctx.rendered = '';
+      ctx.template = template;
+      ctx.type = 'text/html';
+
+      await next();
+
+      // Allow someone to override the ssr by setting ctx.body
+      // This is especially useful for things like ctx.redirect
+      if (ctx.body && ctx.respond !== false) {
+        return;
+      }
+
+      ctx.template.head.push(getSerializedUniversalValues(ctx));
+
+      if (ssrBodyTemplate) {
+        ctx.body = ssrBodyTemplate(ctx);
+      } else {
+        ctx.body = legacySSRBodyTemplate(ctx);
+      }
     };
-    ctx.element = element;
-    ctx.rendered = '';
-    ctx.template = template;
-    ctx.type = 'text/html';
-
-    await next();
-
-    // Allow someone to override the ssr by setting ctx.body
-    // This is especially useful for things like ctx.redirect
-    if (ctx.body && ctx.respond !== false) {
-      return;
-    }
-
-    if (ssrBodyTemplate) {
-      ctx.body = ssrBodyTemplate(ctx);
-    } else {
-      ctx.body = legacySSRBodyTemplate(ctx);
-    }
   };
 }
 
@@ -161,4 +165,11 @@ function getPreloadHintLinks(ctx) {
     return `<link rel="preload"${crossOriginAttribute} href="${url}" nonce="${ctx.nonce}" as="script" />`;
   });
   return hints.join('');
+}
+
+function getSerializedUniversalValues(ctx) {
+  const app = ctx[appSymbol];
+  return html`<script type="application/json" id="__FUSION_UNIVERSAL_VALUES__">
+    ${JSON.stringify({...app.universalValues, ...ctx.universalValues})}
+  </script>`;
 }

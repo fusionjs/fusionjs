@@ -6,7 +6,7 @@
  * @noflow
  */
 import path from 'path';
-import {now} from '../plugins/timing';
+import {now} from './now.js';
 
 const getSources = (stacks) => {
   // stack is of format: 'at file_xyz.js (/some/file/system/path.js:30:1)\n'
@@ -25,7 +25,7 @@ const getSources = (stacks) => {
 };
 
 // Wraps middleware for measuring middleware timing
-export default function wrapMiddleware(existingMiddleware, token, plugin) {
+export default function wrapMiddleware(existingMiddleware, token) {
   return async (ctx, next) => {
     const downstreamStart = now();
     let upstreamStart = 0;

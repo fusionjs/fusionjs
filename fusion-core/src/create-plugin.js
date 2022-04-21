@@ -8,12 +8,30 @@
 
 import {captureStackTrace} from './stack-trace.js';
 
-// eslint-disable-next-line flowtype/generic-spacing
+import {createPlugin as compatCreatePlugin} from './legacy-compat.js';
 
 export function createPlugin(opts) {
+  // Inject the legacy plugin properties for compatibiity purposes.
+  // However, we should eventually get rid of these properties and possibly
+  // instead just represent plugins as plain generator functions.
   return {
-    __plugin__: true,
-    stack: captureStackTrace(createPlugin),
     ...opts,
+    __plugin__: true,
+    __fn__: compatCreatePlugin(opts),
+    stack: captureStackTrace(createPlugin),
   };
+}
+
+export function declarePlugin(fn) {
+  fn.__fplugin__ = true;
+  return fn;
+}
+
+export function getPluginFn(val) {
+  if (val && val.__plugin__ && val.__fn__) {
+    return val.__fn__;
+  }
+  if (val && val.__fplugin__) {
+    return val;
+  }
 }

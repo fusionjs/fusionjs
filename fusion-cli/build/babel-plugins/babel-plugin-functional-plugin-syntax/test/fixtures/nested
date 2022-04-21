@@ -1,0 +1,9 @@
+import {withPlugin} from "fusion-core";
+
+function MyPlugin() {
+  return withPlugin(() => {
+    return withPlugin(() => {
+      return "foo";
+    });
+  });
+}

@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`withPlugin errors: .using without invocation 1`] = `
+"unknown: withPlugin must be invoked
+  1 |
+  2 |     import {withPlugin} from \\"fusion-core\\";
+> 3 |     withPlugin.using(TokenA, TokenB);
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 |     "
+`;
+
+exports[`withPlugin errors: bare 1`] = `
+"unknown: withPlugin must be invoked
+  1 |
+  2 |     import {withPlugin} from \\"fusion-core\\";
+> 3 |     withPlugin;
+    |     ^^^^^^^^^^^
+  4 |     "
+`;
+
+exports[`withPlugin errors: property 1`] = `
+"unknown: withPlugin must be invoked
+  1 |
+  2 |     import {withPlugin} from \\"fusion-core\\";
+> 3 |     withPlugin.someProperty;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+  4 |     "
+`;

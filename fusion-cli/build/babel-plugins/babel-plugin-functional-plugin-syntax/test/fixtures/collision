@@ -1,0 +1,13 @@
+import {withDeps} from "fusion-core";
+
+const _declarePlugin = "collision";
+
+function MyPluginA() {
+  const [a] = withDeps([A]);
+  return a;
+}
+
+function MyPluginB() {
+  const [b] = withDeps([B]);
+  return b;
+}

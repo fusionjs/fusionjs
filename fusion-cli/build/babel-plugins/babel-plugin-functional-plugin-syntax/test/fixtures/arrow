@@ -1,0 +1,8 @@
+import {withDeps} from "fusion-core";
+
+function getPlugin() {
+  return () => {
+    console.log(this);
+    const [a] = withDeps([A]);
+  }
+}

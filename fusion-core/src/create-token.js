@@ -28,3 +28,10 @@ export class TokenImpl {
 export function createToken(name) {
   return new TokenImpl(name);
 }
+
+export function getTokenRef(token) {
+  if (token instanceof TokenImpl) {
+    return token.ref;
+  }
+  return token;
+}

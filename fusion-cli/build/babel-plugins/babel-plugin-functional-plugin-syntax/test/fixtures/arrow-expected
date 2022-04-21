@@ -1,0 +1,11 @@
+import { declarePlugin as _declarePlugin } from "fusion-core";
+import { withDeps } from "fusion-core";
+
+function getPlugin() {
+  var _this = this;
+
+  return /*#__PURE__*/_declarePlugin(function* () {
+    console.log(_this);
+    const [a] = yield withDeps([A]);
+  });
+}

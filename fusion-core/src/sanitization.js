@@ -62,19 +62,4 @@ const unescape = (str) => {
   );
 };
 
-// These types are necessary due to not having an assignment in the __BROWSER__ environment
-const flowHtml = html;
-
-const flowDangerouslySetHTML = dangerouslySetHTML;
-
-const flowConsumeSanitizedHTML = consumeSanitizedHTML;
-
-const flowEscape = escape;
-
-export {
-  flowHtml as html,
-  flowDangerouslySetHTML as dangerouslySetHTML,
-  flowConsumeSanitizedHTML as consumeSanitizedHTML,
-  flowEscape as escape,
-  unescape,
-};
+export {html, dangerouslySetHTML, consumeSanitizedHTML, escape, unescape};

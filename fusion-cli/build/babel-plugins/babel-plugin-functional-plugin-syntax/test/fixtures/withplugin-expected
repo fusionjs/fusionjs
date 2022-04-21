@@ -1,0 +1,9 @@
+import { declarePlugin as _declarePlugin } from "fusion-core";
+
+var MyPlugin = /*#__PURE__*/_declarePlugin(function* MyPlugin() {
+  const foo = yield withPlugin(FooPlugin);
+  const bar = yield withPlugin.using(TokenA, a)(BarPlugin);
+  const baz = yield withPlugin.using(TokenA, a).using(TokenB, B)(BazPlugin);
+});
+
+import { withPlugin } from "fusion-core";

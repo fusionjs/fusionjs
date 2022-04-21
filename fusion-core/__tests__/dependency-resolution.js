@@ -1,4 +1,5 @@
 /* @noflow */
+/* eslint-env node */
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
 import {createPlugin} from '../src/create-plugin';
@@ -565,9 +566,8 @@ test('dependency configuration with missing deps', () => {
     })
   );
   app.register(StringToken, 'string-a');
-  expect(() => app.resolve()).toThrow();
   expect(() => app.resolve()).toThrow(
-    /This token is a required dependency of the plugin registered to "parent-token" token/
+    /Missing registration for token other-string-token. This is a dependency of plugin registered @/
   );
   expect(provides).not.toHaveBeenCalled();
 });
@@ -591,7 +591,7 @@ test('error message when dependent plugin does not have token', () => {
   );
   app.register(StringToken, 'string-a');
   expect(() => app.resolve()).toThrow(
-    /This token is a required dependency of the plugin registered to "UnnamedPlugin" token/
+    /Missing registration for token other-string-token. This is a dependency of plugin registered @/
   );
   expect(provides).not.toHaveBeenCalled();
 });
@@ -636,4 +636,42 @@ test('retrieve unresolved dependency', () => {
   expect(() => app.getService(TokenA)).toThrow(
     /Cannot get service from unresolved app/
   );
+});
+
+test('cycle error', () => {
+  const app = new App('el', (el) => el);
+  const TokenA = createToken('TokenA');
+  const TokenB = createToken('TokenB');
+  const PluginA = createPlugin({
+    deps: {B: TokenB},
+    provides: () => {},
+  });
+  const PluginB = createPlugin({
+    deps: {A: TokenA},
+    provides: () => {},
+  });
+
+  app.register(TokenA, PluginA);
+  app.register(TokenB, PluginB);
+
+  try {
+    app.resolve();
+  } catch (e) {
+    // Make path deterministic
+    let message = e.message
+      .split(__dirname)
+      .join('/root')
+      .replace(new RegExp(/◀(─)*╯/g), '◀───────────────╯');
+
+    // Needed to make snapshots deterministic
+    // eslint-disable-next-line jest/no-try-expect
+    expect(message).toMatchInlineSnapshot(`
+      "Error: Plugin dependency graph must not have cycles.
+      ┌─▶ Registration @ /root/dependency-resolution.js:655:7 ──╮
+      │╭─── depends on token TokenA provided by ◀───────────────╯
+      │╰▶ Registration @ /root/dependency-resolution.js:654:7 ──╮
+      ╰──── depends on token TokenB provided by ◀───────────────╯
+      "
+    `);
+  }
 });

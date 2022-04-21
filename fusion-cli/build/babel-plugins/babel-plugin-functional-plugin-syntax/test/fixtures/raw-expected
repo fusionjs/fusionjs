@@ -1,0 +1,8 @@
+import { declarePlugin as _declarePlugin } from "fusion-core";
+
+var MyPlugin = /*#__PURE__*/_declarePlugin(function* MyPlugin() {
+  const [a] = yield withDeps([A]);
+  __NODE__ ? withEndpoint("/foo", handler) : void 0;
+});
+
+import { withDeps } from "fusion-core";

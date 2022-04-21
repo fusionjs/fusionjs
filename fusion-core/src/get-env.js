@@ -47,6 +47,4 @@ export function loadEnv() {
   };
 }
 
-// Handle flow-types for export so browser export is ignored.
-
 export default __BROWSER__ ? () => {} : loadEnv();

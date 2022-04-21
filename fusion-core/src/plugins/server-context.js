@@ -35,6 +35,8 @@ export default function middleware(ctx, next) {
   ctx.useragent = new UAParser(ctx.headers['user-agent']).getResult();
   ctx.element = null;
   ctx.rendered = null;
+  ctx.postRenderEffects = [];
+  ctx.universalValues = {};
 
   return next();
 }

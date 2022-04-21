@@ -47,3 +47,11 @@ export {
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
+export {
+  withUniversalValue,
+  withRenderSetup,
+  withSSREffect,
+  withEndpoint,
+  withMiddleware,
+  withUniversalMiddleware,
+} from './core.js';

@@ -1,0 +1,7 @@
+import {withDeps, withRenderSetup} from "fusion-core";
+
+function MyPlugin() {
+  const [a] = withDeps([A]);
+  withRenderSetup();
+  return a;
+}

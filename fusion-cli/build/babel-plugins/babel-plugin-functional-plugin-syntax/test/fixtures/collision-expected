@@ -1,0 +1,14 @@
+import { declarePlugin as _declarePlugin2 } from "fusion-core";
+
+var MyPluginA = /*#__PURE__*/_declarePlugin2(function* MyPluginA() {
+  const [a] = yield withDeps([A]);
+  return a;
+});
+
+var MyPluginB = /*#__PURE__*/_declarePlugin2(function* MyPluginB() {
+  const [b] = yield withDeps([B]);
+  return b;
+});
+
+import { withDeps } from "fusion-core";
+const _declarePlugin = "collision";

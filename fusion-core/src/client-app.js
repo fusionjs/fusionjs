@@ -23,7 +23,7 @@ export default function () {
       this.middleware({element: ElementToken}, createClientHydrate);
     }
     resolve() {
-      this.middleware({render: RenderToken}, createClientRenderer);
+      this.middleware({render: RenderToken}, createClientRenderer(this));
       return super.resolve();
     }
     callback() {

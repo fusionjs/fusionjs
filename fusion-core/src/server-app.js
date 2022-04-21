@@ -18,6 +18,7 @@ import {
 } from './tokens';
 import ssrPlugin from './plugins/ssr';
 import contextMiddleware from './plugins/server-context.js';
+import {appSymbol} from './utils/app-symbol.js';
 
 export default function () {
   const Koa = require('koa');
@@ -25,23 +26,36 @@ export default function () {
   return class ServerApp extends BaseApp {
     constructor(el, render) {
       super(el, render);
+      this.endpoints = new Map();
       this._app = new Koa();
       this._app.proxy = true;
       this.middleware(contextMiddleware);
+      this.middleware((ctx, next) => {
+        ctx[appSymbol] = this;
+        return next();
+      });
       this.register(TimingToken, Timing);
+      this.middleware((ctx, next) => {
+        for (const [endpointPath, handler] of this.endpoints) {
+          if (ctx.path === endpointPath) {
+            return handler(ctx, next);
+          }
+        }
+        return next();
+      });
       this.middleware(
         {
           element: ElementToken,
           ssrDecider: SSRDeciderToken,
           ssrBodyTemplate: SSRBodyTemplateToken.optional,
         },
-        ssrPlugin
+        ssrPlugin(this.endpoints)
       );
     }
     resolve() {
       this.middleware(
         {timing: TimingToken, render: RenderToken},
-        serverRenderer
+        serverRenderer(this)
       );
       return super.resolve();
     }

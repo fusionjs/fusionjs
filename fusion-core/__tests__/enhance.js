@@ -197,6 +197,8 @@ test.skip('regular enhancer on unregistered token with no dependencies', (t) => 
   }).toThrow();
 });
 
+// Orphan enhancer should not throw
+// See https://github.com/fusionjs/fusionjs/issues/573
 test('regular enhancer on unregistered token with optional dependencies', () => {
   let app = new App('el', (el) => el);
 
@@ -214,7 +216,7 @@ test('regular enhancer on unregistered token with optional dependencies', () => 
   app.enhance(FnToken, BaseFnEnhancer);
   expect(() => {
     app.resolve();
-  }).toThrow();
+  }).not.toThrow();
 });
 
 test('enhancement with a plugin with missing deps', () => {
@@ -249,9 +251,32 @@ test('enhancement with a plugin with missing deps', () => {
     return (ctx, next) => next();
   });
   expect(() => app.resolve()).toThrow(
-    /This token is a required dependency of the plugin registered to "EnhancerOf<FnType>" token/
+    /Missing registration for token DepA. This is a dependency of plugin registered @/
   );
   expect(provides).not.toHaveBeenCalled();
+});
+
+test('Chained enhancers', () => {
+  let app = new App('el', (el) => el);
+  const StrToken = createToken('StrToken');
+  const FnToken = createToken('FnToken');
+  app.register(
+    FnToken,
+    createPlugin({
+      deps: {str: StrToken},
+      provides: ({str}) => {
+        expect(str).toBe('foobarbaz');
+      },
+    })
+  );
+  app.register(StrToken, 'foo');
+  app.enhance(StrToken, (str) => {
+    return str + 'bar';
+  });
+  app.enhance(StrToken, (str) => {
+    return str + 'baz';
+  });
+  app.resolve();
 });
 
 test('Enhancer middleware hoisted up to position of original registration', async () => {
@@ -490,4 +515,31 @@ test('Complex RenderToken enhancer order', async () => {
     'render_enhancer3',
     'render_fn',
   ]);
+});
+
+test('orphan enhancers noop', () => {
+  const app = new App('el', (el) => el);
+  const OrphanToken1 = createToken('Orphan1');
+  const OrphanToken2 = createToken('Orphan2');
+  const OrphanToken3 = createToken('Orphan3');
+  app.enhance(OrphanToken1, () => {
+    createPlugin({
+      provides: () => {
+        throw new Error('Should not be called');
+      },
+      middleware: () => (ctx, next) => next(),
+    });
+  });
+  app.enhance(OrphanToken2, () => {
+    throw new Error('Should not be called');
+  });
+  app.enhance(OrphanToken3, () => {
+    throw new Error('Should not be called');
+  });
+  app.enhance(OrphanToken3, () => {
+    throw new Error('Should not be called');
+  });
+  expect(() => {
+    app.resolve();
+  }).not.toThrow();
 });

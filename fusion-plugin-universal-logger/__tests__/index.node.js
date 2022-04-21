@@ -85,10 +85,15 @@ test('Server logger listening on events', async () => {
     }
   }
   const app = new App('element', (el) => el);
+
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
   app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});
-  app.middleware({events: UniversalEventsToken}, ({events}) => {
+  // The following middleware has an implicit dependency on the logger plugin.
+  // The middleware setup function needs to be executed *after* the logger plugin
+  // because it emits an event. While it doesn't directly depend on LoggerToken,
+  // the logger plugin must exist first.
+  app.middleware({events: UniversalEventsToken, _: LoggerToken}, ({events}) => {
     events.emit('universal-log', {
       level: 'info',
       args: ['test', {hello: 'world'}],

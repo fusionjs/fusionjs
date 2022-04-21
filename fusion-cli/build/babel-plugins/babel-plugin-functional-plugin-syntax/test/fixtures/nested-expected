@@ -1,0 +1,11 @@
+import { declarePlugin as _declarePlugin } from "fusion-core";
+
+var MyPlugin = /*#__PURE__*/_declarePlugin(function* MyPlugin() {
+  return yield withPlugin( /*#__PURE__*/_declarePlugin(function* () {
+    return yield withPlugin(() => {
+      return "foo";
+    });
+  }));
+});
+
+import { withPlugin } from "fusion-core";

@@ -746,7 +746,7 @@ interface JestExpectType {
    * Use .toThrowErrorMatchingSnapshot to test that a function throws a error
    * matching the most recent snapshot when it is called.
    */
-  toThrowErrorMatchingSnapshot(): void;
+  toThrowErrorMatchingSnapshot(name?: string): void;
   toThrowErrorMatchingInlineSnapshot(snapshot?: string): void;
 }
 
@@ -916,7 +916,7 @@ type JestObjectType = {
   spyOn(
     object: Object,
     methodName: string,
-    accessType?: 'get' | 'set'
+    accessType?: "get" | "set"
   ): JestMockFn<any, any>,
   /**
    * Set the default timeout interval for tests and before/after hooks in milliseconds.
@@ -1088,9 +1088,9 @@ type JestPrettyFormatColors = {
   value: { close: string, open: string },
 };
 
-type JestPrettyFormatIndent = string => string;
+type JestPrettyFormatIndent = (string) => string;
 type JestPrettyFormatRefs = Array<any>;
-type JestPrettyFormatPrint = any => string;
+type JestPrettyFormatPrint = (any) => string;
 type JestPrettyFormatStringOrNull = string | null;
 
 type JestPrettyFormatOptions = {|
@@ -1121,7 +1121,7 @@ type JestPrettyFormatPlugin = {
     opts: JestPrettyFormatOptions,
     colors: JestPrettyFormatColors
   ) => string,
-  test: any => boolean,
+  test: (any) => boolean,
 };
 
 type JestPrettyFormatPlugins = Array<JestPrettyFormatPlugin>;

@@ -1,0 +1,7 @@
+import {withPlugin} from "fusion-core";
+
+function MyPlugin() {
+  const foo = withPlugin(FooPlugin);
+  const bar = withPlugin.using(TokenA, a)(BarPlugin);
+  const baz = withPlugin.using(TokenA, a).using(TokenB, B)(BazPlugin);
+}

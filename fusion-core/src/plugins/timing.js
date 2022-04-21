@@ -8,6 +8,7 @@
 import {createPlugin} from '../create-plugin';
 import {memoize} from '../memoize';
 import {createToken} from '../create-token';
+import {now} from '../utils/now.js';
 
 class Timing {
   constructor() {
@@ -90,20 +91,6 @@ export default createPlugin({
   provides: () => timing,
   middleware: () => middleware,
 });
-
-export function now() {
-  if (__NODE__) {
-    const [seconds, ns] = process.hrtime();
-    return Math.round(seconds * 1000 + ns / 1e6);
-  } else {
-    // eslint-disable-next-line cup/no-undef
-    if (window.performance && window.performance.now) {
-      // eslint-disable-next-line cup/no-undef
-      return Math.round(window.performance.now());
-    }
-    return Date.now();
-  }
-}
 
 function deferred() {
   let resolve = () => {};

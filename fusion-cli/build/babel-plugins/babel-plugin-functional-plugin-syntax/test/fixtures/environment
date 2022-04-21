@@ -1,0 +1,9 @@
+import {withEndpoint} from "fusion-core";
+
+function MyPlugin() {
+  withEndpoint("/foo", handler);
+}
+
+function* RawPlugin() {
+  withEndpoint("/foo", handler);
+}

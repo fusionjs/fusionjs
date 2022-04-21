@@ -96,7 +96,9 @@ async function reload() {
 
 function reverseRegister(app, token, plugin) {
   app.register(token, plugin);
-  app.plugins.unshift(app.plugins.pop());
+  const entries = Array.from(app.taskMap.entries());
+  entries.unshift(entries.pop());
+  app.taskMap = new Map(entries);
 }
 
 // $FlowFixMe

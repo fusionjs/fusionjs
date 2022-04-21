@@ -1,0 +1,11 @@
+import { declarePlugin as _declarePlugin } from "fusion-core";
+
+var MyPlugin = /*#__PURE__*/_declarePlugin(function* MyPlugin() {
+  __NODE__ ? withEndpoint("/foo", handler) : void 0;
+});
+
+var RawPlugin = /*#__PURE__*/_declarePlugin(function* RawPlugin() {
+  __NODE__ ? withEndpoint("/foo", handler) : void 0;
+});
+
+import { withEndpoint } from "fusion-core";

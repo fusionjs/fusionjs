@@ -1,0 +1,6 @@
+import {withDeps} from "fusion-core";
+
+function* MyPlugin() {
+  const [a] = yield withDeps([A]);
+  __NODE__ ? withEndpoint("/foo", handler) : void 0;
+}
