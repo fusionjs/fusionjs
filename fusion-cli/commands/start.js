@@ -13,7 +13,7 @@ const path = require('path');
 const cp = require('child_process');
 
 exports.run = async function (
-  {dir = '.', environment, port, debug} /*: any */
+  {dir = '.', environment, port, debug, useModuleScripts = false} /*: any */
 ) {
   if (debug && !process.env.__FUSION_DEBUGGING__) {
     const command = process.argv.shift();
@@ -41,7 +41,11 @@ exports.run = async function (
     const entry = getEntry(env);
     // $FlowFixMe
     const {start} = await require(entry);
-    return start({dir, port: port || process.env.PORT_HTTP || 3000}); // handle server bootstrap errors (e.g. port already in use)
+    return start({
+      dir,
+      useModuleScripts,
+      port: port || process.env.PORT_HTTP || 3000,
+    }); // handle server bootstrap errors (e.g. port already in use)
   } else {
     throw new Error(`App can't start. JS isn't compiled`); // handle compilation errors
   }

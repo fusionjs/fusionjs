@@ -50,6 +50,15 @@ const statsOption = {
   },
 };
 
+const moduleScriptsOption = {
+  useModuleScripts: {
+    type: 'boolean',
+    default: false,
+    describe:
+      'Use <script type="module"> and <script nomodule> loading instead of user-agent checks',
+  },
+};
+
 module.exports = {
   build: {
     descr: 'Build your app',
@@ -163,6 +172,7 @@ module.exports = {
       ...analyzeOption,
       ...disableBuildCacheOption,
       ...statsOption,
+      ...moduleScriptsOption,
     },
   },
   profile: {
@@ -192,6 +202,7 @@ module.exports = {
         describe:
           "Which environment/assets to run - defaults to first available assets among ['development', 'production']",
       },
+      ...moduleScriptsOption,
     },
   },
   test: {

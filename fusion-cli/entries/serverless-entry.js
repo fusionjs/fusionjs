@@ -26,6 +26,7 @@ import CriticalChunkIdsPlugin from '../plugins/critical-chunk-ids-plugin.js';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import {SSRBodyTemplate} from '../plugins/ssr-plugin';
+import {SSRModuleScriptsBodyTemplate} from '../plugins/ssr-module-scripts-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
 
 let prefix = process.env.ROUTE_PREFIX;
@@ -39,7 +40,11 @@ const initialize = main
       throw new Error('App should export a function');
     };
 
-export default async function loadApp(dir /*: string */ = '.') {
+export default async function loadApp(
+  dir /*: string */ = '.',
+  options /* : ?{useModuleScripts?: boolean} */ = {}
+) {
+  const {useModuleScripts = false} = options || {};
   const app = await initialize();
   if (!(app instanceof BaseApp)) {
     throw new Error('Application entry point did not return an App');
@@ -47,7 +52,10 @@ export default async function loadApp(dir /*: string */ = '.') {
   const AssetsPlugin = AssetsFactory(dir);
   reverseRegister(app, ContextPlugin);
   app.register(AssetsPlugin);
-  app.register(SSRBodyTemplateToken, SSRBodyTemplate);
+  app.register(
+    SSRBodyTemplateToken,
+    useModuleScripts ? SSRModuleScriptsBodyTemplate : SSRBodyTemplate
+  );
   app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
   if (prefix) {
     app.register(RoutePrefixToken, prefix);

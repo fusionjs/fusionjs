@@ -56,11 +56,13 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--stats`: Control verbosity level of build stats output (`full`, `minimal`) `[default: "minimal"]`
   - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
   - `--unsafeCache`: Use webpack's unsafeCache to boost incremental build performance. Any filesystem alterations affecting module resolution will be ignored, and require dev process restart
+  - `--useModuleScripts`: Use Module Scripts of `<script type="module">` instead of `<script>` for client bundles
 
 - `fusion start [--environment]`
   Runs your application, assuming you have previously built them via `fusion build`. Note that build artifacts must be saved to disk (i.e. this command will fail if you use `fusion dev` to build artifacts instead of `fusion build`.
 
   - `--environment`: Which environment/assets to run - defaults to first available assets among `["development", "production"]`
+  - `--useModuleScripts`: Use `<script type="module">` and `<script nomodule>` instead of user-agent checks for modern/legacy bundle loading
 
 - `fusion test`
   This command is being deprecated, please use `jest` directly for which base configuration is provided via `fusion-cli/build/jest/jest-config`:

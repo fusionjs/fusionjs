@@ -31,6 +31,7 @@ import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
 import {SSRBodyTemplate} from '../plugins/ssr-plugin';
+import {SSRModuleScriptsBodyTemplate} from '../plugins/ssr-module-scripts-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
 // $FlowFixMe
 import main from '__FUSION_ENTRY_PATH__'; // eslint-disable-line import/no-unresolved
@@ -47,12 +48,14 @@ const initialize =
         throw new Error('App should export a function');
       };
 
-export async function start({port, dir = '.'} /*: any */) {
+export async function start(
+  {port, dir = '.', useModuleScripts = false} /*: any */
+) {
   AssetsPlugin = AssetsFactory(dir);
   // TODO(#21): support https.createServer(credentials, listener);
   server = http.createServer();
 
-  await reload();
+  await reload({useModuleScripts});
 
   server.on('request', (req, res) => {
     if (prefix) stripRoutePrefix(req, prefix);
@@ -71,14 +74,19 @@ export async function start({port, dir = '.'} /*: any */) {
   });
 }
 
-async function reload() {
+async function reload(
+  {useModuleScripts} /* : { useModuleScripts?: boolean } */
+) {
   const app = await initialize();
   if (!(app instanceof BaseApp)) {
     throw new Error('Application entry point did not return an App');
   }
   reverseRegister(app, ContextPlugin);
   app.register(AssetsPlugin);
-  app.register(SSRBodyTemplateToken, SSRBodyTemplate);
+  app.register(
+    SSRBodyTemplateToken,
+    useModuleScripts ? SSRModuleScriptsBodyTemplate : SSRBodyTemplate
+  );
   app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
   if (prefix) {
     app.register(RoutePrefixToken, prefix);
