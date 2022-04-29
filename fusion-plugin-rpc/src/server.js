@@ -128,7 +128,6 @@ const pluginFactory: () => RPCPluginType = () =>
       if (!emitter)
         throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
-      const form = new formidable.IncomingForm();
 
       const apiPath = formatApiPath(
         rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
@@ -155,6 +154,7 @@ const pluginFactory: () => RPCPluginType = () =>
                   'multipart/form-data'
                 ) !== -1
               ) {
+                const form = new formidable.IncomingForm();
                 body = await new Promise((resolve, reject) => {
                   form.parse(ctx.req, (err, fields: {[string]: any}, files) => {
                     if (err) {
