@@ -89,7 +89,7 @@ function getCompiler(opts) {
   };
   config.output.path = '/';
   // $FlowFixMe
-  config.entry = './src/sw.js';
+  config.entry = './src/sw';
   instance = webpack(config);
   instance.outputFileSystem = new MemoryFileSystem();
   return instance;
