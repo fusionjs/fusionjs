@@ -13,7 +13,7 @@ import {createPlugin} from 'fusion-core';
 import App from 'fusion-react';
 import {getSimulator} from 'fusion-test-utils';
 import type {FusionPlugin} from 'fusion-core';
-import {Link, Routes, Route, Outlet} from '../src/index.js';
+import {Link, Routes, Route, Outlet, useLocation} from '../src/index.js';
 import {Navigate} from '../src/modules/Navigate.js';
 import RouterPlugin, {RouterToken, GetStaticContextToken} from '../src/plugin';
 
@@ -264,6 +264,33 @@ test('Router Providing History', async () => {
   await simulator.render('/');
   cleanup();
 });
+
+if (__NODE__) {
+  test('router history providing location', async () => {
+    const Hello = () => {
+      const loc = useLocation();
+      return <div>{loc.search}</div>;
+    };
+    const element = (
+      <div>
+        <Routes>
+          <Route path="/" element={<Hello />} />
+        </Routes>
+      </div>
+    );
+
+    const app = getApp(element);
+    const UniversalEvents = getMockEvents({
+      title: '/',
+      page: '/',
+    });
+    app.register(UniversalEventsToken, UniversalEvents);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/?q=hi');
+    expect(ctx.rendered.includes('?q=hi')).toBeTruthy();
+    cleanup();
+  });
+}
 
 test('events with no tracking id and route prefix', async () => {
   const Hello = () => <div>Hello</div>;

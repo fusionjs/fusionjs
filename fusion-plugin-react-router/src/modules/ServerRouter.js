@@ -68,7 +68,7 @@ class ServerRouter extends React.Component<RouterPropsType> {
     return (
       <BaseRouter
         basename={basename}
-        location={history.location.pathname}
+        location={history.location}
         navigator={history}
         static={true}
       >
