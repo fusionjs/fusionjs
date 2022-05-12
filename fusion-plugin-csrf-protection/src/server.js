@@ -27,6 +27,10 @@ const enhancer = (oldFetch: Fetch): FusionPlugin<PluginDepsType, Fetch> => {
     middleware: (deps) => {
       const {ignored = []} = deps;
       const ignoreSet = new Set(ignored);
+      // navigator.sendBeacon is used to send analytics/metrics events to /_events
+      // Because this doesn't use the fetch token, this plugin would block these payloads
+      // Note that this means /_events should never cause a mutation of user state/data
+      ignoreSet.add('/_events');
 
       return async function csrfMiddleware(ctx, next) {
         if (ctx.path === '/csrf-token' && ctx.method === 'POST') {

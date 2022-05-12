@@ -107,3 +107,30 @@ test('does not verify ignored paths', async () => {
   });
   expect(ctx.status).toBe(200);
 });
+
+test('ignores /_events', async () => {
+  const app = getApp();
+  app.middleware((ctx, next) => {
+    if (ctx.path === '/_events') ctx.body = {ok: 1};
+    return next();
+  });
+  const simulator = getSimulator(app);
+  const ctx = await simulator.request('/_events', {
+    method: 'POST',
+  });
+  expect(ctx.status).toBe(200);
+});
+
+test('ignores /_events with ignored routes', async () => {
+  const app = getApp();
+  app.register(CsrfIgnoreRoutesToken, ['/not_events']);
+  app.middleware((ctx, next) => {
+    if (ctx.path === '/_events') ctx.body = {ok: 1};
+    return next();
+  });
+  const simulator = getSimulator(app);
+  const ctx = await simulator.request('/_events', {
+    method: 'POST',
+  });
+  expect(ctx.status).toBe(200);
+});

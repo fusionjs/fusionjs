@@ -2,7 +2,7 @@
 
 [![Build status](https://badge.buildkite.com/7a82192275779f6a8ba81f7d4a1b0d294256838faa1dfdf080.svg?branch=master)](https://buildkite.com/uberopensource/fusionjs)
 
-The `fusion-plugin-universal-events` is commonly required by other Fusion.js plugins and is used as an event emitter for data such as statistics and analytics. This plugin captures events emitted from the client, sends them in batches to the server periodically, and allows the server to handle them. Note that due to the batched and fire-and-forget nature of the client-to-server event emission, this library is not suitable for timing-sensitive requests such as error logging or RPC calls.
+The `fusion-plugin-universal-events` is commonly required by other Fusion.js plugins and is used as an event emitter for data such as statistics and analytics. This plugin captures events emitted from the client, sends them in batches to the server periodically, and allows the server to handle them. Note that due to the batched and fire-and-forget nature of the client-to-server event emission, this library is not suitable for timing-sensitive requests such as error logging or RPC calls. Furthermore, it is important that these events are only ever used for stats/metrics/analytics and never trigger mutations of user state or business logic.
 
 It's useful for when you want to collect data about user actions or other metrics, and send them in bulk to the server to minimize the number of HTTP requests.
 
