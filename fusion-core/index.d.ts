@@ -62,6 +62,7 @@ declare type FusionPlugin<Deps extends FusionPluginDepsType, Service> = {
   provides?: (Deps: ExtractDepsType<Deps>) => Service;
   middleware?: (Deps: ExtractDepsType<Deps>, Service: Service) => Middleware;
   cleanup?: (service: Service) => Promise<void>;
+  __fn__?: any;
 };
 declare type SSRDecider = (a: Context) => boolean;
 declare type aliaser = {
@@ -76,7 +77,42 @@ declare type RouteTagsType = {
   };
 };
 
-declare class BaseApp {
+declare class App {
+  taskMap: Map<any, any>;
+  resolved: Map<any, any>;
+  count: number;
+  unresolvedAsyncCount: number;
+  registeredTokens: Set<unknown>;
+  enhancerChainRoots: Map<any, any>;
+  enhancerChainTails: Map<any, any>;
+  enhancerTokens: Map<any, any>;
+  cleanups: Array<cleanupFn>;
+  wrappers: any[];
+  renderSetup: any[];
+  universalValues: {};
+  pending: any;
+  activeTask: any;
+  constructor();
+  registerPlugin(
+    id: any,
+    taskFn: any,
+    param?: any
+  ): {
+    alias: (from: any, to: any) => void;
+  };
+  enhance(id: any, enhancer: any): void;
+  init(): Promise<unknown>;
+  _setRef(): void;
+  _clearRef(): void;
+}
+declare function withMiddleware(middleware: any): void;
+declare function withUniversalMiddleware(middleware: any): void;
+declare function withUniversalValue(id: any): ((val: any) => void)[];
+declare function withEndpoint(endpointPath: any, fn: any): void;
+declare function withRenderSetup(fn: any): void;
+declare function withSSREffect(effectFn: any): void;
+
+declare class BaseApp extends App {
   constructor(el: any, render: any);
   registered: Map<
     any,
@@ -89,10 +125,11 @@ declare class BaseApp {
   >;
   enhancerToToken: Map<any, any>;
   plugins: Array<any>;
-  cleanups: Array<cleanupFn>;
   renderer: any;
   _getService: (a: any) => any;
   _dependedOn: Set<any>;
+  done: boolean;
+  enableMiddlewareTiming: boolean;
   register<T>(
     tokenOrValue: Token<T> | FusionPlugin<any, T>,
     maybeValue?: FusionPlugin<any, T> | T
@@ -104,7 +141,7 @@ declare class BaseApp {
   ): void;
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function): void;
   cleanup(): Promise<any>;
-  resolve<TResolved>(): void;
+  resolve(): void;
   getService<TResolved>(token: Token<TResolved>): TResolved;
   callback(...args: any[]): Promise<void> | any;
 }
@@ -126,14 +163,14 @@ declare function compose(middleware: Array<Middleware>): Middleware;
 declare type MemoizeFn<A> = (ctx: Context) => A;
 declare function memoize<A>(fn: MemoizeFn<A>): MemoizeFn<A>;
 
-declare const unescape: (str: string) => string;
-declare const flowHtml: (
+declare let html: (
   strings: TemplateStringsArray,
   ...expressions: Array<string>
 ) => SanitizedHTMLWrapper;
-declare const flowDangerouslySetHTML: (html: string) => any;
-declare const flowConsumeSanitizedHTML: (str: SanitizedHTMLWrapper) => string;
-declare const flowEscape: (str: string) => string;
+declare let dangerouslySetHTML: (html: string) => any;
+declare let consumeSanitizedHTML: (h: SanitizedHTMLWrapper) => string;
+declare let escape: (str: string) => string;
+declare const unescape: (str: string) => string;
 
 declare function assetUrl(url: string): string;
 declare function chunkId(filename: string): string;
@@ -158,7 +195,7 @@ declare const EnableMiddlewareTimingToken: Token<boolean>;
 declare type FusionPluginNoHidden<
   TDeps extends FusionPluginDepsType,
   TService
-> = Omit<FusionPlugin<TDeps, TService>, '__plugin__' | 'stack'>;
+> = Omit<FusionPlugin<TDeps, TService>, '__plugin__' | 'stack' | '__fn__'>;
 declare function createPlugin<
   TDeps extends FusionPluginDepsType,
   TService extends any
@@ -194,17 +231,23 @@ export {
   assetUrl,
   chunkId,
   compose,
-  flowConsumeSanitizedHTML as consumeSanitizedHTML,
+  consumeSanitizedHTML,
   createPlugin,
   createToken,
-  flowDangerouslySetHTML as dangerouslySetHTML,
+  dangerouslySetHTML,
   FusionApp as default,
-  flowEscape as escape,
+  escape,
   _default as getEnv,
-  flowHtml as html,
+  html,
   memoize,
   syncChunkIds,
   syncChunkPaths,
   unescape,
+  withEndpoint,
+  withMiddleware,
+  withRenderSetup,
+  withSSREffect,
+  withUniversalMiddleware,
+  withUniversalValue,
   workerUrl,
 };

@@ -5,77 +5,180 @@
  *
  */
 
-import * as react_router from 'react-router';
-export {
-  RouteComponentProps as ContextRouterType,
-  match as MatchType,
-} from 'react-router';
 import * as React from 'react';
-import {History, Location} from 'history';
-export {Location as LocationType, History as RouterHistoryType} from 'history';
+import {ReactNode, ComponentType, ReactElement} from 'react';
+import {History} from 'history';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {Token, Context, FusionPlugin, RouteTagsToken} from 'fusion-core';
-import {
-  Router as Router$1,
-  BrowserRouter as BrowserRouter$2,
-  HashRouter as HashRouter$1,
-  Link as Link$1,
-  matchPath as matchPath$1,
-  MemoryRouter as MemoryRouter$1,
-  NavLink as NavLink$1,
-  Prompt as Prompt$1,
-  Switch as Switch$1,
-  withRouter as withRouter$1,
-  useHistory as useHistory$1,
-  useRouteMatch as useRouteMatch$1,
-  useLocation as useLocation$1,
-  useParams as useParams$1,
-} from 'react-router-dom';
 
 declare type RouterPropsType = {
-  context?: any;
-  onRoute?: Function;
-  history: History;
-  Provider?: BaseRouterType;
   basename?: string;
   children?: React.ReactNode;
+  context?: StaticContextType;
+  history: TNavigator;
+  onRoute?: Function;
 };
 declare type RouterType = React.ComponentType<RouterPropsType>;
-declare type LocationShapeType = {
-  pathname?: string;
-  search?: string;
-  hash?: string;
-  state?: any;
-};
 declare type StaticContextType = {
   action?: string | null;
-  location?: Location | null;
+  location?: TLocation | null;
   status?: number | null;
   url?: string | null;
+  setCode?: (a: number) => void;
+  redirect?: (a: string) => void;
 };
-declare type BaseRouterType = React.ComponentType<{
-  history: History;
-  children?: React.ReactNode;
+declare type RouterContextType = {
+  basename: string;
+  history: TNavigator;
+  router: {
+    staticContext: StaticContextType;
+  };
+  onRoute: Function;
+};
+declare type TLocation = {
+  pathname: string;
+  search: string;
+  hash: string;
+};
+declare type TTo = string | TLocation;
+declare type TNavigation = 'POP' | 'PUSH' | 'REPLACE';
+declare type TNavigator = History;
+declare type TRouterProps = {
+  basename?: string;
+  children?: ReactNode;
+  location: string | TLocation;
+  navigationType?: TNavigation;
+  navigator: TNavigator;
+  static?: boolean;
+};
+declare type TRouter = ComponentType<TRouterProps>;
+declare type TNavigate = ComponentType<{
+  to: TTo;
+  replace?: boolean;
+  state?: any;
 }>;
-
-declare type ProviderPropsType = {
-  history: History;
-  children?: React.ReactNode;
+declare type TRoute = ComponentType<{
+  caseSensitive?: boolean;
+  children?: ReactNode;
+  element?: ReactNode | null;
+  index?: boolean;
+  path?: string;
+  trackingId?: string;
+}>;
+declare type TRoutes = ComponentType<{
+  children?: ReactNode;
+  location?: TTo;
+}>;
+declare type TUseLocation = () => TLocation;
+declare type TRouteObject = {
+  caseSensitive?: boolean;
+  children?: Array<TRouteObject>;
+  element?: ReactNode;
+  index?: boolean;
+  path?: string;
 };
+declare type TCreateRoutesFromChildren = (
+  children: ReactNode
+) => Array<TRouteObject>;
+declare type TRouteMatch = {
+  params: {
+    [key: string]: string;
+  };
+  pathname: string;
+  route: TRouteObject;
+};
+declare type TMatchRoutes = (
+  routes: Array<TRouteObject>,
+  location: TTo,
+  basename?: string
+) => Array<TRouteMatch> | null;
+declare type TBrowserRouter = ComponentType<{
+  basename?: string;
+  children?: ReactNode;
+  window?: any;
+}>;
+declare type TUnstableHistoryRouter = ComponentType<{
+  basename?: string;
+  children?: ReactNode;
+  history: TNavigator;
+}>;
+declare type THashRouter = ComponentType<{
+  basename?: string;
+  children?: ReactNode;
+  window?: any;
+}>;
+declare type TMemoryRouter = ComponentType<{
+  basename?: string;
+  children?: ReactNode;
+  initialEntries?: Array<TTo>;
+  initialIndex?: number;
+}>;
+declare type TLink = ComponentType<{
+  reloadDocument?: boolean;
+  replace?: boolean;
+  state?: any;
+  to: TTo;
+}>;
+declare type TNavLink = ComponentType<{
+  children?: ReactNode;
+  caseSensitive?: boolean;
+  className?: string | Function;
+  end?: boolean;
+  style?: any;
+}>;
+declare type TOutlet = ComponentType<{
+  context?: any;
+}>;
+declare type TUseOutletContext = () => any;
+declare type TStaticRouter = ComponentType<{
+  basename?: string;
+  children?: ReactNode;
+  location: TTo;
+}>;
+declare type TGeneratePath = (path: string, params: any) => string;
+declare type TRenderMatches = (
+  matches: Array<TRouteMatch> | null
+) => ReactElement<any> | null;
+declare type TMatchPath = (pattern: any, pathname: string) => any;
+declare type TResolvePath = (to: TTo, fromPathname: string) => TLocation;
+declare type TUseHref = (to: TTo) => string;
+declare type TUseLinkClickHandler = (to: TTo, options?: any) => any;
+declare type TUseInRouterContext = () => boolean;
+declare type TUseNavigationType = () => TNavigation;
+declare type TUseMatch = (pattern: any) => any;
+declare type TUseNavigate = () => any;
+declare type TUseOutlet = () => ReactElement<any> | null;
+declare type TUseParams = () => any;
+declare type TUseResolvedPath = (to: TTo) => TLocation;
+declare type TUseRoutes = (
+  routes: Array<TRouteObject>,
+  location?: TTo
+) => ReactElement<any> | null;
+declare type TUseSearchParams = (defaultInit?: any) => [any, any];
+declare type TCreateSearchParams = (init?: any) => any;
+declare type THistory = {
+  action: string;
+  location: TLocation;
+  go(delta: number): void;
+  push(to: TTo, state?: any): void;
+  replace(path: TTo, state?: any): void;
+  createHref(to: TTo): string;
+  back(): void;
+  forward(): void;
+  listen(listener: any): () => void;
+  block(blocker: any): () => void;
+};
+
 declare type HistoryWrapperType = {
   from: (ctx: Context) => {
-    history: History;
+    history: TNavigator;
   };
 };
 declare const GetStaticContextToken: Token<(ctx: Context) => StaticContextType>;
-declare const RouterProviderToken: Token<
-  React.ComponentType<ProviderPropsType>
->;
 declare const RouterToken: Token<HistoryWrapperType>;
 declare type PluginDepsType = {
   getStaticContext: typeof GetStaticContextToken.optional;
   emitter: typeof UniversalEventsToken.optional;
-  Provider: typeof RouterProviderToken.optional;
   RouteTags: typeof RouteTagsToken;
 };
 declare const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType>;
@@ -84,151 +187,49 @@ declare type StatusPropsType = {
   children: React.ReactNode;
   code?: string | number;
 };
-declare type StatusContextType = {
-  router?: {
-    staticContext: {
-      status: number;
-    };
-  };
-};
 declare class Status$1 extends React.Component<StatusPropsType> {
-  constructor(props: StatusPropsType, context: StatusContextType);
+  constructor(props: StatusPropsType, context: RouterContextType);
   render(): React.ReactNode;
   static contextTypes: {
     router: any;
   };
 }
 
-declare type PropsType = {
-  to: string | LocationShapeType;
-  push?: boolean;
-  from?: string;
-  exact?: boolean;
-  strict?: boolean;
+declare type PropsType$1 = {
+  to: TTo;
+  replace?: boolean;
   code?: number | string;
-  children?: React.ReactNode;
 };
-declare type ContextType$1 = {
-  router?: {
-    staticContext?: StaticContextType;
-  };
-};
-declare class Redirect$1 extends React.Component<PropsType> {
-  context: ContextType$1;
+declare class Navigate$1 extends React.Component<PropsType$1> {
   static defaultProps: {
-    push: boolean;
+    to: string;
+    replace: boolean;
     code: number;
   };
   render(): JSX.Element;
   static contextTypes: {
+    history: any;
     router: any;
   };
 }
 
-/**
- * The public top-level API for a "static" <Router>, so-called because it
- * can't actually change the current location. Instead, it just records
- * location changes in a context object. Useful mainly in testing and
- * server-rendering scenarios.
- */
-declare class ServerRouter extends React.Component<RouterPropsType> {
-  static defaultProps: {
-    basename: string;
-    context: {};
-    Provider: typeof Router$1;
-    onRoute: () => void;
-  };
-  getRouterStaticContext(): any;
-  getChildContext(): {
-    router: {
-      staticContext: any;
-    };
-    onRoute: (routeData: any) => any;
-  };
-  render(): JSX.Element;
-  static childContextTypes: {
-    router: () => void;
-    onRoute: () => void;
-  };
-}
-
-declare type ContextType = {
-  __IS_PREPARE__: boolean;
+declare type PropsType = {
+  children?: React.ReactNode;
 };
-declare class BrowserRouter$1 extends React.Component<RouterPropsType> {
-  lastTitle: string | undefined | null;
-  lastParams: {};
-  context: ContextType;
-  static defaultProps: {
-    onRoute: () => void;
-    Provider: typeof Router$1;
-  };
-  constructor(props: RouterPropsType, context: ContextType);
-  getChildContext(): {
-    onRoute: (routeData: any) => void;
-  };
-  render(): JSX.Element;
-  static propTypes: {
-    children: any;
-    onRoute: any;
+declare function Routes$1(
+  props: PropsType,
+  context: RouterContextType
+): JSX.Element;
+declare namespace Routes$1 {
+  var contextTypes: {
     history: any;
-    Provider: any;
-    basename: any;
-  };
-  static contextTypes: {
-    __IS_PREPARE__: any;
-  };
-  static childContextTypes: {
+    router: any;
     onRoute: any;
   };
+  var displayName: string;
 }
 
-declare const BrowserRouter: typeof BrowserRouter$2;
-declare const HashRouter: typeof HashRouter$1;
-declare const Link: typeof Link$1;
-declare const matchPath: typeof matchPath$1;
-declare const MemoryRouter: typeof MemoryRouter$1;
-declare const NavLink: typeof NavLink$1;
-declare const Prompt: typeof Prompt$1;
-declare const Route: React.FC<
-  {
-    trackingId?: any;
-    component?: React.ComponentType<any>;
-    render?: (
-      routeProps: react_router.RouteComponentProps<
-        {},
-        react_router.StaticContext,
-        unknown
-      >
-    ) => React.ReactNode;
-    children?:
-      | React.ReactNode
-      | ((
-          routeProps: react_router.RouteComponentProps<
-            {},
-            react_router.StaticContext,
-            unknown
-          >
-        ) => React.ReactNode);
-  } & react_router.RouteProps<
-    string,
-    {
-      [x: string]: string;
-    }
-  > &
-    react_router.OmitNative<
-      {},
-      keyof react_router.RouteProps<
-        string,
-        {
-          [x: string]: string;
-        }
-      >
-    >
->;
-declare const Router: typeof BrowserRouter$1 | typeof ServerRouter;
-declare const Switch: typeof Switch$1;
-declare const withRouter: typeof withRouter$1;
+declare const Status: typeof Status$1;
 declare const NotFound: <
   TProps extends {
     children: React.ReactNode;
@@ -236,38 +237,117 @@ declare const NotFound: <
 >(
   props: TProps
 ) => JSX.Element;
-declare const Redirect: typeof Redirect$1;
-declare const Status: typeof Status$1;
-declare const useHistory: typeof useHistory$1;
-declare const useRouteMatch: typeof useRouteMatch$1;
-declare const useLocation: typeof useLocation$1;
-declare const useParams: typeof useParams$1;
+declare const Navigate: typeof Navigate$1;
+declare const Router: RouterType;
+declare const BrowserRouter: TBrowserRouter;
+declare const UnstableHistoryRouter: TUnstableHistoryRouter;
+declare const HashRouter: THashRouter;
+declare const MemoryRouter: TMemoryRouter;
+declare const Link: TLink;
+declare const NavLink: TNavLink;
+declare const Outlet: TOutlet;
+declare const useOutletContext: TUseOutletContext;
+declare const Routes: typeof Routes$1;
+declare const Route: TRoute;
+declare const createRoutesFromChildren: TCreateRoutesFromChildren;
+declare const generatePath: TGeneratePath;
+declare const matchRoutes: TMatchRoutes;
+declare const renderMatches: TRenderMatches;
+declare const matchPath: TMatchPath;
+declare const resolvePath: TResolvePath;
+declare const useHref: TUseHref;
+declare const useLinkClickHandler: TUseLinkClickHandler;
+declare const useInRouterContext: TUseInRouterContext;
+declare const useLocation: TUseLocation;
+declare const useNavigationType: TUseNavigationType;
+declare const useMatch: TUseMatch;
+declare const useNavigate: TUseNavigate;
+declare const useOutlet: TUseOutlet;
+declare const useParams: TUseParams;
+declare const useResolvedPath: TUseResolvedPath;
+declare const useRoutes: TUseRoutes;
+declare const useSearchParams: TUseSearchParams;
+declare const createSearchParams: TCreateSearchParams;
 
 export {
   BrowserRouter,
   GetStaticContextToken,
   HashRouter,
   Link,
-  LocationShapeType,
   MemoryRouter,
   NavLink,
+  Navigate,
   NotFound,
-  Prompt,
-  Redirect,
+  Outlet,
   Route,
   Router,
+  RouterContextType,
   RouterPropsType,
-  RouterProviderToken,
   RouterToken,
   RouterType,
+  Routes,
   StaticContextType,
   Status,
-  Switch,
+  TBrowserRouter,
+  TCreateRoutesFromChildren,
+  TCreateSearchParams,
+  TGeneratePath,
+  THashRouter,
+  THistory,
+  TLink,
+  TLocation,
+  TMatchPath,
+  TMatchRoutes,
+  TMemoryRouter,
+  TNavLink,
+  TNavigate,
+  TNavigation,
+  TNavigator,
+  TOutlet,
+  TRenderMatches,
+  TResolvePath,
+  TRoute,
+  TRouteMatch,
+  TRouteObject,
+  TRouter,
+  TRouterProps,
+  TRoutes,
+  TStaticRouter,
+  TTo,
+  TUnstableHistoryRouter,
+  TUseHref,
+  TUseInRouterContext,
+  TUseLinkClickHandler,
+  TUseLocation,
+  TUseMatch,
+  TUseNavigate,
+  TUseNavigationType,
+  TUseOutlet,
+  TUseOutletContext,
+  TUseParams,
+  TUseResolvedPath,
+  TUseRoutes,
+  TUseSearchParams,
+  UnstableHistoryRouter,
+  createRoutesFromChildren,
+  createSearchParams,
   plugin as default,
+  generatePath,
   matchPath,
-  useHistory,
+  matchRoutes,
+  renderMatches,
+  resolvePath,
+  useHref,
+  useInRouterContext,
+  useLinkClickHandler,
   useLocation,
+  useMatch,
+  useNavigate,
+  useNavigationType,
+  useOutlet,
+  useOutletContext,
   useParams,
-  useRouteMatch,
-  withRouter,
+  useResolvedPath,
+  useRoutes,
+  useSearchParams,
 };
