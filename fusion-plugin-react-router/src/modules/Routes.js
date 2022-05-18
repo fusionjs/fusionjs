@@ -38,19 +38,21 @@ function Routes(props: PropsType, context: RouterContextType) {
     const trackingIdMap: {[string]: string} = trackingIdMapRef.current || {};
     if (!trackingIdMapRef.current) {
       const compileTracking = (children, currentPath) => {
-        React.Children.forEach(children, (element) => {
-          if (element.props.children) {
-            compileTracking(
-              element.props.children,
-              currentPath + element.props.path + '/'
-            );
-          } else {
-            const {path, trackingId} = element.props;
-            if (path && trackingId) {
-              trackingIdMap[currentPath + path] = trackingId;
+        React.Children.toArray(children)
+          .filter(Boolean)
+          .forEach((element) => {
+            if (element.props.children) {
+              compileTracking(
+                element.props.children,
+                currentPath + element.props.path + '/'
+              );
+            } else {
+              const {path, trackingId} = element.props;
+              if (path && trackingId) {
+                trackingIdMap[currentPath + path] = trackingId;
+              }
             }
-          }
-        });
+          });
       };
       compileTracking(props.children || [], '');
       trackingIdMapRef.current = trackingIdMap;

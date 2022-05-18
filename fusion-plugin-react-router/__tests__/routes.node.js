@@ -226,7 +226,7 @@ test('routes fires onRoute when location changes with custom trackingId, prefix,
     </>
   );
   const Hello = () => <div>Hello</div>;
-
+  const Hi = () => <div>Hi</div>;
   let callNum = 0;
   const onRoute = (data) => {
     if (callNum === 0) {
@@ -249,7 +249,7 @@ test('routes fires onRoute when location changes with custom trackingId, prefix,
     url: null,
   };
   const history = createServerHistory('/base', ctx, '/base/outer/inner');
-
+  const falsy = false;
   const el = (
     <Router history={history} onRoute={onRoute} basename="/base">
       <Routes>
@@ -259,9 +259,39 @@ test('routes fires onRoute when location changes with custom trackingId, prefix,
             element={<Hello />}
             trackingId={'inner-tracking'}
           />
+          {falsy ? <Route path="not-gonna-work" element={<Hi />} /> : null}
         </Route>
       </Routes>
     </Router>
   );
   render(el);
+});
+
+test('nullish routes render without issue', () => {
+  const HelloParent = () => (
+    <>
+      <div>Hello</div>
+      <Outlet />
+    </>
+  );
+  const Hi = () => <div>Hi</div>;
+  const ctx = {
+    action: null,
+    location: null,
+    status: 200,
+    url: null,
+  };
+  const history = createServerHistory('', ctx, '/outer/inner');
+  const falsy = false;
+  const el = (
+    <Router history={history}>
+      <Routes>
+        <Route path="/outer" element={<HelloParent />}>
+          <Route path="inner" element={<Hi />} />
+          {falsy ? <Route path="not-gonna-work" element={<Hi />} /> : null}
+        </Route>
+      </Routes>
+    </Router>
+  );
+  expect(render(el)).toEqual('<div>Hello</div><div>Hi</div>');
 });
