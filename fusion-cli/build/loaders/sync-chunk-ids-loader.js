@@ -18,10 +18,14 @@ module.exports = function syncChunkIdsLoader() {
   this.cacheable(false);
   const callback = this.async();
 
-  chunkMetadataState.result.then((chunkMetadata) => {
-    callback(
-      null,
-      `module.exports = ${JSON.stringify(chunkMetadata.criticalIds)};`
-    );
-  });
+  chunkMetadataState.result
+    .then((chunkMetadata) => {
+      callback(
+        null,
+        `module.exports = ${JSON.stringify(chunkMetadata.criticalIds)};`
+      );
+    })
+    .catch((err) => {
+      callback(err);
+    });
 };

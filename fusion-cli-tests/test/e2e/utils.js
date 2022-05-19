@@ -99,9 +99,9 @@ async function waitForServer(port /*: any */) /*: any */ {
       started = true;
     } catch (e) {
       // Allow returning true for 500 status code errors to test error states
-      if (e.status === 500) {
+      if (e.response && e.response.status === 500) {
         started = true;
-        res = e;
+        res = e.response;
       } else {
         numTries++;
       }

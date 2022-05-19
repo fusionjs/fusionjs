@@ -17,9 +17,13 @@ module.exports = function chunkManifestLoader() {
   const chunkMetadataState /*: ClientChunkMetadataContext*/ =
     this[clientChunkMetadataContextKey];
   const callback = this.async();
-  chunkMetadataState.result.then((chunkMetadata) => {
-    callback(null, generateSource(chunkMetadata));
-  });
+  chunkMetadataState.result
+    .then((chunkMetadata) => {
+      callback(null, generateSource(chunkMetadata));
+    })
+    .catch((err) => {
+      callback(err);
+    });
 };
 
 function generateSource({chunks, runtimeChunkIds, initialChunkIds}) {

@@ -26,6 +26,7 @@ const {
   svgoLoader,
   babelLoader,
   i18nManifestLoader,
+  chunkManifestLoader,
   chunkUrlMapLoader,
   syncChunkIdsLoader,
   syncChunkPathsLoader,
@@ -80,6 +81,7 @@ export type WebpackConfigOpts = {|
   dir: string,
   dev: boolean,
   hmr: boolean,
+  serverHmr: boolean,
   watch: boolean,
   preserveNames: boolean,
   zopfli: boolean,
@@ -133,6 +135,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     dev,
     dir,
     hmr,
+    serverHmr,
     watch,
     state,
     fusionConfig,
@@ -181,13 +184,14 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const mode = dev ? 'development' : 'production';
   const env = dev ? 'development' : 'production';
   const shouldMinify = !dev && minify;
-  const isHMREnabled =
+  const isHmrEnabled =
     dev &&
     hmr &&
     watch &&
-    // Disabling HMR when running in analyze mode,
+    // Disable client HMR when running in analyze mode,
     // so hot-update chunks do not get in a way.
     !isAnalyzerEnabled;
+  const isServerHmrEnabled = dev && serverHmr && watch;
   const target = {server: 'node', client: 'web', sw: 'webworker'}[runtime];
   const fusionBuildFolder = path.resolve(dir, '.fusion');
 
@@ -198,14 +202,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const babelConfigData = {
     target: runtime === 'server' ? 'node-bundled' : 'browser-modern',
     specOnly: true,
-    plugins:
-      fusionConfig.babel && fusionConfig.babel.plugins
-        ? fusionConfig.babel.plugins
-        : [],
-    presets:
-      fusionConfig.babel && fusionConfig.babel.presets
-        ? fusionConfig.babel.presets
-        : [],
   };
 
   const isAssumeNoImportSideEffectsEnabled =
@@ -285,6 +281,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     dev,
     dir,
     hmr,
+    serverHmr,
     watch,
     zopfli,
     gzip,
@@ -301,6 +298,10 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
   const isBuildCachePersistent =
     isBuildCacheEnabled && !isEmptyDir(cacheDirectory);
 
+  const withHmr =
+    (isHmrEnabled && runtime === 'client') ||
+    (isServerHmrEnabled && runtime === 'server');
+
   const externalsCache = new Map();
 
   return {
@@ -309,7 +310,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           cache: {
             type: 'filesystem',
             cacheDirectory,
-            name: `${runtime}-${mode}${isHMREnabled ? '-hmr' : ''}`,
+            name: `${runtime}-${mode}${withHmr ? '-hmr' : ''}`,
             version: JSON.stringify(cacheVersionVars),
             buildDependencies: {
               // Invalidate cache when any of these files, or any of their dependencies change
@@ -350,14 +351,9 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
           path.join(__dirname, '../entries/client-public-path.js'),
         runtime === 'server' &&
           path.join(__dirname, '../entries/server-public-path.js'),
-        isHMREnabled &&
-          runtime !== 'server' &&
+        isHmrEnabled &&
+          runtime === 'client' &&
           `${require.resolve('webpack-hot-middleware/client')}?name=client`,
-        // TODO: revisit server-side HMR (we currently restart the server)
-        // TODO(#46): use 'webpack/hot/signal' instead
-        // isHMREnabled &&
-        //   runtime === 'server' &&
-        //   `${require.resolve('webpack/hot/poll')}?1000`,
         runtime === 'server' &&
           path.join(__dirname, `../entries/${id}-entry.js`), // server-entry or serverless-entry
         runtime === 'client' &&
@@ -529,14 +525,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                   target:
                     runtime === 'server' ? 'node-bundled' : 'browser-legacy',
                   specOnly: true,
-                  plugins:
-                    fusionConfig.babel && fusionConfig.babel.plugins
-                      ? fusionConfig.babel.plugins
-                      : [],
-                  presets:
-                    fusionConfig.babel && fusionConfig.babel.presets
-                      ? fusionConfig.babel.presets
-                      : [],
                 },
                 /**
                  * Fusion-specific transforms (not applied to node_modules)
@@ -713,6 +701,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
         [chunkIdsLoader.alias]: chunkIdsLoader.path,
         [syncChunkIdsLoader.alias]: syncChunkIdsLoader.path,
         [syncChunkPathsLoader.alias]: syncChunkPathsLoader.path,
+        [chunkManifestLoader.alias]: chunkManifestLoader.path,
         [chunkUrlMapLoader.alias]: chunkUrlMapLoader.path,
         [i18nManifestLoader.alias]: i18nManifestLoader.path,
         [swLoader.alias]: swLoader.path,
@@ -840,10 +829,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
             compilation: 'client',
             i18nManifest: state.i18nManifest,
           }),
-      // @TODO: revisit server-side HMR (we currently restart the server)
-      isHMREnabled &&
-        runtime !== 'server' &&
-        new webpack.HotModuleReplacementPlugin(),
+      withHmr && new webpack.HotModuleReplacementPlugin(),
       runtime === 'server' &&
         new webpack.BannerPlugin({
           raw: true,

@@ -90,7 +90,7 @@ declare class BaseApp {
     middleware?: (Deps: $ObjMap<TDeps, ExtractTokenType>) => Middleware
   ): void;
   enhance<TResolved>(token: Token<TResolved>, enhancer: Function): void;
-  cleanup(): Promise<any>;
+  cleanup(): Promise<any> | any;
   resolve<TResolved>(): void;
   getService<TResolved>(token: Token<TResolved>): TResolved;
   callback(...args: any[]): Promise<void> | any;

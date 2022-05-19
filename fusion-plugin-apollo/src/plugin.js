@@ -132,6 +132,7 @@ export default (renderFn: Render) =>
           return apolloContext;
         };
         const server = new ApolloServer({
+          stopOnTerminationSignals: false,
           formatError: (error) => {
             logger && logger.error(error.message, error);
             return error;

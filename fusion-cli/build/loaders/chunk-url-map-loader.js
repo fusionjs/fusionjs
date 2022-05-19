@@ -17,9 +17,13 @@ module.exports = function chunkUrlMapLoader() {
   const chunkMetadataState /*: ClientChunkMetadataContext*/ =
     this[clientChunkMetadataContextKey];
   const callback = this.async();
-  chunkMetadataState.result.then((chunkMetadata) => {
-    callback(null, generateSource(chunkMetadata.urlMap));
-  });
+  chunkMetadataState.result
+    .then((chunkMetadata) => {
+      callback(null, generateSource(chunkMetadata.urlMap));
+    })
+    .catch((err) => {
+      callback(err);
+    });
 };
 
 function generateSource(chunkUrlMap) {

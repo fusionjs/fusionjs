@@ -12,13 +12,14 @@ const path = require('path');
 const http = require('http');
 const EventEmitter = require('events');
 const getPort = require('get-port');
-const {spawn} = require('child_process');
+const {execSync} = require('child_process');
 const {promisify} = require('util');
 const openUrl = require('react-dev-utils/openBrowser');
 const httpProxy = require('http-proxy');
 const net = require('net');
 const readline = require('readline');
 const chalk = require('chalk');
+const ChildServer = require('./child-server.js');
 
 const renderHtmlError = require('./server-error').renderHtmlError;
 const fs = require('fs');
@@ -41,8 +42,10 @@ function Lifecycle() {
     },
     stop: () => {
       state.started = false;
+      state.error = undefined;
     },
     error: (error) => {
+      state.started = false;
       state.error = error;
       // The error listener may emit before we call wait.
       // Make sure that we're listening before attempting to emit.
@@ -72,10 +75,17 @@ function Lifecycle() {
 
 /*::
 type DevRuntimeType = {
-  run: () => any,
+  run: (serverBuildHash?: string) => any,
   start: () => any,
   stop: () => any,
   invalidate: () => void
+};
+
+type DevRuntimeState = {
+  isInvalid: boolean,
+  server: ?http.Server,
+  childServer: ?ChildServer,
+  proxy: ?httpProxy,
 };
 */
 
@@ -88,100 +98,56 @@ module.exports.DevelopmentRuntime = function (
     debug = false,
     disablePrompts = false,
     experimentalSkipRedundantServerReloads,
+    logger,
+    serverHmr,
     useModuleScripts = false,
   } /*: any */
 ) /*: DevRuntimeType */ {
   const lifecycle = new Lifecycle();
-  const state = {
+  const state /*: DevRuntimeState */ = {
     isInvalid: true,
     server: null,
-    proc: null,
+    childServer: null,
     proxy: null,
   };
 
-  const resolvedChalkPath = require.resolve('chalk');
-  const resolvedServerErrorPath = require.resolve('./server-error');
-
-  this.run = async function reloadProc() {
-    state.isInvalid = false;
-
-    const childPort = await getPort();
-    const command = `
-      process.on('SIGTERM', () => process.exit());
-      process.on('SIGINT', () => process.exit());
-
-      const fs = require('fs');
-      const path = require('path');
-      const chalk = require(${JSON.stringify(resolvedChalkPath)});
-      const renderTerminalError = require(${JSON.stringify(
-        resolvedServerErrorPath
-      )}).renderTerminalError;
-
-      const logErrors = e => {
-        //eslint-disable-next-line no-console
-        console.error(renderTerminalError(e));
-      }
-
-      const logAndSend = e => {
-        logErrors(e);
-        process.send({event: 'error', payload: {
-          message: e.message,
-          name: e.name,
-          stack: e.stack,
-          type: e.type,
-          link: e.link
-        }});
-      }
-
-      const entry = path.resolve('${entryFile}');
-
-      if (fs.existsSync(entry)) {
-        try {
-          const {start} = require(entry);
-          start({port: ${childPort}, useModuleScripts: ${useModuleScripts}})
-            .then(() => {
-              process.send({event: 'started'})
-            })
-            .catch(logAndSend); // handle server bootstrap errors (e.g. port already in use)
-        }
-        catch (e) {
-          logAndSend(e); // handle app top level errors
-        }
-      }
-      else {
-        logAndSend(new Error(\`No entry found at \${entry}\`));
-      }
-    `;
-    const fpath = path.join(dir, entryFile);
-    if (experimentalSkipRedundantServerReloads && (await exists(fpath))) {
-      const entryFileStats = await stat(fpath);
-      if (
-        entryFileStats.mtime.toString() ===
-          entryFileLastModifiedTime.toString() &&
-        state.proc &&
-        state.proxy
-      ) {
-        console.log('Server bundle not changed, skipping server restart.');
-        // No point to resume at this point, as there's another compilation in progress
-        if (!state.isInvalid) {
-          lifecycle.start();
-        }
-        return;
-      } else {
-        entryFileLastModifiedTime = entryFileStats.mtime;
-      }
+  function onChildServerReady() {
+    // No point to resume at this point, as there's another compilation in progress
+    if (state.isInvalid) {
+      return;
     }
 
-    killProc();
+    lifecycle.start();
+  }
 
-    return new Promise((resolve, reject) => {
-      function handleChildServerCrash(err) {
-        lifecycle.stop();
-        killProc();
-        reject(err);
-      }
-      const args = ['-e', command];
-      if (debug) args.push('--inspect-brk');
+  function onChildServerError(err) {
+    if (state.isInvalid) {
+      return;
+    }
+
+    lifecycle.error(err);
+    logger.error(
+      'Server has crashed, please check logs for an error (type `r` in console to restart the server)'
+    );
+  }
+
+  let childServerInitPromise = null;
+  function initChildServer() {
+    if (childServerInitPromise) {
+      return childServerInitPromise;
+    }
+
+    return (childServerInitPromise = getPort().then((childPort) => {
+      childServerInitPromise = null;
+
+      state.childServer = new ChildServer({
+        cwd: path.resolve(process.cwd(), dir),
+        debug,
+        entryFilePath: entryFile,
+        onError: onChildServerError,
+        port: childPort,
+        useModuleScripts,
+      });
 
       state.proxy = httpProxy.createProxyServer({
         agent: new http.Agent({keepAlive: true}),
@@ -190,32 +156,73 @@ module.exports.DevelopmentRuntime = function (
           port: childPort,
         },
       });
+    }));
+  }
 
-      // $FlowFixMe
-      state.proc = spawn('node', args, {
-        cwd: path.resolve(process.cwd(), dir),
-        stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      });
-      // $FlowFixMe
-      state.proc.on('error', handleChildServerCrash);
-      // $FlowFixMe
-      state.proc.on('exit', handleChildServerCrash);
-      // $FlowFixMe
-      state.proc.on('message', (message) => {
-        if (message.event === 'started') {
-          // No point to resume at this point, as there's another compilation in progress
-          if (!state.isInvalid) {
-            lifecycle.start();
-          }
-          resolve();
+  this.run = async function reloadProc(serverBuildHash = '') {
+    state.isInvalid = false;
+
+    if (!serverHmr) {
+      const fpath = path.join(dir, entryFile);
+      if (experimentalSkipRedundantServerReloads && (await exists(fpath))) {
+        const entryFileStats = await stat(fpath);
+        if (
+          entryFileStats.mtime.toString() ===
+            entryFileLastModifiedTime.toString() &&
+          state.childServer &&
+          state.childServer.isStarted() &&
+          state.proxy
+        ) {
+          logger.info('Server bundle not changed, skipping server restart.');
+          onChildServerReady();
+
+          return;
+        } else {
+          entryFileLastModifiedTime = entryFileStats.mtime;
         }
-        if (message.event === 'error') {
-          lifecycle.error(message.payload);
-          killProc();
-          reject(new Error('Received error message from server'));
-        }
-      });
-    });
+      }
+
+      if (state.childServer) {
+        await killProc();
+      }
+    }
+
+    if (!state.childServer) {
+      await initChildServer();
+    }
+
+    // $FlowFixMe[incompatible-use]
+    if (serverHmr && state.childServer.isStarted()) {
+      return (
+        state.childServer
+          // $FlowFixMe[incompatible-use]
+          .update(serverBuildHash)
+          .catch(() => {
+            logger.warn('HMR Failed. Attempting full server reload...');
+
+            // $FlowFixMe[incompatible-use]
+            return state.childServer.start(serverBuildHash);
+          })
+          .then(onChildServerReady)
+          .catch((err) => {
+            onChildServerError(err);
+
+            throw err;
+          })
+      );
+    } else {
+      return (
+        state.childServer
+          // $FlowFixMe[incompatible-use]
+          .start(serverBuildHash)
+          .then(onChildServerReady)
+          .catch((err) => {
+            onChildServerError(err);
+
+            throw err;
+          })
+      );
+    }
   };
 
   this.invalidate = () => {
@@ -223,20 +230,57 @@ module.exports.DevelopmentRuntime = function (
     lifecycle.stop();
   };
 
-  function killProc() {
-    if (state.proc) {
-      lifecycle.stop();
-      state.proc.removeAllListeners();
-      state.proc.kill();
-      state.proc = null;
-    }
+  async function killProc() {
     if (state.proxy) {
       state.proxy.close();
       state.proxy = null;
     }
+
+    if (state.childServer) {
+      try {
+        await state.childServer.stop();
+      } catch (err) {} // eslint-disable-line
+
+      state.childServer = null;
+    }
   }
 
+  let isRestarting = false;
+  this.handleTerminalInput = async (data) => {
+    const input = data.toString().trim();
+
+    if (input === 'r') {
+      if (isRestarting) {
+        logger.warn('Another restart in progress...');
+        return;
+      }
+      isRestarting = true;
+
+      logger.info('Restarting the server...');
+      lifecycle.stop();
+
+      try {
+        await killProc();
+        await this.run();
+
+        logger.info('Server has been restarted');
+      } catch (err) {} // eslint-disable-line
+
+      isRestarting = false;
+    }
+  };
+
   this.start = async function start() {
+    if (debug) {
+      // make the default node debug port available for attaching
+      // by killing the previously attached process
+      try {
+        execSync(
+          "lsof -n -i:9229 | grep node | awk '{print $2}' | xargs -r kill -9"
+        );
+      } catch (err) {} // eslint-disable-line
+    }
+
     const portAvailable = await isPortAvailable(port);
     if (!portAvailable) {
       if (disablePrompts) {
@@ -255,37 +299,35 @@ module.exports.DevelopmentRuntime = function (
       }
     }
 
-    // $FlowFixMe
     state.server = http.createServer((req, res) => {
       middleware(req, res, async () => {
-        lifecycle.wait().then(
-          () => {
-            // $FlowFixMe
-            state.proxy.web(req, res, (e) => {
-              if (res.finished) return;
+        function handleError(err) {
+          if (res.finished) return;
 
-              res.write(renderHtmlError(e));
-              res.end();
-            });
-          },
-          (error) => {
-            if (res.finished) return;
-
-            res.write(renderHtmlError(error));
-            res.end();
+          if (!res.headersSent) {
+            res.statusCode = 500;
           }
-        );
+          res.write(renderHtmlError(err));
+          res.end();
+        }
+
+        function passThrough(onError = handleError) {
+          // $FlowFixMe[incompatible-use]
+          return state.proxy.web(req, res, onError);
+        }
+
+        lifecycle.wait().then(passThrough, handleError);
       });
     });
 
     state.server.on('upgrade', (req, socket, head) => {
-      socket.on('error', (e) => {
+      socket.on('error', (err) => {
         socket.destroy();
       });
       lifecycle.wait().then(
         () => {
-          // $FlowFixMe
-          state.proxy.ws(req, socket, head, (/*e*/) => {
+          // $FlowFixMe[incompatible-use]
+          state.proxy.ws(req, socket, head, () => {
             socket.destroy();
           });
         },
@@ -296,23 +338,29 @@ module.exports.DevelopmentRuntime = function (
       );
     });
 
-    // $FlowFixMe
+    // $FlowFixMe[incompatible-use]
     const listen = promisify(state.server.listen.bind(state.server));
     return listen(port).then(() => {
       const url = `http://localhost:${port}`;
       if (!noOpen) openUrl(url);
+
+      if (process.stdin.isTTY) {
+        process.stdin.on('data', this.handleTerminalInput);
+      }
 
       // Return port in case it had to be changed
       return port;
     });
   };
 
-  this.stop = () => {
-    killProc();
+  this.stop = async () => {
+    process.stdin.off('data', this.handleTerminalInput);
     if (state.server) {
       state.server.close();
       state.server = null; // ensure we can call .run() again after stopping
     }
+
+    await killProc();
   };
 
   return this;

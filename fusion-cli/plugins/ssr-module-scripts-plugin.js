@@ -21,7 +21,7 @@ import {
   chunks,
   runtimeChunkIds,
   initialChunkIds, // $FlowFixMe
-} from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
+} from '__SECRET_CHUNK_MANIFEST_LOADER__!'; // eslint-disable-line
 
 /*::
 import type {SSRBodyTemplateDepsType, SSRBodyTemplateType} from './types.js';

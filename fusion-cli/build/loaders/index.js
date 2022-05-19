@@ -26,6 +26,10 @@ const loaderIndex = {
     alias: '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__',
     path: require.resolve('./i18n-manifest-loader.js'),
   },
+  chunkManifestLoader: {
+    alias: '__SECRET_CHUNK_MANIFEST_LOADER__',
+    path: require.resolve('./chunk-manifest-loader.js'),
+  },
   chunkUrlMapLoader: {
     alias: '__SECRET_BUNDLE_MAP_LOADER__',
     path: require.resolve('./chunk-url-map-loader.js'),

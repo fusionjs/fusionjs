@@ -36,7 +36,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--stats`: Control verbosity level of build stats output (`full`, `minimal`) `[default: "minimal"]`
   - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
 
-  Builds where the ENABLE_REACT_PROFILER environment variable is set to `'true'` will enable the [Fusion React Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) in apps deployed to production. (NOTE: using the react profiler will itself slightly degrade performance):
+  Builds where the `ENABLE_REACT_PROFILER` environment variable is set to `'true'` will enable the [Fusion React Profiler](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html) in apps deployed to production. (NOTE: using the react profiler will itself slightly degrade performance):
 
   - `ENABLE_REACT_PROFILER=true fusion build`
 
@@ -57,6 +57,9 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
   - `--analyze`: Run bundle analyzer for targeted build (`client`, `server`)
   - `--unsafeCache`: Use webpack's unsafeCache to boost incremental build performance. Any filesystem alterations affecting module resolution will be ignored, and require dev process restart
   - `--useModuleScripts`: Use Module Scripts of `<script type="module">` instead of `<script>` for client bundles
+
+  `fusion dev` process is terminated gracefully upon receiving `SIGTERM` and `SIGINT` signals, allowing time to complete all routine tasks (e.g.,  cache persistence etc.), and cleanup all used resources. Use `FUSION_CLI_TERMINATION_GRACE_PERIOD=<time_ms>` environment variable to control the grace period timeout, forcing the process to exit should tasks take long time to finish. _Note: setting this environment variable to `0` will make the process exit immediately_
+  - `FUSION_CLI_TERMINATION_GRACE_PERIOD=<time_ms> fusion dev`:
 
 - `fusion start [--environment]`
   Runs your application, assuming you have previously built them via `fusion build`. Note that build artifacts must be saved to disk (i.e. this command will fail if you use `fusion dev` to build artifacts instead of `fusion build`.

@@ -12,7 +12,10 @@ const winston = require('winston');
 
 const {Compiler} = require('../build/compiler');
 const {DevelopmentRuntime} = require('../build/dev-runtime');
-const {execSync: exec} = require('child_process');
+
+const TERMINATION_GRACE_PERIOD = process.env.FUSION_CLI_TERMINATION_GRACE_PERIOD
+  ? parseInt(process.env.FUSION_CLI_TERMINATION_GRACE_PERIOD)
+  : Infinity;
 
 exports.run = async function (
   {
@@ -23,6 +26,7 @@ exports.run = async function (
     forceLegacyBuild = false,
     port,
     hmr,
+    serverHmr,
     open,
     logLevel,
     disablePrompts,
@@ -48,6 +52,7 @@ exports.run = async function (
     env: 'development',
     dir,
     hmr,
+    serverHmr,
     forceLegacyBuild,
     watch: true,
     logger,
@@ -56,21 +61,20 @@ exports.run = async function (
     unsafeCache,
   });
 
-  const devRuntime = new DevelopmentRuntime(
-    // $FlowFixMe
-    Object.assign(
-      {
-        dir,
-        port,
-        debug,
-        noOpen: !open,
-        disablePrompts,
-        experimentalSkipRedundantServerReloads,
-        useModuleScripts,
-      },
-      hmr ? {middleware: compiler.getMiddleware()} : {}
-    )
-  );
+  const middleware = hmr ? compiler.getMiddleware() : void 0;
+
+  const devRuntime = new DevelopmentRuntime({
+    dir,
+    port,
+    debug,
+    noOpen: !open,
+    disablePrompts,
+    experimentalSkipRedundantServerReloads,
+    logger,
+    middleware,
+    serverHmr,
+    useModuleScripts,
+  });
 
   let testRuntime = null;
   if (test) {
@@ -86,7 +90,7 @@ exports.run = async function (
   const runAll = async () => {
     try {
       await Promise.all([
-        devRuntime.run(),
+        devRuntime.run(compiler.getCompilationHash('server')),
         // $FlowFixMe
         testRuntime ? testRuntime.run() : Promise.resolve(),
       ]);
@@ -96,17 +100,14 @@ exports.run = async function (
     } catch (e) {} // eslint-disable-line
   };
 
-  const watcher = await new Promise((resolve, reject) => {
-    const watcher = compiler.start((err, stats) => {
+  await new Promise((resolve, reject) => {
+    compiler.start((err, stats) => {
       // Rerun for each recompile
-      compiler.on('done', () => {
-        if (debug) {
-          // make the default node debug port available for attaching by killing the
-          // old attached process
-          try {
-            exec("kill -9 $(lsof -n -i:9229 | grep node | awk '{print $2}')");
-          } catch (e) {} // eslint-disable-line
+      compiler.on('done', (stats) => {
+        if (stats.hasErrors()) {
+          return;
         }
+
         runAll();
       });
       compiler.on('invalid', () => devRuntime.invalidate());
@@ -117,22 +118,56 @@ exports.run = async function (
             new Error('Compilation error exiting due to exitOnError parameter.')
           );
         } else {
-          return resolve(watcher);
+          return resolve();
         }
       }
-      return runAll().then(() => resolve(watcher));
+
+      runAll();
+      resolve();
     });
   });
 
-  function stop() {
-    watcher.close();
-    devRuntime.stop();
-    // $FlowFixMe
-    if (testRuntime) testRuntime.stop();
+  async function stop(onClose /*: () => void */) {
+    await Promise.allSettled([
+      middleware && middleware.close(),
+      devRuntime.stop(),
+      // $FlowFixMe
+      testRuntime && testRuntime.stop(),
+      new Promise((resolve) => {
+        compiler.close(resolve);
+      }),
+    ]);
+
+    onClose();
   }
 
-  process.on('SIGTERM', () => {
-    stop();
+  const EXIT_SIGNALS = ['SIGINT', 'SIGTERM'];
+  let forceExit = false;
+  EXIT_SIGNALS.forEach((signal) => {
+    process.on(signal, function onSignalExit() {
+      function exit(exitCode = 0) {
+        EXIT_SIGNALS.forEach((signal) => process.off(signal, onSignalExit));
+        process.exit(exitCode);
+      }
+
+      if (forceExit || TERMINATION_GRACE_PERIOD === 0) {
+        return exit(1);
+      }
+      // User may force exit by sending termination signal a second time
+      forceExit = true;
+
+      console.log(
+        '\nGracefully shutting down... To force exit the process, press ^C again\n'
+      );
+
+      // Force exit should compiler take long time to close
+      if (Number.isFinite(TERMINATION_GRACE_PERIOD)) {
+        setTimeout(function () {
+          exit(1);
+        }, TERMINATION_GRACE_PERIOD);
+      }
+      stop(exit);
+    });
   });
 
   return {

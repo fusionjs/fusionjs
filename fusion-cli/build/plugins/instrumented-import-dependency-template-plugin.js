@@ -160,17 +160,21 @@ class InstrumentedImportDependencyTemplatePlugin {
 
       let clientChunkIndex;
       compiler.hooks.make.tapAsync(name, (compilation, done) => {
-        clientChunkMetadata.result.then((metadata) => {
-          clientChunkIndex = metadata.fileManifest;
+        clientChunkMetadata.result
+          .then((metadata) => {
+            clientChunkIndex = metadata.fileManifest;
 
-          compilation.dependencyTemplates.set(
-            ImportDependency,
-            new InstrumentedImportDependencyTemplate({
-              clientChunkIndex,
-            })
-          );
-          done();
-        });
+            compilation.dependencyTemplates.set(
+              ImportDependency,
+              new InstrumentedImportDependencyTemplate({
+                clientChunkIndex,
+              })
+            );
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
       });
 
       compiler.hooks.compilation.tap(name, (compilation, params) => {

@@ -169,6 +169,11 @@ module.exports = {
         default: false,
         describe: 'Skip server respawn when server bundle does not change',
       },
+      serverHmr: {
+        type: 'boolean',
+        default: false,
+        describe: '[Experimental] Enable HMR for the server bundle',
+      },
       ...analyzeOption,
       ...disableBuildCacheOption,
       ...statsOption,

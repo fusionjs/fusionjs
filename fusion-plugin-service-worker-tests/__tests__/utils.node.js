@@ -19,11 +19,8 @@ export async function startServer(customEnvVariables: any) {
     env: {...process.env, ...customEnvVariables},
   };
 
-  const proc = spawn(
-    'yarn',
-    ['fusion', 'dev', '--port', port, '--no-open'],
-    opts
-  );
+  const proc = spawn('fusion', ['dev', '--port', port, '--no-open'], opts);
+
   const stdoutLines = [];
   const stderrLines = [];
   proc.stdout &&

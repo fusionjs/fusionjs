@@ -2,7 +2,7 @@
 
 # Summary
 
-Flow v0.85 changed the way generic type inference works in a way which meant we were forced to explicitly provide type annotations for `createPlugin`. 
+Flow v0.85 changed the way generic type inference works in a way which meant we were forced to explicitly provide type annotations for `createPlugin`.
 After further analysis, I believe we can update the our type definitions slightly in a non-breaking way which will add suppot for type inference when
 defining plugins.
 
@@ -71,7 +71,7 @@ type FusionPlugin<Deps, Service> = {|
     Deps: $ObjMap<Deps & {}, ExtractReturnType>,
     Service: Service
   ) => Middleware,
-  cleanup?: (service: Service) => Promise<void>,
+  cleanup?: (service: Service) => Promise<void> | void,
 |};
 
 function createPlugin<Deps, Service>(p: FusionPlugin<Deps, Service>): FusionPlugin<Deps, Service> {
@@ -80,7 +80,7 @@ function createPlugin<Deps, Service>(p: FusionPlugin<Deps, Service>): FusionPlug
 ```
 
 In this example, the `Service` argument is in the input position in the `cleanup` function as well as the `middleware` function. Despite `deps` being used
-in the `provides` and `middleware` function, it is not directly reachable from exports because of the usage of `$ObjMap`. 
+in the `provides` and `middleware` function, it is not directly reachable from exports because of the usage of `$ObjMap`.
 
 Looking at the `cleanup` method is the simplext example. The reason the `Service` generic here qualifies as a type in the input position is demonstrated by
 the following example:
@@ -104,17 +104,17 @@ In this case, the `service` argument to `cleanup` is inferred as `number | strin
 when called with a string. This does not match the flow semantics however due to the process of subtyping ([read more](https://flow.org/en/docs/lang/subtypes/)).
 
 Taking a step back, if we look at our `createPlugin` API we can take advantage of the fact that the return value from `createPlugin` is designed to be opaque.
-In other words, it is not designed to have its properties accessed directly by consumers like in the cleanup example. 
+In other words, it is not designed to have its properties accessed directly by consumers like in the cleanup example.
 
-There are two parts of the type checking of fusion plugins. The first part is in the `createPlugin` call itself. This makes sure all the parts of the plugin are 
-consistent. For example, the declared deps match the types of the deps passed into `provides` and `middleware`, and the type returned from `provides` matches the 
+There are two parts of the type checking of fusion plugins. The first part is in the `createPlugin` call itself. This makes sure all the parts of the plugin are
+consistent. For example, the declared deps match the types of the deps passed into `provides` and `middleware`, and the type returned from `provides` matches the
 type injected into `cleanup` and `middleware`. All of this can be done without having any return type from `createPlugin`.
 
-The second part is type checking the `app.register` and `app.enhance` calls. This is done to verify the type of the token matches the provides type of the plugin, 
-and this is the part which depends on the return type of `createPlugin`. The key thing to notice here is that we only need the type of the `provides` method of 
-the plugin to verify it matches the token. At this point, deps, cleanup, and middleware are all irrelevant. 
+The second part is type checking the `app.register` and `app.enhance` calls. This is done to verify the type of the token matches the provides type of the plugin,
+and this is the part which depends on the return type of `createPlugin`. The key thing to notice here is that we only need the type of the `provides` method of
+the plugin to verify it matches the token. At this point, deps, cleanup, and middleware are all irrelevant.
 
-Because `createPlugin` should return an opaque type and because we only need the `provides` type to verify with `app.register`, we can update the `createPlugin` 
+Because `createPlugin` should return an opaque type and because we only need the `provides` type to verify with `app.register`, we can update the `createPlugin`
 return type to remove all generics in input positions without losing any type safety for consumers. There are several ways we could do this, but the simplest
 would be replacing the `service` generic with `any` in the return type of `createPlugin` whenever it is referenced in an input position. We also need to specify
 the properties as covariant.
@@ -127,7 +127,7 @@ type CreatePluginArgs<+Deps, Service> = {|
     Deps: $ObjMap<Deps & {}, ExtractReturnType>,
     Service: Service
   ) => Middleware,
-  +cleanup?: (service: Service) => Promise<void>,
+  +cleanup?: (service: Service) => Promise<void> | void,
 |};
 
 type FusionPlugin<+Deps, +Service> = {|
@@ -135,9 +135,9 @@ type FusionPlugin<+Deps, +Service> = {|
   +provides?: (Deps: $ObjMap<Deps & {}, ExtractReturnType>) => Service,
   +middleware?: (
     Deps: $ObjMap<Deps & {}, ExtractReturnType>,
-    Service: any 
+    Service: any
   ) => Middleware,
-  +cleanup?: (service: any) => Promise<void>,
+  +cleanup?: (service: any) => Promise<void> | void,
 |};
 
 function createPlugin<Deps, Service>(p: CreatePluginArgs<Deps, Service>): FusionPlugin<Deps, Service> {
@@ -153,7 +153,7 @@ flow architecture and keeping all the same type safety for fusion consumers.
 # Drawbacks
 
 While there is type information lost, I would argue it is not type information that should be used in any meaningful way as it is not recommended
-to directly access properties of fusion plugins. 
+to directly access properties of fusion plugins.
 
 The only other drawback we could potentially see is if future changes to flow or the fusion plugin API cause us to lose the ability to get type inference
 we will need to migrate all usages of `createPlugin` to include explicit type annotations, as we have done in the past.
@@ -163,7 +163,7 @@ we will need to migrate all usages of `createPlugin` to include explicit type an
 # Alternatives
 
 There are various alternatives to how we can hack the type system to remove references to generics in input positions. One possibility is we could completely remove
-the presence of the `cleanup` and `middleware` properties from the return type of `createPlugin`. I think this is worse than using `any` since those properties 
+the presence of the `cleanup` and `middleware` properties from the return type of `createPlugin`. I think this is worse than using `any` since those properties
 would still exist on the object.
 
 Another alternative is we can use an identity function type along with `$Call` to mimic the behavior of `$ObjMap`. While this technically works, the flow team

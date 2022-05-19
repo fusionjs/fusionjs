@@ -67,7 +67,7 @@ export type FusionPlugin<Deps: FusionPluginDepsType, Service> = {|
     Deps: ExtractDepsType<Deps & {}>,
     Service: Service
   ) => Middleware,
-  cleanup?: (service: Service) => Promise<void>,
+  cleanup?: (service: Service) => Promise<void> | void,
 |};
 
 export type SSRDecider = (Context) => boolean;
@@ -76,7 +76,7 @@ export type aliaser = {
   alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser,
 };
 
-export type cleanupFn = (thing?: any) => Promise<void>;
+export type cleanupFn = (thing?: any) => Promise<void> | void;
 
 export type SSRBodyTemplate = (Context) => $PropertyType<Context, 'body'>;
 

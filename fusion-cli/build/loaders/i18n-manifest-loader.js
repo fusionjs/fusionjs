@@ -18,9 +18,13 @@ module.exports = function i18nManifestLoader() {
     return void callback('no i18n manifest');
   }
 
-  i18nManifest.result.then((manifest) => {
-    return void callback(null, generateSource(manifest));
-  });
+  i18nManifest.result
+    .then((manifest) => {
+      return void callback(null, generateSource(manifest));
+    })
+    .catch((err) => {
+      callback(err);
+    });
 };
 
 function generateSource(manifest) {

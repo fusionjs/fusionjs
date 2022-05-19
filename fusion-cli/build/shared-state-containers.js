@@ -4,7 +4,7 @@
 class DeferredState /*::<T>*/ {
   /*::
   resolve: T => void;
-  reject: T => void;
+  reject: (err?: Error) => void;
   result: Promise<T>;
   */
   constructor() {
@@ -15,6 +15,8 @@ class DeferredState /*::<T>*/ {
       this.resolve = resolve;
       this.reject = reject;
     });
+    // Prevent process from exiting on unhandled rejection
+    this.result.catch(() => {});
   }
 }
 

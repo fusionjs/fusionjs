@@ -16,7 +16,6 @@ const chalk = require('chalk');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const rimraf = require('rimraf');
 
-const webpackDevMiddleware = require('../lib/simple-webpack-dev-middleware');
 const {getWebpackConfig} = require('./get-webpack-config.js');
 const {
   DeferredState,
@@ -101,8 +100,10 @@ function getStatsLogger({dir, logger, env, statsLevel}) {
 import type {STATS_VERBOSITY_LEVELS_TYPE} from './constants/compiler-stats.js';
 
 type CompilerType = {
+  getCompilationHash: (name: 'client' | 'server') => string,
   on: (type: any, callback: any) => any,
-  start: (callback: any) => any,
+  start: (callback: any) => void,
+  close: (callback: any) => void,
   getMiddleware: () => any,
   clean: () => any,
 };
@@ -113,6 +114,7 @@ type CompilerOpts = {
   dir?: string,
   env: "production" | "development",
   hmr?: boolean,
+  serverHmr?: boolean,
   watch?: boolean,
   forceLegacyBuild?: boolean,
   logger?: any,
@@ -134,6 +136,7 @@ function Compiler(
     dir = '.',
     env,
     hmr = true,
+    serverHmr = false,
     forceLegacyBuild,
     preserveNames = false,
     watch = false,
@@ -196,6 +199,7 @@ function Compiler(
     dir: root,
     dev: env === 'development',
     hmr,
+    serverHmr,
     watch,
     state,
     fusionConfig,
@@ -244,6 +248,14 @@ function Compiler(
 
   const statsLogger = getStatsLogger({dir, logger, env, statsLevel});
 
+  const compilationHashByName = {};
+  compiler.hooks.done.tap('RecordHash', (stats) => {
+    stats.stats.forEach(({compilation}) => {
+      compilationHashByName[compilation.name] = compilation.hash;
+    });
+  });
+  this.getCompilationHash = (name) => compilationHashByName[name];
+
   this.on = (type, callback) => compiler.hooks[type].tap('compiler', callback);
   this.start = (cb) => {
     cb = cb || function noop(err, stats) {};
@@ -259,34 +271,22 @@ function Compiler(
       }
     };
 
-    const watchOptions = compiler.options.map(
-      (options) => options.watchOptions || {}
-    );
     if (watch) {
-      return compiler.watch(watchOptions, handler);
+      const watchOptions = compiler.options.map(
+        (options) => options.watchOptions || {}
+      );
+      compiler.watch(watchOptions, handler);
     } else {
       compiler.run((err, stats) => {
         compiler.close((closeErr) => {
           handler(err || closeErr, stats);
         });
       });
-      // mimic watcher interface for API consistency
-      return {
-        close() {},
-        invalidate() {},
-      };
     }
   };
 
   this.getMiddleware = () => {
-    const dev = webpackDevMiddleware(compiler);
-    const hot = webpackHotMiddleware(compiler, {log: false});
-    return (req, res, next) => {
-      dev(req, res, (err) => {
-        if (err) return next(err);
-        return hot(req, res, next);
-      });
-    };
+    return webpackHotMiddleware(compiler, {log: false});
   };
 
   this.clean = () => {
@@ -296,6 +296,22 @@ function Compiler(
         `${dir}/.fusion/${isBuildCacheEnabled ? '!(.build-cache)' : ''}`,
         (e) => (e ? reject(e) : resolve())
       );
+    });
+  };
+
+  this.close = (callback) => {
+    const err = new Error('Compiler has been closed');
+    state.clientChunkMetadata.reject(err);
+    if (legacyBuildEnabled.value) {
+      state.legacyClientChunkMetadata.reject(err);
+    }
+    state.i18nDeferredManifest.reject(err);
+
+    compiler.close((err) => {
+      if (worker !== void 0) worker.end();
+      worker = void 0;
+
+      callback(err);
     });
   };
 
@@ -329,6 +345,11 @@ function createWorker(maxWorkers /* maxWorkers?: number */) {
     exposedMethods: ['runTransformation'],
     numWorkers: maxWorkers,
     workerSchedulingPolicy: 'in-order',
+    forkOptions: {
+      // Note: prevents child processes from terminating when SIGINT is sent in
+      // the terminal, as we may still need them to finish running compilation.
+      detached: true,
+    },
   });
 }
 

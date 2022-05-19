@@ -32,7 +32,7 @@ const plugin =
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
       // It's possible to call reject with a non-error
-      const err = async (e: mixed) => {
+      const errorHandler = async (e: mixed) => {
         if (e instanceof Error) {
           await onError(e, captureTypes.server);
         } else {
@@ -40,8 +40,14 @@ const plugin =
         }
         process.exit(1);
       };
-      process.once('uncaughtException', err);
-      process.once('unhandledRejection', err);
+      process.once('uncaughtException', errorHandler);
+      process.once('unhandledRejection', errorHandler);
+
+      return errorHandler;
+    },
+    cleanup(errorHandler) {
+      process.off('uncaughtException', errorHandler);
+      process.off('unhandledRejection', errorHandler);
     },
     middleware({onError}) {
       const parseBody = bodyParser();

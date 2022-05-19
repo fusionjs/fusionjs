@@ -13,7 +13,7 @@ import type {AssetsDepsType, AssetsType} from './types.js';
 import {createPlugin, getEnv, RouteTagsToken} from 'fusion-core';
 
 // $FlowFixMe
-import {chunks} from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
+import {chunks} from '__SECRET_CHUNK_MANIFEST_LOADER__!'; // eslint-disable-line
 
 import path from 'path';
 import mount from 'koa-mount';

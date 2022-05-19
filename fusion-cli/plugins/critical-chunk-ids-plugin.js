@@ -14,7 +14,7 @@ import type {CriticalChunkIdsDepsType, CriticalChunkIdsType} from './types.js';
 import {createPlugin, memoize} from 'fusion-core';
 
 // $FlowFixMe
-import {initialChunkIds} from '../build/loaders/chunk-manifest-loader.js!'; // eslint-disable-line
+import {initialChunkIds} from '__SECRET_CHUNK_MANIFEST_LOADER__!'; // eslint-disable-line
 
 /* eslint-disable-next-line */
 export default createPlugin/*:: <CriticalChunkIdsDepsType, CriticalChunkIdsType> */(

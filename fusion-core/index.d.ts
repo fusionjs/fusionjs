@@ -61,14 +61,14 @@ declare type FusionPlugin<Deps extends FusionPluginDepsType, Service> = {
   deps?: Deps;
   provides?: (Deps: ExtractDepsType<Deps>) => Service;
   middleware?: (Deps: ExtractDepsType<Deps>, Service: Service) => Middleware;
-  cleanup?: (service: Service) => Promise<void>;
+  cleanup?: (service: Service) => Promise<void> | void;
   __fn__?: any;
 };
 declare type SSRDecider = (a: Context) => boolean;
 declare type aliaser = {
   alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser;
 };
-declare type cleanupFn = (thing?: any) => Promise<void>;
+declare type cleanupFn = (thing?: any) => Promise<void> | void;
 declare type SSRBodyTemplate = (a: Context) => Context['body'];
 declare type RenderType = (b: any, a: Context) => any;
 declare type RouteTagsType = {
