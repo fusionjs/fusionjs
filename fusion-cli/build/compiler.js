@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const webpack = require('webpack');
 const chalk = require('chalk');
@@ -145,7 +146,14 @@ function Compiler(
     serverless = false,
     modernBuildOnly = false,
     skipSourceMaps = false,
-    maxWorkers,
+    // By default, jest-worker will spawn os.cpus().length - 1 workers.
+    // However, on very large machines, too many workers can be spawned and performance may suffer.
+    // Each worker costs some fixed overhead, but if the number of processed files is insufficiently large,
+    // workers may not reach sufficient utilization to pay for itself. Therefore, we limit maxWorkers
+    // to at most 32, which is reasonably optimal for an extremely large project on a >32 core machine.
+    // This is somewhat arbitrary as we cannot know ahead of time the size of the project,
+    // but having some cap is almost certainly better than no cap for any real-world project.
+    maxWorkers = Math.min(32, os.cpus().length - 1),
     command,
     disableBuildCache,
     experimentalEsbuildMinifier,
@@ -340,7 +348,7 @@ function loadLegacyPkgConfig(dir) {
 }
 
 function createWorker(maxWorkers /* maxWorkers?: number */) {
-  if (require('os').cpus().length < 2) return void 0;
+  if (os.cpus().length < 2) return void 0;
   return new Worker(require.resolve('./loaders/babel-worker.js'), {
     exposedMethods: ['runTransformation'],
     numWorkers: maxWorkers,
