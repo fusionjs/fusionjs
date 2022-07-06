@@ -93,9 +93,12 @@ describe('fusion dev - with server HMR', () => {
   });
 
   let _browser, _buildWatcher, _stopDev;
-  async function setup({stdio} = {}) {
+  async function setup({
+    args,
+    stdio,
+  } /*: {args?: string[], stdio?: string} */ = {}) {
     let {proc, promise, port} = await dev(
-      `--dir=${dir} --serverHmr`,
+      [`--dir=${dir}`, ...(args || [])].join(' '),
       stdio ? {stdio} : void 0
     );
     function stopDev() {
@@ -154,6 +157,49 @@ describe('fusion dev - with server HMR', () => {
       ),
     ]);
   });
+
+  it('should disable server hmr with --no-serverHmr option', async () => {
+    const {browser, port} = await setup({args: ['--no-serverHmr']});
+
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/`);
+
+    const initialPageContent = await page.content();
+    t.ok(
+      initialPageContent.includes('content-default'),
+      'initial app content should contain content-default'
+    );
+
+    await Promise.all([
+      fs.writeFile(
+        ROOT_FILEPATH,
+        rootInitialFileContents.replace('content-default', 'content-updated')
+      ),
+      waitForClientHmrCompleted(page),
+    ]);
+
+    const updatedPageContentClient = await page.content();
+    t.ok(
+      updatedPageContentClient.includes('content-updated'),
+      'updated app content should contain content-updated'
+    );
+
+    const {data: serverHmrStatsAfterUpdate} = await fetchSsrContent(
+      `http://localhost:${port}/server-hmr-stats`
+    );
+    t.ok(
+      serverHmrStatsAfterUpdate.reloadCounter === 0,
+      'server should have skipped hmr'
+    );
+
+    const {data: updatedPageContentServer} = await fetchSsrContent(
+      `http://localhost:${port}/`
+    );
+    t.ok(
+      updatedPageContentServer.includes('content-updated'),
+      'ssr updated app content should contain content-updated'
+    );
+  }, 15000);
 
   it('should handle hmr on both client and server', async () => {
     const {browser, port} = await setup();

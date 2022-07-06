@@ -17,7 +17,9 @@ module.exports = async function testHmr(
     : undefined;
   const {proc, port, promise} = await dev(
     `--dir=${dir} ${
-      skipServerReload ? '--experimentalSkipRedundantServerReloads' : ''
+      skipServerReload
+        ? '--experimentalSkipRedundantServerReloads --no-serverHmr'
+        : ''
     }`,
     options
   );

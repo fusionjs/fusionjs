@@ -137,7 +137,7 @@ function Compiler(
     dir = '.',
     env,
     hmr = true,
-    serverHmr = false,
+    serverHmr = true,
     forceLegacyBuild,
     preserveNames = false,
     watch = false,

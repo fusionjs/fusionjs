@@ -171,8 +171,8 @@ module.exports = {
       },
       serverHmr: {
         type: 'boolean',
-        default: false,
-        describe: '[Experimental] Enable HMR for the server bundle',
+        default: true,
+        describe: 'Enable HMR for the server bundle',
       },
       ...analyzeOption,
       ...disableBuildCacheOption,

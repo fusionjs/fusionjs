@@ -47,6 +47,7 @@ The CLI API can be most easily run through the Yarn or NPX CLI, e.g. `yarn fusio
 
   - `--port`: The port on which the application runs `[default: 3000]`
   - `--no-hmr`: Run without hot modules replacement
+  - `--no-serverHmr`: Run without hot module replacement on the server
   - `--test`: Run tests as well as application
   - `--log-level`: Log level to output to console `[default: "info"]`
   - `--forceLegacyBuild`: Force enable legacy build. By default not compiled in dev.
