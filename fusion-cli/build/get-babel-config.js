@@ -46,11 +46,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   let config = {
     plugins: [
       require.resolve('@babel/plugin-transform-flow-strip-types'),
-      require.resolve('@babel/plugin-syntax-dynamic-import'),
-      [
-        require.resolve('@babel/plugin-proposal-class-properties'),
-        {loose: false},
-      ],
       opts.dev &&
         require.resolve('babel-plugin-transform-styletron-display-name'),
     ].filter(Boolean),
@@ -88,7 +83,6 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
     envPresetOpts.targets = {
       node: 'current',
     };
-    config.plugins.push(require.resolve('babel-plugin-dynamic-import-node'));
   } else if (target === 'node-bundled') {
     envPresetOpts.modules = false;
     envPresetOpts.targets = {
