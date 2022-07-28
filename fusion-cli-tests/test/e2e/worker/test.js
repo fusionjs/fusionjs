@@ -2,6 +2,7 @@
 /* eslint-env node */
 
 const t = require('assert');
+const fs = require('fs');
 const path = require('path');
 
 const puppeteer = require('puppeteer');
@@ -45,4 +46,43 @@ test('`fusion build` app with worker integration', async () => {
 
   await browser.close();
   proc.kill('SIGKILL');
+}, 100000);
+
+test('`fusion build` worker loader client source maps', async () => {
+  const dir = path.resolve(__dirname + '/fixture');
+
+  const env = Object.create(process.env);
+  env.NODE_ENV = 'production';
+
+  await cmd(`build --dir=${dir} --production --modernBuildOnly`, {env});
+
+  const clientDistPath = path.join(
+    dir,
+    '.fusion',
+    'dist',
+    'production',
+    'client'
+  );
+
+  const clientSourceMapFiles = (
+    await fs.promises.readdir(clientDistPath)
+  ).filter((filePath) => filePath.endsWith('.map'));
+
+  const sourceMaps = (
+    await Promise.all(
+      clientSourceMapFiles.map((filePath) =>
+        fs.promises.readFile(path.join(clientDistPath, filePath), 'utf-8')
+      )
+    )
+  ).map((fileContents) => JSON.parse(fileContents));
+
+  const sources = sourceMaps.reduce((acc, sourceMap) => {
+    return [...acc, ...sourceMap.sources];
+  }, []);
+  const uniqueSources = new Set(sources);
+
+  t(
+    uniqueSources.size === sources.length,
+    'Generated source maps should not contain duplicate entries for the same source file'
+  );
 }, 100000);
