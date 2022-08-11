@@ -6,6 +6,8 @@ module.exports = {
   process(src /* : string */) {
     // call directly the webpack loader with a mocked context
     // as graphql-tag/loader leverages `this.cacheable()`
-    return loader.call({cacheable() {}}, src);
+    return {
+      code: loader.call({cacheable() {}}, src),
+    };
   },
 };
