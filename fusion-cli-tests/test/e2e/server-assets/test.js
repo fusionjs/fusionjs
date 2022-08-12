@@ -14,13 +14,7 @@ test('`fusion build` puts server assets in client directory', async () => {
 
   const fusion_folder = '.fusion/dist/production/client/';
   fs.readdir(path.resolve(dir, fusion_folder), (err, files) => {
-    t.ok(
-      files.includes('54dcbe888c1b1145462ae09d6610ab82.txt'),
-      'has server asset'
-    );
-    t.ok(
-      files.includes('2642b2c23331388417654062a7058f82.txt'),
-      'has universal asset'
-    );
+    t.ok(files.includes('00013199171891e8.txt'), 'has server asset');
+    t.ok(files.includes('acc67e892a3932e1.txt'), 'has universal asset');
   });
 }, 100000);

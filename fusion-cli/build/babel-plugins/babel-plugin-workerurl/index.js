@@ -42,9 +42,7 @@ function refsHandler(t, context, refs = []) {
     }
     args[0].replaceWith(
       t.callExpression(t.identifier('require'), [
-        t.stringLiteral(
-          `__SECRET_WORKER_LOADER__!${args[0].node.value}?workerUrl=true`
-        ),
+        t.stringLiteral(`__SECRET_WORKER_LOADER__!${args[0].node.value}`),
       ])
     );
   });

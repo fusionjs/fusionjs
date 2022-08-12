@@ -24,6 +24,15 @@ class WorkerLoaderError extends Error {
   }
 }
 
+const EMPTY_SOURCE_MAP = {
+  file: 'x',
+  version: 3,
+  names: [],
+  sources: [],
+  sourcesContent: [],
+  mappings: '',
+};
+
 const getWorker = (file, content, options) => {
   const publicPath = options.publicPath
     ? JSON.stringify(options.publicPath)
@@ -122,7 +131,14 @@ module.exports.pitch = function (request /* : any*/) {
         delete this._compilation.assets[worker.file];
       }
 
-      return cb(null, `module.exports = ${worker.factory};\n`);
+      return cb(
+        null,
+        `module.exports = ${worker.factory};\n`,
+        // Returning an empty source map for the "virtual" module created here,
+        // fixes a naming collision with the actual source map generated for the
+        // bundled web worker script
+        EMPTY_SOURCE_MAP
+      );
     }
 
     return cb(null, null);
