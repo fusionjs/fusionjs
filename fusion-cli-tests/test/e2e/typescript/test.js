@@ -29,6 +29,7 @@ describe('TypeScript app', () => {
     await page.goto(`http://localhost:${port}/`, {waitUntil: 'load'});
     const content = await page.content();
     t.ok(content.includes('TypeScript'));
+    t.ok(content.includes('FIXTURE_TYPESCRIPT_LOCAL_PACKAGE_CONTENT'));
 
     browser.close();
     proc.kill('SIGKILL');
@@ -45,6 +46,7 @@ describe('TypeScript app', () => {
     await page.goto(`${url}/`, {waitUntil: 'load'});
     const content = await page.content();
     t.ok(content.includes('TypeScript'));
+    t.ok(content.includes('FIXTURE_TYPESCRIPT_LOCAL_PACKAGE_CONTENT'));
 
     await app.teardown();
   }, 15000);

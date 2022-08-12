@@ -641,10 +641,14 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
 
             if (/^[@a-z\-0-9]+/.test(request)) {
               const absolutePath = getModuleAbsolutePath(context, request);
-              // do not bundle external packages and those not whitelisted
-              if (typeof absolutePath !== 'string') {
-                // if module is missing, skip rewriting to absolute path
-                return handleExternalResult(request);
+              if (!absolutePath) {
+                // bundle the dependency if absolute path could not be determined
+                // using node.js resolver at build time. This will ensure a build
+                // failure in case the dependency is missing, as opposed to making
+                // an assumption that the dependency will be available at runtime.
+                // And will also fallback to webpack for resolving, and building a
+                // module imported from a local workspace (monorepo support).
+                return handleExternalResult();
               }
 
               if (experimentalBundleTest) {
@@ -664,8 +668,11 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
                   );
                 }
               }
+
+              // do not bundle external packages
               return handleExternalModule(absolutePath);
             }
+
             // bundle everything else (local files, __*)
             return handleExternalResult();
           }
