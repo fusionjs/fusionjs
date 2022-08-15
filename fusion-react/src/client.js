@@ -8,7 +8,6 @@
 
 /* eslint-env browser */
 import * as React from 'react';
-import ReactDOM from 'react-dom';
 
 export default (el: React.Element<*>) => {
   const domElement = document.getElementById('root');
@@ -25,10 +24,25 @@ export default (el: React.Element<*>) => {
         'Server-side render failed. Falling back to client-side render'
       );
     }
-    ReactDOM.render(el, domElement);
+    if (version.startsWith("18.")) {
+      const { createRoot } = require("react-dom/client")
+      const { startTransition } = require("react")
+      startTransition(() => {
+        createRoot(domElement)?.render(el)
+      })
+    } else {
+      const { render } = require("react-dom")
+      render(el, domElement);
+    }
   } else {
-    return ReactDOM.hydrate
-      ? ReactDOM.hydrate(el, domElement)
-      : ReactDOM.render(el, domElement);
+    if (version.startsWith("18.")) {
+      const { hydrateRoot, createRoot } = require("react-dom/client")
+      return hydrateRoot ? hydrateRoot(domElement, el) : createRoot(domElement).render(el)
+    } else {
+      const ReactDOM = require("react-dom")
+      return ReactDOM.hydrate
+        ? ReactDOM.hydrate(el, domElement)
+        : ReactDOM.render(el, domElement);
+    }
   }
 };

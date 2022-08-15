@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "prop-types": "^15.7.2",
-    "react-is": "^17.0.2",
+    "react-is": "^17.0.2 || ^18.0.0-0",
     "react-ssr-prepass": "^1.5.0"
   },
   "devDependencies": {
@@ -23,8 +23,8 @@
     "fusion-tokens": "0.0.0-monorepo",
     "jest": "^25.1.0",
     "just-compose": "^1.1.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^17.0.2 || ^18.0.0-0",
+    "react-dom": "^17.0.2 || ^18.0.0-0",
     "react-test-renderer": "^17.0.2"
   },
   "engines": {
