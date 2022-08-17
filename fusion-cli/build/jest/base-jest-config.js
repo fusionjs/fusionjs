@@ -86,7 +86,9 @@ const baseJestConfig /*: { [key: string]: any } */ = {
   snapshotSerializers:
     reactSetup.length > 0 ? [require.resolve('enzyme-to-json/serializer')] : [],
   [matchField]: matchValue,
-  testURL: 'http://localhost:3000/',
+  testEnvironmentOptions: {
+    url: 'http://localhost:3000/',
+  },
   collectCoverageFrom: [
     'src/**/*.{js,ts,tsx}',
     '!**/__generated__/**',
