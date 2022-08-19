@@ -52,3 +52,14 @@ export type I18nServiceType = {
     +translateFns?: OptionalTranslateFnsType,
   },
 };
+
+export type I18nLoaderType = {
+  from: (ctx: Context) => {
+    locale: string | Locale,
+    translations: TranslationsObjectType,
+  },
+};
+export type I18nLocaleResolverType = (ctx: Context) => string;
+export type I18nLoaderFactoryType = (
+  resolveLocales?: I18nLocaleResolverType
+) => I18nLoaderType;

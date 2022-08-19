@@ -56,11 +56,12 @@ function getDeps(): DepsType {
       bodyParserConfig: ApolloBodyParserConfigToken.optional,
       defaultOptionsConfig: ApolloDefaultOptionsConfigToken.optional,
     };
+  } else {
+    // $FlowFixMe
+    return {
+      getApolloClient: ApolloClientToken,
+    };
   }
-  // $FlowFixMe
-  return {
-    getApolloClient: ApolloClientToken,
-  };
 }
 
 export default (renderFn: Render) =>
@@ -70,12 +71,15 @@ export default (renderFn: Render) =>
     provides(deps) {
       if (__BROWSER__) {
         return renderFn;
+      } else {
+        return (el, ctx) => {
+          return serverRender(el, deps.logger, deps.getDataFromTree).then(
+            () => {
+              return renderFn(el, ctx);
+            }
+          );
+        };
       }
-      return (el, ctx) => {
-        return serverRender(el, deps.logger, deps.getDataFromTree).then(() => {
-          return renderFn(el, ctx);
-        });
-      };
     },
     middleware({
       RouteTags,

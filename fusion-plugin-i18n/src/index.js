@@ -15,6 +15,7 @@ import clientPlugin, {HydrationStateToken} from './browser';
 import serverLoader from './loader';
 import type {
   I18nDepsType,
+  I18nLoaderFactoryType,
   I18nServiceType,
   TranslationsObjectType,
   TranslateFuncType,
@@ -27,7 +28,7 @@ const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = __NODE__
   ? serverPlugin
   : clientPlugin;
 
-const createI18nLoader: typeof serverLoader = __NODE__
+const createI18nLoader: I18nLoaderFactoryType = __NODE__
   ? serverLoader
   : (void 0: any);
 

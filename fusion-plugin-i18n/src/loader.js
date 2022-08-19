@@ -11,25 +11,19 @@ import fs from 'fs';
 import path from 'path';
 
 import {memoize} from 'fusion-core';
-import type {Context} from 'fusion-core';
 
-import type {TranslationsObjectType} from './types.js';
+import type {
+  I18nLoaderFactoryType,
+  I18nLocaleResolverType,
+  TranslationsObjectType,
+} from './types.js';
 
-export type I18nLoaderType = {
-  from: (ctx: Context) => {
-    locale: string | Locale,
-    translations: TranslationsObjectType,
-  },
-};
-export type LocaleResolverType = (ctx: Context) => string;
-export type LoaderFactoryType = (
-  resolveLocales?: LocaleResolverType
-) => I18nLoaderType;
-
-const defaultResolveLocales: LocaleResolverType = (ctx) =>
+const defaultResolveLocales: I18nLocaleResolverType = (ctx) =>
   ctx.headers['accept-language'];
 
-const loader: LoaderFactoryType = (resolveLocales = defaultResolveLocales) => {
+const loader: I18nLoaderFactoryType = (
+  resolveLocales = defaultResolveLocales
+) => {
   const readDir = (root) => {
     try {
       return fs.readdirSync(root);
