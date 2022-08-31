@@ -144,31 +144,32 @@ exports.run = async function (
   const EXIT_SIGNALS = ['SIGINT', 'SIGTERM'];
   let forceExit = false;
   EXIT_SIGNALS.forEach((signal) => {
-    process.on(signal, function onSignalExit() {
-      function exit(exitCode = 0) {
-        EXIT_SIGNALS.forEach((signal) => process.off(signal, onSignalExit));
-        process.exit(exitCode);
-      }
-
-      if (forceExit || TERMINATION_GRACE_PERIOD === 0) {
-        return exit(1);
-      }
-      // User may force exit by sending termination signal a second time
-      forceExit = true;
-
-      console.log(
-        '\nGracefully shutting down... To force exit the process, press ^C again\n'
-      );
-
-      // Force exit should compiler take long time to close
-      if (Number.isFinite(TERMINATION_GRACE_PERIOD)) {
-        setTimeout(function () {
-          exit(1);
-        }, TERMINATION_GRACE_PERIOD);
-      }
-      stop(exit);
-    });
+    process.on(signal, onSignalExit);
   });
+  function onSignalExit() {
+    function exit(exitCode = 0) {
+      EXIT_SIGNALS.forEach((signal) => process.off(signal, onSignalExit));
+      process.exit(exitCode);
+    }
+
+    if (forceExit || TERMINATION_GRACE_PERIOD === 0) {
+      return exit(1);
+    }
+    // User may force exit by sending termination signal a second time
+    forceExit = true;
+
+    console.log(
+      '\nGracefully shutting down... To force exit the process, press ^C again\n'
+    );
+
+    // Force exit should compiler take long time to close
+    if (Number.isFinite(TERMINATION_GRACE_PERIOD)) {
+      setTimeout(function () {
+        exit(1);
+      }, TERMINATION_GRACE_PERIOD);
+    }
+    stop(exit);
+  }
 
   return {
     compiler,

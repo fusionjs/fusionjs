@@ -10,6 +10,7 @@
 
 const child_process = require('child_process');
 const ChildServerError = require('./child-server-error.js');
+const {renderTerminalError} = require('./server-error.js');
 
 /*::
 type ChildServerOptions = {
@@ -34,7 +35,12 @@ class ChildServer {
   }
 
   onReady() {
-    throw new Error('Did not expect to receive another ready event from child');
+    const err = new Error(
+      'Did not expect to receive another ready event from child'
+    );
+    console.error(renderTerminalError(err));
+
+    this.onError(err);
   }
 
   onError(err /*: Error */) {
@@ -90,6 +96,8 @@ class ChildServer {
             stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
           });
           this.proc.on('error', (err) => {
+            console.error(renderTerminalError(err));
+
             handleChildError(err);
           });
           this.proc.on('exit', (code, signal) => {
@@ -101,8 +109,8 @@ class ChildServer {
                 .filter(Boolean)
                 .join('; ')}`
             );
+            console.error(renderTerminalError(err));
 
-            console.error(err);
             handleChildError(err);
           });
           this.proc.on('message', async (message) => {
@@ -150,7 +158,7 @@ class ChildServer {
   }
 
   _stopPromise = null;
-  stop() {
+  stop(isForced /*: boolean */ = false) {
     if (this._stopPromise) {
       return this._stopPromise;
     }
@@ -164,7 +172,7 @@ class ChildServer {
       this._startPromise = null;
 
       this.proc.removeAllListeners();
-      if (this.options.debug) {
+      if (this.options.debug || isForced) {
         this.proc.on('error', reject);
         this.proc.on('exit', resolve);
         this.proc.kill('SIGKILL');

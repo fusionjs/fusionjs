@@ -230,7 +230,7 @@ module.exports.DevelopmentRuntime = function (
     lifecycle.stop();
   };
 
-  async function killProc() {
+  async function killProc(isForced) {
     if (state.proxy) {
       state.proxy.close();
       state.proxy = null;
@@ -238,7 +238,7 @@ module.exports.DevelopmentRuntime = function (
 
     if (state.childServer) {
       try {
-        await state.childServer.stop();
+        await state.childServer.stop(isForced);
       } catch (err) {} // eslint-disable-line
 
       state.childServer = null;
@@ -360,7 +360,7 @@ module.exports.DevelopmentRuntime = function (
       state.server = null; // ensure we can call .run() again after stopping
     }
 
-    await killProc();
+    await killProc(true);
   };
 
   return this;
