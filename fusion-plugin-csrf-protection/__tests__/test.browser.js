@@ -46,7 +46,7 @@ test('exposes right methods', (done) => {
   app.resolve();
 });
 
-test('includes routePrefix if exists', async (done) => {
+test('includes routePrefix if exists', (done) => {
   window.__ROUTE_PREFIX__ = '/something';
   const fetch = (url, args) => {
     expect(url).toBe('/something/hello');
@@ -77,7 +77,7 @@ test('includes routePrefix if exists', async (done) => {
   app.resolve();
 });
 
-test('sends token on POST', async (done) => {
+test('sends token on POST', (done) => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());
@@ -106,7 +106,7 @@ test('sends token on POST', async (done) => {
   app.resolve();
 });
 
-test('defaults method to GET', async (done) => {
+test('defaults method to GET', (done) => {
   const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());
