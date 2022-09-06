@@ -9,11 +9,29 @@
 export default class ResponseError extends Error {
   code: ?string;
   meta: ?Object;
+  cause: ?mixed;
+  severity: ?$Values<typeof ResponseError.Severity>;
 
-  constructor(message: string) {
+  static Severity = Object.freeze({
+    HIGH: 'HIGH',
+    MEDIUM: 'MEDIUM',
+  });
+
+  constructor(
+    message: string,
+    options?: ?{
+      code?: string,
+      meta?: Object,
+      cause?: mixed,
+      severity?: $Values<typeof ResponseError.Severity>,
+    }
+  ) {
     super(message);
-    this.code = null;
-    this.meta = null;
+    const {code, meta, cause, severity} = options ?? {};
+    this.code = code;
+    this.meta = meta;
+    this.cause = cause;
+    this.severity = severity;
     Error.captureStackTrace(this, ResponseError);
   }
 }

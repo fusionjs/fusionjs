@@ -214,7 +214,9 @@ const pluginFactory: () => RPCPluginType = () =>
                 e instanceof ResponseError
                   ? e
                   : new Error(
-                      'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
+                      __DEV__
+                        ? 'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
+                        : 'Internal Server Error'
                     );
               ctx.body = {
                 status: 'failure',
