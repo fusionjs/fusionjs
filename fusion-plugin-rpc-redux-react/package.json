@@ -16,7 +16,7 @@
     "@babel/preset-env": "^7.15.0",
     "axios": "^0.21.0",
     "create-universal-package": "^4.1.2",
-    "flow-bin": "^0.131.0",
+    "flow-bin": "0.131.0",
     "fusion-cli": "0.0.0-monorepo",
     "fusion-core": "0.0.0-monorepo",
     "fusion-plugin-react-redux": "0.0.0-monorepo",
@@ -32,8 +32,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.1.0",
-    "redux": "^4.0.5",
-    "redux-reactors": "^1.0.3"
+    "redux": "4.0.5",
+    "redux-reactors": "1.0.3"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -59,7 +59,7 @@
     "fusion-plugin-rpc": "0.0.0-monorepo",
     "fusion-react": "0.0.0-monorepo",
     "react": ">= 16.14.0",
-    "redux": "^4.0.5"
+    "redux": "4.0.5"
   },
   "repository": {
     "directory": "fusion-plugin-rpc-redux-react",

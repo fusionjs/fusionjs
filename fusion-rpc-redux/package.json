@@ -7,7 +7,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "redux-reactors": "^1.0.3"
+    "redux-reactors": "1.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -15,9 +15,9 @@
     "@babel/preset-env": "^7.15.0",
     "create-universal-package": "^4.1.2",
     "execa": "^1.0.0",
-    "flow-bin": "^0.131.0",
+    "flow-bin": "0.131.0",
     "jest": "^25.1.0",
-    "redux": "^4.0.5"
+    "redux": "4.0.5"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -35,7 +35,7 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "redux": "^4.0.5"
+    "redux": "4.0.5"
   },
   "repository": {
     "directory": "fusion-rpc-redux",

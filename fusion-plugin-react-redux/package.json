@@ -14,7 +14,7 @@
     "@testing-library/react": "^12.1.5",
     "create-universal-package": "^4.1.2",
     "execa": "^1.0.0",
-    "flow-bin": "^0.131.0",
+    "flow-bin": "0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "jest": "^25.1.0",
@@ -22,7 +22,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.1.0",
-    "redux": "^4.0.5"
+    "redux": "4.0.5"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -44,7 +44,7 @@
     "fusion-core": "0.0.0-monorepo",
     "react": ">= 16.14.0",
     "react-redux": "^7.1.0",
-    "redux": "^4.0.5"
+    "redux": "4.0.5"
   },
   "repository": {
     "directory": "fusion-plugin-react-redux",

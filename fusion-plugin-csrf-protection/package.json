@@ -17,7 +17,7 @@
     "body-parser": "^1.18.3",
     "create-universal-package": "^4.1.2",
     "express": "^4.16.4",
-    "flow-bin": "^0.131.0",
+    "flow-bin": "0.131.0",
     "fusion-core": "0.0.0-monorepo",
     "fusion-test-utils": "0.0.0-monorepo",
     "fusion-tokens": "0.0.0-monorepo",
