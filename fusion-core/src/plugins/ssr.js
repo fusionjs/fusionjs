@@ -8,23 +8,23 @@
 
 import {createPlugin} from '../create-plugin';
 import {escape, consumeSanitizedHTML, html} from '../sanitization';
+import {unstable_EnableServerStreamingToken} from '../tokens';
 import {appSymbol} from '../utils/app-symbol.js';
+import {isBot} from '../utils/is-bot.js';
 
-const botRegex = /(bot|crawler|spider)/i;
 const SSRDecider = createPlugin({
-  provides: () => {
+  deps: {
+    enableServerStreaming: unstable_EnableServerStreamingToken.optional,
+  },
+  provides: (deps) => {
     return (ctx) => {
       // If the request has one of these extensions, we assume it's not something that requires server-side rendering of virtual dom
       // TODO(#46): this check should probably look at the asset manifest to ensure asset 404s are handled correctly
       if (ctx.path.match(/\.(js|js\.map|gif|jpg|png|pdf|json|svg)$/))
         return false;
 
-      // Bots don't always include the accept header.
-      if (ctx.headers['user-agent']) {
-        const agent = ctx.headers['user-agent'];
-        if (botRegex.test(agent) && ctx.method === 'GET') {
-          return true;
-        }
+      if (isBot(ctx)) {
+        return true;
       }
 
       // The Accept header is a good proxy for whether SSR should happen
@@ -32,14 +32,21 @@ const SSRDecider = createPlugin({
       // XHR/fetch requests do not have `text/html` in the Accept headers
       if (!ctx.headers.accept) return false;
       if (!ctx.headers.accept.includes('text/html')) return false;
-      return true;
+
+      return deps.enableServerStreaming ? 'stream' : true;
     };
   },
 });
+
 export {SSRDecider};
 
 export default function createSSRPlugin(endpoints) {
-  return function ssrMiddleware({element, ssrDecider, ssrBodyTemplate}) {
+  return function ssrMiddleware({
+    element,
+    ssrDecider,
+    ssrBodyTemplate,
+    ssrShellTemplate,
+  }) {
     return async function ssrMiddleware(ctx, next) {
       if (endpoints.has(ctx.path)) {
         return next();
@@ -57,6 +64,28 @@ export default function createSSRPlugin(endpoints) {
       ctx.rendered = '';
       ctx.template = template;
       ctx.type = 'text/html';
+      if (ssrShellTemplate) {
+        ctx.shellTemplate = ssrShellTemplate;
+      }
+
+      // If streaming, add effects to prepare boundary once it drops
+      if (ssrDecider(ctx) === 'stream') {
+        const app = ctx[appSymbol];
+        // Reset in case it has been set
+        app.prepareBoundary.reset();
+        // Add boundary effect to run through all postPrepare effects once the
+        // prepare boundary drops
+        app.prepareBoundary.addEffect(() => {
+          for (const effect of ctx.postPrepareEffects) {
+            effect();
+          }
+        });
+        // Add boundary effect to serialize any universalValues to head once the prepare
+        // boundary drops
+        app.prepareBoundary.addEffect(() => {
+          ctx.template.head.push(getSerializedUniversalValues(ctx));
+        });
+      }
 
       await next();
 

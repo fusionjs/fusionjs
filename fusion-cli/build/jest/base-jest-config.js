@@ -48,6 +48,7 @@ function getReactSetup() {
       case '16':
         return [require.resolve('./jest-framework-setup-16.js')];
       case '17':
+      case '18':
         return [require.resolve('./jest-framework-setup-17.js')];
       default:
         return [];

@@ -26,82 +26,86 @@ import {
 import modernBrowserVersions from '../build/modern-browser-versions.js';
 
 /*::
-import type {SSRBodyTemplateDepsType, SSRBodyTemplateType} from './types.js';
+import type {
+  SSRBodyTemplateDepsType,
+  SSRBodyTemplateType,
+  SSRShellTemplateDepsType,
+  SSRShellTemplateType,
+} from './types.js';
 declare var __webpack_public_path__: string;
 */
 
-/* eslint-disable-next-line */
-const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplateType> */(
-    {
-      deps: {
-        criticalChunkIds: CriticalChunkIdsToken.optional,
-        routePrefix: RoutePrefixToken.optional,
-      },
-      provides: ({criticalChunkIds, routePrefix}) => {
-        const {dangerouslyExposeSourceMaps} = getEnv();
-        return (ctx) => {
-          const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
-          const safeAttrs = Object.keys(htmlAttrs)
-            .map((attrKey) => {
-              return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
-            })
-            .join('');
+function getSSRTemplateContents(
+  ctx /*: any */,
+  criticalChunkIds /*: any */,
+  routePrefix /*: any */,
+  emitScripts /*: boolean */
+) /*: {
+  start: string,
+  end: string,
+  scripts: Array<string>
+} */ {
+  const {dangerouslyExposeSourceMaps} = getEnv();
+  const {htmlAttrs, bodyAttrs, title, head, body} = ctx.template;
+  const safeAttrs = Object.keys(htmlAttrs)
+    .map((attrKey) => {
+      return ` ${escape(attrKey)}="${escape(htmlAttrs[attrKey])}"`;
+    })
+    .join('');
 
-          const safeBodyAttrs = Object.keys(bodyAttrs)
-            .map((attrKey) => {
-              return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
-            })
-            .join('');
+  const safeBodyAttrs = Object.keys(bodyAttrs)
+    .map((attrKey) => {
+      return ` ${escape(attrKey)}="${escape(bodyAttrs[attrKey])}"`;
+    })
+    .join('');
 
-          const safeTitle = escape(title);
-          // $FlowFixMe
-          const safeHead = head.map(consumeSanitizedHTML).join('');
-          // $FlowFixMe
-          const safeBody = body.map(consumeSanitizedHTML).join('');
+  const safeTitle = escape(title);
+  // $FlowFixMe
+  const safeHead = head.map(consumeSanitizedHTML).join('');
+  // $FlowFixMe
+  const safeBody = body.map(consumeSanitizedHTML).join('');
 
-          const coreGlobals = [
-            `<script nonce="${ctx.nonce}">`,
-            `window.performance && window.performance.mark && window.performance.mark('firstRenderStart');`,
-            routePrefix && `__ROUTE_PREFIX__ = ${JSON.stringify(routePrefix)};`,
-            `__FUSION_ASSET_PATH__ = ${JSON.stringify(
-              __webpack_public_path__
-            )};`, // consumed in src/entries/client-public-path.js
-            `__NONCE__ = ${JSON.stringify(ctx.nonce)}`, // consumed in src/entries/client-public-path.js
-            `</script>`,
-          ]
-            .filter(Boolean)
-            .join('');
+  const coreGlobals = [
+    `<script nonce="${ctx.nonce}">`,
+    `window.performance && window.performance.mark && window.performance.mark('firstRenderStart');`,
+    routePrefix && `__ROUTE_PREFIX__ = ${JSON.stringify(routePrefix)};`,
+    `__FUSION_ASSET_PATH__ = ${JSON.stringify(__webpack_public_path__)};`, // consumed in src/entries/client-public-path.js
+    `__NONCE__ = ${JSON.stringify(ctx.nonce)}`, // consumed in src/entries/client-public-path.js
+    `</script>`,
+  ]
+    .filter(Boolean)
+    .join('');
 
-          const tokenCriticalChunkIds = criticalChunkIds
-            ? criticalChunkIds.from(ctx)
-            : new Set();
+  const tokenCriticalChunkIds = criticalChunkIds
+    ? criticalChunkIds.from(ctx)
+    : new Set();
 
-          const allCriticalChunkIds = new Set([
-            ...initialChunkIds,
-            // For now, take union of both ctx and token
-            ...ctx.preloadChunks,
-            ...tokenCriticalChunkIds,
-            // runtime chunk must be last script
-            ...runtimeChunkIds,
-          ]);
+  const allCriticalChunkIds = new Set([
+    ...initialChunkIds,
+    // For now, take union of both ctx and token
+    ...ctx.preloadChunks, // Set in fusion-react
+    ...tokenCriticalChunkIds, // Same as initial
+    // runtime chunk must be last script
+    ...runtimeChunkIds,
+  ]);
 
-          const legacyUrls = [];
-          const modernUrls = [];
+  const legacyUrls = [];
+  const modernUrls = [];
 
-          for (let chunkId of allCriticalChunkIds) {
-            const url = chunks.get(chunkId);
-            if (url.includes('client-legacy')) {
-              legacyUrls.push(url);
-            } else {
-              modernUrls.push(url);
-            }
-          }
+  for (let chunkId of allCriticalChunkIds) {
+    const url = chunks.get(chunkId);
+    if (url.includes('client-legacy')) {
+      legacyUrls.push(url);
+    } else {
+      modernUrls.push(url);
+    }
+  }
 
-          const isModernBrowser = checkModuleSupport(ctx.useragent.browser);
+  const isModernBrowser = checkModuleSupport(ctx.useragent.browser);
 
-          if (__DEV__) {
-            if (!isModernBrowser && legacyUrls.length === 0) {
-              return `<!DOCTYPE html>
+  if (__DEV__) {
+    if (!isModernBrowser && legacyUrls.length === 0) {
+      const warningMessage = `<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -113,51 +117,107 @@ const SSRBodyTemplate = createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplat
 <p>For more information, see the docs on <a href="https://github.com/fusionjs/fusion-cli/blob/master/docs/progressively-enhanced-bundles.md">progressively enhanced bundles</a>.</p>
 </body>
 </html>`;
-            }
-          }
+      return {
+        start: warningMessage,
+        end: '',
+        scripts: [],
+      };
+    }
+  }
 
-          const criticalChunkUrls =
-            isModernBrowser || legacyUrls.length === 0
-              ? modernUrls
-              : legacyUrls;
-          let criticalChunkScripts = [];
-          let preloadHints = [];
+  const criticalChunkUrls =
+    isModernBrowser || legacyUrls.length === 0 ? modernUrls : legacyUrls;
+  let criticalChunkScripts = [];
+  let preloadHints = [];
 
-          for (let url of criticalChunkUrls) {
-            if (!__DEV__ && dangerouslyExposeSourceMaps) {
-              // Use -with-map.js bundles
-              url = addWithMap(url);
-            }
-            const crossoriginAttr = process.env.CDN_URL
-              ? ' crossorigin="anonymous"'
-              : '';
-            preloadHints.push(
-              `<link rel="preload" href="${url}" nonce="${ctx.nonce}"${crossoriginAttr} as="script"/>`
-            );
-            criticalChunkScripts.push(
-              `<script defer src="${url}" nonce="${ctx.nonce}"${crossoriginAttr}></script>`
-            );
-          }
+  if (emitScripts) {
+    for (let url of criticalChunkUrls) {
+      if (!__DEV__ && dangerouslyExposeSourceMaps) {
+        // Use -with-map.js bundles
+        url = addWithMap(url);
+      }
+      const crossoriginAttr = process.env.CDN_URL
+        ? ' crossorigin="anonymous"'
+        : '';
+      preloadHints.push(
+        `<link rel="preload" href="${url}" nonce="${ctx.nonce}"${crossoriginAttr} as="script"/>`
+      );
+      criticalChunkScripts.push(
+        `<script defer src="${url}" nonce="${ctx.nonce}"${crossoriginAttr}></script>`
+      );
+    }
+  }
 
-          return [
-            '<!doctype html>',
-            `<html${safeAttrs}>`,
-            `<head>`,
-            `<meta charset="utf-8" />`,
-            `<title>${safeTitle}</title>`,
-            `${preloadHints.join('')}${coreGlobals}${criticalChunkScripts.join(
-              ''
-            )}${safeHead}`,
-            `</head>`,
-            `<body${safeBodyAttrs}>${ctx.rendered}${safeBody}</body>`,
-            '</html>',
-          ].join('');
+  const start = [
+    '<!doctype html>',
+    `<html${safeAttrs}>`,
+    `<head>`,
+    `<meta charset="utf-8" />`,
+    `<title>${safeTitle}</title>`,
+    `${preloadHints.join('')}${coreGlobals}${criticalChunkScripts.join(
+      ''
+    )}${safeHead}`,
+    `</head>`,
+    `<body${safeBodyAttrs}>`,
+  ].join('');
+
+  const end = [`${safeBody}</body>`, '</html>'].join('');
+
+  return {
+    start,
+    end,
+    scripts: criticalChunkUrls,
+  };
+}
+
+const SSRBodyTemplate =
+  createPlugin/*:: <SSRBodyTemplateDepsType,SSRBodyTemplateType> */(
+    {
+      deps: {
+        criticalChunkIds: CriticalChunkIdsToken.optional,
+        routePrefix: RoutePrefixToken.optional,
+      },
+      provides: ({criticalChunkIds, routePrefix}) => {
+        return (ctx) => {
+          const template = getSSRTemplateContents(
+            ctx,
+            criticalChunkIds,
+            routePrefix,
+            true
+          );
+          return [template.start, ctx.rendered, template.end].join('');
         };
       },
     }
   );
 
-export {SSRBodyTemplate};
+const getSSRShellTemplate = (useModuleScripts /*: boolean */) =>
+  createPlugin/*:: <SSRShellTemplateDepsType,SSRShellTemplateType> */(
+    {
+      deps: {
+        criticalChunkIds: CriticalChunkIdsToken.optional,
+        routePrefix: RoutePrefixToken.optional,
+      },
+      provides: ({criticalChunkIds, routePrefix}) => {
+        return (ctx) => {
+          const shell = getSSRTemplateContents(
+            ctx,
+            criticalChunkIds,
+            routePrefix,
+            false
+          );
+          return {
+            start: shell.start,
+            end: shell.end,
+            scripts: shell.scripts,
+            useModuleScripts,
+          };
+        };
+      },
+    }
+  );
+
+export {SSRBodyTemplate, getSSRShellTemplate};
 
 const embeddedBrowserVersions = {
   ios_webkit: 605, // mobile safari v13

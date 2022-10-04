@@ -39,10 +39,12 @@ export {
   SSRDeciderToken,
   HttpServerToken,
   SSRBodyTemplateToken,
+  SSRShellTemplateToken,
   RoutePrefixToken,
   CriticalChunkIdsToken,
   RouteTagsToken,
   EnableMiddlewareTimingToken,
+  unstable_EnableServerStreamingToken,
 } from './tokens';
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
@@ -50,7 +52,7 @@ export {getEnv};
 export {
   withUniversalValue,
   withRenderSetup,
-  withSSREffect,
+  unstable_withPrepareEffect,
   withEndpoint,
   withMiddleware,
   withUniversalMiddleware,

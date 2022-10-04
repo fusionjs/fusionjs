@@ -220,7 +220,7 @@ test('serialization', async (done) => {
   }
 
   // $FlowFixMe
-  await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
+  await Redux.middleware({}, Plugin)(ctx, () => Promise.resolve());
 
   expect(Plugin.from(ctx).store).toBeTruthy();
   expect(ctx.element).not.toBe(element);
@@ -252,7 +252,7 @@ test('serialization and deserialization', async (done) => {
   }
 
   // $FlowFixMe
-  await Redux.middleware(null, Plugin)(ctx, () => Promise.resolve());
+  await Redux.middleware({}, Plugin)(ctx, () => Promise.resolve());
 
   expect(Plugin.from(ctx).store).toBeTruthy();
   expect(ctx.element).not.toBe(element);

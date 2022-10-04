@@ -10,7 +10,7 @@ const yieldHooks = new Set(['withDeps', 'withPlugin', 'withStartup']);
 
 const nodeOnlyHooks = new Set([
   'withMiddleware',
-  'withSSREffect',
+  'unstable_withPrepareEffect',
   'withEndpoint',
 ]);
 

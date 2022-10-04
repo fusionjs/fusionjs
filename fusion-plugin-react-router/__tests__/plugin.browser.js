@@ -67,13 +67,14 @@ test('handles url with invalid URI encoding in browser', async (done) => {
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
   await simulator.render('/%C0%AE%C0%AE/');
-
-  const node = document.getElementById('root');
-  if (!node || !node.textContent) {
-    throw new Error('Could not find node.');
-  }
-  expect(node && node.textContent).toBe('Not Found');
-  cleanup();
+  setTimeout(() => {
+    const node = document.getElementById('root');
+    if (!node || !node.textContent) {
+      throw new Error('Could not find node.');
+    }
+    expect(node && node.textContent).toBe('Not Found');
+    cleanup();
+  }, 0);
 });
 
 function setupRouterData(pageData = {title: '/', page: '/'}) {

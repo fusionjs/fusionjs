@@ -7,7 +7,7 @@
  */
 
 import * as React from 'react';
-import ssrPrepass from 'react-ssr-prepass';
+import ssrPrepass from '@derekju/react-ssr-prepass';
 import PropTypes from 'prop-types';
 
 class PrepareState {

@@ -302,7 +302,9 @@ test('browser middleware', async () => {
   expect(Redux.middleware).toBeTruthy();
   await expect(
     // $FlowFixMe
-    Redux.middleware(null, Plugin)((ctx: any), () => Promise.resolve())
+    Redux.middleware({preloaded: 'state'}, Plugin)((ctx: any), () =>
+      Promise.resolve()
+    )
   ).resolves.not.toThrow();
   expect(ctx.element).not.toBe(element);
   const {getByText} = render(ctx.element);

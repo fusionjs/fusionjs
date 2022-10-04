@@ -36,7 +36,7 @@ test('collectDependencyData', () => {
   if (ssr) {
     expect(ssr.sources instanceof Array).toBe(true);
     expect(ssr.name).toBe('SSRDeciderToken');
-    expect(ssr.dependencies).toEqual([]);
+    expect(ssr.dependencies).toEqual(['unstable_EnableServerStreamingToken']);
   } else throw new Error('should find SSRDeciderToken');
 
   const v = data.dependencies.find((d) => d.name === 'V');

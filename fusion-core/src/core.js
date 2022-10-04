@@ -63,6 +63,9 @@ export class App {
     this.renderSetup = [];
 
     this.universalValues = {};
+
+    // Boundaries
+    this.prepareBoundary = new Boundary('prepare');
   }
 
   registerPlugin(id, taskFn, param) {
@@ -489,18 +492,21 @@ export function withUniversalValue(id) {
       // and then serialize into request scope. Otherwise, this value
       // is intended to be serialized for all requests.
 
-      if (app.SSREffectCtx) {
-        const ctx = app.SSREffectCtx;
-        ctx.universalValues[id] = val;
-      } else if (app.renderSetupCtx) {
+      if (app.renderSetupCtx) {
         const ctx = app.renderSetupCtx;
+        ctx.universalValues[id] = val;
+      } else if (app.renderCtx) {
+        const ctx = app.renderCtx;
+        ctx.universalValues[id] = val;
+      } else if (app.postPrepareEffectCtx) {
+        const ctx = app.postPrepareEffectCtx;
         ctx.universalValues[id] = val;
       } else if (!app.done) {
         // Universal value for all requests
         app.universalValues[id] = val;
       } else {
         throw new Error(
-          'Serialize can only be called synchronously from a plugin or within `withRenderSetup` or `withSSREffect` lifecycles'
+          'Serialize can only be called synchronously from a plugin or within `withRenderSetup` or `unstable_withPrepareEffect` lifecycles'
         );
       }
     } else {
@@ -560,19 +566,19 @@ export function withRenderSetup(fn) {
   app.renderSetup.push(fn);
 }
 
-export function withSSREffect(effectFn) {
+export function unstable_withPrepareEffect(effectFn) {
   if (__BROWSER__) {
-    // Static transform should eliminate withSSREffect() calls from the client build
+    // Static transform should eliminate unstable_withPrepareEffect() calls from the client build
     return;
   }
   const app = global_app_ref;
   if (app.renderSetupCtx) {
     const ctx = app.renderSetupCtx;
-    ctx.postRenderEffects.push(effectFn);
+    ctx.postPrepareEffects.push(effectFn);
   } else {
     // Might also make sense to allow as a top-level lifeycle hook
     throw new Error(
-      'withSSREffect can only be called during `withRenderSetup`'
+      'unstable_withPrepareEffect can only be called during `withRenderSetup`'
     );
   }
 }
@@ -684,4 +690,35 @@ function getRegistrationPosition(token) {
     }
   }
   return 'unknown';
+}
+
+class Boundary {
+  constructor(id) {
+    this.effects = [];
+    this.id = id;
+    this.resolved = false;
+  }
+
+  addEffect(effect) {
+    if (this.resolved) {
+      effect();
+    } else {
+      this.effects.push(effect);
+    }
+  }
+
+  reset() {
+    this.effects = [];
+    this.resolved = false;
+  }
+
+  done() {
+    if (this.resolved) {
+      return;
+    }
+    for (const effect of this.effects) {
+      effect();
+    }
+    this.resolved = true;
+  }
 }

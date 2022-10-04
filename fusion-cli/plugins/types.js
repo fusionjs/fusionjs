@@ -20,6 +20,17 @@ export type SSRBodyTemplateDepsType = {
 };
 export type SSRBodyTemplateType = Context => string;
 
+export type SSRShellTemplateDepsType = {
+  criticalChunkIds: typeof CriticalChunkIdsToken.optional,
+  routePrefix: typeof RoutePrefixToken.optional,
+};
+export type SSRShellTemplateType = Context => {
+  start: string,
+  end: string,
+  scripts: Array<string>,
+  useModuleScripts: boolean,
+};
+
 export type ServerErrorDepsType = {};
 export type ServerErrorType = void;
 

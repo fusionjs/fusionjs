@@ -32,6 +32,14 @@ import type {
 
 const getPlugin = () => {
   let storeCache = null;
+
+  const getReduxState = () => {
+    const stateElement = document.getElementById('__REDUX_STATE__');
+    if (stateElement) {
+      return deserialize(unescape(stateElement.textContent));
+    }
+  };
+
   return createPlugin({
     deps: {
       reducer: ReducerToken,
@@ -42,6 +50,7 @@ const getPlugin = () => {
     provides({reducer, preloadedState, enhancer, reduxDevToolsConfig}) {
       class Redux {
         store: StoreWithContextType<*, *, *>;
+        preloadedState: Object;
 
         constructor(ctx) {
           if (storeCache) {
@@ -50,14 +59,7 @@ const getPlugin = () => {
           } else {
             // We only use initialState for client-side hydration
             // The real initial state should be derived from the reducer and the @@INIT action
-            if (!preloadedState) {
-              const stateElement = document.getElementById('__REDUX_STATE__');
-              if (stateElement) {
-                preloadedState = deserialize(
-                  unescape(stateElement.textContent)
-                );
-              }
-            }
+            this.preloadedState = preloadedState || getReduxState();
             const devTool =
               reduxDevToolsConfig !== false &&
               __DEV__ &&
@@ -76,7 +78,7 @@ const getPlugin = () => {
             // $FlowFixMe
             this.store = createStore(
               reducer,
-              preloadedState,
+              this.preloadedState,
               // $FlowFixMe
               compose(...enhancers)
             );
@@ -90,10 +92,14 @@ const getPlugin = () => {
         },
       };
     },
-    middleware(_, redux) {
+    middleware({preloadedState}, redux) {
       return (ctx, next) => {
-        const {store} = redux.from(ctx);
-        ctx.element = <Provider store={store}>{ctx.element}</Provider>;
+        const {store, preloadedState} = redux.from(ctx);
+        ctx.element = (
+          <Provider store={store} serverState={preloadedState || {}}>
+            {ctx.element}
+          </Provider>
+        );
         return next();
       };
     },

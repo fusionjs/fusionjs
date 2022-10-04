@@ -9,14 +9,19 @@
 /* eslint-env browser */
 
 import * as React from 'react';
-import render from '../src/client';
+import {getSimulator} from 'fusion-test-utils';
+import App from '../src/index';
 
-test('renders', (done) => {
-  const root = setup(true);
+test('client side app', async (done) => {
+  expect.assertions(5);
+  const root = setup(false);
 
-  render(React.createElement('span', null, 'hello'));
-  // setTimeout from https://github.com/reactwg/react-18/discussions/5#discussioncomment-796012
+  const app = new App(React.createElement('span', null, 'hello'));
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
   setTimeout(() => {
+    expect(ctx.rendered).toBeTruthy();
+    expect(ctx.element).toBeTruthy();
     expect(root.firstChild).toBeTruthy();
     const firstChild = ((root.firstChild: any): Node);
     expect(firstChild.nodeName).toBe('SPAN');

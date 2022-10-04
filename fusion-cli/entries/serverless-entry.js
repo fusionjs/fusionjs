@@ -19,13 +19,14 @@ import '__SECRET_I18N_MANIFEST_INSTRUMENTATION_LOADER__!'; // eslint-disable-lin
 import BaseApp, {
   RoutePrefixToken,
   SSRBodyTemplateToken,
+  SSRShellTemplateToken,
   CriticalChunkIdsToken,
 } from 'fusion-core';
 
 import CriticalChunkIdsPlugin from '../plugins/critical-chunk-ids-plugin.js';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
-import {SSRBodyTemplate} from '../plugins/ssr-plugin';
+import {SSRBodyTemplate, getSSRShellTemplate} from '../plugins/ssr-plugin';
 import {SSRModuleScriptsBodyTemplate} from '../plugins/ssr-module-scripts-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
 
@@ -56,6 +57,7 @@ export default async function loadApp(
     SSRBodyTemplateToken,
     useModuleScripts ? SSRModuleScriptsBodyTemplate : SSRBodyTemplate
   );
+  app.register(SSRShellTemplateToken, getSSRShellTemplate(useModuleScripts));
   app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
   if (prefix) {
     app.register(RoutePrefixToken, prefix);

@@ -8,6 +8,9 @@
 
 /* eslint-env node */
 
+// $FlowFixMe
+const {TextEncoder, TextDecoder} = require('util');
+
 process.on('unhandledRejection', (e) => {
   throw e;
 });
@@ -21,6 +24,10 @@ global.requestAnimationFrame = (callback) => {
 global.__BROWSER__ = Boolean(global.window);
 global.__NODE__ = !global.__BROWSER__;
 global.__DEV__ = process.env !== 'production';
+
+// Needed for React 18 Enzyme compatibility
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 if (__NODE__) {
   // fixes issue when react testing library is pulled into node test

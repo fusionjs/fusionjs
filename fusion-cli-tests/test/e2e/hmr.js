@@ -44,6 +44,9 @@ module.exports = async function testHmr(
   const page = await browser.newPage();
   await page.goto(`http://localhost:${port}/`);
 
+  // Give client split time to load
+  await new Promise((res) => setTimeout(res, 1000));
+
   const content = await page.content();
   t.ok(
     content.includes('hmr-component-default'),

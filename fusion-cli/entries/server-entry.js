@@ -24,6 +24,7 @@ import BaseApp, {
   HttpServerToken,
   RoutePrefixToken,
   SSRBodyTemplateToken,
+  SSRShellTemplateToken,
   CriticalChunkIdsToken,
 } from 'fusion-core';
 
@@ -31,7 +32,7 @@ import CriticalChunkIdsPlugin from '../plugins/critical-chunk-ids-plugin.js';
 import AssetsFactory from '../plugins/assets-plugin';
 import ContextPlugin from '../plugins/context-plugin';
 import ServerErrorPlugin from '../plugins/server-error-plugin';
-import {SSRBodyTemplate} from '../plugins/ssr-plugin';
+import {SSRBodyTemplate, getSSRShellTemplate} from '../plugins/ssr-plugin';
 import {SSRModuleScriptsBodyTemplate} from '../plugins/ssr-module-scripts-plugin';
 import stripRoutePrefix from '../lib/strip-prefix.js';
 // $FlowFixMe[cannot-resolve-module]
@@ -97,6 +98,10 @@ async function reload(
   app.register(
     SSRBodyTemplateToken,
     useModuleScripts ? SSRModuleScriptsBodyTemplate : SSRBodyTemplate
+  );
+  app.register(
+    SSRShellTemplateToken,
+    getSSRShellTemplate(Boolean(useModuleScripts))
   );
   app.register(CriticalChunkIdsToken, CriticalChunkIdsPlugin);
   if (prefix) {

@@ -15,6 +15,7 @@ import {
   ElementToken,
   SSRDeciderToken,
   SSRBodyTemplateToken,
+  SSRShellTemplateToken,
 } from './tokens';
 import ssrPlugin from './plugins/ssr';
 import contextMiddleware from './plugins/server-context.js';
@@ -48,13 +49,18 @@ export default function () {
           element: ElementToken,
           ssrDecider: SSRDeciderToken,
           ssrBodyTemplate: SSRBodyTemplateToken.optional,
+          ssrShellTemplate: SSRShellTemplateToken.optional,
         },
         ssrPlugin(this.endpoints)
       );
     }
     resolve() {
       this.middleware(
-        {timing: TimingToken, render: RenderToken},
+        {
+          timing: TimingToken,
+          render: RenderToken,
+          ssrDecider: SSRDeciderToken,
+        },
         serverRenderer(this)
       );
       return super.resolve();

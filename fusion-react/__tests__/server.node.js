@@ -10,9 +10,13 @@ import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import render from '../src/server';
 import App from '../src/index';
+import {
+  unstable_EnableServerStreamingToken,
+  SSRShellTemplateToken,
+} from 'fusion-core';
 
-test('renders', () => {
-  const rendered = render(React.createElement('span', null, 'hello'));
+test('renders', async () => {
+  const rendered = await render(React.createElement('span', null, 'hello'));
   expect(/<span/.test(rendered)).toBeTruthy();
   expect(/hello/.test(rendered)).toBeTruthy();
 });
@@ -36,4 +40,22 @@ test('throw on non-element root', async () => {
       return null;
     });
   }).toThrow();
+});
+
+test('renders in streaming', async () => {
+  const app = new App(React.createElement('div', null, 'Hello World'));
+  app.register(unstable_EnableServerStreamingToken, true);
+  app.register(SSRShellTemplateToken, () => ({
+    start: '<html><body>',
+    end: '</body></html>',
+    scripts: [],
+    useModuleScripts: false,
+  }));
+  const simulator = getSimulator(app);
+  const ctx = await simulator.render('/');
+  expect(
+    ctx.rendered.includes(
+      '<html><body><div id="root"><div>Hello World</div></div></body></html>'
+    )
+  ).toBeTruthy();
 });

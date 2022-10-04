@@ -70,7 +70,7 @@ export type FusionPlugin<Deps: FusionPluginDepsType, Service> = {|
   cleanup?: (service: Service) => Promise<void> | void,
 |};
 
-export type SSRDecider = (Context) => boolean;
+export type SSRDecider = (Context) => boolean | 'stream';
 
 export type aliaser = {
   alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser,
@@ -79,6 +79,15 @@ export type aliaser = {
 export type cleanupFn = (thing?: any) => Promise<void> | void;
 
 export type SSRBodyTemplate = (Context) => $PropertyType<Context, 'body'>;
+
+export type SSRShellTemplate = (Context) => {
+  start: string,
+  end: string,
+  scripts: Array<string>,
+  useModuleScripts: boolean,
+};
+
+export type unstable_EnableServerStreamingTokenType = boolean;
 
 export type RenderType = (any, Context) => any;
 

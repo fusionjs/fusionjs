@@ -83,3 +83,17 @@ test('context composition with a cdn', async () => {
     context.body.includes('https://something.com/lol/es5-file.js')
   ).toBeTruthy();
 });
+
+test('prepare boundary works', async () => {
+  const element = 'hello';
+  const render = (el) => `<h1>${el}</h1>`;
+
+  const app = new App(element, render);
+
+  let done = false;
+  app.prepareBoundary.addEffect(() => {
+    done = true;
+  });
+  app.prepareBoundary.done();
+  expect(done).toEqual(true);
+});

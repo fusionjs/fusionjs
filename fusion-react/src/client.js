@@ -7,8 +7,26 @@
  */
 
 /* eslint-env browser */
+/* global module */
+
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot, hydrateRoot} from 'react-dom/client';
+
+// Save a reference to the root that we can reuse upon HMR. The new createRoot/hydrateRoot
+// API's can only be called once
+let root = null;
+// Client HMR
+if (typeof module !== 'undefined' && module.hot) {
+  // $FlowFixMe
+  module.hot.addDisposeHandler((data) => {
+    data.oldRoot = root;
+  });
+  // $FlowFixMe
+  if (module.hot.data) {
+    // $FlowFixMe
+    root = module.hot.data.oldRoot;
+  }
+}
 
 export default (el: React.Element<*>) => {
   const domElement = document.getElementById('root');
@@ -25,10 +43,16 @@ export default (el: React.Element<*>) => {
         'Server-side render failed. Falling back to client-side render'
       );
     }
-    ReactDOM.render(el, domElement);
+    if (!root) {
+      root = createRoot(domElement);
+    }
+    root.render(el);
   } else {
-    return ReactDOM.hydrate
-      ? ReactDOM.hydrate(el, domElement)
-      : ReactDOM.render(el, domElement);
+    if (root) {
+      return root.render(el);
+    } else {
+      root = hydrateRoot(domElement, el);
+      return root;
+    }
   }
 };

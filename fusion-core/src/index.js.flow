@@ -19,11 +19,13 @@ import type {
   Middleware,
   Token,
   SSRBodyTemplate,
+  SSRShellTemplate,
   RenderType as Render,
   SanitizedHTMLWrapper,
   RenderType,
   SSRDecider,
   RouteTagsType,
+  unstable_EnableServerStreamingTokenType,
 } from "../src/types.js";
 
 export {
@@ -32,10 +34,12 @@ export {
   SSRDeciderToken,
   HttpServerToken,
   SSRBodyTemplateToken,
+  SSRShellTemplateToken,
   RoutePrefixToken,
   CriticalChunkIdsToken,
   RouteTagsToken,
   EnableMiddlewareTimingToken,
+  unstable_EnableServerStreamingToken,
 } from "../src/tokens";
 
 export const TokenType = Object.freeze({
@@ -148,7 +152,9 @@ declare export var ElementToken: Token<any>;
 declare export var SSRDeciderToken: Token<SSRDecider>;
 declare export var HttpServerToken: Token<Server>;
 declare export var SSRBodyTemplateToken: Token<SSRBodyTemplate>;
+declare export var SSRShellTemplateToken: Token<SSRShellTemplate>;
 declare export var RoutePrefixToken: Token<string>;
+declare export var unstable_EnableServerStreamingToken: Token<unstable_EnableServerStreamingTokenType>;
 
 type CriticalChunkIds = Set<number>;
 
@@ -172,4 +178,5 @@ export type {
   Render,
   RouteTagsType,
   ExtractDepsType,
+  unstable_EnableServerStreamingTokenType,
 };

@@ -1,5 +1,5 @@
 // @noflow
-import App, {createToken, withUniversalValue, withRenderSetup, withSSREffect} from 'fusion-core';
+import App, {createToken, withUniversalValue, withRenderSetup, unstable_withPrepareEffect} from 'fusion-core';
 
 export default async function () {
   const app = new App('element', (el) => el);
@@ -51,11 +51,11 @@ function* TestPlugin3() {
 
     withRenderSetup(() => {
       if (__NODE__) {
-        withSSREffect(() => {
+        unstable_withPrepareEffect(() => {
           serialize("baz");
         });
       }
-  });
+    });
 
     if (__BROWSER__) {
       const hydrated = hydrate();

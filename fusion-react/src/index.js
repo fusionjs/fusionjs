@@ -13,6 +13,7 @@ import FusionApp, {
   createToken,
   createPlugin,
   CriticalChunkIdsToken,
+  SSRDeciderToken,
   type Context,
 } from 'fusion-core';
 import {prepare} from './async/index.js';
@@ -58,22 +59,30 @@ export default class App extends FusionApp {
       }
       return provides;
     };
+    // Defined here to access closure value of this. fusion-react inherits from fusion-core/core
+    // which is where the boundary is defined
+    const resolvePrepareBoundary = () => {
+      // $FlowFixMe[reference-before-declaration]
+      this.prepareBoundary.done();
+    };
     const renderer = createPlugin({
       deps: {
         criticalChunkIds: CriticalChunkIdsToken.optional,
         skipPrepare: SkipPrepareToken.optional,
         logger: LoggerToken.optional,
+        ssrDecider: SSRDeciderToken,
       },
-      provides({skipPrepare, logger}) {
+      provides({skipPrepare, logger, ssrDecider}) {
         return (el: React.Element<*>, ctx) => {
           return (skipPrepare ? Promise.resolve() : prepare(el, ctx))
             .catch(() => {}) // recover from failed `prepare`
             .then(() => {
+              resolvePrepareBoundary();
               if (render) {
                 return render(el, ctx);
               }
               if (__NODE__) {
-                return serverRender(el, logger);
+                return serverRender(el, ctx, logger, ssrDecider);
               } else {
                 return clientRender(el);
               }

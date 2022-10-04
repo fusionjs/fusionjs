@@ -83,6 +83,7 @@ export function createRequestContext(
   res.getHeader = (k) => res._headers[k.toLowerCase()];
   res.setHeader = (k, v) => (res._headers[k.toLowerCase()] = v);
   res.removeHeader = (k) => delete res._headers[k.toLowerCase()];
+  res.removeListener = () => {};
 
   // createContext is missing in Koa typings
   const ctx = (new Koa(): any).createContext(req, res);

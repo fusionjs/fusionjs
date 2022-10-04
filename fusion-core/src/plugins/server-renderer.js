@@ -9,7 +9,7 @@
 import {now} from '../utils/now.js';
 
 export default function createServerRenderPlugin(app) {
-  return function serverRenderPlugin({render, timing}) {
+  return function serverRenderPlugin({render, timing, ssrDecider}) {
     return async function renderer(ctx, next) {
       app._setRef();
       app.renderSetupCtx = ctx;
@@ -35,18 +35,26 @@ export default function createServerRenderPlugin(app) {
 
       let renderTime = null;
       if (ctx.element && !ctx.body && ctx.respond !== false) {
+        app._setRef();
+        app.renderCtx = ctx;
         const renderStart = now();
         ctx.rendered = await render(ctx.element, ctx);
         renderTime = now() - renderStart;
+        app.renderCtx = void 0;
+        app._clearRef();
       }
 
-      app._setRef();
-      app.SSREffectCtx = ctx;
-      for (const effect of ctx.postRenderEffects) {
-        effect();
+      // For non-streaming, run post prepare effects here
+      // For streaming they are run on prepare boundary drop
+      if (ssrDecider(ctx) === true) {
+        app._setRef();
+        app.postPrepareEffectCtx = ctx;
+        for (const effect of ctx.postPrepareEffects) {
+          effect();
+        }
+        app.postPrepareEffectCtx = void 0;
+        app._clearRef();
       }
-      app.SSREffectCtx = void 0;
-      app._clearRef();
 
       timer.upstreamStart = now();
       await next();

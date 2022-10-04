@@ -14,7 +14,11 @@ export const ElementToken = createToken('ElementToken');
 export const SSRDeciderToken = createToken('SSRDeciderToken');
 export const HttpServerToken = createToken('HttpServerToken');
 export const SSRBodyTemplateToken = createToken('SSRBodyTemplateToken');
+export const SSRShellTemplateToken = createToken('SSRShellTemplateToken');
 export const RoutePrefixToken = createToken('RoutePrefixToken');
+export const unstable_EnableServerStreamingToken = createToken(
+  'unstable_EnableServerStreamingToken'
+);
 
 export const CriticalChunkIdsToken = createToken('CriticalChunkIdsToken');
 
