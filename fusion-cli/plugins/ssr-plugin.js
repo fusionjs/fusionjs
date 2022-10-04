@@ -224,12 +224,6 @@ const embeddedBrowserVersions = {
 };
 
 /*
-Edge must get transpiled classes due to:
-- https://github.com/Microsoft/ChakraCore/issues/5030
-- https://github.com/Microsoft/ChakraCore/issues/4663
-- https://github.com/babel/babel/issues/8019
-Rather than transpile classes in the modern bundles, Edge should be forced on the slow path
-
 Safari 10.1 and 11 have some ES6 bugs:
 - https://github.com/mishoo/UglifyJS2/issues/1753
 - https://github.com/mishoo/UglifyJS2/issues/2344
@@ -254,6 +248,8 @@ function checkModuleSupport({name, version}) {
     if (majorVersion(version) >= modernBrowserVersions.ios) return true;
   } else if (name === 'Firefox') {
     if (majorVersion(version) >= modernBrowserVersions.firefox) return true;
+  } else if (name === 'Edge') {
+    if (majorVersion(version) >= modernBrowserVersions.edge) return true;
   }
   return false;
 }
