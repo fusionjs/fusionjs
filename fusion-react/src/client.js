@@ -11,6 +11,7 @@
 
 import * as React from 'react';
 import {createRoot, hydrateRoot} from 'react-dom/client';
+import type {Logger} from 'fusion-tokens';
 
 // Save a reference to the root that we can reuse upon HMR. The new createRoot/hydrateRoot
 // API's can only be called once
@@ -28,7 +29,7 @@ if (typeof module !== 'undefined' && module.hot) {
   }
 }
 
-export default (el: React.Element<*>) => {
+export default (el: React.Element<*>, logger?: Logger) => {
   const domElement = document.getElementById('root');
 
   if (!domElement) {
@@ -51,7 +52,24 @@ export default (el: React.Element<*>) => {
     if (root) {
       return root.render(el);
     } else {
-      root = hydrateRoot(domElement, el);
+      root = hydrateRoot(domElement, el, {
+        // Capture uncaught errors from hydration mismatches
+        // https://github.com/reactjs/rfcs/blob/main/text/0215-server-errors-in-react-18.md#error-reporting
+        // errorInfo: https://github.com/facebook/react/pull/24591
+        onRecoverableError: (error, errorInfo) => {
+          logger &&
+            logger.warn(`Client-side hydration onRecoverableError`, {
+              error,
+              errorInfo,
+            });
+          if (__DEV__) {
+            console.warn(`Client-side hydration onRecoverableError`, {
+              error,
+              errorInfo,
+            });
+          }
+        },
+      });
       return root;
     }
   }

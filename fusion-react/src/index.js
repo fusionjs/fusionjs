@@ -84,7 +84,7 @@ export default class App extends FusionApp {
               if (__NODE__) {
                 return serverRender(el, ctx, logger, ssrDecider);
               } else {
-                return clientRender(el);
+                return clientRender(el, logger);
               }
             });
         };
