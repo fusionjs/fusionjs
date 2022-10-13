@@ -13,7 +13,7 @@
     "create-universal-package": "^4.1.2",
     "express": "^4.16.4",
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "get-port": "^5.1.1",
     "jest": "^25.1.0",
     "request": "^2.88.0",
@@ -35,7 +35,7 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "workspace:*"
   },
   "repository": {
     "directory": "fusion-plugin-http-handler",

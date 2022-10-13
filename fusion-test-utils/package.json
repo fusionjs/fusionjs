@@ -22,10 +22,10 @@
     "create-universal-package": "^4.1.2",
     "express": "^4.16.4",
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-http-handler": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
+    "fusion-plugin-http-handler": "workspace:*",
     "jest": "^25.1.0",
-    "jest-resolver-fusion": "0.0.0-monorepo"
+    "jest-resolver-fusion": "workspace:*"
   },
   "engines": {
     "node": ">=8.9.4",
@@ -45,7 +45,7 @@
   "peerDependencies": {
     "@types/jest": "*",
     "@types/node": "*",
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "workspace:*"
   },
   "repository": {
     "directory": "fusion-test-utils",

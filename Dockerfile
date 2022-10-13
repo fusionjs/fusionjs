@@ -1,4 +1,4 @@
-FROM uber/web-base-image:16.13.0-buster
+FROM uber/web-base-image:16.15.0-buster
 
 RUN yarn global add jazelle@0.0.0-canary.eea8cca.0
 

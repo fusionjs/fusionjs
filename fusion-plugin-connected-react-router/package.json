@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
-    "fusion-plugin-react-redux": "0.0.0-monorepo",
+    "fusion-plugin-react-redux": "workspace:*",
     "react-redux": "^7.2.8"
   },
   "devDependencies": {
@@ -19,12 +19,12 @@
     "connected-react-router": "^6.5.0",
     "create-universal-package": "^4.1.2",
     "flow-bin": "0.131.0",
-    "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-cli": "workspace:*",
+    "fusion-core": "workspace:*",
     "fusion-plugin-react-router": "2.3.3",
-    "fusion-plugin-universal-events": "0.0.0-monorepo",
-    "fusion-react": "0.0.0-monorepo",
-    "fusion-test-utils": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "workspace:*",
+    "fusion-react": "workspace:*",
+    "fusion-test-utils": "workspace:*",
     "get-port": "^5.1.1",
     "jest": "^25.1.0",
     "puppeteer": "^2.1.1",
@@ -54,7 +54,7 @@
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "connected-react-router": "^6.5.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "fusion-plugin-react-router": "2.3.3",
     "react": ">= 16.14.0",
     "react-dom": ">= 16.14.0",

@@ -11,7 +11,7 @@
   "devDependencies": {
     "babel-eslint": "10.1.0",
     "eslint": "^7.27.0",
-    "eslint-config-fusion": "0.0.0-monorepo",
+    "eslint-config-fusion": "workspace:*",
     "eslint-plugin-cup": "^2.0.2",
     "eslint-plugin-flowtype": "^5.7.2",
     "eslint-plugin-import": "^2.20.1",
