@@ -96,7 +96,7 @@ export function createServerHistory(
   }
   const history = {
     action: 'POP',
-    location: createLocation(location, basename, false),
+    location: createLocation(location, basename, true),
     go: staticHandler('go'),
     push,
     replace,

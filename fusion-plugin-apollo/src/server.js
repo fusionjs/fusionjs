@@ -23,6 +23,9 @@ export default (
   getDataFromTree?: typeof defaultGetDataFromTree
 ) => {
   return (getDataFromTree || defaultGetDataFromTree)(root).catch((e) => {
+    if (__DEV__) {
+      console.error('SSR Failed with Error', e);
+    }
     logger && logger.error('SSR Failed with Error', e);
   });
 };
