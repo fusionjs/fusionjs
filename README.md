@@ -39,7 +39,7 @@ export default () => {
 }
 ```
 
-We initially [built Fusion.js](https://eng.uber.com/fusionjs/) to make our own websites easier to maintain, but were so impressed with the benefits that we decided to offer it to the community as an open source project!
+We initially [built Fusion.js](https://fusionjs.com/) to make our own websites easier to maintain, but were so impressed with the benefits that we decided to offer it to the community as an open source project!
 
 ## Try it out
 
@@ -48,7 +48,7 @@ If you're interested in giving Fusion.js a shot, [Overview](https://fusionjs.com
 
 ## Contributing
 
-This is a monorepo of all open source Fusion.js packages maintained using [jazelle](https://github.com/fusionjs/fusionjs/tree/master/jazelle). Take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for info on how to develop in this repo.
+This is a monorepo of all open source Fusion.js packages maintained using [jazelle](https://github.com/uber-web/jazelle). Take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for info on how to develop in this repo.
 
 ## License
 
