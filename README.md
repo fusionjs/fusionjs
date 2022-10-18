@@ -39,7 +39,7 @@ export default () => {
 }
 ```
 
-We initially [built Fusion.js](https://eng.uber.com/fusionjs/) to make our own websites easier to maintain, but were so impressed with the benefits that we decided to offer it to the community as an open source project!
+We initially [built Fusion.js](https://fusionjs.com/) to make our own websites easier to maintain, but were so impressed with the benefits that we decided to offer it to the community as an open source project!
 
 ## Try it out
 
