@@ -1,5 +1,6 @@
 {
   "name": "fusionjs-monorepo",
+  "packageManager": "yarn@3.2.4",
   "private": true,
   "workspaces": [
     "fusion-tokens",
@@ -38,5 +39,10 @@
     "fusion-plugin-web-app-manifest",
     "linter",
     "jest-resolver-fusion"
-  ]
+  ],
+  "dependenciesMeta": {
+    "react-dev-utils": {
+      "unplugged": true
+    }
+  }
 }

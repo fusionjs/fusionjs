@@ -67,3 +67,13 @@ dist
 # Jazelle files
 third_party/jazelle/temp
 bazel-*
+
+# Yarn v2
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+yarn.lock

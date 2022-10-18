@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "request-promise": "4.2.6"
   },
   "engines": {
@@ -83,7 +83,7 @@
   "license": "MIT",
   "peerDependencies": {
     "enzyme": "*",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "graphql": "*",
     "react": ">= 16.14.0",
     "react-dom": ">= 16.14.0"

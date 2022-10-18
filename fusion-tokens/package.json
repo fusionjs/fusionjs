@@ -12,7 +12,7 @@
     "@babel/preset-env": "^7.15.0",
     "create-universal-package": "^4.1.2",
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "jest": "^25.1.0"
   },
   "engines": {
@@ -31,7 +31,7 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo"
+    "fusion-core": "workspace:*"
   },
   "repository": {
     "directory": "fusion-tokens",

@@ -165,6 +165,23 @@ if (__NODE__) {
     expect(ctx.response.status).toBe(200);
     cleanup();
   });
+
+  test('handles basename missing from url by prefixing it internally', async () => {
+    const Hello = () => <div>Hello</div>;
+    const element = (
+      <div>
+        <Routes>
+          <Route path="/hello" element={<Hello />} />
+        </Routes>
+      </div>
+    );
+
+    const app = getPrefixApp(element);
+    const simulator = setup(app);
+    const ctx = await simulator.render('/hello');
+    expect(ctx.rendered.includes('Hello')).toBeTruthy();
+    cleanup();
+  });
 }
 
 test('events with trackingId', async () => {

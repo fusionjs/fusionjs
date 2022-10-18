@@ -18,9 +18,9 @@
     "@babel/preset-react": "^7.14.5",
     "create-universal-package": "^4.1.2",
     "flow-bin": "0.131.0",
-    "fusion-cli": "0.0.0-monorepo",
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-react": "0.0.0-monorepo",
+    "fusion-cli": "workspace:*",
+    "fusion-core": "workspace:*",
+    "fusion-react": "workspace:*",
     "get-port": "^5.1.1",
     "jest": "^25.1.0",
     "puppeteer": "^2.1.1",
@@ -47,7 +47,7 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
     "react": ">= 16.14.0",
     "styletron-react": "^5.2.7"
   },

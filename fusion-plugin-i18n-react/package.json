@@ -7,7 +7,7 @@
     "./dist-node-esm/index.js": "./dist-browser-esm/index.js"
   },
   "dependencies": {
-    "fusion-plugin-i18n": "0.0.0-monorepo",
+    "fusion-plugin-i18n": "workspace:*",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
@@ -19,11 +19,11 @@
     "babel-jest": "^25.1.0",
     "create-universal-package": "^4.1.2",
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-plugin-i18n": "0.0.0-monorepo",
-    "fusion-plugin-universal-events": "0.0.0-monorepo",
-    "fusion-react": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
+    "fusion-plugin-i18n": "workspace:*",
+    "fusion-plugin-universal-events": "workspace:*",
+    "fusion-react": "workspace:*",
+    "fusion-tokens": "workspace:*",
     "jest": "^25.1.0",
     "locale": "0.1.0",
     "puppeteer": "^2.1.1",

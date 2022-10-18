@@ -13,8 +13,8 @@
     "@babel/preset-react": "^7.14.5",
     "create-universal-package": "^4.1.2",
     "flow-bin": "0.131.0",
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
+    "fusion-tokens": "workspace:*",
     "jest": "^25.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -32,8 +32,8 @@
   "types": "./index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
-    "fusion-core": "0.0.0-monorepo",
-    "fusion-tokens": "0.0.0-monorepo",
+    "fusion-core": "workspace:*",
+    "fusion-tokens": "workspace:*",
     "react": ">= 16.14.0"
   },
   "repository": {

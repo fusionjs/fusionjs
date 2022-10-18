@@ -48,7 +48,7 @@ If you're interested in giving Fusion.js a shot, [Overview](https://fusionjs.com
 
 ## Contributing
 
-This is a monorepo of all open source Fusion.js packages maintained using [jazelle](https://github.com/uber-web/jazelle). Take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for info on how to develop in this repo.
+This is a monorepo of all open source Fusion.js packages maintained using [Yarn v2](https://github.com/yarnpkg/berry). Take a look at [CONTRIBUTING.md](CONTRIBUTING.md) for info on how to develop in this repo.
 
 ## License
 
