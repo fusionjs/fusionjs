@@ -312,6 +312,14 @@ module.exports.DevelopmentRuntime = function (
         }
 
         function passThrough(onError = handleError) {
+          if (!state.proxy) {
+            res.statusCode = 503;
+            res.setHeader('Connection', 'close');
+            res.end('Service is unavailable, likely shutting down');
+
+            return;
+          }
+
           // $FlowFixMe[incompatible-use]
           return state.proxy.web(req, res, onError);
         }
