@@ -33,7 +33,7 @@ describe('TypeScript app', () => {
 
     browser.close();
     proc.kill('SIGKILL');
-  }, 25000);
+  }, 35000);
 
   test('`fusion dev` works', async () => {
     const app = dev(dir);
@@ -49,5 +49,5 @@ describe('TypeScript app', () => {
     t.ok(content.includes('FIXTURE_TYPESCRIPT_LOCAL_PACKAGE_CONTENT'));
 
     await app.teardown();
-  }, 15000);
+  }, 35000);
 });

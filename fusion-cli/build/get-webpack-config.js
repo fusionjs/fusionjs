@@ -20,6 +20,7 @@ const isEsModule = require('../lib/is-es-module.js');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const NodeSourcePlugin = require('./plugins/node-source-plugin.js');
+const MergeChunksPlugin = require('./plugins/merge-chunks-plugin.js');
 const {
   chunkIdsLoader,
   fileLoader,
@@ -749,8 +750,7 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // Need to provide same API to source node modules in client bundles
       // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L21-L36
       target !== 'node' && new NodeSourcePlugin(nodeBuiltins),
-      runtime === 'server' &&
-        new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1}),
+      runtime === 'server' && new MergeChunksPlugin(),
       onBuildEnd
         ? new ProgressBarPlugin({
             callback: (progressBar) => {

@@ -90,7 +90,7 @@ export const Runtime = class Runtime {
 async function untilReady(page, port) {
   let started = false;
   let numTries = 0;
-  while (!started && numTries < 10) {
+  while (!started && numTries < 15) {
     try {
       await page.goto(`http://localhost:${port}`);
       started = true;
