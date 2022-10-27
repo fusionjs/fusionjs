@@ -61,33 +61,33 @@ export default createPlugin({
 
 ```js
 // src/main.js
-import React from 'react';
-import App, {createPlugin} from 'fusion-core';
+import React from "react";
+import App, { createPlugin } from "fusion-core";
 import RPC, {
   RPCToken,
   RPCHandlersToken,
   ResponseError,
-} from 'fusion-plugin-rpc';
+} from "fusion-plugin-rpc";
 import UniversalEvents, {
   UniversalEventsToken,
-} from 'fusion-plugin-universal-events';
-import {FetchToken} from 'fusion-tokens';
-import fetch from 'unfetch';
+} from "fusion-plugin-universal-events";
+import { FetchToken } from "fusion-tokens";
+import fetch from "unfetch";
 
 // Define your rpc methods server side
 const handlers = __NODE__ && {
   getUser: async (args, ctx) => {
-    return {some: 'data' + args};
+    return { some: "data" + args };
   },
   test: async (args, ctx) => {
     // Error Handling Example
     try {
       doThing();
     } catch (e) {
-      const error = new ResponseError('Failed to do thing');
-      error.code = 'DOTHING';
+      const error = new ResponseError("Failed to do thing");
+      error.code = "DOTHING";
       error.meta = {
-        custom: 'metadata',
+        custom: "metadata",
       };
       throw error;
     }
@@ -117,28 +117,28 @@ The plugin can accept an optional config token for modifying the default behavio
 
 ```js
 // src/main.js
-import React from 'react';
-import App, {createPlugin} from 'fusion-core';
+import React from "react";
+import App, { createPlugin } from "fusion-core";
 import RPC, {
   RPCToken,
   RPCHandlersToken,
   ResponseError,
   RPCHandlersConfigToken,
-} from 'fusion-plugin-rpc';
+} from "fusion-plugin-rpc";
 import UniversalEvents, {
   UniversalEventsToken,
-} from 'fusion-plugin-universal-events';
-import {FetchToken} from 'fusion-tokens';
-import fetch from 'unfetch';
+} from "fusion-plugin-universal-events";
+import { FetchToken } from "fusion-tokens";
+import fetch from "unfetch";
 
-import handlers from './redux/handlers';
+import handlers from "./redux/handlers";
 
 export default () => {
   const app = new App(<div />);
 
   app.register(RPCHandlersConfigToken, {
     // Modify RPC endpoints to be accessible at /nested/api/rpcs/<RPC_ID>
-    apiPath: 'nested/api/rpcs',
+    apiPath: "nested/api/rpcs",
   });
 
   app.register(RPCToken, RPC);
@@ -160,7 +160,7 @@ export default () => {
 ##### `RPC`
 
 ```js
-import RPC from 'fusion-plugin-rpc';
+import RPC from "fusion-plugin-rpc";
 ```
 
 The RPC plugin. Provides the RPC [service API](#service-api).
@@ -168,7 +168,7 @@ The RPC plugin. Provides the RPC [service API](#service-api).
 ##### `RPCToken`
 
 ```js
-import {RPCToken} from 'fusion-plugin-rpc-redux-react';
+import { RPCToken } from "fusion-plugin-rpc-redux-react";
 ```
 
 The canonical token for the RPC plugin. Typically, it should be registered with
@@ -184,7 +184,7 @@ Required. See
 ##### `RPCHandlersToken`
 
 ```js
-import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import { RPCHandlersToken } from "fusion-plugin-rpc";
 ```
 
 Object with keys as the name of the handler and the value the handler implementation. Required. Server-only.
@@ -192,7 +192,7 @@ Object with keys as the name of the handler and the value the handler implementa
 ##### `RPCHandlersConfigToken`
 
 ```js
-import {RPCHandlersConfigToken} from 'fusion-plugin-rpc';
+import { RPCHandlersConfigToken } from "fusion-plugin-rpc";
 ```
 
 Configures what RPC handlers exist. Required. Server-only.
@@ -200,7 +200,7 @@ Configures what RPC handlers exist. Required. Server-only.
 ##### `BodyParserOptionsToken`
 
 ```js
-import {BodyParserOptionsToken} from 'fusion-plugin-rpc';
+import { BodyParserOptionsToken } from "fusion-plugin-rpc";
 ```
 
 Configures options for `koa-bodyparser`. Optional. See available options [here](https://github.com/koajs/bodyparser#options).
@@ -208,13 +208,13 @@ Configures options for `koa-bodyparser`. Optional. See available options [here](
 For example, if you want to increase the limit for uploading large file sizes, set `jsonLimit` to a higher limit:
 
 ```js
-app.register(BodyParserOptionsToken, {jsonLimit: '20mb'});
+app.register(BodyParserOptionsToken, { jsonLimit: "20mb" });
 ```
 
 #### Types
 
 ```flow
-type RPCHandlers = Object<string, () => any>
+type RPCHandlers = Object<string, () => any>;
 ```
 
 You can register a value of type `RPCHandlers` or a Plugin that provides a value
@@ -242,7 +242,7 @@ Optional.
 ```flow
 type RPCConfigType = {
   apiPath?: string,
-}
+};
 ```
 
 ##### `BodyParserOptionsToken`
@@ -285,7 +285,7 @@ The package also exports a mock RPC plugin which can be useful for testing. For
 example:
 
 ```js
-import {mock as MockRPC, RPCToken} from 'fusion-plugin-rpc';
+import { mock as MockRPC, RPCToken } from "fusion-plugin-rpc";
 
 app.register(RPCToken, mock);
 ```
@@ -302,12 +302,32 @@ function testHandler() {
   try {
     doThing();
   } catch (e) {
-    const error = new ResponseError('Failed to do thing');
-    error.code = 'DOTHING';
-    error.meta = {
-      custom: 'metadata',
-    };
-    throw error;
+    throw new ResponseError('Failed to do thing', {
+      code: 'DO-NOTHING', // this is sent to the client
+      meta: { custom: 'metadata' } // this is also sent to the client
+      cause: e // used for internal logging
+    });
+  }
+}
+```
+
+#### Define Severity
+
+Severity can be defined in `ResponseError` between: `HIGH` and `MEDIUM`. This is intended to be utilized for reporting purposes, not all errors have the same impact on the application so there are moments when throwing an error is appropriate but reacting to that error is nuanced. By default, errors are reported as severity `HIGH` if a `ResponseError` is not used or `severity` is not specified.
+
+```js
+function complexHandler() {
+  try {
+    doAnotherThing();
+  } catch (e) {
+    // if the response code is not-found. Throw a `severity: medium` instead
+    if (getResponseCode(e) === "not-found") {
+      throw new ResponseError("not-found", {
+        cause: e,
+        severity: ResponseError.Severity.MEDIUM,
+      });
+    }
+    throw e;
   }
 }
 ```
@@ -323,7 +343,7 @@ type RpcResponseMap = Array<{
   args: Array<*>,
   response: RpcResponse,
 }>;
-type RpcFixtureT = {[string]: RpcResponseMap | RpcResponse};
+type RpcFixtureT = { [string]: RpcResponseMap | RpcResponse };
 ```
 
 `getMockRpcHandlers` has the following interface:
@@ -338,28 +358,31 @@ type getMockRpcHandlersT = (
 For example:
 
 ```js
-import {getMockRpcHandlers, ResponseError} from 'fusion-plugin-rpc';
+import { getMockRpcHandlers, ResponseError } from "fusion-plugin-rpc";
 
 const rpcFixtures = [
   {
     getUser: {
-      firstName: 'John',
-      lastName: 'Doe',
+      firstName: "John",
+      lastName: "Doe",
       uuid: 123,
     },
   },
   {
-    updateUser: [{
-      args: [{firstName: 'Jane'}],
-      response: {
-        firstName: 'John',
-        lastName: 'Doe',
-        uuid: 123,
+    updateUser: [
+      {
+        args: [{ firstName: "Jane" }],
+        response: {
+          firstName: "John",
+          lastName: "Doe",
+          uuid: 123,
+        },
       },
-    }, {
-      args: [{firstName: ''}],
-      response: new ResponseError('Username cant be empty'),
-    }]
+      {
+        args: [{ firstName: "" }],
+        response: new ResponseError("Username cant be empty"),
+      },
+    ],
   },
 ];
 
@@ -368,7 +391,7 @@ const mockRpcHandlers = getMockRpcHandlers(rpcFixtures);
 const user = await mockRpcHandlers.getUser();
 
 try {
-  const user = await mockRpcHandlers.updateUser({firstName: ''});
+  const user = await mockRpcHandlers.updateUser({ firstName: "" });
 } catch (updatedUserError) {
   // When error object is passed as response in fixtures,
   // it will be considered as a failure scenario and will be thrown by rpc handler.
