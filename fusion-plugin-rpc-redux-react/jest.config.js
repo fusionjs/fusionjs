@@ -8,7 +8,7 @@ module.exports = {
       testEnvironment: 'node',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.browser.js',
+        '.browser.test.js',
         'dist',
         'setup-jest.js',
       ],
@@ -23,7 +23,7 @@ module.exports = {
       testEnvironment: 'jsdom',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.node.js',
+        '.node.test.js',
         'dist',
         'setup-jest.js',
       ],
@@ -32,7 +32,7 @@ module.exports = {
         __BROWSER__: true,
         __DEV__: true,
       },
-      setupFilesAfterEnv: ['<rootDir>/__tests__/setup-jest.js'],
+      setupFilesAfterEnv: ['<rootDir>/test/setup-jest.js'],
     },
   ],
 };

@@ -27,7 +27,7 @@ test('app callback', async () => {
   expect(ctx.element).toBe(element);
 });
 
-test('throws rendering errors', async (done) => {
+test('throws rendering errors', async () => {
   const element = 'hi';
   const render = () => {
     return new Promise(() => {
@@ -38,5 +38,4 @@ test('throws rendering errors', async (done) => {
   const callback = app.callback();
 
   await expect(callback()).rejects.toThrow('Test error');
-  done();
 });

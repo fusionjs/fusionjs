@@ -20,7 +20,8 @@
     "fusion-core": "workspace:*",
     "fusion-react": "workspace:*",
     "fusion-test-utils": "workspace:*",
-    "jest": "^25.1.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

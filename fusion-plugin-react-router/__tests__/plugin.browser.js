@@ -32,7 +32,7 @@ function cleanup() {
   }
 }
 
-test('handles url with invalid URI encoding in browser', async (done) => {
+test('handles url with invalid URI encoding in browser', (done) => {
   const Hello = () => <div>Hello</div>;
   const NotFound = () => <div>Not Found</div>;
   const element = (
@@ -66,15 +66,16 @@ test('handles url with invalid URI encoding in browser', async (done) => {
   // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
-  await simulator.render('/%C0%AE%C0%AE/');
-  setTimeout(() => {
-    const node = document.getElementById('root');
-    if (!node || !node.textContent) {
-      throw new Error('Could not find node.');
-    }
-    expect(node && node.textContent).toBe('Not Found');
-    cleanup();
-  }, 0);
+  simulator.render('/%C0%AE%C0%AE/').then(() => {
+    setTimeout(() => {
+      const node = document.getElementById('root');
+      if (!node || !node.textContent) {
+        throw new Error('Could not find node.');
+      }
+      expect(node && node.textContent).toBe('Not Found');
+      cleanup();
+    }, 0);
+  });
 });
 
 function setupRouterData(pageData = {title: '/', page: '/'}) {

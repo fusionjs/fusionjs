@@ -10,7 +10,7 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('browser plugin integration test withRPCRedux', async (done) => {
+test('browser plugin integration test withRPCRedux', async () => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -23,7 +23,9 @@ test('browser plugin integration test withRPCRedux', async (done) => {
   // child component is not rendered until after parent component is mounted,
   // so `prepared` will only be called in the browser
   // need to wait for rpc call to resolve
-  await runtime.page.waitForSelector('[data-testid="child-trip-id"]');
+  await runtime.page.waitForSelector('[data-testid="child-trip-id"]', {
+    timeout: 0,
+  });
 
   const childTripId = await runtime.page.$eval(
     '[data-testid="child-trip-id"]',
@@ -32,5 +34,4 @@ test('browser plugin integration test withRPCRedux', async (done) => {
   expect(childTripId).toEqual('456');
 
   await runtime.end();
-  done();
-}, 45000);
+}, 90000);

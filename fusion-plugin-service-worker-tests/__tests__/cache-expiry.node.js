@@ -18,7 +18,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/cache expiry', async (done) => {
+test('/cache expiry', async () => {
   expect.assertions(6);
   const hostname = 'http://localhost:';
   // for testing, set cache expiry to 4 seconds instead of
@@ -105,6 +105,5 @@ test('/cache expiry', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 25000);

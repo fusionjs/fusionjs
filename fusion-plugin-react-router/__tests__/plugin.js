@@ -329,7 +329,7 @@ test('events with no tracking id and route prefix', async () => {
   cleanup();
 });
 
-test('events with no tracking id and deep path', async (done) => {
+test('events with no tracking id and deep path', async () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -339,7 +339,7 @@ test('events with no tracking id and deep path', async (done) => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
-    return done();
+    return;
   }
   const element = (
     <div>
@@ -369,10 +369,9 @@ test('events with no tracking id and deep path', async (done) => {
   ).toBeTruthy();
   expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
   cleanup();
-  done();
 });
 
-test('events with tracking id and deep path', async (done) => {
+test('events with tracking id and deep path', async () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -382,7 +381,7 @@ test('events with tracking id and deep path', async (done) => {
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
-    return done();
+    return;
   }
   const element = (
     <div>
@@ -416,10 +415,9 @@ test('events with tracking id and deep path', async (done) => {
   ).toBeTruthy();
   expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
   cleanup();
-  done();
 });
 
-test('events with no tracking id and deep path and route prefix', async (done) => {
+test('events with no tracking id and deep path and route prefix', async () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -429,7 +427,7 @@ test('events with no tracking id and deep path and route prefix', async (done) =
   const Hello = () => <div>Hello</div>;
   const NotHere = () => <div>NotHere</div>;
   if (__BROWSER__) {
-    return done();
+    return;
   }
   const element = (
     <div>
@@ -458,7 +456,6 @@ test('events with no tracking id and deep path and route prefix', async (done) =
   ).toBeTruthy();
   expect(!ctx.rendered.includes('NotHere')).toBeTruthy();
   cleanup();
-  done();
 });
 
 test('without UniversalEventsToken', async () => {

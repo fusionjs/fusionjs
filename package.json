@@ -38,7 +38,8 @@
     "eslint-config-fusion",
     "fusion-plugin-web-app-manifest",
     "linter",
-    "jest-resolver-fusion"
+    "jest-resolver-fusion",
+    "jest-resolver-fusion-browser"
   ],
   "dependenciesMeta": {
     "react-dev-utils": {

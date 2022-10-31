@@ -10,7 +10,7 @@
 const {Runtime} = require('../utils.js');
 
 /* eslint-env node */
-test('browser plugin integration test', async (done) => {
+test('browser plugin integration test', async () => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -32,5 +32,4 @@ test('browser plugin integration test', async (done) => {
   expect(path).toEqual('/test');
 
   await runtime.end();
-  done();
 }, 30000);

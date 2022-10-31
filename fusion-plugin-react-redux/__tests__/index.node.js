@@ -44,14 +44,13 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
   return () => app;
 };
 
-test('interface', async (done) => {
+test('interface', async () => {
   const ctx = {memoized: new Map()};
   const reducer = (state, action) => ({test: action.payload || 1});
   const redux = getService(appCreator(reducer), Redux).from((ctx: any));
 
   expect.assertions(2);
   if (!redux.initStore) {
-    done();
     return;
   }
   const store = await redux.initStore();
@@ -59,10 +58,9 @@ test('interface', async (done) => {
   expect(store.getState().test).toBe(1);
   store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState().test).toBe(2);
-  done();
 });
 
-test('non-ssr routes', async (done) => {
+test('non-ssr routes', async () => {
   const reducer = (state, action) => ({test: action.payload || 1});
   const plugin = getService(appCreator(reducer), Redux);
   let mockCtx = {
@@ -72,17 +70,15 @@ test('non-ssr routes', async (done) => {
 
   expect.assertions(1);
   if (!Redux.middleware) {
-    done();
     return;
   }
 
   // $FlowFixMe
   await Redux.middleware(null, plugin)((mockCtx: any), () => Promise.resolve());
   expect(plugin.from((mockCtx: any)).store).toBeFalsy();
-  done();
 });
 
-test('getInitialState', async (done) => {
+test('getInitialState', async () => {
   const reducer = (state = {}, action) => ({
     ...state,
     test: action.payload || 1,
@@ -100,7 +96,6 @@ test('getInitialState', async (done) => {
 
   expect.assertions(6);
   if (!redux.initStore) {
-    done();
     return;
   }
 
@@ -112,10 +107,9 @@ test('getInitialState', async (done) => {
   store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState().test).toBe(2);
   expect(store).toBe(await (redux.initStore && redux.initStore()));
-  done();
 });
 
-test('enhancers', async (done) => {
+test('enhancers', async () => {
   const mockCtx: any = {mock: true, memoized: new Map()};
   const myEnhancer =
     (createStore) =>
@@ -133,17 +127,14 @@ test('enhancers', async (done) => {
 
   expect.assertions(2);
   if (!redux.initStore) {
-    done();
     return;
   }
 
   const store = await redux.initStore();
   expect(store.ctx).toBe(mockCtx);
-  done();
 });
 
 const testEnhancer = async (
-  done,
   enhancer: StoreEnhancer<*, *, *> | FusionPlugin<*, StoreEnhancer<*, *, *>>
 ): Promise<void> => {
   const app = new App('el', (el) => el);
@@ -162,9 +153,7 @@ const testEnhancer = async (
         const reduxScoped = redux.from(ctx);
 
         if (!reduxScoped.initStore) {
-          // $FlowFixMe
-          done.fail();
-          return;
+          throw new Error('Test failure');
         }
 
         // $FlowFixMe
@@ -181,7 +170,7 @@ const testEnhancer = async (
   await simulator.render('/');
 };
 
-test('enhancers - via app.register', async (done) => {
+test('enhancers - via app.register', async () => {
   /* Enhancer function */
   const myEnhancer: StoreEnhancer<*, *, *> =
     (createStore) =>
@@ -191,7 +180,7 @@ test('enhancers - via app.register', async (done) => {
       store.mock = true;
       return store;
     };
-  await testEnhancer(done, myEnhancer);
+  await testEnhancer(myEnhancer);
 
   /* Enhancer plugin */
   const myEnhancerPlugin: FusionPlugin<*, StoreEnhancer<*, *, *>> =
@@ -200,11 +189,10 @@ test('enhancers - via app.register', async (done) => {
         return myEnhancer;
       },
     });
-  await testEnhancer(done, myEnhancerPlugin);
-  done();
+  await testEnhancer(myEnhancerPlugin);
 });
 
-test('serialization', async (done) => {
+test('serialization', async () => {
   const reducer = (state, action) => ({
     test: action.payload || 1,
     xss: '</div>',
@@ -215,7 +203,6 @@ test('serialization', async (done) => {
 
   expect.assertions(5);
   if (!Redux.middleware) {
-    done();
     return;
   }
 
@@ -230,10 +217,9 @@ test('serialization', async (done) => {
     'test'
   );
   expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
-  done();
 });
 
-test('serialization and deserialization', async (done) => {
+test('serialization and deserialization', async () => {
   // A redux state with encoded chars
   const obj = {
     backslashes: '\\u0026',
@@ -247,7 +233,6 @@ test('serialization and deserialization', async (done) => {
 
   expect.assertions(4);
   if (!Redux.middleware) {
-    done();
     return;
   }
 
@@ -264,6 +249,4 @@ test('serialization and deserialization', async (done) => {
   const content =
     dom.window.document.getElementById('__REDUX_STATE__').textContent;
   expect(deserialize(unescape(content))).toStrictEqual(obj);
-
-  done();
 });

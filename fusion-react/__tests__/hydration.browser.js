@@ -15,7 +15,7 @@ const TestComponent = () => {
   return <div>{Math.random()}</div>;
 };
 
-test('hydration mismatch triggers logger warning', async (done) => {
+test('hydration mismatch triggers logger warning', (done) => {
   const root = setup();
   let didWarn = false;
   // $FlowFixMe

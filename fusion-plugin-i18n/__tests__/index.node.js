@@ -63,7 +63,7 @@ test('translate', async () => {
   await simulator.render('/');
 });
 
-test('ssr', async (done) => {
+test('ssr', async () => {
   const data = {test: 'hello</div>', interpolated: 'hi ${value}'};
 
   const chunkTranslationMap = require('../chunk-translation-map');
@@ -84,13 +84,11 @@ test('ssr', async (done) => {
 
   expect.assertions(4);
   if (!I18n.provides) {
-    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
@@ -104,10 +102,9 @@ test('ssr', async (done) => {
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
-  done();
 });
 
-test('endpoint', async (done) => {
+test('endpoint', async () => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
 
   const chunkTranslationMap = require('../chunk-translation-map');
@@ -137,13 +134,11 @@ test('endpoint', async (done) => {
   };
 
   if (!I18n.provides) {
-    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
@@ -151,10 +146,9 @@ test('endpoint', async (done) => {
 
   chunkTranslationMap.dispose('a.js', [0], Object.keys(data));
   chunkTranslationMap.translations.clear();
-  done();
 });
 
-test('endpoint request handles empty body', async (done) => {
+test('endpoint request handles empty body', async () => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -176,22 +170,19 @@ test('endpoint request handles empty body', async (done) => {
   expect.assertions(1);
 
   if (!I18n.provides) {
-    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
 
   expect(ctx.body).toEqual({});
-  done();
 });
 
-test('endpoint request handles legacy query params', async (done) => {
+test('endpoint request handles legacy query params', async () => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -213,21 +204,18 @@ test('endpoint request handles legacy query params', async (done) => {
   expect.assertions(1);
 
   if (!I18n.provides) {
-    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   expect(ctx.body).toEqual({});
-  done();
 });
 
-test('non matched route', async (done) => {
+test('non matched route', async () => {
   const data = {test: 'hello', interpolated: 'hi ${value}'};
   // $FlowFixMe - Invalid context
   const ctx: Context = {
@@ -242,18 +230,15 @@ test('non matched route', async (done) => {
 
   expect.assertions(1);
   if (!I18n.provides) {
-    done();
     return;
   }
   const i18n = I18n.provides(deps);
 
   if (!I18n.middleware) {
-    done();
     return;
   }
   await I18n.middleware(deps, i18n)(ctx, () => Promise.resolve());
   expect(ctx.body).toBeFalsy();
-  done();
 });
 
 test('matchesLiteralSections matches positionally', async () => {

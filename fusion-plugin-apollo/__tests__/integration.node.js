@@ -172,7 +172,7 @@ test('Mutation request', async () => {
   server.close();
 });
 
-test('Mutation request with error', async (done) => {
+test('Mutation request with error', async () => {
   const mutation = gql`
     mutation Test($arg: String) {
       testMutation(arg: $arg) {
@@ -210,10 +210,9 @@ test('Mutation request with error', async (done) => {
     client.mutate({mutation, variables: {arg: 'test'}})
   ).rejects.toThrow('GraphQL error: FAIL');
   server.close();
-  done();
 });
 
-test('Query request with error', async (done) => {
+test('Query request with error', async () => {
   const query = gql`
     query Test {
       test
@@ -251,7 +250,6 @@ test('Query request with error', async (done) => {
   });
   await expect(client.query({query})).rejects.toThrow('GraphQL error: FAIL');
   server.close();
-  done();
 });
 
 test('/graphql endpoint with body parser config', async () => {
@@ -328,7 +326,7 @@ test('Query request with custom apollo server options config', async () => {
   server.close();
 });
 
-test('Invalid query request - logs error', async (done) => {
+test('Invalid query request - logs error', async () => {
   const query = gql`
     query Test {
       lmao
@@ -356,5 +354,4 @@ test('Invalid query request - logs error', async (done) => {
   await expect(client.query({query})).rejects.toThrow();
   expect(logCount).toBe(1);
   server.close();
-  done();
 });

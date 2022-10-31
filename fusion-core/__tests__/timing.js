@@ -1,4 +1,5 @@
 // @noflow
+/* eslint-disable jest/valid-expect-in-promise */
 
 import ClientAppFactory from '../src/client-app';
 import ServerAppFactory from '../src/server-app';
@@ -7,7 +8,7 @@ import {TimingToken} from '../src/plugins/timing';
 
 const App = __BROWSER__ ? ClientAppFactory() : ServerAppFactory();
 
-test('timing plugin', async (done) => {
+test('timing plugin', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -31,11 +32,10 @@ test('timing plugin', async (done) => {
   });
   ctx.timing.end.then((result) => {
     expect(typeof result).toBe('number');
-    done();
   });
 });
 
-test('timing plugin on error middleware', async (done) => {
+test('timing plugin on error middleware', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -62,7 +62,6 @@ test('timing plugin on error middleware', async (done) => {
       expect(resolved.render).toBe(false);
       expect(resolved.upstream).toBe(false);
       expect(ctx.status).toBe(500);
-      done();
     });
     return next();
   });

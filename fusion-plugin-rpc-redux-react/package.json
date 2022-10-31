@@ -26,7 +26,8 @@
     "fusion-test-utils": "workspace:*",
     "fusion-tokens": "workspace:*",
     "get-port": "^5.1.1",
-    "jest": "^25.1.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
     "prop-types": "^15.7.2",
     "puppeteer": "^2.1.1",
     "react": "^18.2.0",
@@ -71,7 +72,7 @@
     "flow": "flow",
     "lint": "yarn g:lint",
     "prepack": "cup-build --force-flow",
-    "test": "jest"
+    "test": "jest -i"
   },
   "sideEffects": false
 }

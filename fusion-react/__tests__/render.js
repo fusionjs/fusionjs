@@ -26,7 +26,7 @@ test('custom render function', async () => {
   expect(didRender).toBeTruthy();
 });
 
-test('runs prepare', async (done) => {
+test('runs prepare', (done) => {
   let called = false;
   const Root = prepared(() => {
     called = true;
@@ -39,10 +39,10 @@ test('runs prepare', async (done) => {
     done();
   });
   const simulator = getSimulator(app);
-  await simulator.render('/');
+  simulator.render('/');
 });
 
-test('skip prepare', async (done) => {
+test('skip prepare', (done) => {
   const Root = prepared(() => {
     // $FlowFixMe
     done.fail('Should not call this');
@@ -55,5 +55,5 @@ test('skip prepare', async (done) => {
   });
   app.register(SkipPrepareToken, true);
   const simulator = getSimulator(app);
-  await simulator.render('/');
+  simulator.render('/');
 });

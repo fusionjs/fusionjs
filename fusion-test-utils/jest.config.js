@@ -2,7 +2,9 @@
 /* eslint-env node */
 
 module.exports = {
-  testURL: 'http://localhost',
+  testEnvironmentOptions: {
+    url: 'http://localhost',
+  },
   testMatch: ['**/__jest__/**/*.js'],
   projects: [
     {
@@ -19,8 +21,7 @@ module.exports = {
     {
       displayName: 'browser',
       testEnvironment: 'jsdom',
-      resolver: require.resolve('jest-resolver-fusion'),
-      browser: true,
+      resolver: require.resolve('jest-resolver-fusion-browser'),
       testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
       globals: {
         __NODE__: false,

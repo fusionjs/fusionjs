@@ -434,7 +434,7 @@ test('throws if body is not sanitized', async () => {
   );
 });
 
-test('rendering error handling', async (done) => {
+test('rendering error handling', async () => {
   const element = 'hi';
   const render = () => {
     return new Promise(() => {
@@ -443,7 +443,6 @@ test('rendering error handling', async (done) => {
   };
   const app = new App(element, render);
   await expect(run(app)).rejects.toThrow('Test error');
-  done();
 });
 
 test('app handles no render token', () => {

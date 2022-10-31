@@ -10,7 +10,9 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('useRPCRedux handler resolves data from redux store', async (done) => {
+jest.setTimeout(60000);
+
+test('useRPCRedux handler resolves data from redux store', async () => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -32,5 +34,4 @@ test('useRPCRedux handler resolves data from redux store', async (done) => {
   expect(selectorData).toEqual('trip');
 
   await runtime.end();
-  done();
-}, 45000);
+}, 60000);

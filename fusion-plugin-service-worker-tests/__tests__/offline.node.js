@@ -17,7 +17,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/works offline', async (done) => {
+test('/works offline', async () => {
   expect.assertions(10);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -119,6 +119,5 @@ test('/works offline', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 15000);

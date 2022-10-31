@@ -16,7 +16,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/happy path', async (done) => {
+test('/happy path', async () => {
   expect.assertions(13);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -143,6 +143,5 @@ test('/happy path', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 20000);

@@ -103,7 +103,7 @@ test('service - requires ctx', () => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('service - request api', async (done) => {
+test('service - request api', (done) => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -148,17 +148,19 @@ test('service - request api', async (done) => {
   try {
     const p = rpc.request('test', 'test-args');
     expect(p instanceof Promise).toBeTruthy();
-    expect(await p).toBe(1);
-    expect(routeTags.from(mockCtx).name).toBe('unknown_route');
-    //  'does not overwrite the name tag on SSR'
-    done();
+    p.then((res) => {
+      expect(res).toBe(1);
+      expect(routeTags.from(mockCtx).name).toBe('unknown_route');
+      //  'does not overwrite the name tag on SSR'
+      done();
+    });
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('service - request api with failing request', async (done) => {
+test('service - request api with failing request', async () => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -199,10 +201,9 @@ test('service - request api with failing request', async (done) => {
   const p = rpc.request('test', 'test-args');
   expect(p instanceof Promise).toBeTruthy();
   await expect(p).rejects.toThrow(e);
-  done();
 });
 
-test('service - request api with invalid endpoint', async (done) => {
+test('service - request api with invalid endpoint', async () => {
   const mockCtx: Context = ({
     headers: {},
     memoized: new Map(),
@@ -237,7 +238,6 @@ test('service - request api with invalid endpoint', async (done) => {
   const p = rpc.request('test', 'test-args');
   expect(p instanceof Promise).toBeTruthy();
   await expect(p).rejects.toThrowError('Missing RPC handler for test');
-  done();
 });
 
 test('FusionJS - middleware resolves', async () => {
@@ -260,7 +260,7 @@ test('FusionJS - middleware resolves', async () => {
   expect(wasResolved).toBeTruthy();
 });
 
-test('middleware - invalid endpoint', async (done) => {
+test('middleware - invalid endpoint', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -302,22 +302,23 @@ test('middleware - invalid endpoint', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    // $FlowFixMe
-    expect(mockCtx.body.data.message).toBe('Missing RPC handler for valueOf');
-    // $FlowFixMe
-    expect(mockCtx.body.data.code).toBe('ERR_MISSING_HANDLER');
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('failure');
-    expect(mockCtx.status).toBe(404);
-    done();
+    middleware(mockCtx, () => Promise.resolve()).then(() => {
+      // $FlowFixMe
+      expect(mockCtx.body.data.message).toBe('Missing RPC handler for valueOf');
+      // $FlowFixMe
+      expect(mockCtx.body.data.code).toBe('ERR_MISSING_HANDLER');
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('failure');
+      expect(mockCtx.status).toBe(404);
+      done();
+    });
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint', async (done) => {
+test('middleware - valid endpoint', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -370,24 +371,25 @@ test('middleware - valid endpoint', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, async () => {
+    middleware(mockCtx, async () => {
       expect(executedHandler).toBe(false);
       Promise.resolve();
+    }).then(() => {
+      expect(tags.name).toBe('test');
+      expect(executedHandler).toBe(true);
+      // $FlowFixMe
+      expect(mockCtx.body.data).toBe(1);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('success');
+      done();
     });
-    expect(tags.name).toBe('test');
-    expect(executedHandler).toBe(true);
-    // $FlowFixMe
-    expect(mockCtx.body.data).toBe(1);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('success');
-    done();
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint (custom api path)', async (done) => {
+test('middleware - valid endpoint (custom api path)', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -437,23 +439,24 @@ test('middleware - valid endpoint (custom api path)', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, async () => {
+    middleware(mockCtx, async () => {
       expect(executedHandler).toBe(false);
       Promise.resolve();
+    }).then(() => {
+      expect(executedHandler).toBe(true);
+      // $FlowFixMe
+      expect(mockCtx.body.data).toBe(1);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('success');
+      done();
     });
-    expect(executedHandler).toBe(true);
-    // $FlowFixMe
-    expect(mockCtx.body.data).toBe(1);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('success');
-    done();
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint (custom api path including slashes)', async (done) => {
+test('middleware - valid endpoint (custom api path including slashes)', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -503,23 +506,24 @@ test('middleware - valid endpoint (custom api path including slashes)', async (d
   }
 
   try {
-    await middleware(mockCtx, async () => {
+    middleware(mockCtx, async () => {
       expect(executedHandler).toBe(false);
       Promise.resolve();
+    }).then(() => {
+      expect(executedHandler).toBe(true);
+      // $FlowFixMe
+      expect(mockCtx.body.data).toBe(1);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('success');
+      done();
     });
-    expect(executedHandler).toBe(true);
-    // $FlowFixMe
-    expect(mockCtx.body.data).toBe(1);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('success');
-    done();
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint with route prefix', async (done) => {
+test('middleware - valid endpoint with route prefix', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '/lol',
@@ -564,19 +568,20 @@ test('middleware - valid endpoint with route prefix', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    // $FlowFixMe
-    expect(mockCtx.body.data).toBe(1);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('success');
-    done();
+    middleware(mockCtx, () => Promise.resolve()).then(() => {
+      // $FlowFixMe
+      expect(mockCtx.body.data).toBe(1);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('success');
+      done();
+    });
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint failure with ResponseError', async (done) => {
+test('middleware - valid endpoint failure with ResponseError', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -626,27 +631,28 @@ test('middleware - valid endpoint failure with ResponseError', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    // $FlowFixMe
-    expect(mockCtx.body.data.message).toBe(e.message);
-    // $FlowFixMe
-    expect(mockCtx.body.data.code).toBe(e.code);
-    // $FlowFixMe
-    expect(mockCtx.body.data.meta).toBe(e.meta);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('failure');
-    // $FlowFixMe
-    expect(Object.keys(mockCtx.body).length).toBe(2);
-    // $FlowFixMe
-    expect(Object.keys(mockCtx.body.data).length).toBe(3);
-    done();
+    middleware(mockCtx, () => Promise.resolve()).then(() => {
+      // $FlowFixMe
+      expect(mockCtx.body.data.message).toBe(e.message);
+      // $FlowFixMe
+      expect(mockCtx.body.data.code).toBe(e.code);
+      // $FlowFixMe
+      expect(mockCtx.body.data.meta).toBe(e.meta);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('failure');
+      // $FlowFixMe
+      expect(Object.keys(mockCtx.body).length).toBe(2);
+      // $FlowFixMe
+      expect(Object.keys(mockCtx.body.data).length).toBe(3);
+      done();
+    });
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - valid endpoint failure with standard error', async (done) => {
+test('middleware - valid endpoint failure with standard error', (done) => {
   const mockCtx: Context = ({
     headers: {},
     prefix: '',
@@ -696,31 +702,32 @@ test('middleware - valid endpoint failure with standard error', async (done) => 
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    expect(
+    middleware(mockCtx, () => Promise.resolve()).then(() => {
+      expect(
+        // $FlowFixMe
+        mockCtx.body.data.message
+      ).toBe(
+        'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
+      );
       // $FlowFixMe
-      mockCtx.body.data.message
-    ).toBe(
-      'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
-    );
-    // $FlowFixMe
-    expect(mockCtx.body.data.code).toBe(undefined);
-    // $FlowFixMe
-    expect(mockCtx.body.data.meta).toBe(undefined);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('failure');
-    // $FlowFixMe
-    expect(Object.keys(mockCtx.body).length).toBe(2);
-    // $FlowFixMe
-    expect(Object.keys(mockCtx.body.data).length).toBe(3);
-    done();
+      expect(mockCtx.body.data.code).toBe(undefined);
+      // $FlowFixMe
+      expect(mockCtx.body.data.meta).toBe(undefined);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('failure');
+      // $FlowFixMe
+      expect(Object.keys(mockCtx.body).length).toBe(2);
+      // $FlowFixMe
+      expect(Object.keys(mockCtx.body.data).length).toBe(3);
+      done();
+    });
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('throws when not passed ctx', async (done) => {
+test('throws when not passed ctx', (done) => {
   const app = createTestFixture();
 
   expect.assertions(1);
@@ -739,7 +746,7 @@ test('throws when not passed ctx', async (done) => {
   ).request('/');
 });
 
-test('middleware - bodyparser options with very small jsonLimit', async (done) => {
+test('middleware - bodyparser options with very small jsonLimit', (done) => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -789,23 +796,24 @@ test('middleware - bodyparser options with very small jsonLimit', async (done) =
   }
 
   try {
-    await middleware(mockCtx, async () => {
+    middleware(mockCtx, async () => {
       expect(executedHandler).toBe(false);
       Promise.resolve();
+    }).then(() => {
+      expect(executedHandler).toBe(false);
+      // $FlowFixMe
+      expect(mockCtx.body.status).toBe('failure');
+      // $FlowFixMe
+      expect(mockCtx.body.data.code).toBe('entity.too.large');
+      done();
     });
-    expect(executedHandler).toBe(false);
-    // $FlowFixMe
-    expect(mockCtx.body.status).toBe('failure');
-    // $FlowFixMe
-    expect(mockCtx.body.data.code).toBe('entity.too.large');
-    done();
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - bodyparser options with default jsonLimit', async (done) => {
+test('middleware - bodyparser options with default jsonLimit', (done) => {
   const mockCtx: Context = ({
     req: mockRequest(),
     headers: {},
@@ -852,15 +860,14 @@ test('middleware - bodyparser options with default jsonLimit', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    done();
+    middleware(mockCtx, () => Promise.resolve()).then(() => done());
   } catch (e) {
     // $FlowFixMe
     done.fail(e);
   }
 });
 
-test('middleware - parse formData', async (done) => {
+test('middleware - parse formData', (done) => {
   const form = new FormData();
   form.append('name', 'test');
   const req = new MockReq({
@@ -922,8 +929,7 @@ test('middleware - parse formData', async (done) => {
   }
 
   try {
-    await middleware(mockCtx, () => Promise.resolve());
-    done();
+    middleware(mockCtx, () => Promise.resolve()).then(() => done());
   } catch (e) {
     // $FlowFixMe
     done.fail(e);

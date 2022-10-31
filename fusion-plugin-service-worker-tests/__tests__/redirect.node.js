@@ -11,7 +11,7 @@ const cacheablePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/response to redirect', async (done) => {
+test('/response to redirect', async () => {
   expect.assertions(7);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -102,6 +102,5 @@ test('/response to redirect', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 15000);

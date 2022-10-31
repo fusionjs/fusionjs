@@ -12,23 +12,24 @@ import * as React from 'react';
 import {getSimulator} from 'fusion-test-utils';
 import App from '../src/index';
 
-test('client side app', async (done) => {
+test('client side app', (done) => {
   expect.assertions(5);
   const root = setup(false);
 
   const app = new App(React.createElement('span', null, 'hello'));
   const simulator = getSimulator(app);
-  const ctx = await simulator.render('/');
-  setTimeout(() => {
-    expect(ctx.rendered).toBeTruthy();
-    expect(ctx.element).toBeTruthy();
-    expect(root.firstChild).toBeTruthy();
-    const firstChild = ((root.firstChild: any): Node);
-    expect(firstChild.nodeName).toBe('SPAN');
-    expect(firstChild.textContent).toBe('hello');
-    cleanup(root);
-    done();
-  }, 0);
+  simulator.render('/').then((ctx) => {
+    setTimeout(() => {
+      expect(ctx.rendered).toBeTruthy();
+      expect(ctx.element).toBeTruthy();
+      expect(root.firstChild).toBeTruthy();
+      const firstChild = ((root.firstChild: any): Node);
+      expect(firstChild.nodeName).toBe('SPAN');
+      expect(firstChild.textContent).toBe('hello');
+      cleanup(root);
+      done();
+    }, 0);
+  });
 });
 
 function setup(withSSRFailure) {

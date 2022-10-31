@@ -1,10 +1,12 @@
 // @noflow
+/* eslint-disable jest/valid-expect-in-promise */
 
 import {run} from './test-helper';
 import {EnableMiddlewareTimingToken} from '../src/tokens';
 import App, {createPlugin, createToken} from '../src/index';
 
-test('middleware timing information is present', async (done) => {
+test('middleware timing information is present', async () => {
+  expect.assertions(1);
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -18,11 +20,11 @@ test('middleware timing information is present', async (done) => {
   const ctx = await run(app);
   ctx.timing.end.then((result) => {
     expect(ctx.timing.middleware.length).toBeGreaterThan(0);
-    done();
   });
 });
 
-test('middleware timing information is not present', async (done) => {
+test('middleware timing information is not present', async () => {
+  expect.assertions(1);
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -35,11 +37,11 @@ test('middleware timing information is not present', async (done) => {
   const ctx = await run(app);
   ctx.timing.end.then((result) => {
     expect(ctx.timing.middleware.length).toEqual(0);
-    done();
   });
 });
 
-test('Enhancer middleware timing', async (done) => {
+test('Enhancer middleware timing', async () => {
+  expect.assertions(1);
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -68,6 +70,5 @@ test('Enhancer middleware timing', async (done) => {
   const ctx = await run(app);
   ctx.timing.end.then((result) => {
     expect(ctx.timing.middleware.length).toBeGreaterThan(0);
-    done();
   });
 });

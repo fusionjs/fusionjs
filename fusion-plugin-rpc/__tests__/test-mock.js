@@ -39,7 +39,7 @@ function createTestFixture() {
   return app;
 }
 
-test('mock with missing handler', async (done) => {
+test('mock with missing handler', (done) => {
   const app = createTestFixture();
 
   expect.assertions(1);
@@ -58,7 +58,7 @@ test('mock with missing handler', async (done) => {
   );
 });
 
-test('mock with handler', async (done) => {
+test('mock with handler', (done) => {
   const mockHandlers = {
     test: (args) => {
       expect(args).toStrictEqual({test: 'args'});

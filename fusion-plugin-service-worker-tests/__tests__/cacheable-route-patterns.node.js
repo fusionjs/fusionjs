@@ -11,7 +11,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/cacheable-route-patterns', async (done) => {
+test('/cacheable-route-patterns', async () => {
   expect.assertions(8);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer({
@@ -116,6 +116,5 @@ test('/cacheable-route-patterns', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 15000);

@@ -31,7 +31,7 @@ const {ConnectedRouter, push} = require('connected-react-router');
 const {getSimulator} = require('fusion-test-utils');
 const {connect} = require('react-redux');
 
-test('An app', async (done) => {
+test('An app', async () => {
   expect.assertions(5);
   const Root = connect((state) => state, {push})((props) => {
     expect(props.router.location.pathname).toBe('/');
@@ -89,7 +89,6 @@ test('An app', async (done) => {
 
   const sim = getSimulator(app);
   await sim.render('/');
-  done();
 });
 
 test('Exports a token', () => {

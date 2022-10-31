@@ -55,7 +55,10 @@ test("Don't break on cross-origin exceptions", () => {
   window.opener = new Proxy(
     {},
     {
-      get: () => {
+      get: (_, prop) => {
+        // Jest 26+ does a lookup on _isMockFunction so we need to handle that
+        if (prop === '_isMockFunction') return;
+
         // Simulate an Exception on all access to `window.opener`
         throw new Error('Simulated `DOMException`');
       },

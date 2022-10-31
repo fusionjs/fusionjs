@@ -4,7 +4,7 @@ import {run} from './test-helper';
 import App, {withEndpoint} from '../src/index';
 import {declarePlugin} from '../src/create-plugin';
 
-test('withEndpoint works', async (done) => {
+test('withEndpoint works', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -31,5 +31,4 @@ test('withEndpoint works', async (done) => {
     },
   });
   expect(ctx.body).toBe('foobar');
-  done();
 });

@@ -80,7 +80,7 @@ test('adds script', async () => {
   ).toBeTruthy();
 });
 
-test('Uncaught exceptions', async (done) => {
+test('Uncaught exceptions', (done) => {
   const forked = fork('./fixtures/uncaught-exception.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', (data) => {
@@ -94,7 +94,7 @@ test('Uncaught exceptions', async (done) => {
   });
 });
 
-test('Unhandled rejections', async (done) => {
+test('Unhandled rejections', (done) => {
   const forked = fork('./fixtures/unhandled-rejection.js', {stdio: 'pipe'});
   let stdout = '';
   forked.stdout.on('data', (data) => {
@@ -107,7 +107,7 @@ test('Unhandled rejections', async (done) => {
   });
 });
 
-test('Unhandled rejections with non-error', async (done) => {
+test('Unhandled rejections with non-error', (done) => {
   const forked = fork('./fixtures/unhandled-rejection-non-error.js', {
     stdio: 'pipe',
   });

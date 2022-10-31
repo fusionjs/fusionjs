@@ -45,7 +45,7 @@ function teardown() {
   }
 }
 
-test('browser plugin integration test withRPCRedux', async (done) => {
+test('browser plugin integration test withRPCRedux', async () => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -100,10 +100,9 @@ test('browser plugin integration test withRPCRedux', async (done) => {
   expect(expectedActions.length).toBe(0);
 
   teardown();
-  done();
 });
 
-test('browser plugin integration test withRPCRedux and options', async (done) => {
+test('browser plugin integration test withRPCRedux and options', async () => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -164,10 +163,9 @@ test('browser plugin integration test withRPCRedux and options', async (done) =>
   expect(expectedActions.length).toBe(0);
 
   teardown();
-  done();
 });
 
-test('browser plugin integration test withRPCRedux - failure', async (done) => {
+test('browser plugin integration test withRPCRedux - failure', async () => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -239,10 +237,9 @@ test('browser plugin integration test withRPCRedux - failure', async (done) => {
     .catch((e) => expect(e.message).toBe('message'));
   expect(expectedActions.length).toBe(0);
   teardown();
-  done();
 });
 
-test('browser mock integration test withRPCRedux', async (done) => {
+test('browser mock integration test withRPCRedux', async () => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -297,10 +294,9 @@ test('browser mock integration test withRPCRedux', async (done) => {
   await getSimulator(app).render('/');
   expect(expectedActions.length).toBe(0);
   teardown();
-  done();
 });
 
-test('browser mock integration test withRPCRedux - failure', async (done) => {
+test('browser mock integration test withRPCRedux - failure', async () => {
   setup();
   const expectedActions = [
     {type: initActionPattern},
@@ -370,10 +366,9 @@ test('browser mock integration test withRPCRedux - failure', async (done) => {
     .catch((e) => expect(e.message).toBe('message'));
   expect(expectedActions.length).toBe(0);
   teardown();
-  done();
 });
 
-test('browser plugin integration test withRPCReactor', async (done) => {
+test('browser plugin integration test withRPCReactor', async () => {
   setup();
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -450,10 +445,9 @@ test('browser plugin integration test withRPCReactor', async (done) => {
   expect(flags.start).toBe(true);
   expect(flags.success).toBe(true);
   teardown();
-  done();
 });
 
-test('browser mock plugin integration test withRPCReactor', async (done) => {
+test('browser mock plugin integration test withRPCReactor', async () => {
   setup();
   const expectedActions = [{type: initActionPattern}];
   const store = createStore(
@@ -529,10 +523,9 @@ test('browser mock plugin integration test withRPCReactor', async (done) => {
   expect(flags.start).toBe(true);
   expect(flags.success).toBe(true);
   teardown();
-  done();
 });
 
-test('browser plugin integration test withRPCReactor - failure', async (done) => {
+test('browser plugin integration test withRPCReactor - failure', async () => {
   setup();
   const err = {
     message: 'Some failure',
@@ -620,10 +613,9 @@ test('browser plugin integration test withRPCReactor - failure', async (done) =>
   expect(flags.start).toBe(true);
   expect(flags.failure).toBe(true);
   teardown();
-  done();
 });
 
-test('browser plugin integration test withRPCReactor - failure 2', async (done) => {
+test('browser plugin integration test withRPCReactor - failure 2', async () => {
   setup();
   const err = {
     message: 'Some failure',
@@ -712,5 +704,4 @@ test('browser plugin integration test withRPCReactor - failure 2', async (done) 
   expect(flags.start).toBe(true);
   expect(flags.failure).toBe(true);
   teardown();
-  done();
 });

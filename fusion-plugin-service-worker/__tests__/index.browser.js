@@ -23,7 +23,7 @@ afterEach(() => {
   delete window.navigator.serviceWorker;
 });
 
-test('/registers sw', async (done) => {
+test('/registers sw', (done) => {
   expect.assertions(1);
   mockAddEventListener();
   let logged = '';
@@ -38,11 +38,12 @@ test('/registers sw', async (done) => {
   app.register(ServiceWorker);
 
   const sim = getSimulator(app);
-  await sim.render('/');
-  await app.cleanup();
+  sim.render('/').then(() => {
+    app.cleanup();
+  });
 });
 
-test('/unregisters sw', async (done) => {
+test('/unregisters sw', (done) => {
   expect.assertions(1);
   mockAddEventListener();
   let logged = '';
@@ -57,8 +58,9 @@ test('/unregisters sw', async (done) => {
   });
   app.register(ServiceWorker);
   const sim = getSimulator(app);
-  await sim.render('/');
-  await app.cleanup();
+  sim.render('/').then(() => {
+    app.cleanup();
+  });
 });
 
 function mockAddEventListener() {

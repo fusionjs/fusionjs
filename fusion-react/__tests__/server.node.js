@@ -21,7 +21,7 @@ test('renders', async () => {
   expect(/hello/.test(rendered)).toBeTruthy();
 });
 
-test('app api', async (done) => {
+test('app api', async () => {
   expect(typeof App).toBe('function');
   const app = new App(React.createElement('div', null, 'Hello World'));
   const simulator = getSimulator(app);
@@ -30,7 +30,6 @@ test('app api', async (done) => {
   expect(
     typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered)
   ).toBeTruthy();
-  done();
 });
 
 test('throw on non-element root', async () => {

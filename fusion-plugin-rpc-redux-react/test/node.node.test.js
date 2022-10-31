@@ -56,7 +56,7 @@ test('mock plugin', () => {
   expect(typeof RPCRedux.from(mockCtx).request).toBe('function');
 });
 
-test('withRPCRedux hoc', async (done) => {
+test('withRPCRedux hoc', async () => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {
@@ -112,10 +112,9 @@ test('withRPCRedux hoc', async (done) => {
   const ctx = await sim.render('/');
   expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
   expect(didRender).toBe(true);
-  done();
 });
 
-test('withRPCReactor hoc', async (done) => {
+test('withRPCReactor hoc', async () => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {
@@ -175,7 +174,6 @@ test('withRPCReactor hoc', async (done) => {
   const ctx = await sim.render('/');
   expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
   expect(didRender).toBe(true);
-  done();
 });
 
 test('ResponseError', () => {

@@ -57,12 +57,12 @@ test('register filters error stack', function registerTest() {
     return acc;
   }, {});
   expect(callLocations).toMatchInlineSnapshot(`
-    Object {
-      "plugin": "at Object.registerTest (this-file)",
-      "register": "at srcMain (this-file)",
-      "token": "at Object.registerTest (this-file)",
-    }
-  `);
+Object {
+  "plugin": "at Object.registerTest (this-file)",
+  "register": "at register (this-file)",
+  "token": "at Object.registerTest (this-file)",
+}
+`);
 });
 
 test('enhance filters error stack', function enhanceTest() {
@@ -87,13 +87,13 @@ test('enhance filters error stack', function enhanceTest() {
     return acc;
   }, {});
   expect(callLocations).toMatchInlineSnapshot(`
-    Object {
-      "enhance": "at srcMain (this-file)",
-      "plugin": "at Object.enhanceTest (this-file)",
-      "register": "at srcMain (this-file)",
-      "token": "at Object.enhanceTest (this-file)",
-    }
-  `);
+Object {
+  "enhance": "at enhance (this-file)",
+  "plugin": "at Object.enhanceTest (this-file)",
+  "register": "at register (this-file)",
+  "token": "at Object.enhanceTest (this-file)",
+}
+`);
 });
 
 test('alias filters error stack', function aliasTest() {
@@ -123,11 +123,11 @@ test('alias filters error stack', function aliasTest() {
     return acc;
   }, {});
   expect(fromCallLocations).toMatchInlineSnapshot(`
-    Object {
-      "alias-from": "at srcMain (this-file)",
-      "token": "at Object.aliasTest (this-file)",
-    }
-  `);
+Object {
+  "alias-from": "at alias (this-file)",
+  "token": "at Object.aliasTest (this-file)",
+}
+`);
 
   const toCallLocations = toToken.stacks.reduce((acc, stack) => {
     acc[stack.type] = stack.stack
@@ -137,9 +137,9 @@ test('alias filters error stack', function aliasTest() {
     return acc;
   }, {});
   expect(toCallLocations).toMatchInlineSnapshot(`
-    Object {
-      "alias-to": "at srcMain (this-file)",
-      "token": "at Object.aliasTest (this-file)",
-    }
-  `);
+Object {
+  "alias-to": "at alias (this-file)",
+  "token": "at Object.aliasTest (this-file)",
+}
+`);
 });

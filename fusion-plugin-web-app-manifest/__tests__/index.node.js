@@ -14,13 +14,12 @@ const TEST_MANIFEST = {
   name: 'Fusion test manifest',
 };
 
-test('injects manifest', async (done) => {
+test('injects manifest', async () => {
   const element = React.createElement('div');
   const setupContext: any = {element, template: {head: [], body: []}};
 
   expect.assertions(1);
   if (!Plugin.middleware) {
-    done();
     return;
   }
 
@@ -33,10 +32,9 @@ test('injects manifest', async (done) => {
     // $FlowFixMe
     consumeSanitizedHTML(setupContext.template.head[0]).match(manifestLink)[0]
   ).toBe(manifestLink);
-  done();
 });
 
-test('returns manifest', async (done) => {
+test('returns manifest', async () => {
   const requestContext: any = {
     undefined,
     method: 'GET',
@@ -45,7 +43,6 @@ test('returns manifest', async (done) => {
 
   expect.assertions(1);
   if (!Plugin.middleware) {
-    done();
     return;
   }
   // $FlowFixMe
@@ -54,5 +51,4 @@ test('returns manifest', async (done) => {
   );
   // $FlowFixMe
   expect(requestContext.body).toBe(TEST_MANIFEST);
-  done();
 });

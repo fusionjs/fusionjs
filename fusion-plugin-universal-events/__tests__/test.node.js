@@ -70,7 +70,7 @@ test('Server EventEmitter - events from browser', async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test('Server EventEmitter - events with ctx', async (done) => {
+test('Server EventEmitter - events with ctx', (done) => {
   let globalCalled = false;
   const mockCtx = {mock: true};
   const app = new App('el', (el) => el);
@@ -141,7 +141,7 @@ test('Server EventEmitter - mapping', async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test('Server EventEmitter error handling', async (done) => {
+test('Server EventEmitter error handling', (done) => {
   expect.assertions(1);
   const app = new App('fake-element', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
@@ -162,17 +162,18 @@ test('Server EventEmitter error handling', async (done) => {
     return next();
   });
   const simulator = getSimulator(app);
-  await simulator
+  simulator
     .request('/lol', {method: 'POST'})
     .then(() => {
       // $FlowFixMe
       done.fail('should throw');
     })
-    .catch(() => {});
-  done();
+    .catch(() => {
+      done();
+    });
 });
 
-test('Server EventEmitter batching', async (done) => {
+test('Server EventEmitter batching', (done) => {
   const app = new App('fake-element', (el) => el);
   const flags = {
     preawait: false,
@@ -254,7 +255,7 @@ test('Server EventEmitter batching', async (done) => {
     };
   });
   const simulator = getSimulator(app);
-  await simulator.request('/lol', {method: 'POST'});
+  simulator.request('/lol', {method: 'POST'});
 
   setTimeout(() => {
     expect(flags.preawait).toBeTruthy();

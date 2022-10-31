@@ -132,7 +132,7 @@ test('createRPCHandler error in success reducer', (done) => {
   });
 });
 
-test('createRPCHandler error in start reducer', async (done) => {
+test('createRPCHandler error in start reducer', (done) => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
@@ -172,7 +172,7 @@ test('createRPCHandler error in start reducer', async (done) => {
   done();
 });
 
-test('createRPCHandler error in failure reducer', async (done) => {
+test('createRPCHandler error in failure reducer', async () => {
   const expectedActions = ['start', 'success'];
   const handler = createRPCHandler({
     actions: {
@@ -180,9 +180,7 @@ test('createRPCHandler error in failure reducer', async (done) => {
         return {type: 'start', payload: args};
       },
       success: (result) => {
-        // $FlowFixMe
-        done.fail('should not call success');
-        return {type: 'success', payload: result};
+        throw new Error('should not call success');
       },
       failure: (e) => {
         throw new Error('Fail');
@@ -206,7 +204,6 @@ test('createRPCHandler error in failure reducer', async (done) => {
     rpcId: 'test',
   });
   await expect(handler('args')).rejects.toThrow('Fail');
-  done();
 });
 
 test('createRPCHandler failure', (done) => {

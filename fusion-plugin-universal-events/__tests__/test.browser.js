@@ -302,7 +302,7 @@ test('Browser EventEmitter - fetch adds events back to queue if they fail to sen
   expect(store.data.length).toBe(1);
 });
 
-test('Browser EventEmitter interval', async (done) => {
+test('Browser EventEmitter interval', (done) => {
   navigator.sendBeacon = jest.fn(() => true);
   store.getAndClear();
   const emitter = new UniversalEmitter(

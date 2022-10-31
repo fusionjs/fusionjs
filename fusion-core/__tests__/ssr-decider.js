@@ -7,7 +7,7 @@ import App, {
   SSRDeciderToken,
 } from '../src/index';
 
-test('ssrDecider works', async (done) => {
+test('ssrDecider works', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -34,10 +34,9 @@ test('ssrDecider works', async (done) => {
     path: '/',
   });
   expect(ctx.fullSSRValue).toBe(true);
-  done();
 });
 
-test('ssrDecider returns `stream` when streaming', async (done) => {
+test('ssrDecider returns `stream` when streaming', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -64,11 +63,9 @@ test('ssrDecider returns `stream` when streaming', async (done) => {
     path: '/',
   });
   expect(ctx.fullSSRValue).toBe('stream');
-
-  done();
 });
 
-test('ssrDecider returns true when bot even if token is true', async (done) => {
+test('ssrDecider returns true when bot even if token is true', async () => {
   const element = 'hi';
   const renderFn = (el) => {
     return el;
@@ -96,6 +93,4 @@ test('ssrDecider returns true when bot even if token is true', async (done) => {
     path: '/',
   });
   expect(ctx.fullSSRValue).toBe(true);
-
-  done();
 });

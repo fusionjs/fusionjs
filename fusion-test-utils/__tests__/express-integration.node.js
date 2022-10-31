@@ -12,7 +12,7 @@ import express from 'express';
 
 import {getSimulator} from '../src/index.js';
 
-test('integrate with express', async (done) => {
+test('integrate with express', (done) => {
   const flags = {render: false, end: false};
   const element = 'hi';
   const renderFn = () => {
@@ -33,11 +33,12 @@ test('integrate with express', async (done) => {
   const testApp = getSimulator(app);
 
   if (!__BROWSER__) {
-    const ctx = await testApp.request('/');
-    expect(ctx.element).toBeFalsy();
-    expect(!flags.render).toBeTruthy();
-    expect(flags.end).toBeTruthy();
+    testApp.request('/').then((ctx) => {
+      expect(ctx.element).toBeFalsy();
+      expect(!flags.render).toBeTruthy();
+      expect(flags.end).toBeTruthy();
 
-    done();
+      done();
+    });
   }
 });

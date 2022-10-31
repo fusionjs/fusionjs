@@ -33,7 +33,7 @@ function cleanup() {
   }
 }
 
-test('mapping events in browser', async (done) => {
+test('mapping events in browser', async () => {
   const Home = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -103,7 +103,6 @@ test('mapping events in browser', async (done) => {
         expect(payload).toStrictEqual(expected);
         if (expectedPayloads.length === 0) {
           cleanup();
-          done();
         }
       },
     }),

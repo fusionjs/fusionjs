@@ -38,7 +38,7 @@ test('simulate multi-render requests', async () => {
   }
 });
 
-test('simulate non-render request', async (done) => {
+test('simulate non-render request', (done) => {
   const flags = {render: false};
   const element = 'hi';
   const renderFn = () => {
@@ -50,10 +50,11 @@ test('simulate non-render request', async (done) => {
     expect(() => testApp.request('/')).toThrow();
     done();
   } else {
-    const ctx = await testApp.request('/');
-    expect(ctx.element).toBeFalsy();
-    expect(!flags.render).toBeTruthy();
-    done();
+    testApp.request('/').then((ctx) => {
+      expect(ctx.element).toBeFalsy();
+      expect(!flags.render).toBeTruthy();
+      done();
+    });
   }
 });
 

@@ -10,7 +10,7 @@
 /* eslint-env node */
 import {Runtime} from '../../utils.js';
 
-test('browser plugin integration test withRPCRedux', async (done) => {
+test('browser plugin integration test withRPCRedux', async () => {
   const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
@@ -23,5 +23,4 @@ test('browser plugin integration test withRPCRedux', async (done) => {
   expect(userId).toEqual('123');
 
   await runtime.end();
-  done();
 }, 45000);

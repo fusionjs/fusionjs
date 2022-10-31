@@ -12,8 +12,29 @@ const nodeResolver = ResolverFactory.createResolver({
   aliasFields: ['es2015', 'es2017'],
 });
 
+const browserResolver = ResolverFactory.createResolver({
+  fileSystem: fs,
+  useSyncFileSystemCalls: true,
+  mainFields: ['main'],
+  aliasFields: ['browser', 'es2015', 'es2017'],
+});
+
 module.exports = function enhancedResolve(modulePath, opts) {
   try {
+    let browserResult = browserResolver.resolveSync(
+      {},
+      opts.basedir,
+      modulePath
+    );
+    if (browserResult !== false) {
+      return browserResult;
+    }
+    // Fallback to non-browser field if enhanced-resolve produces `false`.
+    // Some packages (e.g. object-inspect) use falsy browser field values to
+    // indicate that no browser version exists.
+    // This isn't handled by enhanced-resolve.
+    // So we simply fall back to resolution without browser field in this case
+
     return nodeResolver.resolveSync({}, opts.basedir, modulePath);
   } catch (err) {
     // Upon failure to resolve, enhanced-resolve throws with a different

@@ -11,7 +11,7 @@ const precachePaths = [
   '/_static/client-vendor.js',
 ];
 
-test('/multiple-routes', async (done) => {
+test('/multiple-routes', async () => {
   expect.assertions(6);
   const hostname = 'http://localhost:';
   const {port, proc} = await startServer();
@@ -122,6 +122,5 @@ test('/multiple-routes', async (done) => {
     await browser.close();
   } finally {
     proc.kill();
-    done();
   }
 }, 15000);
