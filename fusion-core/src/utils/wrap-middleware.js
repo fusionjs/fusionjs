@@ -17,8 +17,7 @@ const getSources = (stacks) => {
         .split('\n')
         .map((line) => line.match(/\((.*?)\)/))
         .filter((match) => match && match[1])
-        .map((match) => match[1])
-        .map((to) => (__NODE__ ? path.relative(process.cwd(), to) : to))
+        .map((match) => (__NODE__ ? path.relative(process.cwd(), match[1]) : match[1]))
         .shift(),
     };
   });
