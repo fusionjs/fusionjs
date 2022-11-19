@@ -5,6 +5,7 @@
  *
  */
 
+/// <reference types="react" />
 import * as fusion_core from 'fusion-core';
 import fusion_core__default, {
   FusionPlugin,
@@ -93,7 +94,7 @@ declare type PreparedOpts = {
 declare const prepared: (
   sideEffect: (b: any, a: any) => any | Promise<any>,
   opts?: PreparedOpts
-) => <Config extends unknown>(
+) => <Config>(
   OriginalComponent: React.ComponentType<Config>
 ) => React.ComponentType<
   {
@@ -120,7 +121,7 @@ declare function withAsyncComponent<Config>({
   ErrorComponent: React.ComponentType<any>;
 }): React.ComponentType<Config>;
 
-declare const _default: <Config extends unknown>(
+declare const _default: <Config>(
   OriginalComponent: React.ComponentType<Config>
 ) => React.ComponentType<
   {

@@ -64,7 +64,7 @@ declare type FusionPlugin<Deps extends FusionPluginDepsType, Service> = {
   cleanup?: (service: Service) => Promise<void> | void;
   __fn__?: any;
 };
-declare type SSRDecider = (a: Context) => boolean;
+declare type SSRDecider = (a: Context) => boolean | 'stream';
 declare type aliaser = {
   alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser;
 };
@@ -90,6 +90,7 @@ declare class App {
   wrappers: any[];
   renderSetup: any[];
   universalValues: {};
+  prepareBoundary: Boundary;
   pending: any;
   activeTask: any;
   constructor();
@@ -110,7 +111,16 @@ declare function withUniversalMiddleware(middleware: any): void;
 declare function withUniversalValue(id: any): ((val: any) => void)[];
 declare function withEndpoint(endpointPath: any, fn: any): void;
 declare function withRenderSetup(fn: any): void;
-declare function withSSREffect(effectFn: any): void;
+declare function unstable_withPrepareEffect(effectFn: any): void;
+declare class Boundary {
+  private effects;
+  private id;
+  private resolved;
+  constructor(id: string);
+  addEffect(effect: any): void;
+  reset(): void;
+  done(): void;
+}
 
 declare class BaseApp extends App {
   constructor(el: any, render: any);
@@ -184,7 +194,9 @@ declare const ElementToken: Token<any>;
 declare const SSRDeciderToken: Token<SSRDecider>;
 declare const HttpServerToken: Token<Server>;
 declare const SSRBodyTemplateToken: Token<SSRBodyTemplate>;
+declare const SSRShellTemplateToken: Token<any>;
 declare const RoutePrefixToken: Token<string>;
+declare const unstable_EnableServerStreamingToken: Token<boolean>;
 declare type CriticalChunkIds = Set<number>;
 declare type CriticalChunkIdsService = {
   from(ctx: Context): CriticalChunkIds;
@@ -227,6 +239,7 @@ export {
   SSRBodyTemplate,
   SSRBodyTemplateToken,
   SSRDeciderToken,
+  SSRShellTemplateToken,
   Token,
   assetUrl,
   chunkId,
@@ -243,10 +256,11 @@ export {
   syncChunkIds,
   syncChunkPaths,
   unescape,
+  unstable_EnableServerStreamingToken,
+  unstable_withPrepareEffect,
   withEndpoint,
   withMiddleware,
   withRenderSetup,
-  withSSREffect,
   withUniversalMiddleware,
   withUniversalValue,
   workerUrl,
