@@ -5,6 +5,7 @@
  *
  */
 
+/// <reference types="react" />
 import * as React from 'react';
 import {ReactNode, ComponentType, ReactElement} from 'react';
 import {History} from 'history';

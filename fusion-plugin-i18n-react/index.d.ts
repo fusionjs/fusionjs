@@ -5,6 +5,7 @@
  *
  */
 
+/// <reference types="react" />
 import * as fusion_core from 'fusion-core';
 import * as React from 'react';
 import React__default from 'react';
@@ -27,7 +28,7 @@ declare const _default: fusion_core.FusionPlugin<I18nDepsType, I18nServiceType>;
 
 declare const withTranslations: (
   translationKeys: string[]
-) => <T extends unknown>(
+) => <T extends {}>(
   Component: React__default.ComponentType<T>
 ) => new (...args: any) => React__default.Component<
   Omit<T, 'translate' | 'localeCode'>,
