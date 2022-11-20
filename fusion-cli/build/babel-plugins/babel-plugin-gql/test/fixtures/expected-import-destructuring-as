@@ -1,5 +1,4 @@
 import { gql as frameworkgql } from 'fusion-apollo';
 import gql from 'gql';
 gql('./file.graphql');
-
 require("./file.graphql");

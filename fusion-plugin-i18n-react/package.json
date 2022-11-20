@@ -17,7 +17,7 @@
     "@babel/preset-react": "^7.14.5",
     "@testing-library/react": "^13.3.0",
     "babel-jest": "28.1.3",
-    "create-universal-package": "^4.1.2",
+    "create-universal-package": "^4.3.0",
     "flow-bin": "0.131.0",
     "fusion-core": "workspace:*",
     "fusion-plugin-i18n": "workspace:*",

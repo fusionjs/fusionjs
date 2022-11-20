@@ -1,6 +1,5 @@
 import { gql } from 'fusion-plugin-apollo';
 import { gql as gqlOther } from 'gql';
-
 const path = './test';
 gql('./file.graphql');
 gqlOther(path);

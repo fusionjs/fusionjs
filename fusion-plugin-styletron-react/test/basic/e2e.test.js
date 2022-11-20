@@ -55,4 +55,4 @@ test('basic rendering and hydration works', async () => {
 
   server.kill();
   browser.close();
-}, 30000);
+}, 100000);

@@ -183,12 +183,14 @@ test('enhancers - via app.register', async () => {
   await testEnhancer(myEnhancer);
 
   /* Enhancer plugin */
-  const myEnhancerPlugin: FusionPlugin<*, StoreEnhancer<*, *, *>> =
-    createPlugin({
-      provides() {
-        return myEnhancer;
-      },
-    });
+  const myEnhancerPlugin: FusionPlugin<
+    *,
+    StoreEnhancer<*, *, *>
+  > = createPlugin({
+    provides() {
+      return myEnhancer;
+    },
+  });
   await testEnhancer(myEnhancerPlugin);
 });
 

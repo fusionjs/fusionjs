@@ -77,3 +77,6 @@ bazel-*
 !.yarn/sdks
 !.yarn/versions
 yarn.lock
+
+# typescript
+*.tsbuildinfo

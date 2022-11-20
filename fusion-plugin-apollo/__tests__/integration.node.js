@@ -15,7 +15,7 @@ import {
   ApolloContextToken,
   ApolloDefaultOptionsConfigToken,
 } from '../src/index';
-import gql from 'graphql-tag';
+import {gql} from 'graphql-tag';
 import App from 'fusion-react';
 import {RenderToken} from 'fusion-core';
 import {ApolloClient} from 'apollo-client';

@@ -18,7 +18,7 @@ import {
   GraphQLEndpointToken,
   ApolloContextToken,
 } from '../src/index';
-import gql from 'graphql-tag';
+import {gql} from 'graphql-tag';
 import {makeExecutableSchema} from 'graphql-tools';
 import {Query} from '@apollo/react-components';
 import App from 'fusion-react';

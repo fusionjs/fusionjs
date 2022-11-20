@@ -45,4 +45,4 @@ test('token prefix', async () => {
 
   server.kill();
   browser.close();
-}, 30000);
+}, 100000);
