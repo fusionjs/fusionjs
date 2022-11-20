@@ -11,7 +11,7 @@ import App, {createPlugin} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 import {FetchToken} from 'fusion-tokens';
 import {buildSchema} from 'graphql';
-import gql from 'graphql-tag';
+import {gql} from 'graphql-tag';
 import unfetch from 'unfetch';
 
 import {

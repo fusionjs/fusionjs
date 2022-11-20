@@ -13,7 +13,7 @@
     "@babel/core": "^7.15.0",
     "@babel/plugin-transform-flow-strip-types": "^7.14.5",
     "@babel/preset-env": "^7.15.0",
-    "create-universal-package": "^4.1.2",
+    "create-universal-package": "^4.3.0",
     "flow-bin": "0.131.0",
     "fusion-core": "workspace:*",
     "fusion-test-utils": "workspace:*",

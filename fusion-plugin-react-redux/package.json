@@ -12,7 +12,7 @@
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
     "@testing-library/react": "^13.3.0",
-    "create-universal-package": "^4.1.2",
+    "create-universal-package": "^4.3.0",
     "execa": "^1.0.0",
     "flow-bin": "0.131.0",
     "fusion-core": "workspace:*",

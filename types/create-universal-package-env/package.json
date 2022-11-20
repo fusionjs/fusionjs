@@ -1,0 +1,10 @@
+{
+    "name": "@types/create-universal-package-env",
+    "version": "0.0.0-monorepo",
+    "types": "./index.d.ts",
+    "private": true,
+    "scripts": {
+        "test": "echo OK",
+        "lint": "echo OK"
+    }
+}

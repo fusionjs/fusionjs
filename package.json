@@ -3,6 +3,7 @@
   "packageManager": "yarn@3.2.4",
   "private": true,
   "workspaces": [
+    "types/create-universal-package-env",
     "fusion-tokens",
     "fusion-test-utils",
     "fusion-scaffolder",
@@ -45,5 +46,8 @@
     "react-dev-utils": {
       "unplugged": true
     }
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
   }
 }
