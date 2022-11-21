@@ -6,11 +6,21 @@
  * @flow
  */
 
-import {createPlugin, createToken, getEnv} from './src/index.js';
-import {html, consumeSanitizedHTML} from './src/sanitization';
-import BaseApp from './src/base-app';
+import {
+  createPlugin,
+  createToken,
+  getEnv,
+  html,
+  consumeSanitizedHTML,
+} from './src/index.js.flow';
 
-import type {Context, FusionPlugin, Middleware, Token} from './src/types.js';
+import type {
+  FusionApp,
+  Context,
+  FusionPlugin,
+  Middleware,
+  Token,
+} from './src/index.js.flow';
 
 /* eslint-disable no-unused-vars */
 
@@ -20,9 +30,9 @@ import type {Context, FusionPlugin, Middleware, Token} from './src/types.js';
  */
 
 /* Sanity Check: FusionPlugin<Deps, Service> */
-const someApp: BaseApp = (null: any);
+const someApp: FusionApp = (null: any);
 function optionallyRegistersAPlugin(
-  app: BaseApp,
+  app: FusionApp,
   somePlugin?: FusionPlugin<any, any>
 ): void {
   if (somePlugin) {

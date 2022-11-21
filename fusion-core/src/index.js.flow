@@ -7,40 +7,94 @@
  */
 
 import type { Server } from "http";
+import type {Context as KoaContext} from 'koa';
 
-import type {
-  aliaser,
-  cleanupFn,
-  ExtractDepsType,
-  Context,
-  ExtractTokenType,
-  FusionPlugin,
-  FusionPluginDepsType,
-  Middleware,
-  Token,
-  SSRBodyTemplate,
-  SSRShellTemplate,
-  RenderType as Render,
-  SanitizedHTMLWrapper,
-  RenderType,
-  SSRDecider,
-  RouteTagsType,
-  unstable_EnableServerStreamingTokenType,
-} from "../src/types.js";
+type Token<T> = {
+  (): T,
+  optional: Token<void | T>,
+  stacks: Array<{
+    // eslint-disable-next-line
+    type:
+      | 'token'
+      | 'plugin'
+      | 'register'
+      | 'enhance'
+      | 'alias-from'
+      | 'alias-to',
+    stack: string,
+  }>,
+};
 
-export {
-  RenderToken,
-  ElementToken,
-  SSRDeciderToken,
-  HttpServerToken,
-  SSRBodyTemplateToken,
-  SSRShellTemplateToken,
-  RoutePrefixToken,
-  CriticalChunkIdsToken,
-  RouteTagsToken,
-  EnableMiddlewareTimingToken,
-  unstable_EnableServerStreamingToken,
-} from "../src/tokens";
+type ExtendedKoaContext = KoaContext & {memoized: Map<Object, mixed>};
+
+type SanitizedHTMLWrapper = Object;
+
+type SSRContext = {
+  element: any,
+  template: {
+    htmlAttrs: Object,
+    title: string,
+    head: Array<SanitizedHTMLWrapper>,
+    body: Array<SanitizedHTMLWrapper>,
+    bodyAttrs: {[string]: string},
+  },
+} & ExtendedKoaContext;
+
+type Context = SSRContext | ExtendedKoaContext;
+
+type Middleware = (
+  ctx: Context,
+  next: () => Promise<void>
+) => Promise<*>;
+
+type MiddlewareWithDeps<Deps> = (
+  Deps: $ObjMap<Deps, ExtractTokenType>
+) => Middleware;
+
+type ExtractTokenType = <V>(Token<V>) => V;
+
+type ExtractDepsType<V> = $ObjMap<V, ExtractTokenType>;
+
+type FusionPluginDepsType = $ReadOnly<{
+  [key: string]: Token<any>,
+}> | void;
+
+type FusionPlugin<Deps: FusionPluginDepsType, Service> = {|
+  __plugin__: boolean,
+  stack: string,
+  deps?: Deps,
+  provides?: (Deps: ExtractDepsType<Deps & {}>) => Service,
+  middleware?: (
+    Deps: ExtractDepsType<Deps & {}>,
+    Service: Service
+  ) => Middleware,
+  cleanup?: (service: Service) => Promise<void> | void,
+|};
+
+type SSRDecider = (Context) => boolean | 'stream';
+
+type aliaser = {
+  alias: <T>(sourceToken: Token<T>, destToken: Token<T>) => aliaser,
+};
+
+type cleanupFn = (thing?: any) => Promise<void> | void;
+
+type SSRBodyTemplate = (Context) => $PropertyType<Context, 'body'>;
+
+type SSRShellTemplate = (Context) => {
+  start: string,
+  end: string,
+  scripts: Array<string>,
+  useModuleScripts: boolean,
+};
+
+type unstable_EnableServerStreamingTokenType = boolean;
+
+type RenderType = (any, Context) => any;
+
+type RouteTagsType = {
+  from: (ctx: Context) => {[string]: string},
+};
 
 export const TokenType = Object.freeze({
   Required: 0,
@@ -146,15 +200,15 @@ declare export function syncChunkIds(argument: any): any;
 declare export function syncChunkPaths(argument: any): any;
 declare export function workerUrl(url: string): string;
 
-declare export var RouteTagsToken: Token<RouteTagsType>;
-declare export var RenderToken: Token<RenderType>;
-declare export var ElementToken: Token<any>;
-declare export var SSRDeciderToken: Token<SSRDecider>;
-declare export var HttpServerToken: Token<Server>;
-declare export var SSRBodyTemplateToken: Token<SSRBodyTemplate>;
-declare export var SSRShellTemplateToken: Token<SSRShellTemplate>;
-declare export var RoutePrefixToken: Token<string>;
-declare export var unstable_EnableServerStreamingToken: Token<unstable_EnableServerStreamingTokenType>;
+declare var RouteTagsToken: Token<RouteTagsType>;
+declare var RenderToken: Token<RenderType>;
+declare var ElementToken: Token<any>;
+declare var SSRDeciderToken: Token<SSRDecider>;
+declare var HttpServerToken: Token<Server>;
+declare var SSRBodyTemplateToken: Token<SSRBodyTemplate>;
+declare var SSRShellTemplateToken: Token<SSRShellTemplate>;
+declare var RoutePrefixToken: Token<string>;
+declare var unstable_EnableServerStreamingToken: Token<unstable_EnableServerStreamingTokenType>;
 
 type CriticalChunkIds = Set<number>;
 
@@ -162,9 +216,23 @@ type CriticalChunkIdsService = {
   from(ctx: Context): CriticalChunkIds,
 };
 
-declare export var CriticalChunkIdsToken: Token<CriticalChunkIdsService>;
+declare var CriticalChunkIdsToken: Token<CriticalChunkIdsService>;
 
-declare export var EnableMiddlewareTimingToken: Token<boolean>;
+declare var EnableMiddlewareTimingToken: Token<boolean>;
+
+export {
+  RenderToken,
+  ElementToken,
+  SSRDeciderToken,
+  HttpServerToken,
+  SSRBodyTemplateToken,
+  SSRShellTemplateToken,
+  RoutePrefixToken,
+  CriticalChunkIdsToken,
+  RouteTagsToken,
+  EnableMiddlewareTimingToken,
+  unstable_EnableServerStreamingToken,
+};
 
 export type {
   Context,
@@ -175,7 +243,7 @@ export type {
   Middleware,
   Token,
   SSRBodyTemplate,
-  Render,
+  RenderType as Render,
   RouteTagsType,
   ExtractDepsType,
   unstable_EnableServerStreamingTokenType,

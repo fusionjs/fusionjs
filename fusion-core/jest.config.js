@@ -8,9 +8,10 @@ module.exports = {
       testEnvironment: 'node',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.browser.js',
-        'test-helper.js',
+        '\\.browser\\.[jt]sx?$',
+        'test-helper\\.[jt]sx?$',
         'dist',
+        'lib',
       ],
       globals: {
         __NODE__: true,
@@ -23,9 +24,10 @@ module.exports = {
       testEnvironment: 'jsdom',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.node.js',
-        'test-helper.js',
+        '\\.node\\.[jt]sx?$',
+        'test-helper\\.[jt]sx?$',
         'dist',
+        'lib',
       ],
       globals: {
         __NODE__: false,
