@@ -19,16 +19,24 @@ import type {ErrorHandlerPluginType, ErrorHandlerType} from './types.js';
 export const ErrorHandlerToken: Token<ErrorHandlerType> =
   createToken('ErrorHandlerToken');
 
+export const ErrorSerializerToken: Token<ErrorSerializer> =
+  createToken('ErrorSerializerToken');
+
 const captureTypes = {
   browser: 'browser',
   request: 'request',
   server: 'server',
 };
 
+const type DepsType = {
+  onError: ErrorHandlerToken,
+  serializeError: ErrorSerializerToken.optional
+}
+
 const plugin =
   __NODE__ &&
-  createPlugin({
-    deps: {onError: ErrorHandlerToken},
+  createPlugin<DepsType, ErrorHandlerPluginType>({
+    deps: {onError, serializeError = () => String(e)},
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
       // It's possible to call reject with a non-error
@@ -36,7 +44,7 @@ const plugin =
         if (e instanceof Error) {
           await onError(e, captureTypes.server);
         } else {
-          await onError(new Error(String(e)), captureTypes.server);
+          await onError(new Error(serializeError(e)), captureTypes.server);
         }
         process.exit(1);
       };

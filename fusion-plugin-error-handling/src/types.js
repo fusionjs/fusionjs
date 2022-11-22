@@ -23,3 +23,8 @@ export type ErrorHandlerType = (
   captureType: string,
   ctx: ?Context
 ) => Promise<*> | void;
+
+
+export type ErrorSerializerType = (
+  e: mixed,
+) => String;
