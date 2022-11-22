@@ -24,7 +24,4 @@ export type ErrorHandlerType = (
   ctx: ?Context
 ) => Promise<*> | void;
 
-
-export type ErrorSerializerType = (
-  e: mixed,
-) => String;
+export type ErrorSerializerType = (e: mixed) => String;
