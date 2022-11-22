@@ -13,7 +13,7 @@ import {fork} from 'child_process';
 import App, {consumeSanitizedHTML} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
-import ErrorHandling, {ErrorHandlerToken} from '../src/server';
+import ErrorHandling, {ErrorHandlerToken, ErrorSerializerToken} from '../src/server';
 
 test('request errors', async () => {
   expect.assertions(6);
@@ -119,6 +119,22 @@ test('Unhandled rejections with non-error', (done) => {
     expect(code).toBe(1);
     expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
     expect(stdout.includes('INSTANCEOF ERROR true')).toBeTruthy();
+    done();
+  });
+});
+
+test('Unhandled rejections with non-error and errorSerializer', (done) => {
+  const forked = fork('./fixtures/unhandled-rejection-non-error-with-serializer.js', {
+    stdio: 'pipe',
+  });
+  let stdout = '';
+  forked.stdout.on('data', (data) => {
+    stdout += data.toString();
+  });
+  forked.on('close', (code) => {
+    expect(code).toBe(1);
+    expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
+    expect(stdout.includes('something_random')).toBeTruthy();
     done();
   });
 });

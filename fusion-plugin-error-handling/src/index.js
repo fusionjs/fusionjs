@@ -11,4 +11,4 @@ import clientPlugin from './client';
 
 export default __NODE__ ? serverPlugin : clientPlugin;
 
-export {ErrorHandlerToken} from './server.js';
+export {ErrorHandlerToken, ErrorSerializerToken} from './server.js';
