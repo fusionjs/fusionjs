@@ -3,29 +3,28 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {createToken} from 'fusion-core';
-import type {Token} from 'fusion-core';
+import { createToken } from "fusion-core";
+import type { Token } from "fusion-core";
 
 export type Timers = {
-  setInterval: (Function, number) => number,
-  clearInterval: (number) => void,
+  setInterval: (b: Function, a: number) => number;
+  clearInterval: (a: number) => void;
 };
 
 export const NodePerformanceEmitterToken: Token<any> = createToken(
-  'NodePerformanceEmitterToken'
+  "NodePerformanceEmitterToken"
 );
 
-export const TimersToken: Token<Timers> = createToken('TimersToken');
+export const TimersToken: Token<Timers> = createToken("TimersToken");
 
 export const EventLoopLagIntervalToken: Token<number> = createToken(
-  'EventLoopLagIntervalToken'
+  "EventLoopLagIntervalToken"
 );
 export const MemoryIntervalToken: Token<number> = createToken(
-  'MemoryIntervalToken'
+  "MemoryIntervalToken"
 );
 export const SocketIntervalToken: Token<number> = createToken(
-  'SocketIntervalToken'
+  "SocketIntervalToken"
 );

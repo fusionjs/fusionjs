@@ -3,18 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 type FallbackLookup = {
-  [string]: {
-    name: string,
-    styles: mixed,
-  },
+  [x: string]: {
+    name: string;
+    styles: unknown;
+  };
 };
 
 class PreloadSession {
-  fontsToPreload: {[string]: boolean};
+  fontsToPreload: {
+    [x: string]: boolean;
+  };
   fallbackLookup: FallbackLookup;
 
   constructor(fallbackLookup: FallbackLookup) {
@@ -26,7 +27,7 @@ class PreloadSession {
   // this will get called by component code on the server
   // use this to only preload what will be used by current bundles
   getFontDetails = (name: string) => {
-    const {name: fallbackName, styles = {}} = this.fallbackLookup[name] || {};
+    const { name: fallbackName, styles = {} } = this.fallbackLookup[name] || {};
     const result = {
       name,
       fallbackName,

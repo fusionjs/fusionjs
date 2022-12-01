@@ -1,39 +1,37 @@
-// @flow
-
-import puppeteer from 'puppeteer';
-import {startServer, logCacheDates, logCachedURLs} from './utils.node';
+import puppeteer from "puppeteer";
+import { startServer, logCacheDates, logCachedURLs } from "./utils.node";
 
 // from fixture-apps/app
 const cacheablePaths = [
-  '/_static/client-main.js',
-  '/_static/client-runtime.js',
-  '/_static/client-vendor.js',
+  "/_static/client-main.js",
+  "/_static/client-runtime.js",
+  "/_static/client-vendor.js",
 ];
 
 const precachePaths = [
-  '/_static/client-main.js',
-  '/_static/client-runtime.js',
-  '/_static/client-vendor.js',
+  "/_static/client-main.js",
+  "/_static/client-runtime.js",
+  "/_static/client-vendor.js",
 ];
 
-test('/happy path', async () => {
+test("/happy path", async () => {
   expect.assertions(13);
-  const hostname = 'http://localhost:';
-  const {port, proc} = await startServer();
+  const hostname = "http://localhost:";
+  const { port, proc } = await startServer();
   const browser = await puppeteer.launch({
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--enable-features=NetworkService',
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--enable-features=NetworkService",
     ],
     ignoreHTTPSErrors: true,
   });
   try {
     let isReady, originalCacheDates;
     const page = await browser.newPage();
-    page.on('console', (msg) => {
-      if (msg._text.startsWith('[TEST] cached after first load:')) {
-        const cacheKeys = msg._text.split('#')[1].split(',');
+    page.on("console", (msg) => {
+      if (msg._text.startsWith("[TEST] cached after first load:")) {
+        const cacheKeys = msg._text.split("#")[1].split(",");
         expect(cacheKeys.length === precachePaths.length).toBeTruthy();
         expect(
           precachePaths.every((path) =>
@@ -41,8 +39,8 @@ test('/happy path', async () => {
           )
         ).toBeTruthy();
         expect(!cacheKeys.includes(`${hostname}${port}/`)).toBeTruthy();
-      } else if (msg._text.startsWith('[TEST] cached after second load:')) {
-        const cacheKeys = msg._text.split('#')[1].split(',');
+      } else if (msg._text.startsWith("[TEST] cached after second load:")) {
+        const cacheKeys = msg._text.split("#")[1].split(",");
         expect(
           // add one for HTML
           cacheKeys.length === cacheablePaths.length + 1
@@ -53,18 +51,18 @@ test('/happy path', async () => {
           )
         ).toBeTruthy();
         expect(cacheKeys.includes(`${hostname}${port}/`)).toBeTruthy();
-      } else if (msg._text.startsWith('[TEST] cache dates after first load:')) {
+      } else if (msg._text.startsWith("[TEST] cache dates after first load:")) {
         originalCacheDates = msg._text
-          .split('#')[1]
-          .split(',')
+          .split("#")[1]
+          .split(",")
           .map((n) => parseInt(n));
         expect(originalCacheDates.length === precachePaths.length).toBeTruthy();
       } else if (
-        msg._text.startsWith('[TEST] cache dates after second load:')
+        msg._text.startsWith("[TEST] cache dates after second load:")
       ) {
         const newCacheDates = msg._text
-          .split('#')[1]
-          .split(',')
+          .split("#")[1]
+          .split(",")
           .map((n) => parseInt(n));
         expect(
           // add one for HTML
@@ -81,24 +79,24 @@ test('/happy path', async () => {
     // FIRST LOAD
     await page.goto(`${hostname}${port}`);
 
-    isReady = await page.evaluate('navigator.serviceWorker.ready');
+    isReady = await page.evaluate("navigator.serviceWorker.ready");
 
     expect(isReady).toBeTruthy();
 
     await page.waitFor(1000);
 
     const controller = await page.evaluate(
-      'navigator.serviceWorker.controller'
+      "navigator.serviceWorker.controller"
     );
     expect(controller).toBeTruthy();
 
-    await logCachedURLs(page, '[TEST] cached after first load:');
-    await logCacheDates(page, '[TEST] cache dates after first load:');
+    await logCachedURLs(page, "[TEST] cached after first load:");
+    await logCacheDates(page, "[TEST] cache dates after first load:");
 
     // Capture requests during 2nd load.
     const allRequests = new Map();
 
-    page.on('request', (req) => {
+    page.on("request", (req) => {
       allRequests.set(req.url(), req);
     });
 
@@ -106,11 +104,11 @@ test('/happy path', async () => {
     await page.waitFor(1000);
 
     // SECOND LOAD
-    await page.reload({waitUntil: 'domcontentloaded'});
-    await page.evaluate('navigator.serviceWorker.controller');
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.evaluate("navigator.serviceWorker.controller");
 
-    await logCachedURLs(page, '[TEST] cached after second load:');
-    await logCacheDates(page, '[TEST] cache dates after second load:');
+    await logCachedURLs(page, "[TEST] cached after second load:");
+    await logCacheDates(page, "[TEST] cache dates after second load:");
 
     expect(
       Array.from(allRequests.values())
@@ -134,7 +132,7 @@ test('/happy path', async () => {
         )
         .every(
           (req) =>
-            req.resourceType() === 'document' || // html always processed by SW
+            req.resourceType() === "document" || // html always processed by SW
             !req.response() ||
             !req.response().fromServiceWorker()
         )

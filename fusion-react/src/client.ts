@@ -3,21 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
 /* global module */
 
-import * as React from 'react';
-import {createRoot, hydrateRoot} from 'react-dom/client';
-import type {Logger} from 'fusion-tokens';
+import * as React from "react";
+import { createRoot, hydrateRoot } from "react-dom/client";
+import type { Logger } from "fusion-tokens";
 
 // Save a reference to the root that we can reuse upon HMR. The new createRoot/hydrateRoot
 // API's can only be called once
 let root = null;
 // Client HMR
-if (typeof module !== 'undefined' && module.hot) {
+if (typeof module !== "undefined" && module.hot) {
   // $FlowFixMe
   module.hot.addDisposeHandler((data) => {
     data.oldRoot = root;
@@ -29,8 +28,8 @@ if (typeof module !== 'undefined' && module.hot) {
   }
 }
 
-export default (el: React.Element<*>, logger?: Logger) => {
-  const domElement = document.getElementById('root');
+export default (el: React.ReactElement<any>, logger?: Logger) => {
+  const domElement = document.getElementById("root");
 
   if (!domElement) {
     throw new Error("Could not find 'root' element");
@@ -41,7 +40,7 @@ export default (el: React.Element<*>, logger?: Logger) => {
   if (ssrFailed) {
     if (__DEV__) {
       console.error(
-        'Server-side render failed. Falling back to client-side render'
+        "Server-side render failed. Falling back to client-side render"
       );
     }
     if (!root) {

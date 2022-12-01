@@ -3,30 +3,29 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 export const fallbackLookup = {
   depth0: {},
   depth1: {
-    'Lato-Bold': {
-      name: 'Lato-Regular',
-      styles: {fontWeight: 'bold'},
+    "Lato-Bold": {
+      name: "Lato-Regular",
+      styles: { fontWeight: "bold" },
     },
-    'Lato-Thin': {
-      name: 'Lato-Regular',
-      styles: {fontWeight: '100'},
+    "Lato-Thin": {
+      name: "Lato-Regular",
+      styles: { fontWeight: "100" },
     },
   },
   depth2: {
-    'Lato-Regular': {
-      name: 'Helvetica',
+    "Lato-Regular": {
+      name: "Helvetica",
     },
-    'Lato-Bold': {
-      name: 'Helvetica',
+    "Lato-Bold": {
+      name: "Helvetica",
     },
-    'Lato-Thin': {
-      name: 'Helvetica',
+    "Lato-Thin": {
+      name: "Helvetica",
     },
   },
 };

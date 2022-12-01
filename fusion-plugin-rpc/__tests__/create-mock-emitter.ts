@@ -1,5 +1,4 @@
-// @flow
-import type {IEmitter} from '../src/types.js';
+import type { IEmitter } from "../src/types";
 
 function createMockEmitter<TProps>(props: TProps): IEmitter {
   const emitter = {

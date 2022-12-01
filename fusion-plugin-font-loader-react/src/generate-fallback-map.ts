@@ -3,10 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {AtomicFontsObjectType} from './types';
+import type { AtomicFontsObjectType } from "./types";
 
 export default function generateFallbackMap(
   fonts: AtomicFontsObjectType,
@@ -23,7 +22,7 @@ export default function generateFallbackMap(
   // the list of all fonts our depth strategy suggests we should preload
   Object.keys(fonts).forEach((fontName) => {
     let depth = 0;
-    let nextFallback = {name: fontName};
+    let nextFallback = { name: fontName };
     fallbackCandidateLookup[fontName] = [nextFallback];
     while (preloadDepth > depth++) {
       const nextFont = fonts[nextFallback && nextFallback.name];

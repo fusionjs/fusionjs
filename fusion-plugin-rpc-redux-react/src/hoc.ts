@@ -3,21 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import type {Reducer} from 'redux';
-import {useRPCRedux} from './hook.js';
-import {createRPCReactors} from 'fusion-rpc-redux';
+import * as React from "react";
+import type { Reducer } from "redux";
+import { useRPCRedux } from "./hook";
+import { createRPCReactors } from "fusion-rpc-redux";
 
 type RPCReducersType = {
-  start?: Reducer<*, *>,
-  success?: Reducer<*, *>,
-  failure?: Reducer<*, *>,
+  start?: Reducer<any, any>;
+  success?: Reducer<any, any>;
+  failure?: Reducer<any, any>;
 };
 
-export function withRPCReactor<Props: {}>(
+export function withRPCReactor<Props extends {}>(
   rpcId: string,
   reducers: RPCReducersType,
   {
@@ -25,9 +24,9 @@ export function withRPCReactor<Props: {}>(
     transformParams,
     mapStateToParams,
   }: {
-    propName?: string,
-    transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any,
+    propName?: string;
+    transformParams?: (params: any) => any;
+    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any;
   } = {}
 ) {
   return withRPCRedux(rpcId, {
@@ -39,7 +38,7 @@ export function withRPCReactor<Props: {}>(
   });
 }
 
-export function withRPCRedux<Props: {}>(
+export function withRPCRedux<Props extends {}>(
   rpcId: string,
   {
     propName,
@@ -47,12 +46,12 @@ export function withRPCRedux<Props: {}>(
     transformParams,
     mapStateToParams,
   }: {
-    propName?: string,
-    actions?: any,
-    transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any,
+    propName?: string;
+    actions?: any;
+    transformParams?: (params: any) => any;
+    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any;
   } = {}
-): (React.ComponentType<*>) => React.ComponentType<*> {
+): (a: React.ComponentType<any>) => React.ComponentType<any> {
   return (Component: React.ComponentType<Props>) => {
     function WithRPCRedux(props: Props) {
       const wrappedMapStateToParams =
@@ -68,8 +67,8 @@ export function withRPCRedux<Props: {}>(
         [propName || rpcId]: handler,
       });
     }
-    const displayName = Component.displayName || Component.name || 'Anonymous';
-    WithRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
+    const displayName = Component.displayName || Component.name || "Anonymous";
+    WithRPCRedux.displayName = "WithRPCRedux" + "(" + displayName + ")";
     return WithRPCRedux;
   };
 }

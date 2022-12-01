@@ -3,39 +3,38 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
-import assert from 'assert';
-import {promisify} from 'util';
-import jwt from 'jsonwebtoken';
-import get from 'just-safe-get';
-import set from 'just-safe-set';
+import assert from "assert";
+import { promisify } from "util";
+import jwt from "jsonwebtoken";
+import get from "just-safe-get";
+import set from "just-safe-set";
 
-import {createPlugin, memoize} from 'fusion-core';
-import type {Context, FusionPlugin} from 'fusion-core';
-import type {Session} from 'fusion-tokens';
+import { createPlugin, memoize } from "fusion-core";
+import type { Context, FusionPlugin } from "fusion-core";
+import type { Session } from "fusion-tokens";
 
 import {
   SessionSecretToken,
   SessionCookieNameToken,
   SessionCookieExpiresToken,
-} from './tokens.js';
-import type {SessionDeps, SessionService} from './types.js';
+} from "./tokens";
+import type { SessionDeps, SessionService } from "./types";
 
 // Scope path to `data.` here since `jsonwebtoken` has some special top-level keys that we do not want to expose (ex: `exp`)
 const getFullPath = (keyPath) => `data.${keyPath}`;
 
 type JWTConfig = {
-  secret: string,
-  cookieName: string,
-  expires: number,
+  secret: string;
+  cookieName: string;
+  expires: number;
 };
 
 class JWTSession {
   cookie: string | void;
-  token: ?Object;
+  token: any;
   config: JWTConfig;
 
   constructor(ctx: Context, config: JWTConfig) {
@@ -52,14 +51,14 @@ class JWTSession {
     }
     return this.token;
   }
-  get(keyPath: string): mixed {
+  get(keyPath: string): unknown {
     assert(
       this.token,
       "Cannot access token before loaded, please use this plugin before any of it's dependencies"
     );
     return get(this.token, getFullPath(keyPath));
   }
-  set(keyPath: string, val: mixed): boolean {
+  set(keyPath: string, val: unknown): boolean {
     assert(
       this.token,
       "Cannot access token before loaded, please use this plugin before any of it's dependencies"
@@ -80,16 +79,16 @@ const p: FusionPlugin<SessionDeps, SessionService> =
       expires: SessionCookieExpiresToken.optional,
     },
     provides: (deps) => {
-      const {secret, cookieName, expires = 86400} = deps;
+      const { secret, cookieName, expires = 86400 } = deps;
       const service: SessionService = {
         from: memoize((ctx: Context) => {
-          return new JWTSession(ctx, {secret, cookieName, expires});
+          return new JWTSession(ctx, { secret, cookieName, expires });
         }),
       };
       return service;
     },
     middleware: (deps, service) => {
-      const {secret, cookieName, expires = 86400} = deps;
+      const { secret, cookieName, expires = 86400 } = deps;
       return async function jwtMiddleware(
         ctx: Context,
         next: () => Promise<void>
@@ -108,11 +107,11 @@ const p: FusionPlugin<SessionDeps, SessionService> =
           if (signed !== session.cookie) {
             const msExpires = new Date(time + expires * 1000);
             // TODO(#3) provide way to not set cookie if not needed yet
-            ctx.cookies.set(cookieName, signed, {expires: msExpires});
+            ctx.cookies.set(cookieName, signed, { expires: msExpires });
           }
         }
       };
     },
   });
 
-export default ((p: any): FusionPlugin<SessionDeps, Session>);
+export default p as any as FusionPlugin<SessionDeps, Session>;

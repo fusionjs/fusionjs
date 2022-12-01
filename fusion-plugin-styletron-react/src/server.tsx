@@ -3,28 +3,27 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
 
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 
-import React from 'react';
-import {createPlugin, dangerouslySetHTML} from 'fusion-core';
+import React from "react";
+import { createPlugin, dangerouslySetHTML } from "fusion-core";
 
-import {Provider as StyletronProvider} from 'styletron-react';
+import { Provider as StyletronProvider } from "styletron-react";
 
-import {workerRoute, wasmRoute, AtomicPrefixToken} from './constants.js';
+import { workerRoute, wasmRoute, AtomicPrefixToken } from "./constants";
 
 let workerPath;
 let wasmPath;
 
 if (__DEV__ && __NODE__) {
-  const base = path.dirname(require.resolve('css-to-js-sourcemap-worker'));
-  workerPath = path.resolve(base, 'worker.js');
-  wasmPath = path.resolve(base, 'mappings.wasm');
+  const base = path.dirname(require.resolve("css-to-js-sourcemap-worker"));
+  workerPath = path.resolve(base, "worker.js");
+  wasmPath = path.resolve(base, "mappings.wasm");
 }
 
 function getPlugin(getStyletronEngine: any): any {
@@ -35,7 +34,7 @@ function getPlugin(getStyletronEngine: any): any {
         prefix: AtomicPrefixToken.optional,
       },
       middleware:
-        ({prefix}) =>
+        ({ prefix }) =>
         (ctx, next) => {
           if (__DEV__) {
             if (ctx.url === workerRoute) {
@@ -49,7 +48,7 @@ function getPlugin(getStyletronEngine: any): any {
           }
 
           if (ctx.element) {
-            const config = prefix === void 0 ? void 0 : {prefix};
+            const config = prefix === void 0 ? void 0 : { prefix };
             const engine = getStyletronEngine(config);
 
             ctx.element = (

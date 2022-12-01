@@ -3,24 +3,23 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {createPlugin, RouteTagsToken} from 'fusion-core';
-import type {Context} from 'fusion-core';
-import type {Fetch} from 'fusion-tokens';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import { createPlugin, RouteTagsToken } from "fusion-core";
+import type { Context } from "fusion-core";
+import type { Fetch } from "fusion-tokens";
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
 
-import MissingHandlerError from './missing-handler-error';
-import {RPCHandlersToken} from './tokens';
-import type {HandlerType} from './tokens.js';
-import type {RPCPluginType, IEmitter} from './types.js';
+import MissingHandlerError from "./missing-handler-error";
+import { RPCHandlersToken } from "./tokens";
+import type { HandlerType } from "./tokens";
+import type { RPCPluginType, IEmitter } from "./types";
 
 class RPC {
-  ctx: ?Context;
-  emitter: ?IEmitter;
-  handlers: ?HandlerType;
-  fetch: ?Fetch;
+  ctx: Context | undefined | null;
+  emitter: IEmitter | undefined | null;
+  handlers: HandlerType | undefined | null;
+  fetch: Fetch | undefined | null;
 
   constructor(handlers: any) {
     this.handlers = handlers;
@@ -28,7 +27,7 @@ class RPC {
 
   async request<TArgs, TResult>(method: string, args: TArgs): Promise<TResult> {
     if (!this.handlers) {
-      throw new Error('fusion-plugin-rpc requires `handlers`');
+      throw new Error("fusion-plugin-rpc requires `handlers`");
     }
 
     if (!this.handlers[method]) {
@@ -45,8 +44,8 @@ const plugin: RPCPluginType = createPlugin({
     // $FlowFixMe
     emitter: UniversalEventsToken.optional,
   },
-  provides: ({handlers} = {}) => {
-    return {from: () => new RPC(handlers)};
+  provides: ({ handlers } = {}) => {
+    return { from: () => new RPC(handlers) };
   },
 });
 

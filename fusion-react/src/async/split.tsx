@@ -3,15 +3,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import prepared from './prepared.js';
+import * as React from "react";
+import PropTypes from "prop-types";
+import prepared from "./prepared";
 
-declare var __webpack_modules__: {[string]: any};
-declare var __webpack_require__: (any) => any;
+declare var __webpack_modules__: {
+  [x: string]: any;
+};
+
+declare var __webpack_require__: (a: any) => any;
 
 const contextTypes = {
   splitComponentLoaders: PropTypes.array.isRequired,
@@ -56,10 +58,12 @@ export default function withAsyncComponent<Config>({
   LoadingComponent,
   ErrorComponent,
 }: {
-  defer?: boolean,
-  load: () => Promise<{default: React.ComponentType<Config>}>,
-  LoadingComponent: React.ComponentType<any>,
-  ErrorComponent: React.ComponentType<any>,
+  defer?: boolean;
+  load: () => Promise<{
+    default: React.ComponentType<Config>;
+  }>;
+  LoadingComponent: React.ComponentType<any>;
+  ErrorComponent: React.ComponentType<any>;
 }): React.ComponentType<Config> {
   let AsyncComponent = null;
   let error = null;
@@ -84,7 +88,7 @@ export default function withAsyncComponent<Config>({
         const chunkIds = promise.__CHUNK_IDS;
 
         if (
-          typeof __webpack_modules__ !== 'undefined' &&
+          typeof __webpack_modules__ !== "undefined" &&
           __webpack_modules__[id] &&
           webpackChunksLoaded(chunkIds)
         ) {
@@ -114,7 +118,7 @@ export default function withAsyncComponent<Config>({
 
         if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
           context.pushSSRMetadata({
-            type: 'critical-dynamic-import',
+            type: "critical-dynamic-import",
             data: dynamicImportMetadata,
           });
         }
@@ -126,7 +130,7 @@ export default function withAsyncComponent<Config>({
           try {
             componentPromise = load();
           } catch (e) {
-            componentPromise = (Promise.reject(e): any);
+            componentPromise = Promise.reject(e) as any;
           }
           // $FlowFixMe
           metadata.chunkIds = componentPromise.__CHUNK_IDS || [];
@@ -150,7 +154,7 @@ export default function withAsyncComponent<Config>({
       try {
         componentPromise = load();
       } catch (e) {
-        componentPromise = (Promise.reject(e): any);
+        componentPromise = Promise.reject(e) as any;
       }
 
       // $FlowFixMe
@@ -169,7 +173,7 @@ export default function withAsyncComponent<Config>({
 
       if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
         context.pushSSRMetadata({
-          type: 'critical-dynamic-import',
+          type: "critical-dynamic-import",
           data: dynamicImportMetadata,
         });
       }
@@ -186,7 +190,7 @@ export default function withAsyncComponent<Config>({
           // Note: .default is toolchain specific, breaks w/ CommonJS exports
           AsyncComponent = asyncComponent.default;
           if (AsyncComponent === undefined) {
-            throw new Error('Bundle does not contain a default export');
+            throw new Error("Bundle does not contain a default export");
           }
         })
         .catch((err) => {
@@ -197,6 +201,6 @@ export default function withAsyncComponent<Config>({
             }); // log error
         });
     },
-    {defer, contextTypes, forceUpdate: true}
+    { defer, contextTypes, forceUpdate: true }
   )(WithAsyncComponent);
 }

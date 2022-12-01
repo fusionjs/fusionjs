@@ -4,39 +4,38 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @jest-environment node
- * @flow
  */
 
-const {default: App} = require('fusion-react');
-const {RenderToken, createPlugin} = require('fusion-core');
-const React = require('react');
-const {renderToString} = require('react-dom/server');
+const { default: App } = require("fusion-react");
+const { RenderToken, createPlugin } = require("fusion-core");
+const React = require("react");
+const { renderToString } = require("react-dom/server");
 const {
   default: Router,
   RouterToken,
   // $FlowFixMe - Pinned to v5 of react router
   RouterProviderToken,
-} = require('fusion-plugin-react-router');
+} = require("fusion-plugin-react-router");
 const {
   default: ConnectedRouterEnhancer,
   ConnectedRouterEnhancerToken,
-} = require('..');
+} = require("..");
 const {
   default: ReduxPlugin,
   ReduxToken,
   EnhancerToken,
   ReducerToken,
-} = require('fusion-plugin-react-redux');
-const {ConnectedRouter, push} = require('connected-react-router');
-const {getSimulator} = require('fusion-test-utils');
-const {connect} = require('react-redux');
+} = require("fusion-plugin-react-redux");
+const { ConnectedRouter, push } = require("connected-react-router");
+const { getSimulator } = require("fusion-test-utils");
+const { connect } = require("react-redux");
 
-test('An app', async () => {
+test("An app", async () => {
   expect.assertions(5);
-  const Root = connect((state) => state, {push})((props) => {
-    expect(props.router.location.pathname).toBe('/');
-    props.push('/test');
-    return React.createElement('div', null, 'Hello World');
+  const Root = connect((state) => state, { push })((props) => {
+    expect(props.router.location.pathname).toBe("/");
+    props.push("/test");
+    return React.createElement("div", null, "Hello World");
   });
   const app = new App(React.createElement(Root));
   app.register(RenderToken, renderToString);
@@ -44,7 +43,7 @@ test('An app', async () => {
   app.register(RouterProviderToken, ConnectedRouter);
   app.register(ReduxToken, ReduxPlugin);
   app.register(ReducerToken, (state = {}, action) => {
-    if (action.type === 'TEST') {
+    if (action.type === "TEST") {
       return {
         ...state,
         test: true,
@@ -56,12 +55,12 @@ test('An app', async () => {
   app.enhance(RouterToken, (oldRouter) => {
     return {
       from: (ctx) => {
-        const {history} = oldRouter.from(ctx);
+        const { history } = oldRouter.from(ctx);
         return {
           history: {
             ...history,
             push(url) {
-              expect(url).toBe('/test');
+              expect(url).toBe("/test");
             },
           },
         };
@@ -70,17 +69,17 @@ test('An app', async () => {
   });
   app.register(
     createPlugin({
-      deps: {redux: ReduxToken},
+      deps: { redux: ReduxToken },
       middleware:
-        ({redux}) =>
+        ({ redux }) =>
         async (ctx, next) => {
           await next();
           const store = redux.from(ctx).store;
           const state = store.getState();
-          expect(typeof state.router.location.pathname).toBe('string');
-          expect(typeof state.router.action).toBe('string');
+          expect(typeof state.router.location.pathname).toBe("string");
+          expect(typeof state.router.action).toBe("string");
           store.dispatch({
-            type: 'TEST',
+            type: "TEST",
           });
           expect(store.getState().test).toBe(true);
         },
@@ -88,9 +87,9 @@ test('An app', async () => {
   );
 
   const sim = getSimulator(app);
-  await sim.render('/');
+  await sim.render("/");
 });
 
-test('Exports a token', () => {
+test("Exports a token", () => {
   expect(ConnectedRouterEnhancerToken).toBeDefined();
 });

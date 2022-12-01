@@ -3,11 +3,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
 export default {
-  async getLastTrip({tripId}) {
-    return {id: tripId, from: 'here', to: 'there'};
+  async getLastTrip({ tripId }) {
+    return { id: tripId, from: "here", to: "there" };
   },
 };

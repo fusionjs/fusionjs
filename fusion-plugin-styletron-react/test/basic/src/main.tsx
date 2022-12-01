@@ -1,15 +1,13 @@
-// @flow
+import React from "react";
+import App from "fusion-react";
+import Styletron, { styled } from "../../..";
 
-import React from 'react';
-import App from 'fusion-react';
-import Styletron, {styled} from '../../..';
-
-const StyledComponent = styled('div', (props) => ({color: props.$color}));
+const StyledComponent = styled("div", (props) => ({ color: props.$color }));
 
 function Root() {
-  const [color, setColor] = React.useState('red');
+  const [color, setColor] = React.useState("red");
 
-  const toggleColor = () => setColor(color === 'red' ? 'blue' : 'red');
+  const toggleColor = () => setColor(color === "red" ? "blue" : "red");
 
   return (
     <div>

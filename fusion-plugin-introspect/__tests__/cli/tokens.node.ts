@@ -1,18 +1,17 @@
-// @flow
-import {mockFs} from './mockFs.js';
-import {tokens} from '../../src/cli/tokens.js';
+import { mockFs } from "./mockFs";
+import { tokens } from "../../src/cli/tokens.js";
 
-test('tokens', async () => {
+test("tokens", async () => {
   mockFs({
-    version: '0.0.0',
+    version: "0.0.0",
     server: [
       {
         timestamp: 0,
         dependencies: [
           {
-            name: 'ABC',
-            type: 'both',
-            sources: [{type: 'register', source: 'foo/bar:1:2'}],
+            name: "ABC",
+            type: "both",
+            sources: [{ type: "register", source: "foo/bar:1:2" }],
             dependencies: [],
           },
         ],
@@ -20,7 +19,7 @@ test('tokens', async () => {
     ],
   });
   const data = await tokens();
-  expect(data.includes('Server:')).toBe(true);
-  expect(data.includes('ABC')).toBe(true);
-  expect(data.includes('foo/bar:1:2')).toBe(true);
+  expect(data.includes("Server:")).toBe(true);
+  expect(data.includes("ABC")).toBe(true);
+  expect(data.includes("foo/bar:1:2")).toBe(true);
 });

@@ -3,18 +3,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
-import browser from './browser.js';
-import server from './server.js';
-import * as fs from './fs-store.js';
+import browser from "./browser";
+import server from "./server";
+import * as fs from "./fs-store";
 
 export type {
   IntrospectionSchema,
   Dependencies,
   Dependency,
   Metadata,
-} from './server.js';
+} from "./server";
 
 export default __NODE__ ? server : browser;
 // $FlowFixMe

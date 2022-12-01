@@ -3,23 +3,22 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {Locale, Locales} from 'locale';
-import fs from 'fs';
-import path from 'path';
+import { Locale, Locales } from "locale";
+import fs from "fs";
+import path from "path";
 
-import {memoize} from 'fusion-core';
+import { memoize } from "fusion-core";
 
 import type {
   I18nLoaderFactoryType,
   I18nLocaleResolverType,
   TranslationsObjectType,
-} from './types.js';
+} from "./types";
 
 const defaultResolveLocales: I18nLocaleResolverType = (ctx) =>
-  ctx.headers['accept-language'];
+  ctx.headers["accept-language"];
 
 const loader: I18nLoaderFactoryType = (
   resolveLocales = defaultResolveLocales
@@ -31,14 +30,14 @@ const loader: I18nLoaderFactoryType = (
       return [];
     }
   };
-  const root = './translations';
+  const root = "./translations";
   const locales = readDir(root)
     .filter((p) => p.match(/json$/))
-    .map((p) => p.replace(/\.json$/, ''));
+    .map((p) => p.replace(/\.json$/, ""));
   const data = locales.reduce((memo, locale) => {
     const parsedLocale = new Locale(locale);
     memo[parsedLocale.normalized] = JSON.parse(
-      fs.readFileSync(path.join(root, locale + '.json'), 'utf8')
+      fs.readFileSync(path.join(root, locale + ".json"), "utf8")
     );
     return memo;
   }, {});
@@ -49,9 +48,9 @@ const loader: I18nLoaderFactoryType = (
       const expectedLocales = new Locales(resolveLocales(ctx));
       const locale = expectedLocales.best(supportedLocales);
       const translations: TranslationsObjectType = data[locale.normalized];
-      return {translations, locale};
+      return { translations, locale };
     }),
   };
 };
 
-export default (((__NODE__ ? loader : null): any): typeof loader);
+export default __NODE__ ? loader : (null as any as typeof loader);

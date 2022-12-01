@@ -1,18 +1,19 @@
-// @flow
-import mapObject from 'just-map-object';
-import isEqual from 'just-compare';
-import ResponseError from './response-error';
-import {type HandlerType} from './tokens';
+import mapObject from "just-map-object";
+import isEqual from "just-compare";
+import ResponseError from "./response-error";
+import { type HandlerType } from "./tokens";
 
-export type RpcResponse = Object | ResponseError;
+export type RpcResponse = any | ResponseError;
 export type RpcResponseMap = Array<{
-  args: Array<*>,
-  response: RpcResponse,
+  args: Array<any>;
+  response: RpcResponse;
 }>;
-export type RpcFixtureT = {[string]: RpcResponseMap | RpcResponse};
+export type RpcFixtureT = {
+  [x: string]: RpcResponseMap | RpcResponse;
+};
 type OnMockRpcCallbackT = (
   handler: string,
-  args: Array<*>,
+  args: Array<any>,
   response: RpcResponse
 ) => void;
 

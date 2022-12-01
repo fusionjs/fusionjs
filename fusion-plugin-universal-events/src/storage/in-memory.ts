@@ -1,7 +1,5 @@
-// @flow
-
-import type {BatchStorage, BatchType} from '../types';
-import {split} from './split';
+import type { BatchStorage, BatchType } from "../types";
+import { split } from "./split";
 
 class InMemoryBatchStorage implements BatchStorage {
   data: BatchType[] = [];

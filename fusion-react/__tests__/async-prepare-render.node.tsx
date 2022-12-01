@@ -3,15 +3,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-disable react/no-multi-comp */
-import * as React from 'react';
-import TestRenderer from 'react-test-renderer';
-import {prepare, prepared} from '../src/async/index.js';
+import * as React from "react";
+import TestRenderer from "react-test-renderer";
+import { prepare, prepared } from "../src/async/index";
 
-test('Preparing a hook', (done) => {
+test("Preparing a hook", (done) => {
   function Component() {
     const [state] = React.useState(0);
     return `Current value: ${state}`;
@@ -21,12 +20,12 @@ test('Preparing a hook', (done) => {
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const renderer = TestRenderer.create(app);
-    expect(renderer.root.children).toEqual(['Current value: 0']);
+    expect(renderer.root.children).toEqual(["Current value: 0"]);
     done();
   });
 });
 
-test('Preparing a sync app', (done) => {
+test("Preparing a sync app", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -55,7 +54,7 @@ test('Preparing a sync app', (done) => {
   });
 });
 
-test('Preparing a sync app with nested children', (done) => {
+test("Preparing a sync app with nested children", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -88,7 +87,7 @@ test('Preparing a sync app with nested children', (done) => {
   });
 });
 
-test('Preparing a sync app with functional components referencing children', (done) => {
+test("Preparing a sync app with functional components referencing children", (done) => {
   let numRenders = 0;
   let numChildRenders = 0;
   let numPrepares = 0;
@@ -102,7 +101,7 @@ test('Preparing a sync app with functional components referencing children', (do
   }
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
   const app = (
@@ -120,7 +119,7 @@ test('Preparing a sync app with functional components referencing children', (do
   });
 });
 
-test('Preparing an async app', (done) => {
+test("Preparing an async app", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -141,7 +140,7 @@ test('Preparing an async app', (done) => {
   }
   const AsyncParent = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimpleComponent);
   const app = <AsyncParent data="test" />;
@@ -156,7 +155,7 @@ test('Preparing an async app', (done) => {
   });
 });
 
-test('Preparing an async app with nested asyncs', (done) => {
+test("Preparing an async app with nested asyncs", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -178,7 +177,7 @@ test('Preparing an async app with nested asyncs', (done) => {
   }
   const AsyncParent = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimpleComponent);
   const app = (
@@ -200,7 +199,7 @@ test('Preparing an async app with nested asyncs', (done) => {
   });
 });
 
-test('Preparing an app with sibling async components', (done) => {
+test("Preparing an app with sibling async components", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -222,7 +221,7 @@ test('Preparing an app with sibling async components', (done) => {
   }
   const AsyncParent = prepared(async (props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
   })(SimpleComponent);
   const app = (
     <div>
@@ -246,7 +245,7 @@ test('Preparing an app with sibling async components', (done) => {
   });
 });
 
-test('Rendering a component triggers componentWillMount before render', (done) => {
+test("Rendering a component triggers componentWillMount before render", (done) => {
   const orderedMethodCalls = [];
   const orderedChildMethodCalls = [];
 
@@ -254,11 +253,11 @@ test('Rendering a component triggers componentWillMount before render', (done) =
   // eslint-disable-next-line react/no-deprecated
   class SimpleComponent extends React.Component<any> {
     UNSAFE_componentWillMount() {
-      orderedMethodCalls.push('componentWillMount');
+      orderedMethodCalls.push("componentWillMount");
     }
 
     render() {
-      orderedMethodCalls.push('render');
+      orderedMethodCalls.push("render");
       return <SimpleChildComponent />;
     }
   }
@@ -267,11 +266,11 @@ test('Rendering a component triggers componentWillMount before render', (done) =
   // eslint-disable-next-line react/no-deprecated
   class SimpleChildComponent extends React.Component<any> {
     UNSAFE_componentWillMount() {
-      orderedChildMethodCalls.push('componentWillMount');
+      orderedChildMethodCalls.push("componentWillMount");
     }
 
     render() {
-      orderedChildMethodCalls.push('render');
+      orderedChildMethodCalls.push("render");
       return <div>Hello World</div>;
     }
   }
@@ -280,13 +279,13 @@ test('Rendering a component triggers componentWillMount before render', (done) =
   const p = prepare(app);
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
-    expect(orderedMethodCalls).toEqual(['componentWillMount', 'render']);
-    expect(orderedChildMethodCalls).toEqual(['componentWillMount', 'render']);
+    expect(orderedMethodCalls).toEqual(["componentWillMount", "render"]);
+    expect(orderedChildMethodCalls).toEqual(["componentWillMount", "render"]);
     done();
   });
 });
 
-test('Preparing an async app with componentWillReceiveProps option', (done) => {
+test("Preparing an async app with componentWillReceiveProps option", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -308,7 +307,7 @@ test('Preparing an async app with componentWillReceiveProps option', (done) => {
   const AsyncParent = prepared(
     (props) => {
       numPrepares++;
-      expect(props.data).toBe('test');
+      expect(props.data).toBe("test");
       return Promise.resolve();
     },
     {
@@ -333,7 +332,7 @@ test('Preparing an async app with componentWillReceiveProps option', (done) => {
   });
 });
 
-test('Preparing an async app with componentDidUpdate option', (done) => {
+test("Preparing an async app with componentDidUpdate option", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -355,7 +354,7 @@ test('Preparing an async app with componentDidUpdate option', (done) => {
   const AsyncParent = prepared(
     (props) => {
       numPrepares++;
-      expect(props.data).toBe('test');
+      expect(props.data).toBe("test");
       return Promise.resolve();
     },
     {
@@ -380,7 +379,7 @@ test('Preparing an async app with componentDidUpdate option', (done) => {
   });
 });
 
-test('Preparing React.forwardRef', (done) => {
+test("Preparing React.forwardRef", (done) => {
   // $FlowFixMe
   const Forwarded = React.forwardRef(function Inner(props, ref) {
     // eslint-disable-line
@@ -397,12 +396,12 @@ test('Preparing React.forwardRef', (done) => {
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const renderer = TestRenderer.create(<div>{app}</div>);
-    expect(renderer.root.findAllByType('span').length).toBe(2);
+    expect(renderer.root.findAllByType("span").length).toBe(2);
     done();
   });
 });
 
-test('Preparing React.forwardRef with async children', (done) => {
+test("Preparing React.forwardRef with async children", (done) => {
   // $FlowFixMe
   const Forwarded = React.forwardRef(function Inner(props, ref) {
     // eslint-disable-line
@@ -416,7 +415,7 @@ test('Preparing React.forwardRef with async children', (done) => {
   }
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
   const app = (
@@ -434,7 +433,7 @@ test('Preparing React.forwardRef with async children', (done) => {
   });
 });
 
-test('Preparing a Fragment', (done) => {
+test("Preparing a Fragment", (done) => {
   const app = (
     <React.Fragment>
       <span>1</span>
@@ -445,12 +444,12 @@ test('Preparing a Fragment', (done) => {
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const renderer = TestRenderer.create(<div>{app}</div>);
-    expect(renderer.root.findAllByType('span').length).toBe(2);
+    expect(renderer.root.findAllByType("span").length).toBe(2);
     done();
   });
 });
 
-test('Preparing a fragment with async children', (done) => {
+test("Preparing a fragment with async children", (done) => {
   let numChildRenders = 0;
   let numPrepares = 0;
   function SimplePresentational() {
@@ -459,7 +458,7 @@ test('Preparing a fragment with async children', (done) => {
   }
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
   const app = (
@@ -478,9 +477,9 @@ test('Preparing a fragment with async children', (done) => {
   });
 });
 
-test('Preparing React.createContext()', (done) => {
+test("Preparing React.createContext()", (done) => {
   // $FlowFixMe
-  const {Provider, Consumer} = React.createContext('light');
+  const { Provider, Consumer } = React.createContext("light");
 
   const app = (
     <Provider value="light">
@@ -492,14 +491,14 @@ test('Preparing React.createContext()', (done) => {
   expect(p instanceof Promise).toBeTruthy();
   p.then(() => {
     const renderer = TestRenderer.create(<div>{app}</div>);
-    expect(renderer.root.findAllByType('span').length).toBe(2);
+    expect(renderer.root.findAllByType("span").length).toBe(2);
     done();
   });
 });
 
-test('Preparing React.createContext() with async children', (done) => {
+test("Preparing React.createContext() with async children", (done) => {
   // $FlowFixMe
-  const {Provider, Consumer} = React.createContext('light');
+  const { Provider, Consumer } = React.createContext("light");
 
   let numChildRenders = 0;
   let numPrepares = 0;
@@ -511,7 +510,7 @@ test('Preparing React.createContext() with async children', (done) => {
       <Consumer>
         {(theme) => {
           numRenderPropsRenders++;
-          expect(theme).toBe('dark');
+          expect(theme).toBe("dark");
           return <div>{theme}</div>;
         }}
       </Consumer>
@@ -520,7 +519,7 @@ test('Preparing React.createContext() with async children', (done) => {
 
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -552,9 +551,9 @@ test('Preparing React.createContext() with async children', (done) => {
   });
 });
 
-test('Preparing React.createContext() with deep async children', (done) => {
+test("Preparing React.createContext() with deep async children", (done) => {
   // $FlowFixMe
-  const {Provider, Consumer} = React.createContext('light');
+  const { Provider, Consumer } = React.createContext("light");
 
   let numChildRenders = 0;
   let numPrepares = 0;
@@ -566,7 +565,7 @@ test('Preparing React.createContext() with deep async children', (done) => {
 
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -575,7 +574,7 @@ test('Preparing React.createContext() with deep async children', (done) => {
       <Consumer>
         {(theme) => {
           numRenderPropsRenders++;
-          expect(theme).toBe('dark');
+          expect(theme).toBe("dark");
           return <AsyncChild data="test" />;
         }}
       </Consumer>
@@ -597,9 +596,9 @@ test('Preparing React.createContext() with deep async children', (done) => {
   });
 });
 
-test('Preparing React.createContext() using the default provider value', (done) => {
+test("Preparing React.createContext() using the default provider value", (done) => {
   // $FlowFixMe
-  const {Consumer} = React.createContext('light');
+  const { Consumer } = React.createContext("light");
 
   let numChildRenders = 0;
   let numPrepares = 0;
@@ -611,7 +610,7 @@ test('Preparing React.createContext() using the default provider value', (done) 
 
   const AsyncChild = prepared((props) => {
     numPrepares++;
-    expect(props.data).toBe('test');
+    expect(props.data).toBe("test");
     return Promise.resolve();
   })(SimplePresentational);
 
@@ -620,7 +619,7 @@ test('Preparing React.createContext() using the default provider value', (done) 
       <Consumer>
         {(theme) => {
           numRenderPropsRenders++;
-          expect(theme).toBe('light');
+          expect(theme).toBe("light");
           return <AsyncChild data="test" />;
         }}
       </Consumer>
@@ -638,7 +637,7 @@ test('Preparing React.createContext() using the default provider value', (done) 
   });
 });
 
-test('Preparing a component using getDerivedStateFromProps', (done) => {
+test("Preparing a component using getDerivedStateFromProps", (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -651,11 +650,11 @@ test('Preparing a component using getDerivedStateFromProps', (done) => {
       numConstructors++;
       this.state = {
         firstRender: true,
-        originalState: 'should remain',
+        originalState: "should remain",
       };
     }
 
-    static getDerivedStateFromProps(props, {firstRender}) {
+    static getDerivedStateFromProps(props, { firstRender }) {
       numDerivedStateFromProps++;
       return {
         firstRender: false,
@@ -664,12 +663,12 @@ test('Preparing a component using getDerivedStateFromProps', (done) => {
     }
     // eslint-disable-next-line react/no-deprecated
     componentWillMount() {
-      throw new Error('Should not be called when gDSFP is defined');
+      throw new Error("Should not be called when gDSFP is defined");
     }
 
     render() {
       numRenders++;
-      retainedState = this.state.originalState === 'should remain';
+      retainedState = this.state.originalState === "should remain";
       return (
         <div>
           {this.state.someNewKey.map((item, key) => (
@@ -687,7 +686,7 @@ test('Preparing a component using getDerivedStateFromProps', (done) => {
   const AsyncParent = prepared(
     (props) => {
       numPrepares++;
-      expect(props.data).toBe('test');
+      expect(props.data).toBe("test");
       return Promise.resolve();
     },
     {

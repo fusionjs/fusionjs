@@ -3,27 +3,33 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as React from "react";
+import PropTypes from "prop-types";
 
 type PreparedOpts = {
-  boundary?: boolean,
-  defer?: boolean,
-  componentDidMount?: boolean,
-  componentWillReceiveProps?: boolean,
-  componentDidUpdate?: boolean,
-  contextTypes?: Object,
-  forceUpdate?: boolean,
+  boundary?: boolean;
+  defer?: boolean;
+  componentDidMount?: boolean;
+  componentWillReceiveProps?: boolean;
+  componentDidUpdate?: boolean;
+  contextTypes?: any;
+  forceUpdate?: boolean;
 };
 
 const prepared =
-  (sideEffect: (any, any) => any | Promise<any>, opts?: PreparedOpts = {}) =>
+  (
+    sideEffect: (b: any, a: any) => any | Promise<any>,
+    opts: PreparedOpts = {}
+  ) =>
   <Config>(
     OriginalComponent: React.ComponentType<Config>
-  ): React.ComponentType<{...Config, effectId?: string}> => {
+  ): React.ComponentType<
+    {
+      effectId?: string;
+    } & Config
+  > => {
     opts = Object.assign(
       {
         boundary: false,
@@ -38,7 +44,7 @@ const prepared =
     );
 
     const displayName =
-      OriginalComponent.displayName || OriginalComponent.name || '';
+      OriginalComponent.displayName || OriginalComponent.name || "";
 
     class PreparedComponent extends React.Component<any> {
       componentDidMount() {
@@ -64,7 +70,7 @@ const prepared =
       }
 
       render() {
-        const effectId = this.props.effectId || 'defaultId';
+        const effectId = this.props.effectId || "defaultId";
         const prepareState = this.context.__PREPARE_STATE__;
         if (prepareState) {
           if (opts.defer || opts.boundary) {

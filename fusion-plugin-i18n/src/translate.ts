@@ -1,5 +1,4 @@
-// @flow
-import {type TranslationsObjectType} from './types';
+import { type TranslationsObjectType } from "./types";
 
 export function matchesLiteralSections(literalSections: Array<string>) {
   return (translation: string) => {
@@ -7,11 +6,11 @@ export function matchesLiteralSections(literalSections: Array<string>) {
 
     if (literalSections.length === 1) {
       const literal = literalSections[0];
-      return literal !== '' && translation === literal;
+      return literal !== "" && translation === literal;
     }
 
     return literalSections.every((literal, literalIndex) => {
-      if (literal === '') {
+      if (literal === "") {
         // literal section either:
         // - starts/ends the literal
         // - is the result of two adjacent interpolations
@@ -66,7 +65,7 @@ export function translateKeys(
 // Default i18n format
 export function translateKey(sources: any, locale: any, key: string): string {
   const localeKey = sources[key];
-  if (typeof localeKey === 'string') {
+  if (typeof localeKey === "string") {
     return localeKey;
   }
   // $FlowFixMe - we are unsound here, but assume that key exists

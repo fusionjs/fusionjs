@@ -3,17 +3,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-disable react/no-multi-comp */
-import * as React from 'react';
-import {renderToString} from 'react-dom/server';
-import Provider from '../src/async/prepare-provider';
-import {prepare, split} from '../src/async/index.js';
+import * as React from "react";
+import { renderToString } from "react-dom/server";
+import Provider from "../src/async/prepare-provider";
+import { prepare, split } from "../src/async/index";
 
-test('Preparing an app with an async component', async () => {
-  function DeferredComponent(props: {foo: 'foo'}) {
+test("Preparing an app with an async component", async () => {
+  function DeferredComponent(props: { foo: "foo" }) {
     return <div>Loaded</div>;
   }
   function LoadingComponent() {
@@ -25,7 +24,7 @@ test('Preparing an app with an async component', async () => {
 
   const ToTest = split({
     defer: false,
-    load: () => (Promise.resolve({default: DeferredComponent}): any),
+    load: () => Promise.resolve({ default: DeferredComponent }) as any,
     LoadingComponent,
     ErrorComponent,
   });
@@ -44,7 +43,7 @@ test('Preparing an app with an async component', async () => {
   await expect(prepare(app)).resolves.toBeUndefined();
 });
 
-test('Preparing an app with an errored async component', async () => {
+test("Preparing an app with an errored async component", async () => {
   function LoadingComponent() {
     return <div>Loading</div>;
   }
@@ -54,7 +53,7 @@ test('Preparing an app with an errored async component', async () => {
 
   const ToTest = split({
     defer: false,
-    load: () => (Promise.reject(new Error('failed')): any),
+    load: () => Promise.reject(new Error("failed")) as any,
     LoadingComponent,
     ErrorComponent,
   });

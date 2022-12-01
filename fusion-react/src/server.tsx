@@ -3,20 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
-import * as React from 'react';
-import Stream from 'stream';
-import {renderToString, renderToPipeableStream} from 'react-dom/server';
-import type {Logger} from 'fusion-tokens';
+import * as React from "react";
+import Stream from "stream";
+import { renderToString, renderToPipeableStream } from "react-dom/server";
+import type { Logger } from "fusion-tokens";
 
 export default (
-  el: React.Element<*>,
+  el: React.ReactElement<any>,
   ctx: any,
   logger?: Logger,
-  ssrDecider?: (any) => boolean | 'stream'
+  ssrDecider?: (a: any) => boolean | "stream"
 ): Promise<string> => {
   const renderFullSSRFn = ssrDecider || ((ctx) => true);
   try {
@@ -24,10 +23,10 @@ export default (
       return Promise.resolve(`<div id='root'>${renderToString(el)}</div>`);
     } else {
       return new Promise((resolve, reject) => {
-        ctx.res.socket.on('error', (error) => {
-          logger && logger.error('Streaming SSR failed with error', error);
+        ctx.res.socket.on("error", (error) => {
+          logger && logger.error("Streaming SSR failed with error", error);
           if (__DEV__) {
-            console.error('Streaming SSR failed with error', error);
+            console.error("Streaming SSR failed with error", error);
           }
         });
 
@@ -42,15 +41,15 @@ export default (
         // input is done, we will manually close the output as well.
         const inputStream = new Stream.PassThrough();
         const outputStream = new Stream.PassThrough();
-        let buffer = '';
+        let buffer = "";
         // Attach event to read into buffer
-        inputStream.on('data', (chunk) => {
+        inputStream.on("data", (chunk) => {
           buffer += chunk;
           outputStream.write(chunk);
         });
         // Attach event to close outputStream when inputStream is done
         // React handles closing this for us
-        inputStream.on('end', () => {
+        inputStream.on("end", () => {
           outputStream.end();
         });
         // Assign to koa
@@ -64,11 +63,11 @@ export default (
         }
         // Let React pipe to the inputStream
         // $FlowFixMe[incompatible-exact]
-        const {pipe} = renderToPipeableStream(<div id="root">{el}</div>, {
+        const { pipe } = renderToPipeableStream(<div id="root">{el}</div>, {
           ...bootstrap,
           nonce: ctx.nonce,
           onShellReady() {
-            ctx.type = 'html';
+            ctx.type = "html";
             inputStream.write(shellTemplates.start);
             pipe(inputStream);
             inputStream.write(shellTemplates.end);
@@ -80,11 +79,11 @@ export default (
               shellTemplates.start,
               `<div id="root" data-fusion-render="client"></div>`,
               shellTemplates.end,
-            ].join('');
+            ].join("");
 
             const moduleTag = shellTemplates.useModuleScripts
               ? 'type="module"'
-              : '';
+              : "";
             for (const script of shellTemplates.scripts) {
               buffer += `<script async src="${script}" nonce="${ctx.nonce}" ${moduleTag}></script>`;
             }
@@ -95,9 +94,9 @@ export default (
           },
           onError(e) {
             if (__DEV__) {
-              console.error('Server-side stream failed', e);
+              console.error("Server-side stream failed", e);
             }
-            logger && logger.error('Streaming SSR Failed with Error', e);
+            logger && logger.error("Streaming SSR Failed with Error", e);
           },
         });
       });
@@ -105,11 +104,11 @@ export default (
   } catch (e) {
     if (__DEV__) {
       console.error(
-        'Server-side render failed. Falling back to client-side render',
+        "Server-side render failed. Falling back to client-side render",
         e
       );
     }
-    logger && logger.error('SSR Failed with Error', e);
+    logger && logger.error("SSR Failed with Error", e);
     return Promise.resolve('<div id="root" data-fusion-render="client"></div>');
   }
 };

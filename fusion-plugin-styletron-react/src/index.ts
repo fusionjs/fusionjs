@@ -3,7 +3,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import {
@@ -12,14 +11,14 @@ import {
   withStyleDeep,
   withTransform,
   withWrapper,
-} from 'styletron-react';
+} from "styletron-react";
 
-import {AtomicPrefixToken} from './constants.js';
+import { AtomicPrefixToken } from "./constants";
 
-import serverAtomic from './server-atomic';
-import serverMonolithic from './server-monolithic';
-import browserAtomic from './browser-atomic';
-import browserMonolithic from './browser-monolithic';
+import serverAtomic from "./server-atomic";
+import serverMonolithic from "./server-monolithic";
+import browserAtomic from "./browser-atomic";
+import browserMonolithic from "./browser-monolithic";
 
 declare var __NODE__: Boolean;
 
@@ -28,6 +27,6 @@ const StyletronMonolithicPlugin = __NODE__
   : browserMonolithic;
 
 export default __NODE__ ? serverAtomic : browserAtomic;
-export {styled, withStyle, withStyleDeep, withTransform, withWrapper};
-export {AtomicPrefixToken};
-export {StyletronMonolithicPlugin};
+export { styled, withStyle, withStyleDeep, withTransform, withWrapper };
+export { AtomicPrefixToken };
+export { StyletronMonolithicPlugin };

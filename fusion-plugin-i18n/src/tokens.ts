@@ -3,11 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {createToken} from 'fusion-core';
+import { createToken } from "fusion-core";
 
-export const I18nLoaderToken = createToken<*>('I18nLoaderToken');
+export const I18nLoaderToken = createToken<any>("I18nLoaderToken");
 
-export const I18nTranslateFnsToken = createToken<*>('I18nTranslateFnsToken');
+export const I18nTranslateFnsToken = createToken<any>("I18nTranslateFnsToken");

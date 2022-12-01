@@ -3,21 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 /* globals global */
 
-import FusionApp, {compose} from 'fusion-core';
-import type {Context} from 'fusion-core';
+import FusionApp, { compose } from "fusion-core";
+import type { Context } from "fusion-core";
 
-import {createRequestContext, createRenderContext} from './mock-context.js';
+import { createRequestContext, createRenderContext } from "./mock-context";
 
 export const request =
   (app: FusionApp) =>
-  (url: string, options: * = {}): Promise<*> => {
+  (url: string, options: any = {}): Promise<any> => {
     if (__BROWSER__) {
       throw new Error(
-        '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
+        "[fusion-test-utils] Request api not support from the browser. Please use `render` instead"
       );
     }
     const ctx = createRequestContext(url, options);
@@ -26,9 +25,9 @@ export const request =
 
 export const render =
   (app: FusionApp) =>
-  (url: string, options: * = {}): Promise<*> => {
+  (url: string, options: any = {}): Promise<any> => {
     if (global.jsdom) {
-      if (!url.startsWith('/')) {
+      if (!url.startsWith("/")) {
         url = `/${url}`;
       }
       global.jsdom.reconfigure({
@@ -39,6 +38,6 @@ export const render =
     return simulate(app, ctx);
   };
 
-export default function simulate(app: FusionApp, ctx: Context): Promise<*> {
+export default function simulate(app: FusionApp, ctx: Context): Promise<any> {
   return compose(app.plugins)(ctx, () => Promise.resolve()).then(() => ctx);
 }

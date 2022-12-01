@@ -3,17 +3,16 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import App, {createPlugin} from 'fusion-core';
-import {GetInitialStateToken} from '../../tokens.js';
+import App, { createPlugin } from "fusion-core";
+import { GetInitialStateToken } from "../../tokens";
 
-import type {Context} from 'fusion-core';
+import type { Context } from "fusion-core";
 
 const app = new App();
 
-app.register(GetInitialStateToken, async (): Object => {
+app.register(GetInitialStateToken, async (): any => {
   return {};
 });
 
@@ -31,9 +30,9 @@ app.register(
   GetInitialStateToken,
   createPlugin({
     provides: () => {
-      return async function getInitialState(
-        ctx: Context
-      ): Promise<{something: any}> {
+      return async function getInitialState(ctx: Context): Promise<{
+        something: any;
+      }> {
         return {
           something: ctx.state.something,
         };

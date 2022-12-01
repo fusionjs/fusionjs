@@ -3,28 +3,27 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {Context} from 'fusion-core';
+import type { Context } from "fusion-core";
 
 import {
   SessionSecretToken,
   SessionCookieNameToken,
   SessionCookieExpiresToken,
-} from './tokens.js';
+} from "./tokens";
 
 export type SessionService = {
   from(ctx: Context): {
-    loadToken(): Promise<?Object | string>,
-    get(keyPath: string): mixed,
-    set(keyPath: string, val: mixed): boolean,
-    cookie: string | void,
-  },
+    loadToken(): Promise<any | string>;
+    get(keyPath: string): unknown;
+    set(keyPath: string, val: unknown): boolean;
+    cookie: string | void;
+  };
 };
 
 export type SessionDeps = {
-  secret: typeof SessionSecretToken,
-  cookieName: typeof SessionCookieNameToken,
-  expires: typeof SessionCookieExpiresToken.optional,
+  secret: typeof SessionSecretToken;
+  cookieName: typeof SessionCookieNameToken;
+  expires: typeof SessionCookieExpiresToken.optional;
 };

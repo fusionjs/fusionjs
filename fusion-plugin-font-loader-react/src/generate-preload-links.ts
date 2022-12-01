@@ -3,10 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {AtomicFontsObjectType} from './types';
+import type { AtomicFontsObjectType } from "./types";
 
 export default function generatePreloadLinks(
   fontNames: {},
@@ -25,5 +24,5 @@ export default function generatePreloadLinks(
       );
     }
   });
-  return links.join('\n');
+  return links.join("\n");
 }

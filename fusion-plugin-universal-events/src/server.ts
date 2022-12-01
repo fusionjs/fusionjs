@@ -3,18 +3,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
-import {memoize, createPlugin, RouteTagsToken} from 'fusion-core';
-import type {FusionPlugin, Context} from 'fusion-core';
+import { memoize, createPlugin, RouteTagsToken } from "fusion-core";
+import type { FusionPlugin, Context } from "fusion-core";
 
-import Emitter from './emitter.js';
+import Emitter from "./emitter";
 import type {
   IEmitter,
   UniversalEventsPluginDepsType as DepsType,
-} from './types.js';
+} from "./types";
 
 export class GlobalEmitter extends Emitter {
   from: (ctx: Context) => ScopedEmitter;
@@ -26,7 +25,7 @@ export class GlobalEmitter extends Emitter {
       return new ScopedEmitter(ctx, this);
     });
   }
-  emit(type: string, payload: mixed, ctx?: Context): void {
+  emit(type: string, payload: unknown, ctx?: Context): void {
     payload = super.mapEvent(type, payload, this.ctx);
     super.handleEvent(type, payload, ctx);
   }
@@ -38,7 +37,10 @@ export class GlobalEmitter extends Emitter {
 class ScopedEmitter extends Emitter {
   ctx: Context;
   parent: GlobalEmitter;
-  batch: Array<{type: string, payload: any}>;
+  batch: Array<{
+    type: string;
+    payload: any;
+  }>;
   flushed: boolean;
 
   constructor(ctx: Context, parent: GlobalEmitter) {
@@ -48,15 +50,15 @@ class ScopedEmitter extends Emitter {
     this.batch = [];
     this.flushed = false;
   }
-  emit(type: string, payload: mixed) {
+  emit(type: string, payload: unknown) {
     // this logic exists to manage ensuring we send events after the batch
     if (this.flushed) {
-      this.handleBatchedEvent({type, payload});
+      this.handleBatchedEvent({ type, payload });
     } else {
-      this.batch.push({type, payload});
+      this.batch.push({ type, payload });
     }
   }
-  handleBatchedEvent({type, payload}: {type: string, payload: mixed}) {
+  handleBatchedEvent({ type, payload }: { type: string; payload: unknown }) {
     payload = super.mapEvent(type, payload, this.ctx);
     payload = this.parent.mapEvent(type, payload, this.ctx);
     super.handleEvent(type, payload, this.ctx);
@@ -82,21 +84,21 @@ const plugin =
     },
     provides: () => new GlobalEmitter(),
     middleware: (deps, globalEmitter) => {
-      const bodyParser = require('koa-bodyparser');
+      const bodyParser = require("koa-bodyparser");
       // Forcing to parse JSON even if the Content-Type is different because we only expect JSON
       // payloads for events and the browser sends beacons with Content-Type: 'text/plain' due to
       // this bug http://crbug.com/490015
-      const parseBody = bodyParser({detectJSON: () => true});
+      const parseBody = bodyParser({ detectJSON: () => true });
       return async function universalEventsMiddleware(ctx, next) {
         const emitter = globalEmitter.from(ctx);
-        if (ctx.method === 'POST' && ctx.path === '/_events') {
-          deps.RouteTags.from(ctx).name = 'universal_events';
+        if (ctx.method === "POST" && ctx.path === "/_events") {
+          deps.RouteTags.from(ctx).name = "universal_events";
           await parseBody(ctx, async () => {});
           // $FlowFixMe
-          const {items} = ctx.request.body;
+          const { items } = ctx.request.body;
           if (items) {
             for (let index = 0; index < items.length; index++) {
-              const {type, payload} = items[index];
+              const { type, payload } = items[index];
               emitter.emit(type, payload);
             }
             ctx.status = 200;
@@ -118,4 +120,4 @@ const plugin =
     },
   });
 
-export default ((plugin: any): FusionPlugin<DepsType, IEmitter>);
+export default plugin as any as FusionPlugin<DepsType, IEmitter>;

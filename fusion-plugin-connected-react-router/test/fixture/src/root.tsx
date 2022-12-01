@@ -3,13 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
-import React from 'react';
-import {connect} from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-import {Link} from 'fusion-plugin-react-router';
+import { Link } from "fusion-plugin-react-router";
 
 function Root(props) {
   return (
@@ -24,4 +24,4 @@ function Root(props) {
   );
 }
 
-export default connect(({router}) => ({router}))(Root);
+export default connect(({ router }) => ({ router }))(Root);

@@ -3,14 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import React from 'react';
-import {createPlugin} from 'fusion-core';
-import {HelmetProvider} from 'react-helmet-async';
+import React from "react";
+import { createPlugin } from "fusion-core";
+import { HelmetProvider } from "react-helmet-async";
 
-import type {FusionPlugin} from 'fusion-core';
+import type { FusionPlugin } from "fusion-core";
 
 const plugin =
   __BROWSER__ &&
@@ -25,4 +24,4 @@ const plugin =
     },
   });
 
-export default ((plugin: any): FusionPlugin<void, void>);
+export default plugin as any as FusionPlugin<void, void>;

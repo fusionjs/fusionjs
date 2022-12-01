@@ -3,45 +3,53 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {createReactor} from 'redux-reactors';
-import type {ReactorAction} from 'redux-reactors';
-import type {Reducer, Store} from 'redux';
+import { createReactor } from "redux-reactors";
+import type { ReactorAction } from "redux-reactors";
+import type { Reducer, Store } from "redux";
+
+type $ObjMap<T extends {}, F extends (v: any) => any> = {
+  [K in keyof T]: F extends (v: T[K]) => infer R ? R : never;
+};
 
 export type ActionType = {
-  type: string,
-  payload: *,
+  type: string;
+  payload: any;
 };
 
 type RPCReactorsType<TType, TPayload> = {
-  start: ReactorAction<TType, TPayload>,
-  success: ReactorAction<TType, TPayload>,
-  failure: ReactorAction<TType, TPayload>,
+  start: ReactorAction<TType, TPayload>;
+  success: ReactorAction<TType, TPayload>;
+  failure: ReactorAction<TType, TPayload>;
 };
 
-type RPCReducersType<S, A: ActionType> = {
-  start?: Reducer<S, A>,
-  success?: Reducer<S, A>,
-  failure?: Reducer<S, A>,
+type RPCReducersType<S, A extends ActionType> = {
+  start?: Reducer<S, A>;
+  success?: Reducer<S, A>;
+  failure?: Reducer<S, A>;
 };
 
-type NormalizedRPCReducersType<S, A: ActionType> = {
-  start: Reducer<S, A>,
-  success: Reducer<S, A>,
-  failure: Reducer<S, A>,
+type NormalizedRPCReducersType<S, A extends ActionType> = {
+  start: Reducer<S, A>;
+  success: Reducer<S, A>;
+  failure: Reducer<S, A>;
 };
 
 function camelUpper(key: string): string {
-  return key.replace(/([A-Z])/g, '_$1').toUpperCase();
+  return key.replace(/([A-Z])/g, "_$1").toUpperCase();
 }
 
-const noopReducer: Reducer<*, *> = (state) => state;
+const noopReducer: Reducer<any, any> = (state) => state;
 
-type ActionNamesType = {failure: string, start: string, success: string};
-type ActionTypesType = $Keys<ActionNamesType>;
-const types: Array<ActionTypesType> = ['start', 'success', 'failure'];
+type ActionNamesType = {
+  failure: string;
+  start: string;
+  success: string;
+};
+
+type ActionTypesType = keyof ActionNamesType;
+const types: Array<ActionTypesType> = ["start", "success", "failure"];
 
 function createActionNames(rpcId: string): ActionNamesType {
   const rpcActionName = camelUpper(rpcId);
@@ -53,23 +61,24 @@ function createActionNames(rpcId: string): ActionNamesType {
 }
 
 type Action<TType, TPayload> = {
-  type: TType,
-  payload: TPayload,
+  type: TType;
+  payload: TPayload;
 };
-type ConvertToAction = <T>(T) => (payload: any) => Action<T, *>;
+
+type ConvertToAction = <T>(a: T) => (payload: any) => Action<T, any>;
 type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
 export function createRPCActions(rpcId: string): RPCActionsType {
   const actionNames = createActionNames(rpcId);
   const obj: RPCActionsType = {};
   types.forEach((type) => {
     obj[type] = (payload: any) => {
-      return {type: actionNames[type], payload};
+      return { type: actionNames[type], payload };
     };
   });
   return obj;
 }
 
-function getNormalizedReducers<S, A: ActionType>(
+function getNormalizedReducers<S, A extends ActionType>(
   reducers: RPCReducersType<S, A>
 ): NormalizedRPCReducersType<S, A> {
   const obj: NormalizedRPCReducersType<S, A> = {};
@@ -80,7 +89,7 @@ function getNormalizedReducers<S, A: ActionType>(
   return obj;
 }
 
-export function createRPCReducer<S, A: ActionType>(
+export function createRPCReducer<S, A extends ActionType>(
   rpcId: string,
   reducers: RPCReducersType<S, A>,
   // $FlowFixMe
@@ -104,28 +113,29 @@ export function createRPCReducer<S, A: ActionType>(
 }
 
 // TODO(#107): Improve flow types with reactors
-export function createRPCReactors<S, A: ActionType>(
+export function createRPCReactors<S, A extends ActionType>(
   rpcId: string,
   reducers: RPCReducersType<S, A>
-): RPCReactorsType<*, *> {
+): RPCReactorsType<any, any> {
   const actionNames = createActionNames(rpcId);
   const normalizedReducers = getNormalizedReducers(reducers);
   const reactors = types.reduce((obj, type) => {
     if (!normalizedReducers[type]) {
       throw new Error(`Missing reducer for type ${type}`);
     }
-    const reactor: () => ReactorAction<*, *> = createReactor(
+    const reactor: () => ReactorAction<any, any> = createReactor(
       actionNames[type],
-      (normalizedReducers[type]: any)
+      normalizedReducers[type] as any
     );
     obj[type] = reactor;
     return obj;
   }, {});
-  return ((reactors: any): RPCReactorsType<*, *>);
+  return reactors as any as RPCReactorsType<any, any>;
 }
 
 // FYI 2018-05-10 - Improve type definition for RPCHandlerType
 type RPCHandlerType = (args: any) => any;
+
 export function createRPCHandler({
   actions,
   store,
@@ -134,12 +144,12 @@ export function createRPCHandler({
   mapStateToParams,
   transformParams,
 }: {
-  actions?: RPCActionsType,
-  store: Store<*, *, *>,
-  rpc: any,
-  rpcId: string,
-  mapStateToParams?: (state: any, args?: any) => any,
-  transformParams?: (params: any) => any,
+  actions?: RPCActionsType;
+  store: Store<any, any, any>;
+  rpc: any;
+  rpcId: string;
+  mapStateToParams?: (state: any, args?: any) => any;
+  transformParams?: (params: any) => any;
 }): RPCHandlerType {
   if (!actions) {
     actions = createRPCActions(rpcId);

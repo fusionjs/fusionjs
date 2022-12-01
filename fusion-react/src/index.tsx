@@ -3,11 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
-import * as React from 'react';
+import * as React from "react";
 
 import FusionApp, {
   createToken,
@@ -15,17 +14,17 @@ import FusionApp, {
   CriticalChunkIdsToken,
   SSRDeciderToken,
   type Context,
-} from 'fusion-core';
-import {prepare} from './async/index.js';
-import PrepareProvider from './async/prepare-provider';
-import {LoggerToken} from 'fusion-tokens';
+} from "fusion-core";
+import { prepare } from "./async/index";
+import PrepareProvider from "./async/prepare-provider";
+import { LoggerToken } from "fusion-tokens";
 
-import serverRender from './server';
-import clientRender from './client';
+import serverRender from "./server";
+import clientRender from "./client";
 
-import ProviderPlugin from './plugin';
-import ProvidedHOC from './hoc';
-import Provider from './provider';
+import ProviderPlugin from "./plugin";
+import ProvidedHOC from "./hoc";
+import Provider from "./provider";
 
 import {
   FusionContext,
@@ -33,26 +32,26 @@ import {
   ServiceContext,
   useService,
   withServices,
-} from './context.js';
+} from "./context";
 
-export const SkipPrepareToken = createToken<boolean>('SkipPrepareToken');
+export const SkipPrepareToken = createToken<boolean>("SkipPrepareToken");
 
-export type Render = (el: React.Element<*>, context: Context) => any;
+export type Render = (el: React.ReactElement<any>, context: Context) => any;
 
 declare var __NODE__: Boolean;
 
 export default class App extends FusionApp {
-  constructor(root: React.Element<*>, render: ?Render) {
+  constructor(root: React.ReactElement<any>, render?: Render | null) {
     if (!React.isValidElement(root)) {
       throw new Error(
-        'Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)'
+        "Invalid React element. Ensure your root element is a React.Element (e.g. <Foo />) and not a React.Component (e.g. Foo)"
       );
     }
     const getService = (token) => {
       // $FlowFixMe
       const provides = this.getService(token);
       const isRequiredToken = Boolean(token.optional);
-      if (typeof provides === 'undefined' && isRequiredToken) {
+      if (typeof provides === "undefined" && isRequiredToken) {
         throw new Error(
           `Token ${token.name} not registered or registered plugin does not provide a service. To use an optional plugin, use \`Token.optional\`.`
         );
@@ -72,8 +71,8 @@ export default class App extends FusionApp {
         logger: LoggerToken.optional,
         ssrDecider: SSRDeciderToken,
       },
-      provides({skipPrepare, logger, ssrDecider}) {
-        return (el: React.Element<*>, ctx) => {
+      provides({ skipPrepare, logger, ssrDecider }) {
+        return (el: React.ReactElement<any>, ctx) => {
           return (skipPrepare ? Promise.resolve() : prepare(el, ctx))
             .catch(() => {}) // recover from failed `prepare`
             .then(() => {
@@ -89,7 +88,7 @@ export default class App extends FusionApp {
             });
         };
       },
-      middleware({criticalChunkIds}) {
+      middleware({ criticalChunkIds }) {
         return (ctx, next) => {
           if (__NODE__ && !ctx.element) {
             return next();
@@ -152,4 +151,4 @@ export {
 
 function noop() {}
 
-export * from './async/index.js';
+export * from "./async/index";

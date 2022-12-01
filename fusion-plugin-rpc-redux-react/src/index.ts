@@ -3,7 +3,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import {
@@ -11,12 +10,12 @@ import {
   RPCToken,
   RPCHandlersToken,
   ResponseError,
-} from 'fusion-plugin-rpc';
-import {createRPCReducer} from 'fusion-rpc-redux';
-import type {ActionType} from 'fusion-rpc-redux';
-import {withRPCRedux, withRPCReactor} from './hoc';
-import {useRPCRedux} from './hook';
-import plugin, {mock} from './plugin';
+} from "fusion-plugin-rpc";
+import { createRPCReducer } from "fusion-rpc-redux";
+import type { ActionType } from "fusion-rpc-redux";
+import { withRPCRedux, withRPCReactor } from "./hoc";
+import { useRPCRedux } from "./hook";
+import plugin, { mock } from "./plugin";
 
 export default plugin;
 export {
@@ -30,4 +29,4 @@ export {
   withRPCReactor,
   useRPCRedux,
 };
-export type {ActionType};
+export type { ActionType };

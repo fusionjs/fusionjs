@@ -3,13 +3,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import {createBrowserHistory} from 'history';
+import * as React from "react";
+import { createBrowserHistory } from "history";
 
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
 import {
   createPlugin,
   createToken,
@@ -17,37 +16,37 @@ import {
   unescape,
   memoize,
   RouteTagsToken,
-} from 'fusion-core';
-import type {Token, Context, FusionPlugin} from 'fusion-core';
+} from "fusion-core";
+import type { Token, Context, FusionPlugin } from "fusion-core";
 
-import {Router as ServerRouter} from './server.js';
-import {Router as BrowserRouter} from './browser.js';
-import {createServerHistory} from './modules/ServerHistory.js';
+import { Router as ServerRouter } from "./server";
+import { Router as BrowserRouter } from "./browser";
+import { createServerHistory } from "./modules/ServerHistory";
 
-import type {TNavigator, StaticContextType} from './types.js';
+import type { TNavigator, StaticContextType } from "./types";
 
 type HistoryWrapperType = {
   from: (ctx: Context) => {
-    history: TNavigator,
-  },
+    history: TNavigator;
+  };
 };
 
 export const GetStaticContextToken =
-  createToken<(ctx: Context) => StaticContextType>('GetStaticContext');
+  createToken<(ctx: Context) => StaticContextType>("GetStaticContext");
 
-export const RouterToken: Token<HistoryWrapperType> = createToken('Router');
+export const RouterToken: Token<HistoryWrapperType> = createToken("Router");
 
 const Router = __NODE__ ? ServerRouter : BrowserRouter;
 
 type PluginDepsType = {
-  getStaticContext: typeof GetStaticContextToken.optional,
-  emitter: typeof UniversalEventsToken.optional,
-  RouteTags: typeof RouteTagsToken,
+  getStaticContext: typeof GetStaticContextToken.optional;
+  emitter: typeof UniversalEventsToken.optional;
+  RouteTags: typeof RouteTagsToken;
 };
 
 // Preserve browser history instance across HMR
 let browserHistory;
-let noMatchingRoute = 'no-matching-route';
+let noMatchingRoute = "no-matching-route";
 
 const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   deps: {
@@ -55,10 +54,10 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
     getStaticContext: GetStaticContextToken.optional,
     RouteTags: RouteTagsToken,
   },
-  middleware: ({RouteTags, emitter, getStaticContext}, self) => {
+  middleware: ({ RouteTags, emitter, getStaticContext }, self) => {
     return async (ctx, next) => {
       const tags = RouteTags.from(ctx);
-      const prefix = ctx.prefix || '';
+      const prefix = ctx.prefix || "";
       if (!ctx.element) {
         return next();
       }
@@ -118,7 +117,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
               });
             };
             scopedEmitter.map((payload) => {
-              if (payload && typeof payload === 'object') {
+              if (payload && typeof payload === "object") {
                 if (pageData.routeMatched) {
                   payload.__url__ = pageData.title;
                   payload.__urlParams__ = pageData.params;
@@ -130,15 +129,15 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
               return payload;
             });
             ctx.timing.end.then((timing) => {
-              emitTiming('pageview:server')(timing);
-              ctx.timing.render.then(emitTiming('render:server'));
+              emitTiming("pageview:server")(timing);
+              ctx.timing.render.then(emitTiming("render:server"));
             });
           }
         });
       } else if (__BROWSER__) {
         // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
         let pageData = {};
-        const element = document.getElementById('__ROUTER_DATA__');
+        const element = document.getElementById("__ROUTER_DATA__");
         if (element) {
           pageData = JSON.parse(unescape(element.textContent));
           tags.name = pageData.title;
@@ -146,7 +145,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         }
         emitter &&
           emitter.map((payload) => {
-            if (payload && typeof payload === 'object') {
+            if (payload && typeof payload === "object") {
               if (pageData.routeMatched) {
                 payload.__url__ = pageData.title;
                 payload.__urlParams__ = pageData.params;
@@ -162,11 +161,11 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         // routes to match based on the previous location information.
         if (
           !browserHistory ||
-          (__DEV__ && typeof window.jsdom !== 'undefined')
+          (__DEV__ && typeof window.jsdom !== "undefined")
         ) {
-          browserHistory = (createBrowserHistory({
+          browserHistory = createBrowserHistory({
             basename: ctx.prefix,
-          }): TNavigator);
+          }) as TNavigator;
         }
         // Expose the history object
         myAPI.history = browserHistory;
@@ -179,7 +178,7 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
               pageData = payload;
               tags.name = pageData.title;
               tags.page = pageData.page;
-              emitter && emitter.emit('pageview:browser', payload);
+              emitter && emitter.emit("pageview:browser", payload);
             }}
           >
             {ctx.element}
@@ -192,9 +191,11 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
   provides() {
     return {
       from: memoize(() => {
-        const api: {history: TNavigator} = ({
+        const api: {
+          history: TNavigator;
+        } = {
           history: null,
-        }: any);
+        } as any;
         return api;
       }),
     };

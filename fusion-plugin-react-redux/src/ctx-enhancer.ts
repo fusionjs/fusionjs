@@ -3,18 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
 
-import {createStore} from 'redux';
-import type {Store} from 'redux';
+import { createStore } from "redux";
+import type { Store } from "redux";
 
-import type {Context} from 'fusion-core';
+import type { Context } from "fusion-core";
 
 type CreateStoreType = typeof createStore;
-type StoreWithContextType = Store<*, *, *> & {ctx: Context};
+
+type StoreWithContextType = Store<any, any, any> & {
+  ctx: Context;
+};
 
 export default (ctx: Context) =>
   (createStore: CreateStoreType) =>

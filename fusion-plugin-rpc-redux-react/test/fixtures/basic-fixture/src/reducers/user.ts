@@ -3,13 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
-import {createRPCReducer} from '../../../../..';
+import { createRPCReducer } from "../../../../..";
 
-export default createRPCReducer('getUser', {
-  start: (state, action) => ({...state, loading: true}),
+export default createRPCReducer("getUser", {
+  start: (state, action) => ({ ...state, loading: true }),
   success: (state, action) => ({
     ...state,
     loading: false,

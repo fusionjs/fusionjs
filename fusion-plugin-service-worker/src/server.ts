@@ -1,13 +1,11 @@
-// @flow
-
 /* global */
 
-import url from 'url';
-import {createPlugin} from 'fusion-core';
-import {LoggerToken} from 'fusion-tokens';
-import type {FusionPlugin} from 'fusion-core';
+import url from "url";
+import { createPlugin } from "fusion-core";
+import { LoggerToken } from "fusion-tokens";
+import type { FusionPlugin } from "fusion-core";
 
-import {SWTemplateFunctionToken, SWOptionsToken} from './tokens';
+import { SWTemplateFunctionToken, SWOptionsToken } from "./tokens";
 
 function invokeTemplateFn(templateFn, resources) {
   return templateFn(resources);
@@ -17,8 +15,8 @@ function hasSameHostName(url1, url2) {
   return url.parse(String(url1)).hostname === url.parse(String(url2)).hostname;
 }
 
-export default ((__NODE__ &&
-  createPlugin({
+export default __NODE__ &&
+  (createPlugin({
     deps: {
       logger: LoggerToken,
       templateFn: SWTemplateFunctionToken,
@@ -35,13 +33,13 @@ export default ((__NODE__ &&
     }) => {
       return async (ctx, next) => {
         if (__NODE__) {
-          if (ctx.method === 'GET' && ctx.url === '/sw.js') {
+          if (ctx.method === "GET" && ctx.url === "/sw.js") {
             const chunkUrls = Array.from(ctx.chunkUrlMap).map((value) =>
-              value[1].get('es5')
+              value[1].get("es5")
             );
             try {
-              ctx.type = 'text/javascript';
-              ctx.set('Cache-Control', 'max-age=0');
+              ctx.type = "text/javascript";
+              ctx.set("Cache-Control", "max-age=0");
               ctx.body = invokeTemplateFn(templateFn, {
                 // TODO(#24): also include images etc.
                 cacheableResourcePaths: chunkUrls,
@@ -59,12 +57,12 @@ export default ((__NODE__ &&
               });
             } catch (err) {
               ctx.status = 500;
-              ctx.body = {error: err.message};
-              logger.error('Error in Service Worker endpoint:', err);
+              ctx.body = { error: err.message };
+              logger.error("Error in Service Worker endpoint:", err);
             }
           }
           return next();
         }
       };
     },
-  }): any): FusionPlugin<{}, void>);
+  }) as any as FusionPlugin<{}, void>);

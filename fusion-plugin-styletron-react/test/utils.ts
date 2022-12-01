@@ -1,4 +1,4 @@
-// @noflow
+// @ts-nocheck
 
 /* eslint-env node, browser */
 
@@ -32,6 +32,6 @@ exports.untilReady = async function untilReady(page, port) {
   }
 
   if (!started) {
-    throw new Error('Failed to start');
+    throw new Error("Failed to start");
   }
 };

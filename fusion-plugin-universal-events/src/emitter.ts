@@ -3,14 +3,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {Context} from 'fusion-core';
+import type { Context } from "fusion-core";
 
-import type {IEmitter} from './types.js';
+import type { IEmitter } from "./types";
 
-const globalEventType = '*';
+const globalEventType = "*";
 export default class UniversalEmitter implements IEmitter {
   handlers: any;
   mappers: any;
@@ -19,29 +18,29 @@ export default class UniversalEmitter implements IEmitter {
     this.handlers = {};
     this.mappers = {};
   }
-  map(...args: *): * {
-    const {type, callback} = getArgs(args);
+  map(...args: any): any {
+    const { type, callback } = getArgs(args);
     if (!this.mappers[type]) this.mappers[type] = [];
     this.mappers[type].push(callback);
   }
-  on(...args: *): * {
-    const {type, callback} = getArgs(args);
+  on(...args: any): any {
+    const { type, callback } = getArgs(args);
     if (!this.handlers[type]) this.handlers[type] = [];
     this.handlers[type].push(callback);
   }
-  off(...args: *): * {
-    const {type, callback} = getArgs(args);
+  off(...args: any): any {
+    const { type, callback } = getArgs(args);
     const index = this.handlers[type].indexOf(callback);
     if (index > -1) this.handlers[type].splice(index, 1);
   }
-  mapEvent(type: string, payload: mixed, ctx?: Context): mixed {
+  mapEvent(type: string, payload: unknown, ctx?: Context): unknown {
     const globalMappers = this.mappers[globalEventType] || [];
     const mappers = (this.mappers[type] || []).concat(globalMappers);
     return mappers.reduce((payload, mapper) => {
       return mapper(payload, ctx, type);
     }, payload);
   }
-  handleEvent(type: string, payload: mixed, ctx?: Context): void {
+  handleEvent(type: string, payload: unknown, ctx?: Context): void {
     const globalHandlers = this.handlers[globalEventType] || [];
     const handlers = (this.handlers[type] || []).concat(globalHandlers);
     handlers.forEach((handler) => handler(payload, ctx, type));
@@ -49,32 +48,32 @@ export default class UniversalEmitter implements IEmitter {
 
   /* eslint-disable-next-line  no-unused-vars */
   from(ctx: Context) {
-    throw new Error('Not implemented.');
+    throw new Error("Not implemented.");
   }
   /* eslint-disable-next-line  no-unused-vars */
-  emit(type: string, payload: mixed, ctx?: Context) {
+  emit(type: string, payload: unknown, ctx?: Context) {
     // throw new Error('Not implemented.');
   }
   /* eslint-disable-next-line  no-unused-vars */
   setFrequency(frequency: number) {
-    throw new Error('Not implemented.');
+    throw new Error("Not implemented.");
   }
   teardown() {
-    throw new Error('Not implemented.');
+    throw new Error("Not implemented.");
   }
   flush() {
-    throw new Error('Not implemented.');
+    throw new Error("Not implemented.");
   }
 }
 
 function validateHandler(handler) {
-  if (typeof handler !== 'function')
-    throw new TypeError('handler must be a function');
+  if (typeof handler !== "function")
+    throw new TypeError("handler must be a function");
 }
 
 function getArgs(args) {
-  const type = typeof args[0] === 'string' ? args[0] : globalEventType;
+  const type = typeof args[0] === "string" ? args[0] : globalEventType;
   const callback = args[1] || args[0];
   validateHandler(callback);
-  return {type, callback};
+  return { type, callback };
 }

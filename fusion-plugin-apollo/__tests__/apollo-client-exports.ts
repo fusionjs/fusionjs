@@ -3,7 +3,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import {
@@ -13,9 +12,9 @@ import {
   GetApolloClientLinksToken,
   ApolloClientDefaultOptionsToken,
   ApolloClientResolversToken,
-} from '../src/apollo-client/index.js';
+} from "../src/apollo-client/index";
 
-test('exports', () => {
+test("exports", () => {
   expect(ApolloClientPlugin).toBeTruthy();
   expect(GetApolloClientCacheToken).toBeTruthy();
   expect(ApolloClientCredentialsToken).toBeTruthy();

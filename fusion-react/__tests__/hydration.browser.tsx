@@ -3,19 +3,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
 
-import * as React from 'react';
-import render from '../src/client';
+import * as React from "react";
+import render from "../src/client";
 
 const TestComponent = () => {
   return <div>{Math.random()}</div>;
 };
 
-test('hydration mismatch triggers logger warning', (done) => {
+test("hydration mismatch triggers logger warning", (done) => {
   const root = setup();
   let didWarn = false;
   // $FlowFixMe
@@ -34,8 +33,8 @@ test('hydration mismatch triggers logger warning', (done) => {
 });
 
 function setup() {
-  const root = document.createElement('div');
-  root.id = 'root';
+  const root = document.createElement("div");
+  root.id = "root";
   document.body && document.body.appendChild(root);
   return root;
 }

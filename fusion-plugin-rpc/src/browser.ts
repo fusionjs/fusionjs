@@ -3,64 +3,65 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
 
-import {createPlugin, memoize, type Context} from 'fusion-core';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import {I18nToken} from 'fusion-plugin-i18n';
-import {FetchToken} from 'fusion-tokens';
-import type {Fetch} from 'fusion-tokens';
+import { createPlugin, memoize, type Context } from "fusion-core";
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import { I18nToken } from "fusion-plugin-i18n";
+import { FetchToken } from "fusion-tokens";
+import type { Fetch } from "fusion-tokens";
 
 import {
   type HandlerType,
   RPCHandlersConfigToken,
   RPCQueryParamsToken,
-} from './tokens.js';
-import type {RPCPluginType, IEmitter, RPCConfigType} from './types.js';
-import {formatApiPath} from './utils.js';
+} from "./tokens";
+import type { RPCPluginType, IEmitter, RPCConfigType } from "./types";
+import { formatApiPath } from "./utils";
 
 type InitializationOpts = {
-  fetch: Fetch,
-  emitter: IEmitter,
-  queryParams: Array<[string, string]>,
-  rpcConfig: ?RPCConfigType,
+  fetch: Fetch;
+  emitter: IEmitter;
+  queryParams: Array<[string, string]>;
+  rpcConfig: RPCConfigType | undefined | null;
 };
 
-const statKey = 'rpc:method-client';
+const statKey = "rpc:method-client";
 
 class RPC {
-  ctx: ?Context;
-  emitter: ?IEmitter;
-  handlers: ?HandlerType;
+  ctx: Context | undefined | null;
+  emitter: IEmitter | undefined | null;
+  handlers: HandlerType | undefined | null;
   queryParams: Array<[string, string]>;
-  fetch: ?Fetch;
-  config: ?RPCConfigType;
+  fetch: Fetch | undefined | null;
+  config: RPCConfigType | undefined | null;
   apiPath: string;
-  constructor({fetch, emitter, rpcConfig, queryParams}: InitializationOpts) {
+  constructor({ fetch, emitter, rpcConfig, queryParams }: InitializationOpts) {
     this.fetch = fetch;
     this.config = rpcConfig || {};
     this.emitter = emitter;
     this.queryParams = queryParams;
 
     this.apiPath = formatApiPath(
-      rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
+      rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : "api"
     );
   }
 
   request<TArgs, TResult>(
     rpcId: string,
     args: TArgs,
-    headers: ?{[string]: string},
-    options: ?RequestOptions
+    headers?: {
+      [x: string]: string;
+    } | null,
+    options?: RequestInit | null
   ): Promise<TResult> {
     if (!this.fetch) {
-      throw new Error('fusion-plugin-rpc requires `fetch`');
+      throw new Error("fusion-plugin-rpc requires `fetch`");
     }
     if (!this.emitter) {
-      throw new Error('Missing emitter registered to UniversalEventsToken');
+      throw new Error("Missing emitter registered to UniversalEventsToken");
     }
     const fetch = this.fetch;
     const emitter = this.emitter;
@@ -73,15 +74,15 @@ class RPC {
             .map(
               ([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
             )
-            .join('&')}`
-        : '';
+            .join("&")}`
+        : "";
 
     return fetch(
       `${apiPath}${rpcId}${queryParams}`,
       args instanceof FormData
         ? {
             ...options,
-            method: 'POST',
+            method: "POST",
             headers: {
               // Content-Type will be set automatically
               ...(headers || {}),
@@ -90,10 +91,10 @@ class RPC {
           }
         : {
             ...options,
-            method: 'POST',
+            method: "POST",
             // $FlowFixMe
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               ...(headers || {}),
             },
             body: JSON.stringify(args || {}),
@@ -101,11 +102,11 @@ class RPC {
     )
       .then((r) => r.json())
       .then((args) => {
-        const {status, data} = args;
-        if (status === 'success') {
+        const { status, data } = args;
+        if (status === "success") {
           emitter.emit(statKey, {
             method: rpcId,
-            status: 'success',
+            status: "success",
             timing: Date.now() - startTime,
           });
           return data;
@@ -113,7 +114,7 @@ class RPC {
           emitter.emit(statKey, {
             method: rpcId,
             error: data,
-            status: 'failure',
+            status: "failure",
             timing: Date.now() - startTime,
           });
           return Promise.reject(data ? data : {});
@@ -143,10 +144,10 @@ const pluginFactory: () => RPCPluginType = () =>
       return {
         from: memoize((ctx) => {
           const queryParamsValue = (queryParams && queryParams.from(ctx)) || [];
-          const locale = (i18n && i18n.from(ctx).locale) || '';
-          const localeCode = typeof locale === 'string' ? locale : locale.code;
+          const locale = (i18n && i18n.from(ctx).locale) || "";
+          const localeCode = typeof locale === "string" ? locale : locale.code;
           if (localeCode) {
-            queryParamsValue.push(['localeCode', localeCode]);
+            queryParamsValue.push(["localeCode", localeCode]);
           }
           return new RPC({
             fetch,
@@ -159,4 +160,4 @@ const pluginFactory: () => RPCPluginType = () =>
     },
   });
 
-export default ((__BROWSER__ && pluginFactory(): any): RPCPluginType);
+export default __BROWSER__ && (pluginFactory() as any as RPCPluginType);

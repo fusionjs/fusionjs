@@ -1,5 +1,3 @@
-// @flow
-
 export function serialize(obj: any) {
   return encode(JSON.stringify(obj));
 }
@@ -9,7 +7,7 @@ export function deserialize(str: string) {
 }
 
 export function parseJSONWithUndefined(str: string) {
-  if (str === 'undefined') {
+  if (str === "undefined") {
     return undefined;
   }
   return JSON.parse(str);
@@ -20,22 +18,22 @@ export function parseJSONWithUndefined(str: string) {
 
 const encodeRegex = /[%\\]/g;
 const encodeChars = {
-  '\\': '%5C',
-  '%': '%25',
+  "\\": "%5C",
+  "%": "%25",
 };
 
 // A minimalist URI encoding to save bytes
 export function encode(str: string) {
   if (str === void 0) {
-    return 'undefined';
+    return "undefined";
   }
   return str.replace(encodeRegex, (match) => encodeChars[match]);
 }
 
 const decodeRegex = /(%5C)|(%25)/g;
 const decodeChars = {
-  '%5C': '\\',
-  '%25': '%',
+  "%5C": "\\",
+  "%25": "%",
 };
 
 export function decode(str: string) {

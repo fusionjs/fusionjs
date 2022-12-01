@@ -3,11 +3,10 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {Context} from 'fusion-core';
-import {FetchToken} from 'fusion-tokens';
+import type { Context } from "fusion-core";
+import { FetchToken } from "fusion-tokens";
 
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
 type HandlerFnType<TInput> = (
@@ -18,29 +17,24 @@ type HandlerFnType<TInput> = (
 
 export interface IEmitter {
   from(ctx: Context): IEmitter;
-  emit(type: string, payload: mixed, ctx?: Context): void;
+  emit(type: string, payload: unknown, ctx?: Context): void;
   setFrequency(frequency: number): void;
   teardown(): void;
-
   map<TIn, TOut>(type: string, callback: MapFnType<TIn, TOut>): void;
   map<TIn, TOut>(callback: MapFnType<TIn, TOut>): void;
-
   on<TIn>(type: string, callback: HandlerFnType<TIn>): void;
   on<TIn>(callback: HandlerFnType<TIn>): void;
-
   off<TIn>(type: string, callback: HandlerFnType<TIn>): void;
   off<TIn>(callback: HandlerFnType<TIn>): void;
-
-  mapEvent(type: string, payload: mixed, ctx?: Context): mixed;
-  handleEvent(type: string, payload: mixed, ctx?: Context): void;
-
+  mapEvent(type: string, payload: unknown, ctx?: Context): unknown;
+  handleEvent(type: string, payload: unknown, ctx?: Context): void;
   flush(): void;
 }
 
-export type BatchType = {|
-  type: mixed,
-  payload: mixed,
-|};
+export type BatchType = {
+  type: unknown;
+  payload: unknown;
+};
 
 export interface BatchStorage {
   add(toBeAdded: BatchType): void;
@@ -49,5 +43,5 @@ export interface BatchStorage {
 }
 
 export type UniversalEventsPluginDepsType = {
-  fetch: typeof FetchToken,
+  fetch: typeof FetchToken;
 };

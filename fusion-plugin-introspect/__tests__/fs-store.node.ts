@@ -3,35 +3,34 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
-import proc from 'child_process';
-import fs from 'fs';
-import {storeSync, store} from '../src/fs-store.js';
+import proc from "child_process";
+import fs from "fs";
+import { storeSync, store } from "../src/fs-store";
 
-test('fs.storeSync', () => {
+test("fs.storeSync", () => {
   try {
-    proc.execSync('mkdir -p .fusion');
-    storeSync({a: 1});
+    proc.execSync("mkdir -p .fusion");
+    storeSync({ a: 1 });
     const data = JSON.parse(
-      fs.readFileSync('.fusion/fusion-stats.json', 'utf8')
+      fs.readFileSync(".fusion/fusion-stats.json", "utf8")
     );
 
-    expect(data).toEqual({a: 1});
+    expect(data).toEqual({ a: 1 });
   } finally {
-    proc.execSync('rm -rf .fusion');
+    proc.execSync("rm -rf .fusion");
   }
 });
-test('fs.store', async () => {
+test("fs.store", async () => {
   try {
-    proc.execSync('mkdir -p .fusion');
-    await store({a: 1});
+    proc.execSync("mkdir -p .fusion");
+    await store({ a: 1 });
     const data = JSON.parse(
-      fs.readFileSync('.fusion/fusion-stats.json', 'utf8')
+      fs.readFileSync(".fusion/fusion-stats.json", "utf8")
     );
 
-    expect(data).toEqual({a: 1});
+    expect(data).toEqual({ a: 1 });
   } finally {
-    proc.execSync('rm -rf .fusion');
+    proc.execSync("rm -rf .fusion");
   }
 });

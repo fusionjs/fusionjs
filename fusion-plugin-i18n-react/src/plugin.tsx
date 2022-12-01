@@ -3,21 +3,23 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as React from "react";
+import PropTypes from "prop-types";
 
-import i18n, {I18nToken} from 'fusion-plugin-i18n';
-import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
-import {FusionContext, ProviderPlugin, useService} from 'fusion-react';
+import i18n, { I18nToken } from "fusion-plugin-i18n";
+import type { I18nDepsType, I18nServiceType } from "fusion-plugin-i18n";
+import { FusionContext, ProviderPlugin, useService } from "fusion-react";
 
-type ExtractReturnType = <V, TArg>((arg: TArg) => V) => V;
-export type I18nType = $Call<
-  ExtractReturnType,
-  $PropertyType<I18nServiceType, 'from'>
->;
+type $Call1<F extends (...args: any) => any, A> = F extends (
+  a: A,
+  ...args: any
+) => infer R
+  ? R
+  : never;
+type ExtractReturnType = <V, TArg>(a: (arg: TArg) => V) => V;
+export type I18nType = $Call1<ExtractReturnType, I18nServiceType["from"]>;
 export const I18nContext = React.createContext<I18nType>({});
 
 /**
@@ -26,7 +28,7 @@ export const I18nContext = React.createContext<I18nType>({});
  * is critical that we register a callback to splitComponentLoaders for
  * dynamically loading translations.
  */
-function BundleSplitConsumer(props, {splitComponentLoaders}) {
+function BundleSplitConsumer(props, { splitComponentLoaders }) {
   const ctx = React.useContext(FusionContext);
   const service: I18nServiceType = useService(I18nToken);
   const i18n = service.from(ctx);
@@ -34,7 +36,7 @@ function BundleSplitConsumer(props, {splitComponentLoaders}) {
   const [callbacks, setCallbacks] = React.useState({
     i18n,
     // `i18nKeys` comes from fusion-react/async/split
-    load: (_, {i18nKeys}) => i18n.load(i18nKeys),
+    load: (_, { i18nKeys }) => i18n.load(i18nKeys),
   });
   // `splitComponentLoaders` comes from fusion-react/async/prepare-provider
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,9 +44,9 @@ function BundleSplitConsumer(props, {splitComponentLoaders}) {
   React.useMemo(() => {
     if (i18n !== callbacks.i18n) {
       const index = splitComponentLoaders.find((fn) => fn === callbacks.load);
-      const load = (_, {i18nKeys}) => i18n.load(i18nKeys);
+      const load = (_, { i18nKeys }) => i18n.load(i18nKeys);
       splitComponentLoaders.splice(index, 1, load);
-      setCallbacks({i18n, load});
+      setCallbacks({ i18n, load });
     }
   }, [i18n]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
@@ -59,7 +61,7 @@ BundleSplitConsumer.contextTypes = {
 };
 
 export default ProviderPlugin.create<I18nDepsType, I18nServiceType>(
-  'i18n',
+  "i18n",
   i18n,
   BundleSplitConsumer
 );

@@ -1,8 +1,7 @@
-// @flow
-import {mockFs} from './mockFs.js';
-import {parseRuntimeMetadata} from '../../src/shared/parseRuntimeMetadata.js';
+import { mockFs } from "./mockFs";
+import { parseRuntimeMetadata } from "../../src/shared/parseRuntimeMetadata.js";
 
-test('parseRuntimeMetadata', async () => {
+test("parseRuntimeMetadata", async () => {
   const mock = mockFs();
   const data = await parseRuntimeMetadata();
   expect(data).toEqual(mock);

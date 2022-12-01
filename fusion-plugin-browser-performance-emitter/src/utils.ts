@@ -3,22 +3,21 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 type PaintTime = {
-  entryType: string,
-  name: string,
-  startTime: number,
-  duration: number,
+  entryType: string;
+  name: string;
+  startTime: number;
+  duration: number;
 };
 
 export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
   return {
-    firstPaint: getTimeFromMarks(paintTimes, 'first-paint'),
+    firstPaint: getTimeFromMarks(paintTimes, "first-paint"),
     firstContentfulPaint: getTimeFromMarks(
       paintTimes,
-      'first-contentful-paint'
+      "first-contentful-paint"
     ),
   };
 }

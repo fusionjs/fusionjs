@@ -1,3 +1,2 @@
-// @flow
 export const formatApiPath = (apiPath: string): string =>
-  `/${apiPath}/`.replace(/\/{2,}/g, '/');
+  `/${apiPath}/`.replace(/\/{2,}/g, "/");

@@ -3,20 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
-import React from 'react';
-import {consumeSanitizedHTML} from 'fusion-core';
+import React from "react";
+import { consumeSanitizedHTML } from "fusion-core";
 
-import Plugin from '../src/index.js';
+import Plugin from "../src/index";
 
 const TEST_MANIFEST = {
-  name: 'Fusion test manifest',
+  name: "Fusion test manifest",
 };
 
-test('injects manifest', async () => {
-  const element = React.createElement('div');
-  const setupContext: any = {element, template: {head: [], body: []}};
+test("injects manifest", async () => {
+  const element = React.createElement("div");
+  const setupContext: any = { element, template: { head: [], body: [] } };
 
   expect.assertions(1);
   if (!Plugin.middleware) {
@@ -24,7 +23,7 @@ test('injects manifest', async () => {
   }
 
   // $FlowFixMe
-  await Plugin.middleware({manifest: TEST_MANIFEST})(setupContext, () =>
+  await Plugin.middleware({ manifest: TEST_MANIFEST })(setupContext, () =>
     Promise.resolve()
   );
   const manifestLink = '<link rel="manifest" href="/manifest.json" />';
@@ -34,11 +33,11 @@ test('injects manifest', async () => {
   ).toBe(manifestLink);
 });
 
-test('returns manifest', async () => {
+test("returns manifest", async () => {
   const requestContext: any = {
     undefined,
-    method: 'GET',
-    path: '/manifest.json',
+    method: "GET",
+    path: "/manifest.json",
   };
 
   expect.assertions(1);
@@ -46,7 +45,7 @@ test('returns manifest', async () => {
     return;
   }
   // $FlowFixMe
-  await Plugin.middleware({manifest: TEST_MANIFEST})(requestContext, () =>
+  await Plugin.middleware({ manifest: TEST_MANIFEST })(requestContext, () =>
     Promise.resolve()
   );
   // $FlowFixMe

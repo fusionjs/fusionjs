@@ -3,33 +3,32 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
 
-import {Locale} from 'locale';
+import { Locale } from "locale";
 
-import {createPlugin, memoize, html} from 'fusion-core';
-import type {FusionPlugin, Context} from 'fusion-core';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
-import bodyparser from 'koa-bodyparser';
-import querystring from 'querystring';
+import { createPlugin, memoize, html } from "fusion-core";
+import type { FusionPlugin, Context } from "fusion-core";
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import bodyparser from "koa-bodyparser";
+import querystring from "querystring";
 
-import {I18nLoaderToken, I18nTranslateFnsToken} from './tokens.js';
-import createLoader from './loader.js';
+import { I18nLoaderToken, I18nTranslateFnsToken } from "./tokens";
+import createLoader from "./loader";
 import type {
   I18nDepsType,
   I18nServiceType,
   TranslationsObjectType,
   IEmitter,
   OptionalTranslateFnsType,
-} from './types.js';
-import {translateKey, translateKeys} from './translate';
+} from "./types";
+import { translateKey, translateKeys } from "./translate";
 
 function getKeysFromContext(ctx: Context): string[] {
   if (ctx.request.body && Array.isArray(ctx.request.body)) {
-    return (ctx.request.body: any);
+    return ctx.request.body as any;
   }
 
   const querystringParams = querystring.parse(ctx.querystring);
@@ -53,25 +52,25 @@ const pluginFactory: () => PluginType = () =>
       events: UniversalEventsToken.optional,
       translateFns: I18nTranslateFnsToken.optional,
     },
-    provides: ({loader, events, translateFns}) => {
+    provides: ({ loader, events, translateFns }) => {
       class I18n {
         translations: TranslationsObjectType;
         locale: string | Locale;
-        emitter: ?IEmitter;
+        emitter: IEmitter | undefined | null;
         translateFns: OptionalTranslateFnsType;
 
         constructor(ctx) {
           if (!loader) {
             loader = createLoader();
           }
-          const {translations, locale} = loader.from(ctx);
+          const { translations, locale } = loader.from(ctx);
           this.emitter = events && events.from(ctx);
           this.translations = translations;
           this.locale = locale;
           if (translateFns) {
             this.translateFns = translateFns;
           } else {
-            this.translateFns = {translateKey, translateKeys};
+            this.translateFns = { translateKey, translateKeys };
           }
         }
         async load() {} //mirror client API
@@ -82,26 +81,26 @@ const pluginFactory: () => PluginType = () =>
             key
           );
 
-          if (typeof template !== 'string') {
-            this.emitter && this.emitter.emit('i18n-translate-miss', {key});
+          if (typeof template !== "string") {
+            this.emitter && this.emitter.emit("i18n-translate-miss", { key });
             return key;
           }
 
           return template.replace(/\${(.*?)}/g, (_, k) =>
             interpolations[k] === void 0
-              ? '${' + k + '}'
+              ? "${" + k + "}"
               : String(interpolations[k])
           );
         }
       }
 
-      const service = {from: memoize((ctx) => new I18n(ctx))};
+      const service = { from: memoize((ctx) => new I18n(ctx)) };
       return service;
     },
     middleware: (_, plugin) => {
       // TODO(#4) refactor: this currently depends on babel plugins in framework's webpack config.
       // Ideally these babel plugins should be part of this package, not hard-coded in framework core
-      const chunkTranslationMap = require('../chunk-translation-map');
+      const chunkTranslationMap = require("../chunk-translation-map");
       const parseBody = bodyparser();
 
       return async (ctx, next) => {
@@ -131,12 +130,12 @@ const pluginFactory: () => PluginType = () =>
 
           // i18n.locale is actually a locale.Locale instance
           if (!i18n.locale) {
-            throw new Error('i18n.locale was empty');
+            throw new Error("i18n.locale was empty");
           }
 
           const localeCode =
-            typeof i18n.locale === 'string' ? i18n.locale : i18n.locale.code;
-          const serialized = JSON.stringify({localeCode, translations});
+            typeof i18n.locale === "string" ? i18n.locale : i18n.locale.code;
+          const serialized = JSON.stringify({ localeCode, translations });
           const script = html`
             <script type="application/json" id="__TRANSLATIONS__">
               ${serialized}
@@ -147,7 +146,7 @@ const pluginFactory: () => PluginType = () =>
           // set HTML lang tag as a hint for signal screen readers to switch to the
           // recommended language.
           ctx.template.htmlAttrs.lang = localeCode;
-        } else if (ctx.path === '/_translations') {
+        } else if (ctx.path === "/_translations") {
           const i18n = plugin.from(ctx);
           try {
             await parseBody(ctx, () => Promise.resolve());
@@ -164,7 +163,7 @@ const pluginFactory: () => PluginType = () =>
             i18n.translateFns &&
             i18n.translateFns.translateKeys(sources, localeCode, keys);
           ctx.body = translations;
-          ctx.set('cache-control', 'public, max-age=3600'); // cache translations for up to 1 hour
+          ctx.set("cache-control", "public, max-age=3600"); // cache translations for up to 1 hour
           return next();
         } else {
           return next();
@@ -173,4 +172,4 @@ const pluginFactory: () => PluginType = () =>
     },
   });
 
-export default ((__NODE__ && pluginFactory(): any): PluginType);
+export default __NODE__ && (pluginFactory() as any as PluginType);

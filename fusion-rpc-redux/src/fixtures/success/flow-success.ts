@@ -1,31 +1,31 @@
-// @flow
-import type {Reducer} from 'redux';
-import {createRPCReducer} from '../../index.js';
+import type { Reducer } from "redux";
+import { createRPCReducer } from "../../index";
 
 type UserDataType = {
-  firstName: string,
-  lastName: string,
+  firstName: string;
+  lastName: string;
 };
+
 type ErrorType = {
-  message: string,
+  message: string;
 };
 
-export type UserStateType = {|
-  loading: boolean,
-  data: ?UserDataType,
-  error: ?ErrorType,
-|};
+export type UserStateType = {
+  loading: boolean;
+  data: UserDataType | undefined | null;
+  error: ErrorType | undefined | null;
+};
 
-export type UserActionType = {|
-  type: string,
+export type UserActionType = {
+  type: string;
   payload: {
-    data: ?UserDataType,
-    error: ?ErrorType,
-  },
-|};
+    data: UserDataType | undefined | null;
+    error: ErrorType | undefined | null;
+  };
+};
 
 const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
-  'getUser',
+  "getUser",
   {
     start: (state) => {
       return {

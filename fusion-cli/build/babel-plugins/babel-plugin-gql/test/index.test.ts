@@ -3,52 +3,51 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
 
-const fs = require('fs');
-const t = require('assert');
-const {transformFileSync} = require('@babel/core');
+const fs = require("fs");
+const t = require("assert");
+const { transformFileSync } = require("@babel/core");
 
-const plugin = require('../');
+const plugin = require("../");
 
-test('import gql', () => {
+test("import gql", () => {
   const output = transformFileSync(
-    __dirname + '/fixtures/input-import-destructuring',
+    __dirname + "/fixtures/input-import-destructuring",
     {
       plugins: [plugin],
     }
   );
   const expected = fs
     .readFileSync(
-      __dirname + '/fixtures/expected-import-destructuring',
-      'utf-8'
+      __dirname + "/fixtures/expected-import-destructuring",
+      "utf-8"
     )
     .trim();
-  t.equal(output.code, expected, 'replaced correctly');
+  t.equal(output.code, expected, "replaced correctly");
 });
 
-test('import gql as', () => {
+test("import gql as", () => {
   const output = transformFileSync(
-    __dirname + '/fixtures/input-import-destructuring-as',
+    __dirname + "/fixtures/input-import-destructuring-as",
     {
       plugins: [plugin],
     }
   );
   const expected = fs
     .readFileSync(
-      __dirname + '/fixtures/expected-import-destructuring-as',
-      'utf-8'
+      __dirname + "/fixtures/expected-import-destructuring-as",
+      "utf-8"
     )
     .trim();
-  t.equal(output.code, expected, 'replaced correctly');
+  t.equal(output.code, expected, "replaced correctly");
 });
 
-test('invalid arguments', () => {
+test("invalid arguments", () => {
   function output() {
-    return transformFileSync(__dirname + '/fixtures/input-wrong-arg', {
+    return transformFileSync(__dirname + "/fixtures/input-wrong-arg", {
       plugins: [plugin],
     });
   }

@@ -3,16 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 import Plugin, {
   SessionCookieExpiresToken,
   SessionCookieNameToken,
   SessionSecretToken,
-} from '../src/index';
+} from "../src/index";
 
-test('interface', () => {
+test("interface", () => {
   expect(Plugin).toBeTruthy();
   expect(SessionCookieExpiresToken).toBeTruthy();
   expect(SessionCookieNameToken).toBeTruthy();

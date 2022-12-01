@@ -3,18 +3,17 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env node */
 
-import {createPlugin, html, dangerouslySetHTML} from 'fusion-core';
-import PreloadSession from './preload-session';
-import generateFallbackMap from './generate-fallback-map';
-import generatePreloadLinks from './generate-preload-links';
-import {generateFontFaces} from './generate-font-faces';
-import {FontLoaderReactConfigToken as ConfigToken} from './tokens';
-import type {PluginType, AtomicFontsObjectType} from './types.js';
+import { createPlugin, html, dangerouslySetHTML } from "fusion-core";
+import PreloadSession from "./preload-session";
+import generateFallbackMap from "./generate-fallback-map";
+import generatePreloadLinks from "./generate-preload-links";
+import { generateFontFaces } from "./generate-font-faces";
+import { FontLoaderReactConfigToken as ConfigToken } from "./tokens";
+import type { PluginType, AtomicFontsObjectType } from "./types";
 
 let preloadSession;
 
@@ -23,8 +22,8 @@ const plugin = createPlugin({
   deps: {
     config: ConfigToken,
   },
-  provides: ({config}) => {
-    const {fonts, preloadDepth} = config;
+  provides: ({ config }) => {
+    const { fonts, preloadDepth } = config;
     let hasAtomicFonts = false;
     const atomicFonts: AtomicFontsObjectType = Object.keys(fonts).reduce(
       (result, fontName) => {
@@ -48,10 +47,10 @@ const plugin = createPlugin({
         atomicFonts,
       };
     }
-    return {getFontDetails: null, atomicFonts: null};
+    return { getFontDetails: null, atomicFonts: null };
   },
-  middleware: ({config}, {atomicFonts}) => {
-    const {fonts, preloadOverrides} = config;
+  middleware: ({ config }, { atomicFonts }) => {
+    const { fonts, preloadOverrides } = config;
 
     return (ctx, next) => {
       if (ctx.element) {
@@ -80,4 +79,4 @@ const plugin = createPlugin({
     };
   },
 });
-export default (plugin: PluginType);
+export default plugin as PluginType;

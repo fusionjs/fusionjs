@@ -3,21 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import React from 'react';
+import React from "react";
 
-import {createPlugin, html, unescape, RouteTagsToken} from 'fusion-core';
+import { createPlugin, html, unescape, RouteTagsToken } from "fusion-core";
 
-import {ApolloProvider} from '@apollo/react-common';
+import { ApolloProvider } from "@apollo/react-common";
 
-import type {Context, Render} from 'fusion-core';
+import type { Context, Render } from "fusion-core";
 
-import serverRender from './server';
-import {LoggerToken} from 'fusion-tokens';
-import {ApolloServer} from 'apollo-server-koa';
-import compose from 'koa-compose';
+import serverRender from "./server";
+import { LoggerToken } from "fusion-tokens";
+import { ApolloServer } from "apollo-server-koa";
+import compose from "koa-compose";
 import {
   ApolloContextToken,
   ApolloCacheContext,
@@ -27,18 +26,18 @@ import {
   ApolloClientToken,
   ApolloBodyParserConfigToken,
   ApolloDefaultOptionsConfigToken,
-} from './tokens';
+} from "./tokens";
 
 export type DepsType = {
-  RouteTags: typeof RouteTagsToken,
-  apolloContext: typeof ApolloContextToken.optional,
-  logger: typeof LoggerToken.optional,
-  schema: typeof GraphQLSchemaToken.optional,
-  endpoint: typeof GraphQLEndpointToken.optional,
-  getApolloClient: typeof ApolloClientToken,
-  getDataFromTree: typeof GetDataFromTreeToken.optional,
-  bodyParserConfig: typeof ApolloBodyParserConfigToken.optional,
-  defaultOptionsConfig: typeof ApolloDefaultOptionsConfigToken.optional,
+  RouteTags: typeof RouteTagsToken;
+  apolloContext: typeof ApolloContextToken.optional;
+  logger: typeof LoggerToken.optional;
+  schema: typeof GraphQLSchemaToken.optional;
+  endpoint: typeof GraphQLEndpointToken.optional;
+  getApolloClient: typeof ApolloClientToken;
+  getDataFromTree: typeof GetDataFromTreeToken.optional;
+  bodyParserConfig: typeof ApolloBodyParserConfigToken.optional;
+  defaultOptionsConfig: typeof ApolloDefaultOptionsConfigToken.optional;
 };
 
 export type ProvidesType = (el: any, ctx: Context) => Promise<any>;
@@ -85,7 +84,7 @@ export default (renderFn: Render) =>
       RouteTags,
       logger,
       schema,
-      endpoint = '/graphql',
+      endpoint = "/graphql",
       getApolloClient,
       apolloContext = (ctx) => {
         return ctx;
@@ -100,7 +99,7 @@ export default (renderFn: Render) =>
         let initialState = null;
         if (__BROWSER__) {
           // Deserialize initial state for the browser
-          const apolloState = document.getElementById('__APOLLO_STATE__');
+          const apolloState = document.getElementById("__APOLLO_STATE__");
           if (apolloState) {
             initialState = JSON.parse(unescape(apolloState.textContent));
           }
@@ -130,7 +129,7 @@ export default (renderFn: Render) =>
       };
       if (__NODE__ && schema) {
         const getApolloContext = (ctx) => {
-          if (typeof apolloContext === 'function') {
+          if (typeof apolloContext === "function") {
             return apolloContext(ctx);
           }
           return apolloContext;
@@ -144,13 +143,13 @@ export default (renderFn: Render) =>
           ...defaultOptionsConfig,
           schema,
           // investigate other options
-          context: ({ctx}) => {
+          context: ({ ctx }) => {
             return ctx;
           },
           executor: async (requestContext) => {
             const fusionCtx = requestContext.context;
             const routeTags = RouteTags.from(fusionCtx);
-            routeTags.name = 'graphql';
+            routeTags.name = "graphql";
             const apolloCtx = getApolloContext(fusionCtx);
             const client = getApolloClient(fusionCtx, {});
             const queryObservable = client.queryManager.getObservableFromLink(

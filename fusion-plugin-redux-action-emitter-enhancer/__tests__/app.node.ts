@@ -3,55 +3,60 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import type {StoreCreator, Reducer} from 'redux';
+import type { StoreCreator, Reducer } from "redux";
 
-import App, {createPlugin} from 'fusion-core';
-import {getSimulator} from 'fusion-test-utils';
-import {EnhancerToken} from 'fusion-plugin-react-redux';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import App, { createPlugin } from "fusion-core";
+import { getSimulator } from "fusion-test-utils";
+import { EnhancerToken } from "fusion-plugin-react-redux";
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
 
-import ReduxActionEmitterEnhancer from '../src/index.js';
+import ReduxActionEmitterEnhancer from "../src/index";
 
-type ExtractReturnType = <V>(() => V) => V;
-type IEmitter = $Call<typeof UniversalEventsToken, ExtractReturnType>;
+type $Call1<F extends (...args: any) => any, A> = F extends (
+  a: A,
+  ...args: any
+) => infer R
+  ? R
+  : never;
+type ExtractReturnType = <V>(a: () => V) => V;
+type IEmitter = $Call1<typeof UniversalEventsToken, ExtractReturnType>;
 
 const eventsEmitted = [];
 const mockEmitter = {
   emit: (type, payload) => {
-    eventsEmitted.push({type, payload});
+    eventsEmitted.push({ type, payload });
   },
   from: function () {
     return this;
   },
 };
-const mockEmitterTyped = ((mockEmitter: any): IEmitter);
+const mockEmitterTyped = mockEmitter as any as IEmitter;
 
 const mockEmitterPlugin = createPlugin({
   provides: () => mockEmitterTyped,
 });
 
 function createTestFixture() {
-  const app = new App('content', (el) => el);
+  const app = new App("content", (el) => el);
   app.register(EnhancerToken, ReduxActionEmitterEnhancer);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   return app;
 }
 
-test('plugin - service resolved as expected', () => {
+test("plugin - service resolved as expected", () => {
   const app = createTestFixture();
   let wasResolved = false;
 
   getSimulator(
     app,
     createPlugin({
-      deps: {enhancer: EnhancerToken},
+      deps: { enhancer: EnhancerToken },
       provides: (deps) => {
-        const {enhancer} = deps;
+        const { enhancer } = deps;
         expect(enhancer).toBeTruthy();
-        const createStore: StoreCreator<*, *, *> = () => {
+        const createStore: StoreCreator<any, any, any> = () => {
           return {
             dispatch: () => {},
             getState: () => {},
@@ -59,10 +64,10 @@ test('plugin - service resolved as expected', () => {
             replaceReducer: () => {},
           };
         };
-        const mockReducer: Reducer<*, *> = (s) => s;
+        const mockReducer: Reducer<any, any> = (s) => s;
         const enhanced = enhancer(createStore)(mockReducer);
         enhanced.dispatch({
-          type: 'TEST',
+          type: "TEST",
         });
         enhanced.dispatch(function test() {});
         enhanced.dispatch();
@@ -72,6 +77,6 @@ test('plugin - service resolved as expected', () => {
   );
 
   expect(wasResolved).toBeTruthy();
-  expect(eventsEmitted[0].type).toBe('redux-action-emitter:action');
+  expect(eventsEmitted[0].type).toBe("redux-action-emitter:action");
   expect(eventsEmitted.length).toBe(1);
 });

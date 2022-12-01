@@ -3,15 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  * @jest-environment node
  */
 
 /* eslint-env node */
-import {Runtime} from '../../utils.js';
+import { Runtime } from "../../utils";
 
-test('browser plugin integration test withRPCRedux', async () => {
-  const runtime = new Runtime({fixture: __dirname});
+test("browser plugin integration test withRPCRedux", async () => {
+  const runtime = new Runtime({ fixture: __dirname });
   await runtime.start();
 
   // rpc actions are dispatched as sideEffect
@@ -20,7 +20,7 @@ test('browser plugin integration test withRPCRedux', async () => {
     '[data-testid="user-id"]',
     (el) => el.textContent
   );
-  expect(userId).toEqual('123');
+  expect(userId).toEqual("123");
 
   await runtime.end();
 }, 45000);

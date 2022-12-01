@@ -3,12 +3,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
-import ssrPrepass from '@derekju/react-ssr-prepass';
-import PropTypes from 'prop-types';
+import * as React from "react";
+import ssrPrepass from "@derekju/react-ssr-prepass";
+import PropTypes from "prop-types";
 
 class PrepareState {
   seen: Map<any, Set<string>>;

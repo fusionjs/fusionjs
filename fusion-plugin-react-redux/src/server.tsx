@@ -3,29 +3,28 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import React from 'react';
-import {compose, createStore} from 'redux';
-import {Provider} from 'react-redux';
+import React from "react";
+import { compose, createStore } from "redux";
+import { Provider } from "react-redux";
 
-import {createPlugin, memoize, html} from 'fusion-core';
-import type {FusionPlugin, Context} from 'fusion-core';
+import { createPlugin, memoize, html } from "fusion-core";
+import type { FusionPlugin, Context } from "fusion-core";
 
-import ctxEnhancer from './ctx-enhancer';
-import {serialize} from './codec.js';
+import ctxEnhancer from "./ctx-enhancer";
+import { serialize } from "./codec";
 import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
-} from './tokens.js';
+} from "./tokens";
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
   ReactReduxServiceType,
-} from './types.js';
+} from "./types";
 
 const plugin =
   __NODE__ &&
@@ -36,10 +35,10 @@ const plugin =
       enhancer: EnhancerToken.optional,
       getInitialState: GetInitialStateToken.optional,
     },
-    provides({reducer, preloadedState, enhancer, getInitialState}) {
+    provides({ reducer, preloadedState, enhancer, getInitialState }) {
       class Redux {
         ctx: Context;
-        store: ?StoreWithContextType<*, *, *>;
+        store: StoreWithContextType<any, any, any> | undefined | null;
 
         constructor(ctx) {
           // We only use initialState for client-side hydration
@@ -91,7 +90,7 @@ const plugin =
     },
   });
 
-export default ((plugin: any): FusionPlugin<
+export default plugin as any as FusionPlugin<
   ReactReduxDepsType,
   ReactReduxServiceType
->);
+>;

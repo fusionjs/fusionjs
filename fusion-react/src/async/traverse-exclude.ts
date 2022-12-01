@@ -3,10 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import prepared from './prepared.js';
+import prepared from "./prepared";
 
 // Stops the traversal at this node. Useful for optimizing the prepare traversal
 // to visit the minimum number of nodes

@@ -3,16 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import React from 'react';
+import React from "react";
 
-import {I18nContext} from './plugin.js';
+import { I18nContext } from "./plugin";
 
 type TranslatePropsType = {
-  id: string,
-  data?: Object,
+  id: string;
+  data?: any;
 };
 
 function Translate(props: TranslatePropsType) {
@@ -23,4 +22,4 @@ function Translate(props: TranslatePropsType) {
   return React.Fragment ? <>{content}</> : <span>{content}</span>;
 }
 
-export {Translate};
+export { Translate };

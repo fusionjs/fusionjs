@@ -3,27 +3,26 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import {createPath, parsePath} from 'history';
+import { createPath, parsePath } from "history";
 
-import {addRoutePrefix} from './utils.js';
-import type {TLocation, StaticContextType, TTo, TNavigator} from '../types.js';
+import { addRoutePrefix } from "./utils";
+import type { TLocation, StaticContextType, TTo, TNavigator } from "../types";
 
 const locationToCreatePathOpts = (loc: TLocation) => {
   const opts = {};
-  for (const opt of ['pathname', 'search', 'hash']) {
+  for (const opt of ["pathname", "search", "hash"]) {
     if (loc[opt]) opts[opt] = loc[opt];
   }
   return opts;
 };
 
 const defaultCreateLocation = (path: TTo) => {
-  let location: TLocation = typeof path === 'string' ? parsePath(path) : path;
+  let location: TLocation = typeof path === "string" ? parsePath(path) : path;
   location.pathname = decodeURI(location.pathname);
   if (!location.pathname) {
-    location.pathname = '/';
+    location.pathname = "/";
   }
   return location;
 };
@@ -39,7 +38,7 @@ const createLocation = (
   } catch (e) {
     if (e instanceof URIError) {
       return defaultCreateLocation(
-        typeof finalPath === 'string'
+        typeof finalPath === "string"
           ? encodeURI(finalPath)
           : {
               ...finalPath,
@@ -54,7 +53,7 @@ const createLocation = (
 
 const createPrefixedURL = (location: TTo, prefix: string): string => {
   const prefixed = addRoutePrefix(location, prefix);
-  if (typeof prefixed === 'string') {
+  if (typeof prefixed === "string") {
     return prefixed;
   } else {
     return createPath(locationToCreatePathOpts(prefixed));
@@ -76,35 +75,35 @@ export function createServerHistory(
     return createPrefixedURL(location, basename);
   }
   function push(path: TTo) {
-    context.action = 'PUSH';
+    context.action = "PUSH";
     // Ensure prefix is always included
     context.location = createLocation(path, basename, true);
     const url = createPath(locationToCreatePathOpts(context.location));
-    if (typeof url === 'string') {
+    if (typeof url === "string") {
       context.url = url;
     }
   }
 
   function replace(path: TTo) {
-    context.action = 'REPLACE';
+    context.action = "REPLACE";
     // Ensure prefix is always included
     context.location = createLocation(path, basename, true);
     const url = createPath(locationToCreatePathOpts(context.location));
-    if (typeof url === 'string') {
+    if (typeof url === "string") {
       context.url = url;
     }
   }
   const history = {
-    action: 'POP',
+    action: "POP",
     location: createLocation(location, basename, true),
-    go: staticHandler('go'),
+    go: staticHandler("go"),
     push,
     replace,
     createHref,
-    back: staticHandler('back'),
-    forward: staticHandler('forward'),
+    back: staticHandler("back"),
+    forward: staticHandler("forward"),
     listen: () => noop,
     block: () => noop,
   };
-  return (history: TNavigator);
+  return history as TNavigator;
 }

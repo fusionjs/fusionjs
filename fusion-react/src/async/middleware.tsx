@@ -3,19 +3,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
+import * as React from "react";
 
-import type {Middleware} from 'fusion-core';
+import type { Middleware } from "fusion-core";
 
-import PrepareProvider from './prepare-provider';
+import PrepareProvider from "./prepare-provider";
 
 const middleware: Middleware = function (ctx, next) {
   if (__DEV__) {
     // eslint-disable-next-line no-console
-    console.warn('The {middleware} export from fusion-react is deprecated.');
+    console.warn("The {middleware} export from fusion-react is deprecated.");
   }
 
   if (__NODE__ && !ctx.element) {

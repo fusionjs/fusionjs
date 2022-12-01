@@ -3,15 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
-import Plugin, {createRPCReducer, mock, withRPCRedux, withRPCReactor} from '..';
+import Plugin, {
+  createRPCReducer,
+  mock,
+  withRPCRedux,
+  withRPCReactor,
+} from "..";
 
-test('interface', () => {
-  expect(typeof Plugin.provides).toBe('function');
-  expect(typeof createRPCReducer).toBe('function');
-  expect(typeof mock.provides).toBe('function');
-  expect(typeof withRPCRedux).toBe('function');
-  expect(typeof withRPCReactor).toBe('function');
+test("interface", () => {
+  expect(typeof Plugin.provides).toBe("function");
+  expect(typeof createRPCReducer).toBe("function");
+  expect(typeof mock.provides).toBe("function");
+  expect(typeof withRPCRedux).toBe("function");
+  expect(typeof withRPCReactor).toBe("function");
 });

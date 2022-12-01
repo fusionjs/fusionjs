@@ -3,15 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
 /* eslint-env node */
-import puppeteer from 'puppeteer';
-import getPort from 'get-port';
-import child_process from 'child_process';
-import {promisify} from 'util';
-import axios from 'axios';
+import puppeteer from "puppeteer";
+import getPort from "get-port";
+import child_process from "child_process";
+import { promisify } from "util";
+import axios from "axios";
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
@@ -39,7 +39,7 @@ export const createMockEmitter = function createMockEmitter(props) {
 
 export const Runtime = class Runtime {
   constructor(opts) {
-    this.fixturePath = opts.fixture || '.';
+    this.fixturePath = opts.fixture || ".";
     this.collectLogs = opts.collectLogs || false;
     this.started = false;
   }
@@ -48,18 +48,18 @@ export const Runtime = class Runtime {
 
     const [port] = await Promise.all([
       getPort(),
-      execFile('fusion', ['build'], {cwd}),
+      execFile("fusion", ["build"], { cwd }),
     ]);
     this.port = port;
     this.url = `http://localhost:${this.port}`;
 
-    this.server = spawn('fusion', ['start', `--port=${port}`], {
-      stdio: 'inherit',
+    this.server = spawn("fusion", ["start", `--port=${port}`], {
+      stdio: "inherit",
       cwd,
     });
 
     this.browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     this.page = await this.browser.newPage();
@@ -67,7 +67,7 @@ export const Runtime = class Runtime {
 
     this.started = true;
     if (this.collectLogs) {
-      this.page.on('console', (msg) =>
+      this.page.on("console", (msg) =>
         msg.args().forEach(async (arg) => {
           console.log(await arg.jsonValue()); // eslint-disable-line
         })
@@ -75,7 +75,7 @@ export const Runtime = class Runtime {
     }
   }
   request(path) {
-    const url = `${this.url}${path.startsWith('/') ? path : `/${path}`}`;
+    const url = `${this.url}${path.startsWith("/") ? path : `/${path}`}`;
     return axios(url);
   }
   async end() {
@@ -103,6 +103,6 @@ async function untilReady(page, port) {
   }
 
   if (!started) {
-    throw new Error('Failed to start');
+    throw new Error("Failed to start");
   }
 }

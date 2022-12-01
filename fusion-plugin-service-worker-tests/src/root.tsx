@@ -1,9 +1,8 @@
-// @flow
-import React from 'react';
-import {Route, Routes} from 'fusion-plugin-react-router';
+import React from "react";
+import { Route, Routes } from "fusion-plugin-react-router";
 
-import Home from './pages/home.js';
-import PageNotFound from './pages/pageNotFound.js';
+import Home from "./pages/home";
+import PageNotFound from "./pages/pageNotFound";
 
 const root = (
   <Routes>

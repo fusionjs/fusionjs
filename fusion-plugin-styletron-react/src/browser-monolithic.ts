@@ -3,16 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
-import type {FusionPlugin} from 'fusion-core';
+import type { FusionPlugin } from "fusion-core";
 
-import {Client as Styletron} from 'styletron-engine-monolithic';
+import { Client as Styletron } from "styletron-engine-monolithic";
 
-import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin.js';
-import getPlugin from './browser.js';
+import { injectDeclarationCompatMixin } from "./inject-declaration-compat-mixin";
+import getPlugin from "./browser";
 
 const StyletronCompat = injectDeclarationCompatMixin(Styletron);
 
@@ -22,4 +21,4 @@ function getStyletronEngine(config) {
 
 const plugin = getPlugin(getStyletronEngine);
 
-export default ((plugin: any): FusionPlugin<*, *>);
+export default plugin as any as FusionPlugin<any, any>;

@@ -3,20 +3,20 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
 /* eslint-env node */
-import React from 'react';
-import App from 'fusion-react';
-import {getSimulator} from 'fusion-test-utils';
-import Redux, {ReduxToken, ReducerToken} from 'fusion-plugin-react-redux';
-import {createMockEmitter} from './utils.js';
-import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import React from "react";
+import App from "fusion-react";
+import { getSimulator } from "fusion-test-utils";
+import Redux, { ReduxToken, ReducerToken } from "fusion-plugin-react-redux";
+import { createMockEmitter } from "./utils";
+import { UniversalEventsToken } from "fusion-plugin-universal-events";
 
-import Plugin, {RPCToken, RPCHandlersToken, useRPCRedux} from '..';
+import Plugin, { RPCToken, RPCHandlersToken, useRPCRedux } from "..";
 
-test('useRPCRedux hook API', async () => {
+test("useRPCRedux hook API", async () => {
   expect.assertions(4);
 
   let done;
@@ -24,30 +24,30 @@ test('useRPCRedux hook API', async () => {
   const testPromise = new Promise((resolve) => (done = resolve));
 
   function Root() {
-    const getUser = useRPCRedux('getUser', {
+    const getUser = useRPCRedux("getUser", {
       mapStateToParams: (state, arg) => ({
         ...arg,
         ...state,
-        mappedValue: 'map',
+        mappedValue: "map",
       }),
       transformParams: (arg) => ({
         ...arg,
-        transformedValue: 'transform',
+        transformedValue: "transform",
       }),
     });
-    expect(typeof getUser).toBe('function'); // handler is a function
+    expect(typeof getUser).toBe("function"); // handler is a function
 
-    const result = getUser({initialValue: 'initial'});
+    const result = getUser({ initialValue: "initial" });
     expect(result).toBeInstanceOf(Promise); // handler returns promise
 
     // eslint-disable-next-line
-    result.then(data => {
+    result.then((data) => {
       expect(data).toBeTruthy(); // data resolves
       expect(data).toEqual({
-        initialValue: 'initial',
-        stateValue: 'state',
-        mappedValue: 'map',
-        transformedValue: 'transform',
+        initialValue: "initial",
+        stateValue: "state",
+        mappedValue: "map",
+        transformedValue: "transform",
       }); // plumbing functions (mapStateToParams, transformParams) are all called
       done(); // exit test
     });
@@ -63,9 +63,9 @@ test('useRPCRedux hook API', async () => {
     },
   });
   app.register(ReducerToken, (state) => ({
-    stateValue: 'state',
+    stateValue: "state",
   }));
   const sim = getSimulator(app);
-  await sim.render('/');
+  await sim.render("/");
   return testPromise;
 });

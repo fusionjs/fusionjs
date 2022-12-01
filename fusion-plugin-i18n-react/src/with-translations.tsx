@@ -3,16 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import React from 'react';
-import type {Context} from 'fusion-core';
-import {I18nContext} from './plugin.js';
+import React from "react";
+import type { Context } from "fusion-core";
+import { I18nContext } from "./plugin";
+
+import type { Component, ComponentType } from "react";
 
 type TranslateType = (
   key: string,
-  interpolations?: {[string]: string | number}
+  interpolations?: {
+    [x: string]: string | number;
+  }
 ) => string;
 
 /*
@@ -27,13 +30,11 @@ The translation map is then exposed by `fusion-plugin-i18n/chunk-translation-map
 export const withTranslations = (
   translationKeys: string[] /*translationKeys*/
 ) => {
-  return <T: {}>(
-    Component: React$ComponentType<T>
-  ): Class<
-    React$Component<
-      $Diff<T, {|translate?: TranslateType, localeCode?: string|}>
-    >
-  > => {
+  return <T extends {}>(
+    Component: ComponentType<T>
+  ): {
+    new (...args: any): Component<Omit<T, "translate" | "localeCode">>;
+  } => {
     class WithTranslations extends React.Component<T> {
       translate: TranslateType;
       localeCode: string;
@@ -41,11 +42,15 @@ export const withTranslations = (
       constructor(props: T, context: Context) {
         super(props, context);
         const i18n = context;
-        this.localeCode = i18n && i18n.localeCode ? i18n.localeCode : 'en_US';
+        this.localeCode = i18n && i18n.localeCode ? i18n.localeCode : "en_US";
         this.translate =
           i18n && i18n.translate
-            ? (key: string, interpolations?: {[string]: string | number}) =>
-                i18n.translate(key, interpolations)
+            ? (
+                key: string,
+                interpolations?: {
+                  [x: string]: string | number;
+                }
+              ) => i18n.translate(key, interpolations)
             : (key: string) => key;
       }
 
@@ -60,7 +65,7 @@ export const withTranslations = (
       }
     }
 
-    const displayName = Component.displayName || Component.name || 'Anonymous';
+    const displayName = Component.displayName || Component.name || "Anonymous";
     WithTranslations.displayName = `withTranslations(${displayName})`;
     // $FlowFixMe
     WithTranslations.contextType = I18nContext;

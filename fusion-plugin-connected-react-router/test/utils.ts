@@ -3,18 +3,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
 /* eslint-env node */
-const puppeteer = require('puppeteer');
-const getPort = require('get-port');
-const child_process = require('child_process');
-const {promisify} = require('util');
+const puppeteer = require("puppeteer");
+const getPort = require("get-port");
+const child_process = require("child_process");
+const { promisify } = require("util");
 
 const spawn = child_process.spawn;
 const execFile = promisify(child_process.execFile);
-const request = require('axios');
+const request = require("axios");
 
 /* Test helpers */
 module.exports.createMockEmitter = function createMockEmitter(props) {
@@ -38,7 +38,7 @@ module.exports.createMockEmitter = function createMockEmitter(props) {
 
 module.exports.Runtime = class Runtime {
   constructor(opts) {
-    this.fixturePath = opts.fixture || '.';
+    this.fixturePath = opts.fixture || ".";
     this.collectLogs = opts.collectLogs || false;
     this.started = false;
   }
@@ -47,18 +47,18 @@ module.exports.Runtime = class Runtime {
 
     const [port] = await Promise.all([
       getPort(),
-      execFile('fusion', ['build'], {cwd}),
+      execFile("fusion", ["build"], { cwd }),
     ]);
     this.port = port;
     this.url = `http://localhost:${this.port}`;
 
-    this.server = spawn('fusion', ['start', `--port=${port}`], {
-      stdio: 'inherit',
+    this.server = spawn("fusion", ["start", `--port=${port}`], {
+      stdio: "inherit",
       cwd,
     });
 
     this.browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     this.page = await this.browser.newPage();
@@ -66,7 +66,7 @@ module.exports.Runtime = class Runtime {
 
     this.started = true;
     if (this.collectLogs) {
-      this.page.on('console', (msg) =>
+      this.page.on("console", (msg) =>
         msg.args().forEach(async (arg) => {
           console.log(await arg.jsonValue()); // eslint-disable-line
         })
@@ -74,7 +74,7 @@ module.exports.Runtime = class Runtime {
     }
   }
   request(path) {
-    const url = `${this.url}${path.startsWith('/') ? path : `/${path}`}`;
+    const url = `${this.url}${path.startsWith("/") ? path : `/${path}`}`;
     return request(url);
   }
   async end() {
@@ -102,6 +102,6 @@ async function untilReady(page, port) {
   }
 
   if (!started) {
-    throw new Error('Failed to start');
+    throw new Error("Failed to start");
   }
 }

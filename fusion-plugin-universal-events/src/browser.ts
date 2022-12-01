@@ -3,22 +3,21 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
 /* eslint-env browser */
-import {createPlugin} from 'fusion-core';
-import type {FusionPlugin} from 'fusion-core';
-import {FetchToken} from 'fusion-tokens';
-import type {Fetch} from 'fusion-tokens';
-import Emitter from './emitter.js';
+import { createPlugin } from "fusion-core";
+import type { FusionPlugin } from "fusion-core";
+import { FetchToken } from "fusion-tokens";
+import type { Fetch } from "fusion-tokens";
+import Emitter from "./emitter";
 import type {
   IEmitter,
   UniversalEventsPluginDepsType as DepsType,
   BatchStorage,
-} from './types.js';
-import {UniversalEventsBatchStorageToken} from './storage/index.js';
-import {inMemoryBatchStorage} from './storage/in-memory.js';
+} from "./types";
+import { UniversalEventsBatchStorageToken } from "./storage/index";
+import { inMemoryBatchStorage } from "./storage/in-memory";
 
 // The Beacon API rejects requests with big payloads and the size limit
 // depends on the user agent. The limit in Chrome is 64KB and it is supposed
@@ -43,7 +42,7 @@ export class UniversalEmitter extends Emitter {
     storage: BatchStorage,
     interval: number = 5000,
     limit: number = 1000
-  ): void {
+  ) {
     super();
     //privates
     this.storage = storage;
@@ -51,23 +50,23 @@ export class UniversalEmitter extends Emitter {
     this.fetch = fetch;
     this.setFrequency(interval);
     this.limit = limit;
-    window.addEventListener('visibilitychange', this.flushBeforeTerminated);
+    window.addEventListener("visibilitychange", this.flushBeforeTerminated);
   }
   setFrequency(frequency: number): void {
     window.clearInterval(this.interval);
     this.interval = setInterval(this.flush, frequency);
   }
-  emit(type: string, payload: mixed): void {
+  emit(type: string, payload: unknown): void {
     payload = super.mapEvent(type, payload);
     super.handleEvent(type, payload);
-    this.storage.add({type, payload});
+    this.storage.add({ type, payload });
   }
   // match server api
   from(): UniversalEmitter {
     return this;
   }
   flushBeforeTerminated = () =>
-    document.visibilityState === 'hidden' && this.flushInternal();
+    document.visibilityState === "hidden" && this.flushInternal();
   async flushInternal(): Promise<void> {
     if (!this.startFlush()) {
       return;
@@ -103,15 +102,15 @@ export class UniversalEmitter extends Emitter {
         break;
       }
     }
-    const payload = `{"items":[${itemsToSend.join(',')}]}`;
+    const payload = `{"items":[${itemsToSend.join(",")}]}`;
 
     if (navigator.sendBeacon && !isLargePayload) {
       // Not sending Blob with Content-Type: 'application/json' because it throws in some old browsers.
       // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
       // performed in sendBeacon using Blob with a not-simple content type.
       // See http://crbug.com/490015
-      const prefix = window.__ROUTE_PREFIX__ || '';
-      const eventsURL = prefix + '/_events';
+      const prefix = window.__ROUTE_PREFIX__ || "";
+      const eventsURL = prefix + "/_events";
       if (navigator.sendBeacon(eventsURL, payload)) {
         this.storage.getAndClear(itemsToSend.length);
         this.finishFlush();
@@ -120,10 +119,10 @@ export class UniversalEmitter extends Emitter {
     }
 
     try {
-      const res = await this.fetch('/_events', {
-        method: 'POST',
+      const res = await this.fetch("/_events", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: payload,
       });
@@ -146,7 +145,7 @@ export class UniversalEmitter extends Emitter {
     }
   }
   teardown(): void {
-    window.removeEventListener('visibilitychange', this.flushBeforeTerminated);
+    window.removeEventListener("visibilitychange", this.flushBeforeTerminated);
     clearInterval(this.interval);
     this.interval = null;
   }
@@ -171,8 +170,8 @@ const plugin =
   __BROWSER__ &&
   createPlugin<
     {
-      fetch: typeof FetchToken,
-      storage: typeof UniversalEventsBatchStorageToken.optional,
+      fetch: typeof FetchToken;
+      storage: typeof UniversalEventsBatchStorageToken.optional;
     },
     IEmitter
   >({
@@ -180,7 +179,7 @@ const plugin =
       fetch: FetchToken,
       storage: UniversalEventsBatchStorageToken.optional,
     },
-    provides: ({fetch, storage}) => {
+    provides: ({ fetch, storage }) => {
       return new UniversalEmitter(fetch, storage || inMemoryBatchStorage);
     },
     cleanup: async (emitter) => {
@@ -188,4 +187,4 @@ const plugin =
     },
   });
 
-export default ((plugin: any): FusionPlugin<DepsType, IEmitter>);
+export default plugin as any as FusionPlugin<DepsType, IEmitter>;

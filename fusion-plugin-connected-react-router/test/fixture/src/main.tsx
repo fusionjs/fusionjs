@@ -3,27 +3,29 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
-import React from 'react';
-import {createPlugin} from 'fusion-core';
-import {compose} from 'redux';
-import App from 'fusion-react';
-import Root from './root.js';
+import React from "react";
+import { createPlugin } from "fusion-core";
+import { compose } from "redux";
+import App from "fusion-react";
+import Root from "./root";
 import Router, {
   RouterToken,
   RouterProviderToken,
-} from 'fusion-plugin-react-router';
+} from "fusion-plugin-react-router";
 import Redux, {
   ReduxToken,
   ReducerToken,
   EnhancerToken,
   GetInitialStateToken,
-} from 'fusion-plugin-react-redux';
-import ConnectedRouterEnhancer, {ConnectedRouterEnhancerToken} from '../../..';
-import {ConnectedRouter} from 'connected-react-router';
-import reducer from './redux.js';
+} from "fusion-plugin-react-redux";
+import ConnectedRouterEnhancer, {
+  ConnectedRouterEnhancerToken,
+} from "../../..";
+import { ConnectedRouter } from "connected-react-router";
+import reducer from "./redux";
 
 export default function start() {
   const app = new App(<Root />);
@@ -42,8 +44,8 @@ export default function start() {
   app.register(
     EnhancerToken,
     createPlugin({
-      deps: {connectedRouterEnhancer: ConnectedRouterEnhancerToken},
-      provides: ({connectedRouterEnhancer}) => {
+      deps: { connectedRouterEnhancer: ConnectedRouterEnhancerToken },
+      provides: ({ connectedRouterEnhancer }) => {
         return compose(connectedRouterEnhancer);
       },
     })

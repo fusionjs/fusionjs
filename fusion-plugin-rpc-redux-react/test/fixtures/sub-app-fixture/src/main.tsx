@@ -3,25 +3,25 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @noflow
+ * @ts-nocheck
  */
 
-import React from 'react';
-import App from 'fusion-react';
-import RPCPlugin, {RPCToken} from '../../../..';
-import Root from './components/root.js';
+import React from "react";
+import App from "fusion-react";
+import RPCPlugin, { RPCToken } from "../../../..";
+import Root from "./components/root";
 import ReduxPlugin, {
   ReducerToken,
   ReduxToken,
   GetInitialStateToken,
-} from 'fusion-plugin-react-redux';
+} from "fusion-plugin-react-redux";
 import UniversalEvents, {
   UniversalEventsToken,
-} from 'fusion-plugin-universal-events';
-import {RPCHandlersToken} from 'fusion-plugin-rpc';
-import {FetchToken} from 'fusion-tokens';
-import rpcHandlers from './rpc/index.js';
-import reducer from './redux.js';
+} from "fusion-plugin-universal-events";
+import { RPCHandlersToken } from "fusion-plugin-rpc";
+import { FetchToken } from "fusion-tokens";
+import rpcHandlers from "./rpc/index";
+import reducer from "./redux";
 
 export default () => {
   const app = new App(<Root />);

@@ -3,20 +3,19 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import plugin, {RouterToken, GetStaticContextToken} from './plugin';
-import * as server from './server';
-import * as browser from './browser';
+import plugin, { RouterToken, GetStaticContextToken } from "./plugin";
+import * as server from "./server";
+import * as browser from "./browser";
 
-export type * from './types.js';
+export * from "./types";
 
 declare var __BROWSER__: Boolean;
 
 export default plugin;
 
-export {RouterToken, GetStaticContextToken};
+export { RouterToken, GetStaticContextToken };
 
 export const Status = __BROWSER__ ? browser.Status : server.Status;
 export const NotFound = __BROWSER__ ? browser.NotFound : server.NotFound;

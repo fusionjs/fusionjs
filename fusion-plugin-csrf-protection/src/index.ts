@@ -3,13 +3,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import serverCsrf from './server.js';
-import clientCsrf from './browser.js';
+import serverCsrf from "./server";
+import clientCsrf from "./browser";
 
 declare var __NODE__: Boolean;
 export default __NODE__ ? serverCsrf : clientCsrf;
 
-export {CsrfIgnoreRoutesToken} from './shared';
+export { CsrfIgnoreRoutesToken } from "./shared";

@@ -1,11 +1,10 @@
-// @flow
 /* global window */
 
-import type {BatchType, BatchStorage} from '../types';
-import {inMemoryBatchStorage} from './in-memory';
-import {split} from './split';
+import type { BatchType, BatchStorage } from "../types";
+import { inMemoryBatchStorage } from "./in-memory";
+import { split } from "./split";
 
-const storageKey = 'fusion-events';
+const storageKey = "fusion-events";
 
 const get = () => {
   try {
@@ -44,8 +43,8 @@ class LocalBatchStorage implements BatchStorage {
 let isLocalStorageWritable = true;
 
 try {
-  window.localStorage.setItem('test', 'test');
-  window.localStorage.removeItem('test');
+  window.localStorage.setItem("test", "test");
+  window.localStorage.removeItem("test");
 } catch (e) {
   // if set/remove item fails localStorage is not writable
   // fallback to in-memory storage

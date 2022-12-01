@@ -3,16 +3,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @flow
  */
 
-import * as React from 'react';
+import * as React from "react";
 // $FlowFixMe
-import {ReactReduxContext} from 'react-redux';
-import {RPCToken} from 'fusion-plugin-rpc';
-import {ReduxToken} from 'fusion-plugin-react-redux';
-import {FusionContext, useService} from 'fusion-react';
-import {createRPCHandler} from 'fusion-rpc-redux';
+import { ReactReduxContext } from "react-redux";
+import { RPCToken } from "fusion-plugin-rpc";
+import { ReduxToken } from "fusion-plugin-react-redux";
+import { FusionContext, useService } from "fusion-react";
+import { createRPCHandler } from "fusion-rpc-redux";
 
 export function useRPCRedux(
   rpcId: string,
@@ -21,11 +20,11 @@ export function useRPCRedux(
     transformParams,
     mapStateToParams,
   }: {
-    actions?: any,
-    transformParams?: (params: any) => any,
-    mapStateToParams?: (state: any, args?: any) => any,
+    actions?: any;
+    transformParams?: (params: any) => any;
+    mapStateToParams?: (state: any, args?: any) => any;
   } = {}
-): (any) => Promise<any> {
+): (a: any) => Promise<any> {
   const reactReduxContext = React.useContext(ReactReduxContext);
   const ctx = React.useContext(FusionContext);
   const reduxPlugin = useService(ReduxToken).from(ctx);
