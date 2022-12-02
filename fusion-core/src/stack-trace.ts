@@ -15,6 +15,7 @@ export function captureStackTrace(caller: Function): string {
       Error.captureStackTrace(err, caller);
       return err.stack;
     } else {
+      // @ts-ignore not expected in current js runtime
       return new Error().stack;
     }
   }
