@@ -5,9 +5,9 @@
  *
  */
 
-import http from "http";
-import _request from "request-promise";
-import getPort from "get-port";
+import http from 'http';
+import _request from 'request-promise';
+import getPort from 'get-port';
 
 export async function startServer(handler: any) {
   const port = await getPort();

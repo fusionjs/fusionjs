@@ -5,7 +5,7 @@
  *
  */
 
-import type { AtomicFontsObjectType } from "./types";
+import type {AtomicFontsObjectType} from './types';
 
 export default function generatePreloadLinks(
   fontNames: {},
@@ -24,5 +24,5 @@ export default function generatePreloadLinks(
       );
     }
   });
-  return links.join("\n");
+  return links.join('\n');
 }

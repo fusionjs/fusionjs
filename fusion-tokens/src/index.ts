@@ -1,12 +1,12 @@
-import { createToken } from "fusion-core";
-import type { Context, Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Context, Token} from 'fusion-core';
 
 // Tokens
 export type Fetch = (
   input: string | Request,
   init?: RequestInit
 ) => Promise<Response>;
-export const FetchToken: Token<Fetch> = createToken("FetchToken");
+export const FetchToken: Token<Fetch> = createToken('FetchToken');
 
 export type Session = {
   from(ctx: Context): {
@@ -14,7 +14,7 @@ export type Session = {
     set(keyPath: string, val: any): void;
   };
 };
-export const SessionToken: Token<Session> = createToken("SessionToken");
+export const SessionToken: Token<Session> = createToken('SessionToken');
 
 export type Cache = {
   get(key: string): Promise<unknown>;
@@ -22,7 +22,7 @@ export type Cache = {
   set(key: string, val: any): Promise<unknown>;
 };
 
-export const CacheToken: Token<Cache> = createToken("CacheToken");
+export const CacheToken: Token<Cache> = createToken('CacheToken');
 
 type LogCallback = (
   error?: any,
@@ -60,4 +60,4 @@ export type Logger = {
   debug: LeveledLogMethod;
   silly: LeveledLogMethod;
 };
-export const LoggerToken: Token<Logger> = createToken("LoggerToken");
+export const LoggerToken: Token<Logger> = createToken('LoggerToken');

@@ -1,4 +1,4 @@
-import type { Token, Context } from "fusion-core";
+import type {Token, Context} from 'fusion-core';
 
 export type PluginServiceType = {
   from: (ctx?: Context) => {

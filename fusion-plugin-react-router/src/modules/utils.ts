@@ -1,10 +1,10 @@
-import type { TLocation, TTo } from "../types";
+import type {TLocation, TTo} from '../types';
 
-const addLeadingSlash = (path) => (path.charAt(0) === "/" ? path : "/" + path);
+const addLeadingSlash = (path) => (path.charAt(0) === '/' ? path : '/' + path);
 
 export const addRoutePrefix = (location: TTo, prefix: string): TTo => {
   if (!prefix) return location;
-  if (typeof location === "string") {
+  if (typeof location === 'string') {
     return location.startsWith(prefix)
       ? location
       : `${prefix}${addLeadingSlash(location)}`;
@@ -23,12 +23,12 @@ export const removeRoutePrefix = (
   prefix: string
 ): string | TLocation => {
   if (!prefix) return location;
-  const pathname = typeof location === "string" ? location : location.pathname;
-  const hasPrefix = (pathname + "/").indexOf(prefix + "/") === 0;
+  const pathname = typeof location === 'string' ? location : location.pathname;
+  const hasPrefix = (pathname + '/').indexOf(prefix + '/') === 0;
   const unprefixedPathname = pathname.slice(prefix.length);
   const relativePathname = hasPrefix ? unprefixedPathname : pathname;
 
-  if (typeof location === "string") {
+  if (typeof location === 'string') {
     return relativePathname;
   } else {
     return {

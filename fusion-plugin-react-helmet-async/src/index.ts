@@ -5,10 +5,10 @@
  *
  */
 
-import { Helmet, HelmetProvider } from "react-helmet-async";
-import serverPlugin from "./server";
-import clientPlugin from "./browser";
+import {Helmet, HelmetProvider} from 'react-helmet-async';
+import serverPlugin from './server';
+import clientPlugin from './browser';
 
 declare var __NODE__: Boolean;
 export default __NODE__ ? serverPlugin : clientPlugin;
-export { Helmet, HelmetProvider };
+export {Helmet, HelmetProvider};

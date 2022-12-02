@@ -5,25 +5,25 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token, Context } from "fusion-core";
-import type { Options } from "koa-bodyparser";
-import type { RPCConfigType } from "./types";
+import {createToken} from 'fusion-core';
+import type {Token, Context} from 'fusion-core';
+import type {Options} from 'koa-bodyparser';
+import type {RPCConfigType} from './types';
 
-export const RPCToken: Token<any> = createToken("RPCToken");
+export const RPCToken: Token<any> = createToken('RPCToken');
 
 export type HandlerType = {
   [x: string]: (...args: any) => any;
 };
 export const RPCHandlersToken: Token<HandlerType> =
-  createToken("RPCHandlersToken");
+  createToken('RPCHandlersToken');
 export const BodyParserOptionsToken: Token<Options> = createToken(
-  "BodyParserOptionsToken"
+  'BodyParserOptionsToken'
 );
 export const RPCHandlersConfigToken: Token<RPCConfigType> = createToken(
-  "RPCHandlersConfigToken"
+  'RPCHandlersConfigToken'
 );
 
 export const RPCQueryParamsToken: Token<{
   from: (ctx: Context) => Array<[string, string]>;
-}> = createToken("RPCQueryParamsToken");
+}> = createToken('RPCQueryParamsToken');

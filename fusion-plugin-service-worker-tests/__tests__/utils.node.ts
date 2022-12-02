@@ -2,43 +2,43 @@
 /* eslint-disable no-console */
 /* globals window */
 
-import getPort from "get-port";
-import path from "path";
-import fetch from "isomorphic-fetch";
-import type { Page } from "puppeteer";
+import getPort from 'get-port';
+import path from 'path';
+import fetch from 'isomorphic-fetch';
+import type {Page} from 'puppeteer';
 
 export async function startServer(customEnvVariables: any) {
-  let spawn = require("child_process").spawn;
+  let spawn = require('child_process').spawn;
   const port = await getPort();
 
   // Spin up server
   const opts = {
-    cwd: path.resolve(__dirname, ".."),
-    stdio: "inherit",
-    env: { ...process.env, ...customEnvVariables },
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'inherit',
+    env: {...process.env, ...customEnvVariables},
   };
 
-  const proc = spawn("fusion", ["dev", "--port", port, "--no-open"], opts);
+  const proc = spawn('fusion', ['dev', '--port', port, '--no-open'], opts);
 
   const stdoutLines = [];
   const stderrLines = [];
   proc.stdout &&
-    proc.stdout.on("data", (data /*: string*/) => {
+    proc.stdout.on('data', (data /*: string*/) => {
       stdoutLines.push(data.toString());
     });
   proc.stderr &&
-    proc.stderr.on("data", (data /*: string*/) => {
+    proc.stderr.on('data', (data /*: string*/) => {
       stderrLines.push(data.toString());
     });
-  proc.on("close", (code /*: number*/) => {
+  proc.on('close', (code /*: number*/) => {
     if (process.env.VERBOSE) {
-      const stdout = stdoutLines.join("\n");
-      const stderr = stderrLines.join("\n");
+      const stdout = stdoutLines.join('\n');
+      const stderr = stderrLines.join('\n');
       // eslint-disable-next-line no-console
-      console.log({ stdout, stderr, code });
+      console.log({stdout, stderr, code});
     }
   });
-  proc.on("error", (e) => {
+  proc.on('error', (e) => {
     // eslint-disable-next-line no-console
     console.log(e);
   });
@@ -51,7 +51,7 @@ export async function startServer(customEnvVariables: any) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     try {
       res = await fetch(`http://localhost:${port}/`, {
-        headers: { accept: "text/html" },
+        headers: {accept: 'text/html'},
       });
       initialResponse = await res.text();
 
@@ -61,23 +61,23 @@ export async function startServer(customEnvVariables: any) {
     }
   }
   if (!started) {
-    throw new Error("Failed to start server");
+    throw new Error('Failed to start server');
   }
-  return { initialResponse, port, proc };
+  return {initialResponse, port, proc};
 }
 
 export async function logCachedURLs(page: Page, label: string) {
   await page.evaluate(
     (label) =>
       window.caches
-        .open("0.0.0")
+        .open('0.0.0')
         .then((cache) => cache.keys())
         .then((keys) =>
           console.log(
             `${label}#${keys
               .map((key) => key.url)
               .filter(Boolean)
-              .join(",")}`
+              .join(',')}`
           )
         ),
     label
@@ -86,14 +86,14 @@ export async function logCachedURLs(page: Page, label: string) {
 
 export async function logCacheDates(page: Page, label: string) {
   await page.evaluate(async (label) => {
-    const cache = await window.caches.open("0.0.0");
+    const cache = await window.caches.open('0.0.0');
     const requests = await cache.keys();
     const responses = await Promise.all(
       requests.map((request) => cache.match(request))
     );
     console.log(
       `${label}#${responses.map((res) =>
-        new Date(res.headers.get("date")).getTime()
+        new Date(res.headers.get('date')).getTime()
       )}`
     );
   }, label);

@@ -5,9 +5,9 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
-import prepared from "./prepared";
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import prepared from './prepared';
 
 declare var __webpack_modules__: {
   [x: string]: any;
@@ -88,7 +88,7 @@ export default function withAsyncComponent<Config>({
         const chunkIds = promise.__CHUNK_IDS;
 
         if (
-          typeof __webpack_modules__ !== "undefined" &&
+          typeof __webpack_modules__ !== 'undefined' &&
           __webpack_modules__[id] &&
           webpackChunksLoaded(chunkIds)
         ) {
@@ -118,7 +118,7 @@ export default function withAsyncComponent<Config>({
 
         if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
           context.pushSSRMetadata({
-            type: "critical-dynamic-import",
+            type: 'critical-dynamic-import',
             data: dynamicImportMetadata,
           });
         }
@@ -173,7 +173,7 @@ export default function withAsyncComponent<Config>({
 
       if (__NODE__ && context.pushSSRMetadata && dynamicImportMetadata) {
         context.pushSSRMetadata({
-          type: "critical-dynamic-import",
+          type: 'critical-dynamic-import',
           data: dynamicImportMetadata,
         });
       }
@@ -190,7 +190,7 @@ export default function withAsyncComponent<Config>({
           // Note: .default is toolchain specific, breaks w/ CommonJS exports
           AsyncComponent = asyncComponent.default;
           if (AsyncComponent === undefined) {
-            throw new Error("Bundle does not contain a default export");
+            throw new Error('Bundle does not contain a default export');
           }
         })
         .catch((err) => {
@@ -201,6 +201,6 @@ export default function withAsyncComponent<Config>({
             }); // log error
         });
     },
-    { defer, contextTypes, forceUpdate: true }
+    {defer, contextTypes, forceUpdate: true}
   )(WithAsyncComponent);
 }

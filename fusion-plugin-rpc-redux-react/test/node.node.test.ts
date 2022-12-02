@@ -6,13 +6,13 @@
  * @ts-nocheck
  */
 
-import React from "react";
-import App, { createPlugin } from "fusion-core";
-import ReactApp from "fusion-react";
-import { getService, getSimulator } from "fusion-test-utils";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { ReduxToken } from "fusion-plugin-react-redux";
-import { createMockEmitter } from "./utils";
+import React from 'react';
+import App, {createPlugin} from 'fusion-core';
+import ReactApp from 'fusion-react';
+import {getService, getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {createMockEmitter} from './utils';
 
 import Plugin, {
   mock,
@@ -21,56 +21,56 @@ import Plugin, {
   RPCHandlersToken,
   withRPCRedux,
   withRPCReactor,
-} from "..";
+} from '..';
 
-test("plugin", () => {
-  expect(typeof Plugin.provides).toBe("function");
-  const handlers = { test() {} };
+test('plugin', () => {
+  expect(typeof Plugin.provides).toBe('function');
+  const handlers = {test() {}};
   const EventEmitter = createMockEmitter();
 
   const appCreator = () => {
-    const app = new App("content", (el) => el);
+    const app = new App('content', (el) => el);
     app.register(RPCHandlersToken, handlers);
     app.register(UniversalEventsToken, EventEmitter);
     return app;
   };
 
   const RPCRedux = getService(appCreator, Plugin);
-  const mockCtx = { headers: {}, memoized: new Map() };
-  expect(typeof RPCRedux.from(mockCtx).request).toBe("function");
+  const mockCtx = {headers: {}, memoized: new Map()};
+  expect(typeof RPCRedux.from(mockCtx).request).toBe('function');
 });
 
-test("mock plugin", () => {
-  expect(typeof mock.provides).toBe("function");
-  const handlers = { test() {} };
+test('mock plugin', () => {
+  expect(typeof mock.provides).toBe('function');
+  const handlers = {test() {}};
 
   const appCreator = () => {
-    const app = new App("content", (el) => el);
+    const app = new App('content', (el) => el);
     app.register(RPCHandlersToken, handlers);
     app.register(UniversalEventsToken, createMockEmitter());
     return app;
   };
 
   const RPCRedux = getService(appCreator, mock);
-  const mockCtx = { headers: {}, memoized: new Map() };
-  expect(typeof RPCRedux.from(mockCtx).request).toBe("function");
+  const mockCtx = {headers: {}, memoized: new Map()};
+  expect(typeof RPCRedux.from(mockCtx).request).toBe('function');
 });
 
-test("withRPCRedux hoc", async () => {
+test('withRPCRedux hoc', async () => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {
     didRender = true;
-    expect(typeof props.test).toBe("function");
+    expect(typeof props.test).toBe('function');
     if (!handlerCalled) {
       // function renders twice
-      props.test("test-args");
+      props.test('test-args');
       handlerCalled = true;
     }
-    return "hello";
+    return 'hello';
   }
-  const expectedActions = ["TEST_START", "TEST_SUCCESS"];
-  const expectedPayloads = ["test-args", "test-resolve"];
+  const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
+  const expectedPayloads = ['test-args', 'test-resolve'];
   const store = {
     dispatch(action) {
       expect(action.type).toBe(expectedActions.shift());
@@ -79,9 +79,9 @@ test("withRPCRedux hoc", async () => {
     getState() {},
     subscribe() {},
   };
-  expect(typeof withRPCRedux).toBe("function");
-  const Connected = withRPCRedux("test")(Test);
-  expect(Connected.displayName).toBe("WithRPCRedux(Test)");
+  expect(typeof withRPCRedux).toBe('function');
+  const Connected = withRPCRedux('test')(Test);
+  expect(Connected.displayName).toBe('WithRPCRedux(Test)');
   const app = new ReactApp(React.createElement(Connected));
   app.register(RPCToken, mock);
   app.register(
@@ -90,8 +90,8 @@ test("withRPCRedux hoc", async () => {
       provides() {
         return {
           test(args) {
-            expect(args).toBe("test-args");
-            return Promise.resolve("test-resolve");
+            expect(args).toBe('test-args');
+            return Promise.resolve('test-resolve');
           },
         };
       },
@@ -102,41 +102,41 @@ test("withRPCRedux hoc", async () => {
     createPlugin({
       provides() {
         return {
-          from: () => ({ store }),
+          from: () => ({store}),
         };
       },
     })
   );
   app.register(UniversalEventsToken, createMockEmitter());
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
-  expect(typeof ctx.body === "string" && ctx.body.includes("hello")).toBe(true);
+  const ctx = await sim.render('/');
+  expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
   expect(didRender).toBe(true);
 });
 
-test("withRPCReactor hoc", async () => {
+test('withRPCReactor hoc', async () => {
   let didRender = false;
   let handlerCalled = false;
   function Test(props) {
     didRender = true;
-    expect(typeof props.test).toBe("function");
+    expect(typeof props.test).toBe('function');
     if (!handlerCalled) {
       // function renders twice
-      props.test("test-args");
+      props.test('test-args');
       handlerCalled = true;
     }
-    return "hello";
+    return 'hello';
   }
-  expect(typeof withRPCReactor).toBe("function");
-  const Connected = withRPCReactor("test", {
+  expect(typeof withRPCReactor).toBe('function');
+  const Connected = withRPCReactor('test', {
     start() {},
     success() {},
     failure() {},
   })(Test);
-  expect(Connected.displayName).toBe("WithRPCRedux(Test)");
+  expect(Connected.displayName).toBe('WithRPCRedux(Test)');
 
-  const expectedActions = ["TEST_START", "TEST_SUCCESS"];
-  const expectedPayloads = ["test-args", "test-resolve"];
+  const expectedActions = ['TEST_START', 'TEST_SUCCESS'];
+  const expectedPayloads = ['test-args', 'test-resolve'];
   const store = {
     dispatch(action) {
       expect(action.type).toBe(expectedActions.shift());
@@ -152,8 +152,8 @@ test("withRPCReactor hoc", async () => {
       provides() {
         return {
           test(args) {
-            expect(args).toBe("test-args");
-            return Promise.resolve("test-resolve");
+            expect(args).toBe('test-args');
+            return Promise.resolve('test-resolve');
           },
         };
       },
@@ -164,19 +164,19 @@ test("withRPCReactor hoc", async () => {
     createPlugin({
       provides() {
         return {
-          from: () => ({ store }),
+          from: () => ({store}),
         };
       },
     })
   );
   app.register(UniversalEventsToken, createMockEmitter());
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
-  expect(typeof ctx.body === "string" && ctx.body.includes("hello")).toBe(true);
+  const ctx = await sim.render('/');
+  expect(typeof ctx.body === 'string' && ctx.body.includes('hello')).toBe(true);
   expect(didRender).toBe(true);
 });
 
-test("ResponseError", () => {
-  const e = new ResponseError("test");
+test('ResponseError', () => {
+  const e = new ResponseError('test');
   expect(e instanceof Error).toBe(true);
 });

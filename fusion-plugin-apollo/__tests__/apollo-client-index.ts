@@ -5,21 +5,21 @@
  *
  */
 
-import { InMemoryCache } from "apollo-cache-inmemory";
-import App, { createPlugin } from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
-import { ApolloClientToken } from "../src/tokens";
-import { ApolloLink } from "apollo-link";
-import { FetchToken } from "fusion-tokens";
-import unfetch from "unfetch";
+import {InMemoryCache} from 'apollo-cache-inmemory';
+import App, {createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {ApolloClientToken} from '../src/tokens';
+import {ApolloLink} from 'apollo-link';
+import {FetchToken} from 'fusion-tokens';
+import unfetch from 'unfetch';
 
 import {
   ApolloClientPlugin,
   GetApolloClientLinksToken,
-} from "../src/apollo-client/index";
+} from '../src/apollo-client/index';
 
-test("ApolloUniveralClient", async () => {
-  const app = new App("el", (el) => el);
+test('ApolloUniveralClient', async () => {
+  const app = new App('el', (el) => el);
   app.register(GetApolloClientLinksToken, (links) => [
     new ApolloLink((op, forward) => {
       return forward(op);
@@ -34,7 +34,7 @@ test("ApolloUniveralClient", async () => {
     deps: {
       universalClient: ApolloClientToken,
     },
-    middleware({ universalClient }) {
+    middleware({universalClient}) {
       return async (ctx, next) => {
         const client = universalClient(ctx, {});
         clients.push(client);
@@ -49,8 +49,8 @@ test("ApolloUniveralClient", async () => {
   app.register(testPlugin);
 
   const simulator = getSimulator(app);
-  await simulator.render("/");
-  await simulator.render("/");
+  await simulator.render('/');
+  await simulator.render('/');
   expect(clients.length).toBe(2);
   expect(clients[0]).not.toBe(clients[1]);
   expect(clients[0].cache).not.toBe(clients[1].cache);

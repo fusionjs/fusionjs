@@ -5,7 +5,7 @@
  *
  */
 
-import { HttpHandlerToken } from "./tokens";
+import {HttpHandlerToken} from './tokens';
 
 export type DepsType = {
   handler: typeof HttpHandlerToken;

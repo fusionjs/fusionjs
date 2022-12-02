@@ -6,8 +6,8 @@
  */
 
 /* eslint-env browser */
-import NodePerformanceEmitterPlugin from "../src/browser";
+import NodePerformanceEmitterPlugin from '../src/browser';
 
-test("null export, as expected", () => {
+test('null export, as expected', () => {
   expect(NodePerformanceEmitterPlugin).toBe(null);
 });

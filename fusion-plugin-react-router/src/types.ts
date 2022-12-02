@@ -5,9 +5,9 @@
  *
  */
 
-import * as React from "react";
+import * as React from 'react';
 
-import type { ReactNode, ComponentType, ReactElement } from "react";
+import type {ReactNode, ComponentType, ReactElement} from 'react';
 
 /* Custom types */
 
@@ -49,7 +49,7 @@ export type TLocation = {
 
 export type TTo = string | TLocation;
 
-export type TNavigation = "POP" | "PUSH" | "REPLACE";
+export type TNavigation = 'POP' | 'PUSH' | 'REPLACE';
 
 export type TNavigator = {
   action: string;

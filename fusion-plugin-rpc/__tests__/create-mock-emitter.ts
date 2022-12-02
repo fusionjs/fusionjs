@@ -1,4 +1,4 @@
-import type { IEmitter } from "../src/types";
+import type {IEmitter} from '../src/types';
 
 function createMockEmitter<TProps>(props: TProps): IEmitter {
   const emitter = {

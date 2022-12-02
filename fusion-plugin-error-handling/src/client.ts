@@ -7,20 +7,20 @@
 
 /* eslint-env browser */
 
-import { createPlugin, createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createPlugin, createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-import type { ErrorHandlerPluginType } from "./types";
+import type {ErrorHandlerPluginType} from './types';
 
 export const ErrorHandlingEmitterToken: Token<any> = createToken(
-  "ErrorHandlingEmitterToken"
+  'ErrorHandlingEmitterToken'
 );
 
 const plugin =
   __BROWSER__ &&
   createPlugin({
-    deps: { emit: ErrorHandlingEmitterToken.optional },
-    provides: ({ emit }) => {
+    deps: {emit: ErrorHandlingEmitterToken.optional},
+    provides: ({emit}) => {
       let _emit =
         emit ||
         ((e, src) => {
@@ -48,7 +48,7 @@ const plugin =
                 return fn.apply(this, args);
               } catch (e) {
                 // get exception stack frames from our own code rather than potentially from 3rd party CDN code to get around CORS issues
-                _emit(e, "async-event");
+                _emit(e, 'async-event');
               }
             };
             return old.call(this, type, cb, ...rest);
@@ -62,7 +62,7 @@ const plugin =
           // Ignore. Don't have access to the prop, possibly cross-origin restriction.
         }
       }
-      window.addEventListener("unhandledrejection", (e) => {
+      window.addEventListener('unhandledrejection', (e) => {
         e.preventDefault();
         _emit(e.reason instanceof Error ? e.reason : new Error(e.reason));
       });

@@ -6,10 +6,10 @@
  */
 
 /* eslint-disable react/no-multi-comp */
-import * as React from "react";
-import { prepare } from "../src/async/index";
+import * as React from 'react';
+import {prepare} from '../src/async/index';
 
-test("Preparing a sync app passing through context", (done) => {
+test('Preparing a sync app passing through context', (done) => {
   let numConstructors = 0;
   let numRenders = 0;
   let numChildRenders = 0;
@@ -20,7 +20,7 @@ test("Preparing a sync app passing through context", (done) => {
     }
     getChildContext() {
       return {
-        test: "data",
+        test: 'data',
       };
     }
     render() {
@@ -32,7 +32,7 @@ test("Preparing a sync app passing through context", (done) => {
     };
   }
   function SimplePresentational(props, context) {
-    expect(context.test).toBe("data");
+    expect(context.test).toBe('data');
     numChildRenders++;
     return <div>Hello World</div>;
   }

@@ -5,12 +5,12 @@
  *
  */
 
-import type { Token } from "fusion-core";
-import { createToken } from "fusion-core";
+import type {Token} from 'fusion-core';
+import {createToken} from 'fusion-core';
 
-export const SessionSecretToken: Token<string> = createToken("SessionSecret");
+export const SessionSecretToken: Token<string> = createToken('SessionSecret');
 export const SessionCookieNameToken: Token<string> =
-  createToken("SessionCookieName");
+  createToken('SessionCookieName');
 export const SessionCookieExpiresToken: Token<number> = createToken(
-  "SessionCookieExpires"
+  'SessionCookieExpires'
 );

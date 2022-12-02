@@ -37,12 +37,12 @@ import {
   useRoutes as useRoutesUntyped,
   useSearchParams as useSearchParamsUntyped,
   createSearchParams as createSearchParamsUntyped,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import { Status, NotFound } from "./modules/Status";
-import { Navigate } from "./modules/Navigate";
-import { ServerRouter as Router } from "./modules/ServerRouter";
-import { Routes } from "./modules/Routes";
+import {Status, NotFound} from './modules/Status';
+import {Navigate} from './modules/Navigate';
+import {ServerRouter as Router} from './modules/ServerRouter';
+import {Routes} from './modules/Routes';
 
 import type {
   TRoute,
@@ -74,7 +74,7 @@ import type {
   TUseRoutes,
   TUseSearchParams,
   TCreateSearchParams,
-} from "./types";
+} from './types';
 
 /**
  * Cast each of these imports from react-router-dom to a copied-version of their

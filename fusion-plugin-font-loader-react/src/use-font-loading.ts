@@ -5,27 +5,27 @@
  *
  */
 
-import { useState, useEffect, useRef } from "react";
-import { useService } from "fusion-react";
+import {useState, useEffect, useRef} from 'react';
+import {useService} from 'fusion-react';
 
-import { FontLoaderReactToken } from "./tokens";
-import loadFont from "./font-loader";
+import {FontLoaderReactToken} from './tokens';
+import loadFont from './font-loader';
 
 function useFontLoading(fontName: string) {
   const mounted = useRef<boolean | undefined | null>(null);
   const getFontDetails = useService(FontLoaderReactToken);
-  if (typeof getFontDetails !== "function") {
+  if (typeof getFontDetails !== 'function') {
     throw new Error(
       `useFontLoading not supported. This might be because you set \`withStyleOverloads\`
     to true in the font loader config`
     );
   }
-  const { fallbackName, styles } = getFontDetails(fontName);
+  const {fallbackName, styles} = getFontDetails(fontName);
   const initialFontStyles = fallbackName
     ? // switch to fallback name and apply styles to trigger faux font rendition
-      { fontFamily: fallbackName, ...styles }
+      {fontFamily: fallbackName, ...styles}
     : // no fallback so just apply true font
-      { fontFamily: fontName };
+      {fontFamily: fontName};
 
   const [fontStyles, setFontStyles] = useState(initialFontStyles);
 
@@ -34,7 +34,7 @@ function useFontLoading(fontName: string) {
     if (fontStyles.fontFamily !== fontName) {
       // Promise.resolve() case is for hypothetcial server call (to keep flow happy)
       (loadFont(fontName) || Promise.resolve()).then(() => {
-        mounted && setFontStyles({ fontFamily: fontName });
+        mounted && setFontStyles({fontFamily: fontName});
       });
     }
     return () => {

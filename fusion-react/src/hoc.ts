@@ -5,10 +5,10 @@
  *
  */
 
-import * as React from "react";
-import { useService } from "./context";
-import PropTypes from "prop-types";
-import type { Token } from "fusion-core";
+import * as React from 'react';
+import {useService} from './context';
+import PropTypes from 'prop-types';
+import type {Token} from 'fusion-core';
 
 function capitalize(str: string): string {
   return str.replace(/^./, (c) => c.toUpperCase());
@@ -23,12 +23,12 @@ export default {
   ): ReactHOC => {
     const mapProvides = mapProvidesToProps
       ? mapProvidesToProps
-      : (provides) => ({ [name]: provides });
+      : (provides) => ({[name]: provides});
     const _token = token; // Make token constant for flow
     if (_token) {
       // Use new Context through useService hook
       return (Component: React.ComponentType<any>) => {
-        const Wrapper = (props?: { [x: string]: any }) => {
+        const Wrapper = (props?: {[x: string]: any}) => {
           const service = useService(_token);
 
           return React.createElement(Component, {
@@ -37,7 +37,7 @@ export default {
           });
         };
         const displayName =
-          Component.displayName || Component.name || "Anonymous";
+          Component.displayName || Component.name || 'Anonymous';
         Wrapper.displayName = `With${capitalize(name)}(${displayName})`;
         return Wrapper;
       };
@@ -45,7 +45,7 @@ export default {
       // Use legacy Context
       return (Component: React.ComponentType<any>) => {
         const displayName =
-          Component.displayName || Component.name || "Anonymous";
+          Component.displayName || Component.name || 'Anonymous';
 
         class HOC extends React.Component<any> {
           provides: any;
@@ -55,7 +55,7 @@ export default {
             this.provides = ctx[name];
           }
           render() {
-            const props = { ...this.props, ...mapProvides(this.provides) };
+            const props = {...this.props, ...mapProvides(this.provides)};
             return React.createElement(Component, props);
           }
 

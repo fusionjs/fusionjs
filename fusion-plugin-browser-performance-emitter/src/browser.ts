@@ -7,19 +7,19 @@
 
 /* eslint-env browser */
 
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { createPlugin } from "fusion-core";
-import type { FusionPlugin } from "fusion-core";
-import browserPerfCollector from "./helpers/enhancedBrowserMetrics";
-import type { BrowserPerfDepsType } from "./flow";
-import { getTimeFromMarks } from "./utils";
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import browserPerfCollector from './helpers/enhancedBrowserMetrics';
+import type {BrowserPerfDepsType} from './flow';
+import {getTimeFromMarks} from './utils';
 
 class BrowserPerformanceEmitter {
   tags: {
     route: string;
   };
   constructor() {
-    this.tags = { route: window.location.href };
+    this.tags = {route: window.location.href};
   }
 
   calculate(timing, resourceEntries) {
@@ -37,9 +37,9 @@ class BrowserPerformanceEmitter {
     resourceEntries =
       resourceEntries ||
       window.performance
-        .getEntriesByType("resource")
+        .getEntriesByType('resource')
         .filter((entry) => {
-          return entry.name.indexOf("data:") !== 0 && entry.toJSON;
+          return entry.name.indexOf('data:') !== 0 && entry.toJSON;
         })
         .map((entry) => entry.toJSON());
 
@@ -54,11 +54,11 @@ class BrowserPerformanceEmitter {
   getPaintTimes() {
     let firstPaint = null;
     let firstContentfulPaint = null;
-    const paint = window.performance.getEntriesByType("paint");
+    const paint = window.performance.getEntriesByType('paint');
     if (paint) {
-      firstPaint = getTimeFromMarks(paint, "first-paint");
-      firstContentfulPaint = getTimeFromMarks(paint, "first-contentful-paint");
-    } else if (typeof window.performance.timing.msFirstPaint === "number") {
+      firstPaint = getTimeFromMarks(paint, 'first-paint');
+      firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
+    } else if (typeof window.performance.timing.msFirstPaint === 'number') {
       // IE
       firstPaint =
         window.performance.timing.msFirstPaint -
@@ -77,21 +77,21 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
   // $FlowFixMe
   __BROWSER__ &&
   createPlugin({
-    deps: { emitter: UniversalEventsToken },
+    deps: {emitter: UniversalEventsToken},
     middleware: (deps) => {
       const emitter = deps.emitter;
       const emit = (payload) => {
-        emitter.emit("browser-performance-emitter:stats:browser-only", payload);
+        emitter.emit('browser-performance-emitter:stats:browser-only', payload);
       };
 
       return async (ctx, next) => {
         const browserPerformanceEmitter = new BrowserPerformanceEmitter();
 
-        window.addEventListener("load", () => {
+        window.addEventListener('load', () => {
           // window.performance.timing.loadEventEnd not ready until the next tick
           window.setTimeout(() => {
             // for testing purposes pass timing and resourceEntries from options
-            const { timing, resourceEntries, paintTimes } =
+            const {timing, resourceEntries, paintTimes} =
               browserPerformanceEmitter.calculate();
             emit({
               timing,

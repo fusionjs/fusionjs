@@ -11,14 +11,14 @@ import {
   gql,
   GraphQLEndpointToken,
   ApolloDefaultOptionsConfigToken,
-} from "../src/index";
+} from '../src/index';
 
-test("fusion-tokens exports", () => {
+test('fusion-tokens exports', () => {
   expect(ApolloContextToken).toBeTruthy();
   expect(ApolloDefaultOptionsConfigToken).toBeTruthy();
   expect(GraphQLSchemaToken).toBeTruthy();
   expect(GraphQLEndpointToken).toBeTruthy();
   expect(ApolloRenderEnhancer).toBeTruthy();
-  expect(typeof gql).toBe("function");
+  expect(typeof gql).toBe('function');
   expect(gql).toThrow();
 });

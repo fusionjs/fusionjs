@@ -1,19 +1,19 @@
-import App from "fusion-react";
-import Router from "fusion-plugin-react-router";
-import Styletron from "fusion-plugin-styletron-react";
-import { LoggerToken } from "fusion-tokens";
+import App from 'fusion-react';
+import Router from 'fusion-plugin-react-router';
+import Styletron from 'fusion-plugin-styletron-react';
+import {LoggerToken} from 'fusion-tokens';
 
-import { swTemplate as swTemplateFunction } from "fusion-cli/sw";
+import {swTemplate as swTemplateFunction} from 'fusion-cli/sw';
 import SwPlugin, {
   SWRegisterToken,
   SWTemplateFunctionToken,
   SWOptionsToken,
-} from "fusion-plugin-service-worker";
+} from 'fusion-plugin-service-worker';
 
-import MockRedirectPlugin from "./plugins/mock-redirect";
-import MockErrorPlugin from "./plugins/mock-server-error";
+import MockRedirectPlugin from './plugins/mock-redirect';
+import MockErrorPlugin from './plugins/mock-server-error';
 
-import root from "./root";
+import root from './root';
 
 const createMockLogger = () => ({
   log: () => createMockLogger(),
@@ -39,7 +39,7 @@ export default () => {
     app.register(SWTemplateFunctionToken, swTemplateFunction);
     const expiry = parseInt(process.env.EXPIRY, 0);
     if (expiry) {
-      app.register(SWOptionsToken, { cacheDuration: expiry });
+      app.register(SWOptionsToken, {cacheDuration: expiry});
     }
     if (process.env.CACHE_BUSTING_PATTERNS) {
       app.register(SWOptionsToken, {

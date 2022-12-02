@@ -5,28 +5,28 @@
  *
  */
 
-import React from "react";
-import type { Reducer, StoreEnhancer } from "redux";
-import { JSDOM } from "jsdom";
+import React from 'react';
+import type {Reducer, StoreEnhancer} from 'redux';
+import {JSDOM} from 'jsdom';
 
-import App, { consumeSanitizedHTML, createPlugin, unescape } from "fusion-core";
-import type { FusionPlugin } from "fusion-core";
-import { getSimulator, getService } from "fusion-test-utils";
+import App, {consumeSanitizedHTML, createPlugin, unescape} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import {getSimulator, getService} from 'fusion-test-utils';
 
-import { deserialize } from "../src/codec";
+import {deserialize} from '../src/codec';
 
-import Redux from "../src/index";
+import Redux from '../src/index';
 import {
   EnhancerToken,
   PreloadedStateToken,
   ReducerToken,
   GetInitialStateToken,
   ReduxToken,
-} from "../src/tokens";
+} from '../src/tokens';
 
 /* Test fixtures */
 const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
-  const app = new App("test", (el) => el);
+  const app = new App('test', (el) => el);
   if (reducer) {
     app.register(ReducerToken, reducer);
   }
@@ -43,9 +43,9 @@ const appCreator = (reducer, preloadedState, getInitialState, enhancer) => {
   return () => app;
 };
 
-test("interface", async () => {
-  const ctx = { memoized: new Map() };
-  const reducer = (state, action) => ({ test: action.payload || 1 });
+test('interface', async () => {
+  const ctx = {memoized: new Map()};
+  const reducer = (state, action) => ({test: action.payload || 1});
   const redux = getService(appCreator(reducer), Redux).from(ctx as any);
 
   expect.assertions(2);
@@ -55,12 +55,12 @@ test("interface", async () => {
   const store = await redux.initStore();
 
   expect(store.getState().test).toBe(1);
-  store.dispatch({ type: "CHANGE", payload: 2 });
+  store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState().test).toBe(2);
 });
 
-test("non-ssr routes", async () => {
-  const reducer = (state, action) => ({ test: action.payload || 1 });
+test('non-ssr routes', async () => {
+  const reducer = (state, action) => ({test: action.payload || 1});
   const plugin = getService(appCreator(reducer), Redux);
   let mockCtx = {
     body: null,
@@ -77,17 +77,17 @@ test("non-ssr routes", async () => {
   expect(plugin.from(mockCtx as any).store).toBeFalsy();
 });
 
-test("getInitialState", async () => {
+test('getInitialState', async () => {
   const reducer = (state = {}, action) => ({
     ...state,
     test: action.payload || 1,
   });
-  const mockCtx = { mock: true, memoized: new Map() };
+  const mockCtx = {mock: true, memoized: new Map()};
   const getInitialState: any = async (ctx) => {
     expect(ctx).toBe(mockCtx);
-    return { hello: "world" };
+    return {hello: 'world'};
   };
-  const preloadedState = { a: "b" };
+  const preloadedState = {a: 'b'};
   const redux = getService(
     appCreator(reducer, preloadedState, getInitialState),
     Redux
@@ -101,15 +101,15 @@ test("getInitialState", async () => {
   const store = await redux.initStore();
 
   expect(store.getState().test).toBe(1);
-  expect(store.getState().hello).toBe("world");
-  expect(store.getState().a).toBe("b");
-  store.dispatch({ type: "CHANGE", payload: 2 });
+  expect(store.getState().hello).toBe('world');
+  expect(store.getState().a).toBe('b');
+  store.dispatch({type: 'CHANGE', payload: 2});
   expect(store.getState().test).toBe(2);
   expect(store).toBe(await (redux.initStore && redux.initStore()));
 });
 
-test("enhancers", async () => {
-  const mockCtx: any = { mock: true, memoized: new Map() };
+test('enhancers', async () => {
+  const mockCtx: any = {mock: true, memoized: new Map()};
   const myEnhancer =
     (createStore) =>
     (...args) => {
@@ -138,7 +138,7 @@ const testEnhancer = async (
     | StoreEnhancer<any, any, any>
     | FusionPlugin<any, StoreEnhancer<any, any, any>>
 ): Promise<void> => {
-  const app = new App("el", (el) => el);
+  const app = new App('el', (el) => el);
   const mockReducer: Reducer<any, any> = (s) => s;
 
   app.register(EnhancerToken, enhancer);
@@ -149,12 +149,12 @@ const testEnhancer = async (
     deps: {
       redux: ReduxToken,
     },
-    middleware({ redux }) {
+    middleware({redux}) {
       return async (ctx, next) => {
         const reduxScoped = redux.from(ctx);
 
         if (!reduxScoped.initStore) {
-          throw new Error("Test failure");
+          throw new Error('Test failure');
         }
 
         // $FlowFixMe
@@ -168,10 +168,10 @@ const testEnhancer = async (
   app.register(testPlugin);
 
   const simulator = getSimulator(app);
-  await simulator.render("/");
+  await simulator.render('/');
 };
 
-test("enhancers - via app.register", async () => {
+test('enhancers - via app.register', async () => {
   /* Enhancer function */
   const myEnhancer: StoreEnhancer<any, any, any> =
     (createStore) =>
@@ -195,13 +195,13 @@ test("enhancers - via app.register", async () => {
   await testEnhancer(myEnhancerPlugin);
 });
 
-test("serialization", async () => {
+test('serialization', async () => {
   const reducer = (state, action) => ({
     test: action.payload || 1,
-    xss: "</div>",
+    xss: '</div>',
   });
-  const element = React.createElement("div");
-  const ctx: any = { element, template: { body: [] }, memoized: new Map() };
+  const element = React.createElement('div');
+  const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const Plugin = getService(appCreator(reducer), Redux);
 
   expect.assertions(5);
@@ -216,22 +216,22 @@ test("serialization", async () => {
   expect(ctx.element).not.toBe(element);
   expect(ctx.template.body.length).toBe(1);
   // $FlowFixMe
-  expect(consumeSanitizedHTML(ctx.template.body[0]).match("test")[0]).toBe(
-    "test"
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('test')[0]).toBe(
+    'test'
   );
-  expect(consumeSanitizedHTML(ctx.template.body[0]).match("</div>")).toBe(null);
+  expect(consumeSanitizedHTML(ctx.template.body[0]).match('</div>')).toBe(null);
 });
 
-test("serialization and deserialization", async () => {
+test('serialization and deserialization', async () => {
   // A redux state with encoded chars
   const obj = {
-    backslashes: "\\u0026",
-    crazy_combo: "zz%5C%\\25aa%%%%asdf\\u0026%25asdf%5C%\\a%25%%25",
+    backslashes: '\\u0026',
+    crazy_combo: 'zz%5C%\\25aa%%%%asdf\\u0026%25asdf%5C%\\a%25%%25',
   };
 
   const reducer = (state, action) => obj;
-  const element = React.createElement("div");
-  const ctx: any = { element, template: { body: [] }, memoized: new Map() };
+  const element = React.createElement('div');
+  const ctx: any = {element, template: {body: []}, memoized: new Map()};
   const Plugin = getService(appCreator(reducer), Redux);
 
   expect.assertions(4);
@@ -250,6 +250,6 @@ test("serialization and deserialization", async () => {
   const dom = new JSDOM(`<!DOCTYPE html>${body}`);
 
   const content =
-    dom.window.document.getElementById("__REDUX_STATE__").textContent;
+    dom.window.document.getElementById('__REDUX_STATE__').textContent;
   expect(deserialize(unescape(content))).toStrictEqual(obj);
 });

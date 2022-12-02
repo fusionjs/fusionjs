@@ -5,8 +5,8 @@
  *
  */
 
-import JWTBrowser from "../src/jwt-browser";
+import JWTBrowser from '../src/jwt-browser';
 
-test("browser api", () => {
+test('browser api', () => {
   expect(JWTBrowser).toBe(null);
 });

@@ -5,9 +5,9 @@
  *
  */
 
-import { createReactor } from "redux-reactors";
-import type { ReactorAction } from "redux-reactors";
-import type { Reducer, Store } from "redux";
+import {createReactor} from 'redux-reactors';
+import type {ReactorAction} from 'redux-reactors';
+import type {Reducer, Store} from 'redux';
 
 type $ObjMap<T extends {}, F extends (v: any) => any> = {
   [K in keyof T]: F extends (v: T[K]) => infer R ? R : never;
@@ -37,7 +37,7 @@ type NormalizedRPCReducersType<S, A extends ActionType> = {
 };
 
 function camelUpper(key: string): string {
-  return key.replace(/([A-Z])/g, "_$1").toUpperCase();
+  return key.replace(/([A-Z])/g, '_$1').toUpperCase();
 }
 
 const noopReducer: Reducer<any, any> = (state) => state;
@@ -49,7 +49,7 @@ type ActionNamesType = {
 };
 
 type ActionTypesType = keyof ActionNamesType;
-const types: Array<ActionTypesType> = ["start", "success", "failure"];
+const types: Array<ActionTypesType> = ['start', 'success', 'failure'];
 
 function createActionNames(rpcId: string): ActionNamesType {
   const rpcActionName = camelUpper(rpcId);
@@ -72,7 +72,7 @@ export function createRPCActions(rpcId: string): RPCActionsType {
   const obj: RPCActionsType = {};
   types.forEach((type) => {
     obj[type] = (payload: any) => {
-      return { type: actionNames[type], payload };
+      return {type: actionNames[type], payload};
     };
   });
   return obj;

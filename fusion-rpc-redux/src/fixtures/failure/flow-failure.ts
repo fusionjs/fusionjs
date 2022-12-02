@@ -1,5 +1,5 @@
-import type { Reducer } from "redux";
-import { createRPCReducer } from "../../index";
+import type {Reducer} from 'redux';
+import {createRPCReducer} from '../../index';
 
 type UserDataType = {
   firstName: string;
@@ -25,7 +25,7 @@ export type UserActionType = {
 };
 
 const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
-  "getUser",
+  'getUser',
   {
     start: () => {
       return {
@@ -35,7 +35,7 @@ const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
     success: (state, action) => {
       return {
         ...state,
-        loading: "test",
+        loading: 'test',
         data: action.payload.data,
       };
     },
@@ -44,7 +44,7 @@ const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
         loading: false,
         data: null,
         error: action.payload.error,
-        extra: "test",
+        extra: 'test',
       };
     },
   },
@@ -52,7 +52,7 @@ const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
     loading: false,
     data: null,
     error: null,
-    test: "test",
+    test: 'test',
   }
 );
 

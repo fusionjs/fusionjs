@@ -5,18 +5,18 @@
  *
  */
 
-import React from "react";
-import { renderToString as render } from "react-dom/server";
-import { Router, Routes, Route, Status } from "../src/server";
-import { createServerHistory } from "../src/modules/ServerHistory";
+import React from 'react';
+import {renderToString as render} from 'react-dom/server';
+import {Router, Routes, Route, Status} from '../src/server';
+import {createServerHistory} from '../src/modules/ServerHistory';
 
-test("status server sets code with static code", () => {
+test('status server sets code with static code', () => {
   const Hello = () => (
     <Status code="404">
       <div>Hello</div>
     </Status>
   );
-  const state = { code: 0 };
+  const state = {code: 0};
   const ctx = {
     action: null,
     location: null,
@@ -25,7 +25,7 @@ test("status server sets code with static code", () => {
       state.code = code;
     },
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
       <Routes>
@@ -37,13 +37,13 @@ test("status server sets code with static code", () => {
   expect(state.code).toBe(404);
 });
 
-test("status server sets code with numeric code", () => {
+test('status server sets code with numeric code', () => {
   const Hello = () => (
     <Status code={404}>
       <div>Hello</div>
     </Status>
   );
-  const state = { code: 0 };
+  const state = {code: 0};
   const ctx = {
     action: null,
     location: null,
@@ -52,7 +52,7 @@ test("status server sets code with numeric code", () => {
       state.code = code;
     },
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
       <Routes>
@@ -64,13 +64,13 @@ test("status server sets code with numeric code", () => {
   expect(state.code).toBe(404);
 });
 
-test("status server sets code with string code", () => {
+test('status server sets code with string code', () => {
   const Hello = () => (
-    <Status code={"404"}>
+    <Status code={'404'}>
       <div>Hello</div>
     </Status>
   );
-  const state = { code: 0 };
+  const state = {code: 0};
   const ctx = {
     action: null,
     location: null,
@@ -79,7 +79,7 @@ test("status server sets code with string code", () => {
       state.code = code;
     },
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
       <Routes>

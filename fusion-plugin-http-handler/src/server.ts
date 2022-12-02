@@ -7,10 +7,10 @@
 
 /* eslint-env node */
 
-import { createPlugin } from "fusion-core";
-import type { FusionPlugin } from "fusion-core";
-import { HttpHandlerToken, HttpHandlerConfigToken } from "./tokens";
-import type { DepsType } from "./types";
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import {HttpHandlerToken, HttpHandlerConfigToken} from './tokens';
+import type {DepsType} from './types';
 
 const defaultConfig = {
   defer: true,
@@ -24,7 +24,7 @@ const plugin =
       config: HttpHandlerConfigToken.optional,
     },
     middleware: (deps) => {
-      const { handler, config = defaultConfig } = deps;
+      const {handler, config = defaultConfig} = deps;
       return async (ctx, next) => {
         if (config.defer) {
           await next();
@@ -34,7 +34,7 @@ const plugin =
         }
         return new Promise((resolve, reject) => {
           // $FlowFixMe
-          const { req, res } = ctx;
+          const {req, res} = ctx;
           // Default http response object behavior defaults res.statusCode to 200. Koa sets it to 404.
           // This allows for http servers to use `end()` or express to use `send()` without specifying a 200 status code
           const prevStatusCode = ctx.res.statusCode;
@@ -50,8 +50,8 @@ const plugin =
             ctx.respond = false;
             done(null);
           };
-          res.on("end", listener);
-          res.on("finish", listener);
+          res.on('end', listener);
+          res.on('finish', listener);
 
           handler(req, res, (error) => {
             ctx.res.statusCode = prevStatusCode;
@@ -63,13 +63,13 @@ const plugin =
             // Express mutates the req object to make this property non-writable.
             // We need to make it writable because other plugins (like koa-helmet) will set it
             // $FlowFixMe
-            Object.defineProperty(req, "secure", {
+            Object.defineProperty(req, 'secure', {
               // $FlowFixMe
               value: req.secure,
               writable: true,
             });
-            res.removeListener("end", listener);
-            res.removeListener("finish", listener);
+            res.removeListener('end', listener);
+            res.removeListener('finish', listener);
             if (error) {
               return reject(error);
             }

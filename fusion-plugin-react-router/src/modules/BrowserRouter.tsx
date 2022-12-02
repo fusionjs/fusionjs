@@ -5,15 +5,15 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
-import { unstable_HistoryRouter as BaseRouter } from "react-router-dom";
-import compare from "just-compare";
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import {unstable_HistoryRouter as BaseRouter} from 'react-router-dom';
+import compare from 'just-compare';
 
-import type { RouterPropsType, RouterType } from "../types";
+import type {RouterPropsType, RouterType} from '../types';
 
-export { Status, NotFound } from "./Status";
-export { Navigate } from "./Navigate";
+export {Status, NotFound} from './Status';
+export {Navigate} from './Navigate';
 
 type ContextType = {
   __IS_PREPARE__: boolean;
@@ -34,7 +34,7 @@ class BrowserRouter extends React.Component<RouterPropsType> {
   }
 
   getChildContext() {
-    const { __IS_PREPARE__ } = this.context;
+    const {__IS_PREPARE__} = this.context;
     return {
       onRoute: (routeData: any) => {
         if (
@@ -51,7 +51,7 @@ class BrowserRouter extends React.Component<RouterPropsType> {
   }
 
   render() {
-    const { history, basename } = this.props;
+    const {history, basename} = this.props;
     return (
       <BaseRouter basename={basename} history={history}>
         {this.props.children}
@@ -76,4 +76,4 @@ BrowserRouter.childContextTypes = {
 };
 
 const BrowserRouterTyped: RouterType = BrowserRouter;
-export { BrowserRouterTyped as Router };
+export {BrowserRouterTyped as Router};

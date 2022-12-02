@@ -5,8 +5,8 @@
  *
  */
 
-import Server from "./server";
-import Browser from "./browser";
+import Server from './server';
+import Browser from './browser';
 
 declare var __BROWSER__: Boolean;
 const BrowserPerformanceEmitter = __BROWSER__ ? Browser : Server;

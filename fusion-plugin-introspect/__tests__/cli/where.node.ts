@@ -1,17 +1,17 @@
-import { mockFs } from "./mockFs";
-import { where } from "../../src/cli/where.js";
+import {mockFs} from './mockFs';
+import {where} from '../../src/cli/where.js';
 
-test("where", async () => {
+test('where', async () => {
   mockFs({
-    version: "0.0.0",
+    version: '0.0.0',
     server: [
       {
         timestamp: 0,
         dependencies: [
           {
-            name: "ABC",
-            type: "both",
-            sources: [{ type: "register", source: "foo/bar:1:2" }],
+            name: 'ABC',
+            type: 'both',
+            sources: [{type: 'register', source: 'foo/bar:1:2'}],
             dependencies: [],
           },
         ],
@@ -19,6 +19,6 @@ test("where", async () => {
     ],
     browser: [],
   });
-  const data = await where("ABC");
-  expect(data.includes("foo/bar:1:2")).toBe(true);
+  const data = await where('ABC');
+  expect(data.includes('foo/bar:1:2')).toBe(true);
 });

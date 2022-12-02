@@ -5,35 +5,35 @@
  *
  */
 
-import { createPlugin, createToken } from "fusion-core";
-import { FetchToken } from "fusion-tokens";
+import {createPlugin, createToken} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
 import {
   GraphQLSchemaToken,
   ApolloContextToken,
   GraphQLEndpointToken,
   type InitApolloClientType,
-} from "../tokens";
-import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
-import { from as apolloLinkFrom } from "apollo-link";
-import { SchemaLink } from "apollo-link-schema";
-import type { ApolloCache, ApolloClientOptions } from "apollo-client";
-import type { DocumentNode } from "graphql";
+} from '../tokens';
+import {ApolloClient} from 'apollo-client';
+import {HttpLink} from 'apollo-link-http';
+import {from as apolloLinkFrom} from 'apollo-link';
+import {SchemaLink} from 'apollo-link-schema';
+import type {ApolloCache, ApolloClientOptions} from 'apollo-client';
+import type {DocumentNode} from 'graphql';
 
-import type { Context, FusionPlugin, Token } from "fusion-core";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import type {Context, FusionPlugin, Token} from 'fusion-core';
+import {InMemoryCache} from 'apollo-cache-inmemory';
 
 export const GetApolloClientCacheToken: Token<
   (ctx: Context) => ApolloCache<unknown>
-> = createToken("GetApolloClientCacheToken");
+> = createToken('GetApolloClientCacheToken');
 
 export const ApolloClientCredentialsToken: Token<string> = createToken(
-  "ApolloClientCredentialsToken"
+  'ApolloClientCredentialsToken'
 );
 
 export const ApolloClientDefaultOptionsToken: Token<
-  ApolloClientOptions<any>["defaultOptions"]
-> = createToken("ApolloClientDefaultOptionsToken");
+  ApolloClientOptions<any>['defaultOptions']
+> = createToken('ApolloClientDefaultOptionsToken');
 
 type ApolloLinkType = {
   request: (operation: any, forward: any) => any;
@@ -41,15 +41,15 @@ type ApolloLinkType = {
 
 export const GetApolloClientLinksToken: Token<
   (a: Array<ApolloLinkType>, ctx: Context) => Array<ApolloLinkType>
-> = createToken("GetApolloClientLinksToken");
+> = createToken('GetApolloClientLinksToken');
 
 export const ApolloClientResolversToken: Token<
   ResolverMapType | ReadonlyArray<ResolverMapType>
-> = createToken("ApolloClientResolversToken");
+> = createToken('ApolloClientResolversToken');
 
 export const ApolloClientLocalSchemaToken: Token<
   string | string[] | DocumentNode | DocumentNode[]
-> = createToken("ApolloClientLocalSchemaToken");
+> = createToken('ApolloClientLocalSchemaToken');
 
 type ResolverMapType = {
   readonly [key: string]: {
@@ -97,11 +97,11 @@ const ApolloClientPlugin: FusionPlugin<
     getCache = (ctx) =>
       // don't automatically add typename when handling POST requests via the executor. This saves size on the response
       new InMemoryCache({
-        addTypename: ctx.method === "POST" ? false : true,
+        addTypename: ctx.method === 'POST' ? false : true,
       }),
-    endpoint = "/graphql",
+    endpoint = '/graphql',
     fetch,
-    includeCredentials = "same-origin",
+    includeCredentials = 'same-origin',
     apolloContext,
     getApolloLinks,
     typeDefs,
@@ -112,7 +112,7 @@ const ApolloClientPlugin: FusionPlugin<
     if (apolloContext) {
       /* eslint-disable-next-line no-console */
       console.warn(
-        "WARNING: Setting a custom context via ApolloContextToken is deprecated. Please use the DI system to inject dependencies directly into your resolver plugins."
+        'WARNING: Setting a custom context via ApolloContextToken is deprecated. Please use the DI system to inject dependencies directly into your resolver plugins.'
       );
     } else {
       apolloContext = (ctx) => ctx;
@@ -124,7 +124,7 @@ const ApolloClientPlugin: FusionPlugin<
           ? new SchemaLink({
               schema,
               context:
-                typeof apolloContext === "function"
+                typeof apolloContext === 'function'
                   ? apolloContext(ctx)
                   : apolloContext,
             })
@@ -159,4 +159,4 @@ const ApolloClientPlugin: FusionPlugin<
     };
   },
 });
-export { ApolloClientPlugin };
+export {ApolloClientPlugin};

@@ -7,29 +7,29 @@
 
 /* eslint-env node */
 
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { createPlugin } from "fusion-core";
-import type { FusionPlugin } from "fusion-core";
-import type { BrowserPerfDepsType } from "./flow";
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import type {BrowserPerfDepsType} from './flow';
 
 const plugin: FusionPlugin<BrowserPerfDepsType, void> =
   // $FlowFixMe
   __NODE__ &&
   createPlugin({
-    deps: { emitter: UniversalEventsToken },
+    deps: {emitter: UniversalEventsToken},
     provides: (deps) => {
       const emitter = deps.emitter;
-      const perfLoggerVersion = require("../package.json").version;
-      emitter.on("browser-performance-emitter:stats:browser-only", (e, ctx) => {
+      const perfLoggerVersion = require('../package.json').version;
+      emitter.on('browser-performance-emitter:stats:browser-only', (e, ctx) => {
         if (ctx) {
           const scopedEmitter = emitter.from(ctx);
           scopedEmitter.emit(
-            "browser-performance-emitter:stats",
+            'browser-performance-emitter:stats',
             mapPerfEvent(e)
           );
         } else {
           emitter.emit(
-            "browser-performance-emitter:stats",
+            'browser-performance-emitter:stats',
             mapPerfEvent(e),
             ctx
           );
@@ -38,7 +38,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
 
       /* Helper Functions */
       function mapPerfEvent(event) {
-        const { timing, resourceEntries, paintTimes, enhancedMetrics } = event;
+        const {timing, resourceEntries, paintTimes, enhancedMetrics} = event;
 
         if (enhancedMetrics) {
           if (!enhancedMetrics.app) {
@@ -139,7 +139,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         if (item === null || item === undefined) {
           return true;
         }
-        if (typeof item === "object" && Object.keys(item).length === 0) {
+        if (typeof item === 'object' && Object.keys(item).length === 0) {
           return true;
         }
         if (Array.isArray(item) && item.length === 0) {
@@ -149,18 +149,18 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
       }
 
       function extractResourceType(name) {
-        const type = name.substring(name.lastIndexOf(".") + 1);
+        const type = name.substring(name.lastIndexOf('.') + 1);
 
-        if (type.indexOf("css") === 0) {
-          return "css";
-        } else if (type.indexOf("js") === 0) {
-          return "js";
+        if (type.indexOf('css') === 0) {
+          return 'css';
+        } else if (type.indexOf('js') === 0) {
+          return 'js';
         } else if (
-          type.indexOf("png") === 0 ||
-          type.indexOf("svg") === 0 ||
-          type.indexOf("jpg") === 0
+          type.indexOf('png') === 0 ||
+          type.indexOf('svg') === 0 ||
+          type.indexOf('jpg') === 0
         ) {
-          return "image";
+          return 'image';
         }
         return null;
       }

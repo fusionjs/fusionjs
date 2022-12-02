@@ -7,29 +7,29 @@
 
 /* eslint-env node */
 
-import bodyParser from "koa-bodyparser";
-import assert from "assert";
+import bodyParser from 'koa-bodyparser';
+import assert from 'assert';
 
-import { createPlugin, createToken, html } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createPlugin, createToken, html} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-import type { ErrorHandlerPluginType, ErrorHandlerType } from "./types";
+import type {ErrorHandlerPluginType, ErrorHandlerType} from './types';
 
 export const ErrorHandlerToken: Token<ErrorHandlerType> =
-  createToken("ErrorHandlerToken");
+  createToken('ErrorHandlerToken');
 
 const captureTypes = {
-  browser: "browser",
-  request: "request",
-  server: "server",
+  browser: 'browser',
+  request: 'request',
+  server: 'server',
 };
 
 const plugin =
   __NODE__ &&
   createPlugin({
-    deps: { onError: ErrorHandlerToken },
-    provides({ onError }) {
-      assert(typeof onError === "function", "{onError} must be a function");
+    deps: {onError: ErrorHandlerToken},
+    provides({onError}) {
+      assert(typeof onError === 'function', '{onError} must be a function');
       // It's possible to call reject with a non-error
       const errorHandler = async (e: unknown) => {
         if (e instanceof Error) {
@@ -39,16 +39,16 @@ const plugin =
         }
         process.exit(1);
       };
-      process.once("uncaughtException", errorHandler);
-      process.once("unhandledRejection", errorHandler);
+      process.once('uncaughtException', errorHandler);
+      process.once('unhandledRejection', errorHandler);
 
       return errorHandler;
     },
     cleanup(errorHandler) {
-      process.off("uncaughtException", errorHandler);
-      process.off("unhandledRejection", errorHandler);
+      process.off('uncaughtException', errorHandler);
+      process.off('unhandledRejection', errorHandler);
     },
-    middleware({ onError }) {
+    middleware({onError}) {
       const parseBody = bodyParser();
       async function middleware(ctx, next) {
         if (ctx.element) {
@@ -91,11 +91,11 @@ const plugin =
             </script>
           `;
           ctx.template.head.unshift(script);
-        } else if (ctx.path === "/_errors") {
+        } else if (ctx.path === '/_errors') {
           await parseBody(ctx, () => Promise.resolve());
           // $FlowFixMe
           await onError(ctx.request.body, captureTypes.browser, ctx);
-          ctx.body = { ok: 1 };
+          ctx.body = {ok: 1};
         }
         try {
           await next();

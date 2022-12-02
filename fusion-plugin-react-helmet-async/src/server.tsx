@@ -5,13 +5,13 @@
  *
  */
 
-import React from "react";
-import { createPlugin, dangerouslySetHTML } from "fusion-core";
-import { HelmetProvider } from "react-helmet-async";
+import React from 'react';
+import {createPlugin, dangerouslySetHTML} from 'fusion-core';
+import {HelmetProvider} from 'react-helmet-async';
 
-import type { FusionPlugin } from "fusion-core";
+import type {FusionPlugin} from 'fusion-core';
 
-const keys = ["meta", "link", "style", "base", "noscript", "script"];
+const keys = ['meta', 'link', 'style', 'base', 'noscript', 'script'];
 
 const plugin =
   __NODE__ &&
@@ -26,13 +26,13 @@ const plugin =
           <HelmetProvider context={helmetContext}>{ctx.element}</HelmetProvider>
         );
         await next();
-        const { helmet } = helmetContext;
+        const {helmet} = helmetContext;
         if (helmet) {
           ctx.template.title = dangerouslySetHTML(
             helmet.title
               .toString()
-              .replace("</title>", "")
-              .replace(/^<title.*>/, "")
+              .replace('</title>', '')
+              .replace(/^<title.*>/, '')
           );
           keys.forEach((key) => {
             ctx.template.head.push(dangerouslySetHTML(helmet[key].toString()));

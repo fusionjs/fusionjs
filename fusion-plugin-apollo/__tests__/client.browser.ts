@@ -7,26 +7,26 @@
 
 /* eslint-env browser */
 
-import React from "react";
-import render from "../src/client";
+import React from 'react';
+import render from '../src/client';
 
-test("renders", () => {
-  const root = document.createElement("div");
-  root.id = "root";
+test('renders', () => {
+  const root = document.createElement('div');
+  root.id = 'root';
   if (!document.body) {
-    throw new Error("Could not find body");
+    throw new Error('Could not find body');
   }
   document.body.appendChild(root);
-  render(React.createElement("span", null, "hello"));
+  render(React.createElement('span', null, 'hello'));
   const firstChild = root.firstChild;
   if (!firstChild) {
-    throw new Error("Could not first child");
+    throw new Error('Could not first child');
   }
-  expect(firstChild.nodeName).toBe("SPAN");
-  expect(firstChild.textContent).toBe("hello");
+  expect(firstChild.nodeName).toBe('SPAN');
+  expect(firstChild.textContent).toBe('hello');
 
   if (!document.body) {
-    throw new Error("Could not find body");
+    throw new Error('Could not find body');
   }
   document.body.removeChild(root);
 });

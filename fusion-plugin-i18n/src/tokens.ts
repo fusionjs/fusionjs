@@ -5,8 +5,8 @@
  *
  */
 
-import { createToken } from "fusion-core";
+import {createToken} from 'fusion-core';
 
-export const I18nLoaderToken = createToken<any>("I18nLoaderToken");
+export const I18nLoaderToken = createToken<any>('I18nLoaderToken');
 
-export const I18nTranslateFnsToken = createToken<any>("I18nTranslateFnsToken");
+export const I18nTranslateFnsToken = createToken<any>('I18nTranslateFnsToken');

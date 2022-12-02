@@ -7,10 +7,10 @@
 
 /* eslint-env browser */
 
-import { createStore } from "redux";
-import type { Store } from "redux";
+import {createStore} from 'redux';
+import type {Store} from 'redux';
 
-import type { Context } from "fusion-core";
+import type {Context} from 'fusion-core';
 
 type CreateStoreType = typeof createStore;
 

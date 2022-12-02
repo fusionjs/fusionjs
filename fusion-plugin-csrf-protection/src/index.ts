@@ -5,10 +5,10 @@
  *
  */
 
-import serverCsrf from "./server";
-import clientCsrf from "./browser";
+import serverCsrf from './server';
+import clientCsrf from './browser';
 
 declare var __NODE__: Boolean;
 export default __NODE__ ? serverCsrf : clientCsrf;
 
-export { CsrfIgnoreRoutesToken } from "./shared";
+export {CsrfIgnoreRoutesToken} from './shared';

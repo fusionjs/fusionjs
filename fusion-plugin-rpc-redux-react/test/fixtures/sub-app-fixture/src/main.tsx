@@ -6,22 +6,22 @@
  * @ts-nocheck
  */
 
-import React from "react";
-import App from "fusion-react";
-import RPCPlugin, { RPCToken } from "../../../..";
-import Root from "./components/root";
+import React from 'react';
+import App from 'fusion-react';
+import RPCPlugin, {RPCToken} from '../../../..';
+import Root from './components/root';
 import ReduxPlugin, {
   ReducerToken,
   ReduxToken,
   GetInitialStateToken,
-} from "fusion-plugin-react-redux";
+} from 'fusion-plugin-react-redux';
 import UniversalEvents, {
   UniversalEventsToken,
-} from "fusion-plugin-universal-events";
-import { RPCHandlersToken } from "fusion-plugin-rpc";
-import { FetchToken } from "fusion-tokens";
-import rpcHandlers from "./rpc/index";
-import reducer from "./redux";
+} from 'fusion-plugin-universal-events';
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import {FetchToken} from 'fusion-tokens';
+import rpcHandlers from './rpc/index';
+import reducer from './redux';
 
 export default () => {
   const app = new App(<Root />);

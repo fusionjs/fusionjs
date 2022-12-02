@@ -6,35 +6,35 @@
  * @ts-nocheck
  */
 
-import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { prepared } from "fusion-react";
-import { withRPCRedux } from "../../../../..";
+import React from 'react';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {prepared} from 'fusion-react';
+import {withRPCRedux} from '../../../../..';
 
 const CHILD_TRIP_ID = 456;
 
 function Child(props) {
   if (props.isLoading) {
-    return "Loading...";
+    return 'Loading...';
   }
 
   return (
     <div data-testid="child-trip-id">
-      {props.lastTrip ? props.lastTrip.id : "no trips"}
+      {props.lastTrip ? props.lastTrip.id : 'no trips'}
     </div>
   );
 }
 
 export default compose(
-  withRPCRedux("getLastTrip"),
-  connect(({ lastTrip }) => ({
+  withRPCRedux('getLastTrip'),
+  connect(({lastTrip}) => ({
     lastTrip: lastTrip.data,
     isLoading: lastTrip.loading,
   })),
   prepared((props) =>
     props.lastTrip
       ? Promise.resolve()
-      : props.getLastTrip({ tripId: CHILD_TRIP_ID })
+      : props.getLastTrip({tripId: CHILD_TRIP_ID})
   )
 )(Child);

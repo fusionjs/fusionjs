@@ -7,7 +7,7 @@
  */
 
 export default {
-  async getLastTrip({ tripId }) {
-    return { id: tripId, from: "here", to: "there" };
+  async getLastTrip({tripId}) {
+    return {id: tripId, from: 'here', to: 'there'};
   },
 };

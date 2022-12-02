@@ -4,13 +4,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import * as React from "react";
-import type { ReactElement } from "react";
+import * as React from 'react';
+import type {ReactElement} from 'react';
 
 export const FusionContext = React.createContext<any>({});
 export const ServiceContext = React.createContext<any>(() => {
   throw new Error(
-    "`ServiceContext.Provider` was not found. This occurs if you are attempting to use `ServiceContext` in a non-React Fusion.js application."
+    '`ServiceContext.Provider` was not found. This occurs if you are attempting to use `ServiceContext` in a non-React Fusion.js application.'
   );
 });
 

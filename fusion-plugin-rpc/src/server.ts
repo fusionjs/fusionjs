@@ -7,26 +7,26 @@
 
 /* eslint-env node */
 
-import bodyparser from "koa-bodyparser";
-import formidable from "formidable";
+import bodyparser from 'koa-bodyparser';
+import formidable from 'formidable';
 
-import { createPlugin, memoize, RouteTagsToken } from "fusion-core";
-import type { Context } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import type { Fetch } from "fusion-tokens";
+import {createPlugin, memoize, RouteTagsToken} from 'fusion-core';
+import type {Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {Fetch} from 'fusion-tokens';
 
-import MissingHandlerError from "./missing-handler-error";
-import ResponseError from "./response-error";
+import MissingHandlerError from './missing-handler-error';
+import ResponseError from './response-error';
 import {
   BodyParserOptionsToken,
   RPCHandlersToken,
   RPCHandlersConfigToken,
-} from "./tokens";
-import type { HandlerType } from "./tokens";
-import type { RPCPluginType, IEmitter } from "./types";
-import { formatApiPath } from "./utils";
+} from './tokens';
+import type {HandlerType} from './tokens';
+import type {RPCPluginType, IEmitter} from './types';
+import {formatApiPath} from './utils';
 
-const statKey = "rpc:method";
+const statKey = 'rpc:method';
 
 /* Helper function */
 function hasHandler(handlers: HandlerType, method: string): boolean {
@@ -41,7 +41,7 @@ class RPC {
 
   constructor(emitter: IEmitter, handlers: any, ctx: Context) {
     if (!ctx || !ctx.headers) {
-      throw new Error("fusion-plugin-rpc requires `ctx`");
+      throw new Error('fusion-plugin-rpc requires `ctx`');
     }
     this.ctx = ctx;
     this.emitter = emitter;
@@ -54,22 +54,22 @@ class RPC {
     const startTime = ms();
 
     if (!this.ctx) {
-      throw new Error("fusion-plugin-rpc requires `ctx`");
+      throw new Error('fusion-plugin-rpc requires `ctx`');
     }
     if (!this.emitter) {
-      throw new Error("fusion-plugin-rpc requires `emitter`");
+      throw new Error('fusion-plugin-rpc requires `emitter`');
     }
     const scopedEmitter = this.emitter.from(this.ctx);
 
     if (!this.handlers) {
-      throw new Error("fusion-plugin-rpc requires `handlers`");
+      throw new Error('fusion-plugin-rpc requires `handlers`');
     }
     if (!hasHandler(this.handlers, method)) {
       const e = new MissingHandlerError(method);
       if (scopedEmitter) {
-        scopedEmitter.emit("rpc:error", {
+        scopedEmitter.emit('rpc:error', {
           method,
-          origin: "server",
+          origin: 'server',
           error: e,
         });
       }
@@ -80,8 +80,8 @@ class RPC {
       if (scopedEmitter) {
         scopedEmitter.emit(statKey, {
           method,
-          status: "success",
-          origin: "server",
+          status: 'success',
+          origin: 'server',
           timing: ms() - startTime,
         });
       }
@@ -91,8 +91,8 @@ class RPC {
         scopedEmitter.emit(statKey, {
           method,
           error: e,
-          status: "failure",
-          origin: "server",
+          status: 'failure',
+          origin: 'server',
           timing: ms() - startTime,
         });
       }
@@ -112,7 +112,7 @@ const pluginFactory: () => RPCPluginType = () =>
     },
 
     provides: (deps) => {
-      const { emitter, handlers } = deps;
+      const {emitter, handlers} = deps;
 
       const service = {
         from: memoize((ctx) => new RPC(emitter, handlers, ctx)),
@@ -121,25 +121,25 @@ const pluginFactory: () => RPCPluginType = () =>
     },
 
     middleware: (deps) => {
-      const { emitter, handlers, bodyParserOptions, rpcConfig } = deps;
+      const {emitter, handlers, bodyParserOptions, rpcConfig} = deps;
       if (!handlers)
-        throw new Error("Missing handlers registered to RPCHandlersToken");
+        throw new Error('Missing handlers registered to RPCHandlersToken');
       if (!emitter)
-        throw new Error("Missing emitter registered to UniversalEventsToken");
+        throw new Error('Missing emitter registered to UniversalEventsToken');
       const parseBody = bodyparser(bodyParserOptions);
 
       const apiPath = formatApiPath(
-        rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : "api"
+        rpcConfig && rpcConfig.apiPath ? rpcConfig.apiPath : 'api'
       );
 
       return async (ctx, next) => {
         await next();
         const routeTags = (deps.RouteTags && deps.RouteTags.from(ctx)) || {};
         const scopedEmitter = emitter.from(ctx);
-        if (ctx.method === "POST" && ctx.path.startsWith(apiPath)) {
+        if (ctx.method === 'POST' && ctx.path.startsWith(apiPath)) {
           const startTime = ms();
           // eslint-disable-next-line no-useless-escape
-          const pathMatch = new RegExp(`${apiPath}([^/]+)`, "i");
+          const pathMatch = new RegExp(`${apiPath}([^/]+)`, 'i');
           const [, method] = ctx.path.match(pathMatch) || [];
           if (hasHandler(handlers, method)) {
             routeTags.name = method;
@@ -148,9 +148,9 @@ const pluginFactory: () => RPCPluginType = () =>
               if (
                 ctx.req &&
                 ctx.req.headers &&
-                ctx.req.headers["content-type"] &&
-                ctx.req.headers["content-type"].indexOf(
-                  "multipart/form-data"
+                ctx.req.headers['content-type'] &&
+                ctx.req.headers['content-type'].indexOf(
+                  'multipart/form-data'
                 ) !== -1
               ) {
                 const form = new formidable.IncomingForm();
@@ -180,10 +180,10 @@ const pluginFactory: () => RPCPluginType = () =>
               }
             } catch (e) {
               ctx.body = {
-                status: "failure",
+                status: 'failure',
                 data: {
                   message: e.message,
-                  code: e.type || "ERR_BAD_BODY",
+                  code: e.type || 'ERR_BAD_BODY',
                   meta: e.meta,
                 },
               };
@@ -191,8 +191,8 @@ const pluginFactory: () => RPCPluginType = () =>
                 scopedEmitter.emit(statKey, {
                   method,
                   error: e,
-                  status: "failure",
-                  origin: "browser",
+                  status: 'failure',
+                  origin: 'browser',
                   timing: ms() - startTime,
                 });
               }
@@ -206,14 +206,14 @@ const pluginFactory: () => RPCPluginType = () =>
                 ctx
               );
               ctx.body = {
-                status: "success",
+                status: 'success',
                 data: result,
               };
               if (scopedEmitter) {
                 scopedEmitter.emit(statKey, {
                   method,
-                  status: "success",
-                  origin: "browser",
+                  status: 'success',
+                  origin: 'browser',
                   timing: ms() - startTime,
                 });
               }
@@ -223,11 +223,11 @@ const pluginFactory: () => RPCPluginType = () =>
                   ? e
                   : new Error(
                       __DEV__
-                        ? "UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages"
-                        : "Internal Server Error"
+                        ? 'UnknownError - Use ResponseError from fusion-plugin-rpc (or fusion-plugin-rpc-redux-react if you are using React) package for more detailed error messages'
+                        : 'Internal Server Error'
                     );
               ctx.body = {
-                status: "failure",
+                status: 'failure',
                 data: {
                   message: error.message,
                   // $FlowFixMe
@@ -240,8 +240,8 @@ const pluginFactory: () => RPCPluginType = () =>
                 scopedEmitter.emit(statKey, {
                   method,
                   error: e,
-                  status: "failure",
-                  origin: "browser",
+                  status: 'failure',
+                  origin: 'browser',
                   timing: ms() - startTime,
                 });
               }
@@ -249,7 +249,7 @@ const pluginFactory: () => RPCPluginType = () =>
           } else {
             const e = new MissingHandlerError(method);
             ctx.body = {
-              status: "failure",
+              status: 'failure',
               data: {
                 message: e.message,
                 code: e.code,
@@ -257,8 +257,8 @@ const pluginFactory: () => RPCPluginType = () =>
             };
             ctx.status = 404;
             if (scopedEmitter) {
-              scopedEmitter.emit("rpc:error", {
-                origin: "browser",
+              scopedEmitter.emit('rpc:error', {
+                origin: 'browser',
                 method,
                 error: e,
               });

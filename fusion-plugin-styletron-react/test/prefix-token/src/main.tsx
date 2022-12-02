@@ -1,8 +1,8 @@
-import React from "react";
-import App from "fusion-react";
-import Styletron, { styled, AtomicPrefixToken } from "../../..";
+import React from 'react';
+import App from 'fusion-react';
+import Styletron, {styled, AtomicPrefixToken} from '../../..';
 
-const StyledComponent = styled("div", { color: "red", background: "blue" });
+const StyledComponent = styled('div', {color: 'red', background: 'blue'});
 
 function Root() {
   return (
@@ -15,6 +15,6 @@ function Root() {
 export default () => {
   const app = new App(<Root />);
   app.register(Styletron);
-  app.register(AtomicPrefixToken, "__atomic_prefix__");
+  app.register(AtomicPrefixToken, '__atomic_prefix__');
   return app;
 };

@@ -5,33 +5,33 @@
  *
  */
 
-import * as React from "react";
-import { getSimulator } from "fusion-test-utils";
-import render from "../src/server";
-import App from "../src/index";
+import * as React from 'react';
+import {getSimulator} from 'fusion-test-utils';
+import render from '../src/server';
+import App from '../src/index';
 import {
   unstable_EnableServerStreamingToken,
   SSRShellTemplateToken,
-} from "fusion-core";
+} from 'fusion-core';
 
-test("renders", async () => {
-  const rendered = await render(React.createElement("span", null, "hello"));
+test('renders', async () => {
+  const rendered = await render(React.createElement('span', null, 'hello'));
   expect(/<span/.test(rendered)).toBeTruthy();
   expect(/hello/.test(rendered)).toBeTruthy();
 });
 
-test("app api", async () => {
-  expect(typeof App).toBe("function");
-  const app = new App(React.createElement("div", null, "Hello World"));
+test('app api', async () => {
+  expect(typeof App).toBe('function');
+  const app = new App(React.createElement('div', null, 'Hello World'));
   const simulator = getSimulator(app);
-  const ctx = await simulator.render("/");
-  expect(ctx.rendered.includes("Hello World")).toBeTruthy();
+  const ctx = await simulator.render('/');
+  expect(ctx.rendered.includes('Hello World')).toBeTruthy();
   expect(
-    typeof ctx.body === "string" && ctx.body.includes(ctx.rendered)
+    typeof ctx.body === 'string' && ctx.body.includes(ctx.rendered)
   ).toBeTruthy();
 });
 
-test("throw on non-element root", async () => {
+test('throw on non-element root', async () => {
   expect(() => {
     // $FlowFixMe
     new App(function () {
@@ -40,17 +40,17 @@ test("throw on non-element root", async () => {
   }).toThrow();
 });
 
-test("renders in streaming", async () => {
-  const app = new App(React.createElement("div", null, "Hello World"));
+test('renders in streaming', async () => {
+  const app = new App(React.createElement('div', null, 'Hello World'));
   app.register(unstable_EnableServerStreamingToken, true);
   app.register(SSRShellTemplateToken, () => ({
-    start: "<html><body>",
-    end: "</body></html>",
+    start: '<html><body>',
+    end: '</body></html>',
     scripts: [],
     useModuleScripts: false,
   }));
   const simulator = getSimulator(app);
-  const ctx = await simulator.render("/");
+  const ctx = await simulator.render('/');
   expect(
     ctx.rendered.includes(
       '<html><body><div id="root"><div>Hello World</div></div></body></html>'

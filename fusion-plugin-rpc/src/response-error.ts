@@ -15,8 +15,8 @@ export default class ResponseError extends Error {
     | null;
 
   static Severity = Object.freeze({
-    HIGH: "HIGH",
-    MEDIUM: "MEDIUM",
+    HIGH: 'HIGH',
+    MEDIUM: 'MEDIUM',
   });
 
   constructor(
@@ -29,7 +29,7 @@ export default class ResponseError extends Error {
     } | null
   ) {
     super(message);
-    const { code, meta, cause, severity } = options ?? {};
+    const {code, meta, cause, severity} = options ?? {};
     this.code = code;
     this.meta = meta;
     this.cause = cause;

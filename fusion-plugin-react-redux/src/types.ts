@@ -5,16 +5,16 @@
  *
  */
 
-import type { Store } from "redux";
+import type {Store} from 'redux';
 
-import type { Context } from "fusion-core";
+import type {Context} from 'fusion-core';
 
 import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
-} from "./tokens";
+} from './tokens';
 
 export type GetInitialStateType<TState> = (
   ctx: Context

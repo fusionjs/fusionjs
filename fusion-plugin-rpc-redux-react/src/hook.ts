@@ -5,13 +5,13 @@
  *
  */
 
-import * as React from "react";
+import * as React from 'react';
 // $FlowFixMe
-import { ReactReduxContext } from "react-redux";
-import { RPCToken } from "fusion-plugin-rpc";
-import { ReduxToken } from "fusion-plugin-react-redux";
-import { FusionContext, useService } from "fusion-react";
-import { createRPCHandler } from "fusion-rpc-redux";
+import {ReactReduxContext} from 'react-redux';
+import {RPCToken} from 'fusion-plugin-rpc';
+import {ReduxToken} from 'fusion-plugin-react-redux';
+import {FusionContext, useService} from 'fusion-react';
+import {createRPCHandler} from 'fusion-rpc-redux';
 
 export function useRPCRedux(
   rpcId: string,

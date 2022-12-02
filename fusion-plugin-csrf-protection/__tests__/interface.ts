@@ -5,9 +5,9 @@
  *
  */
 
-import Plugin, { CsrfIgnoreRoutesToken } from "../src/index";
+import Plugin, {CsrfIgnoreRoutesToken} from '../src/index';
 
-test("plugin api", () => {
+test('plugin api', () => {
   expect(Plugin).toBeTruthy();
   expect(CsrfIgnoreRoutesToken).toBeTruthy();
 });

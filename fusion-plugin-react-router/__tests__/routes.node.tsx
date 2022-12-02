@@ -5,12 +5,12 @@
  *
  */
 
-import React from "react";
-import { renderToString as render } from "react-dom/server";
-import { Router, Routes, Route, Outlet } from "../src/server";
-import { createServerHistory } from "../src/modules/ServerHistory";
+import React from 'react';
+import {renderToString as render} from 'react-dom/server';
+import {Router, Routes, Route, Outlet} from '../src/server';
+import {createServerHistory} from '../src/modules/ServerHistory';
 
-test("routes matches as expected", () => {
+test('routes matches as expected', () => {
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
   const ctx = {
@@ -19,7 +19,7 @@ test("routes matches as expected", () => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history}>
       <Routes>
@@ -32,7 +32,7 @@ test("routes matches as expected", () => {
   expect(!/Hi/.test(render(el))).toBeTruthy();
 });
 
-test("nested routes matches as expected", () => {
+test('nested routes matches as expected', () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -46,7 +46,7 @@ test("nested routes matches as expected", () => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/outer/inner");
+  const history = createServerHistory('', ctx, '/outer/inner');
   const el = (
     <Router history={history}>
       <Routes>
@@ -56,10 +56,10 @@ test("nested routes matches as expected", () => {
       </Routes>
     </Router>
   );
-  expect(render(el)).toEqual("<div>Hello</div><div>Hi</div>");
+  expect(render(el)).toEqual('<div>Hello</div><div>Hi</div>');
 });
 
-test("nested routes with prefix matches as expected", () => {
+test('nested routes with prefix matches as expected', () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -73,7 +73,7 @@ test("nested routes with prefix matches as expected", () => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("/base", ctx, "/base/outer/inner");
+  const history = createServerHistory('/base', ctx, '/base/outer/inner');
   const el = (
     <Router basename="/base" history={history}>
       <Routes>
@@ -83,15 +83,15 @@ test("nested routes with prefix matches as expected", () => {
       </Routes>
     </Router>
   );
-  expect(render(el)).toEqual("<div>Hello</div><div>Hi</div>");
+  expect(render(el)).toEqual('<div>Hello</div><div>Hi</div>');
 });
 
-test("routes fires onRoute when location changes", (done) => {
+test('routes fires onRoute when location changes', (done) => {
   const Hello = () => <div>Hello</div>;
 
   const onRoute = (data) => {
-    expect(data.page).toEqual("/hello");
-    expect(data.title).toEqual("/hello");
+    expect(data.page).toEqual('/hello');
+    expect(data.title).toEqual('/hello');
     expect(data.params).toEqual({});
     done();
   };
@@ -102,7 +102,7 @@ test("routes fires onRoute when location changes", (done) => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/hello");
+  const history = createServerHistory('', ctx, '/hello');
 
   const el = (
     <Router history={history} onRoute={onRoute}>
@@ -114,7 +114,7 @@ test("routes fires onRoute when location changes", (done) => {
   render(el);
 });
 
-test("routes fires onRoute when location changes with nested route", (done) => {
+test('routes fires onRoute when location changes with nested route', (done) => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -126,12 +126,12 @@ test("routes fires onRoute when location changes with nested route", (done) => {
   let callNum = 0;
   const onRoute = (data) => {
     if (callNum === 0) {
-      expect(data.page).toEqual("/outer");
-      expect(data.title).toEqual("/outer");
+      expect(data.page).toEqual('/outer');
+      expect(data.title).toEqual('/outer');
       expect(data.params).toEqual({});
     } else if (callNum === 1) {
-      expect(data.page).toEqual("/outer/inner");
-      expect(data.title).toEqual("/outer/inner");
+      expect(data.page).toEqual('/outer/inner');
+      expect(data.title).toEqual('/outer/inner');
       expect(data.params).toEqual({});
       done();
     }
@@ -144,7 +144,7 @@ test("routes fires onRoute when location changes with nested route", (done) => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/outer/inner");
+  const history = createServerHistory('', ctx, '/outer/inner');
 
   const el = (
     <Router history={history} onRoute={onRoute}>
@@ -158,12 +158,12 @@ test("routes fires onRoute when location changes with nested route", (done) => {
   render(el);
 });
 
-test("routes fires onRoute when location changes with prefix", (done) => {
+test('routes fires onRoute when location changes with prefix', (done) => {
   const Hello = () => <div>Hello</div>;
 
   const onRoute = (data) => {
-    expect(data.page).toEqual("/hello");
-    expect(data.title).toEqual("/hello");
+    expect(data.page).toEqual('/hello');
+    expect(data.title).toEqual('/hello');
     expect(data.params).toEqual({});
     done();
   };
@@ -174,7 +174,7 @@ test("routes fires onRoute when location changes with prefix", (done) => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("/base", ctx, "/base/hello");
+  const history = createServerHistory('/base', ctx, '/base/hello');
   const el = (
     <Router history={history} onRoute={onRoute} basename="/base">
       <Routes>
@@ -185,12 +185,12 @@ test("routes fires onRoute when location changes with prefix", (done) => {
   render(el);
 });
 
-test("routes fires onRoute when location changes with custom trackingId", (done) => {
+test('routes fires onRoute when location changes with custom trackingId', (done) => {
   const Hello = () => <div>Hello</div>;
 
   const onRoute = (data) => {
-    expect(data.page).toEqual("/hello");
-    expect(data.title).toEqual("custom-tracking-id");
+    expect(data.page).toEqual('/hello');
+    expect(data.title).toEqual('custom-tracking-id');
     expect(data.params).toEqual({});
     done();
   };
@@ -201,7 +201,7 @@ test("routes fires onRoute when location changes with custom trackingId", (done)
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/hello");
+  const history = createServerHistory('', ctx, '/hello');
 
   const el = (
     <Router history={history} onRoute={onRoute}>
@@ -209,7 +209,7 @@ test("routes fires onRoute when location changes with custom trackingId", (done)
         <Route
           path="/hello"
           element={<Hello />}
-          trackingId={"custom-tracking-id"}
+          trackingId={'custom-tracking-id'}
         />
       </Routes>
     </Router>
@@ -217,7 +217,7 @@ test("routes fires onRoute when location changes with custom trackingId", (done)
   render(el);
 });
 
-test("routes fires onRoute when location changes with custom trackingId, prefix, and nests", (done) => {
+test('routes fires onRoute when location changes with custom trackingId, prefix, and nests', (done) => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -229,12 +229,12 @@ test("routes fires onRoute when location changes with custom trackingId, prefix,
   let callNum = 0;
   const onRoute = (data) => {
     if (callNum === 0) {
-      expect(data.page).toEqual("/outer");
-      expect(data.title).toEqual("/outer");
+      expect(data.page).toEqual('/outer');
+      expect(data.title).toEqual('/outer');
       expect(data.params).toEqual({});
     } else if (callNum === 1) {
-      expect(data.page).toEqual("/outer/inner");
-      expect(data.title).toEqual("inner-tracking");
+      expect(data.page).toEqual('/outer/inner');
+      expect(data.title).toEqual('inner-tracking');
       expect(data.params).toEqual({});
       done();
     }
@@ -247,7 +247,7 @@ test("routes fires onRoute when location changes with custom trackingId, prefix,
     status: 200,
     url: null,
   };
-  const history = createServerHistory("/base", ctx, "/base/outer/inner");
+  const history = createServerHistory('/base', ctx, '/base/outer/inner');
   const falsy = false;
   const el = (
     <Router history={history} onRoute={onRoute} basename="/base">
@@ -256,7 +256,7 @@ test("routes fires onRoute when location changes with custom trackingId, prefix,
           <Route
             path="inner"
             element={<Hello />}
-            trackingId={"inner-tracking"}
+            trackingId={'inner-tracking'}
           />
           {falsy ? <Route path="not-gonna-work" element={<Hi />} /> : null}
         </Route>
@@ -266,7 +266,7 @@ test("routes fires onRoute when location changes with custom trackingId, prefix,
   render(el);
 });
 
-test("nullish routes render without issue", () => {
+test('nullish routes render without issue', () => {
   const HelloParent = () => (
     <>
       <div>Hello</div>
@@ -280,7 +280,7 @@ test("nullish routes render without issue", () => {
     status: 200,
     url: null,
   };
-  const history = createServerHistory("", ctx, "/outer/inner");
+  const history = createServerHistory('', ctx, '/outer/inner');
   const falsy = false;
   const el = (
     <Router history={history}>
@@ -292,5 +292,5 @@ test("nullish routes render without issue", () => {
       </Routes>
     </Router>
   );
-  expect(render(el)).toEqual("<div>Hello</div><div>Hi</div>");
+  expect(render(el)).toEqual('<div>Hello</div><div>Hi</div>');
 });

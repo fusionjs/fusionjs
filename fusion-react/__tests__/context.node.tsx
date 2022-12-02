@@ -5,84 +5,84 @@
  *
  */
 
-import * as React from "react";
-import { createToken, createPlugin } from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
-import App from "../src/index";
+import * as React from 'react';
+import {createToken, createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import App from '../src/index';
 import {
   FusionContext,
   ServiceConsumer,
   useService,
   withServices,
-} from "../src/context";
-import { split } from "../src/async/index";
+} from '../src/context';
+import {split} from '../src/async/index';
 
-test("context#useService", async () => {
-  const TestToken = createToken("test");
-  const TestPlugin = createPlugin({ provides: () => 3 });
+test('context#useService', async () => {
+  const TestToken = createToken('test');
+  const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
   function TestComponent() {
     const provides = useService(TestToken);
     const ctx = React.useContext(FusionContext);
     didRender = true;
     expect(provides).toBe(3);
-    expect(ctx.request.url).toBe("/");
-    return React.createElement("div", null, "hello");
+    expect(ctx.request.url).toBe('/');
+    return React.createElement('div', null, 'hello');
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
   app.register(TestToken, TestPlugin);
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
+  const ctx = await sim.render('/');
   expect(
-    typeof ctx.body === "string" && ctx.body.includes("hello")
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
   ).toBeTruthy();
   expect(didRender).toBeTruthy();
 });
 
-test("context#useService - unregistered token", async () => {
+test('context#useService - unregistered token', async () => {
   let didRender = false;
   function TestComponent() {
-    const TestToken = createToken("test");
+    const TestToken = createToken('test');
     useService(TestToken);
     didRender = true;
-    return React.createElement("div", null, "successful render");
+    return React.createElement('div', null, 'successful render');
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
-  expect(ctx.rendered).not.toContain("successful render"); // falls back to client render
+  const ctx = await sim.render('/');
+  expect(ctx.rendered).not.toContain('successful render'); // falls back to client render
   expect(didRender).toBeFalsy(); // error thrown within component is caught and logged
 });
 
-test("context#useService - optional token", async () => {
+test('context#useService - optional token', async () => {
   let didRender = false;
   function TestComponent() {
-    const TestToken = createToken("test");
+    const TestToken = createToken('test');
     useService(TestToken.optional);
     didRender = true;
-    return React.createElement("div", null, "hello");
+    return React.createElement('div', null, 'hello');
   }
   const element = React.createElement(TestComponent);
   const app = new App(element);
   const sim = getSimulator(app);
-  await sim.render("/");
+  await sim.render('/');
   expect(didRender).toBeTruthy();
 });
 
-test("context#ServiceConsumer", async () => {
-  const TestToken = createToken("test");
-  const TestPlugin = createPlugin({ provides: () => 3 });
+test('context#ServiceConsumer', async () => {
+  const TestToken = createToken('test');
+  const TestPlugin = createPlugin({provides: () => 3});
   let didRender = false;
   function TestComponent() {
     return React.createElement(
       ServiceConsumer,
-      { token: TestToken },
+      {token: TestToken},
       (provides) => {
         didRender = true;
         expect(provides).toBe(3);
-        return React.createElement("div", null, "hello");
+        return React.createElement('div', null, 'hello');
       }
     );
   }
@@ -90,46 +90,46 @@ test("context#ServiceConsumer", async () => {
   const app = new App(element);
   app.register(TestToken, TestPlugin);
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
+  const ctx = await sim.render('/');
   expect(
-    typeof ctx.body === "string" && ctx.body.includes("hello")
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
   ).toBeTruthy();
   expect(didRender).toBeTruthy();
 });
 
-test("context#withServices", async () => {
-  const TestToken1 = createToken("test-1");
-  const TestToken2 = createToken("test-2");
-  const TestPlugin1 = createPlugin({ provides: () => 1 });
-  const TestPlugin2 = createPlugin({ provides: () => 2 });
+test('context#withServices', async () => {
+  const TestToken1 = createToken('test-1');
+  const TestToken2 = createToken('test-2');
+  const TestPlugin1 = createPlugin({provides: () => 1});
+  const TestPlugin2 = createPlugin({provides: () => 2});
   let didRender = false;
-  function TestComponent({ mappedOne, mappedTwo, propValue }) {
+  function TestComponent({mappedOne, mappedTwo, propValue}) {
     didRender = true;
     expect(mappedOne).toBe(1);
     expect(mappedTwo).toBe(2);
     expect(propValue).toBe(3);
-    return React.createElement("div", null, "hello");
+    return React.createElement('div', null, 'hello');
   }
   const WrappedComponent = withServices(
     {
       test1: TestToken1,
       test2: TestToken2,
     },
-    (deps) => ({ mappedOne: deps.test1, mappedTwo: deps.test2 })
+    (deps) => ({mappedOne: deps.test1, mappedTwo: deps.test2})
   )(TestComponent);
-  const element = React.createElement(WrappedComponent, { propValue: 3 });
+  const element = React.createElement(WrappedComponent, {propValue: 3});
   const app = new App(element);
   app.register(TestToken1, TestPlugin1);
   app.register(TestToken2, TestPlugin2);
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
+  const ctx = await sim.render('/');
   expect(
-    typeof ctx.body === "string" && ctx.body.includes("hello")
+    typeof ctx.body === 'string' && ctx.body.includes('hello')
   ).toBeTruthy();
   expect(didRender).toBeTruthy();
 });
 
-test("collects split SSR metadata in context", async () => {
+test('collects split SSR metadata in context', async () => {
   function DeferredComponent() {
     return <div>Loaded</div>;
   }
@@ -144,10 +144,10 @@ test("collects split SSR metadata in context", async () => {
     defer: false,
     load: () =>
       Object.defineProperty(
-        Promise.resolve({ default: DeferredComponent }),
+        Promise.resolve({default: DeferredComponent}),
         // $FlowFixMe
-        "__FUSION_DYNAMIC_IMPORT_METADATA__",
-        { value: "some_arbitrary_metadata" }
+        '__FUSION_DYNAMIC_IMPORT_METADATA__',
+        {value: 'some_arbitrary_metadata'}
       ) as any,
     LoadingComponent,
     ErrorComponent,
@@ -155,14 +155,14 @@ test("collects split SSR metadata in context", async () => {
 
   const app = new App(<SplitComponent />);
   const sim = getSimulator(app);
-  const ctx = await sim.render("/");
+  const ctx = await sim.render('/');
   expect(ctx.ssrMetadata).toStrictEqual([
-    { data: "some_arbitrary_metadata", type: "critical-dynamic-import" },
+    {data: 'some_arbitrary_metadata', type: 'critical-dynamic-import'},
   ]);
 
   // Should also be present for subsequent SSR
-  const ctx2 = await sim.render("/");
+  const ctx2 = await sim.render('/');
   expect(ctx2.ssrMetadata).toStrictEqual([
-    { data: "some_arbitrary_metadata", type: "critical-dynamic-import" },
+    {data: 'some_arbitrary_metadata', type: 'critical-dynamic-import'},
   ]);
 });

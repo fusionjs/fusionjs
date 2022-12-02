@@ -5,24 +5,24 @@
  *
  */
 
-import MockEmitter from "events";
+import MockEmitter from 'events';
 
-import App, { createPlugin, createToken } from "fusion-core";
-import { FetchToken } from "fusion-tokens";
-import { getSimulator } from "fusion-test-utils";
-import type { Token } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { I18nToken } from "fusion-plugin-i18n";
+import App, {createPlugin, createToken} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
+import {getSimulator} from 'fusion-test-utils';
+import type {Token} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {I18nToken} from 'fusion-plugin-i18n';
 
-import RPCPlugin from "../src/browser";
-import type { IEmitter } from "../src/types";
-import createMockEmitter from "./create-mock-emitter";
-import { RPCHandlersConfigToken, RPCQueryParamsToken } from "../src/tokens";
+import RPCPlugin from '../src/browser';
+import type {IEmitter} from '../src/types';
+import createMockEmitter from './create-mock-emitter';
+import {RPCHandlersConfigToken, RPCQueryParamsToken} from '../src/tokens';
 
-const MockPluginToken: Token<any> = createToken("test-plugin-token");
+const MockPluginToken: Token<any> = createToken('test-plugin-token');
 function createTestFixture() {
   const mockFetch = (...args) =>
-    Promise.resolve({ json: () => ({ status: "success", data: args }) });
+    Promise.resolve({json: () => ({status: 'success', data: args})});
   const mockEmitter: IEmitter = new MockEmitter() as any;
   const mockEmitterPlugin = createPlugin({
     provides: () => mockEmitter,
@@ -30,14 +30,14 @@ function createTestFixture() {
   const mockI18nPlugin = createPlugin({
     provides: () => ({
       from: () => ({
-        locale: "el-GR",
+        locale: 'el-GR',
         load: async () => {},
-        translate: () => "",
+        translate: () => '',
       }),
     }),
   });
 
-  const app = new App("content", (el) => el);
+  const app = new App('content', (el) => el);
   // $FlowFixMe
   app.register(FetchToken, mockFetch);
   app.register(UniversalEventsToken, mockEmitterPlugin);
@@ -46,13 +46,13 @@ function createTestFixture() {
   return app;
 }
 
-test("success status request", (done) => {
+test('success status request', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("success");
-      expect(typeof payload.timing).toBe("number");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -62,20 +62,20 @@ test("success status request", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test")
+          .request('test')
           .then(([url, options]) => {
-            expect(url).toBe("/api/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.body).toBe("{}");
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
             done();
           })
           .catch((e) => {
@@ -91,20 +91,20 @@ test("success status request", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request with additional query params", (done) => {
+test('success status request with additional query params', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("success");
-      expect(typeof payload.timing).toBe("number");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
   app.register(UniversalEventsToken, mockEmitter);
   app.register(RPCQueryParamsToken, {
     from() {
-      return [["hello", "world"]];
+      return [['hello', 'world']];
     },
   });
 
@@ -112,20 +112,20 @@ test("success status request with additional query params", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test")
+          .request('test')
           .then(([url, options]) => {
-            expect(url).toBe("/api/test?hello=world&localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.body).toBe("{}");
+            expect(url).toBe('/api/test?hello=world&localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
             done();
           })
           .catch((e) => {
@@ -141,29 +141,29 @@ test("success status request with additional query params", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request (with custom api path)", (done) => {
+test('success status request (with custom api path)', (done) => {
   const app = createTestFixture();
 
-  app.register(RPCHandlersConfigToken, { apiPath: "test/api/path" });
+  app.register(RPCHandlersConfigToken, {apiPath: 'test/api/path'});
 
   let wasResolved = false;
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test")
+          .request('test')
           .then(([url, options]) => {
-            expect(url).toBe("/test/api/path/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.body).toBe("{}");
+            expect(url).toBe('/test/api/path/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
             done();
           })
           .catch((e) => {
@@ -179,29 +179,29 @@ test("success status request (with custom api path)", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request (with custom api path containing slashes)", (done) => {
+test('success status request (with custom api path containing slashes)', (done) => {
   const app = createTestFixture();
 
-  app.register(RPCHandlersConfigToken, { apiPath: "///test/api///path/" });
+  app.register(RPCHandlersConfigToken, {apiPath: '///test/api///path/'});
 
   let wasResolved = false;
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test")
+          .request('test')
           .then(([url, options]) => {
-            expect(url).toBe("/test/api/path/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.body).toBe("{}");
+            expect(url).toBe('/test/api/path/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.body).toBe('{}');
             done();
           })
           .catch((e) => {
@@ -217,13 +217,13 @@ test("success status request (with custom api path containing slashes)", (done) 
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request w/args and header", (done) => {
+test('success status request w/args and header', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("success");
-      expect(typeof payload.timing).toBe("number");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -234,20 +234,20 @@ test("success status request w/args and header", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test", { args: 1 }, { "test-header": "header value" })
+          .request('test', {args: 1}, {'test-header': 'header value'})
           .then(([url, options]) => {
-            expect(url).toBe("/api/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.headers["test-header"]).toBe("header value");
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.headers['test-header']).toBe('header value');
             expect(options.body).toBe('{"args":1}');
             done();
           })
@@ -264,13 +264,13 @@ test("success status request w/args and header", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request w/args and options", (done) => {
+test('success status request w/args and options', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("success");
-      expect(typeof payload.timing).toBe("number");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -281,20 +281,20 @@ test("success status request w/args and options", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         rpc
-          .request("test", { args: 1 }, null, { credentials: "omit" })
+          .request('test', {args: 1}, null, {credentials: 'omit'})
           .then(([url, options]) => {
-            expect(url).toBe("/api/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe("application/json");
-            expect(options.credentials).toBe("omit");
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe('application/json');
+            expect(options.credentials).toBe('omit');
             expect(options.body).toBe('{"args":1}');
             done();
           })
@@ -311,13 +311,13 @@ test("success status request w/args and options", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("success status request w/form data", (done) => {
+test('success status request w/form data', (done) => {
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("success");
-      expect(typeof payload.timing).toBe("number");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('success');
+      expect(typeof payload.timing).toBe('number');
     },
   });
   const app = createTestFixture();
@@ -328,39 +328,39 @@ test("success status request w/form data", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        expect(rpc.request("test") instanceof Promise).toBeTruthy();
+        expect(typeof rpc.request).toBe('function');
+        expect(rpc.request('test') instanceof Promise).toBeTruthy();
         /* eslint-disable cup/no-undef */
         const formData = new FormData();
-        formData.append("random", "some-random");
-        formData.append("foo", "foo content");
+        formData.append('random', 'some-random');
+        formData.append('foo', 'foo content');
 
-        const mockFile_1 = new File(["foo"], "foo.csv", { type: "text/csv" });
-        const mockFile_2 = new File(["bar"], "bar.csv", { type: "text/csv" });
+        const mockFile_1 = new File(['foo'], 'foo.csv', {type: 'text/csv'});
+        const mockFile_2 = new File(['bar'], 'bar.csv', {type: 'text/csv'});
 
-        formData.append("fooFile", mockFile_1);
-        formData.append("barFile", mockFile_2);
+        formData.append('fooFile', mockFile_1);
+        formData.append('barFile', mockFile_2);
 
         /* eslint-enable cup/no-undef */
 
         rpc
-          .request("test", formData)
+          .request('test', formData)
           .then(([url, options]) => {
-            expect(url).toBe("/api/test?localeCode=el-GR");
-            expect(options.method).toBe("POST");
-            expect(options.headers["Content-Type"]).toBe(undefined);
+            expect(url).toBe('/api/test?localeCode=el-GR');
+            expect(options.method).toBe('POST');
+            expect(options.headers['Content-Type']).toBe(undefined);
             // In tests or log, this will show up as `{}`. Don't be fooled~
             expect(options.body).toBe(formData);
             expect(Array.from(options.body.entries())).toEqual([
-              ["random", "some-random"],
-              ["foo", "foo content"],
-              ["fooFile", mockFile_1],
-              ["barFile", mockFile_2],
+              ['random', 'some-random'],
+              ['foo', 'foo content'],
+              ['fooFile', mockFile_1],
+              ['barFile', mockFile_2],
             ]);
             done();
           })
@@ -377,18 +377,18 @@ test("success status request w/form data", (done) => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("failure status request", (done) => {
+test('failure status request', (done) => {
   const mockFetchAsFailure = () =>
     Promise.resolve({
-      json: () => ({ status: "failure", data: "failure data" }),
+      json: () => ({status: 'failure', data: 'failure data'}),
     });
   const mockEmitter = createMockEmitter({
     emit(type, payload) {
-      expect(type).toBe("rpc:method-client");
-      expect(payload.method).toBe("test");
-      expect(payload.status).toBe("failure");
-      expect(typeof payload.timing).toBe("number");
-      expect(payload.error).toBe("failure data");
+      expect(type).toBe('rpc:method-client');
+      expect(payload.method).toBe('test');
+      expect(payload.status).toBe('failure');
+      expect(typeof payload.timing).toBe('number');
+      expect(payload.error).toBe('failure data');
     },
   });
 
@@ -402,21 +402,21 @@ test("failure status request", (done) => {
   getSimulator(
     app,
     createPlugin({
-      deps: { rpcFactory: MockPluginToken },
+      deps: {rpcFactory: MockPluginToken},
       provides: (deps) => {
         const rpc = deps.rpcFactory.from({
           memoized: new Map(),
         });
-        expect(typeof rpc.request).toBe("function");
-        const testRequest = rpc.request("test");
+        expect(typeof rpc.request).toBe('function');
+        const testRequest = rpc.request('test');
         expect(testRequest instanceof Promise).toBeTruthy();
         testRequest
           .then(() => {
             // $FlowFixMe
-            done.fail(() => new Error("should reject promise"));
+            done.fail(() => new Error('should reject promise'));
           })
           .catch((e) => {
-            expect(e).toBe("failure data");
+            expect(e).toBe('failure data');
             done();
           });
 

@@ -1,7 +1,7 @@
-import mapObject from "just-map-object";
-import isEqual from "just-compare";
-import ResponseError from "./response-error";
-import { type HandlerType } from "./tokens";
+import mapObject from 'just-map-object';
+import isEqual from 'just-compare';
+import ResponseError from './response-error';
+import {type HandlerType} from './tokens';
 
 export type RpcResponse = any | ResponseError;
 export type RpcResponseMap = Array<{

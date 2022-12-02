@@ -5,13 +5,13 @@
  *
  */
 
-import type { Context } from "fusion-core";
+import type {Context} from 'fusion-core';
 
 import {
   SessionSecretToken,
   SessionCookieNameToken,
   SessionCookieExpiresToken,
-} from "./tokens";
+} from './tokens';
 
 export type SessionService = {
   from(ctx: Context): {

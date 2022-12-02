@@ -5,10 +5,10 @@
  *
  */
 
-import App, { createPlugin } from "fusion-core";
-import { GetInitialStateToken } from "../../tokens";
+import App, {createPlugin} from 'fusion-core';
+import {GetInitialStateToken} from '../../tokens';
 
-import type { Context } from "fusion-core";
+import type {Context} from 'fusion-core';
 
 const app = new App();
 

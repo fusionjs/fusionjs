@@ -5,11 +5,11 @@
  *
  */
 
-import React from "react";
-import { createPlugin } from "fusion-core";
-import { HelmetProvider } from "react-helmet-async";
+import React from 'react';
+import {createPlugin} from 'fusion-core';
+import {HelmetProvider} from 'react-helmet-async';
 
-import type { FusionPlugin } from "fusion-core";
+import type {FusionPlugin} from 'fusion-core';
 
 const plugin =
   __BROWSER__ &&

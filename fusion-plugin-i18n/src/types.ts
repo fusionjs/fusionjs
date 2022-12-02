@@ -5,14 +5,14 @@
  *
  */
 
-import { Locale } from "locale";
+import {Locale} from 'locale';
 
-import { FetchToken } from "fusion-tokens";
-import type { Context } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {FetchToken} from 'fusion-tokens';
+import type {Context} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import { HydrationStateToken } from "./browser";
-import { I18nLoaderToken } from "./tokens";
+import {HydrationStateToken} from './browser';
+import {I18nLoaderToken} from './tokens';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,

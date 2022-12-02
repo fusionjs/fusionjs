@@ -5,17 +5,17 @@
  *
  */
 
-import * as React from "react";
+import * as React from 'react';
 
-import { createPlugin } from "fusion-core";
-import type { FusionPlugin, Middleware } from "fusion-core";
+import {createPlugin} from 'fusion-core';
+import type {FusionPlugin, Middleware} from 'fusion-core';
 
-import Provider from "./provider";
+import Provider from './provider';
 
 // eslint-disable-next-line
 type FusionPluginNoHidden<TDeps, TService> = Omit<
   FusionPlugin<TDeps, TService>,
-  "__plugin__" | "stack"
+  '__plugin__' | 'stack'
 >;
 
 export default {
@@ -36,7 +36,7 @@ export default {
         if (ctx.element) {
           ctx.element = React.createElement(
             ProviderComponent,
-            { provides, ctx },
+            {provides, ctx},
             ctx.element
           );
         }

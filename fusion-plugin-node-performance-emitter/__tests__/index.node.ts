@@ -6,11 +6,11 @@
  */
 
 /* eslint-env node */
-import MockEmitter from "events";
+import MockEmitter from 'events';
 
-import App, { createPlugin } from "fusion-core";
-import { getSimulator, getService } from "fusion-test-utils";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import App, {createPlugin} from 'fusion-core';
+import {getSimulator, getService} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 import {
   NodePerformanceEmitterToken,
@@ -18,11 +18,11 @@ import {
   EventLoopLagIntervalToken,
   MemoryIntervalToken,
   SocketIntervalToken,
-} from "../src/tokens";
-import NodePerformanceEmitterPlugin from "../src/server";
+} from '../src/tokens';
+import NodePerformanceEmitterPlugin from '../src/server';
 
 /* Constants */
-const EVENT_PLUGIN_NAME = "node-performance-emitter";
+const EVENT_PLUGIN_NAME = 'node-performance-emitter';
 
 /* Mocks */
 const mockConfig = {
@@ -44,8 +44,8 @@ const mockTimersFactory = (shouldExpect) => {
     _getNumSetInterval: () => _numSetInterval,
     setInterval: (fn, timeout) => {
       if (shouldExpect) {
-        expect(typeof fn).toBe("function");
-        expect(typeof timeout).toBe("number");
+        expect(typeof fn).toBe('function');
+        expect(typeof timeout).toBe('number');
       }
       fn();
       _numSetInterval++;
@@ -67,7 +67,7 @@ function createTestFixture() {
     provides: () => mockEmitterFactory(),
   });
 
-  const app = new App("content", (el) => el);
+  const app = new App('content', (el) => el);
   app.register(NodePerformanceEmitterToken, NodePerformanceEmitterPlugin);
   app.register(TimersToken, mockTimers);
   app.register(UniversalEventsToken, mockEmitterPlugin);
@@ -81,15 +81,15 @@ function registerMockConfig(app) {
 }
 
 /* Tests */
-test("FusionApp - service resolved", () => {
+test('FusionApp - service resolved', () => {
   const app = createTestFixture();
 
   let wasResolved = false;
   getSimulator(
     app,
     createPlugin({
-      deps: { perfEmitter: NodePerformanceEmitterToken },
-      provides: ({ perfEmitter }) => {
+      deps: {perfEmitter: NodePerformanceEmitterToken},
+      provides: ({perfEmitter}) => {
         expect(perfEmitter).toBeTruthy();
         wasResolved = true;
       },
@@ -98,7 +98,7 @@ test("FusionApp - service resolved", () => {
   expect(wasResolved).toBeTruthy();
 });
 
-test("service - cannot track the same types more than once at a time", () => {
+test('service - cannot track the same types more than once at a time', () => {
   const perfService = getService(
     createTestFixture,
     NodePerformanceEmitterPlugin
@@ -114,10 +114,10 @@ test("service - cannot track the same types more than once at a time", () => {
   expect(() => perfService.stop()).not.toThrow();
 });
 
-test("service - tracking number of timer intervals set", () => {
+test('service - tracking number of timer intervals set', () => {
   const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
-    const app = new App("content", (el) => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitterFactory());
     registerMockConfig(app);
@@ -130,11 +130,11 @@ test("service - tracking number of timer intervals set", () => {
   expect(mockTimers._getNumSetInterval() === 0).toBeTruthy();
 });
 
-test("service - tracking emit messages", (done) => {
+test('service - tracking emit messages', (done) => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory(true);
   const appCreator = () => {
-    const app = new App("content", (el) => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitter);
     registerMockConfig(app);
@@ -192,11 +192,11 @@ test("service - tracking emit messages", (done) => {
   });
 });
 
-test("service - testing garbage collection emits", (done) => {
+test('service - testing garbage collection emits', (done) => {
   const mockEmitter = mockEmitterFactory();
   const mockTimers = mockTimersFactory();
   const appCreator = () => {
-    const app = new App("content", (el) => el);
+    const app = new App('content', (el) => el);
     app.register(TimersToken, mockTimers);
     app.register(UniversalEventsToken, mockEmitter);
     registerMockConfig(app);
@@ -217,7 +217,7 @@ test("service - testing garbage collection emits", (done) => {
   // Make some garbage!
   var myTracker = [];
   for (var i = 0; i < 1000000; i++) {
-    myTracker.push({ lotsof: "garbage" });
+    myTracker.push({lotsof: 'garbage'});
   }
   myTracker = [];
 

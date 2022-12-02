@@ -5,12 +5,12 @@
  *
  */
 
-import React from "react";
-import { renderToString as render } from "react-dom/server";
-import { Router, Routes, Route, Navigate } from "../src/server";
-import { createServerHistory } from "../src/modules/ServerHistory";
+import React from 'react';
+import {renderToString as render} from 'react-dom/server';
+import {Router, Routes, Route, Navigate} from '../src/server';
+import {createServerHistory} from '../src/modules/ServerHistory';
 
-test("redirects to a new URL", () => {
+test('redirects to a new URL', () => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Navigate to="/hello" />;
   let setCode = false;
@@ -23,11 +23,11 @@ test("redirects to a new URL", () => {
       setCode = true;
     },
     set url(to) {
-      expect(to).toBe("/hello");
+      expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
       <Routes>
@@ -41,7 +41,7 @@ test("redirects to a new URL", () => {
   expect(didRedirect).toBeTruthy();
 });
 
-test("redirects with deprecated context", () => {
+test('redirects with deprecated context', () => {
   const Hello = () => <div>Hello</div>;
   const Moved = () => <Navigate to="/hello" />;
   let setCode = false;
@@ -54,11 +54,11 @@ test("redirects with deprecated context", () => {
       setCode = true;
     },
     set url(to) {
-      expect(to).toBe("/hello");
+      expect(to).toBe('/hello');
       didRedirect = true;
     },
   };
-  const history = createServerHistory("", ctx, "/");
+  const history = createServerHistory('', ctx, '/');
   const el = (
     <Router history={history} context={ctx}>
       <Routes>

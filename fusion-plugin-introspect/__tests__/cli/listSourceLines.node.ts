@@ -1,15 +1,15 @@
-import { listSourceLines } from "../../src/shared/listSourceLines.js";
+import {listSourceLines} from '../../src/shared/listSourceLines.js';
 
-test("listSourceLines", () => {
+test('listSourceLines', () => {
   const dep = {
-    name: "",
-    type: "both",
+    name: '',
+    type: 'both',
     sources: [
-      { type: "token", source: "/foo/bar.js:1:2" },
-      { type: "plugin", source: "/foo/bar.js:3:4" },
+      {type: 'token', source: '/foo/bar.js:1:2'},
+      {type: 'plugin', source: '/foo/bar.js:3:4'},
     ],
     dependencies: [],
   };
-  const lines = listSourceLines(dep, "plugin");
-  expect(lines).toEqual(["/foo/bar.js:3:4"]);
+  const lines = listSourceLines(dep, 'plugin');
+  expect(lines).toEqual(['/foo/bar.js:3:4']);
 });

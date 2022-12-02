@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-env serviceworker */
 
-import type { AssetInfo } from "./types";
+import type {AssetInfo} from './types';
 
-const cacheName = "0.0.0"; // we don't expect this to change
+const cacheName = '0.0.0'; // we don't expect this to change
 const debug = console;
 const defaultMaxCacheDuration = 24 * 60 * 60 * 1000; // one day
 
@@ -43,8 +43,8 @@ export default function getHandlers(assetInfo: AssetInfo) {
       self.clients.matchAll().then((all) =>
         all.map((client) =>
           client.postMessage({
-            type: "upgrade-available",
-            text: "*** from sw: reload for updates",
+            type: 'upgrade-available',
+            text: '*** from sw: reload for updates',
           })
         )
       );
@@ -84,8 +84,8 @@ export default function getHandlers(assetInfo: AssetInfo) {
                     self.clients.matchAll().then((all) =>
                       all.map((client) =>
                         client.postMessage({
-                          type: "cache-expired",
-                          text: "*** from sw: cache expired",
+                          type: 'cache-expired',
+                          text: '*** from sw: cache expired',
                         })
                       )
                     )
@@ -140,17 +140,17 @@ function requestExpectsHtml(request) {
   if (!request || !request.headers) {
     return false;
   }
-  const acceptHeader = request.headers.get("Accept");
-  return acceptHeader && acceptHeader.indexOf("html") > -1;
+  const acceptHeader = request.headers.get('Accept');
+  return acceptHeader && acceptHeader.indexOf('html') > -1;
 }
 
 function responseIsOKAndHtml(response) {
   if (!response || !response.headers || !response.status) {
     return false;
   }
-  const contentType = response.headers.get("content-type");
+  const contentType = response.headers.get('content-type');
   return (
-    response.status === 200 && contentType && contentType.indexOf("html") > -1
+    response.status === 200 && contentType && contentType.indexOf('html') > -1
   );
 }
 
@@ -174,7 +174,7 @@ function requestIsCacheable(
 }
 
 function cacheHasExpired(cachedResponse, cacheDuration) {
-  const dateHeader = cachedResponse.headers.get("date");
+  const dateHeader = cachedResponse.headers.get('date');
   return dateHeader
     ? Date.now() - new Date(dateHeader).valueOf() > cacheDuration
     : false;
@@ -189,12 +189,12 @@ function shouldInvalidateCache(event, cacheBustingPatterns) {
 
 function unexpectedResponseMessage(resp) {
   return `[sw debug] expected HTML but got ${
-    (resp && resp.headers && resp.headers.get("content-type")) || "unknown"
+    (resp && resp.headers && resp.headers.get('content-type')) || 'unknown'
   }`;
 }
 
 function mapToRegex(arr) {
   return arr.length
-    ? arr.map((str) => new RegExp(str.replace(/\//g, "")))
+    ? arr.map((str) => new RegExp(str.replace(/\//g, '')))
     : null;
 }

@@ -145,7 +145,7 @@ type GraphQLEndpoint = string;
 import {GetApolloClientCacheToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - A function that returns an Apollo [cache implementation](https://www.apollographql.com/docs/react/v2.5/advanced/caching/).
+Optional - A function that returns an Apollo [cache implementation](https://www.apollographql.com/docs/react/caching/cache-interaction/).
 
 ```js
 type GetApolloClientCache = (ctx: Context) => ApolloCache
@@ -153,7 +153,7 @@ type GetApolloClientCache = (ctx: Context) => ApolloCache
 
 ###### Default value
 
-The default cache implementation uses [InMemoryCache](https://github.com/apollographql/apollo-client/tree/master/packages/apollo-cache-inmemory).
+The default cache implementation uses [InMemoryCache](https://github.com/apollographql/apollo-client).
 
 ##### `ApolloClientCredentialsToken`
 
@@ -193,7 +193,7 @@ Optional - A configuration value that provides an option to provide custom `getD
 import {ApolloClientResolversToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/data/local-state/).
+Optional - Provides the resolvers for [local state management](https://www.apollographql.com/docs/react/local-state/local-state-management/).
 
 ##### `ApolloClientLocalSchemaToken`
 
@@ -201,7 +201,7 @@ Optional - Provides the resolvers for [local state management](https://www.apoll
 import {ApolloClientLocalSchemaToken} from 'fusion-plugin-apollo';
 ```
 
-Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/data/local-state/).
+Optional - Provides the typeDefs for [local state management](https://www.apollographql.com/docs/react/local-state/local-state-management/).
 
 ##### `ApolloBodyParserConfigToken`
 
@@ -235,7 +235,7 @@ import {ApolloContextToken} from 'fusion-plugin-apollo';
 
 DEPRECATED - A function which returns the apollo context. Defaults to the Fusion.js context. It is not recommended to add custom overrides here. Instead, you can provide dependencies to your resolvers using the Fusion.js dependency injection system.
 
-See the [Apollo Client context documentation](https://www.apollographql.com/docs/apollo-server/v2/essentials/data.html#context) for more details.
+See the [Apollo Client context documentation](https://www.apollographql.com/docs/react/api/link/apollo-link-context/#overview) for more details.
 
 ```js
 type ApolloContext<T> = (ctx: Context => T) | T;

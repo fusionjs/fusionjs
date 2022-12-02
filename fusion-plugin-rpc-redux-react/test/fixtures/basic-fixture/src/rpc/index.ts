@@ -8,6 +8,6 @@
 
 export default {
   async getUser() {
-    return { id: 123, name: "bosco" };
+    return {id: 123, name: 'bosco'};
   },
 };

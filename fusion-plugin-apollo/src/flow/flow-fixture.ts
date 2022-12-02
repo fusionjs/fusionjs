@@ -5,8 +5,8 @@
  *
  */
 
-import App, { createPlugin } from "fusion-core";
-import { ApolloContextToken } from "../index";
+import App, {createPlugin} from 'fusion-core';
+import {ApolloContextToken} from '../index';
 
 const app = new App();
 
@@ -15,7 +15,7 @@ app.register(ApolloContextToken, (ctx) => ({
 }));
 
 app.register(ApolloContextToken, () => ({
-  testcase: "with no context",
+  testcase: 'with no context',
 }));
 
 const plugin = createPlugin({

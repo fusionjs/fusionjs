@@ -8,17 +8,17 @@
  */
 
 /* eslint-env node */
-import { Runtime } from "../../utils";
+import {Runtime} from '../../utils';
 
-test("browser plugin integration test withRPCRedux", async () => {
-  const runtime = new Runtime({ fixture: __dirname });
+test('browser plugin integration test withRPCRedux', async () => {
+  const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
   const parentTripId = await runtime.page.$eval(
     '[data-testid="parent-trip-id"]',
     (el) => el.textContent
   );
-  expect(parentTripId).toEqual("123");
+  expect(parentTripId).toEqual('123');
 
   // child component is not rendered until after parent component is mounted,
   // so `prepared` will only be called in the browser
@@ -31,7 +31,7 @@ test("browser plugin integration test withRPCRedux", async () => {
     '[data-testid="child-trip-id"]',
     (el) => el.textContent
   );
-  expect(childTripId).toEqual("456");
+  expect(childTripId).toEqual('456');
 
   await runtime.end();
 }, 90000);

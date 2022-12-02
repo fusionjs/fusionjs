@@ -5,8 +5,8 @@
  *
  */
 
-import type { Context } from "fusion-core";
-import { FetchToken } from "fusion-tokens";
+import type {Context} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
 
 type MapFnType<TInput, TOutput> = (payload: TInput, ctx?: Context) => TOutput;
 type HandlerFnType<TInput> = (

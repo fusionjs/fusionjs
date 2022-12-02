@@ -9,9 +9,9 @@ import Plugin, {
   SessionCookieExpiresToken,
   SessionCookieNameToken,
   SessionSecretToken,
-} from "../src/index";
+} from '../src/index';
 
-test("interface", () => {
+test('interface', () => {
   expect(Plugin).toBeTruthy();
   expect(SessionCookieExpiresToken).toBeTruthy();
   expect(SessionCookieNameToken).toBeTruthy();

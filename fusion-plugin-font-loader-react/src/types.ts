@@ -5,7 +5,7 @@
  *
  */
 
-import type { FusionPlugin, Token } from "fusion-core";
+import type {FusionPlugin, Token} from 'fusion-core';
 
 type FontURLsType = {
   woff?: string;

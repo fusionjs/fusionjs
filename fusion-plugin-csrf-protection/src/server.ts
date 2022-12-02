@@ -5,10 +5,10 @@
  *
  */
 
-import { createPlugin, type FusionPlugin } from "fusion-core";
-import type { Fetch } from "fusion-tokens";
+import {createPlugin, type FusionPlugin} from 'fusion-core';
+import type {Fetch} from 'fusion-tokens';
 
-import { verifyMethod, CsrfIgnoreRoutesToken } from "./shared";
+import {verifyMethod, CsrfIgnoreRoutesToken} from './shared';
 
 type PluginDepsType = {
   ignored: typeof CsrfIgnoreRoutesToken.optional;
@@ -24,27 +24,27 @@ const enhancer = (oldFetch: Fetch): FusionPlugin<PluginDepsType, Fetch> => {
       return oldFetch;
     },
     middleware: (deps) => {
-      const { ignored = [] } = deps;
+      const {ignored = []} = deps;
       const ignoreSet = new Set(ignored);
       // navigator.sendBeacon is used to send analytics/metrics events to /_events
       // Because this doesn't use the fetch token, this plugin would block these payloads
       // Note that this means /_events should never cause a mutation of user state/data
-      ignoreSet.add("/_events");
+      ignoreSet.add('/_events');
 
       return async function csrfMiddleware(ctx, next) {
-        if (ctx.path === "/csrf-token" && ctx.method === "POST") {
+        if (ctx.path === '/csrf-token' && ctx.method === 'POST') {
           // TODO(#158): Remove this once clients have had the opportunity to upgrade
-          ctx.set("x-csrf-token", "x");
+          ctx.set('x-csrf-token', 'x');
           ctx.status = 200;
-          ctx.body = "";
+          ctx.body = '';
         } else if (verifyMethod(ctx.method) && !ignoreSet.has(ctx.path)) {
-          const token = ctx.headers["x-csrf-token"];
+          const token = ctx.headers['x-csrf-token'];
           if (!token) {
             const message =
               `Missing csrf token on ${ctx.path}` +
               (__DEV__
-                ? " Ensure you are using `fetch` enhanced by `fusion-plugin-csrf-protection`."
-                : "");
+                ? ' Ensure you are using `fetch` enhanced by `fusion-plugin-csrf-protection`.'
+                : '');
             ctx.throw(403, message);
           }
         }

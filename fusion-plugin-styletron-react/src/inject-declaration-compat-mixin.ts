@@ -7,8 +7,8 @@
 
 export const injectDeclarationCompatMixin = (Base: any) =>
   class extends Base {
-    injectDeclaration({ prop, val, media, pseudo }: any) {
-      let style = { [prop]: val };
+    injectDeclaration({prop, val, media, pseudo}: any) {
+      let style = {[prop]: val};
       if (pseudo) {
         style = {
           [pseudo]: style,

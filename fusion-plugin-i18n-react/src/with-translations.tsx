@@ -5,11 +5,11 @@
  *
  */
 
-import React from "react";
-import type { Context } from "fusion-core";
-import { I18nContext } from "./plugin";
+import React from 'react';
+import type {Context} from 'fusion-core';
+import {I18nContext} from './plugin';
 
-import type { Component, ComponentType } from "react";
+import type {Component, ComponentType} from 'react';
 
 type TranslateType = (
   key: string,
@@ -33,7 +33,7 @@ export const withTranslations = (
   return <T extends {}>(
     Component: ComponentType<T>
   ): {
-    new (...args: any): Component<Omit<T, "translate" | "localeCode">>;
+    new (...args: any): Component<Omit<T, 'translate' | 'localeCode'>>;
   } => {
     class WithTranslations extends React.Component<T> {
       translate: TranslateType;
@@ -42,7 +42,7 @@ export const withTranslations = (
       constructor(props: T, context: Context) {
         super(props, context);
         const i18n = context;
-        this.localeCode = i18n && i18n.localeCode ? i18n.localeCode : "en_US";
+        this.localeCode = i18n && i18n.localeCode ? i18n.localeCode : 'en_US';
         this.translate =
           i18n && i18n.translate
             ? (
@@ -65,7 +65,7 @@ export const withTranslations = (
       }
     }
 
-    const displayName = Component.displayName || Component.name || "Anonymous";
+    const displayName = Component.displayName || Component.name || 'Anonymous';
     WithTranslations.displayName = `withTranslations(${displayName})`;
     // $FlowFixMe
     WithTranslations.contextType = I18nContext;

@@ -6,12 +6,12 @@
  */
 
 /* eslint-env node */
-import type { FusionPlugin } from "fusion-core";
+import type {FusionPlugin} from 'fusion-core';
 
-import { Server as Styletron } from "styletron-engine-atomic";
+import {Server as Styletron} from 'styletron-engine-atomic';
 
-import { injectDeclarationCompatMixin } from "./inject-declaration-compat-mixin";
-import getPlugin from "./server";
+import {injectDeclarationCompatMixin} from './inject-declaration-compat-mixin';
+import getPlugin from './server';
 
 const StyletronCompat = injectDeclarationCompatMixin(Styletron);
 

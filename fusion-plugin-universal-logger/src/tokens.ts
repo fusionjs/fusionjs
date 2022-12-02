@@ -5,11 +5,11 @@
  *
  */
 
-import type { LoggerConfig } from "winston";
+import type {LoggerConfig} from 'winston';
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
 export const UniversalLoggerConfigToken: Token<LoggerConfig<any>> = createToken(
-  "UniversalLoggerConfigToken"
+  'UniversalLoggerConfigToken'
 );

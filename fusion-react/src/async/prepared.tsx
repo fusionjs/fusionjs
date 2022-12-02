@@ -5,8 +5,8 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import PropTypes from 'prop-types';
 
 type PreparedOpts = {
   boundary?: boolean;
@@ -44,7 +44,7 @@ const prepared =
     );
 
     const displayName =
-      OriginalComponent.displayName || OriginalComponent.name || "";
+      OriginalComponent.displayName || OriginalComponent.name || '';
 
     class PreparedComponent extends React.Component<any> {
       componentDidMount() {
@@ -70,7 +70,7 @@ const prepared =
       }
 
       render() {
-        const effectId = this.props.effectId || "defaultId";
+        const effectId = this.props.effectId || 'defaultId';
         const prepareState = this.context.__PREPARE_STATE__;
         if (prepareState) {
           if (opts.defer || opts.boundary) {

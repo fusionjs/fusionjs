@@ -5,18 +5,18 @@
  *
  */
 
-import assert from "assert";
+import assert from 'assert';
 
-import FusionApp, { createToken, createPlugin } from "fusion-core";
-import type { FusionPlugin, Token } from "fusion-core";
+import FusionApp, {createToken, createPlugin} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
 
 /* Note: as the Jest type definitions are declared globally and not as part of
  * a module, we must import the relevant types directly from the libdef file here
  * to avoid the invariant that all consumers must add the jest libdef to their
  * .flowconfig libs.
  */
-import type { JestTestName, JestObjectType } from "./flow/jest_v22.x.x";
-import { render, request } from "./simulate";
+import type {JestTestName, JestObjectType} from './flow/jest_v22.x.x';
+import {render, request} from './simulate';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,
@@ -26,7 +26,7 @@ type $Call1<F extends (...args: any) => any, A> = F extends (
   : never;
 
 // eslint-disable-next-line jest/no-export
-export { createRequestContext, createRenderContext } from "./mock-context";
+export {createRequestContext, createRenderContext} from './mock-context';
 
 declare var __BROWSER__: boolean;
 type ExtractFusionAppReturnType = <R>(a: (a: FusionApp) => R) => R;
@@ -60,14 +60,14 @@ export function getService<TService>(
   plugin: FusionPlugin<any, TService>
 ): TService {
   const app = appCreator();
-  const token: Token<TService> = createToken("service-helper");
+  const token: Token<TService> = createToken('service-helper');
 
   let extractedService = null;
   app.register(token, plugin);
   app.register(
     createPlugin({
-      deps: { service: token },
-      provides: ({ service }) => {
+      deps: {service: token},
+      provides: ({service}) => {
         extractedService = service;
       },
     })
@@ -75,7 +75,7 @@ export function getService<TService>(
   app.resolve();
 
   if (!extractedService) {
-    throw new Error("Provided plugin does not export a service");
+    throw new Error('Provided plugin does not export a service');
   }
 
   return extractedService;
@@ -86,7 +86,7 @@ type ExtractArgsReturnType<TArguments, TReturn> = <R>(
   a: (implementation?: (...args: TArguments) => TReturn) => R
 ) => R;
 
-type JestFnType = JestObjectType["fn"];
+type JestFnType = JestObjectType['fn'];
 
 // eslint-disable-next-line flowtype/generic-spacing
 type MockFunctionType<TArgs, TReturn> = (
@@ -109,7 +109,7 @@ type TestType = (
 
 // eslint-disable-next-line import/no-mutable-exports
 let mockFunction: MockFunctionType<any, any>, test: any;
-if (typeof it !== "undefined") {
+if (typeof it !== 'undefined') {
   // Surface snapshot testing
   // $FlowFixMe
   assert.matchSnapshot = (tree, snapshotName) =>
@@ -126,7 +126,7 @@ if (typeof it !== "undefined") {
   mockFunction = (...args) => jest.fn(...args);
 } else {
   const notSupported = () => {
-    throw new Error("Can’t import test() when not using the test-app target.");
+    throw new Error('Can’t import test() when not using the test-app target.');
   };
   test = notSupported;
   test.skip = notSupported;
@@ -137,4 +137,4 @@ const mockFunctionExport = mockFunction as any as MockFunctionType<any, any>;
 const testExport = test as any as TestType;
 
 // eslint-disable-next-line jest/no-export
-export { mockFunctionExport as mockFunction, testExport as test };
+export {mockFunctionExport as mockFunction, testExport as test};

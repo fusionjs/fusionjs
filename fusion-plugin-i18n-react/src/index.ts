@@ -5,7 +5,7 @@
  *
  */
 
-import I18n from "./plugin";
+import I18n from './plugin';
 
 export {
   I18nToken,
@@ -13,17 +13,17 @@ export {
   I18nTranslateFnsToken,
   HydrationStateToken,
   createI18nLoader,
-} from "fusion-plugin-i18n";
+} from 'fusion-plugin-i18n';
 export type {
   I18nDepsType,
   I18nServiceType,
   TranslationsObjectType,
   TranslateFuncType,
-} from "fusion-plugin-i18n";
+} from 'fusion-plugin-i18n';
 
-export { withTranslations } from "./with-translations";
-export { useTranslations } from "./use-translations";
-export { Translate } from "./translate";
-export { I18nContext } from "./plugin";
+export {withTranslations} from './with-translations';
+export {useTranslations} from './use-translations';
+export {Translate} from './translate';
+export {I18nContext} from './plugin';
 
 export default I18n;

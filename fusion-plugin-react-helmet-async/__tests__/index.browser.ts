@@ -6,6 +6,6 @@
  */
 
 /* eslint-env browser */
-test("ok", () => {
+test('ok', () => {
   expect(1).toBeTruthy();
 });

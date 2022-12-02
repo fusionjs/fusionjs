@@ -6,13 +6,13 @@
  */
 /* eslint-env browser */
 
-import React from "react";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { createPlugin } from "fusion-core";
-import App from "fusion-react";
-import { getSimulator } from "fusion-test-utils";
-import { Routes, Route } from "../src/index";
-import RouterPlugin, { RouterToken } from "../src/plugin";
+import React from 'react';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {createPlugin} from 'fusion-core';
+import App from 'fusion-react';
+import {getSimulator} from 'fusion-test-utils';
+import {Routes, Route} from '../src/index';
+import RouterPlugin, {RouterToken} from '../src/plugin';
 
 function getApp(el) {
   const app = new App(el);
@@ -21,17 +21,17 @@ function getApp(el) {
 }
 
 function cleanup() {
-  const root = document.getElementById("root");
+  const root = document.getElementById('root');
   if (root && document.body) {
     document.body.removeChild(root);
   }
-  const routerData = document.getElementById("__ROUTER_DATA__");
+  const routerData = document.getElementById('__ROUTER_DATA__');
   if (routerData && document.body) {
     document.body.removeChild(routerData);
   }
 }
 
-test("handles url with invalid URI encoding in browser", (done) => {
+test('handles url with invalid URI encoding in browser', (done) => {
   const Hello = () => <div>Hello</div>;
   const NotFound = () => <div>Not Found</div>;
   const element = (
@@ -41,16 +41,16 @@ test("handles url with invalid URI encoding in browser", (done) => {
     </Routes>
   );
 
-  const getMockEvents = ({ title: expectedTitle, page: expectedPage }) => {
-    const expected = ["pageview:browser"];
+  const getMockEvents = ({title: expectedTitle, page: expectedPage}) => {
+    const expected = ['pageview:browser'];
     return createPlugin({
       provides: () => ({
         map(mapper) {
-          expect(typeof mapper).toBe("function");
+          expect(typeof mapper).toBe('function');
         },
-        emit(type, { title }) {
+        emit(type, {title}) {
           expect(type).toBe(expected.shift());
-          expect(title).toBe("/%C0%AE%C0%AE/");
+          expect(title).toBe('/%C0%AE%C0%AE/');
           done();
         },
       }),
@@ -59,37 +59,37 @@ test("handles url with invalid URI encoding in browser", (done) => {
 
   const app = getApp(element);
   const UniversalEvents = getMockEvents({
-    title: "no-matching-route",
-    page: "/%C0%AE%C0%AE/",
+    title: 'no-matching-route',
+    page: '/%C0%AE%C0%AE/',
   });
   // $FlowFixMe
   app.register(UniversalEventsToken, UniversalEvents);
   const simulator = setup(app);
-  simulator.render("/%C0%AE%C0%AE/").then(() => {
+  simulator.render('/%C0%AE%C0%AE/').then(() => {
     setTimeout(() => {
-      const node = document.getElementById("root");
+      const node = document.getElementById('root');
       if (!node || !node.textContent) {
-        throw new Error("Could not find node.");
+        throw new Error('Could not find node.');
       }
-      expect(node && node.textContent).toBe("Not Found");
+      expect(node && node.textContent).toBe('Not Found');
       cleanup();
     }, 0);
   });
 });
 
-function setupRouterData(pageData = { title: "/", page: "/" }) {
-  const el = document.createElement("script");
-  el.setAttribute("type", "application/json");
-  el.setAttribute("id", "__ROUTER_DATA__");
+function setupRouterData(pageData = {title: '/', page: '/'}) {
+  const el = document.createElement('script');
+  el.setAttribute('type', 'application/json');
+  el.setAttribute('id', '__ROUTER_DATA__');
   const textNode = document.createTextNode(JSON.stringify(pageData));
   el.appendChild(textNode);
   document.body && document.body.appendChild(el);
-  const rootEl = document.createElement("div");
-  rootEl.setAttribute("id", "root");
+  const rootEl = document.createElement('div');
+  rootEl.setAttribute('id', 'root');
   document.body && document.body.appendChild(rootEl);
 }
 
-function setup(app, pageData = { title: "/", page: "/" }) {
+function setup(app, pageData = {title: '/', page: '/'}) {
   setupRouterData(pageData);
   const simulator = getSimulator(app);
   return simulator;

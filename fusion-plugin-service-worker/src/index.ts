@@ -1,13 +1,13 @@
-import browserPlugin from "./browser";
-import serverPlugin from "./server";
-import getHandlers from "./handlers";
+import browserPlugin from './browser';
+import serverPlugin from './server';
+import getHandlers from './handlers';
 import {
   SWTemplateFunctionToken,
   SWLoggerToken,
   SWRegisterToken,
   SWOptionsToken,
-} from "./tokens";
-import type { AssetInfo } from "./types";
+} from './tokens';
+import type {AssetInfo} from './types';
 
 export default __NODE__ ? serverPlugin : browserPlugin;
 export {
@@ -17,4 +17,4 @@ export {
   SWRegisterToken,
   SWOptionsToken,
 };
-export type { AssetInfo };
+export type {AssetInfo};

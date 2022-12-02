@@ -3,29 +3,30 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @flow
  */
 
 /* eslint-env node */
 
-const t = require("assert");
-const { transform } = require("@babel/core");
+const t = require('assert');
+const {transform} = require('@babel/core');
 
-const createNamedModuleVisitor = require("../visit-named-module");
-const replaceImportDeclaration = require("../replace-import-declaration");
+const createNamedModuleVisitor = require('../visit-named-module');
+const replaceImportDeclaration = require('../replace-import-declaration');
 
 function createTestPlugin(handler) {
   return (babel) => {
     const visitor = createNamedModuleVisitor(
       babel.types,
-      "foo",
-      "bar",
+      'foo',
+      'bar',
       handler
     );
-    return { visitor };
+    return {visitor};
   };
 }
 
-test("with flow types", () => {
+test('with flow types', () => {
   const plugin = createTestPlugin((types, context, refs) => {
     t.equal(refs.length, 1);
     t.ok(types.isCallExpression(refs[0].parent));
@@ -38,12 +39,12 @@ test("with flow types", () => {
     let baz: string = foo();
   `,
     {
-      plugins: [require("@babel/plugin-transform-flow-strip-types"), plugin],
+      plugins: [require('@babel/plugin-transform-flow-strip-types'), plugin],
     }
   );
 });
 
-test("import case", () => {
+test('import case', () => {
   const plugin = createTestPlugin((types, context, refs) => {
     t.equal(refs.length, 1);
     t.ok(types.isCallExpression(refs[0].parent));
@@ -56,14 +57,14 @@ test("import case", () => {
     const notfoo = bar;
     console.log(foo);
   `,
-    { plugins: [plugin] }
+    {plugins: [plugin]}
   );
 });
 
-test("replace import declaration from named module with variable declarations", () => {
+test('replace import declaration from named module with variable declarations', () => {
   const plugin = (babel) => {
-    const visitor = replaceImportDeclaration(babel.types, "bar");
-    return { visitor };
+    const visitor = replaceImportDeclaration(babel.types, 'bar');
+    return {visitor};
   };
 
   const transformed = transform(`import {propOne, propTwo} from 'bar'`, {

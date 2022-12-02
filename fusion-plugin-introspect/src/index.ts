@@ -4,16 +4,16 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import browser from "./browser";
-import server from "./server";
-import * as fs from "./fs-store";
+import browser from './browser';
+import server from './server';
+import * as fs from './fs-store';
 
 export type {
   IntrospectionSchema,
   Dependencies,
   Dependency,
   Metadata,
-} from "./server";
+} from './server';
 
 export default __NODE__ ? server : browser;
 // $FlowFixMe

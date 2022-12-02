@@ -6,17 +6,17 @@
  */
 /* globals global */
 
-import FusionApp, { compose } from "fusion-core";
-import type { Context } from "fusion-core";
+import FusionApp, {compose} from 'fusion-core';
+import type {Context} from 'fusion-core';
 
-import { createRequestContext, createRenderContext } from "./mock-context";
+import {createRequestContext, createRenderContext} from './mock-context';
 
 export const request =
   (app: FusionApp) =>
   (url: string, options: any = {}): Promise<any> => {
     if (__BROWSER__) {
       throw new Error(
-        "[fusion-test-utils] Request api not support from the browser. Please use `render` instead"
+        '[fusion-test-utils] Request api not support from the browser. Please use `render` instead'
       );
     }
     const ctx = createRequestContext(url, options);
@@ -27,7 +27,7 @@ export const render =
   (app: FusionApp) =>
   (url: string, options: any = {}): Promise<any> => {
     if (global.jsdom) {
-      if (!url.startsWith("/")) {
+      if (!url.startsWith('/')) {
         url = `/${url}`;
       }
       global.jsdom.reconfigure({

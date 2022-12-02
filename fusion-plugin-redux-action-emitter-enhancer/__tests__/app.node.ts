@@ -5,14 +5,14 @@
  *
  */
 
-import type { StoreCreator, Reducer } from "redux";
+import type {StoreCreator, Reducer} from 'redux';
 
-import App, { createPlugin } from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
-import { EnhancerToken } from "fusion-plugin-react-redux";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import App, {createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {EnhancerToken} from 'fusion-plugin-react-redux';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import ReduxActionEmitterEnhancer from "../src/index";
+import ReduxActionEmitterEnhancer from '../src/index';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,
@@ -26,7 +26,7 @@ type IEmitter = $Call1<typeof UniversalEventsToken, ExtractReturnType>;
 const eventsEmitted = [];
 const mockEmitter = {
   emit: (type, payload) => {
-    eventsEmitted.push({ type, payload });
+    eventsEmitted.push({type, payload});
   },
   from: function () {
     return this;
@@ -39,22 +39,22 @@ const mockEmitterPlugin = createPlugin({
 });
 
 function createTestFixture() {
-  const app = new App("content", (el) => el);
+  const app = new App('content', (el) => el);
   app.register(EnhancerToken, ReduxActionEmitterEnhancer);
   app.register(UniversalEventsToken, mockEmitterPlugin);
   return app;
 }
 
-test("plugin - service resolved as expected", () => {
+test('plugin - service resolved as expected', () => {
   const app = createTestFixture();
   let wasResolved = false;
 
   getSimulator(
     app,
     createPlugin({
-      deps: { enhancer: EnhancerToken },
+      deps: {enhancer: EnhancerToken},
       provides: (deps) => {
-        const { enhancer } = deps;
+        const {enhancer} = deps;
         expect(enhancer).toBeTruthy();
         const createStore: StoreCreator<any, any, any> = () => {
           return {
@@ -67,7 +67,7 @@ test("plugin - service resolved as expected", () => {
         const mockReducer: Reducer<any, any> = (s) => s;
         const enhanced = enhancer(createStore)(mockReducer);
         enhanced.dispatch({
-          type: "TEST",
+          type: 'TEST',
         });
         enhanced.dispatch(function test() {});
         enhanced.dispatch();
@@ -77,6 +77,6 @@ test("plugin - service resolved as expected", () => {
   );
 
   expect(wasResolved).toBeTruthy();
-  expect(eventsEmitted[0].type).toBe("redux-action-emitter:action");
+  expect(eventsEmitted[0].type).toBe('redux-action-emitter:action');
   expect(eventsEmitted.length).toBe(1);
 });

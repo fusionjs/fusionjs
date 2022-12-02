@@ -5,16 +5,14 @@
  *
  */
 
-import { createStore, compose } from "redux";
+import {createStore, compose} from 'redux';
 
-import App from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import type { Context } from "fusion-core";
-import { getService } from "fusion-test-utils";
+import App from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {Context} from 'fusion-core';
+import {getService} from 'fusion-test-utils';
 
-import actionEmitterPlugin, {
-  ActionEmitterTransformerToken,
-} from "../src/index";
+import actionEmitterPlugin, {ActionEmitterTransformerToken} from '../src/index';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,
@@ -44,7 +42,7 @@ const getMockEventEmitterFactory = function () {
 };
 const sampleReducer = (state = [], action) => {
   switch (action.type) {
-    case "SAMPLE_SET":
+    case 'SAMPLE_SET':
       return [
         ...state,
         {
@@ -56,10 +54,10 @@ const sampleReducer = (state = [], action) => {
   }
 };
 
-const appCreator = (deps?: { emitter?: IEmitter; transformer?: Function }) => {
-  const { emitter, transformer } = deps || {};
+const appCreator = (deps?: {emitter?: IEmitter; transformer?: Function}) => {
+  const {emitter, transformer} = deps || {};
 
-  const app = new App("test", (el) => el);
+  const app = new App('test', (el) => el);
   if (emitter) {
     app.register(UniversalEventsToken, emitter);
   }
@@ -69,22 +67,22 @@ const appCreator = (deps?: { emitter?: IEmitter; transformer?: Function }) => {
   return () => app;
 };
 
-test("Instantiation", () => {
+test('Instantiation', () => {
   const mockEventEmitter = getMockEventEmitterFactory();
   expect(() => getService(appCreator(), actionEmitterPlugin)).toThrow();
   expect(() =>
-    getService(appCreator({ emitter: mockEventEmitter }), actionEmitterPlugin)
+    getService(appCreator({emitter: mockEventEmitter}), actionEmitterPlugin)
   ).not.toThrow();
 });
 
-test("Emits actions", () => {
+test('Emits actions', () => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
   const enhancer = getService(
-    appCreator({ emitter: mockEventEmitter }),
+    appCreator({emitter: mockEventEmitter}),
     actionEmitterPlugin
   );
-  const mockCtx = { mock: true };
+  const mockCtx = {mock: true};
   const mockCtxTyped = mockCtx as any as Context;
   const store = createStore(
     sampleReducer,
@@ -100,31 +98,31 @@ test("Emits actions", () => {
   // Test Emits
   mockEventEmitter
     .from(mockCtxTyped)
-    .on("redux-action-emitter:action", (payload, ctx) => {
-      expect(payload.type).toBe("SAMPLE_SET");
-      expect(typeof payload.foo === "undefined").toBeTruthy();
+    .on('redux-action-emitter:action', (payload, ctx) => {
+      expect(payload.type).toBe('SAMPLE_SET');
+      expect(typeof payload.foo === 'undefined').toBeTruthy();
       expect(ctx).toBe(mockCtxTyped);
     });
   store.dispatch({
-    type: "SAMPLE_SET",
-    foo: { bar: 1 },
+    type: 'SAMPLE_SET',
+    foo: {bar: 1},
   });
 
   expect.assertions(3);
 });
 
-test("transformers", () => {
+test('transformers', () => {
   // Setup
   const mockEventEmitter = getMockEventEmitterFactory();
 
   const enhancer = getService(
     appCreator({
       emitter: mockEventEmitter,
-      transformer: (action) => ({ foo: action.foo }),
+      transformer: (action) => ({foo: action.foo}),
     }),
     actionEmitterPlugin
   );
-  const mockCtx = { mock: true };
+  const mockCtx = {mock: true};
   const mockCtxTyped = mockCtx as any as Context;
   const store = createStore(
     sampleReducer,
@@ -140,12 +138,12 @@ test("transformers", () => {
   // Test Emits
   mockEventEmitter
     .from(mockCtxTyped)
-    .on("redux-action-emitter:action", (payload, ctx) => {
-      expect(payload).toEqual({ foo: 1 });
+    .on('redux-action-emitter:action', (payload, ctx) => {
+      expect(payload).toEqual({foo: 1});
       expect(ctx).toBe(mockCtxTyped);
     });
   store.dispatch({
-    type: "SAMPLE_SET",
+    type: 'SAMPLE_SET',
     foo: 1,
   });
 

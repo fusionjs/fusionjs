@@ -6,15 +6,15 @@
  */
 
 /* eslint-env browser */
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import { createBrowserHistory } from "history";
+import {createBrowserHistory} from 'history';
 
-import { Router, Routes, Route, NotFound } from "../src/browser";
+import {Router, Routes, Route, NotFound} from '../src/browser';
 
-test("noops", () => {
-  const root = document.createElement("div");
+test('noops', () => {
+  const root = document.createElement('div');
 
   const Hello = () => (
     <NotFound>

@@ -5,10 +5,10 @@
  *
  */
 
-import browser from "./browser";
-import server from "./server";
+import browser from './browser';
+import server from './server';
 
 const plugin = __BROWSER__ ? browser : server;
 
 export default plugin;
-export { WebAppManifestToken } from "./tokens";
+export {WebAppManifestToken} from './tokens';

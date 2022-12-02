@@ -5,23 +5,23 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { FusionPlugin, Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {FusionPlugin, Token} from 'fusion-core';
 
-import serverPlugin from "./node";
-import { matchesLiteralSections as _matchesLiteralSections } from "./translate";
-import clientPlugin, { HydrationStateToken } from "./browser";
-import serverLoader from "./loader";
+import serverPlugin from './node';
+import {matchesLiteralSections as _matchesLiteralSections} from './translate';
+import clientPlugin, {HydrationStateToken} from './browser';
+import serverLoader from './loader';
 import type {
   I18nDepsType,
   I18nLoaderFactoryType,
   I18nServiceType,
   TranslationsObjectType,
   TranslateFuncType,
-} from "./types";
-import { I18nLoaderToken, I18nTranslateFnsToken } from "./tokens";
+} from './types';
+import {I18nLoaderToken, I18nTranslateFnsToken} from './tokens';
 
-const I18nToken: Token<I18nServiceType> = createToken("I18nToken");
+const I18nToken: Token<I18nServiceType> = createToken('I18nToken');
 
 const plugin: FusionPlugin<I18nDepsType, I18nServiceType> = __NODE__
   ? serverPlugin

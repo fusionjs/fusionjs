@@ -13,16 +13,16 @@
 
 /* global document */
 
-const testFonts = ["sans-serif", "serif", "monospace"];
+const testFonts = ['sans-serif', 'serif', 'monospace'];
 // TODO(#3): allow override
-const testText = "π+[.—_]imW12/?";
+const testText = 'π+[.—_]imW12/?';
 // how long to wait for load before switching style to true font anyway
 const timeout = 60000;
 
 export default function (font: string) {
   if (__BROWSER__ && document) {
     // $FlowFixMe
-    return document.fonts && typeof document.fonts.load === "function"
+    return document.fonts && typeof document.fonts.load === 'function'
       ? // $FlowFixMe
         document.fonts.load(`1em ${font}`) // native API requires size
       : loadFontPolyfill(font);
@@ -71,7 +71,7 @@ function cleanup(testDivs) {
 
 function createTestDivs() {
   return testFonts.map((testFont, i) => {
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     // $FlowFixMe
     div.testFont = testFont;
     div.style.cssText = `position:absolute;top:-999px;left:${

@@ -6,8 +6,8 @@
  * @ts-nocheck
  */
 
-import { combineReducers } from "redux";
-import { lastTripReducer } from "./reducers/last-trip";
+import {combineReducers} from 'redux';
+import {lastTripReducer} from './reducers/last-trip';
 
 export default combineReducers({
   lastTrip: lastTripReducer,

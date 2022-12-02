@@ -4,14 +4,14 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type { DocumentNode } from "graphql";
-import ApolloRenderEnhancer from "./plugin";
+import type {DocumentNode} from 'graphql';
+import ApolloRenderEnhancer from './plugin';
 
-export * from "./tokens";
-export * from "./apollo-client/index";
+export * from './tokens';
+export * from './apollo-client/index';
 
-export { ApolloRenderEnhancer };
+export {ApolloRenderEnhancer};
 
 export function gql(path: string): DocumentNode {
-  throw new Error("fusion-plugin-apollo/gql should be replaced at build time");
+  throw new Error('fusion-plugin-apollo/gql should be replaced at build time');
 }

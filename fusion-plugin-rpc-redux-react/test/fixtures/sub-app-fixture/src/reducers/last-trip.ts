@@ -6,10 +6,10 @@
  * @ts-nocheck
  */
 
-import { createRPCReducer } from "fusion-rpc-redux";
+import {createRPCReducer} from 'fusion-rpc-redux';
 
-export const lastTripReducer = createRPCReducer("getLastTrip", {
-  start: (state, action) => ({ ...state, loading: true }),
+export const lastTripReducer = createRPCReducer('getLastTrip', {
+  start: (state, action) => ({...state, loading: true}),
   success: (state, action) => ({
     ...state,
     loading: false,
@@ -22,4 +22,4 @@ export const lastTripReducer = createRPCReducer("getLastTrip", {
   }),
 });
 
-export const lastTripInitialState = { loading: false, data: null, error: "" };
+export const lastTripInitialState = {loading: false, data: null, error: ''};

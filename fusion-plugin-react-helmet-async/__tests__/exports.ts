@@ -6,9 +6,9 @@
  */
 
 /* eslint-env browser */
-import HelmetPlugin, { Helmet, HelmetProvider } from "../src/index";
+import HelmetPlugin, {Helmet, HelmetProvider} from '../src/index';
 
-test("exports are", () => {
+test('exports are', () => {
   expect(HelmetPlugin).toBeTruthy();
   expect(Helmet).toBeTruthy();
   expect(HelmetProvider).toBeTruthy();

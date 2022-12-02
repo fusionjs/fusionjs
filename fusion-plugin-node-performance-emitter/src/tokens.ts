@@ -5,8 +5,8 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
 export type Timers = {
   setInterval: (b: Function, a: number) => number;
@@ -14,17 +14,17 @@ export type Timers = {
 };
 
 export const NodePerformanceEmitterToken: Token<any> = createToken(
-  "NodePerformanceEmitterToken"
+  'NodePerformanceEmitterToken'
 );
 
-export const TimersToken: Token<Timers> = createToken("TimersToken");
+export const TimersToken: Token<Timers> = createToken('TimersToken');
 
 export const EventLoopLagIntervalToken: Token<number> = createToken(
-  "EventLoopLagIntervalToken"
+  'EventLoopLagIntervalToken'
 );
 export const MemoryIntervalToken: Token<number> = createToken(
-  "MemoryIntervalToken"
+  'MemoryIntervalToken'
 );
 export const SocketIntervalToken: Token<number> = createToken(
-  "SocketIntervalToken"
+  'SocketIntervalToken'
 );

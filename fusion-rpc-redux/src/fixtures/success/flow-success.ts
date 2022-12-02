@@ -1,5 +1,5 @@
-import type { Reducer } from "redux";
-import { createRPCReducer } from "../../index";
+import type {Reducer} from 'redux';
+import {createRPCReducer} from '../../index';
 
 type UserDataType = {
   firstName: string;
@@ -25,7 +25,7 @@ export type UserActionType = {
 };
 
 const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
-  "getUser",
+  'getUser',
   {
     start: (state) => {
       return {

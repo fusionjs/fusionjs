@@ -6,19 +6,15 @@
  */
 
 // Main export file
-import browser from "./jwt-browser";
-import server from "./jwt-server";
+import browser from './jwt-browser';
+import server from './jwt-server';
 
 import {
   SessionCookieExpiresToken,
   SessionCookieNameToken,
   SessionSecretToken,
-} from "./tokens";
+} from './tokens';
 
 export default __BROWSER__ ? browser : server;
 
-export {
-  SessionCookieExpiresToken,
-  SessionCookieNameToken,
-  SessionSecretToken,
-};
+export {SessionCookieExpiresToken, SessionCookieNameToken, SessionSecretToken};

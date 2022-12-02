@@ -6,11 +6,11 @@
  */
 
 /* eslint-env browser */
-import * as React from "react";
-import ReactDOM from "react-dom";
-import { prepare } from "../src/index";
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import {prepare} from '../src/index';
 
-test("Client-side preparing", (done) => {
+test('Client-side preparing', (done) => {
   let numRenders = 0;
   function SimplePortal() {
     numRenders++;

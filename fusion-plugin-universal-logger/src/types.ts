@@ -5,11 +5,11 @@
  *
  */
 
-import type { FusionPlugin } from "fusion-core";
-import type { Logger } from "fusion-tokens";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import type {FusionPlugin} from 'fusion-core';
+import type {Logger} from 'fusion-tokens';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import { UniversalLoggerConfigToken } from "./tokens";
+import {UniversalLoggerConfigToken} from './tokens';
 
 type DepsType = {
   emitter: typeof UniversalEventsToken;

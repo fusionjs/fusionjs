@@ -1,10 +1,10 @@
-import App from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
+import App from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
 
-import ServiceWorker from "../src/index";
-import { LoggerToken } from "fusion-tokens";
-import { SWTemplateFunctionToken } from "../src/tokens";
-import type { AssetInfo } from "../src/types";
+import ServiceWorker from '../src/index';
+import {LoggerToken} from 'fusion-tokens';
+import {SWTemplateFunctionToken} from '../src/tokens';
+import type {AssetInfo} from '../src/types';
 
 const swTemplateFunction = (params: AssetInfo) => {
   return `
@@ -26,20 +26,20 @@ const createMockLogger = () => ({
   silly: () => createMockLogger(),
 });
 
-test("/health request", async () => {
+test('/health request', async () => {
   expect.assertions(2);
-  const app = new App("el", (el) => el);
+  const app = new App('el', (el) => el);
   app.register(SWTemplateFunctionToken, swTemplateFunction);
   app.register(LoggerToken, createMockLogger());
   app.register(ServiceWorker);
   const sim = getSimulator(app);
   // Basic /health request
-  const ctx_1 = await sim.request("/sw.js");
+  const ctx_1 = await sim.request('/sw.js');
   expect(ctx_1.status).toBe(200);
   expect(
     String(ctx_1.body)
       .trim()
-      .replace(/\n/g, "")
+      .replace(/\n/g, '')
       .startsWith(`import {getHandlers} from '../../index'`)
   ).toBeTruthy();
 

@@ -14,10 +14,10 @@ type PaintTime = {
 
 export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
   return {
-    firstPaint: getTimeFromMarks(paintTimes, "first-paint"),
+    firstPaint: getTimeFromMarks(paintTimes, 'first-paint'),
     firstContentfulPaint: getTimeFromMarks(
       paintTimes,
-      "first-contentful-paint"
+      'first-contentful-paint'
     ),
   };
 }

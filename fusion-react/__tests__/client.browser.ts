@@ -7,29 +7,29 @@
 
 /* eslint-env browser */
 
-import * as React from "react";
-import render from "../src/client";
+import * as React from 'react';
+import render from '../src/client';
 
-test("renders", (done) => {
+test('renders', (done) => {
   const root = setup(true);
 
-  render(React.createElement("span", null, "hello"));
+  render(React.createElement('span', null, 'hello'));
   // setTimeout from https://github.com/reactwg/react-18/discussions/5#discussioncomment-796012
   setTimeout(() => {
     expect(root.firstChild).toBeTruthy();
     const firstChild = root.firstChild as any as Node;
-    expect(firstChild.nodeName).toBe("SPAN");
-    expect(firstChild.textContent).toBe("hello");
+    expect(firstChild.nodeName).toBe('SPAN');
+    expect(firstChild.textContent).toBe('hello');
     cleanup(root);
     done();
   }, 0);
 });
 
 function setup(withSSRFailure) {
-  const root = document.createElement("div");
-  root.id = "root";
+  const root = document.createElement('div');
+  root.id = 'root';
   if (withSSRFailure) {
-    root.setAttribute("data-fusion-render", "client");
+    root.setAttribute('data-fusion-render', 'client');
   }
   document.body && document.body.appendChild(root);
   return root;

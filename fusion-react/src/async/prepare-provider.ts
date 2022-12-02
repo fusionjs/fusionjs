@@ -5,8 +5,8 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import PropTypes from 'prop-types';
 
 class PrepareProvider extends React.Component<any, any> {
   constructor(props: any, context: any) {

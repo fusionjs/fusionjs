@@ -6,10 +6,10 @@
  * @ts-nocheck
  */
 
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
+import {connect} from 'react-redux';
 
-import { Link } from "fusion-plugin-react-router";
+import {Link} from 'fusion-plugin-react-router';
 
 function Root(props) {
   return (
@@ -24,4 +24,4 @@ function Root(props) {
   );
 }
 
-export default connect(({ router }) => ({ router }))(Root);
+export default connect(({router}) => ({router}))(Root);

@@ -4,13 +4,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {
   TimersToken,
   EventLoopLagIntervalToken,
   MemoryIntervalToken,
   SocketIntervalToken,
-} from "./tokens";
+} from './tokens';
 
 export type NodePerformanceDepsType = {
   emitter: typeof UniversalEventsToken;

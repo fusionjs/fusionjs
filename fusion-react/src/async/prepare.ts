@@ -5,9 +5,9 @@
  *
  */
 
-import * as React from "react";
-import ssrPrepass from "@derekju/react-ssr-prepass";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import ssrPrepass from '@derekju/react-ssr-prepass';
+import PropTypes from 'prop-types';
 
 class PrepareState {
   seen: Map<any, Set<string>>;

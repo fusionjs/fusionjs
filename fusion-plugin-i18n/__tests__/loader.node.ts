@@ -7,84 +7,82 @@
 
 /* eslint-env node */
 
-import fs from "fs";
+import fs from 'fs';
 
-import App from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import App from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import I18n from "../src/node";
-import createLoader from "../src/loader";
-import { createI18nLoader, I18nLoaderToken, I18nToken } from "../src/index";
+import I18n from '../src/node';
+import createLoader from '../src/loader';
+import {createI18nLoader, I18nLoaderToken, I18nToken} from '../src/index';
 
-describe("loader", () => {
+describe('loader', () => {
   beforeEach(() => {
-    fs.mkdirSync("translations");
-    fs.writeFileSync("translations/en_US.json", '{"test": "hi ${value}"}');
+    fs.mkdirSync('translations');
+    fs.writeFileSync('translations/en_US.json', '{"test": "hi ${value}"}');
   });
 
-  test("loader", async () => {
-    const app = new App("el", (el) => el);
+  test('loader', async () => {
+    const app = new App('el', (el) => el);
     app.register(I18nToken, I18n);
     // $FlowFixMe
     app.register(UniversalEventsToken, {
-      from: () => ({ emit: () => {} }),
+      from: () => ({emit: () => {}}),
     });
-    app.middleware({ i18n: I18nToken }, ({ i18n }) => {
+    app.middleware({i18n: I18nToken}, ({i18n}) => {
       return (ctx, next) => {
         const translator = i18n.from(ctx);
-        expect(translator.translate("test", { value: "world" })).toBe(
-          "hi world"
-        );
+        expect(translator.translate('test', {value: 'world'})).toBe('hi world');
         return next();
       };
     });
     const simulator = getSimulator(app);
-    await simulator.render("/");
+    await simulator.render('/');
   });
 
   afterEach(() => {
-    fs.unlinkSync("translations/en_US.json");
-    fs.rmdirSync("translations");
+    fs.unlinkSync('translations/en_US.json');
+    fs.rmdirSync('translations');
   });
 });
 
-describe("resolver", () => {
+describe('resolver', () => {
   beforeEach(() => {
-    fs.mkdirSync("translations");
-    fs.writeFileSync("translations/en_US.json", '{"foo": "bar"}');
-    fs.writeFileSync("translations/custom_US.json", '{"foo": "qux"}');
+    fs.mkdirSync('translations');
+    fs.writeFileSync('translations/en_US.json', '{"foo": "bar"}');
+    fs.writeFileSync('translations/custom_US.json', '{"foo": "qux"}');
   });
 
-  test("custom locale resolver", async () => {
-    const app = new App("el", (el) => el);
+  test('custom locale resolver', async () => {
+    const app = new App('el', (el) => el);
     app.register(
       I18nLoaderToken,
-      createI18nLoader((ctx) => "custom_US")
+      createI18nLoader((ctx) => 'custom_US')
     );
     app.register(I18nToken, I18n);
     // $FlowFixMe
     app.register(UniversalEventsToken, {
-      from: () => ({ emit: () => {} }),
+      from: () => ({emit: () => {}}),
     });
-    app.middleware({ i18n: I18nToken }, ({ i18n }) => {
+    app.middleware({i18n: I18nToken}, ({i18n}) => {
       return (ctx, next) => {
         const translator = i18n.from(ctx);
-        expect(translator.translate("foo")).toBe("qux");
+        expect(translator.translate('foo')).toBe('qux');
         return next();
       };
     });
     const simulator = getSimulator(app);
-    await simulator.render("/", { headers: { "accept-language": "en_US" } });
+    await simulator.render('/', {headers: {'accept-language': 'en_US'}});
   });
 
   afterEach(() => {
-    fs.unlinkSync("translations/en_US.json");
-    fs.unlinkSync("translations/custom_US.json");
-    fs.rmdirSync("translations");
+    fs.unlinkSync('translations/en_US.json');
+    fs.unlinkSync('translations/custom_US.json');
+    fs.rmdirSync('translations');
   });
 });
 
-test("no translations dir", () => {
+test('no translations dir', () => {
   expect(createLoader).not.toThrow();
 });

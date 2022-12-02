@@ -8,32 +8,32 @@
 /* eslint-env browser */
 /* globals __REDUX_DEVTOOLS_EXTENSION__ */
 
-import React from "react";
-import { Provider } from "react-redux";
-import { compose, createStore } from "redux";
+import React from 'react';
+import {Provider} from 'react-redux';
+import {compose, createStore} from 'redux';
 
-import { createPlugin, unescape } from "fusion-core";
-import type { Context, FusionPlugin } from "fusion-core";
+import {createPlugin, unescape} from 'fusion-core';
+import type {Context, FusionPlugin} from 'fusion-core';
 
-import ctxEnhancer from "./ctx-enhancer";
-import { deserialize } from "./codec";
+import ctxEnhancer from './ctx-enhancer';
+import {deserialize} from './codec';
 import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
   ReduxDevtoolsConfigToken,
-} from "./tokens";
+} from './tokens';
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
   ReactReduxServiceType,
-} from "./types";
+} from './types';
 
 const getPlugin = () => {
   let storeCache = null;
 
   const getReduxState = () => {
-    const stateElement = document.getElementById("__REDUX_STATE__");
+    const stateElement = document.getElementById('__REDUX_STATE__');
     if (stateElement) {
       return deserialize(unescape(stateElement.textContent));
     }
@@ -46,7 +46,7 @@ const getPlugin = () => {
       enhancer: EnhancerToken.optional,
       reduxDevToolsConfig: ReduxDevtoolsConfigToken.optional,
     },
-    provides({ reducer, preloadedState, enhancer, reduxDevToolsConfig }) {
+    provides({reducer, preloadedState, enhancer, reduxDevToolsConfig}) {
       class Redux {
         store: StoreWithContextType<any, any, any>;
         preloadedState: any;
@@ -67,7 +67,7 @@ const getPlugin = () => {
               __REDUX_DEVTOOLS_EXTENSION__({
                 trace: true,
                 traceLimit: 25,
-                ...((typeof reduxDevToolsConfig === "object" &&
+                ...((typeof reduxDevToolsConfig === 'object' &&
                   reduxDevToolsConfig) ||
                   {}),
               });
@@ -91,9 +91,9 @@ const getPlugin = () => {
         },
       };
     },
-    middleware({ preloadedState }, redux) {
+    middleware({preloadedState}, redux) {
       return (ctx, next) => {
-        const { store, preloadedState } = redux.from(ctx);
+        const {store, preloadedState} = redux.from(ctx);
         ctx.element = (
           <Provider store={store} serverState={preloadedState || {}}>
             {ctx.element}

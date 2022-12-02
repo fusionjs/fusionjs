@@ -5,14 +5,14 @@
  *
  */
 
-import { createToken } from "fusion-core";
+import {createToken} from 'fusion-core';
 
-import type { ConfigTokenType, FontLoaderPluginType } from "./types";
+import type {ConfigTokenType, FontLoaderPluginType} from './types';
 
 export const FontLoaderReactToken: FontLoaderPluginType = createToken(
-  "FontLoaderReactToken"
+  'FontLoaderReactToken'
 );
 
 export const FontLoaderReactConfigToken: ConfigTokenType = createToken(
-  "FontLoaderReactConfigToken"
+  'FontLoaderReactConfigToken'
 );

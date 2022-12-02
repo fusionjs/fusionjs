@@ -5,22 +5,22 @@
  *
  */
 
-import { ApolloClientToken, GraphQLSchemaToken } from "../src/tokens";
-import App, { createPlugin } from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
-import { FetchToken } from "fusion-tokens";
-import { buildSchema } from "graphql";
-import { gql } from "graphql-tag";
-import unfetch from "unfetch";
+import {ApolloClientToken, GraphQLSchemaToken} from '../src/tokens';
+import App, {createPlugin} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {FetchToken} from 'fusion-tokens';
+import {buildSchema} from 'graphql';
+import {gql} from 'graphql-tag';
+import unfetch from 'unfetch';
 
 import {
   ApolloClientResolversToken,
   ApolloClientPlugin,
   ApolloClientLocalSchemaToken,
-} from "../src/apollo-client/index";
+} from '../src/apollo-client/index';
 
-test("local state management", async () => {
-  const app = new App("el", (el) => el);
+test('local state management', async () => {
+  const app = new App('el', (el) => el);
   app.register(ApolloClientToken, ApolloClientPlugin);
   app.register(
     GraphQLSchemaToken,
@@ -48,8 +48,8 @@ test("local state management", async () => {
   let mutationCalled = false;
   app.register(ApolloClientResolversToken, {
     Query: {
-      query: () => "foo",
-      queryClient: () => "client",
+      query: () => 'foo',
+      queryClient: () => 'client',
     },
     Mutation: {
       mutate: async () => {
@@ -62,11 +62,11 @@ test("local state management", async () => {
     deps: {
       universalClient: ApolloClientToken,
     },
-    middleware({ universalClient }) {
+    middleware({universalClient}) {
       return async (ctx, next) => {
         const client = universalClient(ctx, {});
 
-        const { data } = await client.query({
+        const {data} = await client.query({
           query: gql`
             query {
               query @client
@@ -74,8 +74,8 @@ test("local state management", async () => {
             }
           `,
         });
-        expect(data.query).toBe("foo");
-        expect(data.queryClient).toBe("client");
+        expect(data.query).toBe('foo');
+        expect(data.queryClient).toBe('client');
 
         expect(mutationCalled).toBe(false);
         await client.mutate({
@@ -94,5 +94,5 @@ test("local state management", async () => {
   app.register(testPlugin);
 
   const simulator = getSimulator(app);
-  await simulator.render("/");
+  await simulator.render('/');
 });

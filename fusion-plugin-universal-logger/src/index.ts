@@ -5,9 +5,9 @@
  *
  */
 
-import ServerLogger from "./server";
-import BrowserLogger from "./browser";
+import ServerLogger from './server';
+import BrowserLogger from './browser';
 
 export default __BROWSER__ ? BrowserLogger : ServerLogger;
 
-export { UniversalLoggerConfigToken } from "./tokens";
+export {UniversalLoggerConfigToken} from './tokens';

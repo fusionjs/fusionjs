@@ -5,17 +5,17 @@
  *
  */
 
-import App from "fusion-core";
-import express from "express";
-import { HttpHandlerToken, HttpHandlerConfigToken } from "../src/tokens";
-import HttpHandlerPlugin from "../src/server";
-import { startServer } from "../src/test-util";
+import App from 'fusion-core';
+import express from 'express';
+import {HttpHandlerToken, HttpHandlerConfigToken} from '../src/tokens';
+import HttpHandlerPlugin from '../src/server';
+import {startServer} from '../src/test-util';
 
-test("http handler with express", async () => {
-  const app = new App("test", () => "test");
+test('http handler with express', async () => {
+  const app = new App('test', () => 'test');
   app.middleware((ctx, next) => {
-    if (ctx.url === "/send") {
-      ctx.body = "hello world";
+    if (ctx.url === '/send') {
+      ctx.body = 'hello world';
     }
     return next();
   });
@@ -26,52 +26,52 @@ test("http handler with express", async () => {
     hitExpressMiddleware = true;
     return next();
   });
-  expressApp.get("/lol", (req, res) => {
+  expressApp.get('/lol', (req, res) => {
     res.status(200);
-    res.end("OK");
+    res.end('OK');
   });
 
   app.register(HttpHandlerToken, expressApp);
 
-  const { server, request } = await startServer(app.callback());
+  const {server, request} = await startServer(app.callback());
 
-  expect(await request("/send")).toBe("hello world");
+  expect(await request('/send')).toBe('hello world');
   expect(hitExpressMiddleware).toBe(false);
 
-  expect(await request("/lol")).toBe("OK");
+  expect(await request('/lol')).toBe('OK');
   expect(hitExpressMiddleware).toBe(true);
   server.close();
 });
 
-test("http handler with express and defer false", async () => {
-  const app = new App("test", () => "test");
+test('http handler with express and defer false', async () => {
+  const app = new App('test', () => 'test');
   app.middleware((ctx, next) => {
-    if (ctx.url === "/send") {
-      ctx.body = "hello world";
+    if (ctx.url === '/send') {
+      ctx.body = 'hello world';
     }
     return next();
   });
   app.register(HttpHandlerPlugin);
-  app.register(HttpHandlerConfigToken, { defer: false });
+  app.register(HttpHandlerConfigToken, {defer: false});
   let hitExpressMiddleware = false;
   const expressApp = express();
   expressApp.use((req, res, next) => {
     hitExpressMiddleware = true;
     return next();
   });
-  expressApp.get("/lol", (req, res) => {
+  expressApp.get('/lol', (req, res) => {
     res.status(200);
-    res.end("OK");
+    res.end('OK');
   });
 
   app.register(HttpHandlerToken, expressApp);
 
-  const { server, request } = await startServer(app.callback());
+  const {server, request} = await startServer(app.callback());
 
-  expect(await request("/send")).toBe("hello world");
+  expect(await request('/send')).toBe('hello world');
   expect(hitExpressMiddleware).toBe(false);
 
-  expect(await request("/lol")).toBe("OK");
+  expect(await request('/lol')).toBe('OK');
   expect(hitExpressMiddleware).toBe(true);
   server.close();
 });

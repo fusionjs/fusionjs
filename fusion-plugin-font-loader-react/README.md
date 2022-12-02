@@ -103,7 +103,7 @@ const Li = styled('li', {
 
 **NOTE:** As of version 2.2.0 it is no longer necessary to include a `withStyleOverloads` property. Fusion will detect when font descriptors are for styled mode. You can also supply both styled and atomic font descriptors in the same config file and Fusion will infer which is which.
 
-To use this plugin in Styled Mode your config object should pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusionjs/tree/master/fusion-plugin-font-loader-react/blob/master/src/types.js) for more details on this data structure)
+To use this plugin in Styled Mode your config object should pass an array of font files by style. This example will generate the @font-face declaration that follows it. (See [type declarations](https://github.com/fusionjs/fusionjs/blob/master/fusion-plugin-font-loader-react/index.d.ts) for more details on this data structure)
 
 ```js
 {

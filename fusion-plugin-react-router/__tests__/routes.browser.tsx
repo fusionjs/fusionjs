@@ -6,13 +6,13 @@
  */
 
 /* eslint-env browser */
-import React from "react";
-import ReactDOM from "react-dom";
-import { Router, Routes, Route } from "../src/browser";
-import { createBrowserHistory } from "history";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Router, Routes, Route} from '../src/browser';
+import {createBrowserHistory} from 'history';
 
-test("routes matches as expected", () => {
-  const root = document.createElement("div");
+test('routes matches as expected', () => {
+  const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
   const Hi = () => <div>Hi</div>;
   const el = (
@@ -28,19 +28,19 @@ test("routes matches as expected", () => {
   expect(!/Hi/.test(root.innerHTML)).toBeTruthy();
 });
 
-test("routes fires onRoute when location changes", (done) => {
-  const root = document.createElement("div");
+test('routes fires onRoute when location changes', (done) => {
+  const root = document.createElement('div');
   const Hello = () => <div>Hello</div>;
 
   const onRoute = (data) => {
-    expect(data.page).toEqual("/hello");
-    expect(data.title).toEqual("/hello");
+    expect(data.page).toEqual('/hello');
+    expect(data.title).toEqual('/hello');
     expect(data.params).toEqual({});
     done();
   };
 
   const history = createBrowserHistory();
-  history.replace("/hello");
+  history.replace('/hello');
 
   const el = (
     <Router history={history} onRoute={onRoute}>

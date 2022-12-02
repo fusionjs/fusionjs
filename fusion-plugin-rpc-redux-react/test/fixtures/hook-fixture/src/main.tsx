@@ -5,20 +5,17 @@
  *
  */
 
-import React from "react";
-import App from "fusion-react";
-import RPCPlugin, { RPCToken, createRPCReducer } from "../../../..";
-import Root from "./root";
-import ReduxPlugin, {
-  ReducerToken,
-  ReduxToken,
-} from "fusion-plugin-react-redux";
+import React from 'react';
+import App from 'fusion-react';
+import RPCPlugin, {RPCToken, createRPCReducer} from '../../../..';
+import Root from './root';
+import ReduxPlugin, {ReducerToken, ReduxToken} from 'fusion-plugin-react-redux';
 import UniversalEvents, {
   UniversalEventsToken,
-} from "fusion-plugin-universal-events";
-import { RPCHandlersToken } from "fusion-plugin-rpc";
-import { FetchToken } from "fusion-tokens";
-import { combineReducers } from "redux";
+} from 'fusion-plugin-universal-events';
+import {RPCHandlersToken} from 'fusion-plugin-rpc';
+import {FetchToken} from 'fusion-tokens';
+import {combineReducers} from 'redux';
 
 export default () => {
   const app = new App(<Root />);
@@ -36,8 +33,8 @@ export default () => {
 };
 
 const reducer = combineReducers({
-  user: createRPCReducer("getUser", {
-    start: (state, action) => ({ ...state, loading: true }),
+  user: createRPCReducer('getUser', {
+    start: (state, action) => ({...state, loading: true}),
     success: (state, action) => ({
       ...state,
       loading: false,
@@ -49,8 +46,8 @@ const reducer = combineReducers({
       error: action.payload.error,
     }),
   }),
-  trip: createRPCReducer("getTrip", {
-    start: (state, action) => ({ ...state, loading: true }),
+  trip: createRPCReducer('getTrip', {
+    start: (state, action) => ({...state, loading: true}),
     success: (state, action) => ({
       ...state,
       loading: false,
@@ -66,9 +63,9 @@ const reducer = combineReducers({
 
 const rpcHandlers = {
   async getUser() {
-    return { type: "user" };
+    return {type: 'user'};
   },
   async getTrip() {
-    return { type: "trip" };
+    return {type: 'trip'};
   },
 };

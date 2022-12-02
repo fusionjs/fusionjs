@@ -5,10 +5,10 @@
  *
  */
 
-import * as React from "react";
-import type { Reducer } from "redux";
-import { useRPCRedux } from "./hook";
-import { createRPCReactors } from "fusion-rpc-redux";
+import * as React from 'react';
+import type {Reducer} from 'redux';
+import {useRPCRedux} from './hook';
+import {createRPCReactors} from 'fusion-rpc-redux';
 
 type RPCReducersType = {
   start?: Reducer<any, any>;
@@ -67,8 +67,8 @@ export function withRPCRedux<Props extends {}>(
         [propName || rpcId]: handler,
       });
     }
-    const displayName = Component.displayName || Component.name || "Anonymous";
-    WithRPCRedux.displayName = "WithRPCRedux" + "(" + displayName + ")";
+    const displayName = Component.displayName || Component.name || 'Anonymous';
+    WithRPCRedux.displayName = 'WithRPCRedux' + '(' + displayName + ')';
     return WithRPCRedux;
   };
 }

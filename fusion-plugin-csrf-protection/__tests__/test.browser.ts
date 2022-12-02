@@ -6,17 +6,17 @@
  */
 
 /* eslint-env browser */
-import "whatwg-fetch";
+import 'whatwg-fetch';
 
-import App, { createPlugin } from "fusion-core";
-import { FetchToken } from "fusion-tokens";
-import type { Fetch } from "fusion-tokens";
+import App, {createPlugin} from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
+import type {Fetch} from 'fusion-tokens';
 
-import CsrfPlugin from "../src/index";
+import CsrfPlugin from '../src/index';
 
 /* Test helpers */
 function getApp(fetchFn: Fetch) {
-  const app = new App("element", (el) => el);
+  const app = new App('element', (el) => el);
   app.register(FetchToken, fetchFn);
   app.enhance(FetchToken, CsrfPlugin);
   return app;
@@ -31,13 +31,13 @@ function createMockFetch(responseParams: unknown): Response {
   };
 }
 
-test("exposes right methods", (done) => {
+test('exposes right methods', (done) => {
   const app = getApp(window.fetch);
   app.register(
     createPlugin({
-      deps: { fetch: FetchToken },
-      provides: ({ fetch }) => {
-        expect(typeof fetch).toBe("function");
+      deps: {fetch: FetchToken},
+      provides: ({fetch}) => {
+        expect(typeof fetch).toBe('function');
         done();
       },
     })
@@ -45,10 +45,10 @@ test("exposes right methods", (done) => {
   app.resolve();
 });
 
-test("includes routePrefix if exists", (done) => {
-  window.__ROUTE_PREFIX__ = "/something";
+test('includes routePrefix if exists', (done) => {
+  window.__ROUTE_PREFIX__ = '/something';
   const fetch = (url, args) => {
-    expect(url).toBe("/something/hello");
+    expect(url).toBe('/something/hello');
     return Promise.resolve(
       createMockFetch({
         url,
@@ -60,14 +60,14 @@ test("includes routePrefix if exists", (done) => {
   const app = getApp(fetch);
   app.register(
     createPlugin({
-      deps: { fetch: FetchToken },
-      provides: async ({ fetch }) => {
-        expect(typeof fetch).toBe("function");
+      deps: {fetch: FetchToken},
+      provides: async ({fetch}) => {
+        expect(typeof fetch).toBe('function');
         // $FlowFixMe
-        const { url, args } = await fetch("/hello", { method: "POST" });
-        expect(url).toBe("/something/hello");
-        expect(args.credentials).toBe("same-origin");
-        expect(args.headers["x-csrf-token"]).toBe("x");
+        const {url, args} = await fetch('/hello', {method: 'POST'});
+        expect(url).toBe('/something/hello');
+        expect(args.credentials).toBe('same-origin');
+        expect(args.headers['x-csrf-token']).toBe('x');
         delete window.__ROUTE_PREFIX__;
         done();
       },
@@ -76,8 +76,8 @@ test("includes routePrefix if exists", (done) => {
   app.resolve();
 });
 
-test("sends token on POST", (done) => {
-  const expectedUrls = ["/hello"];
+test('sends token on POST', (done) => {
+  const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());
     return Promise.resolve(
@@ -91,13 +91,13 @@ test("sends token on POST", (done) => {
   const app = getApp(fetch);
   app.register(
     createPlugin({
-      deps: { fetch: FetchToken },
-      provides: async ({ fetch }) => {
+      deps: {fetch: FetchToken},
+      provides: async ({fetch}) => {
         // $FlowFixMe
-        const { url, args } = await fetch("/hello", { method: "POST" });
-        expect(url).toBe("/hello");
-        expect(args.credentials).toBe("same-origin");
-        expect(args.headers["x-csrf-token"]).toBe("x");
+        const {url, args} = await fetch('/hello', {method: 'POST'});
+        expect(url).toBe('/hello');
+        expect(args.credentials).toBe('same-origin');
+        expect(args.headers['x-csrf-token']).toBe('x');
         done();
       },
     })
@@ -105,8 +105,8 @@ test("sends token on POST", (done) => {
   app.resolve();
 });
 
-test("defaults method to GET", (done) => {
-  const expectedUrls = ["/hello"];
+test('defaults method to GET', (done) => {
+  const expectedUrls = ['/hello'];
   const fetch = (url, args) => {
     expect(url).toBe(expectedUrls.shift());
     return Promise.resolve(
@@ -120,11 +120,11 @@ test("defaults method to GET", (done) => {
   const app = getApp(fetch);
   app.register(
     createPlugin({
-      deps: { fetch: FetchToken },
-      provides: async ({ fetch }) => {
+      deps: {fetch: FetchToken},
+      provides: async ({fetch}) => {
         // $FlowFixMe
-        const { url, args } = await fetch("/hello");
-        expect(url).toBe("/hello");
+        const {url, args} = await fetch('/hello');
+        expect(url).toBe('/hello');
         expect(args.headers).toBeFalsy();
         done();
       },

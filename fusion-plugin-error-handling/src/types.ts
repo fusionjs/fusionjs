@@ -5,10 +5,10 @@
  *
  */
 
-import type { FusionPlugin, Context } from "fusion-core";
+import type {FusionPlugin, Context} from 'fusion-core';
 
-import { ErrorHandlingEmitterToken } from "./client";
-import { ErrorHandlerToken } from "./server";
+import {ErrorHandlingEmitterToken} from './client';
+import {ErrorHandlerToken} from './server';
 
 type DepsType = {
   onError?: typeof ErrorHandlerToken;

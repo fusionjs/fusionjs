@@ -6,13 +6,13 @@
  * @ts-nocheck
  */
 
-import { combineReducers } from "redux";
+import {combineReducers} from 'redux';
 
 export default combineReducers({
   user: function (state = {}) {
     return {
       ...state,
-      data: { id: 1 },
+      data: {id: 1},
     };
   },
 });

@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { WebAppManifestToken } from "./index";
+import {WebAppManifestToken} from './index';
 
 export type DepsType = {
   manifest: typeof WebAppManifestToken;
@@ -39,21 +39,21 @@ export type WebAppManifestType = {
   background_color: string;
   categories: string[];
   description: string;
-  dir: "auto" | "ltr" | "rtl";
-  display: "standalone" | "fullscreen" | "minimal-ui" | "browser";
+  dir: 'auto' | 'ltr' | 'rtl';
+  display: 'standalone' | 'fullscreen' | 'minimal-ui' | 'browser';
   iarc_rating_id: string;
   icons: Icon[];
   lang: string;
   name: string;
   orientation:
-    | "any"
-    | "natural"
-    | "landscape"
-    | "landscape-primary"
-    | "landscape-secondary"
-    | "portrait"
-    | "portrait-primary"
-    | "portrait-secondary";
+    | 'any'
+    | 'natural'
+    | 'landscape'
+    | 'landscape-primary'
+    | 'landscape-secondary'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary';
   prefer_related_applications: string;
   related_applications: App[];
   scope: string;

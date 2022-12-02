@@ -7,11 +7,11 @@
 
 /* eslint-env browser,node */
 
-import type { StoreEnhancer, StoreCreator, Store } from "redux";
-import type { FusionPlugin, Token } from "fusion-core";
+import type {StoreEnhancer, StoreCreator, Store} from 'redux';
+import type {FusionPlugin, Token} from 'fusion-core';
 
-import { createPlugin, createToken } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {createPlugin, createToken} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,
@@ -23,7 +23,7 @@ type ExtractReturnType = <V>(a: () => V) => V;
 type IEmitter = $Call1<typeof UniversalEventsToken, ExtractReturnType>;
 
 export const ActionEmitterTransformerToken: Token<Function> = createToken(
-  "ActionEmitterTransformerToken"
+  'ActionEmitterTransformerToken'
 );
 
 type PluginDepsType = {
@@ -34,8 +34,8 @@ type PluginDepsType = {
 type ServiceType = StoreEnhancer<any, any, any>;
 
 const defaultTransformer = (action) => {
-  const { type, _trackingMeta } = action;
-  return { type, _trackingMeta };
+  const {type, _trackingMeta} = action;
+  return {type, _trackingMeta};
 };
 
 const plugin: FusionPlugin<PluginDepsType, ServiceType> = createPlugin({
@@ -61,12 +61,12 @@ const plugin: FusionPlugin<PluginDepsType, ServiceType> = createPlugin({
         return {
           ...store,
           dispatch: (action: unknown) => {
-            if (action && typeof action.type === "string") {
+            if (action && typeof action.type === 'string') {
               let payload: any = transformer(action);
               if (payload) {
                 emitter // $FlowFixMe
                   .from(store.ctx)
-                  .emit("redux-action-emitter:action", payload);
+                  .emit('redux-action-emitter:action', payload);
               }
             }
 

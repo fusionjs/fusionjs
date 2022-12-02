@@ -5,7 +5,7 @@
  *
  */
 
-import { inMemoryBatchStorage, localBatchStorage } from "../src/storage/index";
+import {inMemoryBatchStorage, localBatchStorage} from '../src/storage/index';
 
 const toBeTested = {
   localBatchStorage,
@@ -13,13 +13,13 @@ const toBeTested = {
 };
 
 Object.keys(toBeTested).forEach((storageType) => {
-  const { add, addToStart, getAndClear } = toBeTested[storageType];
+  const {add, addToStart, getAndClear} = toBeTested[storageType];
 
   // eslint-disable-next-line jest/valid-describe
   describe(storageType, () => {
-    test("add", () => {
-      const data1 = { type: "nick", payload: "test" };
-      const data2 = { type: "2", payload: "test" };
+    test('add', () => {
+      const data1 = {type: 'nick', payload: 'test'};
+      const data2 = {type: '2', payload: 'test'};
       getAndClear();
       add(data1);
       add(data2);
@@ -27,9 +27,9 @@ Object.keys(toBeTested).forEach((storageType) => {
       expect(getAndClear()).toEqual([data1, data2]);
     });
 
-    test("addToStart", () => {
-      const data1 = { type: "1", payload: "test" };
-      const data2 = { type: "2", payload: "test" };
+    test('addToStart', () => {
+      const data1 = {type: '1', payload: 'test'};
+      const data2 = {type: '2', payload: 'test'};
       getAndClear();
       add(data1);
       addToStart(data2);
@@ -37,8 +37,8 @@ Object.keys(toBeTested).forEach((storageType) => {
       expect(getAndClear()).toEqual([data2, data1]);
     });
 
-    test("getAndClear", () => {
-      const data = { type: "nick", payload: "test" };
+    test('getAndClear', () => {
+      const data = {type: 'nick', payload: 'test'};
       getAndClear();
       add(data);
 
@@ -46,8 +46,8 @@ Object.keys(toBeTested).forEach((storageType) => {
       expect(getAndClear().length).toBeFalsy();
     });
 
-    test("getAndClear with limit", () => {
-      const data = { type: "nick", payload: "test" };
+    test('getAndClear with limit', () => {
+      const data = {type: 'nick', payload: 'test'};
       getAndClear();
       add(data);
       add(data);

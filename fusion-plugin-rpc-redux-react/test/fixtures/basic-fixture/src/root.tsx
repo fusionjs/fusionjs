@@ -6,11 +6,11 @@
  * @ts-nocheck
  */
 
-import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { prepared } from "fusion-react";
-import { withRPCRedux } from "../../../..";
+import React from 'react';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {prepared} from 'fusion-react';
+import {withRPCRedux} from '../../../..';
 
 function Root(props) {
   return (
@@ -21,9 +21,9 @@ function Root(props) {
 }
 
 export default compose(
-  withRPCRedux("getUser"),
-  connect(({ user }) => ({ user: user.data })),
+  withRPCRedux('getUser'),
+  connect(({user}) => ({user: user.data})),
   prepared((props) =>
-    props.user ? Promise.resolve() : props.getUser({ name: "hello" })
+    props.user ? Promise.resolve() : props.getUser({name: 'hello'})
   )
 )(Root);

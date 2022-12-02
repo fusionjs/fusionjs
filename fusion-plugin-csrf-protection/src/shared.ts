@@ -5,10 +5,10 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-const methods = { POST: 1, PUT: 1, PATCH: 1, DELETE: 1 };
+const methods = {POST: 1, PUT: 1, PATCH: 1, DELETE: 1};
 
 export function verifyMethod(
   method: string | keyof typeof methods
@@ -16,5 +16,5 @@ export function verifyMethod(
   return methods[method.toUpperCase()];
 }
 export const CsrfIgnoreRoutesToken: Token<Array<string>> = createToken(
-  "CsrfIgnoreRoutesToken"
+  'CsrfIgnoreRoutesToken'
 );

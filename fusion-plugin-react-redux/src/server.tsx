@@ -5,26 +5,26 @@
  *
  */
 
-import React from "react";
-import { compose, createStore } from "redux";
-import { Provider } from "react-redux";
+import React from 'react';
+import {compose, createStore} from 'redux';
+import {Provider} from 'react-redux';
 
-import { createPlugin, memoize, html } from "fusion-core";
-import type { FusionPlugin, Context } from "fusion-core";
+import {createPlugin, memoize, html} from 'fusion-core';
+import type {FusionPlugin, Context} from 'fusion-core';
 
-import ctxEnhancer from "./ctx-enhancer";
-import { serialize } from "./codec";
+import ctxEnhancer from './ctx-enhancer';
+import {serialize} from './codec';
 import {
   ReducerToken,
   PreloadedStateToken,
   EnhancerToken,
   GetInitialStateToken,
-} from "./tokens";
+} from './tokens';
 import type {
   StoreWithContextType,
   ReactReduxDepsType,
   ReactReduxServiceType,
-} from "./types";
+} from './types';
 
 const plugin =
   __NODE__ &&
@@ -35,7 +35,7 @@ const plugin =
       enhancer: EnhancerToken.optional,
       getInitialState: GetInitialStateToken.optional,
     },
-    provides({ reducer, preloadedState, enhancer, getInitialState }) {
+    provides({reducer, preloadedState, enhancer, getInitialState}) {
       class Redux {
         ctx: Context;
         store: StoreWithContextType<any, any, any> | undefined | null;

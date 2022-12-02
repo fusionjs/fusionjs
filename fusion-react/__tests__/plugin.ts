@@ -5,25 +5,25 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import PropTypes from 'prop-types';
 
-import ReactPlugin from "../src/plugin";
+import ReactPlugin from '../src/plugin';
 
-test(".create works", (done) => {
+test('.create works', (done) => {
   class Foo {
     foo() {}
   }
-  const plugin = ReactPlugin.create("foo", {});
+  const plugin = ReactPlugin.create('foo', {});
   // $FlowFixMe
   const middleware = plugin.middleware({}, new Foo());
-  const element = React.createElement("div");
-  const ctx = { element };
+  const element = React.createElement('div');
+  const ctx = {element};
   // $FlowFixMe
   middleware(ctx, () => Promise.resolve()).then(() => {
     expect(ctx.element).not.toBe(element);
     // $FlowFixMe
-    expect(ctx.element.type.displayName).toBe("FooProvider");
+    expect(ctx.element.type.displayName).toBe('FooProvider');
     // $FlowFixMe
     expect(ctx.element.type.childContextTypes.foo).toBe(
       PropTypes.any.isRequired
@@ -32,14 +32,14 @@ test(".create works", (done) => {
   });
 });
 
-test("idempotency with wrapped middleware", async () => {
+test('idempotency with wrapped middleware', async () => {
   let called = 0;
-  const foo = "foo";
-  const bar = "bar";
-  const baz = "baz";
+  const foo = 'foo';
+  const bar = 'bar';
+  const baz = 'baz';
   const expectedDeps = [foo, bar];
   const expectedSelf = [bar, baz];
-  const plugin = ReactPlugin.create("foo", {
+  const plugin = ReactPlugin.create('foo', {
     middleware: (deps, self) => async () => {
       expect(deps).toBe(expectedDeps.shift());
       expect(self).toBe(expectedSelf.shift());
@@ -50,8 +50,8 @@ test("idempotency with wrapped middleware", async () => {
   const middleware = plugin.middleware(foo, bar);
   // $FlowFixMe
   const middleware2 = plugin.middleware(bar, baz);
-  const element = React.createElement("div");
-  const ctx = { element };
+  const element = React.createElement('div');
+  const ctx = {element};
   // $FlowFixMe
   middleware(ctx, () => Promise.resolve());
   // $FlowFixMe

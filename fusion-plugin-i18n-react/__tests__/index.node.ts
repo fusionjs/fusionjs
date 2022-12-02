@@ -14,14 +14,14 @@ import Plugin, {
   createI18nLoader,
   Translate,
   withTranslations,
-} from "../src/index";
+} from '../src/index';
 
-test("exports", () => {
-  expect(typeof Plugin).toBe("object");
-  expect(typeof I18nToken).toBe("object");
-  expect(typeof I18nLoaderToken).toBe("object");
-  expect(typeof HydrationStateToken).toBe("object");
-  expect(typeof createI18nLoader).toBe("function");
-  expect(typeof Translate).toBe("function");
-  expect(typeof withTranslations).toBe("function");
+test('exports', () => {
+  expect(typeof Plugin).toBe('object');
+  expect(typeof I18nToken).toBe('object');
+  expect(typeof I18nLoaderToken).toBe('object');
+  expect(typeof HydrationStateToken).toBe('object');
+  expect(typeof createI18nLoader).toBe('function');
+  expect(typeof Translate).toBe('function');
+  expect(typeof withTranslations).toBe('function');
 });

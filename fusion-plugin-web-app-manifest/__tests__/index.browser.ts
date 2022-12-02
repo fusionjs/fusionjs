@@ -4,8 +4,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import browserPlugin from "../src/browser";
+import browserPlugin from '../src/browser';
 
-test("browser exports null", () => {
+test('browser exports null', () => {
   expect(browserPlugin).toEqual(null);
 });

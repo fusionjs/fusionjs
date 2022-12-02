@@ -5,10 +5,10 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
-import type { WebAppManifestType } from "./types";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
+import type {WebAppManifestType} from './types';
 
 export const WebAppManifestToken: Token<WebAppManifestType> = createToken(
-  "WebAppManifestToken"
+  'WebAppManifestToken'
 );

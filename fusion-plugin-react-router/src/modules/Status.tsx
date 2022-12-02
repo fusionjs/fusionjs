@@ -5,9 +5,9 @@
  *
  */
 
-import * as React from "react";
-import type { RouterContextType } from "../types";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import type {RouterContextType} from '../types';
+import PropTypes from 'prop-types';
 
 type StatusPropsType = {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ type StatusPropsType = {
 export class Status extends React.Component<StatusPropsType> {
   constructor(props: StatusPropsType, context: RouterContextType) {
     super(props, context);
-    const { router: { staticContext } = {} } = context;
+    const {router: {staticContext} = {}} = context;
     if (staticContext) {
       staticContext.status = parseInt(this.props.code, 10);
     }

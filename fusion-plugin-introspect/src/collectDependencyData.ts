@@ -4,12 +4,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type App from "fusion-core";
-import path from "path";
+import type App from 'fusion-core';
+import path from 'path';
 
-import type { Dep } from "./cli/types.js";
+import type {Dep} from './cli/types.js';
 
-const nodeOf = ({ name, stacks = [] }) => ({
+const nodeOf = ({name, stacks = []}) => ({
   name,
   sources: getSources(stacks, {
     token: /create-token/,
@@ -27,35 +27,35 @@ type Token = {
 
 export const collectDependencyData = (app: App) => {
   const registered = Array.from(app.registered.values());
-  const dependencies = registered.map<Dep>(({ token, value }) => {
+  const dependencies = registered.map<Dep>(({token, value}) => {
     const deps = value && value.deps ? value.deps : {};
     const type =
       value && value.__plugin__
         ? value.provides
           ? value.middleware
-            ? "both"
-            : "service"
+            ? 'both'
+            : 'service'
           : value.middleware
-          ? "middleware"
-          : "noop"
-        : "value";
+          ? 'middleware'
+          : 'noop'
+        : 'value';
     return {
       ...nodeOf(token),
       type,
       dependencies: (Object.values(deps) as any as Array<Token>).map(
-        ({ name }) => name
+        ({name}) => name
       ),
     };
   });
-  return { timestamp: Date.now(), dependencies };
+  return {timestamp: Date.now(), dependencies};
 };
 
 const getSources = (stacks, ignore) => {
-  return stacks.map(({ type, stack = "" }) => {
+  return stacks.map(({type, stack = ''}) => {
     return {
       type,
       source: stack
-        .split("\n")
+        .split('\n')
         .filter((line) => {
           return line.match(/\//) && !line.match(ignore[type] || /base-app/);
         })

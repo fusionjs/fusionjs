@@ -5,15 +5,15 @@
  *
  */
 
-import { createPlugin, RouteTagsToken } from "fusion-core";
-import type { Context } from "fusion-core";
-import type { Fetch } from "fusion-tokens";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {createPlugin, RouteTagsToken} from 'fusion-core';
+import type {Context} from 'fusion-core';
+import type {Fetch} from 'fusion-tokens';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import MissingHandlerError from "./missing-handler-error";
-import { RPCHandlersToken } from "./tokens";
-import type { HandlerType } from "./tokens";
-import type { RPCPluginType, IEmitter } from "./types";
+import MissingHandlerError from './missing-handler-error';
+import {RPCHandlersToken} from './tokens';
+import type {HandlerType} from './tokens';
+import type {RPCPluginType, IEmitter} from './types';
 
 class RPC {
   ctx: Context | undefined | null;
@@ -27,7 +27,7 @@ class RPC {
 
   async request<TArgs, TResult>(method: string, args: TArgs): Promise<TResult> {
     if (!this.handlers) {
-      throw new Error("fusion-plugin-rpc requires `handlers`");
+      throw new Error('fusion-plugin-rpc requires `handlers`');
     }
 
     if (!this.handlers[method]) {
@@ -44,8 +44,8 @@ const plugin: RPCPluginType = createPlugin({
     // $FlowFixMe
     emitter: UniversalEventsToken.optional,
   },
-  provides: ({ handlers } = {}) => {
-    return { from: () => new RPC(handlers) };
+  provides: ({handlers} = {}) => {
+    return {from: () => new RPC(handlers)};
   },
 });
 

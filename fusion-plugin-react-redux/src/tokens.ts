@@ -5,24 +5,24 @@
  *
  */
 
-import type { Reducer, StoreEnhancer } from "redux";
+import type {Reducer, StoreEnhancer} from 'redux';
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-import type { GetInitialStateType, ReactReduxServiceType } from "./types";
+import type {GetInitialStateType, ReactReduxServiceType} from './types';
 
 export const ReduxToken: Token<ReactReduxServiceType> =
-  createToken("ReduxToken");
+  createToken('ReduxToken');
 export const ReducerToken: Token<Reducer<any, any>> =
-  createToken("ReducerToken");
+  createToken('ReducerToken');
 export const PreloadedStateToken: Token<any> = createToken(
-  "PreloadedStateToken"
+  'PreloadedStateToken'
 );
 export const EnhancerToken: Token<StoreEnhancer<any, any, any>> =
-  createToken("EnhancerToken");
+  createToken('EnhancerToken');
 export const ReduxDevtoolsConfigToken: Token<{} | false> = createToken(
-  "ReduxDevtoolsConfigToken"
+  'ReduxDevtoolsConfigToken'
 );
 export const GetInitialStateToken: Token<GetInitialStateType<any>> =
-  createToken("GetInitialStateToken");
+  createToken('GetInitialStateToken');

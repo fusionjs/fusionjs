@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { prepared } from "../index";
+import {prepared} from '../index';
 
-function StrictProps(props: { foo: "foo" }) {
+function StrictProps(props: {foo: 'foo'}) {
   return <div>Hello World</div>;
 }
 const PreparedComponent = prepared(async () => {})(StrictProps);

@@ -5,16 +5,16 @@
  *
  */
 
-import React from "react";
+import React from 'react';
 
-import { renderToString as render } from "react-dom/server";
+import {renderToString as render} from 'react-dom/server';
 
-import { MemoryRouter, Routes, Route } from "../src/server";
+import {MemoryRouter, Routes, Route} from '../src/server';
 
-test("memory router works in server", () => {
+test('memory router works in server', () => {
   const Hello = () => <div>Test</div>;
   const el = (
-    <MemoryRouter initialEntries={["/test"]}>
+    <MemoryRouter initialEntries={['/test']}>
       <Routes>
         <Route path="/test" element={<Hello />} />
       </Routes>

@@ -1,8 +1,8 @@
-import React from "react";
-import { Route, Routes } from "fusion-plugin-react-router";
+import React from 'react';
+import {Route, Routes} from 'fusion-plugin-react-router';
 
-import Home from "./pages/home";
-import PageNotFound from "./pages/pageNotFound";
+import Home from './pages/home';
+import PageNotFound from './pages/pageNotFound';
 
 const root = (
   <Routes>

@@ -1,11 +1,11 @@
-import type { Context } from "fusion-core";
-import { createPlugin } from "fusion-core";
+import type {Context} from 'fusion-core';
+import {createPlugin} from 'fusion-core';
 
 export default createPlugin<void, void>({
   middleware() {
     return (ctx: Context, next: () => Promise<any>) => {
-      if (ctx.method === "GET" && ctx.path === "/redirect") {
-        ctx.redirect("/redirected");
+      if (ctx.method === 'GET' && ctx.path === '/redirect') {
+        ctx.redirect('/redirected');
       }
       return next();
     };

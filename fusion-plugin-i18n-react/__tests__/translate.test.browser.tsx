@@ -1,27 +1,27 @@
-import React from "react";
-import { render } from "@testing-library/react";
+import React from 'react';
+import {render} from '@testing-library/react';
 
-import { Translate } from "../src/index";
-import { I18nContext } from "../src/plugin";
+import {Translate} from '../src/index';
+import {I18nContext} from '../src/plugin';
 
-test("Translate", () => {
+test('Translate', () => {
   const Foo = () => {
     return (
       <div>
-        <Translate id={"foo"} />
+        <Translate id={'foo'} />
       </div>
     );
   };
 
   const mockI18n = {
     async load() {},
-    localeCode: "fr_CA",
+    localeCode: 'fr_CA',
     translate() {
-      return "foo bar baz";
+      return 'foo bar baz';
     },
   };
 
-  const { asFragment } = render(
+  const {asFragment} = render(
     <I18nContext.Provider value={mockI18n}>
       <Foo />
     </I18nContext.Provider>

@@ -5,15 +5,15 @@
  *
  */
 
-import useFontLoading from "./use-font-loading";
-import withFontLoading from "./with-font-loading";
-import FontLoaderReactPlugin from "./plugin";
-import { FontLoaderReactToken, FontLoaderReactConfigToken } from "./tokens";
+import useFontLoading from './use-font-loading';
+import withFontLoading from './with-font-loading';
+import FontLoaderReactPlugin from './plugin';
+import {FontLoaderReactToken, FontLoaderReactConfigToken} from './tokens';
 import type {
   ConfigType,
   AtomicFontsObjectType,
   StyledFontsObjectType,
-} from "./types";
+} from './types';
 
 export default FontLoaderReactPlugin;
 export {
@@ -22,4 +22,4 @@ export {
   FontLoaderReactToken,
   FontLoaderReactConfigToken,
 };
-export type { ConfigType, AtomicFontsObjectType, StyledFontsObjectType };
+export type {ConfigType, AtomicFontsObjectType, StyledFontsObjectType};

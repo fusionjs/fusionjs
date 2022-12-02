@@ -5,9 +5,9 @@
  *
  */
 
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useRPCRedux } from "../../../..";
+import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {useRPCRedux} from '../../../..';
 
 export default function Root() {
   return (
@@ -20,7 +20,7 @@ export default function Root() {
 
 // Use handler to get data
 function Handler(props) {
-  const handler = useRPCRedux("getUser");
+  const handler = useRPCRedux('getUser');
   const [mounted, setMounted] = useState(true);
   const [data, setData] = useState(null);
 
@@ -36,8 +36,8 @@ function Handler(props) {
 
 // Use selector to get data
 function Selector(props) {
-  const handler = useRPCRedux("getTrip");
-  const state = useSelector(({ trip }) => trip.data);
+  const handler = useRPCRedux('getTrip');
+  const state = useSelector(({trip}) => trip.data);
 
   useEffect(() => {
     handler();

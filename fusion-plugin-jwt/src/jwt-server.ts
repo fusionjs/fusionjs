@@ -6,22 +6,22 @@
  */
 
 /* eslint-env node */
-import assert from "assert";
-import { promisify } from "util";
-import jwt from "jsonwebtoken";
-import get from "just-safe-get";
-import set from "just-safe-set";
+import assert from 'assert';
+import {promisify} from 'util';
+import jwt from 'jsonwebtoken';
+import get from 'just-safe-get';
+import set from 'just-safe-set';
 
-import { createPlugin, memoize } from "fusion-core";
-import type { Context, FusionPlugin } from "fusion-core";
-import type { Session } from "fusion-tokens";
+import {createPlugin, memoize} from 'fusion-core';
+import type {Context, FusionPlugin} from 'fusion-core';
+import type {Session} from 'fusion-tokens';
 
 import {
   SessionSecretToken,
   SessionCookieNameToken,
   SessionCookieExpiresToken,
-} from "./tokens";
-import type { SessionDeps, SessionService } from "./types";
+} from './tokens';
+import type {SessionDeps, SessionService} from './types';
 
 // Scope path to `data.` here since `jsonwebtoken` has some special top-level keys that we do not want to expose (ex: `exp`)
 const getFullPath = (keyPath) => `data.${keyPath}`;
@@ -79,16 +79,16 @@ const p: FusionPlugin<SessionDeps, SessionService> =
       expires: SessionCookieExpiresToken.optional,
     },
     provides: (deps) => {
-      const { secret, cookieName, expires = 86400 } = deps;
+      const {secret, cookieName, expires = 86400} = deps;
       const service: SessionService = {
         from: memoize((ctx: Context) => {
-          return new JWTSession(ctx, { secret, cookieName, expires });
+          return new JWTSession(ctx, {secret, cookieName, expires});
         }),
       };
       return service;
     },
     middleware: (deps, service) => {
-      const { secret, cookieName, expires = 86400 } = deps;
+      const {secret, cookieName, expires = 86400} = deps;
       return async function jwtMiddleware(
         ctx: Context,
         next: () => Promise<void>
@@ -107,7 +107,7 @@ const p: FusionPlugin<SessionDeps, SessionService> =
           if (signed !== session.cookie) {
             const msExpires = new Date(time + expires * 1000);
             // TODO(#3) provide way to not set cookie if not needed yet
-            ctx.cookies.set(cookieName, signed, { expires: msExpires });
+            ctx.cookies.set(cookieName, signed, {expires: msExpires});
           }
         }
       };

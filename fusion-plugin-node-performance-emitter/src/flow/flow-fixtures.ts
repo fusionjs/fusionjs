@@ -5,12 +5,12 @@
  *
  */
 
-import React from "react";
-import App from "fusion-react";
-import NodePerfEmitterPlugin from "../index";
+import React from 'react';
+import App from 'fusion-react';
+import NodePerfEmitterPlugin from '../index';
 
 export default () => {
-  const app = new App(React.createElement("div"));
+  const app = new App(React.createElement('div'));
   // We can register NodePerfEmitterPlugin within a node block with no refinements
   if (__NODE__) {
     app.register(NodePerfEmitterPlugin);

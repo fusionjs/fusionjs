@@ -5,7 +5,7 @@
  *
  */
 
-import { getTimeFromMarks } from "../utils";
+import {getTimeFromMarks} from '../utils';
 
 function hasPerf(window) {
   return Boolean(
@@ -17,13 +17,13 @@ function hasPerf(window) {
 }
 
 function getEntries(window) {
-  const resources = window.performance.getEntriesByType("resource");
+  const resources = window.performance.getEntriesByType('resource');
   const jsonResources = resources.filter(
-    (entry) => entry.name.indexOf("data:") !== 0 && entry.toJSON
+    (entry) => entry.name.indexOf('data:') !== 0 && entry.toJSON
   );
-  const navigations = window.performance.getEntriesByType("navigation");
+  const navigations = window.performance.getEntriesByType('navigation');
   const html = navigations.filter(
-    (entry) => entry.entryType === "navigation" && entry.toJSON
+    (entry) => entry.entryType === 'navigation' && entry.toJSON
   );
   return jsonResources.concat(html).map(function (entry) {
     return entry.toJSON();
@@ -31,7 +31,7 @@ function getEntries(window) {
 }
 
 function getServerTiming(window) {
-  const navigationTiming = window.performance.getEntriesByType("navigation")[0];
+  const navigationTiming = window.performance.getEntriesByType('navigation')[0];
   return navigationTiming && navigationTiming.serverTiming;
 }
 
@@ -50,11 +50,11 @@ function getMemory(window) {
 function getPaintTimes(window) {
   let firstPaint = null;
   let firstContentfulPaint = null;
-  const paint = window.performance.getEntriesByType("paint");
+  const paint = window.performance.getEntriesByType('paint');
   if (paint) {
-    firstPaint = getTimeFromMarks(paint, "first-paint");
-    firstContentfulPaint = getTimeFromMarks(paint, "first-contentful-paint");
-  } else if (typeof window.performance.timing.msFirstPaint === "number") {
+    firstPaint = getTimeFromMarks(paint, 'first-paint');
+    firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
+  } else if (typeof window.performance.timing.msFirstPaint === 'number') {
     // IE
     firstPaint =
       window.performance.timing.msFirstPaint -
@@ -69,10 +69,10 @@ function getPaintTimes(window) {
 }
 
 function getRenderTimes(window) {
-  const marks = window.performance.getEntriesByType("mark");
-  const firstRenderStart = getTimeFromMarks(marks, "firstRenderStart");
-  const clientRenderStart = getTimeFromMarks(marks, "clientRenderStart");
-  return { firstRenderStart, clientRenderStart };
+  const marks = window.performance.getEntriesByType('mark');
+  const firstRenderStart = getTimeFromMarks(marks, 'firstRenderStart');
+  const clientRenderStart = getTimeFromMarks(marks, 'clientRenderStart');
+  return {firstRenderStart, clientRenderStart};
 }
 
 function getWidth(window) {
@@ -100,7 +100,7 @@ function getHeight(window) {
 function getDeviceDimensions(window) {
   const height = getHeight(window);
   const width = getWidth(window);
-  return { height, width };
+  return {height, width};
 }
 
 function getNavigationMeta(window) {
@@ -140,11 +140,11 @@ const browserPerfCollector: (window: any) => any = (window: any) => {
 };
 
 function asDictionary(obj = {}) {
-  if (obj.toJSON && typeof obj.toJSON === "function") {
+  if (obj.toJSON && typeof obj.toJSON === 'function') {
     return obj.toJSON();
   }
   return Object.keys(Object.getPrototypeOf(obj)).reduce((result, key) => {
-    if (typeof obj[key] !== "function") {
+    if (typeof obj[key] !== 'function') {
       result[key] = obj[key];
     }
     return result;

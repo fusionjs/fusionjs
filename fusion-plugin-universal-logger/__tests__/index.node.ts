@@ -5,73 +5,67 @@
  *
  */
 
-import { getSimulator } from "fusion-test-utils";
-import App from "fusion-core";
-import { LoggerToken } from "fusion-tokens";
+import {getSimulator} from 'fusion-test-utils';
+import App from 'fusion-core';
+import {LoggerToken} from 'fusion-tokens';
 import UniversalEvents, {
   UniversalEventsToken,
-} from "fusion-plugin-universal-events";
-import TransportStream from "winston-transport";
+} from 'fusion-plugin-universal-events';
+import TransportStream from 'winston-transport';
 
-import plugin from "../src/server";
-import { UniversalLoggerConfigToken } from "../src/tokens";
+import plugin from '../src/server';
+import {UniversalLoggerConfigToken} from '../src/tokens';
 
 type SupportedLevelsType =
-  | "error"
-  | "warn"
-  | "info"
-  | "verbose"
-  | "debug"
-  | "silly";
+  | 'error'
+  | 'warn'
+  | 'info'
+  | 'verbose'
+  | 'debug'
+  | 'silly';
 
-test("Server logger", async () => {
+test('Server logger', async () => {
   expect.assertions(4);
   class Transport extends TransportStream {
     name: string;
 
     constructor() {
       super();
-      this.name = "test-transport";
+      this.name = 'test-transport';
     }
-    log({
-      level,
-      message,
-    }: {
-      level: SupportedLevelsType;
-      message: string;
-    }): void {
-      expect(level).toBe("info");
-      expect(message).toBe("test message");
+    log({level, message}: {level: SupportedLevelsType; message: string}): void {
+      expect(level).toBe('info');
+      expect(message).toBe('test message');
     }
   }
 
-  const app = new App("element", (el) => el);
+  const app = new App('element', (el) => el);
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
-  app.register(UniversalLoggerConfigToken, { transports: [new Transport()] });
+  app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});
   app.middleware(
-    { events: UniversalEventsToken, logger: LoggerToken },
-    ({ events, logger }) => {
-      events.on("universal-log", ({ args, level }) => {
-        expect(args[0]).toBe("test message");
+    {events: UniversalEventsToken, logger: LoggerToken},
+    ({events, logger}) => {
+      events.on('universal-log', ({args, level}) => {
+        expect(args[0]).toBe('test message');
       });
 
       expect(logger).toBeTruthy();
-      logger.info("test message");
+      logger.info('test message');
       return (ctx, next) => next();
     }
   );
   getSimulator(app);
 });
 
-test("Server logger listening on events", async () => {
+test('Server logger listening on events', async () => {
   let called = false;
   class Transport extends TransportStream {
     name: string;
 
     constructor() {
       super();
-      this.name = "test-transport";
+      this.name = 'test-transport';
     }
     log({
       level,
@@ -82,32 +76,29 @@ test("Server logger listening on events", async () => {
       message: string;
       hello: string;
     }) {
-      expect(level).toBe("info");
-      expect(message).toBe("test");
-      expect(message).toBe("test");
-      expect(hello).toBe("world");
+      expect(level).toBe('info');
+      expect(message).toBe('test');
+      expect(message).toBe('test');
+      expect(hello).toBe('world');
       called = true;
     }
   }
-  const app = new App("element", (el) => el);
+  const app = new App('element', (el) => el);
 
   app.register(UniversalEventsToken, UniversalEvents);
   app.register(LoggerToken, plugin);
-  app.register(UniversalLoggerConfigToken, { transports: [new Transport()] });
+  app.register(UniversalLoggerConfigToken, {transports: [new Transport()]});
   // The following middleware has an implicit dependency on the logger plugin.
   // The middleware setup function needs to be executed *after* the logger plugin
   // because it emits an event. While it doesn't directly depend on LoggerToken,
   // the logger plugin must exist first.
-  app.middleware(
-    { events: UniversalEventsToken, _: LoggerToken },
-    ({ events }) => {
-      events.emit("universal-log", {
-        level: "info",
-        args: ["test", { hello: "world" }],
-      });
-      return (ctx, next) => next();
-    }
-  );
+  app.middleware({events: UniversalEventsToken, _: LoggerToken}, ({events}) => {
+    events.emit('universal-log', {
+      level: 'info',
+      args: ['test', {hello: 'world'}],
+    });
+    return (ctx, next) => next();
+  });
   getSimulator(app);
   expect(called).toBe(true);
 });

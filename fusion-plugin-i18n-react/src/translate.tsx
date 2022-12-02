@@ -5,9 +5,9 @@
  *
  */
 
-import React from "react";
+import React from 'react';
 
-import { I18nContext } from "./plugin";
+import {I18nContext} from './plugin';
 
 type TranslatePropsType = {
   id: string;
@@ -22,4 +22,4 @@ function Translate(props: TranslatePropsType) {
   return React.Fragment ? <>{content}</> : <span>{content}</span>;
 }
 
-export { Translate };
+export {Translate};

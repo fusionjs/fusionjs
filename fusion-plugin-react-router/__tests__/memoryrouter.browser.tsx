@@ -6,17 +6,17 @@
  */
 
 /* eslint-env browser */
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import { MemoryRouter, Routes, Route } from "../src/browser";
+import {MemoryRouter, Routes, Route} from '../src/browser';
 
-test("memory router works in browser", () => {
-  const root = document.createElement("div");
+test('memory router works in browser', () => {
+  const root = document.createElement('div');
 
   const Hello = () => <div>Test</div>;
   const el = (
-    <MemoryRouter initialEntries={["/test"]}>
+    <MemoryRouter initialEntries={['/test']}>
       <Routes>
         <Route path="/test" element={<Hello />} />
       </Routes>

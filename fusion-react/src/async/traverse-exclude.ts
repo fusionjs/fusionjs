@@ -5,7 +5,7 @@
  *
  */
 
-import prepared from "./prepared";
+import prepared from './prepared';
 
 // Stops the traversal at this node. Useful for optimizing the prepare traversal
 // to visit the minimum number of nodes

@@ -5,11 +5,11 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
-import type { ServiceType, ConfigType } from "./types";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
+import type {ServiceType, ConfigType} from './types';
 
-export const HttpHandlerToken: Token<ServiceType> = createToken("HttpHandler");
+export const HttpHandlerToken: Token<ServiceType> = createToken('HttpHandler');
 export const HttpHandlerConfigToken: Token<ConfigType> = createToken(
-  "HttpHandlerConfigToken"
+  'HttpHandlerConfigToken'
 );

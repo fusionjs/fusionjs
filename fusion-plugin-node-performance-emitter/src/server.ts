@@ -9,24 +9,24 @@
 
 /* Configuration Tokens */
 // $FlowFixMe flow should be aware of native timers module
-import nodeTimers from "timers";
-import gcStats from "gc-stats";
-import { globalAgent } from "http";
-import assert from "assert";
+import nodeTimers from 'timers';
+import gcStats from 'gc-stats';
+import {globalAgent} from 'http';
+import assert from 'assert';
 
-import { createPlugin } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import type { FusionPlugin } from "fusion-core";
-import type { NodePerformanceDepsType as Deps } from "./flow";
+import type {FusionPlugin} from 'fusion-core';
+import type {NodePerformanceDepsType as Deps} from './flow';
 
 import {
   TimersToken,
   EventLoopLagIntervalToken,
   MemoryIntervalToken,
   SocketIntervalToken,
-} from "./tokens";
-import type { Timers } from "./tokens";
+} from './tokens';
+import type {Timers} from './tokens';
 
 const CONFIG_DEFAULTS = {
   eventLoopLagInterval: 1000 * 10,
@@ -79,9 +79,9 @@ class NodePerformanceEmitter {
     emit: (b: string, a: any) => void,
     timers: Timers
   ) {
-    assert.ok(config, "config provided, as expected");
-    assert.ok(emit, "emit provided, as expected");
-    assert.ok(timers, "timers provided, as expected");
+    assert.ok(config, 'config provided, as expected');
+    assert.ok(emit, 'emit provided, as expected');
+    assert.ok(timers, 'timers provided, as expected');
 
     this.gc = gcStats();
 
@@ -120,7 +120,7 @@ class NodePerformanceEmitter {
   startTrackingEventLoopLag() {
     if (this.eventLoopLagIntervalRef)
       throw new Error(
-        "Event Loop Lag is already being tracked.  Please stop previous instance before beginning a new one."
+        'Event Loop Lag is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
     this.eventLoopLagIntervalRef = this.timers.setInterval(
@@ -137,7 +137,7 @@ class NodePerformanceEmitter {
   emitEventLoopLag(done: Function) {
     done = done || noop;
     eventLoopLag((lag: number) => {
-      this.emit("gauge:event_loop_lag", lag);
+      this.emit('gauge:event_loop_lag', lag);
       return done();
     });
   }
@@ -146,7 +146,7 @@ class NodePerformanceEmitter {
   startTrackingMemoryUsage() {
     if (this.memoryIntervalRef)
       throw new Error(
-        "Memory Usage is already being tracked.  Please stop previous instance before beginning a new one."
+        'Memory Usage is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
     this.memoryIntervalRef = this.timers.setInterval(
@@ -163,21 +163,21 @@ class NodePerformanceEmitter {
   emitMemoryUsage() {
     const memoryUsage = process.memoryUsage();
     // $FlowFixMe .external should be present in typedef of process.memoryUsage()
-    this.emit("gauge:externalMemory", memoryUsage.external);
-    this.emit("gauge:rss", memoryUsage.rss);
-    this.emit("gauge:heapTotal", memoryUsage.heapTotal);
-    this.emit("gauge:heapUsed", memoryUsage.heapUsed);
+    this.emit('gauge:externalMemory', memoryUsage.external);
+    this.emit('gauge:rss', memoryUsage.rss);
+    this.emit('gauge:heapTotal', memoryUsage.heapTotal);
+    this.emit('gauge:heapUsed', memoryUsage.heapUsed);
   }
 
   /* Tracking Garbage Collection */
   startTrackingGCUsage() {
     if (this.isTrackingGarbageCollection)
       throw new Error(
-        "Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one."
+        'Garbage Collection is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
-    this.gc.on("stats", (stats) => {
-      this.emit("timing:gc", {
+    this.gc.on('stats', (stats) => {
+      this.emit('timing:gc', {
         duration: stats.pauseMS,
         type: stats.gctype,
       });
@@ -185,7 +185,7 @@ class NodePerformanceEmitter {
   }
 
   stopTrackingGCUsage() {
-    this.gc.removeAllListeners("stats");
+    this.gc.removeAllListeners('stats');
     this.isTrackingGarbageCollection = false;
   }
 
@@ -193,7 +193,7 @@ class NodePerformanceEmitter {
   startTrackingSocketUsage() {
     if (this.socketUsageIntervalRef)
       throw new Error(
-        "Socket Usage is already being tracked.  Please stop previous instance before beginning a new one."
+        'Socket Usage is already being tracked.  Please stop previous instance before beginning a new one.'
       );
 
     this.socketUsageIntervalRef = this.timers.setInterval(
@@ -210,17 +210,17 @@ class NodePerformanceEmitter {
   emitSocketUsage() {
     // number of sockets currently in use
     this.emit(
-      "gauge:globalAgentSockets",
+      'gauge:globalAgentSockets',
       getCountFromGlobalAgent(globalAgent.sockets)
     );
     // number of requests that have not yet been assigned to sockets
     this.emit(
-      "gauge:globalAgentRequests",
+      'gauge:globalAgentRequests',
       getCountFromGlobalAgent(globalAgent.requests)
     );
     // number of free sockets
     this.emit(
-      "gauge:globalAgentFreeSockets",
+      'gauge:globalAgentFreeSockets',
       getCountFromGlobalAgent(globalAgent.freeSockets)
     );
   }

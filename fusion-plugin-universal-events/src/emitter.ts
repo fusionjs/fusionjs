@@ -5,11 +5,11 @@
  *
  */
 
-import type { Context } from "fusion-core";
+import type {Context} from 'fusion-core';
 
-import type { IEmitter } from "./types";
+import type {IEmitter} from './types';
 
-const globalEventType = "*";
+const globalEventType = '*';
 export default class UniversalEmitter implements IEmitter {
   handlers: any;
   mappers: any;
@@ -19,17 +19,17 @@ export default class UniversalEmitter implements IEmitter {
     this.mappers = {};
   }
   map(...args: any): any {
-    const { type, callback } = getArgs(args);
+    const {type, callback} = getArgs(args);
     if (!this.mappers[type]) this.mappers[type] = [];
     this.mappers[type].push(callback);
   }
   on(...args: any): any {
-    const { type, callback } = getArgs(args);
+    const {type, callback} = getArgs(args);
     if (!this.handlers[type]) this.handlers[type] = [];
     this.handlers[type].push(callback);
   }
   off(...args: any): any {
-    const { type, callback } = getArgs(args);
+    const {type, callback} = getArgs(args);
     const index = this.handlers[type].indexOf(callback);
     if (index > -1) this.handlers[type].splice(index, 1);
   }
@@ -48,7 +48,7 @@ export default class UniversalEmitter implements IEmitter {
 
   /* eslint-disable-next-line  no-unused-vars */
   from(ctx: Context) {
-    throw new Error("Not implemented.");
+    throw new Error('Not implemented.');
   }
   /* eslint-disable-next-line  no-unused-vars */
   emit(type: string, payload: unknown, ctx?: Context) {
@@ -56,24 +56,24 @@ export default class UniversalEmitter implements IEmitter {
   }
   /* eslint-disable-next-line  no-unused-vars */
   setFrequency(frequency: number) {
-    throw new Error("Not implemented.");
+    throw new Error('Not implemented.');
   }
   teardown() {
-    throw new Error("Not implemented.");
+    throw new Error('Not implemented.');
   }
   flush() {
-    throw new Error("Not implemented.");
+    throw new Error('Not implemented.');
   }
 }
 
 function validateHandler(handler) {
-  if (typeof handler !== "function")
-    throw new TypeError("handler must be a function");
+  if (typeof handler !== 'function')
+    throw new TypeError('handler must be a function');
 }
 
 function getArgs(args) {
-  const type = typeof args[0] === "string" ? args[0] : globalEventType;
+  const type = typeof args[0] === 'string' ? args[0] : globalEventType;
   const callback = args[1] || args[0];
   validateHandler(callback);
-  return { type, callback };
+  return {type, callback};
 }

@@ -8,10 +8,10 @@
  */
 
 /* eslint-env node */
-import { Runtime } from "../../utils";
+import {Runtime} from '../../utils';
 
-test("browser plugin integration test withRPCRedux", async () => {
-  const runtime = new Runtime({ fixture: __dirname });
+test('browser plugin integration test withRPCRedux', async () => {
+  const runtime = new Runtime({fixture: __dirname});
   await runtime.start();
 
   // rpc actions are dispatched as sideEffect
@@ -20,7 +20,7 @@ test("browser plugin integration test withRPCRedux", async () => {
     '[data-testid="user-id"]',
     (el) => el.textContent
   );
-  expect(userId).toEqual("123");
+  expect(userId).toEqual('123');
 
   await runtime.end();
 }, 45000);

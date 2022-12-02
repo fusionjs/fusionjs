@@ -5,11 +5,11 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
-import { Router as BaseRouter } from "react-router-dom";
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import {Router as BaseRouter} from 'react-router-dom';
 
-import type { RouterPropsType, RouterType } from "../types";
+import type {RouterPropsType, RouterType} from '../types';
 
 /**
  * The public top-level API for a "static" <Router>, so-called because it
@@ -19,29 +19,29 @@ import type { RouterPropsType, RouterType } from "../types";
  */
 class ServerRouter extends React.Component<RouterPropsType> {
   static defaultProps = {
-    basename: "",
+    basename: '',
     context: {},
     onRoute: () => {},
   };
 
   getRouterStaticContext() {
     let context = this.props.context;
-    if (context && typeof context.setCode === "function") {
+    if (context && typeof context.setCode === 'function') {
       console.warn(
-        "Using context.setCode is deprecated. Use a setter on the status prop instead"
+        'Using context.setCode is deprecated. Use a setter on the status prop instead'
       );
-      Object.defineProperty(context, "status", {
+      Object.defineProperty(context, 'status', {
         set: (code) => {
           if (context.setCode) context.setCode(code);
         },
         configurable: true,
       });
     }
-    if (context && typeof context.redirect === "function") {
+    if (context && typeof context.redirect === 'function') {
       console.warn(
-        "Using context.redirect is deprecated. Use a setter on the url prop instead"
+        'Using context.redirect is deprecated. Use a setter on the url prop instead'
       );
-      Object.defineProperty(context, "url", {
+      Object.defineProperty(context, 'url', {
         set: (url) => {
           if (context.redirect) context.redirect(url);
         },
@@ -63,7 +63,7 @@ class ServerRouter extends React.Component<RouterPropsType> {
   }
 
   render() {
-    const { history, basename, children } = this.props;
+    const {history, basename, children} = this.props;
     return (
       <BaseRouter
         basename={basename}
@@ -86,4 +86,4 @@ ServerRouter.childContextTypes = {
 };
 
 const ServerRouterTyped: RouterType = ServerRouter;
-export { ServerRouterTyped as ServerRouter };
+export {ServerRouterTyped as ServerRouter};

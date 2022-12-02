@@ -5,12 +5,12 @@
  *
  */
 
-import * as React from "react";
-import { renderToString } from "react-dom/server";
-import Provider from "../src/async/prepare-provider";
-import { prepare } from "../src/async/index";
+import * as React from 'react';
+import {renderToString} from 'react-dom/server';
+import Provider from '../src/async/prepare-provider';
+import {prepare} from '../src/async/index';
 
-test("Handling context", async () => {
+test('Handling context', async () => {
   class Child extends React.Component<any, any> {
     static contextTypes = {
       field: () => {},
@@ -21,7 +21,7 @@ test("Handling context", async () => {
     }
 
     render() {
-      return <h1>{this.context.field ? "Yes" : "No"}</h1>;
+      return <h1>{this.context.field ? 'Yes' : 'No'}</h1>;
     }
   }
 
@@ -31,7 +31,7 @@ test("Handling context", async () => {
     };
 
     getChildContext() {
-      return { field: true };
+      return {field: true};
     }
 
     render() {

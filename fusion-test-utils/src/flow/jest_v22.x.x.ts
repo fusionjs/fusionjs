@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type {ReactElement} from 'react';
 // flow-typed signature: 159e15f694a5e3ba2a989dea756a6e22
 // flow-typed version: 0215e23590/jest_v22.x.x/flow_>=v0.39.x
 
@@ -205,7 +205,7 @@ type JestExpectType = {
    * Use .toBeInstanceOf(Class) to check that an object is an instance of a
    * class.
    */
-  toBeInstanceOf(cls: { new (...args: any): any }): void;
+  toBeInstanceOf(cls: {new (...args: any): any}): void;
   /**
    * .toBeNull() is the same as .toBe(null) but the error messages are a bit
    * nicer.
@@ -575,7 +575,7 @@ declare var xtest: typeof it;
 /** The expect function is used every time you want to test a value */
 declare var expect: {
   /** Add additional Jasmine matchers to Jest's roster */
-  extend(matchers: { [name: string]: JestMatcher }): void;
+  extend(matchers: {[name: string]: JestMatcher}): void;
   /** Add a module that formats application-specific data structures. */
   addSnapshotSerializer(serializer: (input: any) => string): void;
   assertions(expectedAssertions: number): void;

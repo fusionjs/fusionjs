@@ -24,7 +24,7 @@ Visualize the tree of plugins in your app
 
 ## Try it out
 
-*(this assumes you've used a fusion scaffolder such as [create-fusion-app](https://github.com/fusionjs/fusionjs/tree/master/create-fusion-app))*
+*(this assumes you've used a fusion scaffolder such as [create-fusion-app](https://github.com/fusionjs/create-fusion-app))*
 
 ### 1. Register plugin
 

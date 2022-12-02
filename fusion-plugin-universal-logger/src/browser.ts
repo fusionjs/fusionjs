@@ -7,19 +7,19 @@
 
 /* eslint-env browser */
 
-import { createPlugin } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
+import {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import type { UniversalLoggerPluginType } from "./types";
+import type {UniversalLoggerPluginType} from './types';
 
 const supportedLevels = [
-  "trace",
-  "debug",
-  "info",
-  "access",
-  "warn",
-  "error",
-  "fatal",
+  'trace',
+  'debug',
+  'info',
+  'access',
+  'warn',
+  'error',
+  'fatal',
 ];
 
 function normalizeErrors(value) {
@@ -28,7 +28,7 @@ function normalizeErrors(value) {
     Object.getOwnPropertyNames(value).forEach((key) => {
       error[key] = value[key];
     });
-    return { error };
+    return {error};
   }
   return value;
 }
@@ -39,7 +39,7 @@ const plugin =
     deps: {
       emitter: UniversalEventsToken,
     },
-    provides: ({ emitter }) => {
+    provides: ({emitter}) => {
       class UniversalLogger {
         constructor() {
           supportedLevels.forEach((level) => {
@@ -50,17 +50,17 @@ const plugin =
           });
         }
         log(level, ...args) {
-          emitter.emit("universal-log", {
+          emitter.emit('universal-log', {
             level,
             args: args.map(normalizeErrors),
-            source: "browser",
+            source: 'browser',
           });
 
           // send errors immediately instead of batching to prevent
           // unwieldy batch sizes
-          if (level === "error") {
+          if (level === 'error') {
             // $FlowFixMe
-            emitter.flush().catch((error) => this.log("error", error));
+            emitter.flush().catch((error) => this.log('error', error));
           }
         }
       }

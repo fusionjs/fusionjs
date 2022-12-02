@@ -6,8 +6,8 @@
  */
 
 // Main export file
-import browser from "./browser";
-import server from "./server";
+import browser from './browser';
+import server from './server';
 
 const plugin = __NODE__ ? server : browser;
 
@@ -25,4 +25,4 @@ export {
   EventLoopLagIntervalToken,
   MemoryIntervalToken,
   SocketIntervalToken,
-} from "./tokens";
+} from './tokens';

@@ -5,14 +5,14 @@
  *
  */
 
-import App, { createPlugin, compose } from "fusion-core";
-import { getSimulator } from "fusion-test-utils";
+import App, {createPlugin, compose} from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
 
-import UniversalEventsPlugin, { GlobalEmitter } from "../src/server";
-import { UniversalEventsToken } from "../src/index";
-import type { IEmitter } from "../src/types";
+import UniversalEventsPlugin, {GlobalEmitter} from '../src/server';
+import {UniversalEventsToken} from '../src/index';
+import type {IEmitter} from '../src/types';
 
-test("Instantiation", () => {
+test('Instantiation', () => {
   const a = {
     memoized: new Map(),
   };
@@ -26,33 +26,33 @@ test("Instantiation", () => {
   expect(Emitter.from(a)).not.toBe(Emitter);
 });
 
-test("Server EventEmitter - events from browser", async () => {
+test('Server EventEmitter - events from browser', async () => {
   let called = false;
   let globalCalled = false;
   const mockCtx = {
     headers: {},
-    method: "POST",
-    path: "/_events",
+    method: 'POST',
+    path: '/_events',
     request: {
       body: {
-        items: [{ type: "a", payload: { x: 1 } }],
+        items: [{type: 'a', payload: {x: 1}}],
       },
     },
     timing: {
       end: Promise.resolve(5),
     },
   };
-  const app = new App("el", (el) => el);
+  const app = new App('el', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
-    events.on("a", ({ x }, ctx) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    events.on('a', ({x}, ctx) => {
       expect(x).toBe(1);
       expect(ctx).toBeTruthy();
       globalCalled = true;
     });
     return (ctx, next) => {
       const ctxEmitter = events.from(ctx);
-      ctxEmitter.on("a", ({ x }, ctx) => {
+      ctxEmitter.on('a', ({x}, ctx) => {
         expect(x).toBe(1);
         expect(ctx).toBeTruthy();
         called = true;
@@ -69,22 +69,22 @@ test("Server EventEmitter - events from browser", async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test("Server EventEmitter - events with ctx", (done) => {
+test('Server EventEmitter - events with ctx', (done) => {
   let globalCalled = false;
-  const mockCtx = { mock: true };
-  const app = new App("el", (el) => el);
+  const mockCtx = {mock: true};
+  const app = new App('el', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
   app.register(
     createPlugin({
-      deps: { events: UniversalEventsToken },
-      provides: ({ events }) => {
-        events.on("b", ({ x }, ctx) => {
+      deps: {events: UniversalEventsToken},
+      provides: ({events}) => {
+        events.on('b', ({x}, ctx) => {
           expect(x).toBe(1);
           expect(ctx).toBe(mockCtx);
           globalCalled = true;
         });
         // $FlowFixMe
-        events.emit("b", { x: 1 }, mockCtx);
+        events.emit('b', {x: 1}, mockCtx);
         expect(globalCalled).toBeTruthy();
         done();
       },
@@ -93,41 +93,41 @@ test("Server EventEmitter - events with ctx", (done) => {
   app.resolve();
 });
 
-test("Server EventEmitter - mapping", async () => {
+test('Server EventEmitter - mapping', async () => {
   let called = false;
   let globalCalled = false;
   const mockCtx = {
     headers: {},
-    method: "POST",
-    path: "/lol",
+    method: 'POST',
+    path: '/lol',
     timing: {
       end: Promise.resolve(5),
     },
   };
-  const app = new App("fake-element", (el) => el);
+  const app = new App('fake-element', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
-    events.on("a", (payload, c) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
+    events.on('a', (payload, c) => {
       expect(c).toBe(mockCtx);
-      expect(payload).toStrictEqual({ x: 1, b: true, global: true });
+      expect(payload).toStrictEqual({x: 1, b: true, global: true});
       globalCalled = true;
     });
-    events.map("a", (payload, c) => {
+    events.map('a', (payload, c) => {
       expect(c).toBe(mockCtx);
-      return { ...payload, global: true };
+      return {...payload, global: true};
     });
     return (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("a", (payload, c) => {
+      emitter.on('a', (payload, c) => {
         expect(c).toBe(ctx);
-        expect(payload).toStrictEqual({ x: 1, b: true, global: true });
+        expect(payload).toStrictEqual({x: 1, b: true, global: true});
         called = true;
       });
-      emitter.map("a", (payload, c) => {
+      emitter.map('a', (payload, c) => {
         expect(c).toBe(ctx);
-        return { ...payload, b: true };
+        return {...payload, b: true};
       });
-      emitter.emit("a", { x: 1 });
+      emitter.emit('a', {x: 1});
       return next();
     };
   });
@@ -140,40 +140,40 @@ test("Server EventEmitter - mapping", async () => {
   expect(globalCalled).toBeTruthy();
 });
 
-test("Server EventEmitter error handling", (done) => {
+test('Server EventEmitter error handling', (done) => {
   expect.assertions(1);
-  const app = new App("fake-element", (el) => el);
+  const app = new App('fake-element', (el) => el);
   app.register(UniversalEventsToken, UniversalEventsPlugin);
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("test-pre-await", ({ x }) => {
+      emitter.on('test-pre-await', ({x}) => {
         expect(x).toBe(1);
       });
-      emitter.emit("test-pre-await", { x: 1 });
-      ctx.throw(403, "error");
+      emitter.emit('test-pre-await', {x: 1});
+      ctx.throw(403, 'error');
       return next();
     };
   });
   app.middleware((ctx, next) => {
     // $FlowFixMe
-    done.fail("should not reach this middleware");
+    done.fail('should not reach this middleware');
     return next();
   });
   const simulator = getSimulator(app);
   simulator
-    .request("/lol", { method: "POST" })
+    .request('/lol', {method: 'POST'})
     .then(() => {
       // $FlowFixMe
-      done.fail("should throw");
+      done.fail('should throw');
     })
     .catch(() => {
       done();
     });
 });
 
-test("Server EventEmitter batching", (done) => {
-  const app = new App("fake-element", (el) => el);
+test('Server EventEmitter batching', (done) => {
+  const app = new App('fake-element', (el) => el);
   const flags = {
     preawait: false,
     postawait: false,
@@ -181,14 +181,14 @@ test("Server EventEmitter batching", (done) => {
     timeout: false,
   };
   app.register(UniversalEventsToken, UniversalEventsPlugin);
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("test-pre-await", ({ x }) => {
+      emitter.on('test-pre-await', ({x}) => {
         expect(x).toBe(1);
         flags.preawait = true;
       });
-      emitter.emit("test-pre-await", { x: 1 });
+      emitter.emit('test-pre-await', {x: 1});
       expect(flags.preawait).toBeFalsy();
       // $FlowFixMe
       expect(emitter.flushed).toBeFalsy();
@@ -196,16 +196,16 @@ test("Server EventEmitter batching", (done) => {
     };
   });
 
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("test-post-await", ({ x, lol }) => {
+      emitter.on('test-post-await', ({x, lol}) => {
         expect(x).toBe(1);
         expect(lol).toBeTruthy();
         flags.postawait = true;
       });
       await next();
-      emitter.emit("test-post-await", { x: 1 });
+      emitter.emit('test-post-await', {x: 1});
       emitter.map((payload) => {
         return {
           ...payload,
@@ -218,10 +218,10 @@ test("Server EventEmitter batching", (done) => {
     };
   });
 
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("test-post-end", ({ x, lol }) => {
+      emitter.on('test-post-end', ({x, lol}) => {
         expect(x).toBe(1);
         expect(lol).toBeTruthy();
         flags.postend = true;
@@ -229,17 +229,17 @@ test("Server EventEmitter batching", (done) => {
       ctx.timing.end.then(() => {
         // $FlowFixMe
         expect(emitter.flushed).toBeFalsy();
-        emitter.emit("test-post-end", { x: 1 });
+        emitter.emit('test-post-end', {x: 1});
         expect(flags.postend).toBeFalsy();
       });
       return next();
     };
   });
 
-  app.middleware({ events: UniversalEventsToken }, ({ events }) => {
+  app.middleware({events: UniversalEventsToken}, ({events}) => {
     return async (ctx, next) => {
       const emitter = events.from(ctx);
-      emitter.on("test-timeout", ({ x, lol }) => {
+      emitter.on('test-timeout', ({x, lol}) => {
         expect(x).toBe(1);
         expect(lol).toBeTruthy();
         flags.timeout = true;
@@ -247,14 +247,14 @@ test("Server EventEmitter batching", (done) => {
       setTimeout(() => {
         // $FlowFixMe
         expect(emitter.flushed).toBeTruthy();
-        emitter.emit("test-timeout", { x: 1 });
+        emitter.emit('test-timeout', {x: 1});
         expect(flags.timeout).toBeTruthy();
       }, 100);
       return next();
     };
   });
   const simulator = getSimulator(app);
-  simulator.request("/lol", { method: "POST" });
+  simulator.request('/lol', {method: 'POST'});
 
   setTimeout(() => {
     expect(flags.preawait).toBeTruthy();

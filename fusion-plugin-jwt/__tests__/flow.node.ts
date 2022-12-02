@@ -5,11 +5,11 @@
  *
  */
 
-import App from "fusion-core";
-import { SessionToken } from "fusion-tokens";
-import JWTServer from "../src/index";
+import App from 'fusion-core';
+import {SessionToken} from 'fusion-tokens';
+import JWTServer from '../src/index';
 
-test("registers against session token", () => {
-  const app = new App("fake-element", (el) => el);
+test('registers against session token', () => {
+  const app = new App('fake-element', (el) => el);
   app.register(SessionToken, JWTServer);
 });

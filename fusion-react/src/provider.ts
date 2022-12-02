@@ -5,14 +5,14 @@
  *
  */
 
-import * as React from "react";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import PropTypes from 'prop-types';
 
 export default {
   create: (name: string): React.ComponentType<any> => {
     class Provider extends React.Component<any> {
       getChildContext() {
-        return { [name]: this.props.provides };
+        return {[name]: this.props.provides};
       }
       render() {
         return React.Children.only(this.props.children);
@@ -23,7 +23,7 @@ export default {
       };
 
       static displayName =
-        name.replace(/^./, (c) => c.toUpperCase()) + "Provider";
+        name.replace(/^./, (c) => c.toUpperCase()) + 'Provider';
     }
     return Provider;
   },

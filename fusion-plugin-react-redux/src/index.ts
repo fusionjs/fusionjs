@@ -5,12 +5,12 @@
  *
  */
 
-import browserPlugin from "./browser";
-import serverPlugin from "./server";
+import browserPlugin from './browser';
+import serverPlugin from './server';
 
 export default __NODE__ ? serverPlugin : browserPlugin();
 
-export * from "./types";
+export * from './types';
 
 export {
   ReduxToken,
@@ -19,4 +19,4 @@ export {
   EnhancerToken,
   GetInitialStateToken,
   ReduxDevtoolsConfigToken,
-} from "./tokens";
+} from './tokens';

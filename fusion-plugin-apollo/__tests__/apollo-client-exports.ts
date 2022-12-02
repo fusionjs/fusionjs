@@ -12,9 +12,9 @@ import {
   GetApolloClientLinksToken,
   ApolloClientDefaultOptionsToken,
   ApolloClientResolversToken,
-} from "../src/apollo-client/index";
+} from '../src/apollo-client/index';
 
-test("exports", () => {
+test('exports', () => {
   expect(ApolloClientPlugin).toBeTruthy();
   expect(GetApolloClientCacheToken).toBeTruthy();
   expect(ApolloClientCredentialsToken).toBeTruthy();

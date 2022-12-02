@@ -6,10 +6,10 @@
  */
 
 /* eslint-env node */
-import { getDataFromTree as defaultGetDataFromTree } from "@apollo/react-ssr";
-import type { Logger } from "fusion-tokens";
+import {getDataFromTree as defaultGetDataFromTree} from '@apollo/react-ssr';
+import type {Logger} from 'fusion-tokens';
 
-import type { ReactElement } from "react";
+import type {ReactElement} from 'react';
 
 // Apollo currently does not have an effective error policy for server side rendering (see https://github.com/apollographql/react-apollo/issues/2680)
 // This render function first tries to use `renderToStringWithData`. If any query in this render function fails, we will catch the error, log it, and
@@ -23,8 +23,8 @@ export default (
 ) => {
   return (getDataFromTree || defaultGetDataFromTree)(root).catch((e) => {
     if (__DEV__) {
-      console.error("SSR Failed with Error", e);
+      console.error('SSR Failed with Error', e);
     }
-    logger && logger.error("SSR Failed with Error", e);
+    logger && logger.error('SSR Failed with Error', e);
   });
 };

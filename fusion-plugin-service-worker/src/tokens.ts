@@ -5,10 +5,10 @@
  *
  */
 
-import { createToken } from "fusion-core";
-import type { Token } from "fusion-core";
+import {createToken} from 'fusion-core';
+import type {Token} from 'fusion-core';
 
-import type { ConfigTokenType, SWLoggerTokenType } from "./types";
+import type {ConfigTokenType, SWLoggerTokenType} from './types';
 
 type Options = {
   cacheableRoutePatterns?: Array<RegExp>;
@@ -16,9 +16,9 @@ type Options = {
   cacheDuration?: number;
 };
 
-export const SWLoggerToken: SWLoggerTokenType = createToken("SWLoggerToken");
-export const SWRegisterToken: Token<boolean> = createToken("SWRegisterToken");
+export const SWLoggerToken: SWLoggerTokenType = createToken('SWLoggerToken');
+export const SWRegisterToken: Token<boolean> = createToken('SWRegisterToken');
 export const SWTemplateFunctionToken: ConfigTokenType = createToken(
-  "SWTemplateFunctionToken"
+  'SWTemplateFunctionToken'
 );
-export const SWOptionsToken: Token<Options> = createToken("SWOptionsToken");
+export const SWOptionsToken: Token<Options> = createToken('SWOptionsToken');

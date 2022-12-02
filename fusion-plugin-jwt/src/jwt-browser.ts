@@ -5,9 +5,9 @@
  *
  */
 
-import type { FusionPlugin } from "fusion-core";
-import type { Session } from "fusion-tokens";
+import type {FusionPlugin} from 'fusion-core';
+import type {Session} from 'fusion-tokens';
 
-import type { SessionDeps } from "./types";
+import type {SessionDeps} from './types';
 
 export default null as any as FusionPlugin<SessionDeps, Session>;

@@ -4,10 +4,10 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { createPlugin, html } from "fusion-core";
-import type { FusionPlugin } from "fusion-core";
-import { WebAppManifestToken } from "./tokens";
-import type { DepsType } from "./types";
+import {createPlugin, html} from 'fusion-core';
+import type {FusionPlugin} from 'fusion-core';
+import {WebAppManifestToken} from './tokens';
+import type {DepsType} from './types';
 
 const plugin =
   __NODE__ &&
@@ -15,13 +15,13 @@ const plugin =
     deps: {
       manifest: WebAppManifestToken,
     },
-    middleware({ manifest }) {
+    middleware({manifest}) {
       return (ctx, next) => {
         if (ctx.element) {
           ctx.template.head.push(
             html` <link rel="manifest" href="/manifest.json" /> `
           );
-        } else if (ctx.method === "GET" && ctx.path === "/manifest.json") {
+        } else if (ctx.method === 'GET' && ctx.path === '/manifest.json') {
           ctx.body = manifest;
         }
         return next();

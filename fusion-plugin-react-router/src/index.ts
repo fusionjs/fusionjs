@@ -5,17 +5,17 @@
  *
  */
 
-import plugin, { RouterToken, GetStaticContextToken } from "./plugin";
-import * as server from "./server";
-import * as browser from "./browser";
+import plugin, {RouterToken, GetStaticContextToken} from './plugin';
+import * as server from './server';
+import * as browser from './browser';
 
-export * from "./types";
+export * from './types';
 
 declare var __BROWSER__: Boolean;
 
 export default plugin;
 
-export { RouterToken, GetStaticContextToken };
+export {RouterToken, GetStaticContextToken};
 
 export const Status = __BROWSER__ ? browser.Status : server.Status;
 export const NotFound = __BROWSER__ ? browser.NotFound : server.NotFound;

@@ -5,10 +5,10 @@
  *
  */
 
-import { type FusionPlugin, type Context, RouteTagsToken } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { type Fetch, FetchToken } from "fusion-tokens";
-import { I18nToken } from "fusion-plugin-i18n";
+import {type FusionPlugin, type Context, RouteTagsToken} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {type Fetch, FetchToken} from 'fusion-tokens';
+import {I18nToken} from 'fusion-plugin-i18n';
 
 import {
   RPCHandlersToken,
@@ -16,7 +16,7 @@ import {
   RPCHandlersConfigToken,
   RPCQueryParamsToken,
   type HandlerType,
-} from "./tokens";
+} from './tokens';
 
 type $Call1<F extends (...args: any) => any, A> = F extends (
   a: A,

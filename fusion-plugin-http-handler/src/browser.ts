@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type { FusionPlugin } from "fusion-core";
-import type { DepsType } from "./types";
+import type {FusionPlugin} from 'fusion-core';
+import type {DepsType} from './types';
 
 export default null as any as FusionPlugin<DepsType, void>;

@@ -7,16 +7,16 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 
-import * as React from "react";
-import PropTypes from "prop-types";
+import * as React from 'react';
+import PropTypes from 'prop-types';
 import {
   Routes as ReactRouterRoutes,
   useLocation,
   createRoutesFromChildren,
   matchRoutes,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import type { RouterContextType } from "../types";
+import type {RouterContextType} from '../types';
 
 type PropsType = {
   children?: React.ReactNode;
@@ -45,24 +45,24 @@ function Routes(props: PropsType, context: RouterContextType) {
             if (element.props.children) {
               compileTracking(
                 element.props.children,
-                currentPath + element.props.path + "/"
+                currentPath + element.props.path + '/'
               );
             } else {
-              const { path, trackingId } = element.props;
+              const {path, trackingId} = element.props;
               if (path && trackingId) {
                 trackingIdMap[currentPath + path] = trackingId;
               }
             }
           });
       };
-      compileTracking(props.children || [], "");
+      compileTracking(props.children || [], '');
       trackingIdMapRef.current = trackingIdMap;
     }
 
     const matches = matchRoutes(routeData, location);
     if (matches && matches.length > 0) {
       for (const match of matches) {
-        if (typeof context.onRoute === "function") {
+        if (typeof context.onRoute === 'function') {
           // Convert match back to original pathname to look up in trackingIdMap
           // since the path in trackingIdMap has params while match data does not
           let translatedPathname = match.pathname;
@@ -96,7 +96,7 @@ function Routes(props: PropsType, context: RouterContextType) {
     runEffect();
   }
 
-  const { children, ...remainingProps } = props;
+  const {children, ...remainingProps} = props;
   return <ReactRouterRoutes {...remainingProps}>{children}</ReactRouterRoutes>;
 }
 
@@ -108,6 +108,6 @@ Routes.contextTypes = {
   onRoute: PropTypes.func,
 };
 
-Routes.displayName = "FusionRoutes";
+Routes.displayName = 'FusionRoutes';
 
-export { Routes };
+export {Routes};

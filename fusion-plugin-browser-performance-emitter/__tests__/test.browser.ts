@@ -6,23 +6,23 @@
  */
 
 /* eslint-env browser */
-import App, { createPlugin } from "fusion-core";
-import { UniversalEventsToken } from "fusion-plugin-universal-events";
-import { getSimulator } from "fusion-test-utils";
+import App, {createPlugin} from 'fusion-core';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import {getSimulator} from 'fusion-test-utils';
 
-import type { FusionPlugin } from "fusion-core";
+import type {FusionPlugin} from 'fusion-core';
 
-import BrowserPerformanceEmitterPlugin from "../src/browser";
+import BrowserPerformanceEmitterPlugin from '../src/browser';
 
 /* Fixture */
 function createTestFixture() {
-  const app = new App("content", (el) => el);
+  const app = new App('content', (el) => el);
   app.register(BrowserPerformanceEmitterPlugin);
   return app;
 }
 
 // getEntriesByType is not implemented in JSDOM
-test.skip("Correct metrics are logged", (done) => {
+test.skip('Correct metrics are logged', (done) => {
   /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
@@ -38,7 +38,7 @@ test.skip("Correct metrics are logged", (done) => {
   const eventsEmitted = [];
   const mockEmitter = {
     emit: (type, payload) => {
-      eventsEmitted.push({ type, payload });
+      eventsEmitted.push({type, payload});
     },
   };
   const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
@@ -49,18 +49,18 @@ test.skip("Correct metrics are logged", (done) => {
   app.register(UniversalEventsToken, mockEmitterPlugin);
 
   /* Simulator */
-  getSimulator(app).render("/");
+  getSimulator(app).render('/');
 
   expect.assertions(3);
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     expect(eventsEmitted.length).toBe(1);
     const event = eventsEmitted[0];
     expect(event.payload.timing).toBe(window.performance.timing);
     expect(event.payload.resourceEntries).toEqual(
       window.performance
-        .getEntriesByType("resource")
+        .getEntriesByType('resource')
         .filter((entry) => {
-          return entry.name.indexOf("data:") !== 0 && entry.toJSON;
+          return entry.name.indexOf('data:') !== 0 && entry.toJSON;
         })
         .map((entry) => entry.toJSON())
     );
@@ -73,7 +73,7 @@ test.skip("Correct metrics are logged", (done) => {
   });
 });
 
-test("Emits correct event", (done) => {
+test('Emits correct event', (done) => {
   /* Window overrides */
   const originalAddEventListener = window.addEventListener;
   const originalSetTimeout = window.setTimeout;
@@ -89,7 +89,7 @@ test("Emits correct event", (done) => {
   const eventsEmitted = [];
   const mockEmitter = {
     emit: (type, payload) => {
-      eventsEmitted.push({ type, payload });
+      eventsEmitted.push({type, payload});
     },
   };
   const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
@@ -100,14 +100,14 @@ test("Emits correct event", (done) => {
   app.register(UniversalEventsToken, mockEmitterPlugin);
 
   /* Simulator */
-  getSimulator(app).render("/");
+  getSimulator(app).render('/');
 
   expect.assertions(6);
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     expect(eventsEmitted.length).toBe(1);
     const event = eventsEmitted[0];
-    expect(event.type).toBe("browser-performance-emitter:stats:browser-only");
-    ["paintTimes", "resourceEntries", "tags", "timing"].forEach((item) => {
+    expect(event.type).toBe('browser-performance-emitter:stats:browser-only');
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach((item) => {
       expect(
         Object.prototype.hasOwnProperty.call(event.payload, item)
       ).toBeTruthy();
@@ -121,7 +121,7 @@ test("Emits correct event", (done) => {
   });
 });
 
-test("Does not fail when window.performance is null", (done) => {
+test('Does not fail when window.performance is null', (done) => {
   /* Window overrides */
   const oldPerformance = window.performance;
   const originalAddEventListener = window.addEventListener;
@@ -139,7 +139,7 @@ test("Does not fail when window.performance is null", (done) => {
   const eventsEmitted = [];
   const mockEmitter = {
     emit: (type, payload) => {
-      eventsEmitted.push({ type, payload });
+      eventsEmitted.push({type, payload});
     },
   };
   const mockEmitterPlugin: FusionPlugin<any, any> = createPlugin({
@@ -150,14 +150,14 @@ test("Does not fail when window.performance is null", (done) => {
   app.register(UniversalEventsToken, mockEmitterPlugin);
 
   /* Simulator */
-  getSimulator(app).render("/");
+  getSimulator(app).render('/');
 
   expect.assertions(6);
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     expect(eventsEmitted.length).toBe(1);
     const event = eventsEmitted[0];
-    expect(event.type).toBe("browser-performance-emitter:stats:browser-only");
-    ["paintTimes", "resourceEntries", "tags", "timing"].forEach((item) => {
+    expect(event.type).toBe('browser-performance-emitter:stats:browser-only');
+    ['paintTimes', 'resourceEntries', 'tags', 'timing'].forEach((item) => {
       expect(
         Object.prototype.hasOwnProperty.call(event.payload, item)
       ).toBeTruthy();

@@ -5,28 +5,28 @@
  *
  */
 
-import { mockFunction, test } from "../index";
+import {mockFunction, test} from '../index';
 
-test("function mocks", (assert) => {
+test('function mocks', (assert) => {
   const myMock = mockFunction();
   assert.equal(myMock.mock.calls.length, 0);
   myMock();
   assert.equal(myMock.mock.calls.length, 1);
 });
 
-test("function mocks with an argument", (assert) => {
+test('function mocks with an argument', (assert) => {
   const myMock = mockFunction(() => null);
   assert.equal(myMock.mock.calls.length, 0);
   myMock();
   assert.equal(myMock.mock.calls.length, 1);
 });
 
-test("matchSnapshot", (assert) => {
-  const myObj = { foo: "bar" };
+test('matchSnapshot', (assert) => {
+  const myObj = {foo: 'bar'};
   assert.matchSnapshot(myObj);
 });
 
-test("matchSnapshot with name", (assert) => {
-  const myObj = { foo: "bar" };
-  assert.matchSnapshot(myObj, "my snapshot name");
+test('matchSnapshot with name', (assert) => {
+  const myObj = {foo: 'bar'};
+  assert.matchSnapshot(myObj, 'my snapshot name');
 });

@@ -6,19 +6,19 @@
  */
 
 /* eslint-env node */
-import App from "fusion-core";
-import { FetchToken } from "fusion-tokens";
-import { getSimulator } from "fusion-test-utils";
+import App from 'fusion-core';
+import {FetchToken} from 'fusion-tokens';
+import {getSimulator} from 'fusion-test-utils';
 
-import CsrfPlugin from "../src/server";
-import { CsrfIgnoreRoutesToken } from "../src/shared";
+import CsrfPlugin from '../src/server';
+import {CsrfIgnoreRoutesToken} from '../src/shared';
 
 function MockFetch() {
   return Promise.resolve();
 }
 
 function getApp() {
-  const app = new App("fake-element", (el) => el);
+  const app = new App('fake-element', (el) => el);
   app.middleware(async (ctx, next) => {
     try {
       await next();
@@ -33,103 +33,103 @@ function getApp() {
   return app;
 }
 
-test("valid token", async () => {
+test('valid token', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
-    if (ctx.url === "/test" && ctx.method === "POST") {
+    if (ctx.url === '/test' && ctx.method === 'POST') {
       ctx.status = 200;
-      ctx.body = "test";
+      ctx.body = 'test';
     }
     return next();
   });
   const sim = getSimulator(app);
-  const ctx = await sim.request("/test", {
-    method: "POST",
+  const ctx = await sim.request('/test', {
+    method: 'POST',
     headers: {
-      "x-csrf-token": "x",
+      'x-csrf-token': 'x',
     },
   });
   expect(ctx.status).toBe(200);
-  expect(ctx.body).toBe("test");
+  expect(ctx.body).toBe('test');
 });
 
-test("GET request", async () => {
+test('GET request', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
-    if (ctx.url === "/test" && ctx.method === "GET") {
+    if (ctx.url === '/test' && ctx.method === 'GET') {
       ctx.status = 200;
-      ctx.body = "test";
+      ctx.body = 'test';
     }
     return next();
   });
   const sim = getSimulator(app);
-  const ctx = await sim.request("/test");
+  const ctx = await sim.request('/test');
   expect(ctx.status).toBe(200);
-  expect(ctx.body).toBe("test");
+  expect(ctx.body).toBe('test');
 });
 
-test("/csrf-token POST", async () => {
+test('/csrf-token POST', async () => {
   const app = getApp();
   const sim = getSimulator(app);
-  const ctx = await sim.request("/csrf-token", {
-    method: "POST",
+  const ctx = await sim.request('/csrf-token', {
+    method: 'POST',
   });
   expect(ctx.status).toBe(200);
 });
 
-test("POST with missing token", async () => {
+test('POST with missing token', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
-    if (ctx.url === "/test" && ctx.method === "POST") {
+    if (ctx.url === '/test' && ctx.method === 'POST') {
       ctx.status = 200;
-      ctx.body = "test";
+      ctx.body = 'test';
     }
     return next();
   });
   const sim = getSimulator(app);
-  const ctx = await sim.request("/test", {
-    method: "POST",
+  const ctx = await sim.request('/test', {
+    method: 'POST',
   });
   expect(ctx.status).toBe(403);
 });
 
-test("does not verify ignored paths", async () => {
+test('does not verify ignored paths', async () => {
   const app = getApp();
-  app.register(CsrfIgnoreRoutesToken, ["/test"]);
+  app.register(CsrfIgnoreRoutesToken, ['/test']);
   app.middleware((ctx, next) => {
-    if (ctx.path === "/test") ctx.body = { ok: 1 };
+    if (ctx.path === '/test') ctx.body = {ok: 1};
     return next();
   });
   const simulator = getSimulator(app);
-  const ctx = await simulator.request("/test", {
-    method: "POST",
+  const ctx = await simulator.request('/test', {
+    method: 'POST',
   });
   expect(ctx.status).toBe(200);
 });
 
-test("ignores /_events", async () => {
+test('ignores /_events', async () => {
   const app = getApp();
   app.middleware((ctx, next) => {
-    if (ctx.path === "/_events") ctx.body = { ok: 1 };
+    if (ctx.path === '/_events') ctx.body = {ok: 1};
     return next();
   });
   const simulator = getSimulator(app);
-  const ctx = await simulator.request("/_events", {
-    method: "POST",
+  const ctx = await simulator.request('/_events', {
+    method: 'POST',
   });
   expect(ctx.status).toBe(200);
 });
 
-test("ignores /_events with ignored routes", async () => {
+test('ignores /_events with ignored routes', async () => {
   const app = getApp();
-  app.register(CsrfIgnoreRoutesToken, ["/not_events"]);
+  app.register(CsrfIgnoreRoutesToken, ['/not_events']);
   app.middleware((ctx, next) => {
-    if (ctx.path === "/_events") ctx.body = { ok: 1 };
+    if (ctx.path === '/_events') ctx.body = {ok: 1};
     return next();
   });
   const simulator = getSimulator(app);
-  const ctx = await simulator.request("/_events", {
-    method: "POST",
+  const ctx = await simulator.request('/_events', {
+    method: 'POST',
   });
   expect(ctx.status).toBe(200);
 });
