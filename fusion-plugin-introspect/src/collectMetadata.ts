@@ -53,7 +53,7 @@ const findMetadata = (dir) => {
 };
 
 const PACKAGE_MANAGERS = new Set(['npm', 'yarn']);
-const getPackageManagersData = () =>
+const getPackageManagersData = (): any =>
   // Yarn: yarn/3.0.0-rc.2.git.20210503.hash-f661129e npm/? node/12.20.1 darwin x64
   // NPM: npm/6.14.10 node/v12.20.1 darwin x64
   (process.env.npm_config_user_agent || '').split(' ').reduce((acc, part) => {

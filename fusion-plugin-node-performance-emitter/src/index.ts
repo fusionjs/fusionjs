@@ -12,9 +12,7 @@ import server from './server';
 const plugin = __NODE__ ? server : browser;
 
 // Use comment so server is unused and therefore pruned from browser
-/*::
 type PluginType = typeof server;
-*/
 
 // Cast to typeof server for now to avoid requiring consumers to use refinements
 export default plugin as any as PluginType;

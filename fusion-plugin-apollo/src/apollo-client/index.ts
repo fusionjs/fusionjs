@@ -17,11 +17,13 @@ import {ApolloClient} from 'apollo-client';
 import {HttpLink} from 'apollo-link-http';
 import {from as apolloLinkFrom} from 'apollo-link';
 import {SchemaLink} from 'apollo-link-schema';
-import type {ApolloCache, ApolloClientOptions} from 'apollo-client';
+import type {ApolloClientOptions} from 'apollo-client';
+import type {ApolloCache} from 'apollo-cache';
 import type {DocumentNode} from 'graphql';
 
-import type {Context, FusionPlugin, Token} from 'fusion-core';
+import type {Context, Token} from 'fusion-core';
 import {InMemoryCache} from 'apollo-cache-inmemory';
+import {ApolloLink} from 'apollo-link';
 
 export const GetApolloClientCacheToken: Token<
   (ctx: Context) => ApolloCache<unknown>
@@ -35,32 +37,21 @@ export const ApolloClientDefaultOptionsToken: Token<
   ApolloClientOptions<any>['defaultOptions']
 > = createToken('ApolloClientDefaultOptionsToken');
 
-type ApolloLinkType = {
-  request: (operation: any, forward: any) => any;
-};
+type ApolloLinkType = ApolloLink;
 
 export const GetApolloClientLinksToken: Token<
   (a: Array<ApolloLinkType>, ctx: Context) => Array<ApolloLinkType>
 > = createToken('GetApolloClientLinksToken');
 
-export const ApolloClientResolversToken: Token<
-  ResolverMapType | ReadonlyArray<ResolverMapType>
-> = createToken('ApolloClientResolversToken');
+export const ApolloClientResolversToken: Token<ResolverMapType> = createToken(
+  'ApolloClientResolversToken'
+);
 
 export const ApolloClientLocalSchemaToken: Token<
   string | string[] | DocumentNode | DocumentNode[]
 > = createToken('ApolloClientLocalSchemaToken');
 
-type ResolverMapType = {
-  readonly [key: string]: {
-    readonly [field: string]: (
-      rootValue?: any,
-      args?: any,
-      context?: any,
-      info?: any
-    ) => any;
-  };
-};
+type ResolverMapType = import('apollo-client').Resolvers;
 
 type ApolloClientDepsType = {
   getCache: typeof GetApolloClientCacheToken.optional;
@@ -77,10 +68,10 @@ type ApolloClientDepsType = {
 
 function Container() {}
 
-const ApolloClientPlugin: FusionPlugin<
+const ApolloClientPlugin = createPlugin<
   ApolloClientDepsType,
-  InitApolloClientType<any>
-> = createPlugin({
+  InitApolloClientType<unknown>
+>({
   deps: {
     getCache: GetApolloClientCacheToken.optional,
     endpoint: GraphQLEndpointToken.optional,
@@ -149,14 +140,14 @@ const ApolloClientPlugin: FusionPlugin<
       });
       return client;
     }
-    return (ctx: Context, initialState: unknown) => {
+    return ((ctx: Context, initialState: unknown) => {
       if (ctx.memoized.has(Container)) {
         return ctx.memoized.get(Container);
       }
       const client = getClient(ctx, initialState);
       ctx.memoized.set(Container, client);
       return client;
-    };
+    }) as InitApolloClientType<unknown>;
   },
 });
 export {ApolloClientPlugin};

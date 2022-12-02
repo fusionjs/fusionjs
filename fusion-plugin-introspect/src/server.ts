@@ -69,7 +69,7 @@ const plugin = (app: App, {store, env = [], deps = {}}: any = {}) => {
     // istanbul ignore next
     if (!store) store = fsStore;
 
-    let data = {};
+    let data: any = {};
     let browserDataCollected = false;
 
     // collect data once at startup to at least have some data in case of a crash
@@ -220,4 +220,7 @@ const plugin = (app: App, {store, env = [], deps = {}}: any = {}) => {
   }
 };
 
-export default plugin as any as (b: App, a: any) => FusionPlugin<void, void>;
+export default plugin as any as (
+  b: App,
+  a?: any
+) => FusionPlugin<undefined, undefined>;

@@ -23,7 +23,7 @@ const prepared =
     sideEffect: (b: any, a: any) => any | Promise<any>,
     opts: PreparedOpts = {}
   ) =>
-  <Config>(
+  <Config,>(
     OriginalComponent: React.ComponentType<Config>
   ): React.ComponentType<
     {
@@ -71,6 +71,7 @@ const prepared =
 
       render() {
         const effectId = this.props.effectId || 'defaultId';
+        // @ts-expect-error todo(flow->ts) missing types for this.context
         const prepareState = this.context.__PREPARE_STATE__;
         if (prepareState) {
           if (opts.defer || opts.boundary) {
@@ -90,6 +91,7 @@ const prepared =
           }
         }
 
+        // @ts-expect-error
         return <OriginalComponent {...this.props} />;
       }
 

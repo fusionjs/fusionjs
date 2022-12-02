@@ -1,0 +1,368 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+/* eslint-env browser */
+import {connect} from 'react-redux';
+import React from 'react';
+
+import App from 'fusion-core';
+import type {Context} from 'fusion-core';
+import {getService} from 'fusion-test-utils';
+import {render} from '@testing-library/react';
+
+import GetReduxPlugin from '../browser';
+import {
+  ReducerToken,
+  PreloadedStateToken,
+  EnhancerToken,
+  ReduxDevtoolsConfigToken,
+} from '../tokens';
+
+import {serialize} from '../codec';
+
+/* Test fixtures */
+const appCreator = (reducer, preloadedState, enhancer, reduxDevToolsConfig) => {
+  const app = new App('test', (el) => el);
+  if (reducer) {
+    app.register(ReducerToken, reducer);
+  }
+  if (preloadedState) {
+    app.register(PreloadedStateToken, preloadedState);
+  }
+  if (enhancer) {
+    // $FlowFixMe
+    app.register(EnhancerToken, enhancer);
+  }
+  if (reduxDevToolsConfig !== undefined && reduxDevToolsConfig !== null) {
+    app.register(ReduxDevtoolsConfigToken, reduxDevToolsConfig);
+  }
+  return () => app;
+};
+
+test('browser with no preloadedState and no __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  // @ts-ignore
+  const provider = getService(appCreator(reducer), Redux);
+  const {store} = provider && provider.from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+});
+
+test('browser with preloadedState and no __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  const preloadedState = {hello: 'world'};
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
+});
+
+test('browser with no preloadedState and a __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reduxState = document.createElement('script');
+  reduxState.setAttribute('type', 'application/json');
+  reduxState.setAttribute('id', '__REDUX_STATE__');
+  reduxState.textContent = JSON.stringify({hello: 'world'});
+  document.body && document.body.appendChild(reduxState);
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer), Redux).from();
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
+  document.body && document.body.removeChild(reduxState);
+});
+
+test('browser with preloadedState and a __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reduxState = document.createElement('script');
+  reduxState.setAttribute('type', 'application/json');
+  reduxState.setAttribute('id', '__REDUX_STATE__');
+  reduxState.textContent = JSON.stringify({
+    hello: 'unused',
+    unused: 'not used',
+  });
+  document.body && document.body.appendChild(reduxState);
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  const preloadedState = {hello: 'world'};
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer, preloadedState), Redux).from();
+  expect(store.getState()).toStrictEqual({test: 1, hello: 'world'});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState()).toStrictEqual({test: 2, hello: 'world'});
+  document.body && document.body.removeChild(reduxState);
+});
+
+test('browser with undefined __REDUX_STATE__ element', () => {
+  const Redux = GetReduxPlugin();
+  const reduxState = document.createElement('script');
+  reduxState.setAttribute('type', 'application/json');
+  reduxState.setAttribute('id', '__REDUX_STATE__');
+  reduxState.textContent = serialize(undefined);
+  document.body && document.body.appendChild(reduxState);
+  const reducer = (state) => state;
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer), Redux).from();
+  expect(store.getState()).toStrictEqual(undefined);
+  document.body && document.body.removeChild(reduxState);
+});
+
+test('browser with enhancer', () => {
+  const Redux = GetReduxPlugin();
+  const mockCtx = {mock: true};
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  const enhancer = (createStore) => {
+    enhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      const store = createStore(...args);
+      // $FlowFixMe
+      expect(store.ctx).toBe(mockCtx);
+      return store;
+    };
+  };
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer, null, enhancer), Redux).from(
+    mockCtx as any as Context
+  );
+  if (!store.ctx) {
+    return;
+  }
+  expect(store.ctx).toBe(mockCtx);
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(1);
+});
+
+test('browser with devtools enhancer', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
+    enhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      return createStore(...args);
+    };
+  };
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer), Redux).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(1);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser with devtools enhancer with custom devToolsConfig', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  let devToolsInitArg = null;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = (initArg) => (createStore) => {
+    devToolsInitArg = initArg;
+    enhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      return createStore(...args);
+    };
+  };
+  // https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/API/Arguments.md#actionsanitizer--statesanitizer
+  const customReduxDevtoolsConfig = {
+    actionSanitizer: (action) => action,
+  };
+  const {store} = getService(
+    appCreator(reducer, null, null, customReduxDevtoolsConfig),
+    Redux
+  ).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(devToolsInitArg).toEqual(
+    expect.objectContaining(customReduxDevtoolsConfig)
+  );
+  expect(enhancerCalls).toBe(1);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser with devtools enhancer, and devToolsConfig set to false', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let enhancerCalls = 0;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
+    enhancerCalls++;
+  };
+  const {store} = getService(
+    appCreator(reducer, null, null, false),
+    Redux
+  ).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(enhancerCalls).toBe(0);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser with devtools enhancer and normal enhancer', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+  let devtoolsEnhancerCalls = 0;
+  let enhancerCalls = 0;
+  window.__REDUX_DEVTOOLS_EXTENSION__ = () => (createStore) => {
+    devtoolsEnhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      return createStore(...args);
+    };
+  };
+  const enhancer = (createStore) => {
+    enhancerCalls++;
+    expect(typeof createStore).toBe('function');
+    return (...args) => {
+      expect(args[0]).toBe(reducer);
+      return createStore(...args);
+    };
+  };
+  // @ts-ignore
+  const {store} = getService(appCreator(reducer, null, enhancer), Redux).from();
+  expect(store.getState()).toStrictEqual({test: 1});
+  store.dispatch({type: 'CHANGE', payload: 2});
+  expect(store.getState().test).toBe(2);
+  expect(devtoolsEnhancerCalls).toBe(1);
+  expect(enhancerCalls).toBe(1);
+  delete window.__REDUX_DEVTOOLS_EXTENSION__;
+});
+
+test('browser middleware', async () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => ({
+    test: action.payload || 1,
+  });
+  function Component(props) {
+    expect(props.test).toBe(1);
+    expect(typeof props.dispatch).toBe('function');
+    return <div>Current value: {props.test}</div>;
+  }
+  const Connected = connect((state) => state)(Component);
+  const element = React.createElement(Connected);
+  const ctx = {element};
+  // @ts-ignore
+  const Plugin = getService(appCreator(reducer), Redux);
+  expect(Redux.middleware).toBeTruthy();
+  await expect(
+    // @ts-ignore
+    Redux.middleware({preloaded: 'state'}, Plugin)(ctx as any, () =>
+      Promise.resolve()
+    )
+  ).resolves.not.toThrow();
+  expect(ctx.element).not.toBe(element);
+  const {getByText} = render(ctx.element);
+  expect(getByText('Current value: 1')).toBeDefined();
+});
+
+test('browser - store creation without cleanup between iterations', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+
+  function getStore(appCreator, Redux) {
+    const provider = getService(appCreator, Redux);
+    // @ts-ignore
+    return provider && provider.from().store;
+  }
+  // @ts-ignore
+  const firstStore = getStore(appCreator(reducer), Redux);
+  // @ts-ignore
+  const secondStore = getStore(appCreator(reducer), Redux);
+
+  expect(firstStore).toBe(secondStore);
+});
+
+test('browser - store creation with cleanup between iterations', () => {
+  const Redux = GetReduxPlugin();
+  const reducer = (state, action) => {
+    return {
+      ...state,
+      test: action.payload || 1,
+    };
+  };
+
+  function getStore(appCreator, Redux) {
+    const provider = getService(appCreator, Redux);
+    // @ts-ignore
+    return provider && provider.from().store;
+  }
+
+  // @ts-ignore
+  const firstApp = appCreator(reducer)();
+  const firstStore = getStore(() => firstApp, Redux);
+  firstApp.cleanup();
+  // @ts-ignore
+  const secondApp = appCreator(reducer)();
+  const secondStore = getStore(() => secondApp, Redux);
+
+  expect(firstStore).not.toBe(secondStore);
+});

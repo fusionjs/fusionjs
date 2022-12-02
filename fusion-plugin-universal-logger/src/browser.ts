@@ -59,7 +59,7 @@ const plugin =
           // send errors immediately instead of batching to prevent
           // unwieldy batch sizes
           if (level === 'error') {
-            // $FlowFixMe
+            // @ts-expect-error
             emitter.flush().catch((error) => this.log('error', error));
           }
         }

@@ -5,11 +5,23 @@
 const fs = require('fs');
 const {ResolverFactory} = require('enhanced-resolve');
 
+const extensions = [
+  '.js',
+  '.mjs',
+  '.cjs',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.json',
+  '.node',
+];
+
 const nodeResolver = ResolverFactory.createResolver({
   fileSystem: fs,
   useSyncFileSystemCalls: true,
   mainFields: ['main'],
   aliasFields: ['es2015', 'es2017'],
+  extensions,
 });
 
 const browserResolver = ResolverFactory.createResolver({
@@ -17,6 +29,7 @@ const browserResolver = ResolverFactory.createResolver({
   useSyncFileSystemCalls: true,
   mainFields: ['main'],
   aliasFields: ['browser', 'es2015', 'es2017'],
+  extensions,
 });
 
 module.exports = function enhancedResolve(modulePath, opts) {

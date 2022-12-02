@@ -12,26 +12,28 @@ type ErrorType = {
 
 export type UserStateType = {
   loading: boolean;
-  data: UserDataType | undefined | null;
-  error: ErrorType | undefined | null;
+  data?: UserDataType;
+  error?: ErrorType;
 };
 
 export type UserActionType = {
   type: string;
   payload: {
-    data: UserDataType | undefined | null;
-    error: ErrorType | undefined | null;
+    data?: UserDataType;
+    error?: ErrorType;
   };
 };
 
-const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
+const UserReducer = createRPCReducer<UserStateType, UserActionType>(
   'getUser',
   {
-    start: () => {
+    start: (state) => {
       return {
+        ...state,
         loading: true,
       };
     },
+    // @ts-expect-error todo(flow->ts) this does not pass typecheck… should this be a test?
     success: (state, action) => {
       return {
         ...state,

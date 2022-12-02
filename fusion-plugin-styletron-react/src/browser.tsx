@@ -31,7 +31,7 @@ function getPlugin(getStyletronEngine: any): any {
           if (ctx.element) {
             if (!engine) {
               const config: {
-                hydrate: HTMLCollection<HTMLElement>;
+                hydrate: HTMLCollection;
                 prefix?: string;
               } = {
                 hydrate: document.getElementsByClassName('_styletron_hydrate_'),

@@ -16,5 +16,5 @@ export type ConnectedRouterDepsType = {
 
 export type ConnectedRouterPluginType = FusionPlugin<
   ConnectedRouterDepsType,
-  StoreEnhancer<any, any, any>
+  StoreEnhancer<any, any>
 >;

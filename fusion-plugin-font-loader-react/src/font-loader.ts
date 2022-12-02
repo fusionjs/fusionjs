@@ -21,10 +21,8 @@ const timeout = 60000;
 
 export default function (font: string) {
   if (__BROWSER__ && document) {
-    // $FlowFixMe
     return document.fonts && typeof document.fonts.load === 'function'
-      ? // $FlowFixMe
-        document.fonts.load(`1em ${font}`) // native API requires size
+      ? document.fonts.load(`1em ${font}`) // native API requires size
       : loadFontPolyfill(font);
   }
 }
@@ -32,7 +30,7 @@ export default function (font: string) {
 function loadFontPolyfill(font): Promise<void> {
   const testDivs = createTestDivs();
   testDivs.forEach(
-    // $FlowFixMe
+    // @ts-expect-error
     (div) => (div.style.fontFamily = `${font}, ${div.testFont}`)
   );
   const waitUntil = Date.now() + timeout;
@@ -72,7 +70,7 @@ function cleanup(testDivs) {
 function createTestDivs() {
   return testFonts.map((testFont, i) => {
     const div = document.createElement('div');
-    // $FlowFixMe
+    // @ts-expect-error
     div.testFont = testFont;
     div.style.cssText = `position:absolute;top:-999px;left:${
       -9999 + i * 100

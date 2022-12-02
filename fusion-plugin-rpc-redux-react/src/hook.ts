@@ -25,7 +25,7 @@ export function useRPCRedux(
     mapStateToParams?: (state: any, args?: any) => any;
   } = {}
 ): (a: any) => Promise<any> {
-  const reactReduxContext = React.useContext(ReactReduxContext);
+  const reactReduxContext: any = React.useContext(ReactReduxContext);
   const ctx = React.useContext(FusionContext);
   const reduxPlugin = useService(ReduxToken).from(ctx);
   const rpc = useService(RPCToken).from(ctx);

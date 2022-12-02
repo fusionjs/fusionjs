@@ -5,35 +5,22 @@
  *
  */
 
+/// <reference types="@types/jest" />
+
 import assert from 'assert';
 
 import FusionApp, {createToken, createPlugin} from 'fusion-core';
 import type {FusionPlugin, Token} from 'fusion-core';
 
-/* Note: as the Jest type definitions are declared globally and not as part of
- * a module, we must import the relevant types directly from the libdef file here
- * to avoid the invariant that all consumers must add the jest libdef to their
- * .flowconfig libs.
- */
-import type {JestTestName, JestObjectType} from './flow/jest_v22.x.x';
 import {render, request} from './simulate';
-
-type $Call1<F extends (...args: any) => any, A> = F extends (
-  a: A,
-  ...args: any
-) => infer R
-  ? R
-  : never;
 
 // eslint-disable-next-line jest/no-export
 export {createRequestContext, createRenderContext} from './mock-context';
 
-declare var __BROWSER__: boolean;
-type ExtractFusionAppReturnType = <R>(a: (a: FusionApp) => R) => R;
 // eslint-disable-next-line jest/no-export
 export type Simulator = {
-  request: $Call1<ExtractFusionAppReturnType, typeof request>;
-  render: $Call1<ExtractFusionAppReturnType, typeof render>;
+  request: ReturnType<typeof request>;
+  render: ReturnType<typeof render>;
   getService<T>(token: Token<T>): T;
 };
 // eslint-disable-next-line jest/no-export
@@ -81,39 +68,31 @@ export function getService<TService>(
   return extractedService;
 }
 
-// Export test runner functions from jest
-type ExtractArgsReturnType<TArguments, TReturn> = <R>(
-  a: (implementation?: (...args: TArguments) => TReturn) => R
-) => R;
-
-type JestFnType = JestObjectType['fn'];
-
-// eslint-disable-next-line flowtype/generic-spacing
-type MockFunctionType<TArgs, TReturn> = (
-  ...args: TArgs
-) => $Call1<ExtractArgsReturnType<TArgs, TReturn>, JestFnType>;
+type JestFnType = typeof jest.fn;
 
 type MatchSnapshotType = (tree: unknown, snapshotName?: string | null) => void;
 
 type CallableAssertType = (
-  assert: typeof assert & {
+  assertArg: typeof assert & {
     matchSnapshot: MatchSnapshotType;
   }
 ) => void | Promise<void>;
 
 type TestType = (
-  name: JestTestName,
+  name: string,
   assert: CallableAssertType,
   timeout?: number
 ) => void;
 
 // eslint-disable-next-line import/no-mutable-exports
-let mockFunction: MockFunctionType<any, any>, test: any;
+let mockFunction: JestFnType, test: any;
 if (typeof it !== 'undefined') {
   // Surface snapshot testing
-  // $FlowFixMe
-  assert.matchSnapshot = (tree, snapshotName) =>
-    // For some reason jest@25 fails when snapshotName=undefined is passed
+  // @ts-expect-error
+  assert.matchSnapshot = (
+    tree,
+    snapshotName // For some reason jest@25 fails when snapshotName=undefined is passed
+  ) =>
     snapshotName
       ? expect(tree).toMatchSnapshot(snapshotName)
       : expect(tree).toMatchSnapshot();
@@ -133,7 +112,7 @@ if (typeof it !== 'undefined') {
   mockFunction = notSupported;
 }
 
-const mockFunctionExport = mockFunction as any as MockFunctionType<any, any>;
+const mockFunctionExport = mockFunction;
 const testExport = test as any as TestType;
 
 // eslint-disable-next-line jest/no-export

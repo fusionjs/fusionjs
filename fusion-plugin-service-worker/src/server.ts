@@ -29,7 +29,7 @@ export default __NODE__ &&
         cacheBustingPatterns,
         cacheableRoutePatterns,
         cacheDuration,
-      } = {},
+      } = {} as any,
     }) => {
       return async (ctx, next) => {
         if (__NODE__) {

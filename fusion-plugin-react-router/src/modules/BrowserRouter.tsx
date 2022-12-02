@@ -22,7 +22,8 @@ type ContextType = {
 class BrowserRouter extends React.Component<RouterPropsType> {
   lastTitle: string | undefined | null;
   lastParams: {};
-  context: ContextType;
+  // todo: update babel config to use declare keyword instead
+  context: ContextType = undefined;
 
   static defaultProps = {
     onRoute: () => {},
@@ -58,22 +59,21 @@ class BrowserRouter extends React.Component<RouterPropsType> {
       </BaseRouter>
     );
   }
+  static propTypes = {
+    basename: PropTypes.string,
+    children: PropTypes.node,
+    history: PropTypes.object,
+    onRoute: PropTypes.func,
+  };
+
+  static contextTypes = {
+    __IS_PREPARE__: PropTypes.bool,
+  };
+
+  static childContextTypes = {
+    onRoute: PropTypes.func.isRequired,
+  };
 }
-
-BrowserRouter.propTypes = {
-  basename: PropTypes.string,
-  children: PropTypes.node,
-  history: PropTypes.object,
-  onRoute: PropTypes.func,
-};
-
-BrowserRouter.contextTypes = {
-  __IS_PREPARE__: PropTypes.bool,
-};
-
-BrowserRouter.childContextTypes = {
-  onRoute: PropTypes.func.isRequired,
-};
 
 const BrowserRouterTyped: RouterType = BrowserRouter;
 export {BrowserRouterTyped as Router};

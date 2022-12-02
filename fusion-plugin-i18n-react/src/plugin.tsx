@@ -6,21 +6,18 @@
  */
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 
 import i18n, {I18nToken} from 'fusion-plugin-i18n';
 import type {I18nDepsType, I18nServiceType} from 'fusion-plugin-i18n';
 import {FusionContext, ProviderPlugin, useService} from 'fusion-react';
 
-type $Call1<F extends (...args: any) => any, A> = F extends (
-  a: A,
-  ...args: any
-) => infer R
-  ? R
-  : never;
-type ExtractReturnType = <V, TArg>(a: (arg: TArg) => V) => V;
-export type I18nType = $Call1<ExtractReturnType, I18nServiceType['from']>;
-export const I18nContext = React.createContext<I18nType>({});
+export type I18nType = ReturnType<I18nServiceType['from']>;
+export const I18nContext: React.Context<I18nType> =
+  React.createContext<I18nType>(
+    // @ts-expect-error todo(flow->ts): incorrect default value
+    {}
+  );
 
 /**
  * The i18n service is loaded with the fusion ctx and provided to the

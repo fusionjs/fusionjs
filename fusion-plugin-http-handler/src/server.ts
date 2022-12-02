@@ -32,7 +32,7 @@ const plugin =
         if (ctx.body) {
           return config.defer || next();
         }
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
           // $FlowFixMe
           const {req, res} = ctx;
           // Default http response object behavior defaults res.statusCode to 200. Koa sets it to 404.
@@ -41,11 +41,10 @@ const plugin =
           ctx.res.statusCode = 200;
           const listener = () => {
             // Makes koa-bodyparser compatible with bodyparser
-            // $FlowFixMe
+            // @ts-expect-error
             req._body = true;
-            // $FlowFixMe
+            // @ts-expect-error
             req.body = ctx.request.body;
-            // $FlowFixMe
             res.setHeader = () => {};
             ctx.respond = false;
             done(null);
@@ -53,6 +52,7 @@ const plugin =
           res.on('end', listener);
           res.on('finish', listener);
 
+          // @ts-expect-error
           handler(req, res, (error) => {
             ctx.res.statusCode = prevStatusCode;
             // $FlowFixMe
@@ -64,7 +64,7 @@ const plugin =
             // We need to make it writable because other plugins (like koa-helmet) will set it
             // $FlowFixMe
             Object.defineProperty(req, 'secure', {
-              // $FlowFixMe
+              // @ts-expect-error
               value: req.secure,
               writable: true,
             });

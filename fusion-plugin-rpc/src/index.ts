@@ -25,4 +25,4 @@ export {
 export {default as getMockRpcHandlers} from './mock-rpc-handlers';
 
 export type {RPCDepsType};
-export type RPCType = RPCServiceType;
+export type {RPCServiceType as RPCType};

@@ -24,8 +24,12 @@ const plugin = (app: App, _: any) => {
     return createPlugin({});
   }
 };
-export default plugin as any as (b: App, a: any) => FusionPlugin<void, void>;
+export default plugin as any as (
+  b: App,
+  a: any
+) => FusionPlugin<undefined, undefined>;
 
 function getRoutePrefix() {
+  // @ts-expect-error
   return window.__ROUTE_PREFIX__ || '';
 }

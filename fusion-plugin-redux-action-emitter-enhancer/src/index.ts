@@ -31,7 +31,7 @@ type PluginDepsType = {
   transformer: typeof ActionEmitterTransformerToken.optional;
 };
 
-type ServiceType = StoreEnhancer<any, any, any>;
+type ServiceType = StoreEnhancer<any, any>;
 
 const defaultTransformer = (action) => {
   const {type, _trackingMeta} = action;
@@ -55,16 +55,16 @@ const plugin: FusionPlugin<PluginDepsType, ServiceType> = createPlugin({
     }
 
     const service: ServiceType =
-      (createStore: StoreCreator<any, any, any>) =>
-      (...args: any) => {
-        const store: Store<any, any, any> = createStore(...args);
+      (createStore: StoreCreator) =>
+      (...args: [any, any, any?]) => {
+        const store: Store<any, any> = createStore(...args);
         return {
           ...store,
-          dispatch: (action: unknown) => {
+          dispatch: (action) => {
             if (action && typeof action.type === 'string') {
               let payload: any = transformer(action);
               if (payload) {
-                emitter // $FlowFixMe
+                emitter // @ts-expect-error
                   .from(store.ctx)
                   .emit('redux-action-emitter:action', payload);
               }

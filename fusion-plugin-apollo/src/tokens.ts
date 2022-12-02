@@ -8,10 +8,9 @@ import React from 'react';
 import {createToken, type Context, type Token} from 'fusion-core';
 import type {ApolloClient} from 'apollo-client';
 
-/*::
-import {GraphQLOptions} from 'apollo-server-koa';
-type GraphQLOptionsType = typeof GraphQLOptions;
-*/
+import type {GraphQLOptions} from 'apollo-server-koa';
+
+type GraphQLOptionsType = GraphQLOptions;
 
 export type InitApolloClientType<TInitialState> = (
   ctx: Context,
@@ -26,7 +25,7 @@ export type ApolloContext<T> = (a: Context) => T | T;
 export const ApolloContextToken: Token<ApolloContext<unknown>> =
   createToken('ApolloContextToken');
 
-export const ApolloCacheContext = React.createContext<any>();
+export const ApolloCacheContext = React.createContext<any>(undefined);
 
 export const GraphQLEndpointToken: Token<string> = createToken(
   'GraphQLEndpointToken'

@@ -8,9 +8,9 @@
 import {createToken} from 'fusion-core';
 import type {Token, Context} from 'fusion-core';
 import type {Options} from 'koa-bodyparser';
-import type {RPCConfigType} from './types';
+import type {RPCConfigType, RPCServiceType} from './types';
 
-export const RPCToken: Token<any> = createToken('RPCToken');
+export const RPCToken: Token<RPCServiceType> = createToken('RPCToken');
 
 export type HandlerType = {
   [x: string]: (...args: any) => any;

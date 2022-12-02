@@ -1,12 +1,33 @@
 {
-  "presets": [["@babel/preset-react", { "runtime": "automatic" }]],
-  "plugins": ["@babel/plugin-transform-flow-strip-types"],
+  "presets": [
+    "@babel/preset-typescript",
+    [
+      "@babel/preset-react",
+      {
+        "runtime": "automatic"
+      }
+    ]
+  ],
+  "plugins": [],
   "env": {
     "test": {
-      "plugins": ["@babel/plugin-transform-flow-strip-types"],
+      "plugins": [],
       "presets": [
-        ["@babel/preset-react", { "runtime": "automatic" }],
-        ["@babel/preset-env", { "targets": { "node": "current" } }]
+        "@babel/preset-typescript",
+        [
+          "@babel/preset-react",
+          {
+            "runtime": "automatic"
+          }
+        ],
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
       ]
     }
   }

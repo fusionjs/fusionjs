@@ -16,6 +16,13 @@
     "@babel/plugin-transform-flow-strip-types": "^7.14.5",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/create-universal-package-env": "workspace:*",
+    "@types/jest": "^28.1.3",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/webpack-env": "^1.18.0",
+    "babel-jest": "^28.1.3",
     "create-universal-package": "^4.3.0",
     "flow-bin": "0.131.0",
     "fusion-core": "workspace:*",
@@ -26,7 +33,8 @@
     "just-compose": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-test-renderer": "^18.2.0"
+    "react-test-renderer": "^18.2.0",
+    "typescript": "^4.8.4"
   },
   "engines": {
     "node": ">=12.0.0",
@@ -36,12 +44,14 @@
   "files": [
     "dist-*/",
     "src/",
-    "index.d.ts"
+    "!src/__tests__",
+    "lib/",
+    "!lib/__tests__"
   ],
   "homepage": "https://fusionjs.com/api/fusion-react",
   "license": "MIT",
   "main": "./dist-node-cjs/index.js",
-  "types": "./index.d.ts",
+  "types": "./lib/index.d.ts",
   "module": "./dist-node-esm/index.js",
   "peerDependencies": {
     "fusion-core": "workspace:*",
@@ -56,9 +66,8 @@
   },
   "scripts": {
     "clean": "cup-clean",
-    "flow": "flow",
     "lint": "yarn g:lint",
-    "prepack": "cup-build --force-flow",
+    "prepack": "yarn tsc -b && cup-build",
     "test": "jest",
     "view-cover": "npm run cover && open coverage/index.html"
   },

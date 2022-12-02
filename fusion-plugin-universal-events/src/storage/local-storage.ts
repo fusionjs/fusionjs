@@ -51,6 +51,6 @@ try {
   isLocalStorageWritable = false;
 }
 
-export const localBatchStorage = isLocalStorageWritable
+export const localBatchStorage: BatchStorage = isLocalStorageWritable
   ? new LocalBatchStorage()
   : inMemoryBatchStorage;

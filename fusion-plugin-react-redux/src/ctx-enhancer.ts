@@ -14,13 +14,13 @@ import type {Context} from 'fusion-core';
 
 type CreateStoreType = typeof createStore;
 
-type StoreWithContextType = Store<any, any, any> & {
+type StoreWithContextType = Store<any, any> & {
   ctx: Context;
 };
 
 export default (ctx: Context) =>
   (createStore: CreateStoreType) =>
-  (...args: any) => {
+  (...args: [any, any, any?]) => {
     const store: StoreWithContextType = {
       ...createStore(...args),
       ctx,

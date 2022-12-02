@@ -37,9 +37,12 @@ const plugin =
         if (
           key.match(/webkit/) == null && // stop deprecation warnings
           window[key] &&
+          // @ts-expect-error
           window[key].prototype &&
+          // @ts-expect-error
           window[key].prototype.addEventListener
         ) {
+          // @ts-expect-error
           const proto = window[key].prototype;
           const old = proto.addEventListener;
           proto.addEventListener = function (type, fn, ...rest) {

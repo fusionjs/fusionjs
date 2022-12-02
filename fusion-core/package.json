@@ -50,8 +50,7 @@
     "src/",
     "!src/__tests__",
     "lib/",
-    "!lib/__tests__",
-    "index.d.ts"
+    "!lib/__tests__"
   ],
   "homepage": "https://fusionjs.com/api/fusion-core",
   "license": "MIT",
@@ -65,9 +64,8 @@
   },
   "scripts": {
     "clean": "cup-clean",
-    "flow": "flow",
     "lint": "yarn g:lint",
-    "prepack": "yarn tsc -b && cup-build && cp src/index.js.flow dist-node-cjs",
+    "prepack": "yarn tsc -b && cup-build",
     "test": "jest"
   },
   "sideEffects": false

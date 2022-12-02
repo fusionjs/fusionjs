@@ -32,9 +32,9 @@ export function createRequestContext(
     const parsedUrl = {...parse(url)};
     const {path} = parsedUrl;
     parsedUrl.path = parsedUrl.pathname;
-    //$FlowFixMe
+    //@ts-expect-error
     parsedUrl.url = path;
-    //$FlowFixMe
+    //@ts-expect-error
     return {parsedUrl};
   }
   const httpMocks = require('node-mocks-http');

@@ -9,10 +9,6 @@ import {createReactor} from 'redux-reactors';
 import type {ReactorAction} from 'redux-reactors';
 import type {Reducer, Store} from 'redux';
 
-type $ObjMap<T extends {}, F extends (v: any) => any> = {
-  [K in keyof T]: F extends (v: T[K]) => infer R ? R : never;
-};
-
 export type ActionType = {
   type: string;
   payload: any;
@@ -53,6 +49,7 @@ const types: Array<ActionTypesType> = ['start', 'success', 'failure'];
 
 function createActionNames(rpcId: string): ActionNamesType {
   const rpcActionName = camelUpper(rpcId);
+  // @ts-expect-error
   const names: ActionNamesType = {};
   types.forEach((type) => {
     names[type] = `${rpcActionName}_${type.toUpperCase()}`;
@@ -65,10 +62,13 @@ type Action<TType, TPayload> = {
   payload: TPayload;
 };
 
-type ConvertToAction = <T>(a: T) => (payload: any) => Action<T, any>;
-type RPCActionsType = $ObjMap<ActionNamesType, ConvertToAction>;
+type RPCActionsType = {
+  [T in ActionTypesType]: (payload: any) => Action<string, any>;
+};
+
 export function createRPCActions(rpcId: string): RPCActionsType {
   const actionNames = createActionNames(rpcId);
+  // @ts-expect-error
   const obj: RPCActionsType = {};
   types.forEach((type) => {
     obj[type] = (payload: any) => {
@@ -81,6 +81,7 @@ export function createRPCActions(rpcId: string): RPCActionsType {
 function getNormalizedReducers<S, A extends ActionType>(
   reducers: RPCReducersType<S, A>
 ): NormalizedRPCReducersType<S, A> {
+  // @ts-expect-error
   const obj: NormalizedRPCReducersType<S, A> = {};
   types.forEach((type) => {
     // $FlowFixMe
@@ -92,7 +93,7 @@ function getNormalizedReducers<S, A extends ActionType>(
 export function createRPCReducer<S, A extends ActionType>(
   rpcId: string,
   reducers: RPCReducersType<S, A>,
-  // $FlowFixMe
+  // @ts-expect-error todo: this does not look correct
   startValue: S = {}
 ): Reducer<S, A> {
   const actionNames = createActionNames(rpcId);
@@ -145,7 +146,7 @@ export function createRPCHandler({
   transformParams,
 }: {
   actions?: RPCActionsType;
-  store: Store<any, any, any>;
+  store: Store<any, any>;
   rpc: any;
   rpcId: string;
   mapStateToParams?: (state: any, args?: any) => any;
@@ -178,7 +179,7 @@ export function createRPCHandler({
           delete e.__shouldBubble;
           throw e;
         }
-        const error = Object.getOwnPropertyNames(e).reduce((obj, key) => {
+        const error: any = Object.getOwnPropertyNames(e).reduce((obj, key) => {
           obj[key] = e[key];
           return obj;
         }, {});

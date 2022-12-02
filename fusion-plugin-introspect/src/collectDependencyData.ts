@@ -7,7 +7,9 @@
 import type App from 'fusion-core';
 import path from 'path';
 
-import type {Dep} from './cli/types.js';
+// todo(flow->ts): migrate cli to typescript
+type Dep = any;
+//import type {Dep} from './cli/types.js';
 
 const nodeOf = ({name, stacks = []}) => ({
   name,

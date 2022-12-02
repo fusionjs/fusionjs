@@ -20,6 +20,7 @@ function useFontLoading(fontName: string) {
     to true in the font loader config`
     );
   }
+  // @ts-expect-error todo(flow->ts) types does not match
   const {fallbackName, styles} = getFontDetails(fontName);
   const initialFontStyles = fallbackName
     ? // switch to fallback name and apply styles to trigger faux font rendition

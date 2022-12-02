@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src"
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../fusion-plugin-i18n"
+    },
+    {
+      "path": "../fusion-core"
+    },
+    {
+      "path": "../fusion-plugin-i18n"
+    },
+    {
+      "path": "../fusion-plugin-universal-events"
+    },
+    {
+      "path": "../fusion-react"
+    },
+    {
+      "path": "../fusion-tokens"
+    }
+  ]
+}

@@ -230,9 +230,9 @@ const pluginFactory: () => RPCPluginType = () =>
                 status: 'failure',
                 data: {
                   message: error.message,
-                  // $FlowFixMe
+                  // @ts-expect-error
                   code: error.code,
-                  // $FlowFixMe
+                  // @ts-expect-error
                   meta: error.meta,
                 },
               };

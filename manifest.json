@@ -35,7 +35,10 @@
     "create-fusion-plugin",
     "create-fusion-app",
     "fusion-plugin-web-app-manifest",
-    "jest-resolver-fusion"
+    "everything"
+  ],
+  "excludeFromPublishing": [
+    "everything"
   ],
   "versionPolicy": {
     "lockstep": true

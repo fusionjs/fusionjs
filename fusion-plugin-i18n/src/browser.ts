@@ -55,7 +55,8 @@ const pluginFactory: () => PluginType = () =>
       hydrationState: HydrationStateToken.optional,
       events: UniversalEventsToken.optional,
     },
-    provides: ({fetch = window.fetch, hydrationState, events} = {}) => {
+    // todo: is default value required?
+    provides: ({fetch = window.fetch, hydrationState, events} = {} as any) => {
       class I18n {
         locale: string;
         translations: TranslationsObjectType;

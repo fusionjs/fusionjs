@@ -6,6 +6,7 @@
  */
 
 import * as React from 'react';
+import type {History} from 'history';
 
 import type {ReactNode, ComponentType, ReactElement} from 'react';
 
@@ -51,18 +52,7 @@ export type TTo = string | TLocation;
 
 export type TNavigation = 'POP' | 'PUSH' | 'REPLACE';
 
-export type TNavigator = {
-  action: string;
-  location: TLocation;
-  go(delta: number): void;
-  push(to: TTo, state?: any): void;
-  replace(path: TTo, state?: any): void;
-  createHref(to: TTo): string;
-  back(): void;
-  forward(): void;
-  listen(listener: any): () => void;
-  block(blocker: any): () => void;
-};
+export type TNavigator = History;
 
 export type TRouterProps = {
   basename?: string;

@@ -62,7 +62,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
       }
 
       function getCalculatedStats(timing, resourceEntries, paintTimes) {
-        let calculated = {};
+        let calculated: any = {};
         if (!isEmpty(timing)) {
           calculated = {
             // time spent following redirects
@@ -122,6 +122,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
           if (!isEmpty(resourceLoadTimes)) {
             Object.keys(resourceLoadTimes).forEach((resourceType) => {
               const avgTime = parseInt(
+                // @ts-expect-error todo(flow->ts) why parseInt? can it be removed?
                 mean(resourceLoadTimes[resourceType]),
                 10
               );

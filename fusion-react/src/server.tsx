@@ -55,7 +55,7 @@ export default (
         // Assign to koa
         ctx.body = outputStream;
         // Determine if we are using modules or not
-        const bootstrap = {};
+        const bootstrap: any = {};
         if (shellTemplates.useModuleScripts) {
           bootstrap.bootstrapModules = shellTemplates.scripts;
         } else {

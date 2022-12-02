@@ -5,7 +5,7 @@
  *
  */
 
-import type {Store} from 'redux';
+import type {Store, Action} from 'redux';
 
 import type {Context} from 'fusion-core';
 
@@ -20,7 +20,7 @@ export type GetInitialStateType<TState> = (
   ctx: Context
 ) => Promise<TState> | TState;
 
-export type StoreWithContextType<S, A, D> = Store<S, A, D> & {
+export type StoreWithContextType<S, A extends Action> = Store<S, A> & {
   ctx: Context;
 };
 
@@ -34,7 +34,7 @@ export type ReactReduxDepsType = {
 export type ReactReduxServiceType = {
   from: (ctx?: Context) => {
     ctx?: Context;
-    store: StoreWithContextType<any, any, any>;
-    initStore?: () => Promise<StoreWithContextType<any, any, any>>;
+    store: StoreWithContextType<any, any>;
+    initStore?: () => Promise<StoreWithContextType<any, any>>;
   };
 };

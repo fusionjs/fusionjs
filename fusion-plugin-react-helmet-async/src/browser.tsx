@@ -24,4 +24,4 @@ const plugin =
     },
   });
 
-export default plugin as any as FusionPlugin<void, void>;
+export default plugin as any as FusionPlugin<undefined, undefined>;

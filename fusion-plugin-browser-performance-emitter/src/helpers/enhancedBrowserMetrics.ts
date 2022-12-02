@@ -139,7 +139,7 @@ const browserPerfCollector: (window: any) => any = (window: any) => {
   };
 };
 
-function asDictionary(obj = {}) {
+function asDictionary(obj: any = {}) {
   if (obj.toJSON && typeof obj.toJSON === 'function') {
     return obj.toJSON();
   }

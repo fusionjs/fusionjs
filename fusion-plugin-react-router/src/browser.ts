@@ -83,7 +83,9 @@ const UnstableHistoryRouter: TUnstableHistoryRouter =
   UnstableHistoryRouterUntyped;
 const HashRouter: THashRouter = HashRouterUntyped;
 const MemoryRouter: TMemoryRouter = MemoryRouterUntyped;
+// @ts-expect-error todo(flow->ts)
 const Link: TLink = LinkUntyped;
+// @ts-expect-error todo(flow->ts)
 const NavLink: TNavLink = NavLinkUntyped;
 const Outlet: TOutlet = OutletUntyped;
 const useOutletContext: TUseOutletContext = useOutletContextUntyped;
@@ -107,6 +109,7 @@ const useOutlet: TUseOutlet = useOutletUntyped;
 const useParams: TUseParams = useParamsUntyped;
 const useResolvedPath: TUseResolvedPath = useResolvedPathUntyped;
 const useRoutes: TUseRoutes = useRoutesUntyped;
+// @ts-expect-error todo(flow->ts)
 const useSearchParams: TUseSearchParams = useSearchParamsUntyped;
 const createSearchParams: TCreateSearchParams = createSearchParamsUntyped;
 

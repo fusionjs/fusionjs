@@ -6,14 +6,13 @@
  */
 
 /* eslint-env browser */
-/* globals __REDUX_DEVTOOLS_EXTENSION__ */
 
 import React from 'react';
 import {Provider} from 'react-redux';
 import {compose, createStore} from 'redux';
 
 import {createPlugin, unescape} from 'fusion-core';
-import type {Context, FusionPlugin} from 'fusion-core';
+import type {Context} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
 import {deserialize} from './codec';
@@ -29,6 +28,10 @@ import type {
   ReactReduxServiceType,
 } from './types';
 
+declare global {
+  var __REDUX_DEVTOOLS_EXTENSION__: any;
+}
+
 const getPlugin = () => {
   let storeCache = null;
 
@@ -39,7 +42,15 @@ const getPlugin = () => {
     }
   };
 
-  return createPlugin({
+  return createPlugin<
+    {
+      reducer: typeof ReducerToken;
+      preloadedState: typeof PreloadedStateToken.optional;
+      enhancer: typeof EnhancerToken.optional;
+      reduxDevToolsConfig: typeof ReduxDevtoolsConfigToken.optional;
+    },
+    ReactReduxServiceType
+  >({
     deps: {
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
@@ -48,7 +59,7 @@ const getPlugin = () => {
     },
     provides({reducer, preloadedState, enhancer, reduxDevToolsConfig}) {
       class Redux {
-        store: StoreWithContextType<any, any, any>;
+        store: StoreWithContextType<any, any>;
         preloadedState: any;
 
         constructor(ctx) {
@@ -93,6 +104,7 @@ const getPlugin = () => {
     },
     middleware({preloadedState}, redux) {
       return (ctx, next) => {
+        // @ts-expect-error todo(flow->ts) TS2339: Property 'preloadedState' does not exist on type '{ ctx?: Context; store: StoreWithContextType ; initStore?: () => Promise  >; }'.
         const {store, preloadedState} = redux.from(ctx);
         ctx.element = (
           <Provider store={store} serverState={preloadedState || {}}>
@@ -108,7 +120,4 @@ const getPlugin = () => {
   });
 };
 
-export default getPlugin as any as () => FusionPlugin<
-  ReactReduxDepsType,
-  ReactReduxServiceType
->;
+export default getPlugin;

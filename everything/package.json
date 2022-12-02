@@ -1,0 +1,51 @@
+{
+  "name": "@fusionjs/everything",
+  "version": "0.0.0-monorepo",
+  "dependencies": {
+    "eslint-config-fusion": "0.0.0-monorepo",
+    "fusion-cli": "0.0.0-monorepo",
+    "fusion-cli-tests": "0.0.0-monorepo",
+    "fusion-core": "0.0.0-monorepo",
+    "fusion-plugin-apollo": "0.0.0-monorepo",
+    "fusion-plugin-browser-performance-emitter": "0.0.0-monorepo",
+    "fusion-plugin-connected-react-router": "0.0.0-monorepo",
+    "fusion-plugin-csrf-protection": "0.0.0-monorepo",
+    "fusion-plugin-error-handling": "0.0.0-monorepo",
+    "fusion-plugin-font-loader-react": "0.0.0-monorepo",
+    "fusion-plugin-http-handler": "0.0.0-monorepo",
+    "fusion-plugin-i18n": "0.0.0-monorepo",
+    "fusion-plugin-i18n-react": "0.0.0-monorepo",
+    "fusion-plugin-introspect": "0.0.0-monorepo",
+    "fusion-plugin-jwt": "0.0.0-monorepo",
+    "fusion-plugin-node-performance-emitter": "0.0.0-monorepo",
+    "fusion-plugin-react-helmet-async": "0.0.0-monorepo",
+    "fusion-plugin-react-redux": "0.0.0-monorepo",
+    "fusion-plugin-react-router": "0.0.0-monorepo",
+    "fusion-plugin-redux-action-emitter-enhancer": "0.0.0-monorepo",
+    "fusion-plugin-rpc": "0.0.0-monorepo",
+    "fusion-plugin-rpc-redux-react": "0.0.0-monorepo",
+    "fusion-plugin-service-worker": "0.0.0-monorepo",
+    "fusion-plugin-service-worker-tests": "0.0.0-monorepo",
+    "fusion-plugin-styletron-react": "0.0.0-monorepo",
+    "fusion-plugin-universal-events": "0.0.0-monorepo",
+    "fusion-plugin-universal-logger": "0.0.0-monorepo",
+    "fusion-plugin-web-app-manifest": "0.0.0-monorepo",
+    "fusion-react": "0.0.0-monorepo",
+    "fusion-rpc-redux": "0.0.0-monorepo",
+    "fusion-scaffolder": "0.0.0-monorepo",
+    "fusion-test-utils": "0.0.0-monorepo",
+    "fusion-tokens": "0.0.0-monorepo"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  },
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "build": "echo ok",
+    "flow": "echo ok",
+    "lint": "echo ok",
+    "test": "echo ok",
+    "typecheck": "tsc -b ."
+  }
+}

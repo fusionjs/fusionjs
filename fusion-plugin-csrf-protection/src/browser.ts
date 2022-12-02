@@ -9,6 +9,11 @@
 import type {Fetch} from 'fusion-tokens';
 import {verifyMethod} from './shared';
 
+declare global {
+  interface Window {
+    __ROUTE_PREFIX__?: string;
+  }
+}
 const enhancer = (fetch: Fetch) => {
   const prefix = window.__ROUTE_PREFIX__ || ''; // created by fusion-core/src/server
   let fetchWithCsrfToken: Fetch = (url, options) => {

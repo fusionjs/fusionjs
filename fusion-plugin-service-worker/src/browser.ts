@@ -18,6 +18,7 @@ export default createPlugin({
           const existingSW = sw.controller;
           if (shouldRegister) {
             sw.register('/sw.js')
+              // @ts-expect-error todo(flow->ts)
               .then((res) => logger.log('*** sw registered:', res))
               .catch((e) => logger.log('*** sw registration failed:', e));
             sw.addEventListener('message', (event) => {

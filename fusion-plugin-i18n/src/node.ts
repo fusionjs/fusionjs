@@ -34,7 +34,8 @@ function getKeysFromContext(ctx: Context): string[] {
   const querystringParams = querystring.parse(ctx.querystring);
   if (querystringParams.keys) {
     try {
-      const keys = JSON.parse(querystringParams.keys);
+      // todo: querystringParams.keys might be array
+      const keys = JSON.parse(querystringParams.keys as string);
       return Array.isArray(keys) ? keys : [];
     } catch (e) {
       return [];
@@ -114,7 +115,7 @@ const pluginFactory: () => PluginType = () =>
             ...ctx.preloadChunks,
           ];
 
-          const keys = new Set();
+          const keys = new Set<string>();
           chunks.forEach((id) => {
             const iterator = chunkTranslationMap.translationsForChunk(id);
             for (const item of iterator) {

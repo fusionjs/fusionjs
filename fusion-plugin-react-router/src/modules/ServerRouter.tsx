@@ -75,15 +75,15 @@ class ServerRouter extends React.Component<RouterPropsType> {
       </BaseRouter>
     );
   }
+  static childContextTypes = {
+    history: PropTypes.object,
+    router: PropTypes.shape({
+      staticContext: PropTypes.object,
+    }),
+    onRoute: () => {},
+  };
 }
 
-ServerRouter.childContextTypes = {
-  history: PropTypes.object,
-  router: PropTypes.shape({
-    staticContext: PropTypes.object,
-  }),
-  onRoute: () => {},
-};
-
+// @ts-expect-error todo(flow->ts)
 const ServerRouterTyped: RouterType = ServerRouter;
 export {ServerRouterTyped as ServerRouter};

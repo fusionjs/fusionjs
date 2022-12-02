@@ -8,6 +8,7 @@
 import App, {createPlugin} from 'fusion-core';
 import {ApolloContextToken} from '../index';
 
+// @ts-expect-error
 const app = new App();
 
 app.register(ApolloContextToken, (ctx) => ({

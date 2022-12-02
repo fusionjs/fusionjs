@@ -48,7 +48,6 @@ export default class App extends FusionApp {
       );
     }
     const getService = (token) => {
-      // $FlowFixMe
       const provides = this.getService(token);
       const isRequiredToken = Boolean(token.optional);
       if (typeof provides === 'undefined' && isRequiredToken) {

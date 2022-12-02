@@ -1,4 +1,3 @@
-// @flow
 /* eslint-env node */
 
 module.exports = {
@@ -8,9 +7,10 @@ module.exports = {
       testEnvironment: 'node',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.browser.js',
+        '\\.browser\\.[jt]sx?$',
         'dist',
-        'utils.node.js',
+        'lib',
+        'utils.node.ts',
       ],
       globals: {
         __NODE__: true,
@@ -23,9 +23,10 @@ module.exports = {
       testEnvironment: 'jsdom',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.node.js',
+        '\\.node\\.[jt]sx?$',
         'dist',
-        'utils.node.js',
+        'lib',
+        'utils.node.ts',
       ],
       globals: {
         __NODE__: false,

@@ -44,7 +44,7 @@ const plugin: RPCPluginType = createPlugin({
     // $FlowFixMe
     emitter: UniversalEventsToken.optional,
   },
-  provides: ({handlers} = {}) => {
+  provides: ({handlers} = {} as any) => {
     return {from: () => new RPC(handlers)};
   },
 });

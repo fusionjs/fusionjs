@@ -37,6 +37,8 @@ module.exports = {
 
     'require-atomic-updates': 0,
     'dot-notation': 'error',
+    // disabled because it does not really work when mixing ts and js files
+    'import/no-unresolved': 'off',
   },
   settings: {
     react: {

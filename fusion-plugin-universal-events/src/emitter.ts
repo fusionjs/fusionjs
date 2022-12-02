@@ -47,7 +47,7 @@ export default class UniversalEmitter implements IEmitter {
   }
 
   /* eslint-disable-next-line  no-unused-vars */
-  from(ctx: Context) {
+  from(ctx: Context): IEmitter {
     throw new Error('Not implemented.');
   }
   /* eslint-disable-next-line  no-unused-vars */

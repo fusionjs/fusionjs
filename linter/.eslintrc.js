@@ -3,6 +3,15 @@ module.exports = {
   extends: ['eslint-config-fusion'],
   overrides: [
     {
+      files: ['**/*.js'],
+      rules: {
+        'flowtype/require-valid-file-annotation': 'off',
+        'flowtype/no-types-missing-file-annotation': 'off',
+        // todo: remove empty tests
+        'jest/no-export': 'off',
+      },
+    },
+    {
       files: ['**/*.ts', '**/*.tsx'],
       parser: '@typescript-eslint/parser',
       plugins: ['@typescript-eslint'],
@@ -10,6 +19,7 @@ module.exports = {
         'flowtype/require-valid-file-annotation': 'off',
         'flowtype/no-types-missing-file-annotation': 'off',
         'cup/no-undef': 'off',
+        'jest/no-export': 'off',
         // does not work correctly with import type typescript feature todo: probably can be fixed with eslint tooling upgrade
         'import/no-duplicates': 'off',
 

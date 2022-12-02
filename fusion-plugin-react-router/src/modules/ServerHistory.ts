@@ -19,6 +19,7 @@ const locationToCreatePathOpts = (loc: TLocation) => {
 };
 
 const defaultCreateLocation = (path: TTo) => {
+  // @ts-expect-error todo(flow->ts)
   let location: TLocation = typeof path === 'string' ? parsePath(path) : path;
   location.pathname = decodeURI(location.pathname);
   if (!location.pathname) {
@@ -93,8 +94,10 @@ export function createServerHistory(
       context.url = url;
     }
   }
-  const history = {
+  const history: TNavigator = {
+    // @ts-expect-error todo(flow->ts)
     action: 'POP',
+    // @ts-expect-error todo(flow->ts)
     location: createLocation(location, basename, true),
     go: staticHandler('go'),
     push,
@@ -105,5 +108,5 @@ export function createServerHistory(
     listen: () => noop,
     block: () => noop,
   };
-  return history as TNavigator;
+  return history;
 }

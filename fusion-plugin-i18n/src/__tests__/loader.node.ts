@@ -1,0 +1,90 @@
+/** Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+/* eslint-env node */
+
+import fs from 'fs';
+
+import App from 'fusion-core';
+import {getSimulator} from 'fusion-test-utils';
+import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+
+import I18n from '../node';
+import createLoader from '../loader';
+import {createI18nLoader, I18nLoaderToken, I18nToken} from '../index';
+
+describe('loader', () => {
+  beforeEach(() => {
+    fs.mkdirSync('translations');
+    fs.writeFileSync('translations/en_US.json', '{"test": "hi ${value}"}');
+  });
+
+  test('loader', async () => {
+    const app = new App('el', (el) => el);
+    app.register(I18nToken, I18n);
+    // $FlowFixMe
+    app.register(UniversalEventsToken, {
+      // @ts-expect-error
+      from: () => ({emit: () => {}}),
+    });
+    app.middleware({i18n: I18nToken}, ({i18n}) => {
+      return (ctx, next) => {
+        const translator = i18n.from(ctx);
+        expect(translator.translate('test', {value: 'world'})).toBe('hi world');
+        return next();
+      };
+    });
+    const simulator = getSimulator(app);
+    await simulator.render('/');
+  });
+
+  afterEach(() => {
+    fs.unlinkSync('translations/en_US.json');
+    fs.rmdirSync('translations');
+  });
+});
+
+describe('resolver', () => {
+  beforeEach(() => {
+    fs.mkdirSync('translations');
+    fs.writeFileSync('translations/en_US.json', '{"foo": "bar"}');
+    fs.writeFileSync('translations/custom_US.json', '{"foo": "qux"}');
+  });
+
+  test('custom locale resolver', async () => {
+    const app = new App('el', (el) => el);
+    app.register(
+      I18nLoaderToken,
+      createI18nLoader((ctx) => 'custom_US')
+    );
+    app.register(I18nToken, I18n);
+    // $FlowFixMe
+    app.register(UniversalEventsToken, {
+      // @ts-expect-error
+      from: () => ({emit: () => {}}),
+    });
+    app.middleware({i18n: I18nToken}, ({i18n}) => {
+      return (ctx, next) => {
+        const translator = i18n.from(ctx);
+        expect(translator.translate('foo')).toBe('qux');
+        return next();
+      };
+    });
+    const simulator = getSimulator(app);
+    await simulator.render('/', {headers: {'accept-language': 'en_US'}});
+  });
+
+  afterEach(() => {
+    fs.unlinkSync('translations/en_US.json');
+    fs.unlinkSync('translations/custom_US.json');
+    fs.rmdirSync('translations');
+  });
+});
+
+test('no translations dir', () => {
+  expect(createLoader).not.toThrow();
+});

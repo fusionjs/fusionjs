@@ -35,7 +35,6 @@ const withFontLoading = (fontName: string) => {
       const mounted: {
         current: boolean | undefined | null;
       } = useRef(null);
-      // $FlowFixMe
       const {getFontDetails} = useService(FontLoaderReactToken);
       if (typeof getFontDetails !== 'function') {
         throw new Error(

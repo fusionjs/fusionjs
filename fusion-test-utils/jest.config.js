@@ -1,4 +1,3 @@
-// @flow
 /* eslint-env node */
 
 module.exports = {
@@ -11,7 +10,12 @@ module.exports = {
       displayName: 'node',
       testEnvironment: 'node',
       resolver: require.resolve('jest-resolver-fusion'),
-      testPathIgnorePatterns: ['/node_modules/', '.browser.js', 'dist'],
+      testPathIgnorePatterns: [
+        '/node_modules/',
+        '\\.browser\\.[jt]sx?$',
+        'dist',
+        'lib',
+      ],
       globals: {
         __NODE__: true,
         __BROWSER__: false,
@@ -22,7 +26,12 @@ module.exports = {
       displayName: 'browser',
       testEnvironment: 'jsdom',
       resolver: require.resolve('jest-resolver-fusion-browser'),
-      testPathIgnorePatterns: ['/node_modules/', '.node.js', 'dist'],
+      testPathIgnorePatterns: [
+        '/node_modules/',
+        '\\.node\\.[jt]sx?$',
+        'dist',
+        'lib',
+      ],
       globals: {
         __NODE__: false,
         __BROWSER__: true,

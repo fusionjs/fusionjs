@@ -41,7 +41,7 @@ function Routes(props: PropsType, context: RouterContextType) {
       const compileTracking = (children, currentPath) => {
         React.Children.toArray(children)
           .filter(Boolean)
-          .forEach((element) => {
+          .forEach((element: any) => {
             if (element.props.children) {
               compileTracking(
                 element.props.children,

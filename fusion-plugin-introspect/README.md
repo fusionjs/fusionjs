@@ -189,7 +189,7 @@ import introspect from 'fusion-plugin-introspect';
 app.register(introspect(app, {store, env}));
 ```
 
-- `introspect: (app, {store, env}) => FusionPlugin<void, void>` - creates a Fusion plugin
+- `introspect: (app, {store, env}) => FusionPlugin<undefined, undefined>` - creates a Fusion plugin
   - `app: FusionApp` - a Fusion app instance. Usually obtained from `fusion-react` or `fusion-apollo`.
   - `store: {store, storeSync}` - a storage mechanism. Defaults to `fsStore`
     - `store: (data, deps) => Promise<void>` - called when all runtime data is collected successfully

@@ -3,7 +3,7 @@ import type {Context, Token} from 'fusion-core';
 
 // Tokens
 export type Fetch = (
-  input: string | Request,
+  input: RequestInfo,
   init?: RequestInit
 ) => Promise<Response>;
 export const FetchToken: Token<Fetch> = createToken('FetchToken');

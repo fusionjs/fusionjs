@@ -10,22 +10,14 @@ import {Locale} from 'locale';
 import {FetchToken} from 'fusion-tokens';
 import type {Context} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
+import type {UniversalEventsType as IEmitter} from 'fusion-plugin-universal-events';
 
 import {HydrationStateToken} from './browser';
 import {I18nLoaderToken} from './tokens';
 
-type $Call1<F extends (...args: any) => any, A> = F extends (
-  a: A,
-  ...args: any
-) => infer R
-  ? R
-  : never;
-
 export type TranslationsObjectType = {
   [x: string]: string;
 };
-
-type ExtractReturnType = <V>(a: () => V) => V;
 
 export type TranslateFuncType = (
   key: string,
@@ -51,7 +43,8 @@ export type I18nDepsType = {
   translateFns?: typeof I18nLoaderToken.optional;
 };
 
-export type IEmitter = $Call1<ExtractReturnType, typeof UniversalEventsToken>;
+//todo: backport directly use emitter type
+export type {IEmitter};
 
 export type I18nServiceType = {
   from: (ctx: Context) => {

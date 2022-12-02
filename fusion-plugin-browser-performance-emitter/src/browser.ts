@@ -22,7 +22,7 @@ class BrowserPerformanceEmitter {
     this.tags = {route: window.location.href};
   }
 
-  calculate(timing, resourceEntries) {
+  calculate(timing?, resourceEntries?) {
     if (
       (!window.performance ||
         !window.performance.timing ||
@@ -58,13 +58,17 @@ class BrowserPerformanceEmitter {
     if (paint) {
       firstPaint = getTimeFromMarks(paint, 'first-paint');
       firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
-    } else if (typeof window.performance.timing.msFirstPaint === 'number') {
-      // IE
-      firstPaint =
-        window.performance.timing.msFirstPaint -
-        window.performance.timing.navigationStart;
     } else {
-      return null;
+      // @ts-expect-error
+      if (typeof window.performance.timing.msFirstPaint === 'number') {
+        // IE
+        firstPaint =
+          // @ts-expect-error
+          window.performance.timing.msFirstPaint -
+          window.performance.timing.navigationStart;
+      } else {
+        return null;
+      }
     }
     return {
       firstPaint,

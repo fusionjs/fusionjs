@@ -26,12 +26,13 @@ export function withRPCReactor<Props extends {}>(
   }: {
     propName?: string;
     transformParams?: (params: any) => any;
-    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any;
+    mapStateToParams?: (state: any, args: any, ownProps: Props) => any;
   } = {}
 ) {
   return withRPCRedux(rpcId, {
     actions: createRPCReactors(rpcId, reducers),
     propName,
+    // @ts-expect-error todo(flow->ts) can this be removed?
     rpcId,
     transformParams,
     mapStateToParams,
@@ -49,7 +50,7 @@ export function withRPCRedux<Props extends {}>(
     propName?: string;
     actions?: any;
     transformParams?: (params: any) => any;
-    mapStateToParams?: (state: any, args?: any, ownProps: Props) => any;
+    mapStateToParams?: (state: any, args: any, ownProps: Props) => any;
   } = {}
 ): (a: React.ComponentType<any>) => React.ComponentType<any> {
   return (Component: React.ComponentType<Props>) => {

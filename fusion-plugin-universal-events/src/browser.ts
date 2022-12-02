@@ -28,6 +28,12 @@ const BEACON_PAYLOAD_SIZE_LIMIT = 60000;
 // The bodyparser used server-side has a default 1mb limit
 const XHR_PAYLOAD_SIZE_LIMIT = 1048576;
 
+declare global {
+  interface Window {
+    __ROUTE_PREFIX__?: string;
+  }
+}
+
 export class UniversalEmitter extends Emitter {
   flush: any;
   fetch: Fetch;

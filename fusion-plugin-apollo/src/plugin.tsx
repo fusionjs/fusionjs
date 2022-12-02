@@ -56,7 +56,7 @@ function getDeps(): DepsType {
       defaultOptionsConfig: ApolloDefaultOptionsConfigToken.optional,
     };
   } else {
-    // $FlowFixMe
+    // @ts-expect-error todo(flow-ts): refactor this
     return {
       getApolloClient: ApolloClientToken,
     };
@@ -147,11 +147,13 @@ export default (renderFn: Render) =>
             return ctx;
           },
           executor: async (requestContext) => {
-            const fusionCtx = requestContext.context;
+            // todo(flow->ts) koa types
+            const fusionCtx: any = requestContext.context;
             const routeTags = RouteTags.from(fusionCtx);
             routeTags.name = 'graphql';
             const apolloCtx = getApolloContext(fusionCtx);
             const client = getApolloClient(fusionCtx, {});
+            // @ts-expect-error todo(flow->ts)
             const queryObservable = client.queryManager.getObservableFromLink(
               requestContext.document,
               apolloCtx,
@@ -173,6 +175,7 @@ export default (renderFn: Render) =>
         server.applyMiddleware({
           // switch to server.getMiddleware once https://github.com/apollographql/apollo-server/pull/2435 lands
           app: {
+            // @ts-expect-error todo(flow->ts)
             use: (m) => {
               serverMiddleware.push(m);
             },

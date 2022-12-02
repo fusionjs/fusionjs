@@ -40,7 +40,8 @@
     "fusion-plugin-web-app-manifest",
     "linter",
     "jest-resolver-fusion",
-    "jest-resolver-fusion-browser"
+    "jest-resolver-fusion-browser",
+    "everything"
   ],
   "dependenciesMeta": {
     "react-dev-utils": {

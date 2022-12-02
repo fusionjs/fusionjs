@@ -41,7 +41,7 @@ async function getDistFiles(dir) {
 test('`fusion build` app with dynamic imports chunk hashing', async () => {
   await cmd(`build --dir=${dir} --production`);
 
-  const splitChunkId = 3;
+  const splitChunkId = 1;
   const distFiles = await getDistFiles(dir);
   const dynamicFileBundlePath = path.resolve(
     dir,

@@ -1,0 +1,26 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "lib": [
+      "esnext",
+      "dom",
+      "webworker"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../fusion-core"
+    },
+    {
+      "path": "../fusion-test-utils"
+    },
+    {
+      "path": "../fusion-tokens"
+    }
+  ]
+}

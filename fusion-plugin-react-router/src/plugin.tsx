@@ -63,7 +63,8 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
       }
       const myAPI = self.from(ctx);
       if (__NODE__) {
-        let pageData = {
+        // todo(flow->ts) remove any
+        let pageData: any = {
           title: ctx.path,
           page: ctx.path,
         };
@@ -136,7 +137,8 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         });
       } else if (__BROWSER__) {
         // TODO(#3): We should consider adding render/downstream/upstream timings for the browser
-        let pageData = {};
+        // todo(flow->ts) remove any
+        let pageData: any = {};
         const element = document.getElementById('__ROUTER_DATA__');
         if (element) {
           pageData = JSON.parse(unescape(element.textContent));
@@ -161,9 +163,11 @@ const plugin: FusionPlugin<PluginDepsType, HistoryWrapperType> = createPlugin({
         // routes to match based on the previous location information.
         if (
           !browserHistory ||
+          // @ts-expect-error todo(flow->ts) remove any
           (__DEV__ && typeof window.jsdom !== 'undefined')
         ) {
           browserHistory = createBrowserHistory({
+            // @ts-expect-error todo(flow->ts) remove any
             basename: ctx.prefix,
           }) as TNavigator;
         }

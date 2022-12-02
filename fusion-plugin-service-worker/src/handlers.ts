@@ -7,6 +7,10 @@ const cacheName = '0.0.0'; // we don't expect this to change
 const debug = console;
 const defaultMaxCacheDuration = 24 * 60 * 60 * 1000; // one day
 
+type InstallEvent = any;
+type FetchEvent = any;
+declare var self: ServiceWorkerGlobalScope;
+
 export default function getHandlers(assetInfo: AssetInfo) {
   const {
     precachePaths,
@@ -39,7 +43,8 @@ export default function getHandlers(assetInfo: AssetInfo) {
     },
     onActivate: (event: InstallEvent) => {
       // let all existing clients claim this new worker instance
-      event.waitUntil(clients.claim());
+      // todo(flow->ts) doublechck change from `clients` to `self.clients`
+      event.waitUntil(self.clients.claim());
       self.clients.matchAll().then((all) =>
         all.map((client) =>
           client.postMessage({

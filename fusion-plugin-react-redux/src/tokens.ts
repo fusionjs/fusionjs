@@ -19,7 +19,7 @@ export const ReducerToken: Token<Reducer<any, any>> =
 export const PreloadedStateToken: Token<any> = createToken(
   'PreloadedStateToken'
 );
-export const EnhancerToken: Token<StoreEnhancer<any, any, any>> =
+export const EnhancerToken: Token<StoreEnhancer<any, any>> =
   createToken('EnhancerToken');
 export const ReduxDevtoolsConfigToken: Token<{} | false> = createToken(
   'ReduxDevtoolsConfigToken'

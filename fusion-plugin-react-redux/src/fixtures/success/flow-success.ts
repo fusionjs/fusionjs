@@ -10,9 +10,10 @@ import {GetInitialStateToken} from '../../tokens';
 
 import type {Context} from 'fusion-core';
 
+// @ts-expect-error todo(flow->ts):
 const app = new App();
 
-app.register(GetInitialStateToken, async (): any => {
+app.register(GetInitialStateToken, async (): Promise<any> => {
   return {};
 });
 

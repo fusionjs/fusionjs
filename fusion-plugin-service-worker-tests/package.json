@@ -30,7 +30,6 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "flow": "flow",
     "lint": "yarn g:lint",
     "test": "jest --runInBand"
   },

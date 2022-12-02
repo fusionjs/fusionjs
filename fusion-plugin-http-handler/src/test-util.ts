@@ -12,7 +12,7 @@ import getPort from 'get-port';
 export async function startServer(handler: any) {
   const port = await getPort();
   const server = http.createServer(handler);
-  await new Promise((resolve) => {
+  await new Promise<void>((resolve) => {
     server.listen(port, resolve);
   });
   return {

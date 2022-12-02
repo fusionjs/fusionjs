@@ -11,7 +11,9 @@ export function unregisterServiceWorker(logger: SWLoggerType) {
         return Promise.all(
           registrations.map(
             (registration) =>
-              new Promise((res) => registration.unregister().then(() => res()))
+              new Promise<void>((res) =>
+                registration.unregister().then(() => res())
+              )
           )
         );
       }

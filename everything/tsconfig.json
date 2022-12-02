@@ -1,0 +1,89 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "../fusion-core"
+    },
+    {
+      "path": "../fusion-plugin-apollo"
+    },
+    {
+      "path": "../fusion-plugin-browser-performance-emitter"
+    },
+    {
+      "path": "../fusion-plugin-connected-react-router"
+    },
+    {
+      "path": "../fusion-plugin-csrf-protection"
+    },
+    {
+      "path": "../fusion-plugin-error-handling"
+    },
+    {
+      "path": "../fusion-plugin-font-loader-react"
+    },
+    {
+      "path": "../fusion-plugin-http-handler"
+    },
+    {
+      "path": "../fusion-plugin-i18n"
+    },
+    {
+      "path": "../fusion-plugin-i18n-react"
+    },
+    {
+      "path": "../fusion-plugin-introspect"
+    },
+    {
+      "path": "../fusion-plugin-jwt"
+    },
+    {
+      "path": "../fusion-plugin-node-performance-emitter"
+    },
+    {
+      "path": "../fusion-plugin-react-helmet-async"
+    },
+    {
+      "path": "../fusion-plugin-react-redux"
+    },
+    {
+      "path": "../fusion-plugin-react-router"
+    },
+    {
+      "path": "../fusion-plugin-redux-action-emitter-enhancer"
+    },
+    {
+      "path": "../fusion-plugin-rpc"
+    },
+    {
+      "path": "../fusion-plugin-rpc-redux-react"
+    },
+    {
+      "path": "../fusion-plugin-service-worker"
+    },
+    {
+      "path": "../fusion-plugin-styletron-react"
+    },
+    {
+      "path": "../fusion-plugin-universal-events"
+    },
+    {
+      "path": "../fusion-plugin-universal-logger"
+    },
+    {
+      "path": "../fusion-plugin-web-app-manifest"
+    },
+    {
+      "path": "../fusion-react"
+    },
+    {
+      "path": "../fusion-rpc-redux"
+    },
+    {
+      "path": "../fusion-test-utils"
+    },
+    {
+      "path": "../fusion-tokens"
+    }
+  ]
+}

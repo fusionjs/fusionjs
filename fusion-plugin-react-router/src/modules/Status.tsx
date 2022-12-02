@@ -17,8 +17,9 @@ type StatusPropsType = {
 export class Status extends React.Component<StatusPropsType> {
   constructor(props: StatusPropsType, context: RouterContextType) {
     super(props, context);
-    const {router: {staticContext} = {}} = context;
+    const {router: {staticContext} = {} as any} = context;
     if (staticContext) {
+      // @ts-expect-error number in parseInt
       staticContext.status = parseInt(this.props.code, 10);
     }
   }
@@ -26,13 +27,13 @@ export class Status extends React.Component<StatusPropsType> {
   render() {
     return this.props.children;
   }
-}
 
-Status.contextTypes = {
-  router: PropTypes.shape({
-    staticContext: PropTypes.object,
-  }),
-};
+  static contextTypes = {
+    router: PropTypes.shape({
+      staticContext: PropTypes.object,
+    }),
+  };
+}
 
 export const NotFound = <
   TProps extends {

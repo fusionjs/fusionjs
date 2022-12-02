@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../lib",
+    "rootDir": "./"
+  },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "./__tests__/**/*",
+    "./cli/**/*"
+  ],
+  "references": [
+    {
+      "path": "../../fusion-core"
+    },
+    {
+      "path": "../../fusion-test-utils"
+    }
+  ]
+}

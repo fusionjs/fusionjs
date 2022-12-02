@@ -1,15 +1,28 @@
-// @noflow
+// @ts-check
 
 /* eslint-env node */
 
+// @flow
 const fs = require('fs');
 const {ResolverFactory} = require('enhanced-resolve');
+
+const extensions = [
+  '.js',
+  '.mjs',
+  '.cjs',
+  '.jsx',
+  '.ts',
+  '.tsx',
+  '.json',
+  '.node',
+];
 
 const nodeResolver = ResolverFactory.createResolver({
   fileSystem: fs,
   useSyncFileSystemCalls: true,
   mainFields: ['main'],
   aliasFields: ['es2015', 'es2017'],
+  extensions,
 });
 
 module.exports = function enhancedResolve(modulePath, opts) {

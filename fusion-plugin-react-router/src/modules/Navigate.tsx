@@ -28,13 +28,16 @@ export class Navigate extends React.Component<PropsType> {
 
   render() {
     const staticContext =
+      // @ts-expect-error todo(flow->ts) missing types for this.context
       this.context.router && this.context.router.staticContext;
+    // @ts-expect-error todo(flow->ts) missing types for this.context
     const history = this.context.history;
 
     // Redirect (Navigate in RR6) was removed for server side redirects
     // https://gist.github.com/mjackson/b5748add2795ce7448a366ae8f8ae3bb
     // This implementation preserves the RR5 behavior for backwards compatibility
     if (__NODE__ && staticContext && history) {
+      // @ts-expect-error todo(flow->ts) number in parseInt
       staticContext.status = parseInt(this.props.code, 10);
       history[this.props.replace ? 'replace' : 'push'](this.props.to);
       return null;
@@ -42,11 +45,11 @@ export class Navigate extends React.Component<PropsType> {
     const {code, ...rest} = this.props;
     return <NavigateComponent {...rest} />;
   }
-}
 
-Navigate.contextTypes = {
-  history: PropTypes.object,
-  router: PropTypes.shape({
-    staticContext: PropTypes.object,
-  }),
-};
+  static contextTypes = {
+    history: PropTypes.object,
+    router: PropTypes.shape({
+      staticContext: PropTypes.object,
+    }),
+  };
+}

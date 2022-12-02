@@ -21,7 +21,7 @@ const plugin =
         if (!ctx.element) {
           return next();
         }
-        const helmetContext = {};
+        const helmetContext: any = {};
         ctx.element = (
           <HelmetProvider context={helmetContext}>{ctx.element}</HelmetProvider>
         );
@@ -46,4 +46,4 @@ const plugin =
     },
   });
 
-export default plugin as any as FusionPlugin<void, void>;
+export default plugin as any as FusionPlugin<undefined, undefined>;

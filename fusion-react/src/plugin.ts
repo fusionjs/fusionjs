@@ -8,22 +8,22 @@
 import * as React from 'react';
 
 import {createPlugin} from 'fusion-core';
-import type {FusionPlugin, Middleware} from 'fusion-core';
+import type {FusionPlugin, Middleware, FusionPluginDepsType} from 'fusion-core';
 
 import Provider from './provider';
 
 // eslint-disable-next-line
-type FusionPluginNoHidden<TDeps, TService> = Omit<
+type FusionPluginNoHidden<TDeps extends FusionPluginDepsType, TService> = Omit<
   FusionPlugin<TDeps, TService>,
   '__plugin__' | 'stack'
 >;
 
 export default {
-  create: <TDeps extends any, TService extends any>(
+  create: <TDeps extends FusionPluginDepsType, TService extends any>(
     name: string,
     // eslint-disable-next-line
     plugin:
-      | FusionPluginNoHidden<TDeps, TService>
+      | (FusionPluginNoHidden<TDeps, TService> & {__plugin__?: void})
       | FusionPlugin<TDeps, TService>,
     provider?: React.ComponentType<any>
   ): FusionPlugin<TDeps, TService> => {

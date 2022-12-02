@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, {Validator} from 'prop-types';
 import prepared from './prepared';
 
 declare var __webpack_modules__: {
@@ -15,7 +15,13 @@ declare var __webpack_modules__: {
 
 declare var __webpack_require__: (a: any) => any;
 
-const contextTypes = {
+declare global {
+  interface Window {
+    webpackChunkFusion: any;
+  }
+}
+
+const contextTypes: {[k: string]: Validator<any>} = {
   splitComponentLoaders: PropTypes.array.isRequired,
 };
 
@@ -82,9 +88,9 @@ export default function withAsyncComponent<Config>({
       // populated before app is hydrated, causing a rendering mismatch.
       if (!AsyncComponent) {
         let promise = load();
-        // $FlowFixMe
+        // @ts-expect-error
         const id = promise.__MODULE_ID;
-        // $FlowFixMe
+        // @ts-expect-error
         const chunkIds = promise.__CHUNK_IDS;
 
         if (

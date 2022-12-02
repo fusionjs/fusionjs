@@ -6,6 +6,7 @@
  */
 
 import * as React from 'react';
+// @ts-expect-error todo(flow->ts) incorrect module name hardcoded in definition
 import ssrPrepass from '@derekju/react-ssr-prepass';
 import PropTypes from 'prop-types';
 

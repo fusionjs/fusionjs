@@ -11,7 +11,7 @@ import * as browser from './browser';
 
 export * from './types';
 
-declare var __BROWSER__: Boolean;
+declare var __BROWSER__: boolean;
 
 export default plugin;
 

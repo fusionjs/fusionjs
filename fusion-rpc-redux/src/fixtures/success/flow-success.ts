@@ -24,7 +24,7 @@ export type UserActionType = {
   };
 };
 
-const UserReducer: Reducer<UserStateType, UserActionType> = createRPCReducer(
+const UserReducer = createRPCReducer<UserStateType, UserActionType>(
   'getUser',
   {
     start: (state) => {

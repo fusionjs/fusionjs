@@ -5,8 +5,9 @@ dist-node-cjs/
 dist-node-esm/
 coverage/
 .nyc_output/
-test/*/.fusion
+src/test/*/.fusion
 
 .DS_Store
 npm-debug.log
 yarn-error.log
+lib/

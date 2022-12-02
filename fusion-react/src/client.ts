@@ -17,13 +17,10 @@ import type {Logger} from 'fusion-tokens';
 let root = null;
 // Client HMR
 if (typeof module !== 'undefined' && module.hot) {
-  // $FlowFixMe
   module.hot.addDisposeHandler((data) => {
     data.oldRoot = root;
   });
-  // $FlowFixMe
   if (module.hot.data) {
-    // $FlowFixMe
     root = module.hot.data.oldRoot;
   }
 }
@@ -55,6 +52,7 @@ export default (el: React.ReactElement<any>, logger?: Logger) => {
         // Capture uncaught errors from hydration mismatches
         // https://github.com/reactjs/rfcs/blob/main/text/0215-server-errors-in-react-18.md#error-reporting
         // errorInfo: https://github.com/facebook/react/pull/24591
+        // @ts-expect-error todo(flow->ts) TS2322: Type '(error: any, errorInfo: any) => void' is not assignable to type '(error: unknown) => void'.
         onRecoverableError: (error, errorInfo) => {
           logger &&
             logger.warn(`Client-side hydration onRecoverableError`, {

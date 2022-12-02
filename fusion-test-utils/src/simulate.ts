@@ -26,10 +26,12 @@ export const request =
 export const render =
   (app: FusionApp) =>
   (url: string, options: any = {}): Promise<any> => {
+    // @ts-expect-error
     if (global.jsdom) {
       if (!url.startsWith('/')) {
         url = `/${url}`;
       }
+      // @ts-expect-error
       global.jsdom.reconfigure({
         url: `http://localhost${url}`,
       });

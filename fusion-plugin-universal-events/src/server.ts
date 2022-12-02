@@ -94,7 +94,7 @@ const plugin =
         if (ctx.method === 'POST' && ctx.path === '/_events') {
           deps.RouteTags.from(ctx).name = 'universal_events';
           await parseBody(ctx, async () => {});
-          // $FlowFixMe
+          // @ts-expect-error
           const {items} = ctx.request.body;
           if (items) {
             for (let index = 0; index < items.length; index++) {

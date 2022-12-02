@@ -1,4 +1,3 @@
-// @flow
 /* eslint-env node */
 
 module.exports = {
@@ -8,9 +7,10 @@ module.exports = {
       testEnvironment: 'node',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.browser.test.js',
+        '\\.browser\\.test\\.[jt]sx?$',
         'dist',
-        'setup-jest.js',
+        'lib',
+        'setup-jest.ts',
       ],
       globals: {
         __NODE__: true,
@@ -23,16 +23,17 @@ module.exports = {
       testEnvironment: 'jsdom',
       testPathIgnorePatterns: [
         '/node_modules/',
-        '.node.test.js',
+        '\\.node\\.test\\.[jt]sx?$',
         'dist',
-        'setup-jest.js',
+        'lib',
+        'setup-jest.ts',
       ],
       globals: {
         __NODE__: false,
         __BROWSER__: true,
         __DEV__: true,
       },
-      setupFilesAfterEnv: ['<rootDir>/test/setup-jest.js'],
+      setupFilesAfterEnv: ['<rootDir>/src/test/setup-jest.ts'],
     },
   ],
 };

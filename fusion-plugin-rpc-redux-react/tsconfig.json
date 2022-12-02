@@ -1,0 +1,36 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src"
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../fusion-rpc-redux"
+    },
+    {
+      "path": "../fusion-core"
+    },
+    {
+      "path": "../fusion-plugin-react-redux"
+    },
+    {
+      "path": "../fusion-plugin-rpc"
+    },
+    {
+      "path": "../fusion-plugin-universal-events"
+    },
+    {
+      "path": "../fusion-react"
+    },
+    {
+      "path": "../fusion-test-utils"
+    },
+    {
+      "path": "../fusion-tokens"
+    }
+  ]
+}

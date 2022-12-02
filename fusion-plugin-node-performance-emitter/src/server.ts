@@ -17,7 +17,6 @@ import assert from 'assert';
 import {createPlugin} from 'fusion-core';
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 
-import type {FusionPlugin} from 'fusion-core';
 import type {NodePerformanceDepsType as Deps} from './flow';
 
 import {
@@ -58,7 +57,7 @@ function eventLoopLag(cb: Function) {
 function noop() {}
 
 /* Service */
-class NodePerformanceEmitter {
+export class NodePerformanceEmitter {
   gc: any;
   eventLoopLagInterval: number;
   memoryInterval: number;
@@ -229,7 +228,7 @@ class NodePerformanceEmitter {
 /* Plugin */
 const plugin =
   __NODE__ &&
-  createPlugin({
+  createPlugin<Deps, NodePerformanceEmitter>({
     deps: {
       emitter: UniversalEventsToken,
       timers: TimersToken.optional,
@@ -241,7 +240,8 @@ const plugin =
     },
     provides: ({
       emitter,
-      timers = nodeTimers,
+      // todo(flow->ts): better Timers type
+      timers = nodeTimers as unknown as Timers,
       eventLoopLagInterval = CONFIG_DEFAULTS.eventLoopLagInterval,
       memoryInterval = CONFIG_DEFAULTS.memoryInterval,
       socketInterval = CONFIG_DEFAULTS.socketInterval,
@@ -263,4 +263,4 @@ const plugin =
     cleanup: async (service) => service.stop(),
   });
 
-export default plugin as any as FusionPlugin<Deps, NodePerformanceEmitter>;
+export default plugin;

@@ -5,7 +5,11 @@
  *
  */
 
-export const injectDeclarationCompatMixin = (Base: any) =>
+export const injectDeclarationCompatMixin = <
+  T extends new (...args: any[]) => any
+>(
+  Base: T
+) =>
   class extends Base {
     injectDeclaration({prop, val, media, pseudo}: any) {
       let style = {[prop]: val};

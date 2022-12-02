@@ -28,7 +28,7 @@ const plugin: ConnectedRouterPluginType = createPlugin({
         const {history} = router.from(store.ctx);
         const routerReducer = connectRouter(history);
         const combinedReducer = (
-          {router: routerState, ...restState} = {},
+          {router: routerState, ...restState} = {} as any,
           action
         ) => {
           /**

@@ -28,7 +28,7 @@ import type {
 
 const plugin =
   __NODE__ &&
-  createPlugin({
+  createPlugin<ReactReduxDepsType, ReactReduxServiceType>({
     deps: {
       reducer: ReducerToken,
       preloadedState: PreloadedStateToken.optional,
@@ -38,7 +38,7 @@ const plugin =
     provides({reducer, preloadedState, enhancer, getInitialState}) {
       class Redux {
         ctx: Context;
-        store: StoreWithContextType<any, any, any> | undefined | null;
+        store: StoreWithContextType<any, any> | undefined | null;
 
         constructor(ctx) {
           // We only use initialState for client-side hydration
@@ -90,7 +90,4 @@ const plugin =
     },
   });
 
-export default plugin as any as FusionPlugin<
-  ReactReduxDepsType,
-  ReactReduxServiceType
->;
+export default plugin;
