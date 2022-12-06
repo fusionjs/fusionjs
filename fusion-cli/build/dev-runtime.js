@@ -127,7 +127,7 @@ module.exports.DevelopmentRuntime = function (
 
     lifecycle.error(err);
     logger.error(
-      'Server has crashed, please check logs for an error (type `r` in console to restart the server)'
+      'Server has crashed, please check logs for an error (type `r`, and press `ENTER` in the terminal to restart the server)'
     );
   }
 
