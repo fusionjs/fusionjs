@@ -25,7 +25,7 @@ import {getTokenRef} from './create-token';
 import {declarePlugin, getPluginFn} from './create-plugin';
 import wrapMiddleware from './utils/wrap-middleware';
 import {unescape} from './sanitization';
-import {cleanupFn} from './types';
+import type {cleanupFn} from './types';
 
 // This is the global reference that hooks can use during synchronous execution.
 // For example, a hook could push add a middleware to the app.
@@ -35,40 +35,53 @@ const NEXT = 0,
   STOP = 1;
 
 export class App {
-  taskMap = new Map();
-  resolved = new Map();
-  count = 0;
-  unresolvedAsyncCount = 0;
+  taskMap: Map<any, any>;
+  resolved: Map<any, any>;
+  count: number;
+  unresolvedAsyncCount: number;
+  registeredTokens: Set<any>;
+  enhancerChainRoots: Map<any, any>;
+  enhancerChainTails: Map<any, any>;
+  enhancerTokens: Map<any, any>;
+  cleanups: Array<cleanupFn>;
+  wrappers: Array<any>;
+  renderSetup: Array<any>;
+  universalValues: Object;
+  prepareBoundary: Boundary;
+  pending: Set<any>;
+  activeTask: any;
 
-  // Track so we can early error if dependency on non-registered token exists.
-  registeredTokens = new Set();
+  constructor() {
+    this.taskMap = new Map();
+    this.resolved = new Map();
+    this.count = 0;
+    this.unresolvedAsyncCount = 0;
 
-  // The first enhancer needs access to the original token.
-  // This map connects the token requested by the first enhancer to the original
-  enhancerChainRoots = new Map(); // RootRef (A') -> OriginalRef (A)
+    // Track so we can early error if dependency on non-registered token exists.
+    this.registeredTokens = new Set();
 
-  // When adding an enhancer, we need to build upon existing tail. This map
-  // allows for lookup of the prior enhancer result so the next enhancer
-  // can depend on it.
-  enhancerChainTails = new Map(); // RawRef (A) -> TailRef (A'''')
+    // The first enhancer needs access to the original token.
+    // This map connects the token requested by the first enhancer to the original
+    this.enhancerChainRoots = new Map(); // RootRef (A') -> OriginalRef (A)
 
-  enhancerTokens = new Map();
+    // When adding an enhancer, we need to build upon existing tail. This map
+    // allows for lookup of the prior enhancer result so the next enhancer
+    // can depend on it.
+    this.enhancerChainTails = new Map(); // RawRef (A) -> TailRef (A'''')
 
-  cleanups: Array<cleanupFn> = [];
+    this.enhancerTokens = new Map();
 
-  // Element wrappers
-  wrappers = [];
-  renderSetup = [];
+    this.cleanups = [];
 
-  universalValues = {};
+    // Element wrappers
+    this.wrappers = [];
+    this.renderSetup = [];
 
-  // Boundaries
-  prepareBoundary = new Boundary('prepare');
+    this.universalValues = {};
 
-  pending;
-  activeTask;
-
-  constructor() {}
+    // Boundaries
+    this.prepareBoundary = new Boundary('prepare');
+  }
 
   registerPlugin(id, taskFn, param?) {
     if (!taskFn) {
@@ -448,16 +461,22 @@ class Task {
   id;
   fn;
   param;
-  generator = void 0;
-  step = void 0;
-  promise = void 0;
-  deps = void 0;
-  tokenAliases = new Map();
-  requested = [];
+  generator;
+  step;
+  promise;
+  deps;
+  tokenAliases: Map<any, any>;
+  requested: Array<any>;
   constructor(taskFn, id, param?) {
     this.id = id;
     this.fn = taskFn;
     this.param = param;
+    this.generator = void 0;
+    this.step = void 0;
+    this.promise = void 0;
+    this.deps = void 0;
+    this.tokenAliases = new Map();
+    this.requested = [];
   }
 }
 

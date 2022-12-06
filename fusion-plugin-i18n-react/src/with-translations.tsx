@@ -39,6 +39,7 @@ export const withTranslations = (
     class WithTranslations extends React.Component<T> {
       translate: TranslateType;
       localeCode: string;
+      static displayName: string;
 
       constructor(props: T, context: Context) {
         super(props, context);
@@ -64,11 +65,10 @@ export const withTranslations = (
           />
         );
       }
-
-      static displayName = `withTranslations(${displayName})`;
-      // $FlowFixMe
-      static contextType = I18nContext;
     }
+
+    WithTranslations.displayName = `withTranslations(${displayName})`;
+    WithTranslations.contextType = I18nContext;
 
     return WithTranslations;
   };
