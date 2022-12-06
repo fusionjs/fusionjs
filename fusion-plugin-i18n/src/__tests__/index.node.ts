@@ -312,3 +312,108 @@ test('matchesLiteralSections matches positionally', async () => {
   );
   expect(matches4).toEqual(['abbc', 'ababc']);
 });
+
+describe('loader.getTranslations', () => {
+  test('translate', async () => {
+    const data = {
+      test: 'hello',
+      interpolated: 'hi ${adjective} ${noun}',
+    };
+    const getTranslations = jest.fn();
+    const app = new App('el', (el) => el);
+    app.register(I18nToken, I18n);
+    app.register(I18nLoaderToken, {
+      from: () => ({
+        translations: {},
+        locale: 'en_US',
+        getTranslations,
+      }),
+    });
+    app.register(UniversalEventsToken as any, {
+      from: () => ({
+        emit: (name, payload) => {
+          expect(name).toBe('i18n-translate-miss');
+          expect(payload.key).toBe('missing-translation');
+        },
+      }),
+    });
+    app.middleware(
+      {
+        i18n: I18nToken,
+      },
+      ({i18n}) => {
+        return (ctx, next) => {
+          const translator = i18n.from(ctx);
+          getTranslations.mockReturnValue({
+            test: data.test,
+          });
+          expect(translator.translate('test')).toBe('hello');
+          expect(getTranslations).toHaveBeenLastCalledWith(['test']);
+          expect(translator.translate('missing-translation')).toBe(
+            'missing-translation'
+          );
+          expect(getTranslations).toHaveBeenLastCalledWith([
+            'missing-translation',
+          ]);
+          getTranslations.mockReturnValue({
+            interpolated: data.interpolated,
+          });
+          expect(
+            translator.translate('interpolated', {
+              adjective: 'big',
+              noun: 'world',
+            })
+          ).toBe('hi big world');
+          expect(
+            translator.translate('interpolated', {
+              noun: 'world',
+            })
+          ).toBe('hi ${adjective} world');
+          expect(
+            translator.translate('interpolated', {
+              adjective: '',
+              noun: '0',
+            })
+          ).toBe('hi  0');
+          expect(translator.translate('interpolated')).toBe(
+            'hi ${adjective} ${noun}'
+          );
+          return next();
+        };
+      }
+    );
+    const simulator = getSimulator(app);
+    await simulator.render('/');
+  });
+  test('translations field', async () => {
+    const data = {
+      test: 'hello',
+      interpolated: 'hi ${adjective} ${noun}',
+    };
+    const getTranslations = jest.fn();
+    const app = new App('el', (el) => el);
+    app.register(I18nToken, I18n);
+    app.register(I18nLoaderToken, {
+      from: () => ({
+        translations: {},
+        locale: 'en_US',
+        getTranslations,
+      }),
+    });
+    app.middleware(
+      {
+        i18n: I18nToken,
+      },
+      ({i18n}) => {
+        return (ctx, next) => {
+          const translator = i18n.from(ctx);
+          getTranslations.mockReturnValue(data);
+          expect(translator.translations).toEqual(data);
+          return next();
+        };
+      }
+    );
+    const simulator = getSimulator(app);
+    await simulator.render('/');
+  });
+});
