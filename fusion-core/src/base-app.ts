@@ -174,6 +174,7 @@ class BaseApp extends Core {
     };
 
     if (enhancers && Array.isArray(enhancers)) {
+      // @ts-ignore (Remove once references are used)
       enhancers.push(enhancer);
     }
     this.registered.set(getTokenRef(token), {
@@ -214,6 +215,7 @@ class BaseApp extends Core {
     this.done = true;
   }
 
+  // @ts-ignore (Remove once references are used)
   getService<TResolved>(token: Token<TResolved>): TResolved {
     if (!this.done) {
       throw new DIError({

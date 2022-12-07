@@ -55,6 +55,7 @@ export function sortLegacy(app) {
     }
 
     if (task.middleware) {
+      // @ts-ignore (Remove once references are used)
       legacySorted.push(task.middleware);
     }
 

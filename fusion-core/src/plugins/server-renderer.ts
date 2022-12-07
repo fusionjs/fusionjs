@@ -52,6 +52,7 @@ export default function createServerRenderPlugin(app) {
         app.renderCtx = ctx;
         const renderStart = now();
         ctx.rendered = await render(ctx.element, ctx);
+        // @ts-ignore (Remove once references are used)
         renderTime = now() - renderStart;
         app.renderCtx = void 0;
         app._clearRef();

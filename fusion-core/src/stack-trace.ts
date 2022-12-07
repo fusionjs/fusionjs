@@ -8,6 +8,7 @@
 export function captureStackTrace(caller: Function): string {
   // For monitoring in production, use a single format independent of browser
   if (__BROWSER__ && !__DEV__) {
+    // @ts-ignore (Remove once references are used)
     return new Error().stack;
   } else {
     if ('captureStackTrace' in Error) {
@@ -46,6 +47,7 @@ export class DIError extends Error {
     if (stack) {
       // Replace the DIError stack trace with the supplied stack
       // Assumes `message` contains no new lines
+      // @ts-ignore (Remove once references are used)
       const diErrorMessage = this.stack.split('\n')[0];
       const stackOverride = stack.split('\n');
       stackOverride[0] = diErrorMessage;

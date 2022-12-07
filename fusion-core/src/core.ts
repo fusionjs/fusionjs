@@ -152,6 +152,7 @@ export class App {
   }
 
   init() {
+    // @ts-ignore (Remove once references are used)
     global_app_ref = this;
     // We are using deferred pattern to more ergonomically have granular control over when
     // synchronous execution begins and ends in order to properly mantain the
@@ -168,6 +169,7 @@ export class App {
           for (let stack of original.stacks) {
             if (stack.type === 'enhance') {
               enhancerRegistrations.push(
+                // @ts-ignore (Remove once references are used)
                 stack.stack.split('(')[1].split(')')[0]
               );
             }
@@ -237,6 +239,7 @@ export class App {
   }
 
   _setRef() {
+    // @ts-ignore (Remove once references are used)
     global_app_ref = this;
   }
 
@@ -266,6 +269,7 @@ class Deps {
 
     for (let dep of deps) {
       if (task.deps && task.deps.has(dep)) {
+        // @ts-ignore (Remove once references are used)
         resolvedDeps.push(task.deps.get(dep));
         continue;
       }
@@ -277,6 +281,7 @@ class Deps {
         );
         if (result.resolved) {
           task.requested.push(result.eventual);
+          // @ts-ignore (Remove once references are used)
           resolvedDeps.push(result.value);
           continue;
         }
@@ -284,6 +289,7 @@ class Deps {
         const result = getResolvedDep(app, dep);
         if (result.resolved) {
           task.requested.push(result.eventual);
+          // @ts-ignore (Remove once references are used)
           resolvedDeps.push(result.value);
           continue;
         }
@@ -294,6 +300,7 @@ class Deps {
         !task.tokenAliases.has(getTokenRef(dep))
       ) {
         if (dep.type && dep.type === 1) {
+          // @ts-ignore (Remove once references are used)
           resolvedDeps.push(void 0);
           continue;
         } else {
@@ -491,16 +498,21 @@ export function withMiddleware(middleware) {
 export function withUniversalMiddleware(middleware) {
   const app = global_app_ref;
 
+  // @ts-ignore (Remove once references are used)
   if (app.enableMiddlewareTiming) {
+    // @ts-ignore (Remove once references are used)
     const token = app.activeTask.id;
     middleware = wrapMiddleware(middleware, token);
   }
 
+  // @ts-ignore (Remove once references are used)
   app.plugins.push(middleware);
 
+  // @ts-ignore (Remove once references are used)
   if (app.activeTask.middleware) {
     throw new Error('Only one middleware per plugin is allowed.');
   }
+  // @ts-ignore (Remove once references are used)
   app.activeTask.middleware = middleware;
 }
 
@@ -509,6 +521,7 @@ export function withCleanup(cleanup) {
   if (typeof cleanup !== 'function') {
     return;
   }
+  // @ts-ignore (Remove once references are used)
   app.cleanups.push(cleanup);
 }
 
@@ -523,17 +536,25 @@ export function withUniversalValue(id) {
       // and then serialize into request scope. Otherwise, this value
       // is intended to be serialized for all requests.
 
+      // @ts-ignore (Remove once references are used)
       if (app.renderSetupCtx) {
+        // @ts-ignore (Remove once references are used)
         const ctx = app.renderSetupCtx;
         ctx.universalValues[id] = val;
+        // @ts-ignore (Remove once references are used)
       } else if (app.renderCtx) {
+        // @ts-ignore (Remove once references are used)
         const ctx = app.renderCtx;
         ctx.universalValues[id] = val;
+        // @ts-ignore (Remove once references are used)
       } else if (app.postPrepareEffectCtx) {
+        // @ts-ignore (Remove once references are used)
         const ctx = app.postPrepareEffectCtx;
         ctx.universalValues[id] = val;
+        // @ts-ignore (Remove once references are used)
       } else if (!app.done) {
         // Universal value for all requests
+        // @ts-ignore (Remove once references are used)
         app.universalValues[id] = val;
       } else {
         throw new Error(
@@ -552,6 +573,7 @@ export function withUniversalValue(id) {
           const element = document.getElementById(
             '__FUSION_UNIVERSAL_VALUES__'
           );
+          // @ts-ignore (Remove once references are used)
           hydrated = JSON.parse(unescape(element.textContent));
         } catch (err) {
           console.error(`Failed to hydrate universal value: ${id}`);
@@ -574,6 +596,7 @@ export function withEndpoint(endpointPath, fn) {
   const app = global_app_ref;
 
   // Ensure no collision with another endpoint
+  // @ts-ignore (Remove once references are used)
   for (let [existingEndpoint] of app.endpoints) {
     if (endpointPath === existingEndpoint) {
       throw new Error(
@@ -582,6 +605,7 @@ export function withEndpoint(endpointPath, fn) {
     }
   }
 
+  // @ts-ignore (Remove once references are used)
   app.endpoints.set(endpointPath, fn);
 }
 
@@ -594,6 +618,7 @@ export function withRenderSetup(fn) {
   //   <BProvider>{root}</BProvider>
   // </APRovider>
   // In this case, B provider can depend on the context of A provider.
+  // @ts-ignore (Remove once references are used)
   app.renderSetup.push(fn);
 }
 
@@ -603,7 +628,9 @@ export function unstable_withPrepareEffect(effectFn) {
     return;
   }
   const app = global_app_ref;
+  // @ts-ignore (Remove once references are used)
   if (app.renderSetupCtx) {
+    // @ts-ignore (Remove once references are used)
     const ctx = app.renderSetupCtx;
     ctx.postPrepareEffects.push(effectFn);
   } else {
@@ -659,6 +686,7 @@ function reportCycleError(unresolvedTasks: Iterable<Task>) {
     visited.add(task);
     if (task.step.value instanceof Deps) {
       for (let dep of task.step.value.deps) {
+        // @ts-ignore (Remove once references are used)
         cycle.push({
           name: dep.name,
           registrationPos: getRegistrationPosition(task.id),
@@ -675,6 +703,7 @@ function reportCycleError(unresolvedTasks: Iterable<Task>) {
     let len = cycle.length;
     walkDeps(task);
     if (cycle.length !== len) {
+      // @ts-ignore (Remove once references are used)
       cycles.push(cycle);
     }
     cycle = [];
@@ -682,6 +711,7 @@ function reportCycleError(unresolvedTasks: Iterable<Task>) {
 
   let output = 'Error: Plugin dependency graph must not have cycles.\n';
   for (let cycle of cycles) {
+    // @ts-ignore (Remove once references are used)
     cycle.forEach((item, i) => {
       const registrationPos = item.registrationPos;
       const tokenName = item.name;
@@ -701,6 +731,7 @@ function reportCycleError(unresolvedTasks: Iterable<Task>) {
       } else {
         output += `│╰▶ Registration @ ${registrationPos} ${p1}──╮\n`;
       }
+      // @ts-ignore (Remove once references are used)
       if (i === cycle.length - 1) {
         output += `╰──── depends on token ${tokenName} provided by ◀${p2}╯\n`;
       } else {
