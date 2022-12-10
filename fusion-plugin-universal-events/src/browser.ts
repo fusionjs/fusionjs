@@ -71,8 +71,10 @@ export class UniversalEmitter extends Emitter {
   from(): UniversalEmitter {
     return this;
   }
+
   flushBeforeTerminated = () =>
     document.visibilityState === 'hidden' && this.flushInternal();
+
   async flushInternal(): Promise<void> {
     if (!this.startFlush()) {
       return;
@@ -86,7 +88,12 @@ export class UniversalEmitter extends Emitter {
       return;
     }
 
-    const payloadSizelimit = navigator.sendBeacon
+    // Navigator has to be bound to ensure it does not error in some browsers
+    // https://xgwang.me/posts/you-may-not-know-beacon/#it-may-throw-error%2C-be-sure-to-catch
+    const sendBeacon =
+      navigator.sendBeacon && navigator.sendBeacon.bind(navigator);
+
+    const payloadSizelimit = sendBeacon
       ? BEACON_PAYLOAD_SIZE_LIMIT
       : XHR_PAYLOAD_SIZE_LIMIT;
 
@@ -110,14 +117,23 @@ export class UniversalEmitter extends Emitter {
     }
     const payload = `{"items":[${itemsToSend.join(',')}]}`;
 
-    if (navigator.sendBeacon && !isLargePayload) {
+    if (sendBeacon && !isLargePayload) {
       // Not sending Blob with Content-Type: 'application/json' because it throws in some old browsers.
       // It has been temporary disabled due to a CORS-related bug - CORS preflight checks were not
       // performed in sendBeacon using Blob with a not-simple content type.
       // See http://crbug.com/490015
       const prefix = window.__ROUTE_PREFIX__ || '';
       const eventsURL = prefix + '/_events';
-      if (navigator.sendBeacon(eventsURL, payload)) {
+
+      let sendBeaconResult = false;
+      try {
+        // Only wrap this line inside try catch just to be surgical.
+        sendBeaconResult = sendBeacon(eventsURL, payload);
+      } catch (e) {
+        // Do nothing. If sendBeaconResult is false, we will fallback to using `this.fetch` below.
+      }
+
+      if (sendBeaconResult) {
         this.storage.getAndClear(itemsToSend.length);
         this.finishFlush();
         return;
