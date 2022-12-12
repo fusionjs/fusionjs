@@ -2,7 +2,7 @@
   "name": "fusion-cli-tests",
   "version": "0.0.0-monorepo",
   "dependencies": {
-    "@babel/core": "^7.15.0",
+    "@babel/core": "^7.20.5",
     "axios": "^0.21.0",
     "fusion-cli": "workspace:*",
     "get-port": "^5.1.1",

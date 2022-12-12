@@ -13,10 +13,10 @@
     "recursive-readdir": "2.2.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/node": "^7.14.9",
-    "@babel/plugin-transform-flow-strip-types": "^7.14.5",
-    "@babel/preset-env": "^7.15.0",
+    "@babel/core": "^7.20.5",
+    "@babel/node": "^7.20.5",
+    "@babel/plugin-transform-flow-strip-types": "^7.19.0",
+    "@babel/preset-env": "^7.20.2",
     "babel-eslint": "10.1.0",
     "flow-bin": "0.131.0",
     "nyc": "^14.1.0",

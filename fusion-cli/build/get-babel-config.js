@@ -39,7 +39,7 @@ module.exports = function getBabelConfig(opts /*: BabelConfigOpts */) {
   // Shared base env preset options
   let envPresetOpts /*: Object*/ = {
     useBuiltIns: 'entry',
-    corejs: '3.0.0',
+    corejs: '3.26',
   };
 
   // Shared base configuration
