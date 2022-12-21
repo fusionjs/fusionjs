@@ -15,10 +15,6 @@ process.on('unhandledRejection', (e) => {
   throw e;
 });
 
-global.requestAnimationFrame = (callback) => {
-  setTimeout(callback, 0);
-};
-
 // Parity with create-universal-package globals.
 // https://github.com/rtsao/create-universal-package#globals
 global.__BROWSER__ = Boolean(global.window);
