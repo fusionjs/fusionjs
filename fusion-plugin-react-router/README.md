@@ -391,7 +391,7 @@ For previous users of this plugin that was using React Router 5, the list below 
 
 ### Migration from V5
 
-The official documentation provides a detailed list of what changes need to be implemented: https://reactrouter.com/docs/en/v6/upgrading/v5
+The official documentation provides a detailed list of what changes need to be implemented: https://reactrouter.com/en/6.6.2/upgrading/v5
 
 Because `<Route>` elements no longer take React component but React element instances, if you utilize the `split` API from `fusion-react`, you will need to wrap the output of `split` with a `React.createElement` call to ensure
 that an element is being returned.
