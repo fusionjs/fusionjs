@@ -51,7 +51,6 @@ yarn add fusion-plugin-react-router
 // src/components/root.js
 import React from 'react';
 import {
-  Router,
   Routes,
   Route,
   Link,
@@ -82,7 +81,7 @@ const root = (
     <Routes>
       <Route caseSensitive={true} path="/" element={<Home />} />
       <Route caseSensitive={true} path="/test" element={<Test />} />
-      <Route element={<PageNotFound />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   </div>
 );
