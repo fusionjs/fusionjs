@@ -10,34 +10,45 @@
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
-import type {BrowserPerfDepsType} from './flow';
+import type {
+  BrowserPerfDepsType,
+  BrowserPerfEventMappedType,
+  BrowserPerfEventType,
+  CalculatedStatsType,
+  PaintTimesType,
+  PerformanceTiming,
+} from './types';
 
 const plugin: FusionPlugin<BrowserPerfDepsType, void> =
-  // $FlowFixMe
   __NODE__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
     provides: (deps) => {
       const emitter = deps.emitter;
       const perfLoggerVersion = require('../package.json').version;
-      emitter.on('browser-performance-emitter:stats:browser-only', (e, ctx) => {
-        if (ctx) {
-          const scopedEmitter = emitter.from(ctx);
-          scopedEmitter.emit(
-            'browser-performance-emitter:stats',
-            mapPerfEvent(e)
-          );
-        } else {
-          emitter.emit(
-            'browser-performance-emitter:stats',
-            mapPerfEvent(e),
-            ctx
-          );
+      emitter.on(
+        'browser-performance-emitter:stats:browser-only',
+        (event, ctx) => {
+          if (ctx) {
+            const scopedEmitter = emitter.from(ctx);
+            scopedEmitter.emit(
+              'browser-performance-emitter:stats',
+              mapPerfEvent(event)
+            );
+          } else {
+            emitter.emit(
+              'browser-performance-emitter:stats',
+              mapPerfEvent(event),
+              ctx
+            );
+          }
         }
-      });
+      );
 
       /* Helper Functions */
-      function mapPerfEvent(event) {
+      function mapPerfEvent(
+        event: BrowserPerfEventType
+      ): BrowserPerfEventMappedType {
         const {timing, resourceEntries, paintTimes, enhancedMetrics} = event;
 
         if (enhancedMetrics) {
@@ -61,8 +72,13 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         };
       }
 
-      function getCalculatedStats(timing, resourceEntries, paintTimes) {
-        let calculated: any = {};
+      function getCalculatedStats(
+        timing: PerformanceTiming,
+        resourceEntries: PerformanceResourceTiming[],
+        paintTimes: PaintTimesType
+      ) {
+        let calculated: CalculatedStatsType = {};
+
         if (!isEmpty(timing)) {
           calculated = {
             // time spent following redirects
@@ -96,16 +112,13 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
               timing.domContentLoadedEventStart - timing.responseEnd,
           };
           if (paintTimes) {
-            // $FlowFixMe
             calculated.first_paint_time = paintTimes.firstPaint;
-            // $FlowFixMe
             calculated.first_contentful_paint_time =
               paintTimes.firstContentfulPaint;
           }
         }
 
         if (!isEmpty(resourceEntries)) {
-          // $FlowFixMe
           calculated.resources_avg_load_time = {};
           // all of the values are on the prototype so we need to extract them
           const resourceLoadTimes = resourceEntries.reduce((memo, entry) => {
@@ -126,7 +139,6 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
                 mean(resourceLoadTimes[resourceType]),
                 10
               );
-              // $FlowFixMe
               calculated.resources_avg_load_time[resourceType] = avgTime;
             });
           }
@@ -135,7 +147,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         return calculated;
       }
 
-      function isEmpty(item) {
+      function isEmpty(item: Record<string, any> | Record<string, any>[]) {
         // eslint-disable-next-line no-undefined
         if (item === null || item === undefined) {
           return true;
@@ -149,7 +161,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         return false;
       }
 
-      function extractResourceType(name) {
+      function extractResourceType(name: string) {
         const type = name.substring(name.lastIndexOf('.') + 1);
 
         if (type.indexOf('css') === 0) {
@@ -166,7 +178,7 @@ const plugin: FusionPlugin<BrowserPerfDepsType, void> =
         return null;
       }
 
-      function mean(array) {
+      function mean(array: number[]) {
         return (
           array.reduce((total, element) => {
             total += element;

@@ -15,6 +15,7 @@ import {getSimulator} from 'fusion-test-utils';
 import type {FusionPlugin} from 'fusion-core';
 
 import BrowserPerformanceEmitterPlugin from '../server';
+import type {BrowserPerfEventMappedType} from '../types';
 
 /* Mock Results */
 const mockTiming = {
@@ -120,7 +121,7 @@ test('Correct metrics are emitted', () => {
 
   // Process emits
   expect.assertions(14);
-  const handlePerfEvent = function (event) {
+  const handlePerfEvent = function (event: BrowserPerfEventMappedType) {
     const calculatedStats = event.calculatedStats;
     expect(calculatedStats).not.toBe(undefined);
 

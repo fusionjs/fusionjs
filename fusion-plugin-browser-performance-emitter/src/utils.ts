@@ -5,14 +5,11 @@
  *
  */
 
-type PaintTime = {
-  entryType: string;
-  name: string;
-  startTime: number;
-  duration: number;
-};
+import type {PaintTimesType} from './types';
 
-export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
+export function buildPaintTimesObject(
+  paintTimes: PerformanceEntry[]
+): PaintTimesType {
   return {
     firstPaint: getTimeFromMarks(paintTimes, 'first-paint'),
     firstContentfulPaint: getTimeFromMarks(
@@ -22,7 +19,7 @@ export function buildPaintTimesObject(paintTimes: Array<PaintTime>) {
   };
 }
 
-export function getTimeFromMarks(marks: Array<PaintTime>, name: string) {
+export function getTimeFromMarks(marks: PerformanceEntry[], name: string) {
   const matchingMarks = marks.filter((mark) => mark.name === name);
   return matchingMarks.length ? matchingMarks[0].startTime : null;
 }

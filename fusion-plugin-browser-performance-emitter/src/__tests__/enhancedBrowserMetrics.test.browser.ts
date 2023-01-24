@@ -8,7 +8,7 @@
 import browserPerfCollector from '../helpers/enhancedBrowserMetrics';
 
 // @ts-ignore
-function mockWindow({performance, ...otherOverrides} = {}) {
+function mockWindow({performance, ...otherOverrides} = {}): Window {
   return {
     ...window,
     performance: {
@@ -20,6 +20,7 @@ function mockWindow({performance, ...otherOverrides} = {}) {
       ...performance,
     },
     navigator: {
+      // @ts-expect-error
       connection: {},
     },
     ...otherOverrides,
@@ -28,7 +29,7 @@ function mockWindow({performance, ...otherOverrides} = {}) {
 
 test('enhancedBrowserMetrics', () => {
   [null, undefined, {}, {performance: {}}, {performance: {timing: {}}}].forEach(
-    (w) => {
+    (w: Window) => {
       expect(browserPerfCollector(w)).toEqual({});
     }
   );
@@ -66,7 +67,7 @@ test('enhancedBrowserMetrics', () => {
     browserPerfCollector(
       mockWindow({
         performance: {
-          getEntriesByType(type) {
+          getEntriesByType(type: string) {
             switch (type) {
               case 'navigation':
                 return [{serverTiming: []}];

@@ -10,30 +10,36 @@
 import {UniversalEventsToken} from 'fusion-plugin-universal-events';
 import {createPlugin} from 'fusion-core';
 import type {FusionPlugin} from 'fusion-core';
-import browserPerfCollector from './helpers/enhancedBrowserMetrics';
-import type {BrowserPerfDepsType} from './flow';
-import {getTimeFromMarks} from './utils';
+import browserPerfCollector, {
+  getPaintTimes,
+  getTiming,
+} from './helpers/enhancedBrowserMetrics';
+import type {
+  BrowserPerfDepsType,
+  BrowserPerfEventType,
+  PerformanceTiming,
+  TagsType,
+} from './types';
 
 class BrowserPerformanceEmitter {
-  tags: {
-    route: string;
-  };
+  tags: TagsType;
   constructor() {
     this.tags = {route: window.location.href};
   }
 
-  calculate(timing?, resourceEntries?) {
+  calculate(
+    timing?: PerformanceTiming,
+    resourceEntries?: PerformanceResourceTiming[]
+  ) {
     if (
-      (!window.performance ||
-        !window.performance.timing ||
-        !window.performance.getEntriesByType) &&
+      (!window.performance || !window.performance.getEntriesByType) &&
       !timing &&
       !resourceEntries
     ) {
       return {};
     }
 
-    timing = timing || window.performance.timing;
+    timing = timing || getTiming(window);
     resourceEntries =
       resourceEntries ||
       window.performance
@@ -46,49 +52,22 @@ class BrowserPerformanceEmitter {
     return {
       timing,
       resourceEntries,
-      paintTimes: this.getPaintTimes(),
-    };
-  }
-
-  /* Helper methods */
-  getPaintTimes() {
-    let firstPaint = null;
-    let firstContentfulPaint = null;
-    const paint = window.performance.getEntriesByType('paint');
-    if (paint) {
-      firstPaint = getTimeFromMarks(paint, 'first-paint');
-      firstContentfulPaint = getTimeFromMarks(paint, 'first-contentful-paint');
-    } else {
-      // @ts-expect-error
-      if (typeof window.performance.timing.msFirstPaint === 'number') {
-        // IE
-        firstPaint =
-          // @ts-expect-error
-          window.performance.timing.msFirstPaint -
-          window.performance.timing.navigationStart;
-      } else {
-        return null;
-      }
-    }
-    return {
-      firstPaint,
-      firstContentfulPaint,
+      paintTimes: getPaintTimes(window),
     };
   }
 }
 
 const plugin: FusionPlugin<BrowserPerfDepsType, void> =
-  // $FlowFixMe
   __BROWSER__ &&
   createPlugin({
     deps: {emitter: UniversalEventsToken},
     middleware: (deps) => {
       const emitter = deps.emitter;
-      const emit = (payload) => {
+      const emit = (payload: BrowserPerfEventType) => {
         emitter.emit('browser-performance-emitter:stats:browser-only', payload);
       };
 
-      return async (ctx, next) => {
+      return async (_ctx, next) => {
         const browserPerformanceEmitter = new BrowserPerformanceEmitter();
 
         window.addEventListener('load', () => {
