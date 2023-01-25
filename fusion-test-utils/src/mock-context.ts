@@ -18,6 +18,7 @@ type ContextOptions = {
   };
   body?: unknown;
   method?: string;
+  ctxCallback?: (ctx: Context) => any;
 };
 
 const defaultContextOptions: ContextOptions = {
@@ -100,6 +101,11 @@ export function createRequestContext(
 
   if (options.body) {
     ctx.request.body = options.body;
+  }
+
+  if (typeof options.ctxCallback === 'function') {
+    // This will allow full control of context for tests
+    options.ctxCallback(ctx);
   }
 
   return ctx;

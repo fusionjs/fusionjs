@@ -136,6 +136,13 @@ test('createRequestContext', () => {
   ).toBe('test');
   // @ts-expect-error todo: fusion request
   expect(createRequestContext('/', {body: 'test'}).request.body).toBe('test');
+  expect(
+    createRequestContext('/', {
+      ctxCallback: (ctx) => {
+        ctx.response.status = 444;
+      },
+    }).response.status
+  ).toBe(444);
 });
 
 test('createRenderContext', () => {
