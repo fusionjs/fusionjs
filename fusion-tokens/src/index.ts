@@ -59,5 +59,7 @@ export type Logger = {
   verbose: LeveledLogMethod;
   debug: LeveledLogMethod;
   silly: LeveledLogMethod;
+  from: (ctx: Context) => Logger;
 };
+
 export const LoggerToken: Token<Logger> = createToken('LoggerToken');

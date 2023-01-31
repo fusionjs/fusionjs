@@ -24,6 +24,7 @@ const createMockLogger = () => ({
   verbose: () => createMockLogger(),
   debug: () => createMockLogger(),
   silly: () => createMockLogger(),
+  from: () => createMockLogger(),
 });
 
 test('/health request', async () => {

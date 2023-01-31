@@ -23,6 +23,7 @@ const createMockLogger = () => ({
   verbose: () => createMockLogger(),
   debug: () => createMockLogger(),
   silly: () => createMockLogger(),
+  from: () => createMockLogger(),
 });
 
 export default () => {
