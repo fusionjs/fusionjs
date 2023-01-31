@@ -7,6 +7,7 @@ const {dev} = require('./utils.js');
 
 function testSetup(dir /*: string */, ...rest /*: any */) {
   let proc;
+  let devPromise;
   let browser;
   let url;
 
@@ -19,14 +20,25 @@ function testSetup(dir /*: string */, ...rest /*: any */) {
         }),
       ]);
       proc = devResult.proc;
+      devPromise = devResult.promise;
       browser = browserResult;
       url = `http://localhost:${devResult.port}`;
       return {proc, browser, url};
     },
     browser: () => browser,
     url: () => url,
-    teardown: () => {
-      proc.kill('SIGKILL');
+    teardown: async (isGracefulShutdown) => {
+      if (isGracefulShutdown) {
+        try {
+          proc.kill();
+          await devPromise;
+        } catch (e) {
+          proc.kill('SIGKILL');
+        }
+      } else {
+        proc.kill('SIGKILL');
+      }
+
       browser.close();
     },
   };

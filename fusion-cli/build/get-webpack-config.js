@@ -18,6 +18,7 @@ const ChunkIdPrefixPlugin = require('./plugins/chunk-id-prefix-plugin.js');
 const resolveFrom = require('../lib/resolve-from.js');
 const isEsModule = require('../lib/is-es-module.js');
 const LoaderContextProviderPlugin = require('./plugins/loader-context-provider-plugin.js');
+const BuildTimingPlugin = require('./plugins/build-timing-plugin.js');
 const ChildCompilationPlugin = require('./plugins/child-compilation-plugin.js');
 const NodeSourcePlugin = require('./plugins/node-source-plugin.js');
 const MergeChunksPlugin = require('./plugins/merge-chunks-plugin.js');
@@ -272,9 +273,6 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
     legacyPkgConfig.node,
     fusionConfig.nodeBuiltins
   );
-
-  // Used to determine if this is an initial or incremental build
-  let isIncrementalBuild = false;
 
   // Invalidate cache when any of these values change
   const cacheVersionVars /*: SerializableConfigOpts */ = {
@@ -751,30 +749,26 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
       // @see: https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeSourcePlugin.js#L21-L36
       target !== 'node' && new NodeSourcePlugin(nodeBuiltins),
       runtime === 'server' && new MergeChunksPlugin(),
-      onBuildEnd
-        ? new ProgressBarPlugin({
-            callback: (progressBar) => {
-              const buildTime = new Date() - progressBar.start;
-              const buildStats /*: BuildStats*/ = {
-                command,
-                target: id,
-                mode,
-                path: dir,
-                watch,
-                minify: shouldMinify,
-                skipSourceMaps,
-                buildTime,
-                isIncrementalBuild,
-                isBuildCacheEnabled,
-                isBuildCachePersistent,
-                version: fusionCLIVersion,
-                buildToolVersion: 'webpack v5',
-              };
-              isIncrementalBuild = true;
-              return onBuildEnd(buildStats);
-            },
-          })
-        : new ProgressBarPlugin(),
+      new ProgressBarPlugin(),
+      onBuildEnd &&
+        new BuildTimingPlugin(({buildTime, isIncrementalBuild}) => {
+          onBuildEnd({
+            command,
+            target: id,
+            mode,
+            path: dir,
+            watch,
+            minify: shouldMinify,
+            skipSourceMaps,
+            buildTime,
+            isIncrementalBuild,
+            isBuildCacheEnabled,
+            isBuildCachePersistent,
+            isLegacyBuildEnabled: state.legacyBuildEnabled.value,
+            version: fusionCLIVersion,
+            buildToolVersion: 'webpack v5',
+          });
+        }),
       runtime === 'server' &&
         new LoaderContextProviderPlugin('optsContext', opts),
       new LoaderContextProviderPlugin(devContextKey, dev),

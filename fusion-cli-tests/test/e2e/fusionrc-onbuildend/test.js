@@ -31,7 +31,7 @@ async function readStats() {
 beforeAll(async () => {
   // This is crucial for the test to pass in CI inside docker container.
   // Upon write to the dir the whole tree gets new btime, which triggers
-  // unneccessary builds in watch mode with webpack v5, hence need to write
+  // unnecessary builds in watch mode with webpack v5, hence need to write
   // a file before the test runs.
   await clearStats();
   await app.setup();
@@ -69,6 +69,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "isBuildCacheEnabled": true,
         "isBuildCachePersistent": false,
         "isIncrementalBuild": false,
+        "isLegacyBuildEnabled": false,
         "minify": false,
         "mode": "development",
         "path": "path",
@@ -84,6 +85,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "isBuildCacheEnabled": true,
         "isBuildCachePersistent": false,
         "isIncrementalBuild": false,
+        "isLegacyBuildEnabled": false,
         "minify": false,
         "mode": "development",
         "path": "path",
@@ -108,8 +110,15 @@ test('`fusion dev` calls onBuildEnd', async () => {
 
   t.ok(await statsReady());
 
+  // Gracefully shutdown dev server, expect not to find any artificial stats
+  await app.teardown(true);
+
   let incStatsOutput = JSON.parse(await readFile(statsFile, 'utf-8'));
   t.ok(Array.isArray(incStatsOutput));
+  t.ok(
+    incStatsOutput.length === 2,
+    `expected onBuildEnd to emit two stat events (client + server), instead received: ${incStatsOutput.length}`
+  );
   incStatsOutput = incStatsOutput.map((stat) => {
     // subsequent build is incremental
     expect(stat.isIncrementalBuild).toBe(true);
@@ -127,6 +136,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "isBuildCacheEnabled": true,
         "isBuildCachePersistent": false,
         "isIncrementalBuild": true,
+        "isLegacyBuildEnabled": false,
         "minify": false,
         "mode": "development",
         "path": "path",
@@ -142,6 +152,7 @@ test('`fusion dev` calls onBuildEnd', async () => {
         "isBuildCacheEnabled": true,
         "isBuildCachePersistent": false,
         "isIncrementalBuild": true,
+        "isLegacyBuildEnabled": false,
         "minify": false,
         "mode": "development",
         "path": "path",

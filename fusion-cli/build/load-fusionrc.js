@@ -25,6 +25,7 @@ export type BuildStats = {
   isBuildCacheEnabled: boolean,
   isBuildCachePersistent: boolean,
   isIncrementalBuild: boolean,
+  isLegacyBuildEnabled: boolean,
   minify: boolean,
   skipSourceMaps: boolean,
   watch: boolean,
