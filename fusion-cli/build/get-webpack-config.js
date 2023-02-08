@@ -927,13 +927,14 @@ function getWebpackConfig(opts /*: WebpackConfigOpts */) {
               chunks: 'async',
               automaticNameDelimiter: '-',
               cacheGroups: {
-                // Only split node_modules in a separate chunk while in dev mode
-                default: dev
-                  ? false
-                  : {
-                      minChunks: 2,
-                      reuseExistingChunk: true,
-                    },
+                default:
+                  // Always split node_modules in a separate chunk while in dev mode
+                  dev && !isAnalyzerEnabled
+                    ? false
+                    : {
+                        minChunks: 2,
+                        reuseExistingChunk: true,
+                      },
                 vendor: {
                   test: /[\\/]node_modules[\\/]/,
                   name: 'vendor',
