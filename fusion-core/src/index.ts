@@ -65,15 +65,18 @@ export {
 
 export type {ErrorHandlerType} from './tokens';
 
-export {createPlugin} from './create-plugin';
+export {createPlugin, declarePlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};
 export {
   withUniversalValue,
   withRenderSetup,
   unstable_withPrepareEffect,
+  withCleanup,
+  withDeps,
   withEndpoint,
   withMiddleware,
+  withPlugin,
   withUniversalMiddleware,
 } from './core';
 

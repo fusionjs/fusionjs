@@ -428,7 +428,7 @@ class Child {
       this.ref.stacks = task.id.stacks;
     }
 
-    const childTask = new Task(this.plugin, this.ref);
+    const childTask = new Task(getPluginFn(this.plugin), this.ref);
 
     task.child = childTask; // Used by legacy sort
 
