@@ -61,6 +61,7 @@ export type ExtractTokenType<T extends Token<any>> = T extends Token<infer R>
   ? R
   : never;
 
+// eslint-disable-next-line no-unused-vars
 export type ExtractServiceType<P> = P extends FusionPlugin<infer D, infer S>
   ? S
   : P;

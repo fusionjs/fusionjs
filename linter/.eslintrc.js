@@ -26,9 +26,6 @@ module.exports = {
         // disbled because missing dependency in fusion-core todo: review after fixing the types
         'import/no-extraneous-dependencies': 'off',
 
-        // should be replaced with @typescript-eslint/no-unused-vars,
-        // but there is apparently a bug when importing type namespaces
-        'no-unused-vars': 'off',
         'no-redeclare': 'off',
         'no-dupe-class-members': 'off',
         '@typescript-eslint/no-dupe-class-members': 'error',

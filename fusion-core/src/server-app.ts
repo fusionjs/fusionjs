@@ -15,11 +15,13 @@ import {
   SSRDeciderToken,
   SSRBodyTemplateToken,
   SSRShellTemplateToken,
+  ErrorHandlerToken,
 } from './tokens';
 import ssrPlugin from './plugins/ssr';
 import contextMiddleware from './plugins/server-context';
 import {appSymbol} from './utils/app-symbol';
 import {Middleware} from './types';
+import {createPlugin} from './create-plugin';
 
 export default function () {
   const Koa = require('koa');
@@ -55,6 +57,19 @@ export default function () {
           ssrShellTemplate: SSRShellTemplateToken.optional,
         },
         ssrPlugin(this.endpoints)
+      );
+      this.register(
+        createPlugin({
+          deps: {errorHandler: ErrorHandlerToken.optional},
+          provides: ({errorHandler}) => {
+            if (!errorHandler) {
+              return;
+            }
+            this._app.on('error', (err, ctx) => {
+              errorHandler(err, 'request', ctx);
+            });
+          },
+        })
       );
     }
     resolve() {

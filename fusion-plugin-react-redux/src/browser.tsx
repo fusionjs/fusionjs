@@ -22,13 +22,10 @@ import {
   EnhancerToken,
   ReduxDevtoolsConfigToken,
 } from './tokens';
-import type {
-  StoreWithContextType,
-  ReactReduxDepsType,
-  ReactReduxServiceType,
-} from './types';
+import type {StoreWithContextType, ReactReduxServiceType} from './types';
 
 declare global {
+  // eslint-disable-next-line no-unused-vars
   var __REDUX_DEVTOOLS_EXTENSION__: any;
 }
 

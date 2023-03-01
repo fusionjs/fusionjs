@@ -10,18 +10,30 @@
 import bodyParser from 'koa-bodyparser';
 import assert from 'assert';
 
-import {createPlugin, createToken, html} from 'fusion-core';
-import type {Token} from 'fusion-core';
+import {createPlugin, html, ErrorHandlerToken} from 'fusion-core';
 
-import type {ErrorHandlerPluginType, ErrorHandlerType} from './types';
+import type {ErrorHandlerPluginType} from './types';
 
-export const ErrorHandlerToken: Token<ErrorHandlerType> =
-  createToken('ErrorHandlerToken');
+export {ErrorHandlerToken};
 
 const captureTypes = {
   browser: 'browser',
   request: 'request',
   server: 'server',
+};
+
+// $FlowFixMe
+export const getError = function (_e) {
+  var error = _e;
+  if (typeof _e === 'object') {
+    if (!(_e instanceof Array)) {
+      error = {};
+      Object.getOwnPropertyNames(_e).forEach(function (key) {
+        error[key] = _e[key];
+      });
+    }
+  }
+  return error;
 };
 
 const plugin =
@@ -31,12 +43,9 @@ const plugin =
     provides({onError}) {
       assert(typeof onError === 'function', '{onError} must be a function');
       // It's possible to call reject with a non-error
-      const errorHandler = async (e: unknown) => {
-        if (e instanceof Error) {
-          await onError(e, captureTypes.server);
-        } else {
-          await onError(new Error(String(e)), captureTypes.server);
-        }
+      const errorHandler = async (e: any) => {
+        await onError(e, captureTypes.server);
+
         process.exit(1);
       };
       process.once('uncaughtException', errorHandler);
@@ -67,13 +76,10 @@ const plugin =
             <script nonce="${ctx.nonce}">
               const messageCounts = {};
               onerror = function (m, s, l, c, e) {
+                var getError = ${getError.toString()};
                 var _e = e || {};
                 messageCounts[m] = (messageCounts[m] || 0) + 1;
                 if (_e.__handled || messageCounts[m] > 3) return;
-                var error = {};
-                Object.getOwnPropertyNames(_e).forEach(function (key) {
-                  error[key] = e[key];
-                });
                 var x = new XMLHttpRequest();
                 x.open('POST', '${ctx.prefix}/_errors');
                 x.setRequestHeader('Content-Type', 'application/json');
@@ -83,7 +89,7 @@ const plugin =
                     source: s,
                     line: l,
                     col: c,
-                    error: error,
+                    error: getError(_e),
                   })
                 );
                 _e.__handled = true;

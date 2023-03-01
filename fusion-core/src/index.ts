@@ -60,7 +60,11 @@ export {
   RouteTagsToken,
   EnableMiddlewareTimingToken,
   unstable_EnableServerStreamingToken,
+  ErrorHandlerToken,
 } from './tokens';
+
+export type {ErrorHandlerType} from './tokens';
+
 export {createPlugin} from './create-plugin';
 export {createToken} from './create-token';
 export {getEnv};

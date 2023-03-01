@@ -29,6 +29,8 @@ const BEACON_PAYLOAD_SIZE_LIMIT = 60000;
 const XHR_PAYLOAD_SIZE_LIMIT = 1048576;
 
 declare global {
+  // https://github.com/uber/fusionjs/issues/1577
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     __ROUTE_PREFIX__?: string;
   }
