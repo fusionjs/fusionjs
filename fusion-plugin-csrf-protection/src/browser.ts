@@ -10,6 +10,8 @@ import type {Fetch} from 'fusion-tokens';
 import {verifyMethod} from './shared';
 
 declare global {
+  // https://github.com/uber/fusionjs/issues/1577
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     __ROUTE_PREFIX__?: string;
   }

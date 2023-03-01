@@ -14,6 +14,7 @@ import type {
   Context,
   RouteTagsType,
   unstable_EnableServerStreamingTokenType,
+  Token,
 } from './types';
 import type {Server} from 'http';
 
@@ -47,3 +48,12 @@ export const CriticalChunkIdsToken = createToken<CriticalChunkIdsService>(
 export const EnableMiddlewareTimingToken = createToken<boolean>(
   'EnableMiddlewareTimingToken'
 );
+
+export type ErrorHandlerType = (
+  e: Error,
+  captureType: string,
+  ctx?: Context | null
+) => Promise<any> | void;
+
+export const ErrorHandlerToken: Token<ErrorHandlerType> =
+  createToken('ErrorHandlerToken');

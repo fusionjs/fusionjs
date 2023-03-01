@@ -5,7 +5,7 @@
  *
  */
 
-import type {FusionPlugin, Context} from 'fusion-core';
+import type {FusionPlugin, ErrorHandlerType} from 'fusion-core';
 
 import {ErrorHandlingEmitterToken} from './client';
 import {ErrorHandlerToken} from './server';
@@ -17,8 +17,4 @@ type DepsType = {
 
 export type ErrorHandlerPluginType = FusionPlugin<DepsType, never>;
 
-export type ErrorHandlerType = (
-  e: Error,
-  captureType: string,
-  ctx?: Context | null
-) => Promise<any> | void;
+export type {ErrorHandlerType};

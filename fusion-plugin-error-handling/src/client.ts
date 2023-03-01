@@ -24,7 +24,7 @@ const plugin =
       let _emit =
         emit ||
         ((e, src) => {
-          if (window.onerror) window.onerror(e.message, src, null, null, e);
+          if (window.onerror) window.onerror(e?.message, src, null, null, e);
         });
       if (__DEV__) {
         let oldEmit = _emit;
@@ -65,9 +65,9 @@ const plugin =
           // Ignore. Don't have access to the prop, possibly cross-origin restriction.
         }
       }
-      window.addEventListener('unhandledrejection', (e) => {
-        e.preventDefault();
-        _emit(e.reason instanceof Error ? e.reason : new Error(e.reason));
+      window.addEventListener('unhandledrejection', (event) => {
+        event.preventDefault();
+        _emit(event.reason, 'unhandled-rejection');
       });
     },
   });

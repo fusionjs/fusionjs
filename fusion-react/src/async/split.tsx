@@ -16,6 +16,8 @@ declare var __webpack_modules__: {
 declare var __webpack_require__: (a: any) => any;
 
 declare global {
+  // https://github.com/uber/fusionjs/issues/1577
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     webpackChunkFusion: any;
   }

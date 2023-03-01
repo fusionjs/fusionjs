@@ -10,7 +10,7 @@ import {compose, createStore} from 'redux';
 import {Provider} from 'react-redux';
 
 import {createPlugin, memoize, html} from 'fusion-core';
-import type {FusionPlugin, Context} from 'fusion-core';
+import type {Context} from 'fusion-core';
 
 import ctxEnhancer from './ctx-enhancer';
 import {serialize} from './codec';

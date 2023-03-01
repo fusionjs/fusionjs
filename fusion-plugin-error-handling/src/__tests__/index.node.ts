@@ -9,10 +9,10 @@
 
 import {fork} from 'child_process';
 
-import App, {consumeSanitizedHTML} from 'fusion-core';
+import App, {consumeSanitizedHTML, html} from 'fusion-core';
 import {getSimulator} from 'fusion-test-utils';
 
-import ErrorHandling, {ErrorHandlerToken} from '../server';
+import ErrorHandling, {ErrorHandlerToken, getError} from '../server';
 
 test('request errors', async () => {
   expect.assertions(6);
@@ -106,7 +106,7 @@ test('Unhandled rejections', (done) => {
   });
 });
 
-test('Unhandled rejections with non-error', (done) => {
+test('Unhandled rejections with non-error does not wrap non-errors into Error instance', (done) => {
   const forked = fork('./fixtures/unhandled-rejection-non-error.js', {
     stdio: 'pipe',
   });
@@ -117,7 +117,29 @@ test('Unhandled rejections with non-error', (done) => {
   forked.on('close', (code) => {
     expect(code).toBe(1);
     expect(stdout.includes('ERROR HANDLER')).toBeTruthy();
-    expect(stdout.includes('INSTANCEOF ERROR true')).toBeTruthy();
+    expect(stdout.includes('INSTANCEOF ERROR false')).toBeTruthy();
     done();
   });
+});
+
+test('getError function should not have any special HTML characters', () => {
+  expect(consumeSanitizedHTML(html`${getError.toString()}`)).toEqual(
+    getError.toString()
+  );
+});
+
+test('getError formats different input types', () => {
+  expect(getError({reason: 'I am reason'})).toMatchInlineSnapshot(`
+    Object {
+      "reason": "I am reason",
+    }
+  `);
+  expect(getError('I am error')).toMatchInlineSnapshot(`"I am error"`);
+  expect(getError(['I am error', 'Me too'])).toMatchInlineSnapshot(`
+    Array [
+      "I am error",
+      "Me too",
+    ]
+  `);
+  expect(getError(() => 'I am function')).toMatchInlineSnapshot(`[Function]`);
 });
