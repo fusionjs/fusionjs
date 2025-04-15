@@ -13,6 +13,7 @@ const {join, relative, dirname, extname} = require('path');
 const {promisify} = require('util');
 const readdir = require('recursive-readdir');
 const {spawn} = require('child_process');
+const sanitizePath = require('./sanitizePath');
 
 const copyFile = promisify(fs.copyFile);
 const lstat = promisify(fs.lstat);
@@ -50,7 +51,7 @@ module.exports = async function scaffold(ctx /*: ScaffoldContext */ = {}) {
     );
   }
 
-  const computedProjectPath = projectPath || join(cwd, project);
+  const computedProjectPath = sanitizePath(projectPath || join(cwd, project));
   const templatePath = join(cwd, path);
   const contentPath = join(templatePath, 'content');
 
@@ -58,6 +59,7 @@ module.exports = async function scaffold(ctx /*: ScaffoldContext */ = {}) {
   await updatePackageJsonFields(computedProjectPath, packageJsonFields);
   await install(computedProjectPath);
 };
+
 
 async function updatePackageJsonFields(projectPath, packageJsonFields = null) {
   if (!packageJsonFields) {
